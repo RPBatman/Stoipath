@@ -9,10 +9,10 @@ import { LOD_HYSTERESIS_LEVELS, LOD_S_MAX, LOD_S_MIN } from './constants';
 
 const S_LOWER = LOD_S_MIN * 2 ** -LOD_HYSTERESIS_LEVELS;
 
-/** Stateless choice: finest level with s <= LOD_S_MAX, clamped to the pyramid. */
+/** Stateless choice: the level whose s lies in (0.5, 1.0], clamped to the pyramid (level 0 may be magnified). */
 export function idealLevel(k: number, levelCount: number): number {
-  // k * 2^L <= 1  =>  L >= -log2(k)
-  const l = Math.ceil(-Math.log2(k) - 1e-9);
+  // s_L = k * 2^L in (0.5, 1]  <=>  L = floor(-log2 k)   (L = 0 is finest, so a coarser level has a larger L).
+  const l = Math.floor(-Math.log2(k) + 1e-9);
   return Math.min(levelCount - 1, Math.max(0, l));
 }
 

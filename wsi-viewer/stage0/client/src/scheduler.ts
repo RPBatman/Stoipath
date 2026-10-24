@@ -22,6 +22,7 @@ import {
   ZOOM_INTENT_HOLD_MS,
   ZOOM_INTENT_HORIZON_MS,
   ZOOM_INTENT_MAX_LEVELS,
+  ZOOM_INTENT_MIN_VELOCITY,
   ZOOM_INTENT_WINDOW_PX,
 } from './constants';
 import type { Camera } from './camera';
@@ -297,7 +298,7 @@ export class Scheduler {
     if (lstar < maxLevel) this.wantRange(cam, lstar + 1, 1, 1, RequestKind.PARTNER, wx0, wy0, wx1, wy1);
 
     // Zoom intent (04 F3 "Zoom intent", A §3): destination level under the pointer, from the extrapolated zoom.
-    const zoomingIn = cam.zoomVel > 1e-5;
+    const zoomingIn = cam.zoomVel > ZOOM_INTENT_MIN_VELOCITY;
     const intent = zoomingIn || now < this.intentUntil;
     if (intent && lstar > 0) {
       const destLog = zoomingIn ? cam.predictLogZoom(ZOOM_INTENT_HORIZON_MS) : cam.targetLogZoom + 1;

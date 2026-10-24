@@ -62,6 +62,8 @@ export const ZOOM_VELOCITY_DECAY_MS = 150;
 export const ZOOM_INTENT_WINDOW_PX = 300;
 /** Destination prediction may look at most this many levels finer than L*. A §3 "L*+1 and L*+2". */
 export const ZOOM_INTENT_MAX_LEVELS = 2;
+/** Zoom velocity (levels/ms) above which a zoom-in burst is "in progress" for destination prefetch; the EMA decays below it ~250 ms after the last notch. task. */
+export const ZOOM_INTENT_MIN_VELOCITY = 0.001;
 /** Horizon used to extrapolate the zoom destination from the first notches / pinch samples. 04 F3 (~155 ms to cross s = 1 in a pinch). */
 export const ZOOM_INTENT_HORIZON_MS = 300;
 /** After pointer-down (or a zoom input) the next finer level under the pointer stays "intended" this long. 04 F3 "Hover/touch-down prefetch" (100-300 ms lead). */
