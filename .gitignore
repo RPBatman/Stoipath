@@ -1,0 +1,17 @@
+# dependencies and build output
+node_modules/
+dist/
+target/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Stage-0 prototype: the tile pyramid is reproducible with wsi-viewer/stage0/tools/build_pyramid.py
+# and is published on the deploy branch, not in the source history
+wsi-viewer/stage0/data/tiles/
+wsi-viewer/stage0/client/harness/results/screens/
+
+# OS / editor
+.DS_Store
+Thumbs.db

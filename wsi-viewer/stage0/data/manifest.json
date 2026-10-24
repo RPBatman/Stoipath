@@ -1,0 +1,213 @@
+{
+  "schema": "stoipath-stage0-pyramid/1",
+  "width": 15360,
+  "height": 15360,
+  "tileSize": 512,
+  "tileUrl": "tiles/{level}/{x}_{y}.jpg",
+  "tileFormat": "image/jpeg",
+  "levelOrder": "index 0 is full resolution; each level halves; the last level fits in one tile",
+  "levels": [
+    {
+      "index": 0,
+      "width": 15360,
+      "height": 15360,
+      "cols": 30,
+      "rows": 30,
+      "scale": 1,
+      "pinned": false,
+      "tiles": 900,
+      "bytes": 64526931,
+      "medianBytesPerTile": 72288,
+      "minBytesPerTile": 45223,
+      "maxBytesPerTile": 78073
+    },
+    {
+      "index": 1,
+      "width": 7680,
+      "height": 7680,
+      "cols": 15,
+      "rows": 15,
+      "scale": 2,
+      "pinned": false,
+      "tiles": 225,
+      "bytes": 23761446,
+      "medianBytesPerTile": 105665,
+      "minBytesPerTile": 85349,
+      "maxBytesPerTile": 115368
+    },
+    {
+      "index": 2,
+      "width": 3840,
+      "height": 3840,
+      "cols": 8,
+      "rows": 8,
+      "scale": 4,
+      "pinned": true,
+      "tiles": 64,
+      "bytes": 7129818,
+      "medianBytesPerTile": 122824,
+      "minBytesPerTile": 33550,
+      "maxBytesPerTile": 134294
+    },
+    {
+      "index": 3,
+      "width": 1920,
+      "height": 1920,
+      "cols": 4,
+      "rows": 4,
+      "scale": 8,
+      "pinned": true,
+      "tiles": 16,
+      "bytes": 1837024,
+      "medianBytesPerTile": 122956,
+      "minBytesPerTile": 76755,
+      "maxBytesPerTile": 135205
+    },
+    {
+      "index": 4,
+      "width": 960,
+      "height": 960,
+      "cols": 2,
+      "rows": 2,
+      "scale": 16,
+      "pinned": true,
+      "tiles": 4,
+      "bytes": 435745,
+      "medianBytesPerTile": 109389,
+      "minBytesPerTile": 96577,
+      "maxBytesPerTile": 120389
+    },
+    {
+      "index": 5,
+      "width": 480,
+      "height": 480,
+      "cols": 1,
+      "rows": 1,
+      "scale": 32,
+      "pinned": true,
+      "tiles": 1,
+      "bytes": 94528,
+      "medianBytesPerTile": 94528,
+      "minBytesPerTile": 94528,
+      "maxBytesPerTile": 94528
+    }
+  ],
+  "mpp": 0.24309399999999998,
+  "source": {
+    "input": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/images/tumor_014.tif",
+    "sizeBytes": 2253898518,
+    "etag": "\"ba0d604c35a77a4bb343e6826336b0bc-269\"",
+    "lastModified": "Wed, 28 Sep 2022 11:34:49 GMT",
+    "regionLevel0": {
+      "x": 36864,
+      "y": 66560,
+      "width": 15360,
+      "height": 15360,
+      "sourceLevel": 0
+    },
+    "regionSelection": "auto-select (see build log)",
+    "format": {
+      "compression": "JPEG",
+      "photometric": "YCBCR",
+      "subsampling": [
+        2,
+        2
+      ],
+      "tileSize": [
+        512,
+        512
+      ],
+      "levels": [
+        [
+          97792,
+          214016
+        ],
+        [
+          49152,
+          107008
+        ],
+        [
+          24576,
+          53760
+        ],
+        [
+          12288,
+          27136
+        ],
+        [
+          6144,
+          13824
+        ],
+        [
+          3072,
+          7168
+        ],
+        [
+          1536,
+          3584
+        ],
+        [
+          1024,
+          2048
+        ],
+        [
+          512,
+          1024
+        ],
+        [
+          512,
+          512
+        ]
+      ],
+      "bigtiff": true,
+      "scannerManufacturer": "3D Histech",
+      "derivation": "tiff-useBigTIFF=1-useRgb=0-levels=10003,10002,10000,10001-processing=0-q80-sourceFilename=\"T12-17823-I1-8\"",
+      "sourceJpegQuality": 80
+    },
+    "pixelSpacingNote": "Philips XML DICOM_PIXEL_SPACING (mm) x 1000",
+    "note": "Pixels are decoded source tiles (no resampling) re-encoded with the settings below; coarser levels are exact 2x2 box means of the decoded level-0 pixels."
+  },
+  "jpegQuality": 85,
+  "jpegSubsampling": "4:2:0",
+  "jpegEncoder": "libjpeg-turbo libjpeg_turbo 3.2.0/8.0 via imagecodecs 2026.10.10, baseline, optimized Huffman",
+  "downsample": "2x2 box mean, round half up",
+  "pinnedBaseMaxPx": 4096,
+  "bytes": {
+    "perLevelMedian": {
+      "0": 72288,
+      "1": 105665,
+      "2": 122824,
+      "3": 122956,
+      "4": 109389,
+      "5": 94528
+    },
+    "perLevelTotal": {
+      "0": 64526931,
+      "1": 23761446,
+      "2": 7129818,
+      "3": 1837024,
+      "4": 435745,
+      "5": 94528
+    },
+    "total": 97785492,
+    "pinnedBase": 9497115,
+    "tilesTotal": 1210
+  },
+  "build": {
+    "tool": "stage0/tools/build_pyramid.py",
+    "command": "tools/build_pyramid.py --input https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/images/tumor_014.tif --annotation https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/annotations/tumor_014.xml --subsampling 420 --size 15360 --out /home/user/Stoipath/wsi-viewer/stage0/data --clean",
+    "date": "2026-10-24T19:34:21+00:00",
+    "durationSec": 23.0,
+    "sourceReadSec": 4.0,
+    "encodeSec": 6.9,
+    "network": {
+      "requests": 41,
+      "bytes": 78432658
+    },
+    "python": "3.13.17",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10",
+    "numpy": "2.5.4",
+    "cpuCount": 4
+  }
+}
