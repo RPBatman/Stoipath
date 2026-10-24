@@ -202,7 +202,10 @@ def source_description(src: SlideSource) -> dict:
         info["scannerManufacturer"] = m.group(1)
     m = re.search(r'Name="DICOM_DERIVATION_DESCRIPTION"[^>]*>([^<]*)<', desc)
     if m:
-        info["derivation"] = m.group(1).replace("&quot;", '"')[:200]
+        # The upstream lab's slide label (sourceFilename) is an accession-style string; keep it out
+        # of anything we publish even though the data set is public and de-identified.
+        deriv = re.sub(r"sourceFilename=&quot;[^&]*&quot;", "sourceFilename=<redacted>", m.group(1))
+        info["derivation"] = deriv.replace("&quot;", '"')[:200]
     q = re.search(r"quality=(\d+)", "\n".join((p.description or "") for p in src.pages[1:2]))
     if q:
         info["sourceJpegQuality"] = int(q.group(1))

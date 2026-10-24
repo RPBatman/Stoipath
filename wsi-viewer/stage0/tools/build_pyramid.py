@@ -96,9 +96,9 @@ def largest_tumor_bbox(annotation: str) -> tuple[float, float, float, float] | N
 THUMB_LEVEL = 5  # source pyramid level used for tissue detection (32x down; a few MB to read)
 
 
-def choose_region(src, size: int, annotation: str | None, margin: int, log) -> tuple[tuple[int, int, int, int], np.ndarray, int]:
+def choose_region(src, size: int, annotation: str | None, margin: int, log) -> tuple[tuple[int, int, int, int], np.ndarray, int, str]:
     """Pick a tile-aligned size x size window: tissue-densest, and containing the largest tumour
-    polygon (with margin) when an annotation is given. Returns (region, thumbnail, thumb_level)."""
+    polygon (with margin) when an annotation is given. Returns (region, thumbnail, thumb_level, rule)."""
     p0 = src.pages[0]
     W0, H0 = p0.shape[1], p0.shape[0]
     # Thumbnail level: source level 5 (32x down), so a 16 px step on the thumbnail equals one
@@ -142,8 +142,9 @@ def choose_region(src, size: int, annotation: str | None, margin: int, log) -> t
             how = "window centred on the largest tumour polygon (bbox larger than window minus margin)"
     cands.sort(reverse=True)
     f, x, y = cands[0]
-    log(f"region auto-select: {how}; tissue fraction {f:.3f} at x={x} y={y} (thumbnail level {lvl}, {ds}x)")
-    return (x, y, size, size), thumb, lvl
+    how = f"auto-select: {how}; tissue fraction {f:.3f} (thumbnail level {lvl}, {ds}x)"
+    log(f"region {how} at x={x} y={y}")
+    return (x, y, size, size), thumb, lvl, how
 
 
 def write_context_image(thumb: np.ndarray, region, ds: int, path: str):
@@ -228,7 +229,7 @@ def main(argv=None) -> int:
         f"level {args.source_level} = {p0.shape[1]}x{p0.shape[0]}, tiles {p0.tilewidth}x{p0.tilelength}, "
         f"{p0.compression.name} {p0.photometric.name} subsampling={p0.subsampling}")
     mpp0, mpp_note = pixel_spacing_um(src)
-    mpp = mpp0 * (PYRAMID_FACTOR**args.source_level) if mpp0 else None
+    mpp = round(mpp0 * (PYRAMID_FACTOR**args.source_level), 6) if mpp0 else None
 
     os.makedirs(args.out, exist_ok=True)
     if args.region:
@@ -236,9 +237,8 @@ def main(argv=None) -> int:
         thumb = None
         how = "explicit --region"
     else:
-        region, thumb, tl = choose_region(src, args.size, args.annotation, args.margin, log)
+        region, thumb, tl, how = choose_region(src, args.size, args.annotation, args.margin, log)
         write_context_image(thumb, region, PYRAMID_FACTOR**tl, os.path.join(args.out, "region_context.jpg"))
-        how = "auto-select (see build log)"
     x0, y0, w, h = region
     log(f"region (source level {args.source_level}): x={x0} y={y0} w={w} h={h}  = {w*mpp/1000:.2f} x {h*mpp/1000:.2f} mm" if mpp else f"region: {region}")
     if args.dry_run:
