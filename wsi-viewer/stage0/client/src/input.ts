@@ -32,21 +32,21 @@ export class Controls {
   wheelLevels(levels: number, sx: number, sy: number, ts: number, kind = 'wheel'): void {
     this.pointerX = sx;
     this.pointerY = sy;
-    this.metrics.noteInput(kind, ts, this.lstar());
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
     this.cam.zoomBy(levels, sx, sy, ts);
     if (levels > 0) this.scheduler.noteIntent(ts);
   }
   dragStart(sx: number, sy: number, ts: number, kind = 'drag'): void {
     this.pointerX = sx;
     this.pointerY = sy;
-    this.metrics.noteInput(kind, ts, this.lstar());
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
     this.cam.dragStart(sx, sy);
     this.scheduler.noteIntent(ts); // touch-down prefetch of the next finer level (04 F3)
   }
   dragMove(dx: number, dy: number, ts: number, kind = 'drag'): void {
     this.pointerX += dx;
     this.pointerY += dy;
-    this.metrics.noteInput(kind, ts, this.lstar());
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
     this.cam.dragMove(dx, dy, ts);
   }
   dragEnd(ts: number): void {
@@ -55,28 +55,28 @@ export class Controls {
   pinchStart(cx: number, cy: number, ts: number): void {
     this.pointerX = cx;
     this.pointerY = cy;
-    this.metrics.noteInput('pinch', ts, this.lstar());
+    this.metrics.noteInput('pinch', ts, this.lstar(), this.cam.logZoom);
     this.cam.pinchStart(cx, cy);
     this.scheduler.noteIntent(ts);
   }
   pinchMove(cx: number, cy: number, scale: number, ts: number): void {
     this.pointerX = cx;
     this.pointerY = cy;
-    this.metrics.noteInput('pinch', ts, this.lstar());
+    this.metrics.noteInput('pinch', ts, this.lstar(), this.cam.logZoom);
     this.cam.pinchMove(cx, cy, scale, ts);
     if (scale > 1) this.scheduler.noteIntent(ts);
   }
   keyZoom(levels: number, ts: number): void {
-    this.metrics.noteInput('key', ts, this.lstar());
+    this.metrics.noteInput('key', ts, this.lstar(), this.cam.logZoom);
     this.cam.zoomBy(levels, this.cam.viewW / 2, this.cam.viewH / 2, ts);
     if (levels > 0) this.scheduler.noteIntent(ts);
   }
   keyPan(dx: number, dy: number, ts: number): void {
-    this.metrics.noteInput('key', ts, this.lstar());
+    this.metrics.noteInput('key', ts, this.lstar(), this.cam.logZoom);
     this.cam.panByEased(dx, dy);
   }
   flyTo(wx: number, wy: number, logZoom: number, ts: number, kind = 'fly'): void {
-    this.metrics.noteInput(kind, ts, this.lstar());
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
     this.cam.flyTo(wx, wy, logZoom);
   }
 }

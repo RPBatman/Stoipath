@@ -32,6 +32,8 @@ function serveSiblingData(): Plugin {
 
 export default defineConfig({
   base: './',
+  // Build id (UTC time of the build) shown in the panel and written into every export, so numbers can be tied to the policy constants that produced them.
+  define: { __BUILD_ID__: JSON.stringify(new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')) },
   plugins: [serveSiblingData()],
   build: {
     target: 'es2022',

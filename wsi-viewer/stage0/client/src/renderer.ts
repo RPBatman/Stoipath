@@ -3,7 +3,7 @@
  * per frame samples two sources per cell (fine + coarse / fade-from) and mixes them in the shader.
  * 04 F5 (texture array, texSubImage, per-frame upload budget), 04 F7 (trilinear, cross-fade), A §2/§3.
  */
-import { MAX_INSTANCES, TEXTURE_MIP_LEVELS } from './constants';
+import { LOWMEM_GIB, MAX_INSTANCES, TEXTURE_LAYERS_LOWMEM_MAX, TEXTURE_LAYERS_MAX, TEXTURE_LAYERS_MIN, TEXTURE_MIP_LEVELS, TEXTURE_VIEWPORT_HEADROOM } from './constants';
 import type { TileResponse } from './decode-messages';
 import { keyLevel } from './pyramid';
 import type { TileCache } from './tile-cache';
@@ -66,6 +66,20 @@ void main() {
   outColor = vec4(mix(a.rgb, b.rgb, vB.y), 1.0);
 }`;
 
+/**
+ * Layers to request for the tile array (constants.ts "GPU upload"): the pinned base plus TEXTURE_VIEWPORT_HEADROOM
+ * viewports of L* tiles at s = 0.5 (one tile covers 2·tileSize device px per axis, +1 for grid alignment), clamped,
+ * and capped when the browser reports a small deviceMemory. Pure so it can be checked by hand from the export.
+ */
+export function chooseLayerCount(viewportW: number, viewportH: number, tileSize: number, basePinTiles: number, deviceMemoryGiB: number | null): number {
+  const cols = Math.ceil(viewportW / (2 * tileSize)) + 1;
+  const rows = Math.ceil(viewportH / (2 * tileSize)) + 1;
+  const need = basePinTiles + Math.ceil(TEXTURE_VIEWPORT_HEADROOM * cols * rows);
+  let layers = Math.min(TEXTURE_LAYERS_MAX, Math.max(TEXTURE_LAYERS_MIN, need));
+  if (deviceMemoryGiB !== null && deviceMemoryGiB <= LOWMEM_GIB) layers = Math.min(layers, TEXTURE_LAYERS_LOWMEM_MAX);
+  return layers;
+}
+
 interface TimerQueryExt {
   readonly TIME_ELAPSED_EXT: number;
   readonly GPU_DISJOINT_EXT: number;
@@ -109,8 +123,11 @@ export class Renderer {
   onUploaded: ((key: number) => void) | null = null;
   totalUploads = 0;
   totalUploadMs = 0;
+  /** Wall time of the constructor (context, shaders, texStorage3D of the whole array): a startup cost phones feel. */
+  readonly initMs: number;
 
   constructor(canvas: HTMLCanvasElement, tileSize: number, requestedLayers: number) {
+    const tInit = performance.now();
     const gl = canvas.getContext('webgl2', {
       alpha: false,
       antialias: false,
@@ -194,6 +211,7 @@ export class Renderer {
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
     gl.clearColor(0.16, 0.16, 0.18, 1);
+    this.initMs = performance.now() - tInit;
   }
 
   private buildProgram(vs: string, fs: string): WebGLProgram {

@@ -64,9 +64,10 @@ class CellStore {
     this.fadeFrom[slot] = -1;
     return slot;
   }
+  /** True when the cell was in the draw list in `frame` or the frame before (uploads run before this frame's plan). */
   isVisible(key: number, frame: number): boolean {
     const s = this.slots.get(key);
-    return s !== undefined && this.lastSeen[s] === frame;
+    return s !== undefined && (this.lastSeen[s] ?? -1) >= frame - 1;
   }
   /** Drop cells not seen for `maxAge` frames. */
   prune(frame: number, maxAge: number): void {

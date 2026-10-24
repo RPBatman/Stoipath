@@ -66,8 +66,10 @@ export class TileCache {
   }
 
   /**
-   * Allocate a layer for `key`, evicting the least recently used unpinned layer not used in `frame` if needed.
-   * Returns -1 when every layer is pinned or in use this frame.
+   * Allocate a layer for `key`, evicting the least recently used unpinned layer if needed. Layers touched in the
+   * previous frame are protected: uploads run at the top of a frame, before the planner touches this frame's
+   * cells, so "used last frame" is the best available proxy for "about to be drawn". Returns -1 when every
+   * layer is pinned or protected (the cache is too small for the viewport; counted as an upload stall).
    */
   allocate(key: number, frame: number, pin: boolean, kind: number, w: number, h: number): number {
     const existing = this.keyToLayer.get(key);
@@ -81,7 +83,7 @@ export class TileCache {
       for (let i = 0; i < this.layerCount; i++) {
         if (this.pinned[i] === 1) continue;
         const used = this.lastUsed[i] ?? 0;
-        if (used >= frame) continue;
+        if (used >= frame - 1) continue;
         if (used < oldest) {
           oldest = used;
           layer = i;

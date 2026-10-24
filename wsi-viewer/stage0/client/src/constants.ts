@@ -82,10 +82,19 @@ export const UPLOAD_BUDGET_MS_IDLE = 6;
 /** Hard cap on uploads per frame regardless of measured time (first-call outliers). 04 F5 "2-4 tiles per frame on phones". */
 export const UPLOAD_MAX_PER_FRAME_GESTURE = 4;
 export const UPLOAD_MAX_PER_FRAME_IDLE = 12;
-/** TEXTURE_2D_ARRAY layers (512² RGBA8 each, 1 MiB + mip). A §2 "≤256 layers"; fewer when deviceMemory is small. */
-export const TEXTURE_LAYERS_DEFAULT = 256;
-export const TEXTURE_LAYERS_LOWMEM = 128;
-/** deviceMemory (GiB) at or below which the low-memory layer count is used. task. */
+/**
+ * TEXTURE_2D_ARRAY layers (512² RGBA8 each, 1 MiB + 0.25 MiB mip). The count is sized to the device instead of
+ * fixed: pinned base tiles + TEXTURE_VIEWPORT_HEADROOM viewports of L* tiles at s = 0.5 (the most tiles a viewport
+ * can need), clamped to [TEXTURE_LAYERS_MIN, TEXTURE_LAYERS_MAX]. A §2 "≤256 layers"; task "fewer on small GPUs".
+ * 256 layers = 320 MiB of GPU memory, 128 = 160 MiB. `?layers=N` overrides; the chosen count is exported.
+ */
+export const TEXTURE_LAYERS_MAX = 256;
+export const TEXTURE_LAYERS_MIN = 128;
+/** Viewports' worth of L* tiles kept beyond the pinned base (current view + ring + trilinear partners + prefetch). task. */
+export const TEXTURE_VIEWPORT_HEADROOM = 2.5;
+/** Upper bound when the browser reports deviceMemory <= LOWMEM_GIB (A §2 "128 MiB phone" L0 budget, raised to hold this pyramid's 85-tile base plus one DPR-2 phone viewport). */
+export const TEXTURE_LAYERS_LOWMEM_MAX = 160;
+/** deviceMemory (GiB) at or below which TEXTURE_LAYERS_LOWMEM_MAX applies. Only Chromium on https reports it. task. */
 export const LOWMEM_GIB = 4;
 /** Mip levels allocated per layer: level 0 (512²) + level 1 (256²). Minification never exceeds ~2.1x under the LOD band, so one mip suffices. 04 F7 "Mipmapped / trilinear". */
 export const TEXTURE_MIP_LEVELS = 2;
@@ -130,8 +139,14 @@ export const SETTLE_EPS_PX = 0.05;
 export const FOCUS_HOLD_MS = 500;
 
 // ---------------------------------------------------------------- measurement
-/** A gesture ends when no input arrived for this long and the camera has settled. task. */
+/**
+ * A gesture ends when no input arrived for this long and the camera has settled (motion < SETTLE_MOTION_PX/frame).
+ * Time-to-sharp is counted from this moment (MEASUREMENT_PROTOCOL §6; A §3 targets are "TTS after settle");
+ * the 04 F8 variant counted from the last input event is exported alongside. task.
+ */
 export const GESTURE_IDLE_MS = 150;
+/** A gesture whose |log2 zoom change| is below this counts as a pan, not a zoom (sub-notch wheel jitter). task. */
+export const ZOOM_GESTURE_MIN_LEVELS = 0.05;
 /** Frame counted as dropped when its rAF delta exceeds this multiple of the detected display interval. task "1.5x". */
 export const DROPPED_FRAME_FACTOR = 1.5;
 /** Frames used to estimate the display interval from rAF cadence (median). task. */
@@ -142,6 +157,8 @@ export const FRAME_LOG_CAPACITY = 36_000;
 export const SHARP_TIMEOUT_MS = 8000;
 /** PerformanceObserver('event') durationThreshold. task; 04 F8 "Event Timing API". */
 export const EVENT_TIMING_THRESHOLD_MS = 16;
+/** Frames before the pinned base has loaded are reported as `startup` and excluded from the steady-state frame-time percentiles (texture allocation and shader compile stalls are real but are not gesture frame drops). task. */
+export const STARTUP_EXCLUDED_FROM_FRAME_STATS = true;
 /** Overlay DOM is refreshed every N frames so the overlay itself stays out of the frame budget. task. */
 export const OVERLAY_REFRESH_FRAMES = 5;
 

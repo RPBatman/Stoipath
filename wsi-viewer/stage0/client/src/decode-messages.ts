@@ -26,7 +26,7 @@ export interface TileResponse {
   width: number;
   height: number;
   bytes: number;
-  /** Worker-clock timestamps (performance.now() in the worker; same time origin as the page in dedicated workers). */
+  /** Worker-clock timestamps (performance.now() in the worker, whose time origin is the worker's start, not the page's): only differences between them are meaningful. */
   tStart: number;
   tHeaders: number;
   tBody: number;
