@@ -12,12 +12,13 @@
  */
 import {
   FLICK_MIN_SPEED,
-  INERTIA_STOP_SPEED,
-  INERTIA_TAU_MS,
+  INERTIA_DECELERATION,
+  INERTIA_MAX_SPEED,
   MAX_ZOOM_ABOVE_L0_LEVELS,
   MIN_ZOOM_BELOW_FIT_LEVELS,
   SETTLE_EPS_LOG,
   SETTLE_EPS_PX,
+  SETTLE_MOTION_PX,
   VELOCITY_EMA_ALPHA,
   ZOOM_TAU_MS,
   ZOOM_VELOCITY_DECAY_MS,
@@ -214,8 +215,9 @@ export class Camera {
     }
     const speed = Math.hypot(this.panVX, this.panVY);
     if (speed >= FLICK_MIN_SPEED) {
-      this.inertiaVX = this.panVX;
-      this.inertiaVY = this.panVY;
+      const clamp = Math.min(1, INERTIA_MAX_SPEED / speed);
+      this.inertiaVX = this.panVX * clamp;
+      this.inertiaVY = this.panVY * clamp;
       this.inertiaActive = true;
     }
   }
@@ -248,20 +250,32 @@ export class Camera {
     this.lastStep = now;
     let moved = false;
 
+    // Motion of the presented transform this frame, in device px at the viewport edge (settle detection).
+    let motionPx = 0;
+
     if (this.inertiaActive) {
-      this.anchorSX += this.inertiaVX * dt;
-      this.anchorSY += this.inertiaVY * dt;
-      const decay = Math.exp(-dt / INERTIA_TAU_MS);
-      this.inertiaVX *= decay;
-      this.inertiaVY *= decay;
-      if (Math.hypot(this.inertiaVX, this.inertiaVY) < INERTIA_STOP_SPEED) this.stopInertia();
+      // Constant deceleration (Leaflet model): bounded stop time, distance = v² / 2a.
+      const speed = Math.hypot(this.inertiaVX, this.inertiaVY);
+      const newSpeed = Math.max(0, speed - INERTIA_DECELERATION * dt);
+      const avg = (speed + newSpeed) / 2;
+      const ux = speed > 0 ? this.inertiaVX / speed : 0;
+      const uy = speed > 0 ? this.inertiaVY / speed : 0;
+      this.anchorSX += ux * avg * dt;
+      this.anchorSY += uy * avg * dt;
+      motionPx = Math.max(motionPx, avg * dt);
+      this.inertiaVX = ux * newSpeed;
+      this.inertiaVY = uy * newSpeed;
+      if (newSpeed <= 0) this.stopInertia();
       moved = true;
     }
 
     const a = 1 - Math.exp(-dt / ZOOM_TAU_MS);
     const dz = this.targetLogZoom - this.logZoom;
+    const halfEdge = Math.max(this.viewW, this.viewH) / 2;
     if (Math.abs(dz) > SETTLE_EPS_LOG) {
-      this.logZoom += dz * a;
+      const applied = dz * a;
+      this.logZoom += applied;
+      motionPx = Math.max(motionPx, Math.abs(applied) * Math.LN2 * halfEdge);
       moved = true;
     } else if (dz !== 0) {
       this.logZoom = this.targetLogZoom;
@@ -273,6 +287,7 @@ export class Camera {
     if (Math.abs(dwx) * kNow > SETTLE_EPS_PX || Math.abs(dwy) * kNow > SETTLE_EPS_PX) {
       this.anchorWX += dwx * a;
       this.anchorWY += dwy * a;
+      motionPx = Math.max(motionPx, Math.hypot(dwx, dwy) * a * kNow);
       moved = true;
     } else if (dwx !== 0 || dwy !== 0) {
       this.anchorWX = this.targetWX;
@@ -290,11 +305,9 @@ export class Camera {
 
     if (moved) this.derive();
     this.moved = moved || this.moved;
-    this.animating =
-      this.inertiaActive ||
-      Math.abs(this.targetLogZoom - this.logZoom) > 0 ||
-      this.targetWX !== this.anchorWX ||
-      this.targetWY !== this.anchorWY;
+    // Visible motion only: the exponential tail below SETTLE_MOTION_PX per frame still redraws but no longer
+    // counts as animating, so gesture end is "the view stopped moving perceptibly".
+    this.animating = this.inertiaActive || motionPx > SETTLE_MOTION_PX;
   }
 
   /** Recompute (cx, cy, k) from the anchor and clamp the centre to the slide. */

@@ -101,12 +101,12 @@ export const WHEEL_PAGE_PX = 300;
 export const WHEEL_MAX_LEVELS_PER_EVENT = 1;
 /** ctrl+wheel is a trackpad pinch on macOS browsers; multiply like OL/MapLibre. 04 F6 ("3 = Apple Maps/MapLibre"). */
 export const TRACKPAD_PINCH_GAIN = 3;
-/** Pan inertia: velocity decays with this time constant after release. 04 F6 (deceleration-based, Leaflet/OSD precedent). */
-export const INERTIA_TAU_MS = 320;
+/** Pan inertia: constant deceleration after release, device px/ms² (Leaflet inertiaDeceleration 3400 px/s²). 04 F6 "deceleration-based". */
+export const INERTIA_DECELERATION = 0.0034;
+/** Release speed is clamped to this (device px/ms) so a wild flick cannot travel for seconds. task. */
+export const INERTIA_MAX_SPEED = 3;
 /** Minimum release speed (device px/ms) that starts inertia. 04 F6 (OSD flickMinSpeed 120 px/s). */
 export const FLICK_MIN_SPEED = 0.12;
-/** Inertia stops below this speed (device px/ms). task. */
-export const INERTIA_STOP_SPEED = 0.02;
 /** Keyboard: +/- zoom by one level, arrows pan by this many device px, both eased. 04 F6 "Keyboard / API animated". */
 export const KEY_ZOOM_LEVELS = 1;
 export const KEY_PAN_PX = 160;
@@ -115,9 +115,15 @@ export const DOUBLE_TAP_LEVELS = 1;
 /** How far beyond fit-to-screen the user may zoom out (levels) and how far past level 0 they may magnify (levels). task. */
 export const MIN_ZOOM_BELOW_FIT_LEVELS = 0.5;
 export const MAX_ZOOM_ABOVE_L0_LEVELS = 1.5;
-/** Camera is "settled" when the eased values are within these of their targets. task. */
-export const SETTLE_EPS_LOG = 1 / 1024;
-export const SETTLE_EPS_PX = 0.25;
+/**
+ * The camera counts as settled (gesture over, for the metrics) when the presented transform moved less than this
+ * many device px at the viewport edge in the last frame: sub-pixel motion is invisible, while the exponential
+ * easing itself never reaches its target exactly. task (gesture end definition).
+ */
+export const SETTLE_MOTION_PX = 0.5;
+/** Residuals below these are snapped to the target (invisible snap, ends the redraw loop). task. */
+export const SETTLE_EPS_LOG = 1 / 4096;
+export const SETTLE_EPS_PX = 0.05;
 /** Focus point used by the scheduler stays at the pointer this long after the last zoom input. task (focus = pointer during zoom). */
 export const FOCUS_HOLD_MS = 500;
 

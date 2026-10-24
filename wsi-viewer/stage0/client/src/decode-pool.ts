@@ -45,12 +45,12 @@ export class DecodePool {
     return n;
   }
 
-  request(key: number, url: string, tier: number): void {
+  request(key: number, url: string, tier: number, kind: number): void {
     let best = 0;
     for (let i = 1; i < this.size; i++) if ((this.load[i] ?? 0) < (this.load[best] ?? 0)) best = i;
     this.load[best] = (this.load[best] ?? 0) + 1;
     this.owner.set(key, best);
-    const msg: WorkerRequest = { type: 'fetch', key, url, tier };
+    const msg: WorkerRequest = { type: 'fetch', key, url, tier, kind };
     this.workers[best]?.postMessage(msg);
   }
 

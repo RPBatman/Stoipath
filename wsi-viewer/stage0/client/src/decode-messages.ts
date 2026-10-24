@@ -6,6 +6,8 @@ export interface FetchRequest {
   url: string;
   /** 0 = visible target tile, 1+ = prefetch (maps to fetch priority 'high' / 'low'). -1 = pinned base. */
   tier: number;
+  /** Why it was requested (RequestKind); echoed back for prefetch accounting. */
+  kind: number;
 }
 export interface CancelRequest {
   type: 'cancel';
@@ -17,6 +19,7 @@ export interface TileResponse {
   type: 'tile';
   key: number;
   tier: number;
+  kind: number;
   bitmap: ImageBitmap;
   /** Half-resolution copy for GPU mip level 1, or null when the worker could not produce one. */
   mip: ImageBitmap | null;
@@ -35,6 +38,7 @@ export interface ErrorResponse {
   type: 'error';
   key: number;
   tier: number;
+  kind: number;
   aborted: boolean;
   message: string;
 }

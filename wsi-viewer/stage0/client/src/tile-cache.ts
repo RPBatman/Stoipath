@@ -11,10 +11,12 @@ export class TileCache {
   private readonly layerKey: Int32Array;
   private readonly lastUsed: Int32Array;
   private readonly pinned: Uint8Array;
-  /** 1 when the tile was fetched as prefetch; used for prefetch-waste accounting. */
-  readonly prefetched: Uint8Array;
+  /** RequestKind the tile was fetched under (scheduler.ts); used for prefetch-waste accounting. */
+  readonly kind: Uint8Array;
   /** 1 once the layer has been drawn at least once. */
   readonly drawn: Uint8Array;
+  /** First draws per request kind (index = kind). */
+  readonly drawnByKind = new Int32Array(8);
   /** Tile pixel size per layer (edge tiles are partial). */
   readonly tileW: Int32Array;
   readonly tileH: Int32Array;
@@ -30,7 +32,7 @@ export class TileCache {
     this.layerKey = new Int32Array(layerCount).fill(-1);
     this.lastUsed = new Int32Array(layerCount);
     this.pinned = new Uint8Array(layerCount);
-    this.prefetched = new Uint8Array(layerCount);
+    this.kind = new Uint8Array(layerCount);
     this.drawn = new Uint8Array(layerCount);
     this.tileW = new Int32Array(layerCount);
     this.tileH = new Int32Array(layerCount);
@@ -56,14 +58,18 @@ export class TileCache {
     this.lastUsed[layer] = frame;
   }
   markDrawn(layer: number): void {
-    this.drawn[layer] = 1;
+    if (this.drawn[layer] === 0) {
+      this.drawn[layer] = 1;
+      const k = this.kind[layer] ?? 0;
+      this.drawnByKind[k] = (this.drawnByKind[k] ?? 0) + 1;
+    }
   }
 
   /**
    * Allocate a layer for `key`, evicting the least recently used unpinned layer not used in `frame` if needed.
    * Returns -1 when every layer is pinned or in use this frame.
    */
-  allocate(key: number, frame: number, pin: boolean, wasPrefetch: boolean, w: number, h: number): number {
+  allocate(key: number, frame: number, pin: boolean, kind: number, w: number, h: number): number {
     const existing = this.keyToLayer.get(key);
     if (existing !== undefined) return existing;
     let layer = -1;
@@ -87,14 +93,14 @@ export class TileCache {
         this.keyToLayer.delete(oldKey);
         this.residentCount--;
         this.evictions++;
-        if (this.prefetched[layer] === 1 && this.drawn[layer] === 0) this.prefetchWasteEvictions++;
+        if ((this.kind[layer] ?? 0) >= 2 && this.drawn[layer] === 0) this.prefetchWasteEvictions++;
       }
     }
     this.layerKey[layer] = key;
     this.keyToLayer.set(key, layer);
     this.lastUsed[layer] = frame;
     this.pinned[layer] = pin ? 1 : 0;
-    this.prefetched[layer] = wasPrefetch ? 1 : 0;
+    this.kind[layer] = kind;
     this.drawn[layer] = 0;
     this.tileW[layer] = w;
     this.tileH[layer] = h;

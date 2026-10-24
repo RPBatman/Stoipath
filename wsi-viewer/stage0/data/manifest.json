@@ -92,7 +92,7 @@
       "maxBytesPerTile": 94528
     }
   ],
-  "mpp": 0.24309399999999998,
+  "mpp": 0.243094,
   "source": {
     "input": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/images/tumor_014.tif",
     "sizeBytes": 2253898518,
@@ -105,7 +105,7 @@
       "height": 15360,
       "sourceLevel": 0
     },
-    "regionSelection": "auto-select (see build log)",
+    "regionSelection": "auto-select: tissue-densest window fully containing the largest tumour polygon bbox [38039, 68094, 48776, 77234] with 1024 px margin; tissue fraction 0.953 (thumbnail level 5, 32x)",
     "format": {
       "compression": "JPEG",
       "photometric": "YCBCR",
@@ -161,7 +161,7 @@
       ],
       "bigtiff": true,
       "scannerManufacturer": "3D Histech",
-      "derivation": "tiff-useBigTIFF=1-useRgb=0-levels=10003,10002,10000,10001-processing=0-q80-sourceFilename=\"T12-17823-I1-8\"",
+      "derivation": "tiff-useBigTIFF=1-useRgb=0-levels=10003,10002,10000,10001-processing=0-q80-sourceFilename=<redacted>",
       "sourceJpegQuality": 80
     },
     "pixelSpacingNote": "Philips XML DICOM_PIXEL_SPACING (mm) x 1000",
@@ -211,10 +211,10 @@
   "build": {
     "tool": "stage0/tools/build_pyramid.py",
     "command": "tools/build_pyramid.py --input https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/images/tumor_014.tif --annotation https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/annotations/tumor_014.xml --subsampling 420 --size 15360 --source-meta tools/source_meta.json --out /home/user/Stoipath/wsi-viewer/stage0/data --clean",
-    "date": "2026-10-24T19:35:56+00:00",
-    "durationSec": 23.6,
-    "sourceReadSec": 4.4,
-    "encodeSec": 7.3,
+    "date": "2026-10-24T19:39:19+00:00",
+    "durationSec": 23.3,
+    "sourceReadSec": 3.8,
+    "encodeSec": 7.2,
     "network": {
       "requests": 41,
       "bytes": 78432658

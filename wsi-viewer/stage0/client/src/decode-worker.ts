@@ -82,7 +82,14 @@ async function handleFetch(req: FetchRequest): Promise<void> {
     }
     cancelledLate = progress.total < 0;
     const tBody = performance.now();
-    const blob = new Blob(chunks, { type: 'image/jpeg' });
+    // One contiguous copy (≈50 KB) keeps the Blob a single part and the types plain ArrayBuffer.
+    const body = new Uint8Array(new ArrayBuffer(progress.received));
+    let off = 0;
+    for (const c of chunks) {
+      body.set(c, off);
+      off += c.byteLength;
+    }
+    const blob = new Blob([body], { type: 'image/jpeg' });
     const bitmap = await createImageBitmap(blob, DECODE_OPTS);
     const mip = await makeMip(bitmap);
     const tDecoded = performance.now();
@@ -92,6 +99,7 @@ async function handleFetch(req: FetchRequest): Promise<void> {
         type: 'tile',
         key: req.key,
         tier: req.tier,
+        kind: req.kind,
         bitmap,
         mip,
         width: bitmap.width,
@@ -107,7 +115,7 @@ async function handleFetch(req: FetchRequest): Promise<void> {
     );
   } catch (err) {
     const aborted = err instanceof DOMException && err.name === 'AbortError';
-    scope.postMessage({ type: 'error', key: req.key, tier: req.tier, aborted, message: aborted ? 'aborted' : String(err) }, []);
+    scope.postMessage({ type: 'error', key: req.key, tier: req.tier, kind: req.kind, aborted, message: aborted ? 'aborted' : String(err) }, []);
   } finally {
     inflight.delete(req.key);
   }

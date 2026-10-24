@@ -105,6 +105,8 @@ export class Renderer {
   private readonly pendingQueries: PendingQuery[] = [];
   /** Set to the GPU upload time (ms) of a frame when a timer query resolves; consumed by metrics. */
   onGpuUploadTime: ((frame: number, ms: number) => void) | null = null;
+  /** Called with each tile key once its bitmap is on the GPU (the scheduler stops tracking it). */
+  onUploaded: ((key: number) => void) | null = null;
   totalUploads = 0;
   totalUploadMs = 0;
 
@@ -259,7 +261,7 @@ export class Renderer {
           break;
         }
         const pin = keyLevel(tile.key) >= basePinLevel;
-        const layer = cache.allocate(tile.key, frame, pin, tile.tier > 0, tile.width, tile.height);
+        const layer = cache.allocate(tile.key, frame, pin, tile.kind, tile.width, tile.height);
         if (layer < 0) {
           result.stalled++;
           i++;
@@ -280,6 +282,7 @@ export class Renderer {
         tile.mip?.close();
         q.splice(i, 1);
         result.count++;
+        this.onUploaded?.(tile.key);
       }
     }
     if (query !== null && this.timerExt !== null) {

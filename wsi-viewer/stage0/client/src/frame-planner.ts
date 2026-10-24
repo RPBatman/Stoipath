@@ -8,7 +8,7 @@
 import { CROSSFADE_MS, MAX_INSTANCES } from './constants';
 import type { Camera } from './camera';
 import { lodFraction } from './lod';
-import { keyLevel, keyX, keyY, tileHeight, tileKey, tileWidth, type Pyramid } from './pyramid';
+import { keyLevel, tileHeight, tileKey, tileWidth, type Pyramid } from './pyramid';
 import { INSTANCE_FLOATS, I_A, I_AS, I_B, I_BS, I_RECT } from './renderer';
 import type { TileCache } from './tile-cache';
 
@@ -95,7 +95,6 @@ export class FramePlanner {
     lodFraction: 0,
   };
   private readonly cells = new CellStore(MAX_INSTANCES * 4);
-  private readonly range = new Int32Array(4);
 
   isCellVisible(key: number, frame: number): boolean {
     return this.cells.isVisible(key, frame);
@@ -223,7 +222,10 @@ export class FramePlanner {
             }
           }
         }
-        if (layerB !== layerA) cache.touch(layerB, frame);
+        if (layerB !== layerA) {
+          cache.touch(layerB, frame);
+          cache.markDrawn(layerB);
+        }
         this.writeSource(o + I_B, o + I_BS, layerB, climbB, tx, ty, tw, th, T, cache);
         inst[o + I_B + 3] = mix;
 
@@ -255,4 +257,3 @@ export class FramePlanner {
   }
 }
 
-export { keyX, keyY };
