@@ -3,7 +3,9 @@
  *  - priority key (tier, |level - L*|, distance of tile centre from the focus point); focus = pointer while zooming,
  *    viewport centre otherwise;
  *  - tier -1 pinned base (coarsest first), tier 0 visible L* tiles, tier 1 trilinear partners / zoom-intent /
- *    predicted-viewport ring, tier 2 ring while a zoom burst is in progress;
+ *    predicted-viewport ring, tier 2 ring while a zoom burst is in progress, tier 3 the warm base (the <= 4096 px
+ *    level that is no longer pinned, REVIEW M2: loaded at open behind everything else, inside the prefetch slot
+ *    share, so a user who zooms in at open gets visible tiles first);
  *  - de-duplication through the residency table and the in-flight map; prefetch limited to a fraction of slots;
  *  - cancellation of in-flight tiles that left the wanted set for CANCEL_GRACE_FRAMES frames;
  *  - capacity-aware prefetch: resident tiles still wanted, decoded tiles awaiting upload and in-flight requests
@@ -32,9 +34,12 @@ import {
 import type { Camera } from './camera';
 import type { DecodePool } from './decode-pool';
 import type { WorkerResponse } from './decode-messages';
-import { idealLevel } from './lod';
+import { idealLevel, levelHolds } from './lod';
 import { keyLevel, keyX, keyY, tileKey, tileRange, type Pyramid } from './pyramid';
+import { REQUEST_KIND_NAMES, RequestKind, isPrefetchKind } from './request-kind';
 import type { TileCache } from './tile-cache';
+
+export { REQUEST_KIND_NAMES, RequestKind };
 
 /** Binary min-heap over typed arrays. */
 class PriorityHeap {
@@ -110,16 +115,20 @@ interface Failure {
   attempts: number;
 }
 
-/** Why a tile was requested; indexes the per-kind counters. Kinds >= PARTNER are prefetch. */
-export const RequestKind = { BASE: 0, VISIBLE: 1, PARTNER: 2, INTENT: 3, RING: 4 } as const;
-export const REQUEST_KIND_NAMES = ['base', 'visible', 'partner', 'intent', 'ring'] as const;
-
 export interface SchedulerCounters {
   requestsBase: number;
   requestsTier0: number;
   requestsPrefetch: number;
+  /** Warm-base requests (tier 3; not prefetch, not base). */
+  requestsWarmBase: number;
   received: number;
   bytes: number;
+  /** HTTP-cache hits / transfers / unknown among received tiles (PerformanceResourceTiming in the worker; REVIEW M8). */
+  cacheHits: number;
+  cacheMisses: number;
+  cacheUnknown: number;
+  /** Cache-Control header of the first tile response (null until one arrived). */
+  cacheControl: string | null;
   cancelled: number;
   cancelledLate: number;
   aborted: number;
@@ -136,6 +145,8 @@ export interface SchedulerCounters {
 
 const TIER_SPAN = 1e8;
 const LEVEL_SPAN = 1e6;
+/** Tier of the warm base: behind every prefetch tier (1, 2). */
+const TIER_WARM = 3;
 
 export function prioOf(tier: number, levelDist: number, dist: number): number {
   return tier * TIER_SPAN + levelDist * LEVEL_SPAN + Math.min(dist, LEVEL_SPAN - 1);
@@ -152,8 +163,13 @@ export class Scheduler {
     requestsBase: 0,
     requestsTier0: 0,
     requestsPrefetch: 0,
+    requestsWarmBase: 0,
     received: 0,
     bytes: 0,
+    cacheHits: 0,
+    cacheMisses: 0,
+    cacheUnknown: 0,
+    cacheControl: null,
     cancelled: 0,
     cancelledLate: 0,
     aborted: 0,
@@ -161,8 +177,8 @@ export class Scheduler {
     prefetchReceived: 0,
     heapOverflow: 0,
     prefetchHeldFrames: 0,
-    requestedByKind: [0, 0, 0, 0, 0],
-    receivedByKind: [0, 0, 0, 0, 0],
+    requestedByKind: [0, 0, 0, 0, 0, 0],
+    receivedByKind: [0, 0, 0, 0, 0, 0],
   };
   private readonly inflight = new Map<number, Inflight>();
   /** Decoded tiles waiting in the renderer's upload queue: neither resident nor in flight, but not to be re-fetched. */
@@ -173,6 +189,7 @@ export class Scheduler {
   private readonly heap = new PriorityHeap(8192);
   private readonly range = new Int32Array(4);
   private baseDone = false;
+  private warmDone = false;
   private intentUntil = -1e9;
   /** Distinct resident, non-pinned tiles in this frame's wanted set (occupied layers we must not evict for prefetch). */
   private residentWanted = 0;
@@ -199,8 +216,22 @@ export class Scheduler {
   get inflightCount(): number {
     return this.inflight.size;
   }
+  /** The pinned base is resident: the viewer is usable ("ready"). */
   get basePinned(): boolean {
     return this.baseDone;
+  }
+  /** The warm base (<= WARM_BASE_MAX_PX, evictable) has also been loaded once; the scripted path waits for this. */
+  get warmBaseReady(): boolean {
+    return this.warmDone;
+  }
+  get baseReady(): boolean {
+    return this.baseDone && this.warmDone;
+  }
+  /** Forget residency-derived state after the GPU cache was cleared or recreated: base and warm base are re-checked next frame. */
+  resetResidency(): void {
+    this.awaitingUpload.clear();
+    this.baseDone = false;
+    this.warmDone = false;
   }
 
   /** Pointer-down or a zoom-in input: the next finer level under the pointer is "intended" for ZOOM_INTENT_HOLD_MS. */
@@ -215,7 +246,11 @@ export class Scheduler {
       this.counters.received++;
       this.counters.bytes += msg.bytes;
       if (msg.cancelledLate) this.counters.cancelledLate++;
-      if (msg.tier > 0) this.counters.prefetchReceived++;
+      if (msg.tier > 0 && isPrefetchKind(msg.kind)) this.counters.prefetchReceived++;
+      if (msg.cacheHit === true) this.counters.cacheHits++;
+      else if (msg.cacheHit === false) this.counters.cacheMisses++;
+      else this.counters.cacheUnknown++;
+      if (this.counters.cacheControl === null && msg.cacheControl !== null) this.counters.cacheControl = msg.cacheControl;
       this.counters.receivedByKind[msg.kind] = (this.counters.receivedByKind[msg.kind] ?? 0) + 1;
       this.failed.delete(msg.key);
       this.awaitingUpload.add(msg.key);
@@ -305,6 +340,23 @@ export class Scheduler {
       }
       if (missing === 0) this.baseDone = true;
     }
+    // Tier 3: warm base (REVIEW M2) — coarsest first, behind every prefetch tier, only while slots and room are free.
+    if (this.baseDone && !this.warmDone) {
+      let missing = 0;
+      for (let level = pyr.basePinLevel - 1; level >= pyr.warmBaseLevel; level--) {
+        const lvl = pyr.levels[level];
+        if (lvl === undefined) continue;
+        for (let y = 0; y < lvl.tilesY; y++) {
+          for (let x = 0; x < lvl.tilesX; x++) {
+            const key = tileKey(level, x, y);
+            if (this.cache.has(key)) continue;
+            missing++;
+            this.want(key, prioOf(TIER_WARM, maxLevel - level, this.focusDist(cam, level, x, y)), RequestKind.WARMBASE);
+          }
+        }
+      }
+      if (missing === 0) this.warmDone = true;
+    }
 
     // Tier 0: visible L* tiles; tier 1 (level distance 1): their trilinear partners at L*+1.
     const wx0 = cam.worldX(0);
@@ -336,7 +388,9 @@ export class Scheduler {
     const pcy = cam.predictCentreY(PREDICT_HORIZON_MS);
     const pz = cam.predictLogZoom(PREDICT_HORIZON_MS);
     const pk = 2 ** pz;
-    const pLevel = Math.abs(pz - cam.logZoom) < 1e-6 ? lstar : idealLevel(pk, pyr.levels.length);
+    // The predicted level respects the hysteresis band: while the predicted zoom keeps L* valid the ring stays at L*
+    // instead of a level the selector will never pick (REVIEW L2).
+    const pLevel = Math.abs(pz - cam.logZoom) < 1e-6 || levelHolds(pk, lstar) ? lstar : idealLevel(pk, pyr.levels.length);
     const pLvl = pyr.levels[pLevel];
     if (pLvl !== undefined) {
       const ring = RING_TILES * pyr.tileSize * pLvl.scale;
@@ -387,6 +441,7 @@ export class Scheduler {
     while (this.heap.size > 0 && this.inflight.size < this.maxInflight) {
       const key = this.heap.pop();
       const tier = tierOf(this.heap.lastPrio);
+      const kind = this.wantedKind.get(key) ?? RequestKind.VISIBLE;
       if (tier > 0) {
         if (prefetchInflight >= this.prefetchSlots) break; // heap is ordered: nothing better is left
         if (room <= 0) {
@@ -394,11 +449,11 @@ export class Scheduler {
           break;
         }
         prefetchInflight++;
-        this.counters.requestsPrefetch++;
+        if (kind === RequestKind.WARMBASE) this.counters.requestsWarmBase++;
+        else this.counters.requestsPrefetch++;
       } else if (tier === 0) this.counters.requestsTier0++;
       else this.counters.requestsBase++;
       if (tier >= 0) room--;
-      const kind = this.wantedKind.get(key) ?? RequestKind.VISIBLE;
       this.counters.requestedByKind[kind] = (this.counters.requestedByKind[kind] ?? 0) + 1;
       this.inflight.set(key, { tier, startedAt: now, lastWanted: frame, cancelled: false });
       this.pool.request(key, this.pyr.tileUrl(keyLevel(key), keyX(key), keyY(key)), tier, kind);

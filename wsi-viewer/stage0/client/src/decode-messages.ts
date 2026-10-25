@@ -33,6 +33,14 @@ export interface TileResponse {
   tDecoded: number;
   /** True when a cancel arrived after >= CANCEL_BYTES_FRACTION of the body had been received, so the fetch was finished anyway. */
   cancelledLate: boolean;
+  /**
+   * HTTP-cache hit (true) or network transfer (false) from the worker's PerformanceResourceTiming entry
+   * (`transferSize === 0` with a non-empty body = served from the cache); null when the entry was not available
+   * (Resource Timing missing or not yet queued). REVIEW M8: bytes alone cannot tell a warm run from a cold one.
+   */
+  cacheHit: boolean | null;
+  /** The response's Cache-Control header (recorded so the export shows whether the host serves tiles `immutable`). */
+  cacheControl: string | null;
 }
 export interface ErrorResponse {
   type: 'error';

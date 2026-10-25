@@ -11,7 +11,8 @@
       #view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; outline: none; }
       #hud { position: fixed; left: 8px; top: 8px; padding: 6px 8px; background: var(--panel); border-radius: 6px; pointer-events: none; white-space: pre; max-width: calc(100vw - 16px); overflow: hidden; }
       #hud canvas { display: block; margin-top: 4px; }
-      #panel { position: fixed; left: 8px; bottom: 8px; right: 8px; max-height: 45vh; overflow: auto; padding: 8px; background: var(--panel); border-radius: 6px; }
+      /* bottom inset keeps the buttons above the iPhone home indicator with viewport-fit=cover (REVIEW L6) */
+      #panel { position: fixed; left: 8px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); right: 8px; max-height: 45vh; overflow: auto; padding: 8px; background: var(--panel); border-radius: 6px; }
       #panel pre { margin: 0 0 6px 0; white-space: pre-wrap; word-break: break-word; }
       #panel button { font: inherit; margin: 2px 6px 2px 0; padding: 6px 10px; background: #2b2b33; color: var(--fg); border: 1px solid #44444f; border-radius: 4px; cursor: pointer; min-height: 32px; }
       #panel button:active { background: #3a3a46; }
@@ -22,7 +23,7 @@
   </head>
   <body>
     <canvas id="view" tabindex="0" aria-label="Whole-slide image viewer"></canvas>
-    <div id="status">loading…</div><!-- reads "ready" once the pinned base is resident; "scripted path running" / "done" during and after a run -->
+    <div id="status">loading…</div><!-- "ready (overview loading n/m)" once the pinned base is resident, "ready" when the warm base is too; "scripted path running" / "done" during and after a run -->
     <div id="hud" class="hidden"><div id="hud-text"></div><canvas id="spark" width="240" height="56"></canvas></div>
     <div id="panel" class="hidden">
       <pre id="device"></pre>
@@ -31,6 +32,7 @@
         <button id="btn-export" type="button">Export JSON</button>
         <button id="btn-copy" type="button">Copy summary</button>
         <button id="btn-reset" type="button">Reset view</button>
+        <button id="btn-evict" type="button" title="Drop every non-pinned tile from the GPU cache for a GPU-cold rerun. The browser HTTP cache stays warm: label the run warm.">Evict GPU tiles</button>
         <button id="btn-hide" type="button">Hide (key O)</button>
       </div>
       <pre id="summary"></pre>

@@ -4,7 +4,7 @@
  * Level 0 is full resolution; level L is downsampled by 2^L (policy brief: "2x levels of 512 px square JPEG tiles").
  * Tile keys pack (level, x, y) into one non-negative int32 so hot-path maps and typed arrays never allocate strings.
  */
-import { PINNED_BASE_MAX_PX, TILE_SIZE_DEFAULT } from './constants';
+import { PINNED_BASE_MAX_PX, TEXTURE_LAYERS_RESERVE, TILE_SIZE_DEFAULT, WARM_BASE_MAX_PX } from './constants';
 
 export interface Level {
   /** Index in our pyramid: 0 = finest. */
@@ -27,10 +27,49 @@ export interface Pyramid {
   readonly mpp: number | null;
   readonly levels: readonly Level[];
   readonly manifestUrl: string;
-  /** Coarsest-first pinned base: every level with index >= basePinLevel is loaded at open and never evicted. */
-  readonly basePinLevel: number;
-  readonly basePinTileCount: number;
+  /**
+   * Coarsest-first pinned base: every level with index >= basePinLevel is loaded at open and never evicted
+   * (PINNED_BASE_MAX_PX). Mutable: `applyPinBudget` raises the level when the texture array is too small.
+   */
+  basePinLevel: number;
+  basePinTileCount: number;
+  /** Warm base: levels in [warmBaseLevel, basePinLevel) are <= WARM_BASE_MAX_PX, loaded at open at the lowest tier, evictable (REVIEW M2). */
+  warmBaseLevel: number;
+  warmBaseTileCount: number;
   tileUrl(level: number, x: number, y: number): string;
+}
+
+/** Index of the finest level whose longest side is <= maxPx (the last level when none is). */
+function firstLevelWithin(levels: readonly Level[], maxPx: number): number {
+  for (let i = 0; i < levels.length; i++) {
+    const l = levels[i];
+    if (l !== undefined && Math.max(l.width, l.height) <= maxPx) return i;
+  }
+  return levels.length - 1;
+}
+function tilesFrom(levels: readonly Level[], from: number, to: number): number {
+  let n = 0;
+  for (let i = from; i < to; i++) {
+    const l = levels[i];
+    if (l !== undefined) n += l.tilesX * l.tilesY;
+  }
+  return n;
+}
+
+/**
+ * Make the pinned base fit the texture array: while pinned tiles + TEXTURE_LAYERS_RESERVE exceed `layerCount`, pin
+ * one level less (coarser only). Returns true when the pin level changed (REVIEW H5: a base that cannot be
+ * allocated never completes and stalls every visible tile).
+ */
+export function applyPinBudget(p: Pyramid, layerCount: number): boolean {
+  const before = p.basePinLevel;
+  while (p.basePinLevel < p.levels.length - 1 && p.basePinTileCount + TEXTURE_LAYERS_RESERVE > layerCount) {
+    p.basePinLevel++;
+    p.basePinTileCount = tilesFrom(p.levels, p.basePinLevel, p.levels.length);
+  }
+  p.warmBaseLevel = Math.min(p.warmBaseLevel, p.basePinLevel);
+  p.warmBaseTileCount = tilesFrom(p.levels, p.warmBaseLevel, p.basePinLevel);
+  return p.basePinLevel !== before;
 }
 
 // Key layout: level in bits 26..30, y in bits 13..25, x in bits 0..12 (8192 tiles per side = 4 Mpx at 512 px).
@@ -189,19 +228,10 @@ export function parseManifest(json: Json, manifestUrl: string): Pyramid {
       if (ratio < 1.8 || ratio > 2.2) console.warn(`[pyramid] level ${i} is not a 2x step of level ${i - 1} (ratio ${ratio.toFixed(2)})`);
     }
   }
-  let basePinLevel = levels.length - 1;
-  for (let i = 0; i < levels.length; i++) {
-    const l = levels[i];
-    if (l !== undefined && Math.max(l.width, l.height) <= PINNED_BASE_MAX_PX) {
-      basePinLevel = i;
-      break;
-    }
-  }
-  let basePinTileCount = 0;
-  for (let i = basePinLevel; i < levels.length; i++) {
-    const l = levels[i];
-    if (l !== undefined) basePinTileCount += l.tilesX * l.tilesY;
-  }
+  const basePinLevel = firstLevelWithin(levels, PINNED_BASE_MAX_PX);
+  const basePinTileCount = tilesFrom(levels, basePinLevel, levels.length);
+  const warmBaseLevel = Math.min(basePinLevel, firstLevelWithin(levels, WARM_BASE_MAX_PX));
+  const warmBaseTileCount = tilesFrom(levels, warmBaseLevel, basePinLevel);
   const base = new URL(manifestUrl, document.baseURI);
   const urlCache = new Map<number, string>();
   const pyramid: Pyramid = {
@@ -214,6 +244,8 @@ export function parseManifest(json: Json, manifestUrl: string): Pyramid {
     manifestUrl: base.href,
     basePinLevel,
     basePinTileCount,
+    warmBaseLevel,
+    warmBaseTileCount,
     tileUrl(level: number, x: number, y: number): string {
       const key = tileKey(level, x, y);
       const cached = urlCache.get(key);

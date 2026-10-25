@@ -3,7 +3,19 @@
  * per frame samples two sources per cell (fine + coarse / fade-from) and mixes them in the shader.
  * 04 F5 (texture array, texSubImage, per-frame upload budget), 04 F7 (trilinear, cross-fade), A §2/§3.
  */
-import { LOD_S_MIN, LOWMEM_GIB, MAX_INSTANCES, TEXTURE_LAYERS_LOWMEM_MAX, TEXTURE_LAYERS_MAX, TEXTURE_LAYERS_MIN, TEXTURE_MIP_LEVELS, TEXTURE_VIEWPORT_HEADROOM } from './constants';
+import {
+  LOD_S_MIN,
+  LOWMEM_GIB,
+  MAX_INSTANCES,
+  TEXTURE_LAYERS_MAX,
+  TEXTURE_LAYERS_MIN,
+  TEXTURE_LAYERS_PHONE_MAX,
+  TEXTURE_LAYERS_RESERVE,
+  TEXTURE_LAYERS_TABLET_MAX,
+  TEXTURE_MIP_LEVELS,
+  TEXTURE_VIEWPORT_HEADROOM,
+  UPLOAD_QUEUE_MAX,
+} from './constants';
 import type { TileResponse } from './decode-messages';
 import { keyLevel } from './pyramid';
 import type { TileCache } from './tile-cache';
@@ -56,8 +68,10 @@ flat in vec4 vA;
 flat in vec4 vB;
 out vec4 outColor;
 vec4 sampleTile(vec2 uv, float layer, vec2 valid, bool hwMip) {
-  // Clamp half a texel inside the tile's valid region so bilinear never reads a neighbour layer's stale texels.
-  vec2 c = clamp(uv, vec2(uHalfTexel), valid - uHalfTexel);
+  // Clamp half a texel inside the tile's valid region so bilinear never reads a neighbour layer's stale texels;
+  // when hardware mips are on, half a texel of mip level 1 (twice as large) is the safe margin (REVIEW L1).
+  vec2 ht = vec2(hwMip ? uHalfTexel * 2.0 : uHalfTexel);
+  vec2 c = clamp(uv, ht, valid - ht);
   if (hwMip) return texture(uTiles, vec3(c, layer));
   return textureLod(uTiles, vec3(c, layer), 0.0);
 }
@@ -69,19 +83,56 @@ void main() {
   outColor = vec4(mix(a.rgb, b.rgb, vB.y), 1.0);
 }`;
 
+export type DeviceClass = 'phone' | 'tablet' | 'desktop';
+
+export interface LayerChoice {
+  layers: number;
+  /** Which rule bounded the count, for the export (`device.textureLayersReason`). */
+  reason: string;
+}
+
 /**
- * Layers to request for the tile array (constants.ts "GPU upload"): the pinned base plus TEXTURE_VIEWPORT_HEADROOM
- * viewports of L* tiles at s = LOD_S_MIN (a tile then covers tileSize·s = 256 device px per axis; +1 for grid
- * alignment), clamped, and capped when the browser reports a small deviceMemory. Pure so it can be checked by hand
- * from the export: 1280×800 → 6×5 tiles → 160 layers; a 786×1704 phone → 5×8 → 185; a 2048×2732 iPad → 256.
+ * Layers to request for the tile array (constants.ts "GPU upload"): the pinned base, the warm base (evictable, but
+ * meant to stay resident) and TEXTURE_VIEWPORT_HEADROOM viewports of L* tiles at s = LOD_S_MIN (a tile then covers
+ * tileSize·s = 256 device px per axis; +1 for grid alignment), clamped to [MIN, MAX], then capped by the device
+ * budget: TEXTURE_LAYERS_PHONE_MAX when the browser reports deviceMemory <= LOWMEM_GIB *or* when deviceMemory is
+ * unknown and the device is phone-class by UA/touch, TEXTURE_LAYERS_TABLET_MAX for tablets (REVIEW H5: deviceMemory
+ * is unavailable over plain http and on Safari, i.e. on every device of the protocol). A `layersHint` (sessionStorage,
+ * written after a context loss) caps it further. Pure so it can be checked by hand from the export: 1280×800 desktop →
+ * 21 + 64 + 2.5·30 = 160; a 786×1704 phone → 21 + 64 + 100 = 185 → 112 (phone cap: the warm base then yields to L*
+ * tiles); a 2048×2732 iPad → 355 → 256 → 192 (tablet cap).
  */
-export function chooseLayerCount(viewportW: number, viewportH: number, tileSize: number, basePinTiles: number, deviceMemoryGiB: number | null): number {
+export function chooseLayerCount(
+  viewportW: number,
+  viewportH: number,
+  tileSize: number,
+  basePinTiles: number,
+  warmBaseTiles: number,
+  deviceMemoryGiB: number | null,
+  deviceClass: DeviceClass,
+  layersHint: number | null,
+): LayerChoice {
   const cols = Math.ceil(viewportW / (tileSize * LOD_S_MIN)) + 1;
   const rows = Math.ceil(viewportH / (tileSize * LOD_S_MIN)) + 1;
-  const need = basePinTiles + Math.ceil(TEXTURE_VIEWPORT_HEADROOM * cols * rows);
+  const need = basePinTiles + warmBaseTiles + Math.ceil(TEXTURE_VIEWPORT_HEADROOM * cols * rows);
   let layers = Math.min(TEXTURE_LAYERS_MAX, Math.max(TEXTURE_LAYERS_MIN, need));
-  if (deviceMemoryGiB !== null && deviceMemoryGiB <= LOWMEM_GIB) layers = Math.min(layers, TEXTURE_LAYERS_LOWMEM_MAX);
-  return layers;
+  let reason = need < TEXTURE_LAYERS_MIN ? 'TEXTURE_LAYERS_MIN' : need > TEXTURE_LAYERS_MAX ? 'TEXTURE_LAYERS_MAX' : 'viewport';
+  const lowMem = deviceMemoryGiB !== null && deviceMemoryGiB <= LOWMEM_GIB;
+  if (lowMem || (deviceMemoryGiB === null && deviceClass === 'phone')) {
+    if (layers > TEXTURE_LAYERS_PHONE_MAX) {
+      layers = TEXTURE_LAYERS_PHONE_MAX;
+      reason = lowMem ? `deviceMemory ${deviceMemoryGiB} GiB <= ${LOWMEM_GIB}` : 'phone-class UA, deviceMemory unknown';
+    }
+  } else if (deviceMemoryGiB === null && deviceClass === 'tablet' && layers > TEXTURE_LAYERS_TABLET_MAX) {
+    layers = TEXTURE_LAYERS_TABLET_MAX;
+    reason = 'tablet-class UA, deviceMemory unknown';
+  }
+  if (layersHint !== null && layersHint > 0 && layersHint < layers) {
+    layers = layersHint;
+    reason = 'sessionStorage hint after a context loss';
+  }
+  layers = Math.max(layers, basePinTiles + TEXTURE_LAYERS_RESERVE);
+  return { layers, reason };
 }
 
 interface TimerQueryExt {
@@ -103,24 +154,29 @@ export interface UploadResult {
 export class Renderer {
   readonly gl: WebGL2RenderingContext;
   readonly tileSize: number;
-  readonly layerCount: number;
-  mipEnabled: boolean;
+  layerCount = 0;
+  mipEnabled = false;
   readonly timerQueryAvailable: boolean;
   readonly rendererString: string;
   readonly vendorString: string;
   width = 1;
   height = 1;
+  /** True between `webglcontextlost` and `restore()`: uploads and draws are skipped (REVIEW H5). */
+  lost = false;
+  contextLosses = 0;
+  /** Decoded tiles dropped from the queue because it exceeded UPLOAD_QUEUE_MAX (REVIEW L4); re-requested if still wanted. */
+  uploadsDropped = 0;
 
   /** Decoded tiles waiting for the per-frame upload budget. */
   readonly uploadQueue: TileResponse[] = [];
-  private readonly program: WebGLProgram;
-  private readonly vao: WebGLVertexArrayObject;
-  private readonly instanceBuffer: WebGLBuffer;
-  private readonly texture: WebGLTexture;
-  private readonly uCam: WebGLUniformLocation | null;
-  private readonly uView: WebGLUniformLocation | null;
+  private program!: WebGLProgram;
+  private vao!: WebGLVertexArrayObject;
+  private instanceBuffer!: WebGLBuffer;
+  private texture!: WebGLTexture;
+  private uCam: WebGLUniformLocation | null = null;
+  private uView: WebGLUniformLocation | null = null;
   private readonly timerExt: TimerQueryExt | null;
-  private readonly pendingQueries: PendingQuery[] = [];
+  private pendingQueries: PendingQuery[] = [];
   /** Set to the GPU upload time (ms) of a frame when a timer query resolves; consumed by metrics. */
   onGpuUploadTime: ((frame: number, ms: number) => void) | null = null;
   /** Called with each tile key once its bitmap is on the GPU (the scheduler stops tracking it). */
@@ -152,7 +208,25 @@ export class Renderer {
     const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as TimerQueryExt | null;
     this.timerExt = ext;
     this.timerQueryAvailable = ext !== null;
+    this.setupGl(requestedLayers);
+    this.initMs = performance.now() - tInit;
+  }
 
+  /**
+   * Recreate every GL object after `webglcontextrestored` (REVIEW H5: mobile drivers commit texture memory lazily, so
+   * an oversize array fails as a context loss seconds later, not as GL_OUT_OF_MEMORY). The caller resets the tile
+   * cache to the new `layerCount`; decoded tiles still in `uploadQueue` are valid and are uploaded to the new array.
+   */
+  restore(requestedLayers: number): void {
+    this.pendingQueries = [];
+    this.setupGl(requestedLayers);
+    this.lost = false;
+  }
+
+  /** Program, geometry and the tile array. Called by the constructor and by restore(). */
+  private setupGl(requestedLayers: number): void {
+    const gl = this.gl;
+    const tileSize = this.tileSize;
     this.program = this.buildProgram(VERT, FRAG);
     this.uCam = gl.getUniformLocation(this.program, 'uCam');
     this.uView = gl.getUniformLocation(this.program, 'uView');
@@ -215,7 +289,19 @@ export class Renderer {
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
     gl.clearColor(0.16, 0.16, 0.18, 1);
-    this.initMs = performance.now() - tInit;
+    gl.viewport(0, 0, this.width, this.height);
+  }
+
+  /** Drop every queued decoded tile (GPU-cold rerun); returns their keys so the scheduler can forget them. */
+  dropQueue(): number[] {
+    const keys: number[] = [];
+    for (const t of this.uploadQueue) {
+      t.bitmap.close();
+      t.mip?.close();
+      keys.push(t.key);
+    }
+    this.uploadQueue.length = 0;
+    return keys;
   }
 
   private buildProgram(vs: string, fs: string): WebGLProgram {
@@ -260,7 +346,7 @@ export class Renderer {
     const gl = this.gl;
     const q = this.uploadQueue;
     const result: UploadResult = { count: 0, ms: 0, stalled: 0 };
-    if (q.length === 0) return result;
+    if (q.length === 0 || this.lost) return result;
     const t0 = performance.now();
     let query: WebGLQuery | null = null;
     if (this.timerExt !== null) {
@@ -311,6 +397,25 @@ export class Renderer {
       gl.endQuery(this.timerExt.TIME_ELAPSED_EXT);
       this.pendingQueries.push({ query, frame });
     }
+    // Bound the RAM held by decoded-but-not-uploaded tiles: drop the oldest tiles nobody is looking at (REVIEW L4).
+    while (q.length > UPLOAD_QUEUE_MAX) {
+      let idx = -1;
+      for (let i = 0; i < q.length; i++) {
+        const t = q[i];
+        if (t !== undefined && !isUrgent(t.key)) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx < 0) break;
+      const t = q[idx];
+      if (t === undefined) break;
+      t.bitmap.close();
+      t.mip?.close();
+      q.splice(idx, 1);
+      this.uploadsDropped++;
+      this.onUploaded?.(t.key);
+    }
     result.ms = performance.now() - t0;
     this.totalUploads += result.count;
     this.totalUploadMs += result.ms;
@@ -319,7 +424,7 @@ export class Renderer {
 
   /** Resolve finished GPU timer queries (results arrive a few frames later). */
   pollTimerQueries(): void {
-    if (this.timerExt === null || this.pendingQueries.length === 0) return;
+    if (this.timerExt === null || this.pendingQueries.length === 0 || this.lost) return;
     const gl = this.gl;
     const disjoint = Boolean(gl.getParameter(this.timerExt.GPU_DISJOINT_EXT));
     while (this.pendingQueries.length > 0) {
@@ -337,6 +442,7 @@ export class Renderer {
   }
 
   draw(instances: Float32Array, count: number, cx: number, cy: number, k: number): void {
+    if (this.lost) return;
     const gl = this.gl;
     gl.clear(gl.COLOR_BUFFER_BIT);
     if (count === 0) return;

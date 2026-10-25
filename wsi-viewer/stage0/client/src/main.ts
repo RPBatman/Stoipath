@@ -2,15 +2,25 @@
  * Bootstrap: load the manifest, create the renderer / cache / workers / scheduler / metrics, bind input and
  * run the single requestAnimationFrame loop (A §2 "one rAF", 04 "Implications" item 1).
  *
- * URL parameters: ?manifest=URL  ?path=1 (auto-run the scripted path, store the summary in window.__stage0Summary)
- *                 ?overlay=1  ?dpr=N (render DPR override)  ?layers=N  ?workers=N
+ * URL parameters: ?manifest=URL  ?path=1 (auto-run the scripted path once the base is resident, store the summary in
+ *                 window.__stage0Summary)  ?overlay=1  ?dpr=N (render DPR override)  ?layers=N  ?workers=N
  *                 ?label=<device>_<browser>_<network>_<cache>[_runN|_manual] (MEASUREMENT_PROTOCOL §1; the summariser parses it)
  *                 ?network= ?cache= (optional explicit copies into summary.run)
  */
 /** Injected by vite.config.ts `define`: UTC time of the build. */
 declare const __BUILD_ID__: string;
 import { Camera } from './camera';
-import { DPR_CAP, FOCUS_HOLD_MS, OVERLAY_REFRESH_FRAMES, UPLOAD_BUDGET_MS_GESTURE, UPLOAD_BUDGET_MS_IDLE, UPLOAD_MAX_PER_FRAME_GESTURE, UPLOAD_MAX_PER_FRAME_IDLE } from './constants';
+import {
+  DPR_CAP,
+  FOCUS_HOLD_MS,
+  LAYERS_HINT_STORAGE_KEY,
+  OVERLAY_REFRESH_FRAMES,
+  TEXTURE_LAYERS_RESERVE,
+  UPLOAD_BUDGET_MS_GESTURE,
+  UPLOAD_BUDGET_MS_IDLE,
+  UPLOAD_MAX_PER_FRAME_GESTURE,
+  UPLOAD_MAX_PER_FRAME_IDLE,
+} from './constants';
 import { DecodePool, chooseWorkerCount } from './decode-pool';
 import type { WorkerResponse } from './decode-messages';
 import { FramePlanner } from './frame-planner';
@@ -18,8 +28,9 @@ import { Controls, bindDomInput } from './input';
 import { LodSelector } from './lod';
 import { Metrics, type DeviceInfo, type FrameInput, type Summary } from './metrics';
 import { Overlay } from './overlay';
-import { loadPyramid, resolveManifestUrl } from './pyramid';
-import { Renderer, chooseLayerCount } from './renderer';
+import { applyPinBudget, loadPyramid, resolveManifestUrl } from './pyramid';
+import { Renderer, chooseLayerCount, type DeviceClass } from './renderer';
+import { isPrefetchKind } from './request-kind';
 import { Scheduler } from './scheduler';
 import { ScriptedPath } from './scripted-path';
 import { TileCache } from './tile-cache';
@@ -39,6 +50,8 @@ interface Stage0Api {
   summary(): Summary;
   exportJson(): string;
   runPath(): void;
+  /** Drop every non-pinned GPU tile (GPU-cold rerun; the HTTP cache stays warm). */
+  evictGpuTiles(): number;
   /** Test hook: jump the camera (world px, log2 zoom) without easing. */
   jumpTo(wx: number, wy: number, logZoom: number): void;
   /** log2 zoom of fit-to-screen for the current viewport (harness/screens.mjs). */
@@ -47,8 +60,12 @@ interface Stage0Api {
     lstar: number;
     sharpFraction: number;
     deficitCells: number;
+    fadingCells: number;
     partnerCells: number;
+    descendantCells: number;
     cells: number;
+    scaleAtLstar: number;
+    magnified: boolean;
     resident: number;
     inflight: number;
     decodeOutstanding: number;
@@ -57,6 +74,7 @@ interface Stage0Api {
     cx: number;
     cy: number;
     baseLoaded: boolean;
+    warmBaseLoaded: boolean;
     gestureActive: boolean;
     cameraAnimating: boolean;
     /** Scheduler room for prefetch (non-pinned layers minus wanted residents, decoded-awaiting-upload and in flight). */
@@ -64,6 +82,8 @@ interface Stage0Api {
     evictions: number;
     viewW: number;
     viewH: number;
+    layers: number;
+    pinnedBaseLevel: number;
   };
   pathDone: boolean;
 }
@@ -81,16 +101,44 @@ function paramNum(p: URLSearchParams, name: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/** 'unknown' rather than '' where nextHopProtocol is unavailable (older WebKit), so the CSV column is never blank (REVIEW L11). */
 function protocolOf(url: string): string {
   try {
     const abs = new URL(url, document.baseURI).href;
     for (const e of performance.getEntriesByType('resource')) {
-      if (e.name === abs) return (e as PerformanceResourceTiming).nextHopProtocol || '';
+      if (e.name === abs) return (e as PerformanceResourceTiming).nextHopProtocol || 'unknown';
     }
     const nav = performance.getEntriesByType('navigation')[0];
-    return nav !== undefined ? (nav as PerformanceNavigationTiming).nextHopProtocol || '' : '';
+    return nav !== undefined ? (nav as PerformanceNavigationTiming).nextHopProtocol || 'unknown' : 'unknown';
   } catch {
-    return '';
+    return 'unknown';
+  }
+}
+
+/**
+ * Device class from the UA and touch points, used for the GPU memory budget when deviceMemory is unknown
+ * (REVIEW H5). iPadOS Safari reports a Macintosh UA with 5 touch points; Android tablets lack "Mobile".
+ */
+export function detectDeviceClass(ua: string, touchPoints: number): DeviceClass {
+  if (/Mobi|iPhone|iPod|Windows Phone/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua))) return 'phone';
+  if (/iPad|Tablet|Silk|Android/i.test(ua) || (/Macintosh/.test(ua) && touchPoints > 1)) return 'tablet';
+  return 'desktop';
+}
+
+function readLayersHint(): number | null {
+  try {
+    const v = sessionStorage.getItem(LAYERS_HINT_STORAGE_KEY);
+    const n = v === null ? NaN : Number(v);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+function writeLayersHint(layers: number): void {
+  try {
+    sessionStorage.setItem(LAYERS_HINT_STORAGE_KEY, String(layers));
+  } catch {
+    /* storage unavailable: the hint is a convenience */
   }
 }
 
@@ -136,11 +184,14 @@ async function main(): Promise<void> {
   const label = params.get('label') ?? 'manual';
   const metrics = new Metrics(label, __BUILD_ID__, params.get('network'), params.get('cache'));
 
-  // Render at the device pixel ratio, capped (04 F7, A §3).
+  // Render at the device pixel ratio, capped (04 F7, A §3). Re-read on every resize: browser zoom and a move to
+  // another monitor change devicePixelRatio and would otherwise desynchronise canvas and pointer (REVIEW M9).
   const dprOverride = paramNum(params, 'dpr');
-  const renderDpr = dprOverride ?? Math.min(DPR_CAP, window.devicePixelRatio || 1);
+  const currentDpr = (): number => dprOverride ?? Math.min(DPR_CAP, window.devicePixelRatio || 1);
+  let renderDpr = currentDpr();
   const navx = navigator as Navigator & NavigatorExtras;
   const deviceMemory = typeof navx.deviceMemory === 'number' ? navx.deviceMemory : null;
+  const deviceClass = detectDeviceClass(navigator.userAgent, navigator.maxTouchPoints);
 
   overlay.setStatus('loading manifest…');
   const manifestUrl = await resolveManifestUrl(params.get('manifest'));
@@ -148,12 +199,19 @@ async function main(): Promise<void> {
   const protocol = protocolOf(pyramid.manifestUrl);
   overlay.setStatus('starting renderer…');
 
-  // Texture array sized to this screen: pinned base + headroom viewports of L* tiles at s = 0.5 (constants.ts "GPU upload").
+  // Texture array sized to this screen and device class (renderer.ts chooseLayerCount; constants.ts "GPU upload").
   const viewportDevW = (canvas.clientWidth || window.innerWidth) * renderDpr;
   const viewportDevH = (canvas.clientHeight || window.innerHeight) * renderDpr;
-  const layersWanted = paramNum(params, 'layers') ?? chooseLayerCount(viewportDevW, viewportDevH, pyramid.tileSize, pyramid.basePinTileCount, deviceMemory);
-  const renderer = new Renderer(canvas, pyramid.tileSize, layersWanted);
+  const layersParam = paramNum(params, 'layers');
+  const choice =
+    layersParam !== null
+      ? { layers: layersParam, reason: '?layers=' }
+      : chooseLayerCount(viewportDevW, viewportDevH, pyramid.tileSize, pyramid.basePinTileCount, pyramid.warmBaseTileCount, deviceMemory, deviceClass, readLayersHint());
+  const renderer = new Renderer(canvas, pyramid.tileSize, choice.layers);
   metrics.rendererInitMs = renderer.initMs;
+  let layersReason = renderer.layerCount === choice.layers ? choice.reason : `${choice.reason}; texStorage3D fell back from ${choice.layers}`;
+  // The pinned base must fit with room to spare, otherwise it never completes (REVIEW H5 deadlock).
+  if (applyPinBudget(pyramid, renderer.layerCount)) metrics.notes.push(`pinned base reduced to levels >= ${pyramid.basePinLevel} (${pyramid.basePinTileCount} tiles) to fit ${renderer.layerCount} layers`);
   const cache = new TileCache(renderer.layerCount);
   const cam = new Camera();
   cam.setSlide(pyramid.width, pyramid.height);
@@ -171,29 +229,58 @@ async function main(): Promise<void> {
   };
   metrics.bindCounters(scheduler.counters, () => {
     let undrawn = cache.prefetchWasteEvictions;
-    for (let i = 0; i < cache.layerCount; i++) if ((cache.kind[i] ?? 0) >= 2 && cache.drawn[i] === 0 && cache.keyOfLayer(i) >= 0) undrawn++;
-    return { layers: cache.layerCount, resident: cache.residentCount, pinned: cache.pinnedCount, evictions: cache.evictions, prefetchedNeverDrawn: undrawn, drawnByKind: cache.drawnByKind };
+    for (let i = 0; i < cache.layerCount; i++) if (isPrefetchKind(cache.kind[i] ?? 0) && cache.drawn[i] === 0 && cache.keyOfLayer(i) >= 0) undrawn++;
+    return {
+      layers: cache.layerCount,
+      resident: cache.residentCount,
+      pinned: cache.pinnedCount,
+      evictions: cache.evictions,
+      prefetchedNeverDrawn: undrawn,
+      drawnByKind: cache.drawnByKind,
+      uploadsDropped: renderer.uploadsDropped,
+      cleared: cache.clearedTiles,
+    };
   });
   renderer.onGpuUploadTime = (frame, ms) => metrics.noteGpuUpload(frame, ms);
   renderer.onUploaded = (key) => scheduler.markUploaded(key);
 
   const controls = new Controls(cam, metrics, scheduler, () => lod.current);
-  const path = new ScriptedPath(controls, cam, metrics);
+  const path = new ScriptedPath(controls, cam, metrics, () => scheduler.baseReady);
+
+  let frame = 0;
+  let dirty = true;
+  let lastResident = -1;
+  let device: DeviceInfo | null = null;
 
   // Viewport sizing in device px.
   const resize = (): void => {
+    renderDpr = currentDpr();
+    if (device !== null) device.renderDpr = renderDpr;
     const cssW = canvas.clientWidth || window.innerWidth;
     const cssH = canvas.clientHeight || window.innerHeight;
     renderer.resize(cssW * renderDpr, cssH * renderDpr);
     cam.setViewport(renderer.width, renderer.height);
+    dirty = true;
   };
   resize();
   cam.fit();
   window.addEventListener('resize', resize);
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(canvas);
+  // devicePixelRatio changes (browser zoom, monitor move) do not always fire `resize`; watch the resolution media query.
+  const watchDpr = (): void => {
+    if (typeof matchMedia !== 'function') return;
+    const mq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    const onChange = (): void => {
+      mq.removeEventListener('change', onChange);
+      resize();
+      watchDpr();
+    };
+    mq.addEventListener('change', onChange);
+  };
+  watchDpr();
 
   const conn = navx.connection;
-  const device: DeviceInfo = {
+  device = {
     userAgent: navigator.userAgent,
     platform: navigator.platform,
     language: navigator.language,
@@ -201,6 +288,7 @@ async function main(): Promise<void> {
     renderDpr,
     hardwareConcurrency: navigator.hardwareConcurrency ?? null,
     deviceMemoryGiB: deviceMemory,
+    deviceClass,
     gpuRenderer: renderer.rendererString,
     gpuVendor: renderer.vendorString,
     connection:
@@ -213,14 +301,17 @@ async function main(): Promise<void> {
     protocol,
     workers: workerCount,
     textureLayers: renderer.layerCount,
+    textureLayersReason: layersReason,
     mipmaps: renderer.mipEnabled,
     gpuTimerQuery: renderer.timerQueryAvailable,
     touch: navigator.maxTouchPoints > 0,
   };
   metrics.setDevice(device);
+  const baseText = (): string =>
+    `pinned base levels ${pyramid.basePinLevel}-${pyramid.levels.length - 1} (${pyramid.basePinTileCount} tiles), warm base levels ${pyramid.warmBaseLevel}-${pyramid.basePinLevel - 1} (${pyramid.warmBaseTileCount} tiles)`;
   overlay.setDevice(
     device,
-    `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}, pinned base from level ${pyramid.basePinLevel} (${pyramid.basePinTileCount} tiles)\n` +
+    `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}; ${baseText()}\n` +
       `in-flight cap ${scheduler.maxInflight} (prefetch ${scheduler.prefetchSlots})  renderer init ${renderer.initMs.toFixed(0)} ms  build ${__BUILD_ID__}  label ${label}${metrics.run.network ? ` net ${metrics.run.network}` : ''}${metrics.run.cache ? ` cache ${metrics.run.cache}` : ''}\n` +
       `keys: O overlay, R reset, P path, +/- zoom, arrows pan`,
   );
@@ -228,13 +319,26 @@ async function main(): Promise<void> {
   const finishSummary = (): Summary => {
     const s = metrics.summary();
     if (!renderer.mipEnabled) s.notes.push('GPU mipmaps disabled: the decode worker could not downscale on this browser');
-    if (!device.gpuTimerQuery) s.notes.push('uploadMsPerFrame is CPU time in texSubImage3D (no EXT_disjoint_timer_query_webgl2)');
-    s.notes.push('inputToRafMs = next rAF timestamp - event.timeStamp for real DOM input only; the frame presents about one display interval later. Scripted inputs are in inputToRafScriptedMs (one frame by construction).');
-    s.notes.push('timeToSharpMs = last input → first sharp frame (04 F8) and includes the easing tail settleAfterInputMs; sharpAfterSettleMs = camera settled → first sharp frame is the tile-pipeline number the A §3 targets refer to (0 when sharp at settle).');
+    if (!s.device.gpuTimerQuery) s.notes.push('uploadMsPerFrame is CPU time in texSubImage3D (no EXT_disjoint_timer_query_webgl2)');
+    s.notes.push('inputToRafMs = next rAF timestamp - event.timeStamp for real DOM input only (clamped at 0; "event -> frame that consumed it", not input-to-photon); the frame presents about one display interval later. Scripted inputs are in inputToRafScriptedMs (one frame by construction).');
+    s.notes.push('ttsFromLastInputMs (headline, 04 F8 TTS) = last input -> end of pop-in (last frame drawing an ancestor, blank or fading cell, + one display interval; 0 if none). sharpAfterSettleMs = camera settled (~0.5 s after a wheel burst) -> first sharp frame (A §3 target form). timeToSharpMs = first sharp frame at/after settle from the last input (>= 150 ms floor; not 04 F8 TTS). Timed-out gestures hold lower bounds (censored).');
+    s.notes.push(`zoomInBursts = gestures with levelsZoomed > 0, not interrupted, not ending magnified (s > 1 at level 0). ${baseText()}.`);
     if (s.startup.framesExcluded > 0) s.notes.push(`frameMs percentiles exclude the ${s.startup.framesExcluded} frames before the pinned base was resident; see startup.*`);
     return s;
   };
   const exportJson = (): string => JSON.stringify(metrics.exportBundle(finishSummary()));
+
+  /** GPU-cold rerun (REVIEW H1): forget every non-pinned tile and queued upload; the warm base reloads first. */
+  const evictGpuTiles = (): number => {
+    for (const key of renderer.dropQueue()) scheduler.markUploaded(key);
+    const n = cache.clearNonPinned();
+    scheduler.resetResidency();
+    planner.reset();
+    metrics.run.gpuCacheClears++;
+    dirty = true;
+    overlay.setStatus(`evicted ${n} GPU tiles — the HTTP cache is still warm: label this run warm`);
+    return n;
+  };
 
   const api: Stage0Api = {
     summary: finishSummary,
@@ -242,14 +346,19 @@ async function main(): Promise<void> {
     runPath: () => {
       if (!path.running) path.start(performance.now());
     },
+    evictGpuTiles,
     jumpTo: (wx, wy, logZoom) => cam.jumpTo(wx, wy, logZoom),
     fitLogZoom: () => cam.fitLogZoom,
     state: () => ({
       lstar: lod.current,
       sharpFraction: planner.stats.sharpFraction,
       deficitCells: planner.stats.deficitCells,
+      fadingCells: planner.stats.fadingCells,
       partnerCells: planner.stats.partnerCells,
+      descendantCells: planner.stats.descendantCells,
       cells: planner.stats.cells,
+      scaleAtLstar: planner.stats.scaleAtLstar,
+      magnified: planner.stats.magnified,
       resident: cache.residentCount,
       inflight: scheduler.inflightCount,
       decodeOutstanding: pool.outstanding,
@@ -258,12 +367,15 @@ async function main(): Promise<void> {
       cx: cam.cx,
       cy: cam.cy,
       baseLoaded: scheduler.basePinned,
+      warmBaseLoaded: scheduler.warmBaseReady,
       gestureActive: metrics.gestureActive,
       cameraAnimating: cam.animating || cam.dragging,
       room: scheduler.lastRoom,
       evictions: cache.evictions,
       viewW: cam.viewW,
       viewH: cam.viewH,
+      layers: cache.layerCount,
+      pinnedBaseLevel: pyramid.basePinLevel,
     }),
     pathDone: false,
   };
@@ -273,8 +385,8 @@ async function main(): Promise<void> {
     const s = finishSummary();
     window.__stage0Summary = s;
     api.pathDone = true;
-    overlay.showSummary(JSON.stringify(s.gestures, null, 1));
-    overlay.setStatus('scripted path done — export or copy the summary');
+    overlay.showSummary(JSON.stringify(s.zoomInBursts, null, 1));
+    overlay.setStatus(`scripted path done (run ${metrics.run.pathRuns}) — export or copy the summary`);
     console.log('[stage0] scripted path done', s);
   };
 
@@ -285,6 +397,9 @@ async function main(): Promise<void> {
       void copyText(JSON.stringify(finishSummary(), null, 1)).then((ok) => overlay.setStatus(ok ? 'summary copied' : 'copy failed'));
     },
     reset: () => cam.fit(),
+    evict: () => {
+      evictGpuTiles();
+    },
   });
   bindDomInput(canvas, controls, {
     scale: () => renderDpr,
@@ -293,14 +408,38 @@ async function main(): Promise<void> {
     onRunPath: () => api.runPath(),
   });
   if (params.get('overlay') === '1') overlay.setVisible(true);
-  canvas.addEventListener('webglcontextlost', (e) => {
-    e.preventDefault();
-    overlay.setStatus('WebGL context lost — reload the page');
+
+  // A hidden tab stops rAF; the delta on return is not a frame time and any open gesture is void (REVIEW M10).
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) metrics.notePause();
   });
 
-  let frame = 0;
-  let dirty = true;
-  let lastResident = -1;
+  // Context loss (REVIEW H5): mobile drivers commit texture memory lazily, so an oversize array fails seconds later as
+  // a context loss. Recover with half the layers, remember the count for the next load in this tab, keep the metrics.
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    renderer.lost = true;
+    metrics.noteContextLoss();
+    overlay.setStatus('WebGL context lost — recovering with a smaller tile array…');
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    const layers = Math.max(pyramid.basePinTileCount + TEXTURE_LAYERS_RESERVE, renderer.layerCount >> 1);
+    renderer.restore(layers);
+    writeLayersHint(renderer.layerCount);
+    applyPinBudget(pyramid, renderer.layerCount);
+    cache.reset(renderer.layerCount);
+    scheduler.resetResidency();
+    planner.reset();
+    layersReason = `context loss recovery #${metrics.contextLosses} (was ${layers * 2 > renderer.layerCount ? layers * 2 : layers})`;
+    if (device !== null) {
+      device.textureLayers = renderer.layerCount;
+      device.textureLayersReason = layersReason;
+    }
+    metrics.notes.push(`WebGL context lost and restored with ${renderer.layerCount} layers; ${baseText()}; tiles were reloaded`);
+    resize();
+    overlay.setStatus(`WebGL context restored with ${renderer.layerCount} layers — reloading tiles`);
+  });
+
   const frameInput: FrameInput = {
     now: 0,
     stats: planner.stats,
@@ -315,6 +454,7 @@ async function main(): Promise<void> {
   };
   const isUrgent = (key: number): boolean => planner.isCellVisible(key);
   let autoPathStarted = false;
+  let warmNoted = false;
 
   const loop = (rafTs: number): void => {
     const dt = metrics.beginFrame(rafTs);
@@ -354,7 +494,7 @@ async function main(): Promise<void> {
 
     // Plan + draw only when something changed (dirty) or a cross-fade is running; metrics are recorded regardless.
     let drawn = false;
-    if (dirty || planner.stats.fading) {
+    if ((dirty || planner.stats.fading) && !renderer.lost) {
       planner.plan(cam, pyramid, lstar, cache, now, frame);
       renderer.draw(planner.instances, planner.count, cam.cx, cam.cy, cam.k);
       drawn = true;
@@ -366,9 +506,14 @@ async function main(): Promise<void> {
     renderer.pollTimerQueries();
     if (metrics.baseLoadedAt === null && scheduler.basePinned) {
       metrics.noteBaseLoaded(now, frame);
-      overlay.setStatus('ready');
+      overlay.setStatus(`ready (overview loading ${pyramid.warmBaseTileCount} tiles)`);
     }
-    if (path.running && frame % OVERLAY_REFRESH_FRAMES === 0) overlay.setStatus(`scripted path running ${path.progress} — hands off`);
+    if (!warmNoted && scheduler.baseReady) {
+      warmNoted = true;
+      metrics.noteWarmBaseLoaded(now);
+      if (!path.running) overlay.setStatus('ready');
+    }
+    if (path.running && frame % OVERLAY_REFRESH_FRAMES === 0) overlay.setStatus(`scripted path running ${path.progress}${scheduler.baseReady ? '' : ' (waiting for the base)'} — hands off`);
 
     frameInput.now = now;
     frameInput.drawn = drawn;
@@ -402,7 +547,7 @@ async function main(): Promise<void> {
       metrics,
     );
 
-    if (params.get('path') === '1' && !autoPathStarted && scheduler.basePinned) {
+    if (params.get('path') === '1' && !autoPathStarted && scheduler.baseReady) {
       autoPathStarted = true;
       path.start(now);
     }

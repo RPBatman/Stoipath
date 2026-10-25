@@ -48,11 +48,12 @@ export class Overlay {
     this.sparkCtx = this.spark.getContext('2d');
   }
 
-  bindButtons(handlers: { path: () => void; export: () => void; copy: () => void; reset: () => void }): void {
+  bindButtons(handlers: { path: () => void; export: () => void; copy: () => void; reset: () => void; evict: () => void }): void {
     must('btn-path').addEventListener('click', handlers.path);
     must('btn-export').addEventListener('click', handlers.export);
     must('btn-copy').addEventListener('click', handlers.copy);
     must('btn-reset').addEventListener('click', handlers.reset);
+    must('btn-evict').addEventListener('click', handlers.evict);
     must('btn-hide').addEventListener('click', () => this.setVisible(false));
   }
 
@@ -75,10 +76,10 @@ export class Overlay {
     this.deviceEl.textContent =
       `${d.userAgent}\n` +
       `DPR ${d.devicePixelRatio} (render ${d.renderDpr})  viewport ${d.viewportDevicePx.width}x${d.viewportDevicePx.height} dev px  screen ${d.screen.width}x${d.screen.height}\n` +
-      `cores ${d.hardwareConcurrency ?? '?'}  memory ${d.deviceMemoryGiB ?? '?'} GiB  workers ${d.workers}  touch ${d.touch}\n` +
+      `cores ${d.hardwareConcurrency ?? '?'}  memory ${d.deviceMemoryGiB ?? '?'} GiB  class ${d.deviceClass}  workers ${d.workers}  touch ${d.touch}\n` +
       `GPU ${d.gpuRenderer}\n` +
       `connection ${conn}  protocol ${d.protocol || '?'}\n` +
-      `texture layers ${d.textureLayers}  mipmaps ${d.mipmaps}  gpu timer ${d.gpuTimerQuery}\n${extra}`;
+      `texture layers ${d.textureLayers} (${d.textureLayersReason})  mipmaps ${d.mipmaps}  gpu timer ${d.gpuTimerQuery}\n${extra}`;
   }
 
   showSummary(text: string): void {
@@ -99,9 +100,9 @@ export class Overlay {
       ? 'gesture: active'
       : g === null
         ? 'gesture: none yet'
-        : `last gesture (${g.kind}${g.levelsZoomed !== 0 ? ` ${g.levelsZoomed > 0 ? '+' : ''}${g.levelsZoomed}L` : ''}): sharp ${g.sharpAfterSettleMs === null ? (g.timedOut ? 'timeout' : 'n/a') : `${g.sharpAfterSettleMs.toFixed(0)} ms`} after settle  TTS ${g.timeToSharpMs?.toFixed(0) ?? '?'} ms from last input (settle tail ${g.settleAfterInputMs?.toFixed(0) ?? '?'})  maxBlur ${g.maxBlurMs.toFixed(0)} ms  deficitFrames ${g.framesWithDeficit}/${g.frames}  dropped ${g.droppedFrames}  ${(g.bytes / 1e6).toFixed(1)} MB`;
+        : `last gesture (${g.kind}${g.levelsZoomed !== 0 ? ` ${g.levelsZoomed > 0 ? '+' : ''}${g.levelsZoomed}L` : ''}${g.endMagnified ? ' MAGNIFIED' : ''}): TTS ${g.censored ? '>= ' : ''}${g.ttsFromLastInputMs.toFixed(0)} ms (last input -> pop-in end)  sharp-after-settle ${g.sharpAfterSettleMs === null ? (g.interrupted ? 'n/a' : '?') : `${g.censored ? '>= ' : ''}${g.sharpAfterSettleMs.toFixed(0)} ms`} (settle tail ${g.settleAfterInputMs?.toFixed(0) ?? '?'})  maxBlur ${g.maxBlurMs.toFixed(0)} ms  blurFrames ${g.framesWithDeficit}/${g.frames}  dropped ${g.droppedFrames}  ${(g.bytes / 1e6).toFixed(1)} MB${g.cacheHitFraction === null ? '' : `  cache-hit ${(100 * g.cacheHitFraction).toFixed(0)}%`}`;
     this.hudText.textContent =
-      `L* ${st.lstar}  centre@L${st.centreLevel}  sharp ${(100 * st.sharpFraction).toFixed(0)}%  deficit ${st.deficitCells}/${st.cells}  blank ${st.blankCells}  lod ${st.lodFraction.toFixed(2)}${st.fading ? '  fading' : ''}\n` +
+      `L* ${st.lstar} s ${st.scaleAtLstar.toFixed(2)}${st.magnified ? ' MAGNIFIED' : ''}  centre@L${st.centreLevel}  sharp ${(100 * st.sharpFraction).toFixed(0)}%  deficit ${st.deficitCells}/${st.cells}  blank ${st.blankCells}  lod ${st.lodFraction.toFixed(2)}${st.fading ? `  fading ${st.fadingCells}` : ''}${st.descendantCells > 0 ? `  children ${st.descendantCells}` : ''}\n` +
       `frame ${live.frameMs.toFixed(1)} ms (${(1000 / metrics.displayIntervalMs).toFixed(0)} Hz)  upload ${live.uploadMs.toFixed(2)} ms (${live.uploads})  inflight ${live.inflight}/${live.maxInflight}  decode ${live.decodeOutstanding}  uploadQ ${live.uploadQueue}\n` +
       `resident ${live.resident}/${live.layers}  zoom 2^${live.logZoom.toFixed(2)}${umPerPx}  fetched ${(live.bytes / 1e6).toFixed(1)} MB  path ${live.pathProgress}\n` +
       gestureLine;

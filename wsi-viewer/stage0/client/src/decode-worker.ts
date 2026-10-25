@@ -3,7 +3,7 @@
  * 04 F5 ("fetch → Blob → createImageBitmap() in a Worker → postMessage (transfer)"), A §2 "Decode pipeline".
  * Cancellation follows 04 F4: abort only when fewer than CANCEL_BYTES_FRACTION of the bytes have arrived.
  */
-import { CANCEL_BYTES_FRACTION } from './constants';
+import { CANCEL_BYTES_FRACTION, CANCEL_KEEP_UNKNOWN_BYTES } from './constants';
 import type { FetchRequest, WorkerRequest, WorkerResponse } from './decode-messages';
 
 interface WorkerScope {
@@ -21,6 +21,41 @@ interface Progress {
 
 const scope = self as unknown as WorkerScope;
 const inflight = new Map<number, Progress>();
+
+/**
+ * Resource Timing lives in the worker that issued the fetch. Entries are collected by URL as they are queued (the
+ * entry is added when the response completes, usually before the decode below finishes); a lookup consumes the entry.
+ * `transferSize` is 0 for a cache hit and > 0 for a transfer (headers + body); it is also 0 when the browser withholds
+ * it (cross-origin without Timing-Allow-Origin), which `encodedBodySize === 0` distinguishes → null.
+ */
+const resourceEntries = new Map<string, PerformanceResourceTiming>();
+try {
+  performance.setResourceTimingBufferSize(2048);
+  const obs = new PerformanceObserver((list) => {
+    for (const e of list.getEntries()) {
+      if (resourceEntries.size < 4096) resourceEntries.set(e.name, e as PerformanceResourceTiming);
+    }
+  });
+  obs.observe({ type: 'resource', buffered: true });
+} catch {
+  /* no Resource Timing in this worker: cacheHit stays null */
+}
+function takeCacheHit(url: string): boolean | null {
+  let e = resourceEntries.get(url);
+  if (e === undefined) {
+    const list = performance.getEntriesByName(url, 'resource');
+    e = list.length > 0 ? (list[list.length - 1] as PerformanceResourceTiming) : undefined;
+  }
+  resourceEntries.delete(url);
+  if (e === undefined || typeof e.transferSize !== 'number') return null;
+  if (e.transferSize > 0) return false;
+  return e.encodedBodySize > 0 || e.decodedBodySize > 0 ? true : null;
+}
+let bufferClears = 0;
+function trimTimeline(): void {
+  // Entries are consumed by takeCacheHit; the browser's own buffer is cleared periodically so it never fills.
+  if (++bufferClears % 256 === 0) performance.clearResourceTimings();
+}
 /** Options that avoid a colour-space / alpha re-conversion at upload. 04 F5. */
 const DECODE_OPTS: ImageBitmapOptions = { colorSpaceConversion: 'none', premultiplyAlpha: 'none' };
 let mipSupported = true;
@@ -63,6 +98,7 @@ async function handleFetch(req: FetchRequest): Promise<void> {
     const res = await fetch(req.url, init);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const tHeaders = performance.now();
+    const cacheControl = res.headers.get('cache-control');
     progress.total = Number(res.headers.get('content-length') ?? 0) || 0;
     const chunks: Uint8Array[] = [];
     if (res.body !== null) {
@@ -93,6 +129,8 @@ async function handleFetch(req: FetchRequest): Promise<void> {
     const bitmap = await createImageBitmap(blob, DECODE_OPTS);
     const mip = await makeMip(bitmap);
     const tDecoded = performance.now();
+    const cacheHit = takeCacheHit(res.url || req.url);
+    trimTimeline();
     const transfer: Transferable[] = mip === null ? [bitmap] : [bitmap, mip];
     scope.postMessage(
       {
@@ -110,6 +148,8 @@ async function handleFetch(req: FetchRequest): Promise<void> {
         tBody,
         tDecoded,
         cancelledLate,
+        cacheHit,
+        cacheControl,
       },
       transfer,
     );
@@ -124,8 +164,10 @@ async function handleFetch(req: FetchRequest): Promise<void> {
 function handleCancel(key: number): void {
   const p = inflight.get(key);
   if (p === undefined) return;
-  if (p.total > 0 && p.received / p.total >= CANCEL_BYTES_FRACTION) {
-    // Most bytes are here: finishing is cheaper than re-fetching later (04 F4). Flag it for the metrics.
+  // Most bytes are here: finishing is cheaper than re-fetching later (04 F4). Without a Content-Length the fraction
+  // is unknown, so a byte floor stands in for it (REVIEW L3). Flag either case for the metrics.
+  const mostlyHere = p.total > 0 ? p.received / p.total >= CANCEL_BYTES_FRACTION : p.received >= CANCEL_KEEP_UNKNOWN_BYTES;
+  if (mostlyHere) {
     p.total = -1;
     return;
   }

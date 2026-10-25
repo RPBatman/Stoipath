@@ -9,7 +9,9 @@ export type TileHandler = (msg: WorkerResponse) => void;
 
 export function chooseWorkerCount(hardwareConcurrency: number | undefined, override: number | null): number {
   if (override !== null && override > 0) return override;
-  const hc = hardwareConcurrency ?? 2;
+  // WebKit withholds or clamps hardwareConcurrency; an unknown core count is assumed to be 4 (-> 3 workers) rather
+  // than 2 (-> 1 worker), matching 04 F5 ">= 2 workers" on the iPads the protocol targets (REVIEW M5).
+  const hc = hardwareConcurrency ?? 4;
   return Math.min(WORKERS_MAX, Math.max(WORKERS_MIN, hc - 1));
 }
 

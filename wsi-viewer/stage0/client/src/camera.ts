@@ -16,9 +16,9 @@ import {
   INERTIA_MAX_SPEED,
   MAX_ZOOM_ABOVE_L0_LEVELS,
   MIN_ZOOM_BELOW_FIT_LEVELS,
+  SETTLE_EDGE_VELOCITY_PX_PER_MS,
   SETTLE_EPS_LOG,
   SETTLE_EPS_PX,
-  SETTLE_MOTION_PX,
   VELOCITY_EMA_ALPHA,
   ZOOM_TAU_MS,
   ZOOM_VELOCITY_DECAY_MS,
@@ -244,14 +244,21 @@ export class Camera {
     this.inertiaVX = this.inertiaVY = 0;
   }
 
-  /** Advance easing and inertia. Sets `moved` and `animating`. */
+  /** Velocity (device px/ms) of the presented transform at the farthest viewport corner from the anchor after the last step(). */
+  edgeVelocity = 0;
+
+  /** Advance easing and inertia. Sets `moved`, `animating` and `edgeVelocity`. */
   step(now: number): void {
     const dt = this.lastStep < 0 ? 16 : Math.min(100, Math.max(0, now - this.lastStep));
     this.lastStep = now;
     let moved = false;
 
-    // Motion of the presented transform this frame, in device px at the viewport edge (settle detection).
-    let motionPx = 0;
+    // Settle detection (constants.ts SETTLE_EDGE_VELOCITY_PX_PER_MS): the velocity of the presented transform at the
+    // viewport corner farthest from the anchor, computed from the camera *state* after this step (residual / tau for
+    // the exponential easing, the inertia speed while coasting). Being a property of the state rather than of the
+    // per-frame delta it does not depend on the frame rate (REVIEW H3); the farthest corner, not the half edge, is
+    // where the motion is largest when the anchor sits at the pointer (REVIEW L13).
+    let velocity = 0;
 
     if (this.inertiaActive) {
       // Constant deceleration (Leaflet model): bounded stop time, distance = v² / 2a.
@@ -262,7 +269,7 @@ export class Camera {
       const uy = speed > 0 ? this.inertiaVY / speed : 0;
       this.anchorSX += ux * avg * dt;
       this.anchorSY += uy * avg * dt;
-      motionPx = Math.max(motionPx, avg * dt);
+      velocity = Math.max(velocity, newSpeed);
       this.inertiaVX = ux * newSpeed;
       this.inertiaVY = uy * newSpeed;
       if (newSpeed <= 0) this.stopInertia();
@@ -270,24 +277,27 @@ export class Camera {
     }
 
     const a = 1 - Math.exp(-dt / ZOOM_TAU_MS);
-    const dz = this.targetLogZoom - this.logZoom;
-    const halfEdge = Math.max(this.viewW, this.viewH) / 2;
+    const cornerDist = Math.hypot(Math.max(this.anchorSX, this.viewW - this.anchorSX), Math.max(this.anchorSY, this.viewH - this.anchorSY));
+    let dz = this.targetLogZoom - this.logZoom;
     if (Math.abs(dz) > SETTLE_EPS_LOG) {
-      const applied = dz * a;
-      this.logZoom += applied;
-      motionPx = Math.max(motionPx, Math.abs(applied) * Math.LN2 * halfEdge);
+      this.logZoom += dz * a;
+      dz = this.targetLogZoom - this.logZoom;
+      // d(logZoom)/dt = dz / tau; a point at distance d from the anchor moves d · ln2 · d(logZoom)/dt.
+      velocity = Math.max(velocity, (Math.abs(dz) / ZOOM_TAU_MS) * Math.LN2 * cornerDist);
       moved = true;
     } else if (dz !== 0) {
       this.logZoom = this.targetLogZoom;
       moved = true;
     }
-    const dwx = this.targetWX - this.anchorWX;
-    const dwy = this.targetWY - this.anchorWY;
+    let dwx = this.targetWX - this.anchorWX;
+    let dwy = this.targetWY - this.anchorWY;
     const kNow = 2 ** this.logZoom;
     if (Math.abs(dwx) * kNow > SETTLE_EPS_PX || Math.abs(dwy) * kNow > SETTLE_EPS_PX) {
       this.anchorWX += dwx * a;
       this.anchorWY += dwy * a;
-      motionPx = Math.max(motionPx, Math.hypot(dwx, dwy) * a * kNow);
+      dwx = this.targetWX - this.anchorWX;
+      dwy = this.targetWY - this.anchorWY;
+      velocity = Math.max(velocity, (Math.hypot(dwx, dwy) * kNow) / ZOOM_TAU_MS);
       moved = true;
     } else if (dwx !== 0 || dwy !== 0) {
       this.anchorWX = this.targetWX;
@@ -305,9 +315,10 @@ export class Camera {
 
     if (moved) this.derive();
     this.moved = moved || this.moved;
-    // Visible motion only: the exponential tail below SETTLE_MOTION_PX per frame still redraws but no longer
+    this.edgeVelocity = velocity;
+    // Visible motion only: the exponential tail below SETTLE_EDGE_VELOCITY_PX_PER_MS still redraws but no longer
     // counts as animating, so gesture end is "the view stopped moving perceptibly".
-    this.animating = this.inertiaActive || motionPx > SETTLE_MOTION_PX;
+    this.animating = this.inertiaActive || velocity > SETTLE_EDGE_VELOCITY_PX_PER_MS;
   }
 
   /** Recompute (cx, cy, k) from the anchor and clamp the centre to the slide. */

@@ -41,7 +41,9 @@ export class Controls {
     this.pointerY = sy;
     this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
     this.cam.dragStart(sx, sy);
-    this.scheduler.noteIntent(ts); // touch-down prefetch of the next finer level (04 F3)
+    // Touch-down prefetch of the next finer level (04 F3 "hover/touch-down"): a finger down often precedes a pinch; a
+    // mouse button down is a pan, so no intent is armed for 'drag' (REVIEW L12).
+    if (kind !== 'drag') this.scheduler.noteIntent(ts);
   }
   dragMove(dx: number, dy: number, ts: number, kind = 'drag'): void {
     this.pointerX += dx;
@@ -144,6 +146,8 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
       if (e.pointerType !== 'mouse' && e.timeStamp - lastTapTime < 300 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 30) {
         c.wheelLevels(DOUBLE_TAP_LEVELS, x, y, e.timeStamp, 'doubletap');
         lastTapTime = -1e9;
+        // The tapping finger is not a drag: forget it so a following move does not pan an un-anchored camera (REVIEW L5).
+        pointers.delete(e.pointerId);
         return;
       }
       lastTapTime = e.timeStamp;
@@ -221,6 +225,8 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
 
   window.addEventListener('keydown', (e) => {
     if (e.target instanceof HTMLElement && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    // Ctrl/Cmd +/- is browser zoom (it changes devicePixelRatio; resize() follows it), not a viewer command (REVIEW M9).
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
     switch (e.key) {
       case '+':
       case '=':

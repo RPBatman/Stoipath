@@ -1,8 +1,10 @@
 // Metrics sanity check (not a benchmark): drives the built viewer with REAL DOM input through Playwright
 // (mouse wheel bursts and a drag), then checks the gesture records against the per-frame log:
 //   1. timeToSharpMs is measured from the last input event (tSharp - tLastInput) and sharpAfterSettleMs from the
-//      settle instant (tSharp - tSettled); the frame at tSharp has sharpFraction 1 and no deficit cells, and every
-//      recorded frame between tLastInput and tSharp carries the gesture flag;
+//      settle instant (tSharp - tSettled); the frame at tSharp has sharpFraction 1 and no deficit, blank or fading
+//      cell, every recorded frame between tLastInput and tSharp carries the gesture flag, blurEndAfterInputMs is the
+//      last blurred frame (ancestor, blank OR fading) after the last input, and the headline ttsFromLastInputMs is
+//      that plus the display interval detected at that frame (0 when nothing was blurred after the last input);
 //   2. the sharp fraction is computed over the visible viewport only: after a jump into an unvisited level-0 area
 //      the number of tier-0 requests equals the number of L* cells intersecting the viewport, and the view reaches
 //      sharpFraction 1 with only those tiles (of 900 level-0 tiles);
@@ -86,11 +88,11 @@ const g = await page.evaluate(() => {
   const g = ex.gestures[ex.gestures.length - 1];
   const c = ex.frames.columns;
   const frames = [];
-  for (let i = 0; i < ex.frames.n; i++) frames.push({ ts: c.ts[i], sharp: c.sharpFraction[i], deficit: c.deficitCells[i], gesture: c.gesture[i], lstar: c.lstar[i], logZoom: c.logZoom[i] });
-  return { g, frames, n: ex.summary.gestures.n, i2r: ex.summary.inputToRafMs, latencies: ex.latencies.inputToRafMs.length };
+  for (let i = 0; i < ex.frames.n; i++) frames.push({ ts: c.ts[i], sharp: c.sharpFraction[i], deficit: c.deficitCells[i], blank: c.blankCells[i], fading: c.fadingCells[i], interval: c.displayIntervalMs[i], gesture: c.gesture[i], lstar: c.lstar[i], logZoom: c.logZoom[i] });
+  return { g, frames, n: ex.summary.gestures.n, i2r: ex.summary.inputToRafMs, byKind: ex.summary.inputToRafByKind, latencies: ex.latencies.inputToRafMs, kinds: ex.latencies.inputKinds };
 });
 console.log(`\nwheel burst gesture: kind ${g.g.kind} inputs ${g.g.inputs} synthetic ${g.g.synthetic} levelsZoomed ${g.g.levelsZoomed} (L* ${g.g.startLstar} -> ${g.g.endLstar}, logZoom ${g.g.startLogZoom.toFixed(2)} -> ${g.g.endLogZoom.toFixed(2)})`);
-console.log(`  tLastInput ${g.g.tLastInput.toFixed(1)}  tSettled ${g.g.tSettled?.toFixed(1)}  tSharp ${g.g.tSharp?.toFixed(1)}  TTS ${g.g.timeToSharpMs}  settle ${g.g.settleAfterInputMs}  sharpAfterSettle ${g.g.sharpAfterSettleMs}  blurEndAfterInput ${g.g.blurEndAfterInputMs.toFixed(1)}  maxBlur ${g.g.maxBlurMs.toFixed(1)}  deficit frames ${g.g.framesWithDeficit}/${g.g.frames}`);
+console.log(`  tLastInput ${g.g.tLastInput.toFixed(1)}  tSettled ${g.g.tSettled?.toFixed(1)}  tSharp ${g.g.tSharp?.toFixed(1)}  timeToSharp ${g.g.timeToSharpMs}  settle ${g.g.settleAfterInputMs}  sharpAfterSettle ${g.g.sharpAfterSettleMs}  blurEndAfterInput ${g.g.blurEndAfterInputMs.toFixed(1)}  ttsFromLastInput ${g.g.ttsFromLastInputMs.toFixed(1)}  maxBlur ${g.g.maxBlurMs.toFixed(1)}  blurred frames ${g.g.framesWithDeficit}/${g.g.frames} (fading ${g.g.framesFading})  endScale ${g.g.endScaleAtLstar.toFixed(2)}  pathRun ${g.g.pathRun}`);
 check(g.n === nBefore + 1, 'the six wheel notches were recorded as one gesture');
 check(g.g.kind === 'zoom-in' && !g.g.synthetic && g.g.inputs === 6, 'classified zoom-in, real (non-synthetic) input, 6 inputs');
 const lastWheelPage = tWheel[tWheel.length - 1];
@@ -99,16 +101,23 @@ check(g.g.tSharp !== null && Math.abs(g.g.timeToSharpMs - (g.g.tSharp - g.g.tLas
 check(g.g.tSettled !== null && Math.abs(g.g.sharpAfterSettleMs - (g.g.tSharp - g.g.tSettled)) < 1e-6, 'sharpAfterSettleMs == tSharp - tSettled');
 check(g.g.settleAfterInputMs >= 150, `settleAfterInputMs ${g.g.settleAfterInputMs} >= GESTURE_IDLE_MS (150): a gesture cannot end before the idle period`);
 const fSharp = g.frames.find((f) => f.ts === g.g.tSharp);
-check(fSharp !== undefined && fSharp.sharp === 1 && fSharp.deficit === 0, `frame at tSharp has sharpFraction 1 and 0 deficit cells (${JSON.stringify(fSharp)})`);
+check(fSharp !== undefined && fSharp.sharp === 1 && fSharp.deficit === 0 && fSharp.blank === 0 && fSharp.fading === 0, `frame at tSharp has sharpFraction 1 and no deficit, blank or fading cell (${JSON.stringify(fSharp)})`);
 const between = g.frames.filter((f) => f.ts > g.g.tLastInput && f.ts <= g.g.tSharp);
 check(between.length > 0 && between.every((f) => f.gesture === 1), `all ${between.length} frames between last input and tSharp carry the gesture flag`);
-const lastDeficit = g.frames.filter((f) => f.ts >= g.g.t0 && f.ts <= g.g.tSharp && f.deficit > 0).pop();
-const expectedBlurEnd = lastDeficit === undefined || lastDeficit.ts <= g.g.tLastInput ? 0 : lastDeficit.ts - g.g.tLastInput;
-check(Math.abs(g.g.blurEndAfterInputMs - expectedBlurEnd) < 1e-6, `blurEndAfterInputMs ${g.g.blurEndAfterInputMs.toFixed(1)} == last deficit frame after last input (${expectedBlurEnd.toFixed(1)})`);
+const isBlurred = (f) => f.deficit > 0 || f.blank > 0 || f.fading > 0;
+const lastBlurred = g.frames.filter((f) => f.ts >= g.g.t0 && f.ts <= g.g.tSharp && isBlurred(f)).pop();
+const expectedBlurEnd = lastBlurred === undefined || lastBlurred.ts <= g.g.tLastInput ? 0 : lastBlurred.ts - g.g.tLastInput;
+check(Math.abs(g.g.blurEndAfterInputMs - expectedBlurEnd) < 1e-6, `blurEndAfterInputMs ${g.g.blurEndAfterInputMs.toFixed(1)} == last blurred frame (ancestor, blank or fading) after last input (${expectedBlurEnd.toFixed(1)})`);
+const expectedTts = expectedBlurEnd === 0 ? 0 : expectedBlurEnd + lastBlurred.interval;
+check(Math.abs(g.g.ttsFromLastInputMs - expectedTts) < 1e-3, `ttsFromLastInputMs ${g.g.ttsFromLastInputMs.toFixed(1)} == blurEnd + display interval at that frame (${expectedTts.toFixed(1)})`);
+const fadingFrames = g.frames.filter((f) => f.ts >= g.g.t0 && f.ts <= g.g.tSharp && f.fading > 0).length;
+check(fadingFrames === g.g.framesFading, `framesFading ${g.g.framesFading} == frames with a cross-fade in the log (${fadingFrames}); they count as blurred`);
+check(g.g.pathRun === 0 && g.g.censored === false && g.g.endMagnified === false && g.g.endScaleAtLstar > 0.5 && g.g.endScaleAtLstar <= 1.0, `real input: pathRun 0, not censored, ends inside the LOD band (s = ${g.g.endScaleAtLstar.toFixed(2)})`);
 const zoomAtEnd = g.frames.find((f) => f.ts === g.g.tSharp);
 // frames.columns.logZoom is a Float32 column; endLogZoom is float64.
 check(zoomAtEnd !== undefined && Math.abs(zoomAtEnd.logZoom - g.g.endLogZoom) < 1e-5 && g.g.endLogZoom - g.g.startLogZoom > 1.9, `six 1/3-level notches zoomed ${(g.g.endLogZoom - g.g.startLogZoom).toFixed(2)} levels; endLogZoom matches the frame log at tSharp`);
 check(g.i2r.n >= 6 && g.i2r.p50 !== null, `inputToRafMs populated for real input (n=${g.i2r.n}, p50 ${g.i2r.p50} ms)`);
+check(g.latencies.every((v) => v >= 0) && g.kinds.length === g.latencies.length && g.kinds.includes('wheel') && g.byKind.wheel !== undefined, `inputToRafMs samples are >= 0 and carry an input kind (by kind: ${Object.keys(g.byKind).join(', ')})`);
 
 // ---- real drag (pan) with the mouse.
 await settled();
