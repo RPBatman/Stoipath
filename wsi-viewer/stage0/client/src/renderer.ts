@@ -4,6 +4,7 @@
  * 04 F5 (texture array, texSubImage, per-frame upload budget), 04 F7 (trilinear, cross-fade), A §2/§3.
  */
 import {
+  LOD_S_MAX,
   LOD_S_MIN,
   LOWMEM_GIB,
   MAX_INSTANCES,
@@ -107,6 +108,18 @@ export interface LayerChoice {
 export function viewportTilesAtMinScale(viewportW: number, viewportH: number, tileSize: number): number {
   const cols = Math.ceil(viewportW / (tileSize * LOD_S_MIN)) + 1;
   const rows = Math.ceil(viewportH / (tileSize * LOD_S_MIN)) + 1;
+  return cols * rows;
+}
+
+/**
+ * Tiles a viewport needs at the typical scale of the L* band, s = sqrt(LOD_S_MIN * LOD_S_MAX) (~0.71: a tile then
+ * covers ~362 device px per axis; +1 per axis for grid alignment). Used by the warm-base budget (constants.ts
+ * WARM_BASE_MIN_FREE_VIEWPORTS); the array itself is still sized for the s = LOD_S_MIN worst case above.
+ */
+export function viewportTilesAtTypicalScale(viewportW: number, viewportH: number, tileSize: number): number {
+  const s = Math.sqrt(LOD_S_MIN * LOD_S_MAX);
+  const cols = Math.ceil(viewportW / (tileSize * s)) + 1;
+  const rows = Math.ceil(viewportH / (tileSize * s)) + 1;
   return cols * rows;
 }
 

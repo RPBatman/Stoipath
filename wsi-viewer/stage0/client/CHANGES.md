@@ -136,3 +136,14 @@ except where the line says otherwise. The behaviour changes, in one place:
 - **Documents**: `MEASUREMENT_PROTOCOL.md` §1, §4–§7, `results/README.md`, `client/README.md`,
   `harness/results/README.md` rewritten to the new definitions; `stage0/README.md` added (what Stage 0
   is, build, serve, deploy, harness, where protocol and results live).
+
+## 2026-10-25 (afternoon) — warm-base budget fix
+
+- The warm base (the 64-tile 4096-px level) was dropped on large high-DPR desktops: the budget rule required two
+  viewports of L* tiles at the s = 0.5 worst case (2864x1468 device px → 91 tiles → 182 > 256 − 21 − 64 = 171),
+  although warm tiles are evicted last. The rule is now 1.5 *typical* viewports (s = sqrt(0.5·1.0) ≈ 0.71,
+  `viewportTilesAtTypicalScale`): the owner's laptop loads it (171 ≥ 81), a 192-layer iPad loads it (107 ≥ 95),
+  the 112-layer phone still does not (27 < 36). Overlay wording now states the budget instead of "array too small".
+- `window.__stage0.state()` also reports `blankCells`; `harness/check-metrics.mjs` asserts "ancestor drawn or already
+  sharp, never blank" right after a jump instead of "every cell still deficit", which raced with fast loopback tiles
+  (flaky before this change as well).

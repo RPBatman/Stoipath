@@ -73,9 +73,10 @@ export function applyPinBudget(p: Pyramid, layerCount: number): boolean {
 }
 
 /**
- * Drop the warm base when the array cannot hold it beside the pinned base and WARM_BASE_MIN_FREE_VIEWPORTS viewports
- * of L* tiles (`viewportTiles` = tiles a viewport needs at s = 0.5, renderer.ts viewportTilesAtMinScale). Returns
- * true when the warm base was dropped (the export then shows `requestedWarmBase = 0` and a note).
+ * Drop the warm base when the array cannot hold it beside the pinned base and WARM_BASE_MIN_FREE_VIEWPORTS typical
+ * viewports of L* tiles (`viewportTiles` = tiles a viewport needs at the typical scale s ~ 0.71, renderer.ts
+ * viewportTilesAtTypicalScale; warm tiles are evicted last, so the s = 0.5 worst case need not fit beside them).
+ * Returns true when the warm base was dropped (the export then shows `requestedWarmBase = 0` and a note).
  */
 export function applyWarmBudget(p: Pyramid, layerCount: number, viewportTiles: number): boolean {
   if (p.warmBaseTileCount === 0) return false;

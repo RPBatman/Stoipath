@@ -66,7 +66,10 @@ const settled = () =>
   const y1 = Math.floor((target.cy + height / 2 / k - 1e-6) / 512);
   const cells = (x1 - x0 + 1) * (y1 - y0 + 1);
   console.log(`jump to level 0 at (${target.cx}, ${target.cy}): sharp ${first.sharpFraction.toFixed(3)} with ${first.deficitCells} deficit cells right after the jump -> ${after.s.sharpFraction} after ${after.tier0 - before} tier-0 requests (viewport covers ${cells} level-0 cells of 900)`);
-  check(first.sharpFraction < 1 && first.deficitCells === cells, `all ${cells} visible cells are deficit cells right after the jump (ancestor drawn, never blank)`);
+  // Two animation frames after the jump some level-0 tiles can already have arrived over loopback (2026-10-25: 1-5 of 12
+  // on this VM, both before and after the warm-base change), so the assertion is "ancestor drawn where L* is missing,
+  // never blank", not "every cell is still a deficit cell".
+  check(first.sharpFraction < 1 && first.deficitCells >= 1 && first.blankCells === 0, `right after the jump the visible cells are deficit (ancestor drawn: ${first.deficitCells} of ${cells}) or already sharp, and none is blank (${first.blankCells})`);
   check(after.tier0 - before === cells, `tier-0 requests == visible cells (${after.tier0 - before} == ${cells}): sharpness is judged over the viewport only`);
   check(after.s.sharpFraction === 1 && after.s.deficitCells === 0, 'sharp fraction reaches exactly 1 with only the viewport tiles resident');
 }

@@ -27,13 +27,19 @@ export const PINNED_BASE_MAX_PX = 2048;
  */
 export const WARM_BASE_MAX_PX = 4096;
 /**
- * The warm base is loaded only when the texture array leaves at least this many viewports of L* tiles (at s = 0.5,
- * the most a viewport can need) free beside the pinned and warm bases. On the 112-layer phone budget (91 non-pinned
- * layers for a 64-tile warm base plus a ~40-tile portrait viewport, ring and partners) prefetch churned the warm
- * base out and level 2 was re-fetched on every zoom-out: 81 % prefetch waste and twice the bytes in the headless
- * phone probe. Without it the pinned level 3 (2048 px) is the fallback, still never blank (REVIEW H5 / M2 follow-up).
+ * The warm base is loaded only when the texture array leaves at least this many TYPICAL viewports of L* tiles free
+ * beside the pinned and warm bases (a typical viewport = the tiles needed at the geometric-mean scale of the L* band,
+ * s = sqrt(LOD_S_MIN * LOD_S_MAX) ~ 0.71; renderer.ts viewportTilesAtTypicalScale). On the 112-layer phone budget
+ * (27 free layers against a ~24-tile typical portrait viewport plus ring and partners) prefetch churned the warm base
+ * out and level 2 was re-fetched on every zoom-out: 81 % prefetch waste and twice the bytes in the headless phone
+ * probe, so the phone stays without it (pinned level 3, 2048 px, is the fallback, still never blank). The earlier
+ * rule, two viewports at the s = 0.5 worst case, also dropped the warm base on large high-DPR desktops (a 2864x1468
+ * device-pixel laptop needs 91 tiles at s = 0.5; 256 - 21 - 64 = 171 < 182) although its warm tiles are evicted
+ * last and 171 free layers hold a typical 54-tile viewport three times over (owner's laptop, 2026-10-25).
+ * Worked examples: 256-layer 2864x1468 laptop 171 >= 1.5*54 -> loaded; 192-layer 2048x2732 iPad 107 >= 1.5*63 ->
+ * loaded; 112-layer 786x1704 phone 27 < 1.5*24 -> not loaded.
  */
-export const WARM_BASE_MIN_FREE_VIEWPORTS = 2;
+export const WARM_BASE_MIN_FREE_VIEWPORTS = 1.5;
 /**
  * Non-pinned layers the texture array must keep for L* tiles. If the array (after a GL_OUT_OF_MEMORY fallback or
  * ?layers=) cannot hold the pinned base plus this many layers, coarser-only levels are pinned instead, so the base

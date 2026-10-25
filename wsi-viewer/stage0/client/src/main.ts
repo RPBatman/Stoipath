@@ -20,6 +20,7 @@ import {
   UPLOAD_BUDGET_MS_IDLE,
   UPLOAD_MAX_PER_FRAME_GESTURE,
   UPLOAD_MAX_PER_FRAME_IDLE,
+  WARM_BASE_MIN_FREE_VIEWPORTS,
 } from './constants';
 import { DecodePool, chooseWorkerCount } from './decode-pool';
 import type { WorkerResponse } from './decode-messages';
@@ -29,7 +30,7 @@ import { LodSelector } from './lod';
 import { Metrics, type DeviceInfo, type FrameInput, type Summary } from './metrics';
 import { Overlay } from './overlay';
 import { applyPinBudget, applyWarmBudget, loadPyramid, resolveManifestUrl } from './pyramid';
-import { Renderer, chooseLayerCount, viewportTilesAtMinScale, type DeviceClass } from './renderer';
+import { Renderer, chooseLayerCount, viewportTilesAtTypicalScale, type DeviceClass } from './renderer';
 import { isPrefetchKind } from './request-kind';
 import { Scheduler } from './scheduler';
 import { ScriptedPath } from './scripted-path';
@@ -60,6 +61,8 @@ interface Stage0Api {
     lstar: number;
     sharpFraction: number;
     deficitCells: number;
+    /** Visible cells with nothing to draw (no L* tile and no resident ancestor); must always be 0. */
+    blankCells: number;
     fadingCells: number;
     partnerCells: number;
     descendantCells: number;
@@ -212,10 +215,11 @@ async function main(): Promise<void> {
   metrics.rendererInitMs = renderer.initMs;
   let layersReason = renderer.layerCount === choice.layers ? choice.reason : `${choice.reason}; texStorage3D fell back from ${choice.layers}`;
   // The pinned base must fit with room to spare, otherwise it never completes (REVIEW H5 deadlock); the warm base is
-  // loaded only when it fits beside two viewports of L* tiles, otherwise prefetch churns it out (WARM_BASE_MIN_FREE_VIEWPORTS).
-  const viewportTiles = viewportTilesAtMinScale(viewportDevW, viewportDevH, pyramid.tileSize);
+  // loaded only when it fits beside WARM_BASE_MIN_FREE_VIEWPORTS typical viewports of L* tiles, otherwise prefetch
+  // churns it out (constants.ts).
+  const viewportTiles = viewportTilesAtTypicalScale(viewportDevW, viewportDevH, pyramid.tileSize);
   if (applyPinBudget(pyramid, renderer.layerCount)) metrics.notes.push(`pinned base reduced to levels >= ${pyramid.basePinLevel} (${pyramid.basePinTileCount} tiles) to fit ${renderer.layerCount} layers`);
-  if (applyWarmBudget(pyramid, renderer.layerCount, viewportTiles)) metrics.notes.push(`warm base not loaded: ${renderer.layerCount} layers leave fewer than 2 viewports (${viewportTiles} tiles at s = 0.5 each) beside the pinned base and the 4096-px level`);
+  if (applyWarmBudget(pyramid, renderer.layerCount, viewportTiles)) metrics.notes.push(`warm base not loaded: ${renderer.layerCount} layers leave fewer than ${WARM_BASE_MIN_FREE_VIEWPORTS} typical viewports (${viewportTiles} tiles at s ~ 0.71 each) beside the pinned base and the 4096-px level`);
   const cache = new TileCache(renderer.layerCount);
   const cam = new Camera();
   cam.setSlide(pyramid.width, pyramid.height);
@@ -313,7 +317,7 @@ async function main(): Promise<void> {
   metrics.setDevice(device);
   const baseText = (): string =>
     `pinned base levels ${pyramid.basePinLevel}-${pyramid.levels.length - 1} (${pyramid.basePinTileCount} tiles), ` +
-    (pyramid.warmBaseTileCount > 0 ? `warm base levels ${pyramid.warmBaseLevel}-${pyramid.basePinLevel - 1} (${pyramid.warmBaseTileCount} tiles)` : 'no warm base (array too small for it)');
+    (pyramid.warmBaseTileCount > 0 ? `warm base levels ${pyramid.warmBaseLevel}-${pyramid.basePinLevel - 1} (${pyramid.warmBaseTileCount} tiles)` : `no warm base (${renderer.layerCount} layers leave fewer than ${WARM_BASE_MIN_FREE_VIEWPORTS} typical viewports free)`);
   overlay.setDevice(
     device,
     `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}; ${baseText()}\n` +
@@ -358,6 +362,7 @@ async function main(): Promise<void> {
       lstar: lod.current,
       sharpFraction: planner.stats.sharpFraction,
       deficitCells: planner.stats.deficitCells,
+      blankCells: planner.stats.blankCells,
       fadingCells: planner.stats.fadingCells,
       partnerCells: planner.stats.partnerCells,
       descendantCells: planner.stats.descendantCells,
@@ -435,7 +440,7 @@ async function main(): Promise<void> {
     renderer.restore(layers);
     writeLayersHint(renderer.layerCount);
     applyPinBudget(pyramid, renderer.layerCount);
-    applyWarmBudget(pyramid, renderer.layerCount, viewportTilesAtMinScale(renderer.width, renderer.height, pyramid.tileSize));
+    applyWarmBudget(pyramid, renderer.layerCount, viewportTilesAtTypicalScale(renderer.width, renderer.height, pyramid.tileSize));
     cache.reset(renderer.layerCount);
     scheduler.resetResidency();
     planner.reset();
