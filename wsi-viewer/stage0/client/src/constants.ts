@@ -11,8 +11,27 @@
 // ---------------------------------------------------------------- pyramid / residency
 /** Tile edge in pixels. 04 F5, A §2 (512² RGBA8 layers). The manifest may override; the GPU array is sized from it. */
 export const TILE_SIZE_DEFAULT = 512;
-/** Levels whose longest side is <= this are loaded at open and never evicted. 04 F2 item 3; A §3 "Pinned base". */
-export const PINNED_BASE_MAX_PX = 4096;
+/**
+ * Levels whose longest side is <= this are loaded at open and never evicted. 04 F2 item 3 and A §3 say "<= 4096 px"
+ * and budget "~1-2 MB" for it; this pyramid's 4096-px base measures 9.5 MB of JPEG / 85 tiles = 106 MiB of RGBA8+mip
+ * on the GPU (data/SOURCE.md; REVIEW H5, M2), which blocked every visible tile at open and ate the phone GPU budget.
+ * Stage 0 therefore pins <= 2048 px (levels 3-5: 21 tiles, 2.4 MB, 26 MiB) and loads the 4096-px level as the
+ * WARM base below. The worst case anywhere on the slide is then level 3 (8x coarser), still never blank.
+ */
+export const PINNED_BASE_MAX_PX = 2048;
+/**
+ * Levels <= this px (but > PINNED_BASE_MAX_PX) form the WARM base: requested at open at the lowest priority tier
+ * (behind visible tiles and every prefetch tier, inside the prefetch slot share so it never starves visible tiles),
+ * evicted only when no other non-pinned layer can be (tile-cache.ts). 04 F2 item 3 / A §3 "<= 4096 px base",
+ * demoted from pinned to warm for the reason above (REVIEW M2).
+ */
+export const WARM_BASE_MAX_PX = 4096;
+/**
+ * Non-pinned layers the texture array must keep for L* tiles. If the array (after a GL_OUT_OF_MEMORY fallback or
+ * ?layers=) cannot hold the pinned base plus this many layers, coarser-only levels are pinned instead, so the base
+ * can always finish loading (REVIEW H5: otherwise `basePinned` never becomes true and visible tiles stall for ever).
+ */
+export const TEXTURE_LAYERS_RESERVE = 32;
 
 // ---------------------------------------------------------------- level of detail
 /** Device pixels per texel above which the current level is magnified and we switch finer. 04 F2 item 1 (s ∈ [0.5, 1.0]). */
@@ -45,6 +64,8 @@ export const PREFETCH_SLOTS_MIN = 2;
 export const CANCEL_BYTES_FRACTION = 0.3;
 /** A tile must be absent from the wanted set this many consecutive frames before it is cancelled (avoids flapping). task. */
 export const CANCEL_GRACE_FRAMES = 3;
+/** Without a Content-Length the byte fraction is unknown: keep the fetch once this many bytes have arrived (REVIEW L3). task. */
+export const CANCEL_KEEP_UNKNOWN_BYTES = 16_384;
 /** Retry a failed tile after this long, at most FAILED_MAX_ATTEMPTS times. task. */
 export const FAILED_RETRY_MS = 2000;
 export const FAILED_MAX_ATTEMPTS = 3;
@@ -82,6 +103,8 @@ export const UPLOAD_BUDGET_MS_IDLE = 6;
 /** Hard cap on uploads per frame regardless of measured time (first-call outliers). 04 F5 "2-4 tiles per frame on phones". */
 export const UPLOAD_MAX_PER_FRAME_GESTURE = 4;
 export const UPLOAD_MAX_PER_FRAME_IDLE = 12;
+/** Decoded tiles (ImageBitmaps, ~1.25 MiB each in RAM) waiting for the upload budget; beyond this the oldest non-visible ones are dropped and may be re-requested (REVIEW L4). task. */
+export const UPLOAD_QUEUE_MAX = 48;
 /**
  * TEXTURE_2D_ARRAY layers (512² RGBA8 each, 1 MiB + 0.25 MiB mip). The count is sized to the device instead of
  * fixed: pinned base tiles + TEXTURE_VIEWPORT_HEADROOM viewports of L* tiles at s = 0.5 (the most tiles a viewport
@@ -92,10 +115,19 @@ export const TEXTURE_LAYERS_MAX = 256;
 export const TEXTURE_LAYERS_MIN = 128;
 /** Viewports' worth of L* tiles kept beyond the pinned base (current view + ring + trilinear partners + prefetch). task. */
 export const TEXTURE_VIEWPORT_HEADROOM = 2.5;
-/** Upper bound when the browser reports deviceMemory <= LOWMEM_GIB (A §2 "128 MiB phone" L0 budget, raised to hold this pyramid's 85-tile base plus one DPR-2 phone viewport). */
-export const TEXTURE_LAYERS_LOWMEM_MAX = 160;
-/** deviceMemory (GiB) at or below which TEXTURE_LAYERS_LOWMEM_MAX applies. Only Chromium on https reports it. task. */
+/**
+ * Upper bound on a phone: A §2 "128 MiB phone" L0 budget; 112 layers x 1.25 MiB = 140 MiB with the mip level, holding
+ * the 21-tile pinned base plus two DPR-2 phone viewports at s = 0.5. Applies when deviceMemory <= LOWMEM_GIB is
+ * reported, and also when deviceMemory is unknown but the device is phone-class by UA/touch (REVIEW H5: deviceMemory
+ * is Chromium-only and secure-context-only, so over the protocol's plain-http LAN and on Safari it is never known).
+ */
+export const TEXTURE_LAYERS_PHONE_MAX = 112;
+/** Upper bound on a tablet (iPad / Android tablet): A §2 "256 MiB iPad" budget; 192 layers = 240 MiB with mips. */
+export const TEXTURE_LAYERS_TABLET_MAX = 192;
+/** deviceMemory (GiB) at or below which TEXTURE_LAYERS_PHONE_MAX applies. Only Chromium on https reports it. task. */
 export const LOWMEM_GIB = 4;
+/** sessionStorage key under which a context-loss recovery stores the layer count that worked, so the next load in the same tab starts there (REVIEW H5). */
+export const LAYERS_HINT_STORAGE_KEY = 'stage0.layersHint';
 /** Mip levels allocated per layer: level 0 (512²) + level 1 (256²). Minification never exceeds ~2.1x under the LOD band, so one mip suffices. 04 F7 "Mipmapped / trilinear". */
 export const TEXTURE_MIP_LEVELS = 2;
 
@@ -123,15 +155,22 @@ export const KEY_ZOOM_LEVELS = 1;
 export const KEY_PAN_PX = 160;
 /** Double-click / double-tap zooms one level (2x) at the pointer. 04 F6. */
 export const DOUBLE_TAP_LEVELS = 1;
-/** How far beyond fit-to-screen the user may zoom out (levels) and how far past level 0 they may magnify (levels). task. */
+/**
+ * How far beyond fit-to-screen the user may zoom out (levels) and how far past level 0 they may magnify (levels).
+ * Magnification at rest violates 04 F2 ("never magnify a tile that will be shown at rest"), so it is allowed for
+ * the user's convenience but flagged: `scaleAtLstar` > 1 marks the frame `magnified`, the HUD shows it, and bursts
+ * ending magnified are excluded from the zoom-in-burst statistics (REVIEW H2). task.
+ */
 export const MIN_ZOOM_BELOW_FIT_LEVELS = 0.5;
 export const MAX_ZOOM_ABOVE_L0_LEVELS = 1.5;
 /**
- * The camera counts as settled (gesture over, for the metrics) when the presented transform moved less than this
- * many device px at the viewport edge in the last frame: sub-pixel motion is invisible, while the exponential
- * easing itself never reaches its target exactly. task (gesture end definition).
+ * The camera counts as settled (gesture over, for the metrics) when the velocity of the presented transform at the
+ * farthest viewport corner from the anchor falls below this (device px per ms): 0.03 px/ms is 0.5 px per 60 Hz
+ * frame, i.e. motion a viewer no longer perceives, while the exponential easing itself never reaches its target.
+ * The velocity is computed from the camera state (residual / tau), not from the per-frame delta, so a 30 fps device
+ * settles at the same instant after the last input as a 120 Hz one (REVIEW H3, L13). task (gesture end definition).
  */
-export const SETTLE_MOTION_PX = 0.5;
+export const SETTLE_EDGE_VELOCITY_PX_PER_MS = 0.03;
 /** Residuals below these are snapped to the target (invisible snap, ends the redraw loop). task. */
 export const SETTLE_EPS_LOG = 1 / 4096;
 export const SETTLE_EPS_PX = 0.05;
@@ -140,9 +179,9 @@ export const FOCUS_HOLD_MS = 500;
 
 // ---------------------------------------------------------------- measurement
 /**
- * A gesture ends when no input arrived for this long and the camera has settled (motion < SETTLE_MOTION_PX/frame).
- * Time-to-sharp is counted from this moment (MEASUREMENT_PROTOCOL §6; A §3 targets are "TTS after settle");
- * the 04 F8 variant counted from the last input event is exported alongside. task.
+ * A gesture ends when no input arrived for this long and the camera has settled (edge velocity below
+ * SETTLE_EDGE_VELOCITY_PX_PER_MS). `sharpAfterSettleMs` (A §3 "time-to-sharp after settle") is counted from that
+ * moment; the headline `ttsFromLastInputMs` (04 F8 TTS: last input -> end of pop-in) does not depend on it. task.
  */
 export const GESTURE_IDLE_MS = 150;
 /** A gesture whose |log2 zoom change| is below this counts as a pan, not a zoom (sub-notch wheel jitter). task. */
@@ -151,18 +190,25 @@ export const ZOOM_GESTURE_MIN_LEVELS = 0.05;
 export const DROPPED_FRAME_FACTOR = 1.5;
 /**
  * Display interval from rAF cadence (task): rAF never fires faster than the display, so the interval is the shortest
- * frame delta that recurs, not the median (a struggling renderer would otherwise report 30 Hz). Deltas go into
- * DISPLAY_INTERVAL_BIN_MS bins; the lowest bin holding >= DISPLAY_INTERVAL_MIN_SHARE of all samples (and at least
- * 3 samples) is taken, re-estimated every DISPLAY_INTERVAL_SAMPLE_FRAMES frames, and snapped to a standard refresh
- * rate when within DISPLAY_INTERVAL_SNAP_TOLERANCE of one (the raw value is exported too).
+ * frame delta that recurs, not the median (a struggling renderer would otherwise report 30 Hz). It is estimated over a
+ * sliding window of the last DISPLAY_INTERVAL_WINDOW_FRAMES deltas, not the whole run, because phones switch the
+ * panel between 60 and 120 Hz with touch ("touch boost"); a whole-run estimate locked at 8.3 ms and then counted
+ * every idle 16.7 ms frame as dropped (REVIEW M3). Deltas go into DISPLAY_INTERVAL_BIN_MS bins; the lowest bin
+ * holding >= DISPLAY_INTERVAL_MIN_SHARE of the window (and at least 3 samples) is taken, re-estimated every
+ * DISPLAY_INTERVAL_SAMPLE_FRAMES frames, snapped to a standard refresh rate within DISPLAY_INTERVAL_SNAP_TOLERANCE,
+ * and stored per frame (`frames.columns.displayIntervalMs`); dropped frames are judged against the per-frame value
+ * everywhere. The whole-run delta histogram is exported so mode switches can be seen.
  */
-export const DISPLAY_INTERVAL_SAMPLE_FRAMES = 60;
+export const DISPLAY_INTERVAL_WINDOW_FRAMES = 60;
+export const DISPLAY_INTERVAL_SAMPLE_FRAMES = 15;
 export const DISPLAY_INTERVAL_BIN_MS = 0.25;
-export const DISPLAY_INTERVAL_MIN_SHARE = 0.05;
+export const DISPLAY_INTERVAL_MIN_SHARE = 0.1;
 export const DISPLAY_INTERVAL_SNAP_TOLERANCE = 0.08;
 export const STANDARD_REFRESH_HZ = [240, 165, 144, 120, 90, 75, 60, 50] as const;
-/** Per-frame log capacity (10 min at 60 Hz). Recording stops when full; the count of unrecorded frames is exported. task. */
-export const FRAME_LOG_CAPACITY = 36_000;
+/** A rAF delta above this is a paused (hidden / backgrounded) tab, not a dropped frame: excluded from frame statistics and counted in `pausedFrames` (REVIEW M10). task. */
+export const PAUSE_FRAME_MS = 1000;
+/** Per-frame log capacity (20 min at 60 Hz, 10 min at 120 Hz). Recording stops when full; the count of unrecorded frames is exported. task. */
+export const FRAME_LOG_CAPACITY = 72_000;
 /** A gesture that is not sharp this long after the camera settled is recorded as timed out. task. */
 export const SHARP_TIMEOUT_MS = 8000;
 /** PerformanceObserver('event') durationThreshold. task; 04 F8 "Event Timing API". */

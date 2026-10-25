@@ -7,7 +7,13 @@
  */
 import { LOD_HYSTERESIS_LEVELS, LOD_S_MAX, LOD_S_MIN } from './constants';
 
-const S_LOWER = LOD_S_MIN * 2 ** -LOD_HYSTERESIS_LEVELS;
+export const S_LOWER = LOD_S_MIN * 2 ** -LOD_HYSTERESIS_LEVELS;
+
+/** True when `level` would stay L* at zoom k under the hysteresis band (REVIEW L2: the prefetcher asks this for the predicted zoom). */
+export function levelHolds(k: number, level: number): boolean {
+  const s = scaleAt(k, level);
+  return s >= S_LOWER && s <= LOD_S_MAX;
+}
 
 /** Stateless choice: the level whose s lies in (0.5, 1.0], clamped to the pyramid (level 0 may be magnified). */
 export function idealLevel(k: number, levelCount: number): number {
