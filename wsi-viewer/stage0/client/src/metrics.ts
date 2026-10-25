@@ -11,6 +11,11 @@
  *  - `sharpAfterSettleMs`: camera settled (last input + GESTURE_IDLE_MS, edge motion < SETTLE_MOTION_PX) → first
  *    sharp frame. This isolates scheduler + network + decode + upload and is what the A §3 targets are written
  *    for; it is 0 when the view is already sharp when it settles.
+ *  - `blurEndAfterInputMs`: last input event → the last frame of the gesture that drew any ancestor (coarser than
+ *    L*) or blank cell, 0 when no such frame followed the last input. Unlike the two above it does not wait for the
+ *    camera to settle, so on a fast network it shows how far into the easing tail the pop-in still reached, and
+ *    unlike a "first sharp frame after input" it is not fooled by a frame that is sharp at a coarser L* before the
+ *    zoom crosses into the destination level. (04 F8 "TTS: last input → first frame with NTF = 0", made robust.)
  */
 import * as constants from './constants';
 import {
@@ -106,6 +111,8 @@ export interface GestureRecord {
   settleAfterInputMs: number | null;
   /** tSharp - tSettled: the tile pipeline alone (A §3 targets); 0 when sharp at settle. */
   sharpAfterSettleMs: number | null;
+  /** Last input → last frame with any ancestor / blank cell drawn (0 if none after the last input); independent of settling. */
+  blurEndAfterInputMs: number;
   frames: number;
   framesWithDeficit: number;
   /** Longest run of consecutive frames with any ancestor drawn, in ms. */
@@ -135,6 +142,7 @@ export interface GestureSummary {
   timeToSharpMs: Percentiles;
   settleAfterInputMs: Percentiles;
   sharpAfterSettleMs: Percentiles;
+  blurEndAfterInputMs: Percentiles;
   maxBlurMs: Percentiles;
   deficitFramePct: Percentiles;
   blurAreaTimeLevelS: Percentiles;
@@ -189,7 +197,7 @@ export interface Summary {
     /** Per request kind: how many were requested, received and drawn at least once. */
     byKind: Record<string, { requested: number; received: number; drawn: number }>;
   };
-  cache: { layers: number; resident: number; pinned: number; evictions: number; uploadStalls: number };
+  cache: { layers: number; resident: number; pinned: number; evictions: number; uploadStalls: number; prefetchHeldFrames: number };
   baseLoadedAtMs: number | null;
   blankFramesAfterBase: number;
   device: DeviceInfo;
@@ -392,6 +400,7 @@ export class Metrics {
         timeToSharpMs: null,
         settleAfterInputMs: null,
         sharpAfterSettleMs: null,
+        blurEndAfterInputMs: 0,
         frames: 0,
         framesWithDeficit: 0,
         maxBlurMs: 0,
@@ -549,6 +558,9 @@ export class Metrics {
       g.framesWithDeficit++;
       if (this.gBlurRunStart < 0) this.gBlurRunStart = now - dt;
       g.maxBlurMs = Math.max(g.maxBlurMs, now - this.gBlurRunStart);
+      // This frame's draw list still holds an ancestor; it is presented until the next frame, which is `now - tLastInput`
+      // plus one display interval after the last input. Grows monotonically because `now` does.
+      if (now > g.tLastInput) g.blurEndAfterInputMs = now - g.tLastInput;
     } else {
       this.gBlurRunStart = -1;
     }
@@ -606,6 +618,7 @@ export class Metrics {
       timeToSharpMs: col(gs.map((g) => g.timeToSharpMs)),
       settleAfterInputMs: col(gs.map((g) => g.settleAfterInputMs)),
       sharpAfterSettleMs: col(gs.map((g) => g.sharpAfterSettleMs)),
+      blurEndAfterInputMs: col(gs.map((g) => g.blurEndAfterInputMs)),
       maxBlurMs: col(gs.map((g) => g.maxBlurMs)),
       deficitFramePct: col(gs.map((g) => (g.frames > 0 ? (100 * g.framesWithDeficit) / g.frames : null))),
       blurAreaTimeLevelS: col(gs.map((g) => g.blurAreaTimeLevelS)),
@@ -736,7 +749,7 @@ export class Metrics {
         prefetchWastePct: prefetchWaste,
         byKind: tilesByKind,
       },
-      cache: { layers: cache.layers, resident: cache.resident, pinned: cache.pinned, evictions: cache.evictions, uploadStalls: this.uploadStalls },
+      cache: { layers: cache.layers, resident: cache.resident, pinned: cache.pinned, evictions: cache.evictions, uploadStalls: this.uploadStalls, prefetchHeldFrames: c?.prefetchHeldFrames ?? 0 },
       baseLoadedAtMs: this.baseLoadedAt === null ? null : Math.round(this.baseLoadedAt - this.t0),
       blankFramesAfterBase: this.blankFramesAfterBase,
       device: dev,

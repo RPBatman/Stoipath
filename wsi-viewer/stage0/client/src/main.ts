@@ -41,7 +41,26 @@ interface Stage0Api {
   runPath(): void;
   /** Test hook: jump the camera (world px, log2 zoom) without easing. */
   jumpTo(wx: number, wy: number, logZoom: number): void;
-  state(): { lstar: number; sharpFraction: number; resident: number; inflight: number; logZoom: number; baseLoaded: boolean };
+  /** log2 zoom of fit-to-screen for the current viewport (harness/screens.mjs). */
+  fitLogZoom(): number;
+  state(): {
+    lstar: number;
+    sharpFraction: number;
+    deficitCells: number;
+    resident: number;
+    inflight: number;
+    decodeOutstanding: number;
+    uploadQueue: number;
+    logZoom: number;
+    cx: number;
+    cy: number;
+    baseLoaded: boolean;
+    gestureActive: boolean;
+    cameraAnimating: boolean;
+    /** Scheduler room for prefetch (non-pinned layers minus wanted residents, decoded-awaiting-upload and in flight). */
+    room: number;
+    evictions: number;
+  };
   pathDone: boolean;
 }
 declare global {
@@ -220,13 +239,23 @@ async function main(): Promise<void> {
       if (!path.running) path.start(performance.now());
     },
     jumpTo: (wx, wy, logZoom) => cam.jumpTo(wx, wy, logZoom),
+    fitLogZoom: () => cam.fitLogZoom,
     state: () => ({
       lstar: lod.current,
       sharpFraction: planner.stats.sharpFraction,
+      deficitCells: planner.stats.deficitCells,
       resident: cache.residentCount,
       inflight: scheduler.inflightCount,
+      decodeOutstanding: pool.outstanding,
+      uploadQueue: renderer.uploadQueue.length,
       logZoom: cam.logZoom,
+      cx: cam.cx,
+      cy: cam.cy,
       baseLoaded: scheduler.basePinned,
+      gestureActive: metrics.gestureActive,
+      cameraAnimating: cam.animating || cam.dragging,
+      room: scheduler.lastRoom,
+      evictions: cache.evictions,
     }),
     pathDone: false,
   };
@@ -276,7 +305,7 @@ async function main(): Promise<void> {
     logZoom: 0,
     cameraAnimating: false,
   };
-  const isUrgent = (key: number): boolean => planner.isCellVisible(key, frame);
+  const isUrgent = (key: number): boolean => planner.isCellVisible(key);
   let autoPathStarted = false;
 
   const loop = (rafTs: number): void => {

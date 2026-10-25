@@ -64,10 +64,10 @@ class CellStore {
     this.fadeFrom[slot] = -1;
     return slot;
   }
-  /** True when the cell was in the draw list in `frame` or the frame before (uploads run before this frame's plan). */
-  isVisible(key: number, frame: number): boolean {
+  /** True when the cell was in the draw list of the plan run in `planFrame` (the most recent plan, however long ago). */
+  isVisible(key: number, planFrame: number): boolean {
     const s = this.slots.get(key);
-    return s !== undefined && (this.lastSeen[s] ?? -1) >= frame - 1;
+    return s !== undefined && planFrame >= 0 && (this.lastSeen[s] ?? -1) >= planFrame;
   }
   /** Drop cells not seen for `maxAge` frames. */
   prune(frame: number, maxAge: number): void {
@@ -96,9 +96,12 @@ export class FramePlanner {
     lodFraction: 0,
   };
   private readonly cells = new CellStore(MAX_INSTANCES * 4);
+  /** Frame of the most recent plan(); the draw list of that frame is what is on screen now. */
+  lastPlanFrame = -1;
 
-  isCellVisible(key: number, frame: number): boolean {
-    return this.cells.isVisible(key, frame);
+  /** Whether the L* cell `key` is in the current draw list (used to order uploads and protect layers from eviction). */
+  isCellVisible(key: number): boolean {
+    return this.cells.isVisible(key, this.lastPlanFrame);
   }
 
   plan(cam: Camera, pyr: Pyramid, lstar: number, cache: TileCache, now: number, frame: number): void {
@@ -115,6 +118,8 @@ export class FramePlanner {
     st.truncated = false;
     st.lodFraction = lodFraction(cam.k, lstar);
     this.count = 0;
+    this.lastPlanFrame = frame;
+    cache.beginPlan(frame);
     if (lvl === undefined) return;
 
     const T = pyr.tileSize;

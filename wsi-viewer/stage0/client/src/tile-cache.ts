@@ -1,7 +1,11 @@
 /**
  * GPU residency table: tile key -> layer of the TEXTURE_2D_ARRAY, with LRU eviction that never touches
- * pinned base tiles (04 F2 item 3) or layers referenced by the current frame.
+ * pinned base tiles (04 F2 item 3) or layers drawn by the most recent frame plan.
  * Everything is typed arrays indexed by layer, plus one Map for key lookup; nothing allocates per frame.
+ *
+ * Two stamps per layer: `drawnFrame` (set by the planner for every layer in the draw list) protects what is on
+ * screen; `lastUsed` (set by draw AND by the scheduler for resident tiles still in its wanted set) orders the LRU
+ * so tiles nobody wants any more go first and prefetched-but-not-yet-visible tiles survive a pan.
  */
 import { ancestorKey } from './pyramid';
 
@@ -10,7 +14,13 @@ export class TileCache {
   private readonly keyToLayer = new Map<number, number>();
   private readonly layerKey: Int32Array;
   private readonly lastUsed: Int32Array;
+  /** Frame of the last plan that drew the layer (eviction protection). */
+  private readonly drawnFrame: Int32Array;
+  /** Frame in which the scheduler last counted the layer as wanted (de-duplicates the per-frame count). */
+  private readonly wantedFrame: Int32Array;
   private readonly pinned: Uint8Array;
+  /** Frame of the most recent planner run; layers drawn by it are never evicted (set via beginPlan). */
+  lastPlanFrame = -1;
   /** RequestKind the tile was fetched under (scheduler.ts); used for prefetch-waste accounting. */
   readonly kind: Uint8Array;
   /** 1 once the layer has been drawn at least once. */
@@ -31,6 +41,8 @@ export class TileCache {
     this.layerCount = layerCount;
     this.layerKey = new Int32Array(layerCount).fill(-1);
     this.lastUsed = new Int32Array(layerCount);
+    this.drawnFrame = new Int32Array(layerCount).fill(-1);
+    this.wantedFrame = new Int32Array(layerCount).fill(-1);
     this.pinned = new Uint8Array(layerCount);
     this.kind = new Uint8Array(layerCount);
     this.drawn = new Uint8Array(layerCount);
@@ -53,9 +65,28 @@ export class TileCache {
     return this.layerKey[layer] ?? -1;
   }
 
-  /** Mark a layer as referenced by frame `frame` (protects it from eviction this frame; drives LRU). */
+  /** The planner starts planning frame `frame`: layers it touches are protected until the next plan. */
+  beginPlan(frame: number): void {
+    this.lastPlanFrame = frame;
+  }
+  /** Mark a layer as drawn by the plan of frame `frame` (protects it from eviction; drives LRU). */
   touch(layer: number, frame: number): void {
     this.lastUsed[layer] = frame;
+    this.drawnFrame[layer] = frame;
+  }
+  /**
+   * The scheduler still wants this resident layer in frame `frame`: refresh its LRU position (not its protection)
+   * so unwanted tiles are evicted first. Returns true the first time the layer is reported in this frame, so the
+   * caller can count distinct wanted resident tiles.
+   */
+  noteWanted(layer: number, frame: number): boolean {
+    if (this.wantedFrame[layer] === frame) return false;
+    this.wantedFrame[layer] = frame;
+    if ((this.lastUsed[layer] ?? 0) < frame) this.lastUsed[layer] = frame;
+    return true;
+  }
+  isPinned(layer: number): boolean {
+    return this.pinned[layer] === 1;
   }
   markDrawn(layer: number): void {
     if (this.drawn[layer] === 0) {
@@ -66,10 +97,11 @@ export class TileCache {
   }
 
   /**
-   * Allocate a layer for `key`, evicting the least recently used unpinned layer if needed. Layers touched in the
-   * previous frame are protected: uploads run at the top of a frame, before the planner touches this frame's
-   * cells, so "used last frame" is the best available proxy for "about to be drawn". Returns -1 when every
-   * layer is pinned or protected (the cache is too small for the viewport; counted as an upload stall).
+   * Allocate a layer for `key`, evicting the least recently used unpinned layer if needed. Protected from eviction:
+   * layers drawn by the most recent plan (uploads run at the top of a frame, before this frame's plan, so "drawn by
+   * the last plan" is exactly what is on screen now, however many frames ago that plan ran) and layers allocated in
+   * this frame. Returns -1 when every layer is pinned or protected (the cache is too small for the viewport; counted
+   * as an upload stall).
    */
   allocate(key: number, frame: number, pin: boolean, kind: number, w: number, h: number): number {
     const existing = this.keyToLayer.get(key);
@@ -82,8 +114,9 @@ export class TileCache {
       let oldest = 0x7fffffff;
       for (let i = 0; i < this.layerCount; i++) {
         if (this.pinned[i] === 1) continue;
+        if ((this.drawnFrame[i] ?? -1) >= this.lastPlanFrame) continue;
         const used = this.lastUsed[i] ?? 0;
-        if (used >= frame - 1) continue;
+        if (used >= frame) continue;
         if (used < oldest) {
           oldest = used;
           layer = i;
@@ -101,6 +134,8 @@ export class TileCache {
     this.layerKey[layer] = key;
     this.keyToLayer.set(key, layer);
     this.lastUsed[layer] = frame;
+    this.drawnFrame[layer] = -1;
+    this.wantedFrame[layer] = -1;
     this.pinned[layer] = pin ? 1 : 0;
     this.kind[layer] = kind;
     this.drawn[layer] = 0;

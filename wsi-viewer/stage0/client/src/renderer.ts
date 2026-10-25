@@ -42,8 +42,11 @@ void main() {
 }`;
 
 const FRAG = `#version 300 es
-precision mediump float;
-precision mediump sampler2DArray;
+// highp is mandatory in GLSL ES 3.00 fragment shaders. The interpolated tile UVs must be highp: fp16 (what Mali /
+// Adreno use for mediump) resolves [0, 1] to ~1/1024, i.e. half a texel on a 512-texel tile, which would blur and
+// shimmer every tile on phones while looking fine on desktop drivers that promote mediump to fp32.
+precision highp float;
+precision highp sampler2DArray;
 uniform sampler2DArray uTiles;
 uniform float uHalfTexel;
 uniform vec3 uBackground;

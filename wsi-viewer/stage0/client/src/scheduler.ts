@@ -6,6 +6,10 @@
  *    predicted-viewport ring, tier 2 ring while a zoom burst is in progress;
  *  - de-duplication through the residency table and the in-flight map; prefetch limited to a fraction of slots;
  *  - cancellation of in-flight tiles that left the wanted set for CANCEL_GRACE_FRAMES frames;
+ *  - capacity-aware prefetch: resident tiles still wanted, decoded tiles awaiting upload and in-flight requests
+ *    are counted against the non-pinned layers of the texture array, and prefetch tiers are dispatched only while
+ *    there is room. Without this a wanted set larger than the cache (ring + partners + intent at s = 0.5) made every
+ *    arrival evict another wanted tile, which was then re-fetched: an endless churn even with the camera still;
  *  - per-host concurrency 6 on HTTP/1.1, higher when h2/h3 was negotiated.
  * The wanted set is rebuilt every frame from the camera, so the heap is cleared and refilled (typed arrays, no GC).
  */
@@ -123,6 +127,8 @@ export interface SchedulerCounters {
   /** Prefetched tiles that arrived and were later drawn (hit) — the complement is waste. */
   prefetchReceived: number;
   heapOverflow: number;
+  /** Frames in which prefetch was held back because the texture array had no room for more wanted tiles. */
+  prefetchHeldFrames: number;
   /** Requests and completed fetches per RequestKind. */
   requestedByKind: number[];
   receivedByKind: number[];
@@ -154,6 +160,7 @@ export class Scheduler {
     errors: 0,
     prefetchReceived: 0,
     heapOverflow: 0,
+    prefetchHeldFrames: 0,
     requestedByKind: [0, 0, 0, 0, 0],
     receivedByKind: [0, 0, 0, 0, 0],
   };
@@ -167,6 +174,10 @@ export class Scheduler {
   private readonly range = new Int32Array(4);
   private baseDone = false;
   private intentUntil = -1e9;
+  /** Distinct resident, non-pinned tiles in this frame's wanted set (occupied layers we must not evict for prefetch). */
+  private residentWanted = 0;
+  /** Non-pinned layers left for new tiles after the wanted residents, decoded-awaiting-upload and in-flight tiles; may go negative. */
+  lastRoom = 0;
   /** Focus point used for distance ordering (device px). */
   focusX = 0;
   focusY = 0;
@@ -243,7 +254,7 @@ export class Scheduler {
     return Math.hypot(sx - this.focusX, sy - this.focusY);
   }
 
-  private wantRange(cam: Camera, level: number, tier: number, levelDist: number, kind: number, wx0: number, wy0: number, wx1: number, wy1: number): void {
+  private wantRange(cam: Camera, frame: number, level: number, tier: number, levelDist: number, kind: number, wx0: number, wy0: number, wx1: number, wy1: number): void {
     const lvl = this.pyr.levels[level];
     if (lvl === undefined) return;
     if (!tileRange(this.pyr, lvl, wx0, wy0, wx1, wy1, this.range)) return;
@@ -254,7 +265,12 @@ export class Scheduler {
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
         const key = tileKey(level, x, y);
-        if (this.cache.has(key)) continue;
+        const layer = this.cache.layerOf(key);
+        if (layer >= 0) {
+          // Resident: keep it fresh in the LRU and count it against the room for prefetch.
+          if (!this.cache.isPinned(layer) && this.cache.noteWanted(layer, frame)) this.residentWanted++;
+          continue;
+        }
         this.want(key, prioOf(tier, levelDist, this.focusDist(cam, level, x, y)), kind);
       }
     }
@@ -270,6 +286,7 @@ export class Scheduler {
     this.wanted.clear();
     this.wantedKind.clear();
     this.heap.clear();
+    this.residentWanted = 0;
 
     // Tier -1: pinned base, coarsest level first so the first paint is never blank (04 F2 item 3).
     if (!this.baseDone) {
@@ -294,8 +311,8 @@ export class Scheduler {
     const wy0 = cam.worldY(0);
     const wx1 = cam.worldX(cam.viewW);
     const wy1 = cam.worldY(cam.viewH);
-    this.wantRange(cam, lstar, 0, 0, RequestKind.VISIBLE, wx0, wy0, wx1, wy1);
-    if (lstar < maxLevel) this.wantRange(cam, lstar + 1, 1, 1, RequestKind.PARTNER, wx0, wy0, wx1, wy1);
+    this.wantRange(cam, frame, lstar, 0, 0, RequestKind.VISIBLE, wx0, wy0, wx1, wy1);
+    if (lstar < maxLevel) this.wantRange(cam, frame, lstar + 1, 1, 1, RequestKind.PARTNER, wx0, wy0, wx1, wy1);
 
     // Zoom intent (04 F3 "Zoom intent", A §3): destination level under the pointer, from the extrapolated zoom.
     const zoomingIn = cam.zoomVel > ZOOM_INTENT_MIN_VELOCITY;
@@ -309,7 +326,7 @@ export class Scheduler {
       for (let level = lstar - 1; level >= destLevel; level--) {
         // World extent of ±WINDOW device px at the zoom where `level` sits mid-band (s = 0.75).
         const half = ZOOM_INTENT_WINDOW_PX / (0.75 * 2 ** -level);
-        this.wantRange(cam, level, 1, lstar - level, RequestKind.INTENT, ax - half, ay - half, ax + half, ay + half);
+        this.wantRange(cam, frame, level, 1, lstar - level, RequestKind.INTENT, ax - half, ay - half, ax + half, ay + half);
       }
     }
 
@@ -325,7 +342,7 @@ export class Scheduler {
       const ring = RING_TILES * pyr.tileSize * pLvl.scale;
       const hw = cam.viewW / 2 / pk;
       const hh = cam.viewH / 2 / pk;
-      this.wantRange(cam, pLevel, zoomingIn ? 2 : 1, Math.abs(pLevel - lstar), RequestKind.RING, pcx - hw - ring, pcy - hh - ring, pcx + hw + ring, pcy + hh + ring);
+      this.wantRange(cam, frame, pLevel, zoomingIn ? 2 : 1, Math.abs(pLevel - lstar), RequestKind.RING, pcx - hw - ring, pcy - hh - ring, pcx + hw + ring, pcy + hh + ring);
     }
 
     // Mark in-flight tiles that are still wanted; queue the rest.
@@ -345,6 +362,7 @@ export class Scheduler {
 
     // Cancel requests that left the wanted set (04 F4; the worker keeps those past the byte threshold).
     let prefetchInflight = 0;
+    let inflightNonBase = 0;
     for (const [key, rec] of this.inflight) {
       if (!rec.cancelled && frame - rec.lastWanted > CANCEL_GRACE_FRAMES) {
         rec.cancelled = true;
@@ -352,7 +370,18 @@ export class Scheduler {
         this.pool.cancel(key);
       }
       if (rec.tier > 0 && !rec.cancelled) prefetchInflight++;
+      if (rec.tier >= 0 && !rec.cancelled) inflightNonBase++;
     }
+
+    // Room in the texture array for tiles that are not resident yet: non-pinned layers minus the resident tiles we
+    // still want, minus decoded tiles waiting for upload, minus in-flight requests. Visible (tier 0) tiles are always
+    // dispatched (chooseLayerCount sizes the array for them and the LRU then evicts unwanted or prefetched tiles);
+    // prefetch tiers only while room remains, so the cache never churns against its own wanted set.
+    let awaitingNonBase = 0;
+    for (const key of this.awaitingUpload) if (keyLevel(key) < pyr.basePinLevel) awaitingNonBase++;
+    let room = this.cache.layerCount - pyr.basePinTileCount - this.residentWanted - awaitingNonBase - inflightNonBase;
+    this.lastRoom = room;
+    let held = false;
 
     // Dispatch in priority order; prefetch tiers are capped to their slot share so visible tiles never starve.
     while (this.heap.size > 0 && this.inflight.size < this.maxInflight) {
@@ -360,14 +389,20 @@ export class Scheduler {
       const tier = tierOf(this.heap.lastPrio);
       if (tier > 0) {
         if (prefetchInflight >= this.prefetchSlots) break; // heap is ordered: nothing better is left
+        if (room <= 0) {
+          held = true;
+          break;
+        }
         prefetchInflight++;
         this.counters.requestsPrefetch++;
       } else if (tier === 0) this.counters.requestsTier0++;
       else this.counters.requestsBase++;
+      if (tier >= 0) room--;
       const kind = this.wantedKind.get(key) ?? RequestKind.VISIBLE;
       this.counters.requestedByKind[kind] = (this.counters.requestedByKind[kind] ?? 0) + 1;
       this.inflight.set(key, { tier, startedAt: now, lastWanted: frame, cancelled: false });
       this.pool.request(key, this.pyr.tileUrl(keyLevel(key), keyX(key), keyY(key)), tier, kind);
     }
+    if (held) this.counters.prefetchHeldFrames++;
   }
 }

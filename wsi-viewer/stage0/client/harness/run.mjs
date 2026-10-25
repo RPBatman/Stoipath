@@ -5,44 +5,14 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync, spawnSync } from 'node:child_process';
-import { createRequire } from 'node:module';
+import { spawnSync } from 'node:child_process';
+import { launchChromium, parseArgs } from './browser.mjs';
 import { startServer } from './serve.mjs';
-
-// Playwright is not a dependency of the client: use a local install if present, else the global one.
-const require = createRequire(import.meta.url);
-function loadPlaywright() {
-  try {
-    return require('playwright');
-  } catch {
-    const roots = [process.env.NODE_PATH, execSync('npm root -g').toString().trim()].filter(Boolean);
-    for (const r of roots) {
-      try {
-        return require(resolve(r, 'playwright'));
-      } catch {
-        /* next */
-      }
-    }
-    throw new Error('playwright not found: npm i -D playwright (or install it globally)');
-  }
-}
-const { chromium } = loadPlaywright();
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const clientDir = resolve(here, '..');
 const stage0Dir = resolve(clientDir, '..');
 
-function parseArgs(argv) {
-  const out = {};
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a.startsWith('--')) {
-      const [k, v] = a.slice(2).split('=');
-      out[k] = v ?? (argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[++i] : 'true');
-    }
-  }
-  return out;
-}
 const args = parseArgs(process.argv.slice(2));
 const label = args.label ?? 'headless-chromium';
 const width = Number(args.width ?? 1280);
@@ -66,7 +36,7 @@ if (args.layers) q.set('layers', args.layers);
 const url = `http://127.0.0.1:${port}/client/dist/index.html?${q.toString()}`;
 console.log(`opening ${url}`);
 
-const browser = await chromium.launch({ headless: args.headed !== 'true', args: ['--ignore-gpu-blocklist', '--enable-unsafe-swiftshader'] });
+const browser = await launchChromium({ headed: args.headed === 'true' });
 const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: dpr });
 const page = await context.newPage();
 page.on('console', (m) => {
@@ -105,6 +75,7 @@ const block = (name, s) => {
   console.log(`${name} (n=${s.n}):`);
   console.log(`  sharp after settle ms:   ${p(s.sharpAfterSettleMs)}   <- tile pipeline only; the A §3 targets (headline, protocol §6)`);
   console.log(`  TTS from last input ms:  ${p(s.timeToSharpMs)}   (04 F8; includes the easing tail, settle ${p(s.settleAfterInputMs)})`);
+  console.log(`  blur end after input ms: ${p(s.blurEndAfterInputMs)}   (last input -> last frame drawing an ancestor; 0 = no pop-in after the last input)`);
   console.log(`  max blur ms:             ${p(s.maxBlurMs)}`);
   console.log(`  deficit-frame %:         ${p(s.deficitFramePct)}`);
   console.log(`  blur-area-time level·s:  ${p(s.blurAreaTimeLevelS)}`);
@@ -116,7 +87,7 @@ const t = summary.tiles;
 console.log(`tiles: base ${t.requestedBase} tier0 ${t.requestedTier0} prefetch ${t.requestedPrefetch} received ${t.received} (${(t.bytes / 1e6).toFixed(1)} MB) cancelled ${t.cancelled} (late ${t.cancelledLate}) aborted ${t.aborted} errors ${t.errors}`);
 console.log(`  fetch ms: ${p(t.fetchMs)}`);
 console.log(`  decode ms: ${p(t.decodeMs)}`);
-console.log(`  prefetch waste: ${t.prefetchWastePct ?? 'n/a'}%   cache: ${summary.cache.resident}/${summary.cache.layers} resident, ${summary.cache.evictions} evictions, ${summary.cache.uploadStalls} upload stalls`);
+console.log(`  prefetch waste: ${t.prefetchWastePct ?? 'n/a'}%   cache: ${summary.cache.resident}/${summary.cache.layers} resident, ${summary.cache.evictions} evictions, ${summary.cache.uploadStalls} upload stalls, prefetch held ${summary.cache.prefetchHeldFrames ?? '?'} frames`);
 console.log(`  by kind: ${Object.entries(t.byKind).map(([k, v]) => `${k} ${v.requested}/${v.received}/${v.drawn}`).join('  ')}  (requested/received/drawn)`);
 console.log(`blank frames after base: ${summary.blankFramesAfterBase}`);
 if (summary.notes.length) console.log('notes:\n  ' + summary.notes.join('\n  '));
