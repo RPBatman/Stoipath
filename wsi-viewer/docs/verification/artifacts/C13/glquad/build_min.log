@@ -1,0 +1,25 @@
+    Updating crates.io index
+     Locking 32 packages to latest compatible versions
+      Adding glam v0.29.3 (available: v0.34.1)
+      Adding hashbrown v0.15.5 (available: v0.17.1)
+   Compiling wasm-bindgen-shared v0.2.129
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling rustversion v1.0.23
+   Compiling bumpalo v3.20.3
+   Compiling futures-task v0.3.34
+   Compiling wasm-bindgen v0.2.129
+   Compiling syn v3.0.9
+   Compiling futures-core v0.3.34
+   Compiling cfg-if v1.0.5
+   Compiling pin-project-lite v0.2.17
+   Compiling slab v0.4.12
+   Compiling once_cell v1.21.4
+   Compiling futures-util v0.3.34
+   Compiling wasm-bindgen-macro-support v0.2.129
+   Compiling wasm-bindgen-macro v0.2.129
+   Compiling js-sys v0.3.106
+   Compiling web-sys v0.3.106
+   Compiling glquad v0.1.0 (/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad)
+    Finished `release` profile [optimized] target(s) in 32.07s

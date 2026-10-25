@@ -1,0 +1,17 @@
+level0 97792x214016, tile 512x512, grid 191x418 = 79838 tiles (databytecounts 79838)
+dense(>50% tissue) n 150 stored p50 76146.5 {'q70_420': 60364, 'q75_420': 64325, 'q80_420': 69436, 'q85_420': 76278, 'q85_444': 94947, 'q90_420': 94556, 'q90_444': 117027, 'q95_444': 153571}
+partial(5-50%) n 150 stored p50 42362.5 {'q70_420': 35103, 'q75_420': 37019, 'q80_420': 39531, 'q85_420': 42719, 'q85_444': 51562, 'q90_420': 55090, 'q90_444': 65868, 'q95_444': 87816}
+glass(<5%) n 150 stored p50 34838.0 {'q70_420': 29702, 'q75_420': 31194, 'q80_420': 33018, 'q85_420': 35478, 'q85_444': 42246, 'q90_420': 46140, 'q90_444': 54411, 'q95_444': 72677}
+optimize q85 (1, 1): plain p50 94592 optimized p50 90056 ratio 0.954
+optimize q90 (1, 1): plain p50 116487 optimized p50 102178 ratio 0.875
+optimize q80 (2, 2): plain p50 69283 optimized p50 67400 ratio 0.974
+viewports n=150: tissue tiles/vp p50 20.0; stored sum p50 1.49 MB p90 1.56 MB
+  q70_420: 20-tile fill p50 1.18 MB  p90 1.24 MB  max 1.28 MB
+  q75_420: 20-tile fill p50 1.25 MB  p90 1.32 MB  max 1.37 MB
+  q80_420: 20-tile fill p50 1.35 MB  p90 1.43 MB  max 1.47 MB
+  q85_420: 20-tile fill p50 1.49 MB  p90 1.56 MB  max 1.62 MB
+  q85_444: 20-tile fill p50 1.85 MB  p90 1.95 MB  max 2.04 MB
+  q90_420: 20-tile fill p50 1.85 MB  p90 1.94 MB  max 2.00 MB
+  q90_444: 20-tile fill p50 2.29 MB  p90 2.40 MB  max 2.50 MB
+  q95_444: 20-tile fill p50 3.00 MB  p90 3.14 MB  max 3.27 MB
+moving tier q75 4:2:0 x 10.8 tiles: p50 0.68 MB

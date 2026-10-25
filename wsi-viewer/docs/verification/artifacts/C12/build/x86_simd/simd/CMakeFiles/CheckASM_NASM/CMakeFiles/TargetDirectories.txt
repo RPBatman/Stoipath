@@ -1,0 +1,2 @@
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_simd/simd/CMakeFiles/CheckASM_NASM/CMakeFiles/edit_cache.dir
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_simd/simd/CMakeFiles/CheckASM_NASM/CMakeFiles/rebuild_cache.dir

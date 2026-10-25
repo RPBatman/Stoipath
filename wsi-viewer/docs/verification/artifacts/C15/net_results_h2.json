@@ -1,0 +1,47 @@
+{
+ "note": "CDP Network.emulateNetworkConditions: latency = added min delay per request (ms); throughput = bytes/s token bucket. No TCP slow start, no loss, no radio scheduling.",
+ "env": "00:42:32 up  1:01,  0 user,  load average: 7.59, 9.17, 8.99",
+ "results": {
+  "h2_tls|W-LAN 1ms 1000Mbps|q85_444": {
+   "bytes_total": 1818993,
+   "protocol_seen": [
+    "h2"
+   ],
+   "fill20_wall_ms_median": 102,
+   "fill20_wall_ms_min": 76,
+   "ideal_bytes_over_bw_plus_1_latency_ms": 16,
+   "overhead_vs_ideal_ms": 86,
+   "first_byte_ms_median_of_medians": 29,
+   "single_tile_fetch_ms_median": 9
+  },
+  "h2_tls|W-LAN 1ms 1000Mbps|q80_420": {
+   "error": "Error: page.evaluate: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-BB p50 25ms 100Mbps|q85_444": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /opt/pw-browsers/chromium-1243/chrome-linux64/chrome --disable-field-trial-config --disable-backgr"
+  },
+  "h2_tls|W-BB p50 25ms 100Mbps|q80_420": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-BB p95 50ms 20Mbps|q85_444": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-BB p95 50ms 20Mbps|q80_420": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-4G p50 45ms 25Mbps|q85_444": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-4G p50 45ms 25Mbps|q80_420": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-4G p95 200ms 5Mbps|q85_444": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  },
+  "h2_tls|W-4G p95 200ms 5Mbps|q80_420": {
+   "error": "Error: browser.newContext: Target page, context or browser has been closed"
+  }
+ },
+ "env_end": "00:54:25 up  1:13,  0 user,  load average: 9.44, 9.11, 8.98",
+ "done": true
+}

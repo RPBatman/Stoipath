@@ -1,0 +1,24 @@
+# This code is from the CMake FAQ
+
+if (NOT EXISTS "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd/install_manifest.txt")
+  message(FATAL_ERROR "Cannot find install manifest: \"/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd/install_manifest.txt\"")
+endif(NOT EXISTS "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd/install_manifest.txt")
+
+file(READ "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
+list(REVERSE files)
+foreach (file ${files})
+  message(STATUS "Uninstalling \"$ENV{DESTDIR}${file}\"")
+    if (EXISTS "$ENV{DESTDIR}${file}")
+      execute_process(
+        COMMAND "/usr/bin/cmake" -E remove "$ENV{DESTDIR}${file}"
+        OUTPUT_VARIABLE rm_out
+        RESULT_VARIABLE rm_retval
+      )
+    if(NOT ${rm_retval} EQUAL 0)
+      message(FATAL_ERROR "Problem when removing \"$ENV{DESTDIR}${file}\"")
+    endif (NOT ${rm_retval} EQUAL 0)
+  else (EXISTS "$ENV{DESTDIR}${file}")
+    message(STATUS "File \"$ENV{DESTDIR}${file}\" does not exist.")
+  endif (EXISTS "$ENV{DESTDIR}${file}")
+endforeach(file)

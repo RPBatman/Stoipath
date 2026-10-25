@@ -1,0 +1,49 @@
+== env
+ 00:35:17 up 54 min,  0 user,  load average: 10.61, 11.45, 9.27
+4
+v22.22.0
+== native imagecodecs (libjpeg-turbo 3.2.0) decode, 7 runs x 200 iters, median of medians
+tile_q80_420.jpg {'median_of_medians_ms': 1.015, 'min_run_median_ms': 0.993}
+tile_q90_420.jpg {'median_of_medians_ms': 1.234, 'min_run_median_ms': 1.125}
+tile_q80_444.jpg {'median_of_medians_ms': 1.428, 'min_run_median_ms': 1.407}
+== Node WASM decoders (bench_decoders.mjs, 100 iters)
+ 00:35:23 up 54 min,  0 user,  load average: 10.80, 11.48, 9.29
+=== tile_q80_420.jpg (61453 bytes) ===
+zune-jpeg 0.5.15 wasm +simd128       {"wasm_bytes":215214,"compile_ms":1.37,"instantiate_ms":0.13,"median_ms":2.45,"min_ms":2.281,"p90_ms":6.438,"vs_ljt_fancy":{"pct_pixels_differ":37.61,"max_abs":4,"mean_abs":0.3035},"vs_ljt_nofancy":{"pct_pixels_differ":63.7
+zune-jpeg 0.5.15 wasm -simd128       {"wasm_bytes":208212,"compile_ms":1.37,"instantiate_ms":0.17,"median_ms":3.334,"min_ms":3.169,"p90_ms":3.65,"vs_ljt_fancy":{"pct_pixels_differ":37.61,"max_abs":4,"mean_abs":0.3035},"vs_ljt_nofancy":{"pct_pixels_differ":63.7
+jpeg-decoder 0.3.2 wasm +simd128     {"wasm_bytes":142341,"compile_ms":1.19,"instantiate_ms":0.15,"median_ms":2.486,"min_ms":1.968,"p90_ms":3.033,"vs_ljt_fancy":{"pct_pixels_differ":14.78,"max_abs":3,"mean_abs":0.1139},"vs_ljt_nofancy":{"pct_pixels_differ":62.
+jpeg-decoder 0.3.2 wasm -simd128     {"wasm_bytes":134769,"compile_ms":1.64,"instantiate_ms":0.18,"median_ms":4.006,"min_ms":3.721,"p90_ms":4.626,"vs_ljt_fancy":{"pct_pixels_differ":9.94,"max_abs":3,"mean_abs":0.076},"vs_ljt_nofancy":{"pct_pixels_differ":60.93
+@jsquash/jpeg (mozjpeg wasm)         {"median_ms":3.26,"min_ms":2.863,"p90_ms":7.342,"vs_ljt_fancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"vs_ljt_nofancy":{"pct_pixels_differ":60.63,"max_abs":17,"mean_abs":0.7122},"note":"async API incl. RGBA ImageD
+jpeg-js (pure JS)                    {"median_ms":15.325,"min_ms":13.367,"p90_ms":26.025,"vs_ljt_fancy":{"pct_pixels_differ":91.44,"max_abs":17,"mean_abs":0.9732},"vs_ljt_nofancy":{"pct_pixels_differ":83.34,"max_abs":3,"mean_abs":0.4976}}
+wasm-vips (libjpeg-turbo wasm)       {"median_ms":4.418,"min_ms":3.882,"p90_ms":7.555,"vs_ljt_fancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"vs_ljt_nofancy":{"pct_pixels_differ":60.63,"max_abs":17,"mean_abs":0.7122},"out_len":786432}
+=== tile_q90_420.jpg (89931 bytes) ===
+zune-jpeg 0.5.15 wasm +simd128       {"wasm_bytes":215214,"compile_ms":8.4,"instantiate_ms":0.12,"median_ms":2.867,"min_ms":2.691,"p90_ms":7.054,"vs_ljt_fancy":{"pct_pixels_differ":38.81,"max_abs":4,"mean_abs":0.3132},"vs_ljt_nofancy":{"pct_pixels_differ":64.2
+zune-jpeg 0.5.15 wasm -simd128       {"wasm_bytes":208212,"compile_ms":12.95,"instantiate_ms":0.19,"median_ms":3.831,"min_ms":3.24,"p90_ms":5.749,"vs_ljt_fancy":{"pct_pixels_differ":38.81,"max_abs":4,"mean_abs":0.3132},"vs_ljt_nofancy":{"pct_pixels_differ":64.
+jpeg-decoder 0.3.2 wasm +simd128     {"wasm_bytes":142341,"compile_ms":43.81,"instantiate_ms":0.18,"median_ms":2.709,"min_ms":2.521,"p90_ms":3.879,"vs_ljt_fancy":{"pct_pixels_differ":15.16,"max_abs":3,"mean_abs":0.1171},"vs_ljt_nofancy":{"pct_pixels_differ":63
+jpeg-decoder 0.3.2 wasm -simd128     {"wasm_bytes":134769,"compile_ms":4.84,"instantiate_ms":0.39,"median_ms":4.381,"min_ms":4.243,"p90_ms":4.648,"vs_ljt_fancy":{"pct_pixels_differ":9.26,"max_abs":3,"mean_abs":0.0709},"vs_ljt_nofancy":{"pct_pixels_differ":61.3
+@jsquash/jpeg (mozjpeg wasm)         {"median_ms":3.548,"min_ms":3.153,"p90_ms":7.374,"vs_ljt_fancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"vs_ljt_nofancy":{"pct_pixels_differ":61.08,"max_abs":14,"mean_abs":0.7093},"note":"async API incl. RGBA Image
+jpeg-js (pure JS)                    {"median_ms":19.881,"min_ms":15,"p90_ms":36.673,"vs_ljt_fancy":{"pct_pixels_differ":91.45,"max_abs":15,"mean_abs":0.973},"vs_ljt_nofancy":{"pct_pixels_differ":83.43,"max_abs":3,"mean_abs":0.5022}}
+wasm-vips (libjpeg-turbo wasm)       {"median_ms":4.786,"min_ms":4.234,"p90_ms":6.621,"vs_ljt_fancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"vs_ljt_nofancy":{"pct_pixels_differ":61.08,"max_abs":14,"mean_abs":0.7093},"out_len":786432}
+=== tile_q80_444.jpg (74387 bytes) ===
+zune-jpeg 0.5.15 wasm +simd128       {"wasm_bytes":215214,"compile_ms":1.6,"instantiate_ms":0.11,"median_ms":3.006,"min_ms":2.933,"p90_ms":7.028,"vs_ljt_fancy":{"pct_pixels_differ":1.44,"max_abs":3,"mean_abs":0.0123},"vs_ljt_nofancy":{"pct_pixels_differ":1.44,
+zune-jpeg 0.5.15 wasm -simd128       {"wasm_bytes":208212,"compile_ms":2.88,"instantiate_ms":0.11,"median_ms":3.598,"min_ms":3.515,"p90_ms":3.738,"vs_ljt_fancy":{"pct_pixels_differ":1.44,"max_abs":3,"mean_abs":0.0123},"vs_ljt_nofancy":{"pct_pixels_differ":1.44
+jpeg-decoder 0.3.2 wasm +simd128     {"wasm_bytes":142341,"compile_ms":2.86,"instantiate_ms":0.12,"median_ms":2.351,"min_ms":2.266,"p90_ms":2.797,"vs_ljt_fancy":{"pct_pixels_differ":5.65,"max_abs":3,"mean_abs":0.0441},"vs_ljt_nofancy":{"pct_pixels_differ":5.65
+jpeg-decoder 0.3.2 wasm -simd128     {"wasm_bytes":134769,"compile_ms":4.5,"instantiate_ms":0.15,"median_ms":4.412,"min_ms":4.343,"p90_ms":4.81,"vs_ljt_fancy":{"pct_pixels_differ":0.6,"max_abs":2,"mean_abs":0.0058},"vs_ljt_nofancy":{"pct_pixels_differ":0.6,"ma
+@jsquash/jpeg (mozjpeg wasm)         {"median_ms":3.635,"min_ms":3.31,"p90_ms":4.539,"vs_ljt_fancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"vs_ljt_nofancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"note":"async API incl. RGBA ImageData alloc 
+jpeg-js (pure JS)                    {"median_ms":29.724,"min_ms":19.91,"p90_ms":45.179,"vs_ljt_fancy":{"pct_pixels_differ":82.72,"max_abs":3,"mean_abs":0.4889},"vs_ljt_nofancy":{"pct_pixels_differ":82.72,"max_abs":3,"mean_abs":0.4889}}
+wasm-vips (libjpeg-turbo wasm)       {"median_ms":5.354,"min_ms":4.4,"p90_ms":10.925,"vs_ljt_fancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"vs_ljt_nofancy":{"pct_pixels_differ":0,"max_abs":0,"mean_abs":0},"out_len":786432}
+== worker pool (Node worker_threads, zune wasm), pool 1/2/3, repeated twice
+load average: 10.44, 11.35, 9.29
+pool 1 single rt 2.811 decode 2.412 msg 0.247 | burst20 wall 55.47 min 52.27 inline 54.23 speedup 0.98
+load average: 10.32, 11.31, 9.29
+pool 2 single rt 2.956 decode 2.399 msg 0.168 | burst20 wall 37.68 min 29.31 inline 58.77 speedup 1.56
+load average: 10.37, 11.30, 9.30
+pool 3 single rt 3.084 decode 2.44 msg 0.214 | burst20 wall 48.44 min 36.91 inline 59.21 speedup 1.22
+load average: 10.02, 11.22, 9.28
+pool 1 single rt 2.804 decode 2.377 msg 0.282 | burst20 wall 55.76 min 47.24 inline 54.45 speedup 0.98
+load average: 10.02, 11.20, 9.29
+pool 2 single rt 2.839 decode 2.386 msg 0.072 | burst20 wall 35.34 min 30.34 inline 56.13 speedup 1.59
+load average: 10.02, 11.20, 9.29
+pool 3 single rt 3.25 decode 2.554 msg 0.256 | burst20 wall 40.93 min 33.75 inline 56.79 speedup 1.39
+== end
+ 00:36:11 up 55 min,  0 user,  load average: 9.78, 11.13, 9.27

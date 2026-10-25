@@ -1,0 +1,31 @@
+chromium 153.0.8010.12 osd 6.1.1 reps 3 env 00:42:38 up  1:01,  0 user,  load average: 7.64, 9.13, 8.98
+
+=== drawer=webgl (actual webgl) dpr=2 cpu_throttle=1x
+phase            frames drawn | update p50    p99 |  draw p50    p99 |  rAF p50    p99 |  tiles levels |  >16.7ms longtask settle ms
+idle                  1     0 |      0.010   0.01 |       nan    nan |    0.085   0.09 |    nan    nan |        0        0         0
+zoom_in_8x           19    19 |      0.590   8.16 |     7.340  21.36 |    7.945  21.94 |     10      2 |        3        0     15008
+settled_forced       41    41 |      0.010   0.84 |     0.880  14.64 |    0.980  15.30 |     24      1 |        0        0         0
+pan                  17    17 |      0.585   1.24 |     7.315  22.07 |    8.750  22.73 |     12      2 |        1        0     15008
+settled_forced2      41    41 |      0.010   3.43 |     0.595  13.19 |    0.730  15.18 |     24      1 |        0        0         0
+zoom_out_8x           2     2 |      0.510   0.62 |     0.755   0.76 |    1.170   2.83 |     48      1 |        0        0      2418
+idle2                 1     0 |      0.010   0.01 |       nan    nan |    0.075   0.07 |    nan    nan |        0        0         0
+
+=== drawer=webgl (actual webgl) dpr=1 cpu_throttle=4x
+phase            frames drawn | update p50    p99 |  draw p50    p99 |  rAF p50    p99 |  tiles levels |  >16.7ms longtask settle ms
+idle                 62     0 |      0.005   2.87 |       nan    nan |    0.145   8.94 |    nan    nan |        0        0         0
+zoom_in_8x           39    39 |      3.430  31.89 |    19.740 134.46 |   24.740 135.26 |     12      2 |       26       11      4654
+settled_forced       41    40 |      0.005   0.64 |     2.765  13.16 |    3.255  15.98 |     24      1 |        0        0         0
+pan                  35    35 |      2.780  21.20 |    24.620 115.78 |   29.850 136.50 |     16      2 |       31        9     11997
+settled_forced2      41    40 |      0.005   2.00 |     3.170  24.93 |    3.345  25.41 |     24      1 |        3        0         0
+zoom_out_8x           6     6 |      1.175   3.56 |     2.610  17.95 |    4.095  20.45 |     12      1 |        1        1      1697
+idle2                10     0 |      0.005   0.56 |       nan    nan |    0.405   7.62 |    nan    nan |        0        0         0
+
+=== drawer=canvas (actual canvas) dpr=1 cpu_throttle=1x
+phase            frames drawn | update p50    p99 |  draw p50    p99 |  rAF p50    p99 |  tiles levels |  >16.7ms longtask settle ms
+idle                 60     0 |      0.010   0.09 |       nan    nan |    0.085   0.22 |    nan    nan |        0        0         0
+zoom_in_8x           74    73 |      0.480   4.54 |     0.245   1.18 |    0.915   7.78 |     22      2 |        0        0      1218
+settled_forced       42    40 |      0.005   0.03 |     0.325   0.51 |    0.400   2.70 |     24      1 |        0        0         0
+pan                  73    72 |      0.420   5.01 |     0.260   2.79 |    1.055   6.08 |     26      2 |        0        0      1216
+settled_forced2      42    40 |      0.005   0.01 |     0.325   1.32 |    0.420   2.46 |     24      1 |        0        0         0
+zoom_out_8x          69    69 |      0.200   6.32 |     0.190   1.95 |    0.935   6.75 |     12      1 |        0        0      1216
+idle2                61     0 |      0.005   0.01 |       nan    nan |    0.060   2.19 |    nan    nan |        0        0         0

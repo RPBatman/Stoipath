@@ -1,0 +1,15 @@
+<!doctype html><title>c12</title><script>
+// Decode a JPEG URL via three Chromium paths, return sha256 of RGB bytes (alpha stripped).
+async function sha(u8) { const h = await crypto.subtle.digest('SHA-256', u8); return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join(''); }
+function rgb(imgData) { const d = imgData.data, n = d.length / 4, o = new Uint8Array(n * 3); for (let i = 0, j = 0; i < d.length; i += 4, j += 3) { o[j] = d[i]; o[j + 1] = d[i + 1]; o[j + 2] = d[i + 2]; } return o; }
+function readback(src) { const c = new OffscreenCanvas(512, 512); const ctx = c.getContext('2d', { willReadFrequently: true, alpha: false, colorSpace: 'srgb' }); ctx.drawImage(src, 0, 0); return rgb(ctx.getImageData(0, 0, 512, 512)); }
+window.decodeAll = async function (url) {
+  const blob = await (await fetch(url, { cache: 'no-store' })).blob(); const out = {};
+  const bm = await createImageBitmap(blob, { colorSpaceConversion: 'none', premultiplyAlpha: 'none' }); out.imageBitmap_none = await sha(readback(bm)); bm.close();
+  const bm2 = await createImageBitmap(blob); out.imageBitmap_default = await sha(readback(bm2)); bm2.close();
+  const img = new Image(); img.src = URL.createObjectURL(blob); await img.decode(); out.htmlImage = await sha(readback(img)); URL.revokeObjectURL(img.src);
+  if (window.ImageDecoder) { const dec = new ImageDecoder({ data: await blob.arrayBuffer(), type: 'image/jpeg', colorSpaceConversion: 'none' }); const { image } = await dec.decode(); 
+    const fmt = image.format; const buf = new Uint8Array(image.allocationSize({ format: 'RGBA' })); await image.copyTo(buf, { format: 'RGBA' }); const n = 512 * 512, o = new Uint8Array(n * 3); for (let i = 0, j = 0; i < buf.length; i += 4, j += 3) { o[j] = buf[i]; o[j + 1] = buf[i + 1]; o[j + 2] = buf[i + 2]; } out.imageDecoder_rgba = await sha(o); out.imageDecoder_native_format = fmt; image.close(); dec.close(); }
+  return out;
+};
+</script>ready

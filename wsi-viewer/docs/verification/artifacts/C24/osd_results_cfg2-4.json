@@ -1,0 +1,3596 @@
+{
+ "env": {
+  "uptime": "00:42:38 up  1:01,  0 user,  load average: 7.64, 9.13, 8.98",
+  "nproc": 4,
+  "node": "v22.22.0",
+  "date": "2026-10-25T00:42:38.367Z"
+ },
+ "chromium": "153.0.8010.12",
+ "osd": "6.1.1",
+ "viewport_css": "1920x1080",
+ "reps": 3,
+ "configs": [
+  {
+   "cfg": {
+    "drawer": "webgl",
+    "dpr": 2,
+    "cpu": 1
+   },
+   "drawerType": "webgl",
+   "aggregate": {
+    "idle": {
+     "update_ms": {
+      "p50_med": 0.01,
+      "p99_med": 0.01,
+      "n_med": 1
+     },
+     "draw_ms": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.085,
+      "p99_med": 0.085,
+      "n_med": 1
+     },
+     "tiles_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "levels_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "drawn_frames_med": 0,
+     "frames_med": 1,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "zoom_in_8x": {
+     "update_ms": {
+      "p50_med": 0.59,
+      "p99_med": 8.165,
+      "n_med": 19
+     },
+     "draw_ms": {
+      "p50_med": 7.34,
+      "p99_med": 21.36,
+      "n_med": 19
+     },
+     "total_rAF_ms": {
+      "p50_med": 7.945,
+      "p99_med": 21.94,
+      "n_med": 19
+     },
+     "tiles_drawn": {
+      "p50_med": 10,
+      "p99_med": 18,
+      "n_med": 19
+     },
+     "levels_drawn": {
+      "p50_med": 2,
+      "p99_med": 2,
+      "n_med": 19
+     },
+     "drawn_frames_med": 19,
+     "frames_med": 19,
+     "over_16_7ms_med": 3,
+     "longtasks_med": 0,
+     "settle_ms_med": 15008.205000000075
+    },
+    "settled_forced": {
+     "update_ms": {
+      "p50_med": 0.01,
+      "p99_med": 0.845,
+      "n_med": 41
+     },
+     "draw_ms": {
+      "p50_med": 0.88,
+      "p99_med": 14.64,
+      "n_med": 41
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.98,
+      "p99_med": 15.305,
+      "n_med": 41
+     },
+     "tiles_drawn": {
+      "p50_med": 24,
+      "p99_med": 31,
+      "n_med": 41
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 2,
+      "n_med": 41
+     },
+     "drawn_frames_med": 41,
+     "frames_med": 41,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "pan": {
+     "update_ms": {
+      "p50_med": 0.585,
+      "p99_med": 1.24,
+      "n_med": 17
+     },
+     "draw_ms": {
+      "p50_med": 7.315,
+      "p99_med": 22.07,
+      "n_med": 17
+     },
+     "total_rAF_ms": {
+      "p50_med": 8.75,
+      "p99_med": 22.735,
+      "n_med": 17
+     },
+     "tiles_drawn": {
+      "p50_med": 12,
+      "p99_med": 18,
+      "n_med": 17
+     },
+     "levels_drawn": {
+      "p50_med": 2,
+      "p99_med": 3,
+      "n_med": 17
+     },
+     "drawn_frames_med": 17,
+     "frames_med": 17,
+     "over_16_7ms_med": 1,
+     "longtasks_med": 0,
+     "settle_ms_med": 15008.224999999627
+    },
+    "settled_forced2": {
+     "update_ms": {
+      "p50_med": 0.01,
+      "p99_med": 3.43,
+      "n_med": 41
+     },
+     "draw_ms": {
+      "p50_med": 0.595,
+      "p99_med": 13.19,
+      "n_med": 41
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.73,
+      "p99_med": 15.18,
+      "n_med": 41
+     },
+     "tiles_drawn": {
+      "p50_med": 24,
+      "p99_med": 32,
+      "n_med": 41
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 2,
+      "n_med": 41
+     },
+     "drawn_frames_med": 41,
+     "frames_med": 41,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "zoom_out_8x": {
+     "update_ms": {
+      "p50_med": 0.51,
+      "p99_med": 0.62,
+      "n_med": 2
+     },
+     "draw_ms": {
+      "p50_med": 0.755,
+      "p99_med": 0.755,
+      "n_med": 2
+     },
+     "total_rAF_ms": {
+      "p50_med": 1.17,
+      "p99_med": 2.835,
+      "n_med": 2
+     },
+     "tiles_drawn": {
+      "p50_med": 48,
+      "p99_med": 48,
+      "n_med": 2
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 1,
+      "n_med": 2
+     },
+     "drawn_frames_med": 2,
+     "frames_med": 2,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0,
+     "settle_ms_med": 2417.644999999553
+    },
+    "idle2": {
+     "update_ms": {
+      "p50_med": 0.01,
+      "p99_med": 0.01,
+      "n_med": 1
+     },
+     "draw_ms": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.075,
+      "p99_med": 0.075,
+      "n_med": 1
+     },
+     "tiles_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "levels_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "drawn_frames_med": 0,
+     "frames_med": 1,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    }
+   },
+   "reps": [
+    {
+     "loadavg_before": "7.64 9.13 8.98",
+     "drawerType": "webgl",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 0,
+        "drawn": 0,
+        "update_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 15003.5,
+       "animDone": true,
+       "loaded": false,
+       "frames": {
+        "n": 13,
+        "drawn": 13,
+        "update_ms": {
+         "n": 13,
+         "p50": 0.64,
+         "p90": 4.825,
+         "p99": 4.87,
+         "max": 4.87
+        },
+        "draw_ms": {
+         "n": 13,
+         "p50": 5.595,
+         "p90": 16.425,
+         "p99": 21.36,
+         "max": 21.36
+        },
+        "total_rAF_ms": {
+         "n": 13,
+         "p50": 6.305,
+         "p90": 21.345,
+         "p99": 21.94,
+         "max": 21.94
+        },
+        "over_16_7ms": 4,
+        "tiles_drawn": {
+         "n": 13,
+         "p50": 9,
+         "p90": 11,
+         "p99": 12,
+         "max": 12
+        },
+        "levels_drawn": {
+         "n": 13,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 97,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 41,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.025,
+         "p90": 0.49,
+         "p99": 0.845,
+         "max": 0.845
+        },
+        "draw_ms": {
+         "n": 41,
+         "p50": 4.02,
+         "p90": 8.46,
+         "p99": 27.105,
+         "max": 27.105
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 4.505,
+         "p90": 8.965,
+         "p99": 27.645,
+         "max": 27.645
+        },
+        "over_16_7ms": 2,
+        "tiles_drawn": {
+         "n": 41,
+         "p50": 24,
+         "p90": 27,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 41,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 15008.229999999981,
+       "animDone": true,
+       "loaded": false,
+       "frames": {
+        "n": 13,
+        "drawn": 13,
+        "update_ms": {
+         "n": 13,
+         "p50": 0.585,
+         "p90": 4.44,
+         "p99": 5.54,
+         "max": 5.54
+        },
+        "draw_ms": {
+         "n": 13,
+         "p50": 10.06,
+         "p90": 25.86,
+         "p99": 27.01,
+         "max": 27.01
+        },
+        "total_rAF_ms": {
+         "n": 13,
+         "p50": 12.9,
+         "p90": 26.64,
+         "p99": 27.88,
+         "max": 27.88
+        },
+        "over_16_7ms": 2,
+        "tiles_drawn": {
+         "n": 13,
+         "p50": 11,
+         "p90": 13,
+         "p99": 14,
+         "max": 14
+        },
+        "levels_drawn": {
+         "n": 13,
+         "p50": 3,
+         "p90": 3,
+         "p99": 3,
+         "max": 3
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 41,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.01,
+         "p90": 0.615,
+         "p99": 8.375,
+         "max": 8.375
+        },
+        "draw_ms": {
+         "n": 41,
+         "p50": 1.1,
+         "p90": 15.035,
+         "p99": 19.22,
+         "max": 19.22
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 1.91,
+         "p90": 17.165,
+         "p99": 21.37,
+         "max": 21.37
+        },
+        "over_16_7ms": 5,
+        "tiles_drawn": {
+         "n": 41,
+         "p50": 24,
+         "p90": 28,
+         "p99": 32,
+         "max": 32
+        },
+        "levels_drawn": {
+         "n": 41,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 3216.189999999944,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 3,
+        "drawn": 3,
+        "update_ms": {
+         "n": 3,
+         "p50": 0.51,
+         "p90": 2.44,
+         "p99": 2.44,
+         "max": 2.44
+        },
+        "draw_ms": {
+         "n": 3,
+         "p50": 0.59,
+         "p90": 0.725,
+         "p99": 0.725,
+         "max": 0.725
+        },
+        "total_rAF_ms": {
+         "n": 3,
+         "p50": 1.17,
+         "p90": 3.295,
+         "p99": 3.295,
+         "max": 3.295
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 3,
+         "p50": 48,
+         "p90": 75,
+         "p99": 75,
+         "max": 75
+        },
+        "levels_drawn": {
+         "n": 3,
+         "p50": 1,
+         "p90": 3,
+         "p99": 3,
+         "max": 3
+        },
+        "longtasks": 0
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 0,
+        "drawn": 0,
+        "update_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 169
+    },
+    {
+     "loadavg_before": "8.61 8.94 8.94",
+     "drawerType": "webgl",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 1,
+        "drawn": 0,
+        "update_ms": {
+         "n": 1,
+         "p50": 0.01,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 1,
+         "p50": 0.085,
+         "p90": 0.085,
+         "p99": 0.085,
+         "max": 0.085
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 15008.564999999944,
+       "animDone": true,
+       "loaded": false,
+       "frames": {
+        "n": 19,
+        "drawn": 19,
+        "update_ms": {
+         "n": 19,
+         "p50": 0.52,
+         "p90": 6.92,
+         "p99": 8.8,
+         "max": 8.8
+        },
+        "draw_ms": {
+         "n": 19,
+         "p50": 7.34,
+         "p90": 15.015,
+         "p99": 20.45,
+         "max": 20.45
+        },
+        "total_rAF_ms": {
+         "n": 19,
+         "p50": 7.945,
+         "p90": 15.985,
+         "p99": 21.07,
+         "max": 21.07
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 19,
+         "p50": 10,
+         "p90": 17,
+         "p99": 18,
+         "max": 18
+        },
+        "levels_drawn": {
+         "n": 19,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 97,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 41,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.01,
+         "p90": 0.49,
+         "p99": 0.535,
+         "max": 0.535
+        },
+        "draw_ms": {
+         "n": 41,
+         "p50": 0.88,
+         "p90": 11.85,
+         "p99": 14.39,
+         "max": 14.39
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 0.98,
+         "p90": 12.345,
+         "p99": 14.885,
+         "max": 14.885
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 41,
+         "p50": 24,
+         "p90": 27,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 41,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 15008.200000000186,
+       "animDone": true,
+       "loaded": false,
+       "frames": {
+        "n": 17,
+        "drawn": 17,
+        "update_ms": {
+         "n": 17,
+         "p50": 0.595,
+         "p90": 1.215,
+         "p99": 1.24,
+         "max": 1.24
+        },
+        "draw_ms": {
+         "n": 17,
+         "p50": 7.315,
+         "p90": 13.02,
+         "p99": 22.07,
+         "max": 22.07
+        },
+        "total_rAF_ms": {
+         "n": 17,
+         "p50": 8.75,
+         "p90": 14.465,
+         "p99": 22.735,
+         "max": 22.735
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 17,
+         "p50": 12,
+         "p90": 17,
+         "p99": 18,
+         "max": 18
+        },
+        "levels_drawn": {
+         "n": 17,
+         "p50": 2,
+         "p90": 3,
+         "p99": 3,
+         "max": 3
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 41,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.01,
+         "p90": 0.57,
+         "p99": 0.76,
+         "max": 0.76
+        },
+        "draw_ms": {
+         "n": 41,
+         "p50": 0.595,
+         "p90": 7.66,
+         "p99": 10.805,
+         "max": 10.805
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 0.73,
+         "p90": 7.98,
+         "p99": 11.36,
+         "max": 11.36
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 41,
+         "p50": 24,
+         "p90": 28,
+         "p99": 32,
+         "max": 32
+        },
+        "levels_drawn": {
+         "n": 41,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 2160.160000000149,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 2,
+        "drawn": 2,
+        "update_ms": {
+         "n": 2,
+         "p50": 0.62,
+         "p90": 0.62,
+         "p99": 0.62,
+         "max": 0.62
+        },
+        "draw_ms": {
+         "n": 2,
+         "p50": 2.065,
+         "p90": 2.065,
+         "p99": 2.065,
+         "max": 2.065
+        },
+        "total_rAF_ms": {
+         "n": 2,
+         "p50": 2.835,
+         "p90": 2.835,
+         "p99": 2.835,
+         "max": 2.835
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 2,
+         "p50": 48,
+         "p90": 48,
+         "p99": 48,
+         "max": 48
+        },
+        "levels_drawn": {
+         "n": 2,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 1,
+        "drawn": 0,
+        "update_ms": {
+         "n": 1,
+         "p50": 0.01,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 1,
+         "p50": 0.075,
+         "p90": 0.075,
+         "p99": 0.075,
+         "max": 0.075
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 180
+    },
+    {
+     "loadavg_before": "8.16 8.62 8.82",
+     "drawerType": "webgl",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 1,
+        "drawn": 0,
+        "update_ms": {
+         "n": 1,
+         "p50": 0.005,
+         "p90": 0.005,
+         "p99": 0.005,
+         "max": 0.005
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 1,
+         "p50": 0.085,
+         "p90": 0.085,
+         "p99": 0.085,
+         "max": 0.085
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 15008.205000000075,
+       "animDone": true,
+       "loaded": false,
+       "frames": {
+        "n": 19,
+        "drawn": 19,
+        "update_ms": {
+         "n": 19,
+         "p50": 0.59,
+         "p90": 6.845,
+         "p99": 8.165,
+         "max": 8.165
+        },
+        "draw_ms": {
+         "n": 19,
+         "p50": 8.125,
+         "p90": 20.44,
+         "p99": 24.24,
+         "max": 24.24
+        },
+        "total_rAF_ms": {
+         "n": 19,
+         "p50": 10.825,
+         "p90": 24.8,
+         "p99": 26.68,
+         "max": 26.68
+        },
+        "over_16_7ms": 3,
+        "tiles_drawn": {
+         "n": 19,
+         "p50": 10,
+         "p90": 17,
+         "p99": 18,
+         "max": 18
+        },
+        "levels_drawn": {
+         "n": 19,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 97,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 41,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.01,
+         "p90": 0.93,
+         "p99": 1.635,
+         "max": 1.635
+        },
+        "draw_ms": {
+         "n": 41,
+         "p50": 0.655,
+         "p90": 7.995,
+         "p99": 14.64,
+         "max": 14.64
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 0.735,
+         "p90": 8.535,
+         "p99": 15.305,
+         "max": 15.305
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 41,
+         "p50": 24,
+         "p90": 27,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 41,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 15008.224999999627,
+       "animDone": true,
+       "loaded": false,
+       "frames": {
+        "n": 17,
+        "drawn": 17,
+        "update_ms": {
+         "n": 17,
+         "p50": 0.52,
+         "p90": 1.15,
+         "p99": 1.235,
+         "max": 1.235
+        },
+        "draw_ms": {
+         "n": 17,
+         "p50": 7.2,
+         "p90": 12.365,
+         "p99": 13.32,
+         "max": 13.32
+        },
+        "total_rAF_ms": {
+         "n": 17,
+         "p50": 7.755,
+         "p90": 14.66,
+         "p99": 17.3,
+         "max": 17.3
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 17,
+         "p50": 12,
+         "p90": 17,
+         "p99": 18,
+         "max": 18
+        },
+        "levels_drawn": {
+         "n": 17,
+         "p50": 2,
+         "p90": 3,
+         "p99": 3,
+         "max": 3
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 41,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.01,
+         "p90": 0.525,
+         "p99": 3.43,
+         "max": 3.43
+        },
+        "draw_ms": {
+         "n": 41,
+         "p50": 0.55,
+         "p90": 10.775,
+         "p99": 13.19,
+         "max": 13.19
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 0.64,
+         "p90": 11.37,
+         "p99": 15.18,
+         "max": 15.18
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 41,
+         "p50": 24,
+         "p90": 28,
+         "p99": 32,
+         "max": 32
+        },
+        "levels_drawn": {
+         "n": 41,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 2417.644999999553,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 2,
+        "drawn": 2,
+        "update_ms": {
+         "n": 2,
+         "p50": 0.46,
+         "p90": 0.46,
+         "p99": 0.46,
+         "max": 0.46
+        },
+        "draw_ms": {
+         "n": 2,
+         "p50": 0.755,
+         "p90": 0.755,
+         "p99": 0.755,
+         "max": 0.755
+        },
+        "total_rAF_ms": {
+         "n": 2,
+         "p50": 1.14,
+         "p90": 1.14,
+         "p99": 1.14,
+         "max": 1.14
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 2,
+         "p50": 48,
+         "p90": 48,
+         "p99": 48,
+         "max": 48
+        },
+        "levels_drawn": {
+         "n": 2,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 1,
+        "drawn": 0,
+        "update_ms": {
+         "n": 1,
+         "p50": 0.005,
+         "p90": 0.005,
+         "p99": 0.005,
+         "max": 0.005
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 1,
+         "p50": 0.075,
+         "p90": 0.075,
+         "p99": 0.075,
+         "max": 0.075
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 180
+    }
+   ]
+  },
+  {
+   "cfg": {
+    "drawer": "webgl",
+    "dpr": 1,
+    "cpu": 4
+   },
+   "drawerType": "webgl",
+   "aggregate": {
+    "idle": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 2.87,
+      "n_med": 61
+     },
+     "draw_ms": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.145,
+      "p99_med": 8.94,
+      "n_med": 62
+     },
+     "tiles_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "levels_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "drawn_frames_med": 0,
+     "frames_med": 62,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "zoom_in_8x": {
+     "update_ms": {
+      "p50_med": 3.43,
+      "p99_med": 31.885,
+      "n_med": 39
+     },
+     "draw_ms": {
+      "p50_med": 19.74,
+      "p99_med": 134.455,
+      "n_med": 39
+     },
+     "total_rAF_ms": {
+      "p50_med": 24.74,
+      "p99_med": 135.26,
+      "n_med": 39
+     },
+     "tiles_drawn": {
+      "p50_med": 12,
+      "p99_med": 31,
+      "n_med": 39
+     },
+     "levels_drawn": {
+      "p50_med": 2,
+      "p99_med": 2,
+      "n_med": 39
+     },
+     "drawn_frames_med": 39,
+     "frames_med": 39,
+     "over_16_7ms_med": 26,
+     "longtasks_med": 11,
+     "settle_ms_med": 4654.040000000037
+    },
+    "settled_forced": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 0.635,
+      "n_med": 41
+     },
+     "draw_ms": {
+      "p50_med": 2.765,
+      "p99_med": 13.165,
+      "n_med": 40
+     },
+     "total_rAF_ms": {
+      "p50_med": 3.255,
+      "p99_med": 15.985,
+      "n_med": 41
+     },
+     "tiles_drawn": {
+      "p50_med": 24,
+      "p99_med": 24,
+      "n_med": 40
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 1,
+      "n_med": 40
+     },
+     "drawn_frames_med": 40,
+     "frames_med": 41,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "pan": {
+     "update_ms": {
+      "p50_med": 2.78,
+      "p99_med": 21.2,
+      "n_med": 35
+     },
+     "draw_ms": {
+      "p50_med": 24.62,
+      "p99_med": 115.78,
+      "n_med": 35
+     },
+     "total_rAF_ms": {
+      "p50_med": 29.85,
+      "p99_med": 136.495,
+      "n_med": 35
+     },
+     "tiles_drawn": {
+      "p50_med": 16,
+      "p99_med": 32,
+      "n_med": 35
+     },
+     "levels_drawn": {
+      "p50_med": 2,
+      "p99_med": 4,
+      "n_med": 35
+     },
+     "drawn_frames_med": 35,
+     "frames_med": 35,
+     "over_16_7ms_med": 31,
+     "longtasks_med": 9,
+     "settle_ms_med": 11997.359999999404
+    },
+    "settled_forced2": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 2,
+      "n_med": 41
+     },
+     "draw_ms": {
+      "p50_med": 3.17,
+      "p99_med": 24.925,
+      "n_med": 40
+     },
+     "total_rAF_ms": {
+      "p50_med": 3.345,
+      "p99_med": 25.405,
+      "n_med": 41
+     },
+     "tiles_drawn": {
+      "p50_med": 24,
+      "p99_med": 24,
+      "n_med": 40
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 1,
+      "n_med": 40
+     },
+     "drawn_frames_med": 40,
+     "frames_med": 41,
+     "over_16_7ms_med": 3,
+     "longtasks_med": 0
+    },
+    "zoom_out_8x": {
+     "update_ms": {
+      "p50_med": 1.175,
+      "p99_med": 3.555,
+      "n_med": 6
+     },
+     "draw_ms": {
+      "p50_med": 2.61,
+      "p99_med": 17.955,
+      "n_med": 6
+     },
+     "total_rAF_ms": {
+      "p50_med": 4.095,
+      "p99_med": 20.455,
+      "n_med": 6
+     },
+     "tiles_drawn": {
+      "p50_med": 12,
+      "p99_med": 19,
+      "n_med": 6
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 2,
+      "n_med": 6
+     },
+     "drawn_frames_med": 6,
+     "frames_med": 6,
+     "over_16_7ms_med": 1,
+     "longtasks_med": 1,
+     "settle_ms_med": 1696.5099999997765
+    },
+    "idle2": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 0.565,
+      "n_med": 10
+     },
+     "draw_ms": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.405,
+      "p99_med": 7.625,
+      "n_med": 10
+     },
+     "tiles_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "levels_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "drawn_frames_med": 0,
+     "frames_med": 10,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    }
+   },
+   "reps": [
+    {
+     "loadavg_before": "8.69 8.80 8.86",
+     "drawerType": "webgl",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 62,
+        "drawn": 0,
+        "update_ms": {
+         "n": 61,
+         "p50": 0.005,
+         "p90": 0.015,
+         "p99": 3.035,
+         "max": 3.035
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 62,
+         "p50": 0.115,
+         "p90": 4.47,
+         "p99": 29.325,
+         "max": 29.325
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 4272.549999999814,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 37,
+        "drawn": 37,
+        "update_ms": {
+         "n": 37,
+         "p50": 4.265,
+         "p90": 15.8,
+         "p99": 31.885,
+         "max": 31.885
+        },
+        "draw_ms": {
+         "n": 37,
+         "p50": 28.295,
+         "p90": 47.77,
+         "p99": 213.65,
+         "max": 213.65
+        },
+        "total_rAF_ms": {
+         "n": 37,
+         "p50": 33.06,
+         "p90": 64.38,
+         "p99": 220.79,
+         "max": 220.79
+        },
+        "over_16_7ms": 34,
+        "tiles_drawn": {
+         "n": 37,
+         "p50": 13,
+         "p90": 28,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 37,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 11
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 53,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 2.765,
+         "p90": 7.395,
+         "p99": 13.165,
+         "max": 13.165
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 3.255,
+         "p90": 8.12,
+         "p99": 13.255,
+         "max": 13.255
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 11639.825000000186,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 35,
+        "drawn": 35,
+        "update_ms": {
+         "n": 35,
+         "p50": 3.265,
+         "p90": 8.79,
+         "p99": 17.24,
+         "max": 17.24
+        },
+        "draw_ms": {
+         "n": 35,
+         "p50": 21,
+         "p90": 36.525,
+         "p99": 141.61,
+         "max": 141.61
+        },
+        "total_rAF_ms": {
+         "n": 35,
+         "p50": 26.4,
+         "p90": 40.405,
+         "p99": 144.765,
+         "max": 144.765
+        },
+        "over_16_7ms": 31,
+        "tiles_drawn": {
+         "n": 35,
+         "p50": 16,
+         "p90": 29,
+         "p99": 32,
+         "max": 32
+        },
+        "levels_drawn": {
+         "n": 35,
+         "p50": 2,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 6
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.015,
+         "p99": 19.77,
+         "max": 19.77
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 3.565,
+         "p90": 19.225,
+         "p99": 25.575,
+         "max": 25.575
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 4.005,
+         "p90": 19.32,
+         "p99": 25.72,
+         "max": 25.72
+        },
+        "over_16_7ms": 5,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 1696.5099999997765,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 6,
+        "drawn": 6,
+        "update_ms": {
+         "n": 6,
+         "p50": 1.175,
+         "p90": 11.79,
+         "p99": 11.79,
+         "max": 11.79
+        },
+        "draw_ms": {
+         "n": 6,
+         "p50": 2.78,
+         "p90": 11.13,
+         "p99": 11.13,
+         "max": 11.13
+        },
+        "total_rAF_ms": {
+         "n": 6,
+         "p50": 4.095,
+         "p90": 16.475,
+         "p99": 16.475,
+         "max": 16.475
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 6,
+         "p50": 12,
+         "p90": 19,
+         "p99": 19,
+         "max": 19
+        },
+        "levels_drawn": {
+         "n": 6,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 8,
+        "drawn": 0,
+        "update_ms": {
+         "n": 8,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 8,
+         "p50": 0.325,
+         "p90": 7.625,
+         "p99": 7.625,
+         "max": 7.625
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 290
+    },
+    {
+     "loadavg_before": "8.90 8.86 8.88",
+     "drawerType": "webgl",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 62,
+        "drawn": 0,
+        "update_ms": {
+         "n": 61,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 2.87,
+         "max": 2.87
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 62,
+         "p50": 0.145,
+         "p90": 2.08,
+         "p99": 5.55,
+         "max": 5.55
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 4654.040000000037,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 39,
+        "drawn": 39,
+        "update_ms": {
+         "n": 39,
+         "p50": 2.755,
+         "p90": 14.71,
+         "p99": 95.63,
+         "max": 95.63
+        },
+        "draw_ms": {
+         "n": 39,
+         "p50": 19.74,
+         "p90": 85.58,
+         "p99": 134.455,
+         "max": 134.455
+        },
+        "total_rAF_ms": {
+         "n": 39,
+         "p50": 24.74,
+         "p90": 98.27,
+         "p99": 135.26,
+         "max": 135.26
+        },
+        "over_16_7ms": 25,
+        "tiles_drawn": {
+         "n": 39,
+         "p50": 12,
+         "p90": 28,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 39,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 14
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 53,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.685,
+         "max": 0.685
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 5.69,
+         "p90": 21.035,
+         "p99": 45.82,
+         "max": 45.82
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 6.345,
+         "p90": 14.535,
+         "p99": 46.305,
+         "max": 46.305
+        },
+        "over_16_7ms": 4,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 1
+       }
+      },
+      "pan": {
+       "ms": 11997.359999999404,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 35,
+        "drawn": 35,
+        "update_ms": {
+         "n": 35,
+         "p50": 2.775,
+         "p90": 8.68,
+         "p99": 25.915,
+         "max": 25.915
+        },
+        "draw_ms": {
+         "n": 35,
+         "p50": 24.995,
+         "p90": 52.725,
+         "p99": 115.78,
+         "max": 115.78
+        },
+        "total_rAF_ms": {
+         "n": 35,
+         "p50": 29.85,
+         "p90": 65.995,
+         "p99": 136.495,
+         "max": 136.495
+        },
+        "over_16_7ms": 33,
+        "tiles_drawn": {
+         "n": 35,
+         "p50": 16,
+         "p90": 29,
+         "p99": 32,
+         "max": 32
+        },
+        "levels_drawn": {
+         "n": 35,
+         "p50": 2,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 9
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.72,
+         "max": 0.72
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 3.17,
+         "p90": 10.28,
+         "p99": 14.355,
+         "max": 14.355
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 3.345,
+         "p90": 10.67,
+         "p99": 18.135,
+         "max": 18.135
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 1555.1299999998882,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 5,
+        "drawn": 5,
+        "update_ms": {
+         "n": 5,
+         "p50": 1.055,
+         "p90": 1.685,
+         "p99": 1.685,
+         "max": 1.685
+        },
+        "draw_ms": {
+         "n": 5,
+         "p50": 2.555,
+         "p90": 17.955,
+         "p99": 17.955,
+         "max": 17.955
+        },
+        "total_rAF_ms": {
+         "n": 5,
+         "p50": 7.74,
+         "p90": 20.455,
+         "p99": 20.455,
+         "max": 20.455
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 5,
+         "p50": 12,
+         "p90": 12,
+         "p99": 12,
+         "max": 12
+        },
+        "levels_drawn": {
+         "n": 5,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 1
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 14,
+        "drawn": 0,
+        "update_ms": {
+         "n": 14,
+         "p50": 0.005,
+         "p90": 0.34,
+         "p99": 0.655,
+         "max": 0.655
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 14,
+         "p50": 0.65,
+         "p90": 1.035,
+         "p99": 1.07,
+         "max": 1.07
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 296
+    },
+    {
+     "loadavg_before": "9.35 9.06 8.95",
+     "drawerType": "webgl",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 62,
+        "drawn": 0,
+        "update_ms": {
+         "n": 61,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.265,
+         "max": 0.265
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 62,
+         "p50": 0.42,
+         "p90": 1.67,
+         "p99": 8.94,
+         "max": 8.94
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 5790.770000000484,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 42,
+        "drawn": 42,
+        "update_ms": {
+         "n": 42,
+         "p50": 3.43,
+         "p90": 8.44,
+         "p99": 17.435,
+         "max": 17.435
+        },
+        "draw_ms": {
+         "n": 42,
+         "p50": 19.345,
+         "p90": 39.55,
+         "p99": 118.045,
+         "max": 118.045
+        },
+        "total_rAF_ms": {
+         "n": 42,
+         "p50": 22.865,
+         "p90": 43.88,
+         "p99": 118.85,
+         "max": 118.85
+        },
+        "over_16_7ms": 26,
+        "tiles_drawn": {
+         "n": 42,
+         "p50": 12,
+         "p90": 27,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 42,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 4
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 56,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.635,
+         "max": 0.635
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 2.36,
+         "p90": 4.12,
+         "p99": 9.495,
+         "max": 9.495
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 2.92,
+         "p90": 5.405,
+         "p99": 15.985,
+         "max": 15.985
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 12980.139999999665,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 35,
+        "drawn": 35,
+        "update_ms": {
+         "n": 35,
+         "p50": 2.78,
+         "p90": 7.455,
+         "p99": 21.2,
+         "max": 21.2
+        },
+        "draw_ms": {
+         "n": 35,
+         "p50": 24.62,
+         "p90": 69.61,
+         "p99": 89.52,
+         "max": 89.52
+        },
+        "total_rAF_ms": {
+         "n": 35,
+         "p50": 30.47,
+         "p90": 70.385,
+         "p99": 90.055,
+         "max": 90.055
+        },
+        "over_16_7ms": 29,
+        "tiles_drawn": {
+         "n": 35,
+         "p50": 16,
+         "p90": 29,
+         "p99": 32,
+         "max": 32
+        },
+        "levels_drawn": {
+         "n": 35,
+         "p50": 2,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 15
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.025,
+         "p99": 2,
+         "max": 2
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 2.415,
+         "p90": 14.86,
+         "p99": 24.925,
+         "max": 24.925
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 2.72,
+         "p90": 15.495,
+         "p99": 25.405,
+         "max": 25.405
+        },
+        "over_16_7ms": 3,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 1984.535000000149,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 6,
+        "drawn": 6,
+        "update_ms": {
+         "n": 6,
+         "p50": 1.285,
+         "p90": 3.555,
+         "p99": 3.555,
+         "max": 3.555
+        },
+        "draw_ms": {
+         "n": 6,
+         "p50": 2.61,
+         "p90": 70.235,
+         "p99": 70.235,
+         "max": 70.235
+        },
+        "total_rAF_ms": {
+         "n": 6,
+         "p50": 3.47,
+         "p90": 75.74,
+         "p99": 75.74,
+         "max": 75.74
+        },
+        "over_16_7ms": 1,
+        "tiles_drawn": {
+         "n": 6,
+         "p50": 12,
+         "p90": 19,
+         "p99": 19,
+         "max": 19
+        },
+        "levels_drawn": {
+         "n": 6,
+         "p50": 1,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 1
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 10,
+        "drawn": 0,
+        "update_ms": {
+         "n": 10,
+         "p50": 0.005,
+         "p90": 0.565,
+         "p99": 0.565,
+         "max": 0.565
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 10,
+         "p50": 0.405,
+         "p90": 15.06,
+         "p99": 15.06,
+         "max": 15.06
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 296
+    }
+   ]
+  },
+  {
+   "cfg": {
+    "drawer": "canvas",
+    "dpr": 1,
+    "cpu": 1
+   },
+   "drawerType": "canvas",
+   "aggregate": {
+    "idle": {
+     "update_ms": {
+      "p50_med": 0.01,
+      "p99_med": 0.09,
+      "n_med": 60
+     },
+     "draw_ms": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.085,
+      "p99_med": 0.22,
+      "n_med": 60
+     },
+     "tiles_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "levels_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "drawn_frames_med": 0,
+     "frames_med": 60,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "zoom_in_8x": {
+     "update_ms": {
+      "p50_med": 0.48,
+      "p99_med": 4.545,
+      "n_med": 73
+     },
+     "draw_ms": {
+      "p50_med": 0.245,
+      "p99_med": 1.18,
+      "n_med": 73
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.915,
+      "p99_med": 7.78,
+      "n_med": 74
+     },
+     "tiles_drawn": {
+      "p50_med": 22,
+      "p99_med": 31,
+      "n_med": 73
+     },
+     "levels_drawn": {
+      "p50_med": 2,
+      "p99_med": 2,
+      "n_med": 73
+     },
+     "drawn_frames_med": 73,
+     "frames_med": 74,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0,
+     "settle_ms_med": 1217.7999999998137
+    },
+    "settled_forced": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 0.025,
+      "n_med": 42
+     },
+     "draw_ms": {
+      "p50_med": 0.325,
+      "p99_med": 0.51,
+      "n_med": 40
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.4,
+      "p99_med": 2.7,
+      "n_med": 42
+     },
+     "tiles_drawn": {
+      "p50_med": 24,
+      "p99_med": 24,
+      "n_med": 40
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 1,
+      "n_med": 40
+     },
+     "drawn_frames_med": 40,
+     "frames_med": 42,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "pan": {
+     "update_ms": {
+      "p50_med": 0.42,
+      "p99_med": 5.015,
+      "n_med": 73
+     },
+     "draw_ms": {
+      "p50_med": 0.26,
+      "p99_med": 2.785,
+      "n_med": 72
+     },
+     "total_rAF_ms": {
+      "p50_med": 1.055,
+      "p99_med": 6.085,
+      "n_med": 73
+     },
+     "tiles_drawn": {
+      "p50_med": 26,
+      "p99_med": 35,
+      "n_med": 72
+     },
+     "levels_drawn": {
+      "p50_med": 2,
+      "p99_med": 4,
+      "n_med": 72
+     },
+     "drawn_frames_med": 72,
+     "frames_med": 73,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0,
+     "settle_ms_med": 1216.179999999702
+    },
+    "settled_forced2": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 0.01,
+      "n_med": 42
+     },
+     "draw_ms": {
+      "p50_med": 0.325,
+      "p99_med": 1.325,
+      "n_med": 40
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.42,
+      "p99_med": 2.46,
+      "n_med": 42
+     },
+     "tiles_drawn": {
+      "p50_med": 24,
+      "p99_med": 24,
+      "n_med": 40
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 1,
+      "n_med": 40
+     },
+     "drawn_frames_med": 40,
+     "frames_med": 42,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    },
+    "zoom_out_8x": {
+     "update_ms": {
+      "p50_med": 0.2,
+      "p99_med": 6.315,
+      "n_med": 69
+     },
+     "draw_ms": {
+      "p50_med": 0.19,
+      "p99_med": 1.945,
+      "n_med": 69
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.935,
+      "p99_med": 6.75,
+      "n_med": 69
+     },
+     "tiles_drawn": {
+      "p50_med": 12,
+      "p99_med": 53,
+      "n_med": 69
+     },
+     "levels_drawn": {
+      "p50_med": 1,
+      "p99_med": 4,
+      "n_med": 69
+     },
+     "drawn_frames_med": 69,
+     "frames_med": 69,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0,
+     "settle_ms_med": 1216.1450000004843
+    },
+    "idle2": {
+     "update_ms": {
+      "p50_med": 0.005,
+      "p99_med": 0.01,
+      "n_med": 61
+     },
+     "draw_ms": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "total_rAF_ms": {
+      "p50_med": 0.06,
+      "p99_med": 2.185,
+      "n_med": 61
+     },
+     "tiles_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "levels_drawn": {
+      "p50_med": null,
+      "p99_med": null,
+      "n_med": 0
+     },
+     "drawn_frames_med": 0,
+     "frames_med": 61,
+     "over_16_7ms_med": 0,
+     "longtasks_med": 0
+    }
+   },
+   "reps": [
+    {
+     "loadavg_before": "8.75 8.98 8.94",
+     "drawerType": "canvas",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 60,
+        "drawn": 0,
+        "update_ms": {
+         "n": 60,
+         "p50": 0.01,
+         "p90": 0.015,
+         "p99": 0.135,
+         "max": 0.135
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 60,
+         "p50": 0.085,
+         "p90": 0.13,
+         "p99": 0.21,
+         "max": 0.21
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 1217.7999999998137,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 72,
+        "drawn": 71,
+        "update_ms": {
+         "n": 71,
+         "p50": 0.475,
+         "p90": 1.825,
+         "p99": 10,
+         "max": 10
+        },
+        "draw_ms": {
+         "n": 71,
+         "p50": 0.245,
+         "p90": 0.345,
+         "p99": 1.005,
+         "max": 1.005
+        },
+        "total_rAF_ms": {
+         "n": 72,
+         "p50": 1.005,
+         "p90": 2.945,
+         "p99": 10.375,
+         "max": 10.375
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 71,
+         "p50": 14,
+         "p90": 24,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 71,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 61,
+       "zoom": 6,
+       "frames": {
+        "n": 42,
+        "drawn": 40,
+        "update_ms": {
+         "n": 42,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 0.31,
+         "p90": 0.405,
+         "p99": 1.71,
+         "max": 1.71
+        },
+        "total_rAF_ms": {
+         "n": 42,
+         "p50": 0.4,
+         "p90": 1.48,
+         "p99": 2.7,
+         "max": 2.7
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 1216.179999999702,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 69,
+        "drawn": 69,
+        "update_ms": {
+         "n": 69,
+         "p50": 0.42,
+         "p90": 1.605,
+         "p99": 5.015,
+         "max": 5.015
+        },
+        "draw_ms": {
+         "n": 69,
+         "p50": 0.25,
+         "p90": 0.365,
+         "p99": 2.785,
+         "max": 2.785
+        },
+        "total_rAF_ms": {
+         "n": 69,
+         "p50": 0.96,
+         "p90": 2.455,
+         "p99": 6.34,
+         "max": 6.34
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 69,
+         "p50": 26,
+         "p90": 32,
+         "p99": 35,
+         "max": 35
+        },
+        "levels_drawn": {
+         "n": 69,
+         "p50": 2,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 1
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 42,
+        "drawn": 40,
+        "update_ms": {
+         "n": 42,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 0.325,
+         "p90": 0.435,
+         "p99": 0.51,
+         "max": 0.51
+        },
+        "total_rAF_ms": {
+         "n": 42,
+         "p50": 0.42,
+         "p90": 0.585,
+         "p99": 1.875,
+         "max": 1.875
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 1216.160000000149,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 74,
+        "drawn": 73,
+        "update_ms": {
+         "n": 74,
+         "p50": 0.2,
+         "p90": 0.875,
+         "p99": 6.42,
+         "max": 6.42
+        },
+        "draw_ms": {
+         "n": 73,
+         "p50": 0.19,
+         "p90": 0.84,
+         "p99": 3.61,
+         "max": 3.61
+        },
+        "total_rAF_ms": {
+         "n": 74,
+         "p50": 1.065,
+         "p90": 2.16,
+         "p99": 6.75,
+         "max": 6.75
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 73,
+         "p50": 12,
+         "p90": 33,
+         "p99": 49,
+         "max": 49
+        },
+        "levels_drawn": {
+         "n": 73,
+         "p50": 1,
+         "p90": 2,
+         "p99": 3,
+         "max": 3
+        },
+        "longtasks": 0
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 60,
+        "drawn": 0,
+        "update_ms": {
+         "n": 60,
+         "p50": 0.005,
+         "p90": 0.005,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 60,
+         "p50": 0.055,
+         "p90": 0.08,
+         "p99": 2.185,
+         "max": 2.185
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 476
+    },
+    {
+     "loadavg_before": "8.67 8.94 8.93",
+     "drawerType": "canvas",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 60,
+        "drawn": 0,
+        "update_ms": {
+         "n": 60,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.05,
+         "max": 0.05
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 60,
+         "p50": 0.085,
+         "p90": 0.17,
+         "p99": 0.385,
+         "max": 0.385
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 1216.2600000007078,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 75,
+        "drawn": 73,
+        "update_ms": {
+         "n": 74,
+         "p50": 0.48,
+         "p90": 1.84,
+         "p99": 4.525,
+         "max": 4.525
+        },
+        "draw_ms": {
+         "n": 73,
+         "p50": 0.265,
+         "p90": 0.45,
+         "p99": 1.67,
+         "max": 1.67
+        },
+        "total_rAF_ms": {
+         "n": 75,
+         "p50": 0.915,
+         "p90": 2.86,
+         "p99": 4.875,
+         "max": 4.875
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 73,
+         "p50": 22,
+         "p90": 24,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 73,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 61,
+       "zoom": 6,
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.035,
+         "max": 0.035
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 0.35,
+         "p90": 0.435,
+         "p99": 0.51,
+         "max": 0.51
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 0.425,
+         "p90": 2.3,
+         "p99": 4.41,
+         "max": 4.41
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 1216.1749999998137,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 73,
+        "drawn": 72,
+        "update_ms": {
+         "n": 73,
+         "p50": 0.42,
+         "p90": 0.795,
+         "p99": 1.225,
+         "max": 1.225
+        },
+        "draw_ms": {
+         "n": 72,
+         "p50": 0.28,
+         "p90": 0.52,
+         "p99": 4.085,
+         "max": 4.085
+        },
+        "total_rAF_ms": {
+         "n": 73,
+         "p50": 1.27,
+         "p90": 1.67,
+         "p99": 5.23,
+         "max": 5.23
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 72,
+         "p50": 26,
+         "p90": 31,
+         "p99": 35,
+         "max": 35
+        },
+        "levels_drawn": {
+         "n": 72,
+         "p50": 2,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 41,
+        "drawn": 40,
+        "update_ms": {
+         "n": 41,
+         "p50": 0.005,
+         "p90": 0.005,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 0.305,
+         "p90": 0.395,
+         "p99": 3.19,
+         "max": 3.19
+        },
+        "total_rAF_ms": {
+         "n": 41,
+         "p50": 0.4,
+         "p90": 1.555,
+         "p99": 4.245,
+         "max": 4.245
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 1216.1450000004843,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 69,
+        "drawn": 69,
+        "update_ms": {
+         "n": 69,
+         "p50": 0.195,
+         "p90": 0.615,
+         "p99": 6.315,
+         "max": 6.315
+        },
+        "draw_ms": {
+         "n": 69,
+         "p50": 0.195,
+         "p90": 0.9,
+         "p99": 1.945,
+         "max": 1.945
+        },
+        "total_rAF_ms": {
+         "n": 69,
+         "p50": 0.61,
+         "p90": 3.155,
+         "p99": 12.74,
+         "max": 12.74
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 69,
+         "p50": 12,
+         "p90": 28,
+         "p99": 53,
+         "max": 53
+        },
+        "levels_drawn": {
+         "n": 69,
+         "p50": 1,
+         "p90": 2,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 0
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 61,
+        "drawn": 0,
+        "update_ms": {
+         "n": 61,
+         "p50": 0.005,
+         "p90": 0.005,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 61,
+         "p50": 0.06,
+         "p90": 0.085,
+         "p99": 1.63,
+         "max": 1.63
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 477
+    },
+    {
+     "loadavg_before": "8.52 8.90 8.91",
+     "drawerType": "canvas",
+     "coi": true,
+     "phases": {
+      "idle": {
+       "frames": {
+        "n": 61,
+        "drawn": 0,
+        "update_ms": {
+         "n": 61,
+         "p50": 0.01,
+         "p90": 0.015,
+         "p99": 0.09,
+         "max": 0.09
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 61,
+         "p50": 0.09,
+         "p90": 0.12,
+         "p99": 0.22,
+         "max": 0.22
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_in_8x": {
+       "ms": 1221.1699999999255,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 74,
+        "drawn": 73,
+        "update_ms": {
+         "n": 73,
+         "p50": 0.48,
+         "p90": 1.52,
+         "p99": 4.545,
+         "max": 4.545
+        },
+        "draw_ms": {
+         "n": 73,
+         "p50": 0.245,
+         "p90": 0.46,
+         "p99": 1.18,
+         "max": 1.18
+        },
+        "total_rAF_ms": {
+         "n": 74,
+         "p50": 0.9,
+         "p90": 2.87,
+         "p99": 7.78,
+         "max": 7.78
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 73,
+         "p50": 22,
+         "p90": 24,
+         "p99": 31,
+         "max": 31
+        },
+        "levels_drawn": {
+         "n": 73,
+         "p50": 2,
+         "p90": 2,
+         "p99": 2,
+         "max": 2
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced": {
+       "tilesLoadedInCache": 61,
+       "zoom": 6,
+       "frames": {
+        "n": 42,
+        "drawn": 40,
+        "update_ms": {
+         "n": 42,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.025,
+         "max": 0.025
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 0.325,
+         "p90": 0.44,
+         "p99": 0.485,
+         "max": 0.485
+        },
+        "total_rAF_ms": {
+         "n": 42,
+         "p50": 0.4,
+         "p90": 0.56,
+         "p99": 1.07,
+         "max": 1.07
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "pan": {
+       "ms": 1232.199999999255,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 74,
+        "drawn": 74,
+        "update_ms": {
+         "n": 74,
+         "p50": 0.435,
+         "p90": 1.075,
+         "p99": 5.755,
+         "max": 5.755
+        },
+        "draw_ms": {
+         "n": 74,
+         "p50": 0.26,
+         "p90": 0.395,
+         "p99": 2.155,
+         "max": 2.155
+        },
+        "total_rAF_ms": {
+         "n": 74,
+         "p50": 1.055,
+         "p90": 3.76,
+         "p99": 6.085,
+         "max": 6.085
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 74,
+         "p50": 26,
+         "p90": 31,
+         "p99": 35,
+         "max": 35
+        },
+        "levels_drawn": {
+         "n": 74,
+         "p50": 2,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 0
+       }
+      },
+      "settled_forced2": {
+       "frames": {
+        "n": 51,
+        "drawn": 40,
+        "update_ms": {
+         "n": 51,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.01,
+         "max": 0.01
+        },
+        "draw_ms": {
+         "n": 40,
+         "p50": 0.345,
+         "p90": 0.41,
+         "p99": 1.325,
+         "max": 1.325
+        },
+        "total_rAF_ms": {
+         "n": 51,
+         "p50": 0.435,
+         "p90": 1.43,
+         "p99": 2.46,
+         "max": 2.46
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 40,
+         "p50": 24,
+         "p90": 24,
+         "p99": 24,
+         "max": 24
+        },
+        "levels_drawn": {
+         "n": 40,
+         "p50": 1,
+         "p90": 1,
+         "p99": 1,
+         "max": 1
+        },
+        "longtasks": 0
+       }
+      },
+      "zoom_out_8x": {
+       "ms": 1202.425000000745,
+       "animDone": true,
+       "loaded": true,
+       "frames": {
+        "n": 67,
+        "drawn": 67,
+        "update_ms": {
+         "n": 67,
+         "p50": 0.21,
+         "p90": 0.62,
+         "p99": 4.125,
+         "max": 4.125
+        },
+        "draw_ms": {
+         "n": 67,
+         "p50": 0.19,
+         "p90": 0.41,
+         "p99": 1,
+         "max": 1
+        },
+        "total_rAF_ms": {
+         "n": 67,
+         "p50": 0.935,
+         "p90": 1.425,
+         "p99": 4.48,
+         "max": 4.48
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 67,
+         "p50": 12,
+         "p90": 25,
+         "p99": 53,
+         "max": 53
+        },
+        "levels_drawn": {
+         "n": 67,
+         "p50": 1,
+         "p90": 3,
+         "p99": 4,
+         "max": 4
+        },
+        "longtasks": 1
+       }
+      },
+      "idle2": {
+       "frames": {
+        "n": 61,
+        "drawn": 0,
+        "update_ms": {
+         "n": 61,
+         "p50": 0.005,
+         "p90": 0.01,
+         "p99": 0.02,
+         "max": 0.02
+        },
+        "draw_ms": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "total_rAF_ms": {
+         "n": 61,
+         "p50": 0.06,
+         "p90": 0.085,
+         "p99": 3.985,
+         "max": 3.985
+        },
+        "over_16_7ms": 0,
+        "tiles_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "levels_drawn": {
+         "n": 0,
+         "p50": null,
+         "p90": null,
+         "p99": null,
+         "max": null
+        },
+        "longtasks": 0
+       }
+      }
+     },
+     "frame_count": 486
+    }
+   ]
+  }
+ ],
+ "env_end": {
+  "uptime": "00:55:53 up  1:15,  0 user,  load average: 8.63, 8.90, 8.91",
+  "nproc": 4,
+  "node": "v22.22.0",
+  "date": "2026-10-25T00:55:53.604Z"
+ }
+}

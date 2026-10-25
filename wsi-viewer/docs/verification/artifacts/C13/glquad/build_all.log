@@ -1,0 +1,129 @@
++ D=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad
++ WOPT=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/dl-gap2/npm/binaryen/package/bin/wasm-opt
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad
++ rustc --version
+rustc 1.97.0 (2d8144b78 2026-07-07)
++ cargo --version
+cargo 1.97.0 (c980f4866 2026-06-30)
++ for feat in min deps
++ extra=
++ '[' min = deps ']'
++ cargo build --release --target wasm32-unknown-unknown --target-dir target_min
++ echo 'cargo min exit 0'
+cargo min exit 0
++ cp target_min/wasm32-unknown-unknown/release/glquad.wasm glquad_min.raw.wasm
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/dl-gap2/npm/binaryen/package/bin/wasm-opt -Os --enable-bulk-memory --enable-nontrapping-float-to-int -o glquad_min.opt.wasm glquad_min.raw.wasm
++ echo 'wasm-opt min exit 0'
+wasm-opt min exit 0
++ for feat in min deps
++ extra=
++ '[' deps = deps ']'
++ extra='--features deps'
++ cargo build --release --target wasm32-unknown-unknown --features deps --target-dir target_deps
++ echo 'cargo deps exit 0'
+cargo deps exit 0
++ cp target_deps/wasm32-unknown-unknown/release/glquad.wasm glquad_deps.raw.wasm
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/dl-gap2/npm/binaryen/package/bin/wasm-opt -Os --enable-bulk-memory --enable-nontrapping-float-to-int -o glquad_deps.opt.wasm glquad_deps.raw.wasm
++ echo 'wasm-opt deps exit 0'
+wasm-opt deps exit 0
+++ grep -A1 'name = "wasm-bindgen"' Cargo.lock
+++ grep version
+++ head -1
+++ sed 's/.*"\(.*\)"/\1/'
++ VER=0.2.129
++ echo 'wasm-bindgen crate 0.2.129'
+wasm-bindgen crate 0.2.129
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg
++ curl -sSL -o wbg.tgz https://github.com/wasm-bindgen/wasm-bindgen/releases/download/0.2.129/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl.tar.gz
++ tar xzf wbg.tgz
++ ls
+wasm-bindgen-0.2.129-x86_64-unknown-linux-musl
+wbg.tgz
+++ find /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg -name wasm-bindgen -type f
+++ head -1
++ WBG=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen
++ echo WBG=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen
+WBG=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen --version
+wasm-bindgen 0.2.129
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad
++ for feat in min deps
++ rm -rf pkg_min
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen --target web --out-dir pkg_min --out-name glquad glquad_min.raw.wasm
++ echo 'wbg min exit 0'
+wbg min exit 0
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/dl-gap2/npm/binaryen/package/bin/wasm-opt -Os --enable-bulk-memory --enable-nontrapping-float-to-int -o pkg_min/glquad_bg.opt.wasm pkg_min/glquad_bg.wasm
++ echo 'wasm-opt bindgen min exit 0'
+wasm-opt bindgen min exit 0
++ for feat in min deps
++ rm -rf pkg_deps
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C13/glquad/wbg/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen --target web --out-dir pkg_deps --out-name glquad glquad_deps.raw.wasm
++ echo 'wbg deps exit 0'
+wbg deps exit 0
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/dl-gap2/npm/binaryen/package/bin/wasm-opt -Os --enable-bulk-memory --enable-nontrapping-float-to-int -o pkg_deps/glquad_bg.opt.wasm pkg_deps/glquad_bg.wasm
++ echo 'wasm-opt bindgen deps exit 0'
+wasm-opt bindgen deps exit 0
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s glquad_deps.raw.wasm
++ tee sizes.txt
+++ wc -c
+++ gzip -9 -c glquad_deps.raw.wasm
++ printf '%-36s raw %9d gz9 %8d\n' glquad_deps.raw.wasm 838312 189316
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+glquad_deps.raw.wasm                 raw    838312 gz9   189316
+++ stat -c%s glquad_min.raw.wasm
+++ gzip -9 -c glquad_min.raw.wasm
+++ wc -c
++ printf '%-36s raw %9d gz9 %8d\n' glquad_min.raw.wasm 790266 168247
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+glquad_min.raw.wasm                  raw    790266 gz9   168247
+++ stat -c%s glquad_deps.opt.wasm
+++ gzip -9 -c glquad_deps.opt.wasm
+++ wc -c
++ printf '%-36s raw %9d gz9 %8d\n' glquad_deps.opt.wasm 766016 186365
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+glquad_deps.opt.wasm                 raw    766016 gz9   186365
+++ stat -c%s glquad_min.opt.wasm
+++ wc -c
+++ gzip -9 -c glquad_min.opt.wasm
++ printf '%-36s raw %9d gz9 %8d\n' glquad_min.opt.wasm 723173 165976
+glquad_min.opt.wasm                  raw    723173 gz9   165976
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s pkg_deps/glquad_bg.wasm
+++ gzip -9 -c pkg_deps/glquad_bg.wasm
+++ wc -c
++ printf '%-36s raw %9d gz9 %8d\n' pkg_deps/glquad_bg.wasm 76672 34472
+pkg_deps/glquad_bg.wasm              raw     76672 gz9    34472
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s pkg_min/glquad_bg.wasm
+++ gzip -9 -c pkg_min/glquad_bg.wasm
+++ wc -c
++ printf '%-36s raw %9d gz9 %8d\n' pkg_min/glquad_bg.wasm 31830 14534
+pkg_min/glquad_bg.wasm               raw     31830 gz9    14534
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s pkg_deps/glquad_bg.opt.wasm
+++ wc -c
+++ gzip -9 -c pkg_deps/glquad_bg.opt.wasm
++ printf '%-36s raw %9d gz9 %8d\n' pkg_deps/glquad_bg.opt.wasm 70930 33411
+pkg_deps/glquad_bg.opt.wasm          raw     70930 gz9    33411
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s pkg_min/glquad_bg.opt.wasm
+++ gzip -9 -c pkg_min/glquad_bg.opt.wasm
+++ wc -c
++ printf '%-36s raw %9d gz9 %8d\n' pkg_min/glquad_bg.opt.wasm 28688 13722
+pkg_min/glquad_bg.opt.wasm           raw     28688 gz9    13722
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s pkg_deps/glquad.js
+++ wc -c
+++ gzip -9 -c pkg_deps/glquad.js
++ printf '%-36s raw %9d gz9 %8d\n' pkg_deps/glquad.js 22675 4878
+pkg_deps/glquad.js                   raw     22675 gz9     4878
++ for f in glquad_*.raw.wasm glquad_*.opt.wasm pkg_*/glquad_bg.wasm pkg_*/glquad_bg.opt.wasm pkg_*/glquad.js
+++ stat -c%s pkg_min/glquad.js
+++ gzip -9 -c pkg_min/glquad.js
+++ wc -c
++ printf '%-36s raw %9d gz9 %8d\n' pkg_min/glquad.js 21992 4830
+pkg_min/glquad.js                    raw     21992 gz9     4830
++ echo C13_BUILD_DONE
+C13_BUILD_DONE

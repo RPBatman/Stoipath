@@ -1,0 +1,15 @@
+h2_tls W-LAN 1ms 1000Mbps q85_444 {"bytes_total":1818993,"protocol_seen":["h2"],"fill20_wall_ms_median":102,"fill20_wall_ms_min":76,"ideal_bytes_over_bw_plus_1_latency_ms":16,"overhead_vs_ideal_ms":86,"first_byte_ms_median_of_medians":29,"single_tile_fetch_ms_median":9}
+ERR h2_tls W-LAN 1ms 1000Mbps q80_420 Error: page.evaluate: Target page, context or browser has been closed
+ERR h2_tls W-BB p50 25ms 100Mbps q85_444 Error: browser.newContext: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /opt/pw-browsers/chromium-1243/chrome-linux64/chrome --disable-field-trial-config --disable-backgr
+ERR h2_tls W-BB p50 25ms 100Mbps q80_420 Error: browser.newContext: Target page, context or browser has been closed
+ERR h2_tls W-BB p95 50ms 20Mbps q85_444 Error: browser.newContext: Target page, context or browser has been closed
+ERR h2_tls W-BB p95 50ms 20Mbps q80_420 Error: browser.newContext: Target page, context or browser has been closed
+ERR h2_tls W-4G p50 45ms 25Mbps q85_444 Error: browser.newContext: Target page, context or browser has been closed
+ERR h2_tls W-4G p50 45ms 25Mbps q80_420 Error: browser.newContext: Target page, context or browser has been closed
+ERR h2_tls W-4G p95 200ms 5Mbps q85_444 Error: browser.newContext: Target page, context or browser has been closed
+ERR h2_tls W-4G p95 200ms 5Mbps q80_420 Error: browser.newContext: Target page, context or browser has been closed
+NET_DONE
+h2 run stalled after first condition (Node http2 server + 20 concurrent streams); killed at 00:54:26Z

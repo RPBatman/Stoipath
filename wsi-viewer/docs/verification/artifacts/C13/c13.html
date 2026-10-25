@@ -1,0 +1,22 @@
+<!doctype html><title>c13</title><canvas id=c width=512 height=512></canvas><script type=module>
+const med = a => { const s = [...a].sort((x, y) => x - y); return s[s.length >> 1]; };
+window.compileBench = async function (url) { // fetch bytes once, then compile (sync bytes) + instantiate with stub imports; also compileStreaming over a fresh fetch
+  const bytes = await (await fetch(url, { cache: 'no-store' })).arrayBuffer();
+  const t0 = performance.now(); const mod = await WebAssembly.compile(bytes); const compile_ms = performance.now() - t0;
+  const imp = {}; for (const im of WebAssembly.Module.imports(mod)) { imp[im.module] ??= {}; imp[im.module][im.name] = im.kind === 'function' ? () => 0 : im.kind === 'memory' ? new WebAssembly.Memory({ initial: 17 }) : im.kind === 'table' ? new WebAssembly.Table({ initial: 100, element: 'anyfunc' }) : new WebAssembly.Global({ value: 'i32', mutable: true }, 0); }
+  const t1 = performance.now(); let inst_ms, instErr = null; try { await WebAssembly.instantiate(mod, imp); inst_ms = performance.now() - t1; } catch (e) { inst_ms = performance.now() - t1; instErr = String(e).slice(0, 80); }
+  const t2 = performance.now(); await WebAssembly.compileStreaming(fetch(url + '?s=' + Math.random(), { cache: 'no-store' })); const streaming_ms = performance.now() - t2;
+  return { bytes: bytes.byteLength, compile_ms: +compile_ms.toFixed(1), instantiate_ms: +inst_ms.toFixed(1), instErr, compileStreaming_incl_fetch_ms: +streaming_ms.toFixed(1) };
+};
+window.glquadFirstFrame = async function (pkgUrl) { // real floor-renderer module end to end: import glue, init wasm, create Viewer, upload 20 tiles, render
+  const t0 = performance.now(); const m = await import(pkgUrl + 'glquad.js?x=' + Math.random()); const t1 = performance.now();
+  await m.default({ module_or_path: pkgUrl + 'glquad_bg.wasm?x=' + Math.random() }); const t2 = performance.now();
+  const v = new m.Viewer('c', 64); const t3 = performance.now(); v.set_view(2560, 2560, 0.2);
+  const tile = new Uint8Array(512 * 512 * 4); for (let i = 0; i < tile.length; i++) tile[i] = (i * 31) & 255;
+  for (let i = 0; i < 20; i++) v.upload_tile(0, i % 5, (i / 5) | 0, tile); const t4 = performance.now();
+  const n = v.render(0); const gl = document.getElementById('c').getContext('webgl2'); gl.finish(); const t5 = performance.now();
+  const px = new Uint8Array(4); gl.readPixels(256, 256, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+  return { import_glue_ms: +(t1 - t0).toFixed(1), wasm_init_ms: +(t2 - t1).toFixed(1), viewer_new_ms: +(t3 - t2).toFixed(1), upload20_ms: +(t4 - t3).toFixed(1), render_finish_ms: +(t5 - t4).toFixed(1), total_ms: +(t5 - t0).toFixed(1), instances_drawn: n, resident: v.resident(), visible_tiles_at_view: v.visible(0).length / 3, centre_pixel: [...px] };
+};
+window.ready = true;
+</script>ready

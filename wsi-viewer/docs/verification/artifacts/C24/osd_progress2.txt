@@ -1,0 +1,9 @@
+cfg {"drawer":"webgl","dpr":2,"cpu":1} rep 0: drawer=webgl zoom settle 15004 ms, settled_forced update p50 0.025 draw p50 4.02 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":2,"cpu":1} rep 1: drawer=webgl zoom settle 15009 ms, settled_forced update p50 0.01 draw p50 0.88 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":2,"cpu":1} rep 2: drawer=webgl zoom settle 15008 ms, settled_forced update p50 0.01 draw p50 0.655 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":1,"cpu":4} rep 0: drawer=webgl zoom settle 4273 ms, settled_forced update p50 0.005 draw p50 2.765 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":1,"cpu":4} rep 1: drawer=webgl zoom settle 4654 ms, settled_forced update p50 0.005 draw p50 5.69 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":1,"cpu":4} rep 2: drawer=webgl zoom settle 5791 ms, settled_forced update p50 0.005 draw p50 2.36 tiles 24 levels 1
+cfg {"drawer":"canvas","dpr":1,"cpu":1} rep 0: drawer=canvas zoom settle 1218 ms, settled_forced update p50 0.005 draw p50 0.31 tiles 24 levels 1
+cfg {"drawer":"canvas","dpr":1,"cpu":1} rep 1: drawer=canvas zoom settle 1216 ms, settled_forced update p50 0.005 draw p50 0.35 tiles 24 levels 1
+cfg {"drawer":"canvas","dpr":1,"cpu":1} rep 2: drawer=canvas zoom settle 1221 ms, settled_forced update p50 0.005 draw p50 0.325 tiles 24 levels 1

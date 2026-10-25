@@ -1,0 +1,46 @@
+<!doctype html><title>c10</title><canvas id=c width=512 height=512></canvas><script>
+const med = a => { const s = [...a].sort((x, y) => x - y); return s[s.length >> 1]; }; const pct = (a, p) => { const s = [...a].sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(p * s.length))]; };
+const S = window.S = { bitmaps: [], held: [] };
+const VS = `#version 300 es\nlayout(location=0) in vec2 p; out vec2 uv; void main(){ uv=p; gl_Position=vec4(p*2.0-1.0,0.0,1.0); }`;
+const FS = `#version 300 es\nprecision mediump float; precision mediump sampler2DArray; uniform sampler2DArray t; uniform float L; in vec2 uv; out vec4 o; void main(){ o=texture(t, vec3(uv, L)); }`;
+window.glSetup = function (layers) {
+  const gl = S.gl = document.getElementById('c').getContext('webgl2', { antialias: false, depth: false, stencil: false, alpha: false, powerPreference: 'high-performance' });
+  const mk = (ty, src) => { const s = gl.createShader(ty); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s); return s; };
+  const pr = gl.createProgram(); gl.attachShader(pr, mk(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, mk(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(pr); gl.useProgram(pr); S.uL = gl.getUniformLocation(pr, 'L');
+  const vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), gl.STATIC_DRAW); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  S.arrays = []; const t0 = performance.now(); const tex = S.tex = window.glNewArray(layers); gl.finish(); const alloc_ms = performance.now() - t0;
+  S.layers = layers; S.u8 = [new Uint8Array(512 * 512 * 4), new Uint8Array(512 * 512 * 4)]; for (let i = 0; i < S.u8[0].length; i++) { S.u8[0][i] = i * 7 & 255; S.u8[1][i] = i * 13 & 255; }
+  S.imgData = new ImageData(512, 512); S.imgData.data.set(S.u8[0]);
+  const dbg = gl.getExtension('WEBGL_debug_renderer_info'); return { alloc_ms, renderer: gl.getParameter(dbg ? dbg.UNMASKED_RENDERER_WEBGL : gl.RENDERER), maxLayers: gl.getParameter(gl.MAX_ARRAY_TEXTURE_LAYERS) };
+};
+window.glNewArray = function (layers) { const gl = S.gl; const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex); gl.texStorage3D(gl.TEXTURE_2D_ARRAY, 1, gl.RGBA8, 512, 512, layers); gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.LINEAR); S.arrays.push(tex); return tex; };
+window.glFillArray = function (idx) { const gl = S.gl, tex = S.arrays[idx]; gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex); const t0 = performance.now(); for (let l = 0; l < S.layers; l++) gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, l, 512, 512, 1, gl.RGBA, gl.UNSIGNED_BYTE, S.u8[l & 1]); gl.finish(); return performance.now() - t0; };
+window.glAllocFilled = function (n, layers) { const r = []; for (let i = 0; i < n; i++) { window.glNewArray(layers); r.push(window.glFillArray(S.arrays.length - 1)); } return r; };
+window.glDraw = function (layer) { const gl = S.gl; gl.bindTexture(gl.TEXTURE_2D_ARRAY, S.tex); gl.uniform1f(S.uL, layer); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+window.loadBitmaps = async function (urls) { S.blobs = []; for (const u of urls) S.blobs.push(await (await fetch(u, { cache: 'no-store' })).blob()); for (const b of S.bitmaps) b.close(); S.bitmaps = []; for (const b of S.blobs) S.bitmaps.push(await createImageBitmap(b, { colorSpaceConversion: 'none', premultiplyAlpha: 'none' })); return S.bitmaps.length; };
+window.bitmapDecode = async function (mode, reps) { const walls = []; for (let r = 0; r < reps; r++) { const t0 = performance.now(); let bms; if (mode === 'parallel') bms = await Promise.all(S.blobs.map(b => createImageBitmap(b))); else { bms = []; for (const b of S.blobs) bms.push(await createImageBitmap(b)); } walls.push(performance.now() - t0); for (const b of bms) b.close(); } return { mode, n: S.blobs.length, wall_median_ms: +med(walls).toFixed(1), wall_min_ms: +Math.min(...walls).toFixed(1), per_tile_ms: +(med(walls) / S.blobs.length).toFixed(2) }; };
+window.glUploadBench = function (kind, n) {
+  const gl = S.gl; gl.bindTexture(gl.TEXTURE_2D_ARRAY, S.tex); const call = []; let cv;
+  if (kind === 'canvas') { cv = new OffscreenCanvas(512, 512); cv.getContext('2d').putImageData(S.imgData, 0, 0); }
+  gl.finish(); const T0 = performance.now();
+  for (let i = 0; i < n; i++) { const src = kind === 'u8' ? S.u8[i & 1] : kind === 'imagedata' ? S.imgData : kind === 'imagebitmap' ? S.bitmaps[i % S.bitmaps.length] : cv; const t0 = performance.now(); gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, i % S.layers, 512, 512, 1, gl.RGBA, gl.UNSIGNED_BYTE, src); call.push(performance.now() - t0); }
+  const T1 = performance.now(); gl.finish(); const T2 = performance.now(); const err = gl.getError();
+  return { kind, n, call_median_ms: +med(call).toFixed(3), call_p90_ms: +pct(call, 0.9).toFixed(3), call_max_ms: +pct(call, 1).toFixed(3), calls_wall_ms: +(T1 - T0).toFixed(1), finish_ms: +(T2 - T1).toFixed(1), total_wall_ms: +(T2 - T0).toFixed(1), per_tile_wall_ms: +((T2 - T0) / n).toFixed(3), MiB_per_s: +((n * 1048576) / ((T2 - T0) / 1000) / 1048576).toFixed(0), glError: err };
+};
+window.glFrameTest = function (k, frames) { return new Promise(res => { const gl = S.gl; const dts = [], ups = []; let last = 0, f = 0, l = 0;
+  const step = ts => { if (last) dts.push(ts - last); last = ts; const t0 = performance.now(); gl.bindTexture(gl.TEXTURE_2D_ARRAY, S.tex); for (let i = 0; i < k; i++) { gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, l++ % S.layers, 512, 512, 1, gl.RGBA, gl.UNSIGNED_BYTE, S.u8[i & 1]); } window.glDraw(l % S.layers); ups.push(performance.now() - t0);
+    if (++f < frames) requestAnimationFrame(step); else res({ k, frames, frame_dt_p50: +med(dts).toFixed(2), frame_dt_p95: +pct(dts, 0.95).toFixed(2), frame_dt_max: +pct(dts, 1).toFixed(2), upload_draw_ms_p50: +med(ups).toFixed(2), upload_draw_ms_p95: +pct(ups, 0.95).toFixed(2), frames_over_16_7: dts.filter(d => d > 16.7).length, frames_over_33: dts.filter(d => d > 33.4).length }); };
+  requestAnimationFrame(step); }); };
+window.holdBitmaps = async function (n) { for (const b of S.held) b.close?.(); S.held = []; for (let i = 0; i < n; i++) S.held.push(await createImageBitmap(S.blobs[i % S.blobs.length])); return S.held.length; };
+window.holdBuffers = function (n) { for (const b of S.held) b.close?.(); S.held = []; for (let i = 0; i < n; i++) { const a = new Uint8Array(512 * 512 * 4); a[i] = 1; a[a.length - 1] = 2; S.held.push(a); } return n; };
+window.holdImageData = function (n) { for (const b of S.held) b.close?.(); S.held = []; for (let i = 0; i < n; i++) { const d = new ImageData(512, 512); d.data[i] = 1; S.held.push(d); } return n; };
+window.releaseHeld = function () { for (const b of S.held) b.close?.(); S.held = []; };
+window.jsHeap = () => performance.memory ? performance.memory.usedJSHeapSize : null;
+// ---- WebGPU ----
+window.gpuSetup = async function (layers) { if (!navigator.gpu) return { error: 'no navigator.gpu' }; const ad = await navigator.gpu.requestAdapter(); if (!ad) return { error: 'no adapter' }; const dev = S.dev = await ad.requestDevice(); S.q = dev.queue;
+  S.gtex = dev.createTexture({ size: [512, 512, layers], format: 'rgba8unorm', usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT }); S.glayers = layers; await S.q.onSubmittedWorkDone(); return { adapter: ad.info?.architecture || 'unknown', layers }; };
+window.gpuUploadBench = async function (kind, n) { const call = []; const T0 = performance.now();
+  for (let i = 0; i < n; i++) { const t0 = performance.now(); if (kind === 'writeTexture') S.q.writeTexture({ texture: S.gtex, origin: [0, 0, i % S.glayers] }, S.u8[i & 1], { bytesPerRow: 2048, rowsPerImage: 512 }, [512, 512, 1]); else S.q.copyExternalImageToTexture({ source: S.bitmaps[i % S.bitmaps.length] }, { texture: S.gtex, origin: [0, 0, i % S.glayers] }, [512, 512, 1]); call.push(performance.now() - t0); }
+  const T1 = performance.now(); await S.q.onSubmittedWorkDone(); const T2 = performance.now();
+  return { kind, n, call_median_ms: +med(call).toFixed(3), call_p90_ms: +pct(call, 0.9).toFixed(3), call_max_ms: +pct(call, 1).toFixed(3), calls_wall_ms: +(T1 - T0).toFixed(1), submitted_wait_ms: +(T2 - T1).toFixed(1), total_wall_ms: +(T2 - T0).toFixed(1), per_tile_wall_ms: +((T2 - T0) / n).toFixed(3) }; };
+</script>ready

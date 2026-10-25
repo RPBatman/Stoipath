@@ -1,0 +1,190 @@
+{
+ "env_start": {
+  "uptime": "00:10:33 up 29 min,  0 user,  load average: 5.82, 5.31, 2.86",
+  "nproc": "4",
+  "time": "2026-10-25T00:10:33.154Z"
+ },
+ "runs": [
+  {
+   "name": "default_swiftshader_webgl2",
+   "args": [
+    "--use-gl=angle",
+    "--use-angle=swiftshader",
+    "--ignore-gpu-blocklist",
+    "--enable-unsafe-webgpu",
+    "--enable-features=Vulkan",
+    "--use-webgpu-adapter=swiftshader"
+   ],
+   "env": {
+    "uptime": "00:10:33 up 29 min,  0 user,  load average: 5.82, 5.31, 2.86",
+    "nproc": "4",
+    "time": "2026-10-25T00:10:33.720Z"
+   },
+   "webgl2": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "vendor": "Google Inc. (Google)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "MAX_ARRAY_TEXTURE_LAYERS": 2048,
+    "MAX_3D_TEXTURE_SIZE": 2048,
+    "MAX_TEXTURE_SIZE": 8192,
+    "MAX_TEXTURE_IMAGE_UNITS": 32,
+    "g4": {
+     "counts_tested": 66,
+     "counts_with_bad_layers": 0,
+     "ok": true
+    },
+    "two_arrays": {
+     "A": {
+      "bad": 0,
+      "badLayers": []
+     },
+     "B": {
+      "bad": 0,
+      "badLayers": []
+     },
+     "bytes_each": 67108864,
+     "bytes_total": 134217728,
+     "MiB_total": 128,
+     "glError": 0
+    },
+    "texSubImage3D_arraybuffer": {
+     "batches": [
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 6.2000000001862645,
+       "batch64_call_ms": 59.5,
+       "batch64_call_plus_finish_ms": 59.5
+      },
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 8.699999999953434,
+       "batch64_call_ms": 59.10000000009313,
+       "batch64_call_plus_finish_ms": 59.10000000009313
+      },
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 8.399999999906868,
+       "batch64_call_ms": 70.89999999990687,
+       "batch64_call_plus_finish_ms": 70.89999999990687
+      },
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 6.699999999953434,
+       "batch64_call_ms": 70.89999999990687,
+       "batch64_call_plus_finish_ms": 71
+      },
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 4.199999999953434,
+       "batch64_call_ms": 55.10000000009313,
+       "batch64_call_plus_finish_ms": 55.199999999953434
+      },
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 9.200000000186265,
+       "batch64_call_ms": 62.60000000009313,
+       "batch64_call_plus_finish_ms": 62.60000000009313
+      },
+      {
+       "per_layer_call_ms_median": 0.10000000009313226,
+       "per_layer_call_ms_max": 8.100000000093132,
+       "batch64_call_ms": 83.60000000009313,
+       "batch64_call_plus_finish_ms": 83.60000000009313
+      }
+     ],
+     "median_per_layer_call_ms": 0.10000000009313226,
+     "median_batch64_call_ms": 62.60000000009313,
+     "median_batch64_with_finish_ms": 62.60000000009313
+    },
+    "imagebitmap": {
+     "tile_bytes": 79810,
+     "createImageBitmap_serial_ms_median": 4,
+     "createImageBitmap_20_parallel_ms": 31.699999999953434,
+     "texSubImage3D_from_bitmap": {
+      "batches": [
+       {
+        "per_tile_call_ms_median": 0.6000000000931323,
+        "batch20_call_ms": 19.699999999953434,
+        "batch20_with_finish_ms": 21.100000000093132
+       },
+       {
+        "per_tile_call_ms_median": 0.6000000000931323,
+        "batch20_call_ms": 16.800000000046566,
+        "batch20_with_finish_ms": 18.0999999998603
+       },
+       {
+        "per_tile_call_ms_median": 0.6999999999534339,
+        "batch20_call_ms": 14.400000000139698,
+        "batch20_with_finish_ms": 17.700000000186265
+       },
+       {
+        "per_tile_call_ms_median": 0.6999999999534339,
+        "batch20_call_ms": 15.5,
+        "batch20_with_finish_ms": 18
+       },
+       {
+        "per_tile_call_ms_median": 0.6999999999534339,
+        "batch20_call_ms": 16.5,
+        "batch20_with_finish_ms": 22.0999999998603
+       },
+       {
+        "per_tile_call_ms_median": 0.8000000000465661,
+        "batch20_call_ms": 36.300000000046566,
+        "batch20_with_finish_ms": 36.4000000001397
+       },
+       {
+        "per_tile_call_ms_median": 0.8000000000465661,
+        "batch20_call_ms": 39.699999999953434,
+        "batch20_with_finish_ms": 39.699999999953434
+       }
+      ],
+      "median_per_tile_call_ms": 0.6999999999534339,
+      "median_batch20_call_ms": 16.800000000046566,
+      "median_batch20_with_finish_ms": 21.100000000093132
+     }
+    },
+    "texSubImage2D_1MiB_ms_median": 0.19999999995343387,
+    "glErrorFinal": 0
+   },
+   "webgpu": {
+    "available": false,
+    "reason": "navigator.gpu undefined"
+   },
+   "env_end": {
+    "uptime": "00:10:43 up 30 min,  0 user,  load average: 5.45, 5.25, 2.87",
+    "nproc": "4",
+    "time": "2026-10-25T00:10:43.315Z"
+   }
+  },
+  {
+   "name": "webgpu_alt_flags",
+   "args": [
+    "--enable-unsafe-webgpu",
+    "--use-angle=swiftshader",
+    "--ignore-gpu-blocklist",
+    "--enable-features=Vulkan,SkiaGraphite",
+    "--use-webgpu-adapter=swiftshader",
+    "--enable-dawn-features=allow_unsafe_apis"
+   ],
+   "env": {
+    "uptime": "00:10:44 up 30 min,  0 user,  load average: 5.45, 5.25, 2.87",
+    "nproc": "4",
+    "time": "2026-10-25T00:10:44.125Z"
+   },
+   "webgpu": {
+    "available": false,
+    "reason": "navigator.gpu undefined"
+   },
+   "env_end": {
+    "uptime": "00:10:44 up 30 min,  0 user,  load average: 5.45, 5.25, 2.87",
+    "nproc": "4",
+    "time": "2026-10-25T00:10:44.158Z"
+   }
+  }
+ ],
+ "env_end": {
+  "uptime": "00:10:44 up 30 min,  0 user,  load average: 5.45, 5.25, 2.87",
+  "nproc": "4",
+  "time": "2026-10-25T00:10:44.575Z"
+ }
+}

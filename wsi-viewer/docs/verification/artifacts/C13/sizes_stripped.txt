@@ -1,0 +1,5 @@
+wgpu_bindgen/pkg_both/wgpusize_bg.stripped.opt.wasm  raw   2095396 gz9   801710
+wgpu_bindgen/pkg_webgl/wgpusize_bg.stripped.opt.wasm raw   2011837 gz9   765169
+wgpu_bindgen/pkg_webgpu/wgpusize_bg.stripped.opt.wasm raw     86770 gz9    34293
+glquad/pkg_min/glquad_bg.stripped.opt.wasm           raw     28614 gz9    13675
+glquad/pkg_deps/glquad_bg.stripped.opt.wasm          raw     70856 gz9    33362

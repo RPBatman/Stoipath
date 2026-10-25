@@ -1,0 +1,30 @@
+unthrottled              q85_444_20      1375223 B  fetch p50    122 ms (min 91, max 229) pred - ms  ttfb 7.3  first 64  decode 187.3 upload 31.0 total 329
+unthrottled              q90_444_20      1770865 B  fetch p50    182 ms (min 103, max 269) pred - ms  ttfb 8.3  first 72  decode 139.3 upload 78.8 total 365
+unthrottled              q75_420_20      1011210 B  fetch p50     81 ms (min 63, max 137) pred - ms  ttfb 7.7  first 72  decode 121.6 upload 31.7 total 271
+unthrottled              q85_444_9        685657 B  fetch p50     36 ms (min 29, max 114) pred - ms  ttfb 3.4  first 29  decode 61.0 upload 21.7 total 173
+unthrottled              synth_80KBx20   1600000 B  fetch p50    113 ms (min 42, max 173) pred - ms  ttfb 8.4  first 112
+unthrottled              synth_55KBx9     500004 B  fetch p50     36 ms (min 25, max 169) pred - ms  ttfb 4.4  first 27
+W-LAN_p50 1ms 900Mbps    q85_444_20      1375223 B  fetch p50    114 ms (min 70, max 273) pred 13 ms  ttfb 7.4  first 114  decode 145.7 upload 67.5 total 288
+W-LAN_p50 1ms 900Mbps    q90_444_20      1770865 B  fetch p50    112 ms (min 102, max 343) pred 17 ms  ttfb 6.9  first 106  decode 111.7 upload 40.5 total 324
+W-LAN_p50 1ms 900Mbps    q75_420_20      1011210 B  fetch p50     73 ms (min 56, max 115) pred 10 ms  ttfb 6.0  first 51  decode 113.7 upload 22.6 total 202
+W-LAN_p50 1ms 900Mbps    q85_444_9        685657 B  fetch p50     46 ms (min 37, max 75) pred 7 ms  ttfb 4.8  first 38  decode 82.6 upload 6.8 total 145
+W-LAN_p50 1ms 900Mbps    synth_80KBx20   1600000 B  fetch p50    112 ms (min 70, max 147) pred 15 ms  ttfb 1.7  first 70
+W-LAN_p50 1ms 900Mbps    synth_55KBx9     500004 B  fetch p50     48 ms (min 39, max 115) pred 5 ms  ttfb 1.9  first 39
+W-LAN_p95 3ms 500Mbps    q85_444_20      1375223 B  fetch p50     79 ms (min 68, max 544) pred 25 ms  ttfb 5.9  first 34  decode 152.5 upload 45.7 total 423
+W-LAN_p95 3ms 500Mbps    q90_444_20      1770865 B  fetch p50    115 ms (min 68, max 117) pred 31 ms  ttfb 3.7  first 111  decode 211.7 upload 31.9 total 356
+W-LAN_p95 3ms 500Mbps    q75_420_20      1011210 B  fetch p50     84 ms (min 60, max 93) pred 19 ms  ttfb 5.6  first 49  decode 110.6 upload 18.6 total 208
+W-LAN_p95 3ms 500Mbps    q85_444_9        685657 B  fetch p50     76 ms (min 57, max 105) pred 14 ms  ttfb 3.9  first 75  decode 51.6 upload 11.8 total 156
+W-LAN_p95 3ms 500Mbps    synth_80KBx20   1600000 B  fetch p50    109 ms (min 76, max 132) pred 29 ms  ttfb 3.5  first 87
+W-LAN_p95 3ms 500Mbps    synth_55KBx9     500004 B  fetch p50     66 ms (min 37, max 110) pred 11 ms  ttfb 4.0  first 46
+W-BB_p50 25ms 100Mbps    q85_444_20      1375223 B  fetch p50    188 ms (min 165, max 291) pred 135 ms  ttfb 8.0  first 131  decode 100.3 upload 26.2 total 327
+W-BB_p50 25ms 100Mbps    q90_444_20      1770865 B  fetch p50    223 ms (min 199, max 415) pred 167 ms  ttfb 7.0  first 142  decode 144.1 upload 43.8 total 419
+W-BB_p50 25ms 100Mbps    q75_420_20      1011210 B  fetch p50    135 ms (min 129, max 177) pred 106 ms  ttfb 2.7  first 71  decode 85.7 upload 18.7 total 242
+W-BB_p50 25ms 100Mbps    q85_444_9        685657 B  fetch p50     99 ms (min 92, max 126) pred 80 ms  ttfb 2.1  first 79  decode 45.8 upload 9.5 total 159
+W-BB_p50 25ms 100Mbps    synth_80KBx20   1600000 B  fetch p50    204 ms (min 179, max 226) pred 153 ms  ttfb 5.5  first 164
+W-BB_p50 25ms 100Mbps    synth_55KBx9     500004 B  fetch p50     83 ms (min 81, max 101) pred 65 ms  ttfb 3.2  first 69
+W-BB_p95 50ms 20Mbps     q85_444_20      1375223 B  fetch p50    623 ms (min 618, max 654) pred 600 ms  ttfb 4.7  first 500  decode 169.9 upload 35.5 total 829
+W-BB_p95 50ms 20Mbps     q90_444_20      1770865 B  fetch p50    790 ms (min 775, max 809) pred 758 ms  ttfb 6.4  first 644  decode 128.4 upload 51.1 total 975
+W-BB_p95 50ms 20Mbps     q75_420_20      1011210 B  fetch p50    493 ms (min 472, max 586) pred 454 ms  ttfb 4.6  first 395  decode 89.0 upload 42.3 total 648
+W-BB_p95 50ms 20Mbps     q85_444_9        685657 B  fetch p50    341 ms (min 339, max 350) pred 324 ms  ttfb 4.2  first 309  decode 52.6 upload 15.9 total 411
+W-BB_p95 50ms 20Mbps     synth_80KBx20   1600000 B  fetch p50    727 ms (min 722, max 739) pred 690 ms  ttfb 2.8  first 661
+W-BB_p95 50ms 20Mbps     synth_55KBx9     500004 B  fetch p50    268 ms (min 265, max 335) pred 250 ms  ttfb 3.1  first 268

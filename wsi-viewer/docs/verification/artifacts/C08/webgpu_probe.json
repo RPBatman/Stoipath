@@ -1,0 +1,28 @@
+[
+ {
+  "set": 0,
+  "args": [
+   "--enable-unsafe-webgpu",
+   "--enable-features=Vulkan",
+   "--use-angle=swiftshader",
+   "--ignore-gpu-blocklist"
+  ],
+  "result": {
+   "isSecureContext": true,
+   "hasGpu": true,
+   "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+   "adapter": {
+    "info": {
+     "vendor": "google",
+     "architecture": "swiftshader",
+     "device": "",
+     "description": ""
+    },
+    "maxTextureArrayLayers": 256,
+    "isCompatibilityMode": null,
+    "featureLevel": null
+   }
+  },
+  "gpuinfo": []
+ }
+]

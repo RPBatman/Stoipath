@@ -1,0 +1,1 @@
+/usr/bin/aarch64-linux-gnu-g++ -O3 -DNDEBUG -static CMakeFiles/ojph_expand.dir/ojph_expand.cpp.o CMakeFiles/ojph_expand.dir/__/others/ojph_img_io.cpp.o -o ojph_expand  ../../core/libopenjph.a -Wl,--no-as-needed 

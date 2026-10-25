@@ -1,0 +1,300 @@
+{
+ "lens": "on-this-machine experiment",
+ "machine": {
+  "nproc": 4,
+  "uptime_at_write": "00:39:02 up 58 min,  0 user,  load average: 7.61, 9.68, 9.03",
+  "note": "shared box: other agents ran headless Chromium benches and cargo wasm builds concurrently; load average 5-17 on 4 cores during all timing runs (recorded per run in each results file). Bandwidth-shaped network numbers are robust; CPU-side decode/upload/LAN numbers are inflated and are upper bounds."
+ },
+ "browser": "Playwright 1.63.0, Chromium 153 (new headless, channel=chromium), ANGLE Vulkan on SwiftShader; WebGPU works only on a secure context (http://localhost) with --enable-unsafe-webgpu --enable-features=Vulkan --use-angle=swiftshader",
+ "C01": {
+  "files": [
+   "C01/eventlatency_bench.mjs",
+   "C01/eventlatency_results.json",
+   "C01/eventlatency_run2.log",
+   "C01/trace_*.json",
+   "C01/trace_explore.mjs"
+  ],
+  "beginframe_interval_ms": 16.67,
+  "gen_to_display_ms_p50_p95": {
+   "REF_mouseMoved": [
+    7.0,
+    12.0
+   ],
+   "REF_mouseWheel": [
+    33.1,
+    38.0
+   ],
+   "GLDIRECT_mouseMoved": [
+    11.8,
+    17.0
+   ],
+   "GLDIRECT_mouseWheel": [
+    38.5,
+    44.8
+   ],
+   "GLRAF_mouseMoved": [
+    16.7,
+    32.2
+   ],
+   "GLRAF_mouseWheel": [
+    36.1,
+    46.0
+   ]
+  },
+  "gen_to_main_end_ms_p50_p95": {
+   "REF_mouseMoved": [
+    1.1,
+    1.6
+   ],
+   "REF_mouseWheel": [
+    26.9,
+    31.1
+   ],
+   "GLDIRECT_mouseWheel": [
+    27.2,
+    31.1
+   ],
+   "GLRAF_mouseMoved": [
+    4.5,
+    14.4
+   ],
+   "GLRAF_mouseWheel": [
+    24.9,
+    30.8
+   ]
+  },
+  "wheel_RendererCompositorToMain_ms_p50": 16.0,
+  "main_end_to_display_ms_p50": "5.6 (REF) .. 11.5 (GL) = SwiftShader draw+swap, NOT a vsync wait",
+  "run1_less_loaded": {
+   "GLDIRECT_mouseWheel_EventLatency_total_p50_p95": [
+    41.8,
+    84.7
+   ],
+   "GLRAF_mouseWheel": [
+    37.2,
+    69.7
+   ],
+   "GLRAF_mouseMoved": [
+    23.7,
+    35.3
+   ],
+   "GLDIRECT_mouseMoved": [
+    13.4,
+    24.7
+   ]
+  }
+ },
+ "C03": {
+  "files": [
+   "C03/fetch_and_grep.sh",
+   "C03/fetch_and_grep.out.txt",
+   "C03/UnifiedWebPreferences.yaml",
+   "C03/Page.cpp",
+   "C03/AnimationFrameRate.cpp",
+   "C03/WKPreferences.h",
+   "C03/WKPreferencesPrivate.h",
+   "C03/fetched_at.txt"
+  ],
+  "yaml_line_4944": "PreferPageRenderingUpdatesNear60FPSEnabled: type bool, status stable, defaultValue PLATFORM(VISION): false, default: true",
+  "Page.cpp": "lines 3038 and 3069 pass settings().preferPageRenderingUpdatesNear60FPSEnabled() into preferredFramesPerSecond()/preferredFrameInterval()",
+  "AnimationFrameRate.cpp": "framesPerSecondNearestFullSpeed: 120->60, 90->90, 144->72 (integer division nearest 60)",
+  "WKPreferences.h": "no frame-rate API",
+  "WKPreferencesPrivate.h": "_features (ios 16.4), _setEnabled:forFeature: (private)",
+  "gpu_canvas_pacing": "m_gpuCanvasesRequestingPacing can only lower the rate"
+ },
+ "C04_C05": {
+  "files": [
+   "C04/coldfill_bench.mjs",
+   "C04/coldfill_results.json",
+   "C04/coldfill_run.log",
+   "C04/analyse.py",
+   "C04/analyse.out.txt",
+   "C05/decode_recheck.mjs",
+   "C05/decode_recheck.json",
+   "common/extract_tiles.py",
+   "common/tiles/manifest.json"
+  ],
+  "protocol": "h2 over TLS to 127.0.0.1, CDP Network.emulateNetworkConditions, 20 concurrent fetches, medians of 5",
+  "fetch_all_ms_p50": {
+   "W-4G_p50 45ms/25Mbps": {
+    "synth1.6MB": 613,
+    "q85_1.375MB": 509,
+    "q90_1.77MB": 679,
+    "q75_1.01MB": 454,
+    "centre9_q85_0.686MB": 278,
+    "synth0.5MB": 270
+   },
+   "W-4G_p95 200ms/5Mbps": {
+    "synth1.6MB": 2808,
+    "q85": 2445,
+    "q90": 3082,
+    "q75": 1866,
+    "centre9": 1326,
+    "synth0.5MB": 1027
+   },
+   "W-BB_p50 25ms/100Mbps": {
+    "synth1.6MB": 196,
+    "q85": 188,
+    "q90": 211,
+    "q75": 163,
+    "centre9": 159,
+    "synth0.5MB": 116
+   },
+   "W-BB_p95 50ms/20Mbps": {
+    "synth1.6MB": 780,
+    "q85": 703,
+    "q90": 812,
+    "q75": 501,
+    "centre9": 349,
+    "synth0.5MB": 286
+   },
+   "W-LAN_p50 1ms/900Mbps": {
+    "synth1.6MB": 102,
+    "note": "CPU/request-overhead bound under load; predicted 15"
+   },
+   "unthrottled": {
+    "synth1.6MB": 82,
+    "q85": 95
+   }
+  },
+  "measured_minus_latency_plus_bytes_over_bw_ms": "+14..+106 (h2 fan-out, TLS, CPU under load)",
+  "decode_20_tiles_createImageBitmap_ms": {
+   "C08 run load~5 parallel20": 31.7,
+   "recheck load~9 parallel20 median": 123.6,
+   "recheck serial sum": 81.2,
+   "per tile serial": 4.0,
+   "harness under load 9-17": "86-350"
+  },
+  "upload_20x1MiB_texSubImage3D_from_ImageBitmap_ms": {
+   "C08 call/finish": [
+    16.8,
+    21.1
+   ],
+   "harness": "20-95"
+  },
+  "total_fetch_decode_upload_ms_p50": {
+   "W-BB_p50 q85": 340,
+   "W-BB_p95 q85": 941,
+   "W-4G_p50 q85": 923,
+   "W-4G_p50 q75": 697,
+   "W-4G_p95 q85": 2676,
+   "W-4G_p95 q75": 2141,
+   "W-4G_p50 centre9": 410
+  }
+ },
+ "C06": {
+  "files": [
+   "../ps-c01-08/fetched/brunye2023_PMC9997932.json (read, not re-fetched)",
+   "../../dl/osd.js"
+  ],
+  "verified_text": {
+   "min_gap": "minimum of 196 ms to a maximum of 136.4 s",
+   "events": "21,416 zoom events, 11,326 zoom-in, 10,090 zoom-out",
+   "duration": "100 ms to 20.7 s",
+   "amplitude": "1x to 59x; 5x criterion retained 66.4%",
+   "within5s": "90.4%",
+   "N": "89 pathologists, 1,246 image reviews"
+  },
+  "osd_zoomPerScroll_default": 1.2,
+  "lead_arith_ms": 154.4
+ },
+ "C07": {
+  "files": [
+   "C07/c07_base_bundle_bytes.py",
+   "C07/c07_results.json",
+   "C07/c07_run.log"
+  ],
+  "slide": "CAMELYON16 tumor_014.tif 97,792 x 214,016 (2.19:1)",
+  "le4096_measured": {
+   "tiles": 32,
+   "MiB_rgba8": 32,
+   "pct_128MiB": 25,
+   "MB_q75_420": 0.659,
+   "MB_q85_444": 0.862,
+   "MB_q90_444": 1.071,
+   "vendor_MB": 0.702
+  },
+  "le2048_measured": {
+   "tiles": 11,
+   "MiB": 11,
+   "MB_q85_444": 0.248
+  },
+  "L5_85tile_proxy": {
+   "tiles": 84,
+   "tissue_fraction": 0.536,
+   "MB_q75": 1.896,
+   "MB_q85": 2.474,
+   "MB_q90": 3.069,
+   "tissue_tile_KB_q85_p50": 27.4,
+   "p90": 106.3
+  },
+  "square_equivalent_bundle": {
+   "tiles": 116,
+   "MB_q75": 2.555,
+   "MB_q85": 3.336,
+   "MB_q90": 4.14
+  },
+  "tile_count_arith_le4096": {
+   "100k^2": 70,
+   "131k^2": 85,
+   "65k^2": 39,
+   "80k^2": 39,
+   "2:1 (131k x 65k)": 43,
+   "2:1 (100k x 50k)": 39,
+   "3:1": 35,
+   "CMU-1 46k x 33k": 44
+  },
+  "tile_count_arith_le2048": {
+   "square >=65k": "14-21",
+   "2:1 and 3:1": 11
+  }
+ },
+ "C08": {
+  "files": [
+   "C08/texarray_test.mjs",
+   "C08/texarray_results.json",
+   "C08/webgpu_probe.mjs",
+   "C08/webgpu_probe.json",
+   "C08/webgpu_texarray.mjs",
+   "C08/webgpu_texarray_results.json"
+  ],
+  "webgl2": {
+   "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)))",
+   "MAX_ARRAY_TEXTURE_LAYERS": 2048,
+   "MAX_3D_TEXTURE_SIZE": 2048,
+   "g4_layer_counts_tested": 66,
+   "bad": 0,
+   "two_64_layer_arrays_MiB": 128,
+   "verified": true,
+   "texSubImage3D_1MiB_from_ArrayBuffer_ms_median": 0.1,
+   "texSubImage3D_from_ImageBitmap_per_tile_ms": 0.7,
+   "batch20_from_ImageBitmap_call_ms": 16.8,
+   "with_finish_ms": 21.1
+  },
+  "webgpu": {
+   "adapter": "google / swiftshader",
+   "maxTextureArrayLayers": 256,
+   "rgba8unorm_512_layers_verified": [
+    1,
+    2,
+    3,
+    15,
+    16,
+    17,
+    63,
+    64,
+    128,
+    256
+   ],
+   "writeTexture_64x1MiB_call_ms": 91.7,
+   "done_ms": 106.5,
+   "per_layer_median_ms": 0.4
+  },
+  "arith": {
+   "bytes_per_layer": 1048576,
+   "64_layers_MiB": 64,
+   "256_layers_MiB": 256,
+   "256_with_mips_MiB": 341
+  }
+ }
+}

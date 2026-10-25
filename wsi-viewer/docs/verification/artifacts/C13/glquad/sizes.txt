@@ -1,0 +1,10 @@
+glquad_deps.raw.wasm                 raw    838312 gz9   189316
+glquad_min.raw.wasm                  raw    790266 gz9   168247
+glquad_deps.opt.wasm                 raw    766016 gz9   186365
+glquad_min.opt.wasm                  raw    723173 gz9   165976
+pkg_deps/glquad_bg.wasm              raw     76672 gz9    34472
+pkg_min/glquad_bg.wasm               raw     31830 gz9    14534
+pkg_deps/glquad_bg.opt.wasm          raw     70930 gz9    33411
+pkg_min/glquad_bg.opt.wasm           raw     28688 gz9    13722
+pkg_deps/glquad.js                   raw     22675 gz9     4878
+pkg_min/glquad.js                    raw     21992 gz9     4830

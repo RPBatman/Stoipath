@@ -1,0 +1,37 @@
+<stdin>:13: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+webgl2.json title: WebGL 2.0 | usage_perc_y 97.13 usage_perc_a 0
+   chrome   first 'y': ('56', 'y')  latest: ('159', 'y')
+   safari   first 'y': ('TP', 'y')  latest: ('27.2', 'y')
+   ios_saf  first 'y': ('15.0-15.1', 'y')  latest: ('27.2', 'y')
+   firefox  first 'y': ('51', 'y')  latest: ('161', 'y')
+   and_chr  first 'y': ('156', 'y')  latest: ('156', 'y')
+   samsung  first 'y': ('7.2-7.4', 'y')  latest: ('30', 'y')
+   android  first 'y': ('156', 'y')  latest: ('156', 'y')
+   and_ff   first 'y': ('158', 'y')  latest: ('158', 'y')
+   edge     first 'y': ('79', 'y')  latest: ('155', 'y')
+   opera    first 'y': ('43', 'y')  latest: ('135', 'y')
+   op_mob   first 'y': ('80', 'y')  latest: ('80', 'y')
+   kaios    first 'y': ('3.0-3.1', 'y')  latest: ('3.0-3.1', 'y')
+   and_uc   first 'y': ('15.5', 'y')  latest: ('15.5', 'y')
+   and_qq   first 'y': ('14.9', 'y')  latest: ('14.9', 'y')
+   baidu    first 'y': ('13.52', 'y')  latest: ('13.52', 'y')
+webgpu.json title: WebGPU | usage_perc_y 85.8 usage_perc_a 3.66
+   chrome   first 'y': ('113', 'y #5')  latest: ('159', 'y #9')
+   safari   first 'y': None  latest: ('27.2', 'a #2 #7')
+   ios_saf  first 'y': ('26.0', 'y')  latest: ('27.2', 'y')
+   firefox  first 'y': None  latest: ('161', 'a d #1 #8')
+   and_chr  first 'y': ('156', 'y')  latest: ('156', 'y')
+   samsung  first 'y': ('24', 'y')  latest: ('30', 'y')
+   android  first 'y': None  latest: ('156', 'n')
+   and_ff   first 'y': None  latest: ('158', 'n d #1')
+   edge     first 'y': ('113', 'y')  latest: ('155', 'y')
+   opera    first 'y': ('99', 'y #5')  latest: ('135', 'y #5')
+   op_mob   first 'y': ('80', 'y #5')  latest: ('80', 'y #5')
+   kaios    first 'y': None  latest: ('3.0-3.1', 'n d #1')
+   and_uc   first 'y': None  latest: ('15.5', 'n')
+   and_qq   first 'y': None  latest: ('14.9', 'n')
+   baidu    first 'y': None  latest: ('13.52', 'n')
+caniuse data.json updated: 2026-10-22T05:38:23
+Traceback (most recent call last):
+  File "<stdin>", line 16, in <module>
+KeyError: 'version_list'

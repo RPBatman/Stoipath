@@ -1,0 +1,72 @@
+{
+ "builds": {
+  "x86_simd": {
+   "n": 695,
+   "mismatches_vs_imagecodecs_ref": 0,
+   "errors": 0,
+   "seconds": 4.0,
+   "first_mismatches": []
+  },
+  "x86_nosimd": {
+   "n": 695,
+   "mismatches_vs_imagecodecs_ref": 0,
+   "errors": 0,
+   "seconds": 4.2,
+   "first_mismatches": []
+  },
+  "arm64_neon": {
+   "n": 695,
+   "mismatches_vs_imagecodecs_ref": 0,
+   "errors": 0,
+   "seconds": 22.1,
+   "first_mismatches": []
+  },
+  "arm64_nosimd": {
+   "n": 695,
+   "mismatches_vs_imagecodecs_ref": 0,
+   "errors": 0,
+   "seconds": 22.4,
+   "first_mismatches": []
+  }
+ },
+ "variants": {
+  "dct_fast": {
+   "q75_420": "132/139 differ",
+   "q80_420": "139/139 differ",
+   "q85_444": "139/139 differ",
+   "q90_420": "132/139 differ",
+   "q90_444": "132/139 differ"
+  },
+  "nosmooth": {
+   "q75_420": "132/139 differ",
+   "q80_420": "132/139 differ",
+   "q85_444": "0/139 differ",
+   "q90_420": "132/139 differ",
+   "q90_444": "0/139 differ"
+  },
+  "dct_float": {
+   "q75_420": "132/139 differ",
+   "q80_420": "132/139 differ",
+   "q85_444": "132/139 differ",
+   "q90_420": "132/139 differ",
+   "q90_444": "132/139 differ"
+  }
+ },
+ "openjph": {
+  "commit": "c7a4d43942d2f92fdc385a8c4148a9b523063192 Tue Oct 20 07:20:15 2026 +1100",
+  "tile_htj2k_psnr40.j2c": {
+   "x86": "cb72a73794384b37108a08d6b87ccbfa24bb43056825a9831dd965c773c7e3f0",
+   "arm64": "216953a7af670dcf39ddc80710539279bd46aedd5be14830d107ab11accefeb3",
+   "gap2_native_ref": "daea96fc103164bf918fc6f2352b721ed31fc9da8c7957d99dc744777891e44a",
+   "x86_eq_arm64": false,
+   "x86_eq_gap2ref": false
+  },
+  "tile_htj2k_rev.j2c": {
+   "x86": "c5b3ef509a92f16d4c29be8cf0300fe75d53e13a3ce650159db932caea8dcc1b",
+   "arm64": "c5b3ef509a92f16d4c29be8cf0300fe75d53e13a3ce650159db932caea8dcc1b",
+   "gap2_native_ref": "c5b3ef509a92f16d4c29be8cf0300fe75d53e13a3ce650159db932caea8dcc1b",
+   "x86_eq_arm64": true,
+   "x86_eq_gap2ref": true
+  }
+ }
+}

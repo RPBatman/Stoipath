@@ -1,0 +1,426 @@
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+Emitted 'error' event on ClientHttp2Session instance at:
+    at emitClose (node:internal/http2/core:1164:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8787
+}
+
+Node.js v22.22.0
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/run_matrix.sh: line 23: kill: (16864) - No such process

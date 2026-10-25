@@ -1,0 +1,6 @@
+8x8 shard of ~60 KB tiles = 3.84 MB (+index); padded to 1 MiB alignment -> 4 MiB
+5x3 viewport: shards touched mean 1.875 max 4 | distribution {1: 0.375, 2: 0.5, 4: 0.125}
+contiguous ranges if only row segments are read (no cross-row over-read): mean 4.5 max 6
+Worker 6-connection budget: 4 shard ranges + 1 index + 1 auth = 6 (exactly at the cap; any extra R2 get stalls)
+single-range coalesce inside one shard reads ~1.26 MB for 0.90 MB needed (1.4x)
+1 MiB-aligned origin slice for one 60 KB tile: 17.5x read amplification; for a 1 KiB index read: 1024x

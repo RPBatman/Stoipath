@@ -1,0 +1,52 @@
+protocol: h2 | trials: 5 | env start: 00:31:49 up 51 min,  0 user,  load average: 8.69, 8.85, 7.90 | env end: 00:34:16 up 53 min,  0 user,  load average: 15.47, 12.21, 9.34
+set bytes: {'q85_444_20': 1375223, 'q90_444_20': 1770865, 'q75_420_20': 1011210, 'q85_444_9': 685657, 'synth_80KBx20': 1600000, 'synth_55KBx9': 500004}
+condition               set                bytes  meas p50    min    max   pred meas-pred plan row  decode  upload  total
+unthrottled             q85_444_20       1375223        95     85    241    nan       nan            111.3    28.1    233
+unthrottled             q90_444_20       1770865       136     85    218    nan       nan            135.1    37.3    304
+unthrottled             q75_420_20       1011210        92     79    236    nan       nan             86.3    20.5    192
+unthrottled             q85_444_9         685657        36     32    137    nan       nan             34.8    12.7    112
+unthrottled             synth_80KBx20    1600000        82     54    142    nan       nan              nan     nan    nan
+unthrottled             synth_55KBx9      500004        46     26    135    nan       nan              nan     nan    nan
+   load during condition: 8.69, 8.85, 7.90
+W-LAN_p50 1ms 900Mbps   q85_444_20       1375223       101     83    168     13        87            122.1    83.2    329
+W-LAN_p50 1ms 900Mbps   q90_444_20       1770865       123     76    126     17       106            134.0    20.4    236
+W-LAN_p50 1ms 900Mbps   q75_420_20       1011210       101     88    149     10        91            193.5    67.8    394
+W-LAN_p50 1ms 900Mbps   q85_444_9         685657        84     54    101      7        77             42.4    10.2    136
+W-LAN_p50 1ms 900Mbps   synth_80KBx20    1600000       102     78    130     15        86       13     nan     nan    nan
+W-LAN_p50 1ms 900Mbps   synth_55KBx9      500004        54     47     61      5        48              nan     nan    nan
+   load during condition: 9.52, 9.02, 7.96
+W-LAN_p95 3ms 500Mbps   q85_444_20       1375223       130     88    179     25       105            140.9    28.9    322
+W-LAN_p95 3ms 500Mbps   q90_444_20       1770865       128    112    323     31        97            122.2    37.8    342
+W-LAN_p95 3ms 500Mbps   q75_420_20       1011210        95     87    204     19        76            109.5    29.0    313
+W-LAN_p95 3ms 500Mbps   q85_444_9         685657        80     61    198     14        66            162.9    27.1    285
+W-LAN_p95 3ms 500Mbps   synth_80KBx20    1600000       132     78    150     29       103       25     nan     nan    nan
+W-LAN_p95 3ms 500Mbps   synth_55KBx9      500004        46     28     53     11        34              nan     nan    nan
+   load during condition: 10.35, 9.22, 8.04
+W-BB_p50 25ms 100Mbps   q85_444_20       1375223       188    169    372    135        53            150.1    21.3    340
+W-BB_p50 25ms 100Mbps   q90_444_20       1770865       211    196    308    167        44            248.6    38.3    562
+W-BB_p50 25ms 100Mbps   q75_420_20       1011210       163    124    281    106        58            192.1    33.1    434
+W-BB_p50 25ms 100Mbps   q85_444_9         685657       159    137    185     80        79            168.7    14.5    387
+W-BB_p50 25ms 100Mbps   synth_80KBx20    1600000       196    181    235    153        43      130     nan     nan    nan
+W-BB_p50 25ms 100Mbps   synth_55KBx9      500004       116     90    173     65        51              nan     nan    nan
+   load during condition: 11.29, 9.43, 8.12
+W-BB_p95 50ms 20Mbps    q85_444_20       1375223       703    627    803    600       103            144.3    34.5    941
+W-BB_p95 50ms 20Mbps    q90_444_20       1770865       812    786    933    758        54            275.8    56.8   1239
+W-BB_p95 50ms 20Mbps    q75_420_20       1011210       501    465    548    454        47            245.6    95.5    862
+W-BB_p95 50ms 20Mbps    q85_444_9         685657       349    335    691    324        25            103.5    27.3    510
+W-BB_p95 50ms 20Mbps    synth_80KBx20    1600000       780    726    805    690        90      650     nan     nan    nan
+W-BB_p95 50ms 20Mbps    synth_55KBx9      500004       286    266    423    250        36              nan     nan    nan
+   load during condition: 12.86, 9.85, 8.27
+W-4G_p50 45ms 25Mbps    q85_444_20       1375223       509    498    629    485        24            350.5    21.4    923
+W-4G_p50 45ms 25Mbps    q90_444_20       1770865       679    632    783    612        67            163.8    30.7    922
+W-4G_p50 45ms 25Mbps    q75_420_20       1011210       454    393    628    369        86      320   153.2    48.9    697
+W-4G_p50 45ms 25Mbps    q85_444_9         685657       278    275    317    264        14            106.7    10.4    410
+W-4G_p50 45ms 25Mbps    synth_80KBx20    1600000       613    596    646    557        56      510     nan     nan    nan
+W-4G_p50 45ms 25Mbps    synth_55KBx9      500004       270    222    400    205        65      160     nan     nan    nan
+   load during condition: 14.99, 10.62, 8.57
+W-4G_p95 200ms 5Mbps    q85_444_20       1375223      2445   2442   2516   2400        44            155.6    46.5   2676
+W-4G_p95 200ms 5Mbps    q90_444_20       1770865      3082   3062   3317   3033        49            185.1    77.1   3420
+W-4G_p95 200ms 5Mbps    q75_420_20       1011210      1866   1851   2116   1818        48     1600   188.5    57.0   2141
+W-4G_p95 200ms 5Mbps    q85_444_9         685657      1326   1318   1356   1297        29             39.9    10.0   1375
+W-4G_p95 200ms 5Mbps    synth_80KBx20    1600000      2808   2800   2853   2760        48     2600     nan     nan    nan
+W-4G_p95 200ms 5Mbps    synth_55KBx9      500004      1027   1025   1033   1000        27      800     nan     nan    nan
+   load during condition: 16.86, 11.32, 8.85

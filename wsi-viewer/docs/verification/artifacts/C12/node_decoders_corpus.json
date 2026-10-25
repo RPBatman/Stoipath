@@ -1,0 +1,215 @@
+{
+ "node": "v22.22.0",
+ "results": {
+  "zune-jpeg 0.5.15 wasm simd128": {
+   "n": 695,
+   "identical": 35,
+   "by_tier": {
+    "q75_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 41.56
+    },
+    "q80_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 42.98
+    },
+    "q85_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 1.71
+    },
+    "q90_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 44.95
+    },
+    "q90_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 1.73
+    }
+   },
+   "worst_pct_px": 47.142791748046875,
+   "worst_max": 5,
+   "mean_pct_px": 23.53,
+   "errors": 0
+  },
+  "jpeg-decoder 0.3.2 wasm simd128": {
+   "n": 695,
+   "identical": 35,
+   "by_tier": {
+    "q75_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 15.23
+    },
+    "q80_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 14.94
+    },
+    "q85_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 5.76
+    },
+    "q90_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 14.31
+    },
+    "q90_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 6.14
+    }
+   },
+   "worst_pct_px": 15.921783447265625,
+   "worst_max": 4,
+   "mean_pct_px": 10.55,
+   "errors": 0
+  },
+  "jpeg-decoder 0.3.2 wasm scalar": {
+   "n": 695,
+   "identical": 35,
+   "by_tier": {
+    "q75_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 10.82
+    },
+    "q80_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 10.52
+    },
+    "q85_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 0.93
+    },
+    "q90_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 9.41
+    },
+    "q90_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 0.93
+    }
+   },
+   "worst_pct_px": 11.945343017578125,
+   "worst_max": 3,
+   "mean_pct_px": 6.05,
+   "errors": 0
+  },
+  "@jsquash/jpeg 1.6.0 (mozjpeg wasm)": {
+   "n": 695,
+   "identical": 695,
+   "by_tier": {
+    "q75_420": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q80_420": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q85_444": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q90_420": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q90_444": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    }
+   },
+   "worst_pct_px": 0,
+   "worst_max": 0,
+   "mean_pct_px": 0,
+   "errors": 0
+  },
+  "wasm-vips 0.0.19 (libjpeg-turbo wasm simd)": {
+   "n": 695,
+   "identical": 695,
+   "by_tier": {
+    "q75_420": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q80_420": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q85_444": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q90_420": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    },
+    "q90_444": {
+     "n": 139,
+     "identical": 139,
+     "median_pct_px_when_differ": 0
+    }
+   },
+   "worst_pct_px": 0,
+   "worst_max": 0,
+   "mean_pct_px": 0,
+   "errors": 0
+  },
+  "jpeg-js 0.4.4 (pure JS)": {
+   "n": 695,
+   "identical": 35,
+   "by_tier": {
+    "q75_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 94.37
+    },
+    "q80_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 95.04
+    },
+    "q85_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 84.97
+    },
+    "q90_420": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 95.81
+    },
+    "q90_444": {
+     "n": 139,
+     "identical": 7,
+     "median_pct_px_when_differ": 84.94
+    }
+   },
+   "worst_pct_px": 97.41897583007812,
+   "worst_max": 23,
+   "mean_pct_px": 88.46,
+   "errors": 0
+  }
+ }
+}

@@ -1,0 +1,32 @@
+-- OpenJPH library version: 0.33.0
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- CPU Architecture is OJPH_ARCH_X86_64
+-- Building Release
+-- C Standard is set to 11
+-- C++ Standard is set to 14
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Looking for aligned_alloc
+-- Looking for aligned_alloc - found
+-- Could NOT find TIFF (missing: TIFF_LIBRARY TIFF_INCLUDE_DIR) 
+CMake Warning at src/apps/CMakeLists.txt:12 (message):
+  TIFF support has been requested but no path to the TIFF library has been
+  specified; please configure with -DCMAKE_PREFIX_PATH=<TIFF library
+  directory>, or disable TIFF support using -DOJPH_ENABLE_TIFF_SUPPORT=OFF.
+
+
+-- Configuring done (2.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/ojph_x86

@@ -1,0 +1,28 @@
+[  3%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_codeblock_fun.cpp.o
+[  7%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_codestream_gen.cpp.o
+[ 11%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_codeblock.cpp.o
+[ 15%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_codestream.cpp.o
+[ 19%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_codestream_local.cpp.o
+[ 23%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_params.cpp.o
+[ 26%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_precinct.cpp.o
+[ 30%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_resolution.cpp.o
+[ 34%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_subband.cpp.o
+[ 38%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_tile.cpp.o
+[ 42%] Building CXX object src/core/CMakeFiles/openjph.dir/codestream/ojph_tile_comp.cpp.o
+[ 46%] Building CXX object src/core/CMakeFiles/openjph.dir/coding/ojph_block_common.cpp.o
+[ 50%] Building CXX object src/core/CMakeFiles/openjph.dir/coding/ojph_block_decoder32.cpp.o
+[ 53%] Building CXX object src/core/CMakeFiles/openjph.dir/coding/ojph_block_decoder64.cpp.o
+[ 57%] Building CXX object src/core/CMakeFiles/openjph.dir/coding/ojph_block_encoder.cpp.o
+[ 61%] Building CXX object src/core/CMakeFiles/openjph.dir/others/ojph_arch.cpp.o
+[ 65%] Building CXX object src/core/CMakeFiles/openjph.dir/others/ojph_file.cpp.o
+[ 69%] Building CXX object src/core/CMakeFiles/openjph.dir/others/ojph_mem.cpp.o
+[ 73%] Building C object src/core/CMakeFiles/openjph.dir/others/ojph_mem_c.c.o
+[ 76%] Building CXX object src/core/CMakeFiles/openjph.dir/others/ojph_message.cpp.o
+[ 80%] Building CXX object src/core/CMakeFiles/openjph.dir/transform/ojph_colour.cpp.o
+[ 84%] Building CXX object src/core/CMakeFiles/openjph.dir/transform/ojph_transform.cpp.o
+[ 88%] Linking CXX static library libopenjph.a
+[ 88%] Built target openjph
+[ 92%] Building CXX object src/apps/ojph_expand/CMakeFiles/ojph_expand.dir/ojph_expand.cpp.o
+[ 96%] Building CXX object src/apps/ojph_expand/CMakeFiles/ojph_expand.dir/__/others/ojph_img_io.cpp.o
+[100%] Linking CXX executable ojph_expand
+[100%] Built target ojph_expand

@@ -1,0 +1,14 @@
+{
+ "tile_htj2k_psnr40.j2c": {
+  "x86_vs_arm64": {
+   "pct_pixels_differ": 0.0011444091796875,
+   "pct_samples_differ": 0.0003814697265625,
+   "max_abs": 1
+  },
+  "x86_vs_gap2_native_ref": {
+   "pct_pixels_differ": 0.002288818359375,
+   "max_abs": 255
+  },
+  "x86_vs_original_psnr_dB": 31.575144288592938
+ }
+}

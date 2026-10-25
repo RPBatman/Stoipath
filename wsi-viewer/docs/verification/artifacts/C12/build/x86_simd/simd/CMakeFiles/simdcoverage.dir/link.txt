@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG -static CMakeFiles/simdcoverage.dir/simdcoverage.c.o -o simdcoverage  ../libjpeg.a 

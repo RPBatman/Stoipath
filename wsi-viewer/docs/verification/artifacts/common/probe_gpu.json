@@ -1,0 +1,62 @@
+{
+ "none/headless-new": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "hw": 4,
+  "webgl2": true,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "maxTex": 8192,
+  "maxArrayLayers": 2048,
+  "max3d": 2048,
+  "hasGpu": false
+ },
+ "none/headless-shell": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "hw": 4,
+  "webgl2": true,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "maxTex": 8192,
+  "maxArrayLayers": 2048,
+  "max3d": 2048,
+  "hasGpu": false
+ },
+ "swiftshader/headless-new": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "hw": 4,
+  "webgl2": true,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "maxTex": 8192,
+  "maxArrayLayers": 2048,
+  "max3d": 2048,
+  "hasGpu": false
+ },
+ "swiftshader/headless-shell": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "hw": 4,
+  "webgl2": true,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "maxTex": 8192,
+  "maxArrayLayers": 2048,
+  "max3d": 2048,
+  "hasGpu": false
+ },
+ "swiftshader2/headless-new": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "hw": 4,
+  "webgl2": true,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "maxTex": 8192,
+  "maxArrayLayers": 2048,
+  "max3d": 2048,
+  "hasGpu": false
+ },
+ "swiftshader2/headless-shell": {
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "hw": 4,
+  "webgl2": true,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "maxTex": 8192,
+  "maxArrayLayers": 2048,
+  "max3d": 2048,
+  "hasGpu": false
+ }
+}

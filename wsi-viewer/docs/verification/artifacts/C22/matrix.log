@@ -1,0 +1,801 @@
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+node:internal/http2/core:1808
+      throw new ERR_HTTP2_INVALID_SESSION();
+      ^
+
+Error [ERR_HTTP2_INVALID_SESSION]: The session has been destroyed
+    at ClientHttp2Session.request (node:internal/http2/core:1808:13)
+    at next (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:43:23)
+    at ClientHttp2Stream.<anonymous> (file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C22/loadgen.mjs:46:51)
+    at ClientHttp2Stream.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ERR_HTTP2_INVALID_SESSION'
+}
+
+Node.js v22.22.0
+done
