@@ -435,6 +435,7 @@ async function main(): Promise<void> {
     renderer.restore(layers);
     writeLayersHint(renderer.layerCount);
     applyPinBudget(pyramid, renderer.layerCount);
+    applyWarmBudget(pyramid, renderer.layerCount, viewportTilesAtMinScale(renderer.width, renderer.height, pyramid.tileSize));
     cache.reset(renderer.layerCount);
     scheduler.resetResidency();
     planner.reset();
@@ -514,7 +515,7 @@ async function main(): Promise<void> {
     renderer.pollTimerQueries();
     if (metrics.baseLoadedAt === null && scheduler.basePinned) {
       metrics.noteBaseLoaded(now, frame);
-      overlay.setStatus(`ready (overview loading ${pyramid.warmBaseTileCount} tiles)`);
+      overlay.setStatus(pyramid.warmBaseTileCount > 0 ? `ready (overview loading ${pyramid.warmBaseTileCount} tiles)` : 'ready');
     }
     if (!warmNoted && scheduler.baseReady) {
       warmNoted = true;
