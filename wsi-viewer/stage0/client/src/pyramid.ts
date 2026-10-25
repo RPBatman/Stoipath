@@ -4,7 +4,7 @@
  * Level 0 is full resolution; level L is downsampled by 2^L (policy brief: "2x levels of 512 px square JPEG tiles").
  * Tile keys pack (level, x, y) into one non-negative int32 so hot-path maps and typed arrays never allocate strings.
  */
-import { PINNED_BASE_MAX_PX, TEXTURE_LAYERS_RESERVE, TILE_SIZE_DEFAULT, WARM_BASE_MAX_PX } from './constants';
+import { PINNED_BASE_MAX_PX, TEXTURE_LAYERS_RESERVE, TILE_SIZE_DEFAULT, WARM_BASE_MAX_PX, WARM_BASE_MIN_FREE_VIEWPORTS } from './constants';
 
 export interface Level {
   /** Index in our pyramid: 0 = finest. */
@@ -70,6 +70,19 @@ export function applyPinBudget(p: Pyramid, layerCount: number): boolean {
   p.warmBaseLevel = Math.min(p.warmBaseLevel, p.basePinLevel);
   p.warmBaseTileCount = tilesFrom(p.levels, p.warmBaseLevel, p.basePinLevel);
   return p.basePinLevel !== before;
+}
+
+/**
+ * Drop the warm base when the array cannot hold it beside the pinned base and WARM_BASE_MIN_FREE_VIEWPORTS viewports
+ * of L* tiles (`viewportTiles` = tiles a viewport needs at s = 0.5, renderer.ts viewportTilesAtMinScale). Returns
+ * true when the warm base was dropped (the export then shows `requestedWarmBase = 0` and a note).
+ */
+export function applyWarmBudget(p: Pyramid, layerCount: number, viewportTiles: number): boolean {
+  if (p.warmBaseTileCount === 0) return false;
+  if (layerCount - p.basePinTileCount - p.warmBaseTileCount >= WARM_BASE_MIN_FREE_VIEWPORTS * viewportTiles) return false;
+  p.warmBaseLevel = p.basePinLevel;
+  p.warmBaseTileCount = 0;
+  return true;
 }
 
 // Key layout: level in bits 26..30, y in bits 13..25, x in bits 0..12 (8192 tiles per side = 4 Mpx at 512 px).

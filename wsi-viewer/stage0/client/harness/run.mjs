@@ -2,6 +2,8 @@
 // wait for window.__stage0Summary, save the full export and print the key percentiles.
 // Usage: node harness/run.mjs [--label NAME] [--manifest URL] [--width 1280 --height 800] [--dpr 1]
 //        [--latency MS] [--kbps N] [--workers N] [--layers N] [--timeout MS] [--headed] [--network NAME --cache cold|warm]
+//        [--ua STRING | --ua phone | --ua tablet] [--touch] : emulate a device UA / touch points so the phone or tablet
+//        GPU-memory cap of chooseLayerCount (REVIEW H5) can be exercised on this machine; the GPU is still SwiftShader.
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,8 +38,20 @@ if (args.layers) q.set('layers', args.layers);
 const url = `http://127.0.0.1:${port}/client/dist/index.html?${q.toString()}`;
 console.log(`opening ${url}`);
 
+// Device emulation presets (UA strings are representative, not any one device).
+const UA_PRESETS = {
+  phone: 'Mozilla/5.0 (Linux; Android 14; Pixel 7a) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36',
+  tablet: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15',
+};
+const contextOptions = { viewport: { width, height }, deviceScaleFactor: dpr };
+if (args.ua) {
+  contextOptions.userAgent = UA_PRESETS[args.ua] ?? args.ua;
+  contextOptions.hasTouch = true;
+}
+if (args.touch === 'true') contextOptions.hasTouch = true;
+
 const browser = await launchChromium({ headed: args.headed === 'true' });
-const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: dpr });
+const context = await browser.newContext(contextOptions);
 const page = await context.newPage();
 page.on('console', (m) => {
   if (m.type() === 'error' || m.type() === 'warning') console.log(`[page:${m.type()}] ${m.text()}`);

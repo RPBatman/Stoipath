@@ -100,3 +100,36 @@ HTTP/1.1). Manifest/tile addressing matched the data layout without changes. Hea
 - `harness/check-metrics.mjs`: real mouse wheel / drag through Playwright; asserts the TTS arithmetic against the
   frame log, the viewport-only sharp fraction (tier-0 requests == visible cells), real-input latency populated.
 - `harness/results/README.md`: what the headless numbers mean.
+
+# Review fixes (2026-10-25, build 2026-10-25T13:25Z and later)
+
+Every High and Medium finding of `REVIEW.md` is fixed in the source and documented there with a
+`Resolution` line per finding (what changed, where, and how it was verified); the Low items are fixed
+except where the line says otherwise. The behaviour changes, in one place:
+
+- **What is measured** (H1, H2): the scripted path starts at an absolute zoom (L* = 3, s = 0.87) and
+  bursts to fixed destinations (L* = 1 and L* = 0 at s = 0.87) on every device — 5 zoom-in bursts
+  (+2, +1, +3, +2, +1 levels), none inside the pinned base, none magnified; gestures carry `pathRun`,
+  `endScaleAtLstar`, `endMagnified`; the protocol defines cold as one run per fresh private window and
+  the summariser drops reruns in the same tab for cold conditions; an **Evict GPU tiles** button gives
+  GPU-cold reruns (labelled warm).
+- **What is reported** (H3, H4, M1, M4): the headline is `ttsFromLastInputMs` (last input → end of
+  pop-in, fading cells count as blurred, + one display interval); `sharpAfterSettleMs` keeps the A §3
+  form with a frame-rate-independent, state-based settle criterion (`SETTLE_EDGE_VELOCITY_PX_PER_MS`);
+  `timeToSharpMs` is no longer called TTS; timed-out gestures are right-censored, not dropped; the
+  input→rAF proxy is clamped at 0, split by input kind and named as a proxy.
+- **GPU memory** (H5, M2, L14): pinned base ≤ 2048 px (21 tiles, 26 MiB), the 3840-px level is an
+  evictable warm base loaded behind everything else; the layer count is capped by device class when
+  `deviceMemory` is unknown (phone 112, tablet 192); the pinned base can never exceed the array
+  (`applyPinBudget`); WebGL context loss is recovered with half the layers and recorded.
+- **Robustness** (M3, M5, M6, M7, M9, M10, M11, L1–L7, L11–L13): sliding-window display interval with a
+  per-frame column; 3 decode workers when `hardwareConcurrency` is withheld; fade/partner hand-off
+  without a pop; descendant overlay on zoom-out; DPR re-read on resize; hidden-tab pauses excluded;
+  per-notch timestamps; mip-aware texel clamp; hysteresis-aware ring level; unknown-length cancel
+  floor; bounded upload queue; double-tap pointer; safe-area inset; larger frame log; `"unknown"`
+  protocol; no zoom intent on mouse drag; farthest-corner settle.
+- **Harness**: `run.mjs --ua phone|tablet|<string> [--touch]` emulates a device UA so the phone/tablet
+  layer cap can be exercised headless; prints `pathRun`, `endScale`, cache-hit fraction and censoring.
+- **Documents**: `MEASUREMENT_PROTOCOL.md` §1, §4–§7, `results/README.md`, `client/README.md`,
+  `harness/results/README.md` rewritten to the new definitions; `stage0/README.md` added (what Stage 0
+  is, build, serve, deploy, harness, where protocol and results live).

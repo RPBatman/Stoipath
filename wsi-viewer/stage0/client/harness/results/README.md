@@ -17,7 +17,10 @@ the device runs described in `../../../MEASUREMENT_PROTOCOL.md` and go to `../..
 
 Labels follow the protocol convention `device_browser_network_cache_runN`; the device here is
 `HeadlessChromium_SwiftShader`. The two `2026-10-24T19-5x` files and the two `2026-10-25T00-01` files are earlier
-builds by the previous agents (older field set, same names); the `2026-10-25T00-33` pair is the integrated build.
+builds by the previous agents (older field set, same names); the `2026-10-25T00-33` pair is the integrated build; the
+`2026-10-25T01-xx` files are the partial review-fix build; files from `2026-10-25T13` onwards are the reviewed build
+(absolute scripted path, `ttsFromLastInputMs` headline, fading counted as blur, 21-tile pinned base + warm base,
+device-class layer cap, censoring, per-frame display interval, `pathRun`, cache-hit fraction).
 
 ## What was verified on this machine
 
@@ -47,16 +50,21 @@ builds by the previous agents (older field set, same names); the `2026-10-25T00-
 
 ## Reading the harness output
 
-Per gesture the export carries three "how long was it blurred" quantities. They answer different questions:
+Per gesture the export carries four "how long was it blurred" quantities (a frame is *blurred* when any visible cell
+is drawn from an ancestor, is blank, or is still cross-fading from an ancestor). They answer different questions:
 
 | Field | Meaning | On loopback it reads |
 |---|---|---|
-| `timeToSharpMs` | last input event → first frame that is sharp at L* **after the camera settled** (04 F8 TTS) | ≈ `settleAfterInputMs`: our own 120 ms-τ easing tail, which at the 0.5 px/frame settle criterion lasts 0.6–1.7 s here because the software renderer runs 12–20 fps during gestures (the criterion is per frame, so slow frames settle later) |
-| `sharpAfterSettleMs` | camera settled → first sharp frame (the A §3 target quantity, protocol headline) | 0 on loopback (tiles land during the easing); 0–83 ms with 100 ms emulated RTT |
-| `blurEndAfterInputMs` | last input event → the last frame of the gesture that still drew an ancestor (or blank) cell; 0 if none | the honest "how long after I stopped did pop-in continue" number, independent of the settle criterion: p50 0.68 s / 0.95 s for zoom-in bursts in the two runs below |
+| `ttsFromLastInputMs` | **headline, 04 F8 TTS**: last input event → end of pop-in = timestamp of the last blurred frame after the last input + one display interval; 0 if nothing was blurred after the last input. Independent of the camera settling | p50 0.23 s / max 0.73 s over the five zoom-in bursts of the 2026-10-25T13 run below: how far into the easing tail pop-in still reached |
+| `blurEndAfterInputMs` | the same without the display interval | — |
+| `sharpAfterSettleMs` | camera settled → first sharp frame (the A §3 target form). "Settled" is computed from the camera state (corner velocity < 0.03 px/ms and ≥ 150 ms since the last input), so the instant does not depend on the frame rate | 0 on loopback for most bursts (tiles land during the easing); the settle tail `settleAfterInputMs` is 0.6–0.77 s here as on a 60 Hz device |
+| `timeToSharpMs` | last input → first sharp frame **at or after settle** = settle tail + sharp-after-settle; ≥ 150 ms floor; **not** 04 F8 TTS; kept for the CSV only | ≈ `settleAfterInputMs` |
 
-Also: `maxBlurMs` (longest run of consecutive frames with any ancestor drawn, during or after the gesture),
-`deficitFramePct` (04 F8 NTF%), `blurAreaTimeLevelS` (04 F8 BAT), `bytesPerGesture`.
+Also: `maxBlurMs` (longest run of consecutive blurred frames, during or after the gesture), `deficitFramePct` (04 F8
+NTF%), `blurAreaTimeLevelS` (04 F8 BAT, fading cells weighted by 1 − α), `bytesPerGesture`, `cacheHitFraction`,
+`endScaleAtLstar` / `endMagnified`, `pathRun`, `censored`. Exports before 2026-10-25T13 (older builds) lack
+`ttsFromLastInputMs`, `pathRun` and the fading columns; their `timeToSharpMs` was still called TTS and their settle
+criterion was per frame (1.3–1.7 s tails on SwiftShader), so they are not comparable with the current ones.
 
 Frame-time and dropped-frame percentages are SwiftShader numbers (p50 83 ms during gestures here, 90 % "dropped"
 against a 60 Hz interval); `inputToRafScriptedMs` is loop latency only, because synthetic inputs carry the frame

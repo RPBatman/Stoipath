@@ -28,8 +28,8 @@ import { Controls, bindDomInput } from './input';
 import { LodSelector } from './lod';
 import { Metrics, type DeviceInfo, type FrameInput, type Summary } from './metrics';
 import { Overlay } from './overlay';
-import { applyPinBudget, loadPyramid, resolveManifestUrl } from './pyramid';
-import { Renderer, chooseLayerCount, type DeviceClass } from './renderer';
+import { applyPinBudget, applyWarmBudget, loadPyramid, resolveManifestUrl } from './pyramid';
+import { Renderer, chooseLayerCount, viewportTilesAtMinScale, type DeviceClass } from './renderer';
 import { isPrefetchKind } from './request-kind';
 import { Scheduler } from './scheduler';
 import { ScriptedPath } from './scripted-path';
@@ -116,12 +116,13 @@ function protocolOf(url: string): string {
 }
 
 /**
- * Device class from the UA and touch points, used for the GPU memory budget when deviceMemory is unknown
- * (REVIEW H5). iPadOS Safari reports a Macintosh UA with 5 touch points; Android tablets lack "Mobile".
+ * Device class from the UA and touch points, used for the GPU memory budget (REVIEW H5; renderer.ts chooseLayerCount).
+ * iPadOS Safari reports a Macintosh UA with touch points (5 on the device; emulators may report 1) and no Mac has a
+ * touch screen, so Macintosh + any touch point is an iPad; Android tablets lack "Mobile".
  */
 export function detectDeviceClass(ua: string, touchPoints: number): DeviceClass {
   if (/Mobi|iPhone|iPod|Windows Phone/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua))) return 'phone';
-  if (/iPad|Tablet|Silk|Android/i.test(ua) || (/Macintosh/.test(ua) && touchPoints > 1)) return 'tablet';
+  if (/iPad|Tablet|Silk|Android/i.test(ua) || (/Macintosh/.test(ua) && touchPoints > 0)) return 'tablet';
   return 'desktop';
 }
 
@@ -210,8 +211,11 @@ async function main(): Promise<void> {
   const renderer = new Renderer(canvas, pyramid.tileSize, choice.layers);
   metrics.rendererInitMs = renderer.initMs;
   let layersReason = renderer.layerCount === choice.layers ? choice.reason : `${choice.reason}; texStorage3D fell back from ${choice.layers}`;
-  // The pinned base must fit with room to spare, otherwise it never completes (REVIEW H5 deadlock).
+  // The pinned base must fit with room to spare, otherwise it never completes (REVIEW H5 deadlock); the warm base is
+  // loaded only when it fits beside two viewports of L* tiles, otherwise prefetch churns it out (WARM_BASE_MIN_FREE_VIEWPORTS).
+  const viewportTiles = viewportTilesAtMinScale(viewportDevW, viewportDevH, pyramid.tileSize);
   if (applyPinBudget(pyramid, renderer.layerCount)) metrics.notes.push(`pinned base reduced to levels >= ${pyramid.basePinLevel} (${pyramid.basePinTileCount} tiles) to fit ${renderer.layerCount} layers`);
+  if (applyWarmBudget(pyramid, renderer.layerCount, viewportTiles)) metrics.notes.push(`warm base not loaded: ${renderer.layerCount} layers leave fewer than 2 viewports (${viewportTiles} tiles at s = 0.5 each) beside the pinned base and the 4096-px level`);
   const cache = new TileCache(renderer.layerCount);
   const cam = new Camera();
   cam.setSlide(pyramid.width, pyramid.height);
@@ -308,7 +312,8 @@ async function main(): Promise<void> {
   };
   metrics.setDevice(device);
   const baseText = (): string =>
-    `pinned base levels ${pyramid.basePinLevel}-${pyramid.levels.length - 1} (${pyramid.basePinTileCount} tiles), warm base levels ${pyramid.warmBaseLevel}-${pyramid.basePinLevel - 1} (${pyramid.warmBaseTileCount} tiles)`;
+    `pinned base levels ${pyramid.basePinLevel}-${pyramid.levels.length - 1} (${pyramid.basePinTileCount} tiles), ` +
+    (pyramid.warmBaseTileCount > 0 ? `warm base levels ${pyramid.warmBaseLevel}-${pyramid.basePinLevel - 1} (${pyramid.warmBaseTileCount} tiles)` : 'no warm base (array too small for it)');
   overlay.setDevice(
     device,
     `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}; ${baseText()}\n` +
@@ -385,7 +390,9 @@ async function main(): Promise<void> {
     const s = finishSummary();
     window.__stage0Summary = s;
     api.pathDone = true;
-    overlay.showSummary(JSON.stringify(s.zoomInBursts, null, 1));
+    // p95 over fewer than 20 bursts is the max (nearest rank): say so instead of letting it be quoted (REVIEW L8).
+    const caveat = s.zoomInBursts.n < 20 ? `zoom-in bursts n = ${s.zoomInBursts.n} (< 20): quote p50 and max, not p95\n` : '';
+    overlay.showSummary(caveat + JSON.stringify(s.zoomInBursts, null, 1));
     overlay.setStatus(`scripted path done (run ${metrics.run.pathRuns}) — export or copy the summary`);
     console.log('[stage0] scripted path done', s);
   };
@@ -423,14 +430,15 @@ async function main(): Promise<void> {
     overlay.setStatus('WebGL context lost — recovering with a smaller tile array…');
   });
   canvas.addEventListener('webglcontextrestored', () => {
-    const layers = Math.max(pyramid.basePinTileCount + TEXTURE_LAYERS_RESERVE, renderer.layerCount >> 1);
+    const previousLayers = renderer.layerCount;
+    const layers = Math.max(pyramid.basePinTileCount + TEXTURE_LAYERS_RESERVE, previousLayers >> 1);
     renderer.restore(layers);
     writeLayersHint(renderer.layerCount);
     applyPinBudget(pyramid, renderer.layerCount);
     cache.reset(renderer.layerCount);
     scheduler.resetResidency();
     planner.reset();
-    layersReason = `context loss recovery #${metrics.contextLosses} (was ${layers * 2 > renderer.layerCount ? layers * 2 : layers})`;
+    layersReason = `context loss recovery #${metrics.contextLosses} (was ${previousLayers})`;
     if (device !== null) {
       device.textureLayers = renderer.layerCount;
       device.textureLayersReason = layersReason;

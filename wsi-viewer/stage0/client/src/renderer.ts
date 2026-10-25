@@ -95,13 +95,21 @@ export interface LayerChoice {
  * Layers to request for the tile array (constants.ts "GPU upload"): the pinned base, the warm base (evictable, but
  * meant to stay resident) and TEXTURE_VIEWPORT_HEADROOM viewports of L* tiles at s = LOD_S_MIN (a tile then covers
  * tileSize·s = 256 device px per axis; +1 for grid alignment), clamped to [MIN, MAX], then capped by the device
- * budget: TEXTURE_LAYERS_PHONE_MAX when the browser reports deviceMemory <= LOWMEM_GIB *or* when deviceMemory is
- * unknown and the device is phone-class by UA/touch, TEXTURE_LAYERS_TABLET_MAX for tablets (REVIEW H5: deviceMemory
- * is unavailable over plain http and on Safari, i.e. on every device of the protocol). A `layersHint` (sessionStorage,
- * written after a context loss) caps it further. Pure so it can be checked by hand from the export: 1280×800 desktop →
+ * budget (A §2: 128 MiB phone, 256 MiB iPad): TEXTURE_LAYERS_PHONE_MAX on every phone-class device (UA/touch) and on
+ * any device that reports deviceMemory <= LOWMEM_GIB, TEXTURE_LAYERS_TABLET_MAX on tablets. The class, not
+ * deviceMemory, decides, because deviceMemory is unavailable over plain http and on Safari (REVIEW H5), is clamped
+ * to 8 where it exists, and the budget is a per-class figure anyway. A `layersHint` (sessionStorage, written after a
+ * context loss) caps it further. Pure so it can be checked by hand from the export: 1280×800 desktop →
  * 21 + 64 + 2.5·30 = 160; a 786×1704 phone → 21 + 64 + 100 = 185 → 112 (phone cap: the warm base then yields to L*
  * tiles); a 2048×2732 iPad → 355 → 256 → 192 (tablet cap).
  */
+/** Tiles a viewport can need at s = LOD_S_MIN (a tile then covers tileSize·s device px per axis; +1 per axis for grid alignment). */
+export function viewportTilesAtMinScale(viewportW: number, viewportH: number, tileSize: number): number {
+  const cols = Math.ceil(viewportW / (tileSize * LOD_S_MIN)) + 1;
+  const rows = Math.ceil(viewportH / (tileSize * LOD_S_MIN)) + 1;
+  return cols * rows;
+}
+
 export function chooseLayerCount(
   viewportW: number,
   viewportH: number,
@@ -112,20 +120,19 @@ export function chooseLayerCount(
   deviceClass: DeviceClass,
   layersHint: number | null,
 ): LayerChoice {
-  const cols = Math.ceil(viewportW / (tileSize * LOD_S_MIN)) + 1;
-  const rows = Math.ceil(viewportH / (tileSize * LOD_S_MIN)) + 1;
-  const need = basePinTiles + warmBaseTiles + Math.ceil(TEXTURE_VIEWPORT_HEADROOM * cols * rows);
+  const need = basePinTiles + warmBaseTiles + Math.ceil(TEXTURE_VIEWPORT_HEADROOM * viewportTilesAtMinScale(viewportW, viewportH, tileSize));
   let layers = Math.min(TEXTURE_LAYERS_MAX, Math.max(TEXTURE_LAYERS_MIN, need));
   let reason = need < TEXTURE_LAYERS_MIN ? 'TEXTURE_LAYERS_MIN' : need > TEXTURE_LAYERS_MAX ? 'TEXTURE_LAYERS_MAX' : 'viewport';
   const lowMem = deviceMemoryGiB !== null && deviceMemoryGiB <= LOWMEM_GIB;
-  if (lowMem || (deviceMemoryGiB === null && deviceClass === 'phone')) {
+  const memText = deviceMemoryGiB === null ? 'deviceMemory unknown' : `deviceMemory ${deviceMemoryGiB} GiB`;
+  if (lowMem || deviceClass === 'phone') {
     if (layers > TEXTURE_LAYERS_PHONE_MAX) {
       layers = TEXTURE_LAYERS_PHONE_MAX;
-      reason = lowMem ? `deviceMemory ${deviceMemoryGiB} GiB <= ${LOWMEM_GIB}` : 'phone-class UA, deviceMemory unknown';
+      reason = lowMem ? `${memText} <= ${LOWMEM_GIB} (phone budget)` : `phone-class device (UA/touch), ${memText}`;
     }
-  } else if (deviceMemoryGiB === null && deviceClass === 'tablet' && layers > TEXTURE_LAYERS_TABLET_MAX) {
+  } else if (deviceClass === 'tablet' && layers > TEXTURE_LAYERS_TABLET_MAX) {
     layers = TEXTURE_LAYERS_TABLET_MAX;
-    reason = 'tablet-class UA, deviceMemory unknown';
+    reason = `tablet-class device (UA/touch), ${memText}`;
   }
   if (layersHint !== null && layersHint > 0 && layersHint < layers) {
     layers = layersHint;

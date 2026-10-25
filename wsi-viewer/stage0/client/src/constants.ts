@@ -27,6 +27,14 @@ export const PINNED_BASE_MAX_PX = 2048;
  */
 export const WARM_BASE_MAX_PX = 4096;
 /**
+ * The warm base is loaded only when the texture array leaves at least this many viewports of L* tiles (at s = 0.5,
+ * the most a viewport can need) free beside the pinned and warm bases. On the 112-layer phone budget (91 non-pinned
+ * layers for a 64-tile warm base plus a ~40-tile portrait viewport, ring and partners) prefetch churned the warm
+ * base out and level 2 was re-fetched on every zoom-out: 81 % prefetch waste and twice the bytes in the headless
+ * phone probe. Without it the pinned level 3 (2048 px) is the fallback, still never blank (REVIEW H5 / M2 follow-up).
+ */
+export const WARM_BASE_MIN_FREE_VIEWPORTS = 2;
+/**
  * Non-pinned layers the texture array must keep for L* tiles. If the array (after a GL_OUT_OF_MEMORY fallback or
  * ?layers=) cannot hold the pinned base plus this many layers, coarser-only levels are pinned instead, so the base
  * can always finish loading (REVIEW H5: otherwise `basePinned` never becomes true and visible tiles stall for ever).
@@ -117,14 +125,15 @@ export const TEXTURE_LAYERS_MIN = 128;
 export const TEXTURE_VIEWPORT_HEADROOM = 2.5;
 /**
  * Upper bound on a phone: A §2 "128 MiB phone" L0 budget; 112 layers x 1.25 MiB = 140 MiB with the mip level, holding
- * the 21-tile pinned base plus two DPR-2 phone viewports at s = 0.5. Applies when deviceMemory <= LOWMEM_GIB is
- * reported, and also when deviceMemory is unknown but the device is phone-class by UA/touch (REVIEW H5: deviceMemory
- * is Chromium-only and secure-context-only, so over the protocol's plain-http LAN and on Safari it is never known).
+ * the 21-tile pinned base plus two DPR-2 phone viewports at s = 0.5. Applies to every phone-class device (UA/touch,
+ * main.ts detectDeviceClass) and to any device reporting deviceMemory <= LOWMEM_GIB. The class decides rather than
+ * deviceMemory because deviceMemory is Chromium-only and secure-context-only (never known over the protocol's
+ * plain-http LAN or on Safari) and clamped to 8 GiB where it exists (REVIEW H5).
  */
 export const TEXTURE_LAYERS_PHONE_MAX = 112;
 /** Upper bound on a tablet (iPad / Android tablet): A §2 "256 MiB iPad" budget; 192 layers = 240 MiB with mips. */
 export const TEXTURE_LAYERS_TABLET_MAX = 192;
-/** deviceMemory (GiB) at or below which TEXTURE_LAYERS_PHONE_MAX applies. Only Chromium on https reports it. task. */
+/** deviceMemory (GiB) at or below which TEXTURE_LAYERS_PHONE_MAX applies to any device class. Only Chromium on https reports it. task. */
 export const LOWMEM_GIB = 4;
 /** sessionStorage key under which a context-loss recovery stores the layer count that worked, so the next load in the same tab starts there (REVIEW H5). */
 export const LAYERS_HINT_STORAGE_KEY = 'stage0.layersHint';
