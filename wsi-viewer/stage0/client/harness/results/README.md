@@ -72,6 +72,37 @@ timestamp. `uploadMsPerFrame` is CPU time in `texSubImage3D` (no `EXT_disjoint_t
 `cache.prefetchHeldFrames` counts frames in which prefetch was held back for lack of room in the texture array
 (0 in both runs at 160 layers / 1280×800).
 
+### The reviewed build (2026-10-25T13-44, build 2026-10-25T13:44:01Z)
+
+Three exports, same code, same loopback server, SwiftShader: the default 1280×800@1 run (`…-headless-chromium.json`),
+a phone viewport 393×852@3 (render DPR 2 → 786×1704) with a phone user agent (`…-probe-phone-ua3.json`, `--ua phone`)
+and an iPad viewport 1024×1366@2 (2048×2732) with a touch Macintosh UA (`…-probe-tablet-ua2.json`, `--ua tablet`; that
+file is from build 13:39, before the warm-base budget, which does not affect it: at the iPad's fit zoom level 2 is the
+visible level and is fetched as tier 0). Zoom-in bursts = 5 per run (+2 → L* 1, +1 → L* 0, +3 → L* 0, +2 → L* 1,
++1 → L* 0, all ending at s = 0.87, none magnified, on every viewport).
+
+| | laptop 1280×800 | phone 786×1704, phone UA | iPad 2048×2732, tablet UA |
+|---|---|---|---|
+| texture layers (reason) | 160 (viewport) | **112** (phone-class device) | **192** (tablet-class device) |
+| pinned / warm base | 21 / 64 tiles | 21 / **not loaded** (would not fit beside 2 viewports) | 21 / 0 (level 2 is visible at fit) |
+| zoom-in bursts: `ttsFromLastInputMs` p50 / max (headline) | 213 / 250 ms | 230 / 383 ms | 1303 / 1363 ms |
+| zoom-in bursts: `sharpAfterSettleMs` p50 / max | 0 / 0 | 0 / 0 | 533 / 567 ms |
+| zoom-in bursts: settle tail `settleAfterInputMs` p50 | 617 ms | 650 ms | 903 ms (larger corner distance, 8 fps) |
+| zoom-in bursts: `maxBlurMs` p50 / max | 233 / 267 ms | 267 / 600 ms | 1417 / 1667 ms |
+| zoom-in bursts: blurred frames % p50 | 23 % | 33 % | 82 % |
+| all gestures: `ttsFromLastInputMs` p50 / max | 90 / 250 ms | 203 / 383 ms | 900 / 1363 ms |
+| tiles received / MB | 266 / 25.1 | 352 / 33.8 | 565 / 53.3 |
+| prefetch waste / evictions / upload stalls | 39 % / 106 / 0 | 42 % / 240 / 0 | 23 % / 373 / 0 |
+| frame ms during gestures p50 (SwiftShader) | 33 | 33 | 117 |
+| blank frames after base / context losses | 0 / 0 | 0 / 0 | 0 / 0 |
+
+Reading: on loopback the tiles arrive during the easing, so `sharpAfterSettleMs` is 0 and the headline TTS (≈ 0.2–0.25 s
+on the laptop) is the pop-in that still happened in the first part of the glide — the number the old `timeToSharpMs`
+(= settle tail, 0.6 s) and the old `sharpAfterSettleMs` (0) both hid. The iPad column is dominated by software
+rasterisation of 5.6 Mpx at ~8 fps and 4 cores shared with three decode workers; it is not an iPad number. Before the
+warm-base budget, the 112-layer phone run received 686 tiles / 62.6 MB with 81 % prefetch waste because prefetch kept
+evicting the 64-tile overview level, which then had to be re-fetched on every zoom-out.
+
 ### The two integrated-build runs (2026-10-25T00-33, build 2026-10-25T00:30:23Z)
 
 | | loopback | +100 ms per tile, 10 Mbps |

@@ -119,8 +119,11 @@ except where the line says otherwise. The behaviour changes, in one place:
   `timeToSharpMs` is no longer called TTS; timed-out gestures are right-censored, not dropped; the
   input→rAF proxy is clamped at 0, split by input kind and named as a proxy.
 - **GPU memory** (H5, M2, L14): pinned base ≤ 2048 px (21 tiles, 26 MiB), the 3840-px level is an
-  evictable warm base loaded behind everything else; the layer count is capped by device class when
-  `deviceMemory` is unknown (phone 112, tablet 192); the pinned base can never exceed the array
+  evictable warm base loaded behind everything else — only when the array leaves two viewports of L*
+  tiles free beside it (`applyWarmBudget`; on the phone budget it is skipped, otherwise prefetch churned
+  it out and doubled the bytes); the layer count is capped **by device class** (phone 112, tablet 192,
+  UA + touch points; `deviceMemory ≤ 4` caps any class) because `deviceMemory` is unavailable on the
+  LAN and on Safari and clamped to 8 elsewhere; the pinned base can never exceed the array
   (`applyPinBudget`); WebGL context loss is recovered with half the layers and recorded.
 - **Robustness** (M3, M5, M6, M7, M9, M10, M11, L1–L7, L11–L13): sliding-window display interval with a
   per-frame column; 3 decode workers when `hardwareConcurrency` is withheld; fade/partner hand-off

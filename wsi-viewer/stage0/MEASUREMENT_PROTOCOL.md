@@ -103,7 +103,9 @@ export carries `pathRun` (1 = first scripted run of the page load, 2+ = reruns, 
 1. Open the URL from §1.2 (private window if cold). The status line reads "loading manifest…",
    "starting renderer…", then `ready (overview loading 64 tiles)` once the pinned base (levels 3–5,
    21 tiles, 2.4 MB) is resident and plain `ready` once the 3840-px overview level (64 tiles, 7.1 MB)
-   has loaded too. Wait for `ready`. Do not touch the screen.
+   has loaded too. On phones (112-layer GPU budget) the overview level is skipped because it would
+   not fit beside the viewport's own tiles, and the status reads `ready` straight after the 21 tiles
+   (the export notes it; `tiles.requestedWarmBase` is 0). Wait for `ready`. Do not touch the screen.
 2. First run on a device/browser: screenshot the panel's device block (userAgent, DPR, cores, memory,
    GPU renderer, connection, protocol, texture layers and reason, in-flight cap) and copy the values
    into the CSV.

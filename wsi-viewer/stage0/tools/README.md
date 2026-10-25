@@ -50,7 +50,7 @@ annotated tumour), `--source-level L` (cut from a coarser source level), `--qual
 | `JPEG_QUALITY` | 85 | arch/A-web-core §2 "brightfield as JPEG q85–90"; 04 Implications 2 (no exotic codec needed for instant zoom) |
 | `JPEG_SUBSAMPLING` | 4:2:0 for this data set (constant default 4:4:4) | A-web-core §2 prefers 4:4:4; §3 allows 4:2:0 as the moving tier. Chosen by measurement: the CAMELYON16 source is already q80 4:2:0, and 4:4:4 cost +24 % bytes (88 vs 71 kB median at level 0) for chroma that the source had already subsampled — see `data/SOURCE.md`. |
 | `PYRAMID_FACTOR` | 2 | 04 F2 (a factor-2 pyramid always offers s ∈ [0.5, 1.0]); 04 F7 ("the pyramid is the mip chain") |
-| `PINNED_BASE_MAX_PX` | 4096 | 04 F2 item 3 / A-web-core §3: pin every level ≤ 4096 px at open. The manifest flags those levels `pinned: true` and reports `bytes.pinnedBase`. |
+| `PINNED_BASE_MAX_PX` | 4096 | 04 F2 item 3 / A-web-core §3: pin every level ≤ 4096 px at open. The manifest flags those levels `pinned: true` and reports `bytes.pinnedBase`. The flag is informational: because this base measured 9.5 MB / 106 MiB of GPU memory (not the 1–2 MB the note assumed), the client pins ≤ 2048 px (21 tiles) and treats the 4096-px level as an evictable "warm base" (`client/src/constants.ts`, REVIEW H5 / M2). |
 | `DEFAULT_SIZE` | 16384 (built at 15360) | Stage-0 brief: ~16k level-0 extent, pyramid < ~100 MB. 16384 measured 111.5 MB; 15360 measured 97.8 MB. |
 | `THUMB_LEVEL` | 5 (32×) | build detail: tissue mask at 7.8 µm/px; a 16 px step = one 512 px tile at level 0 |
 

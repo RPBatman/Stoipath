@@ -78,7 +78,8 @@ For development with hot reload: `npm run dev` (serves `../data` under `/data/`)
 * **`O`** toggles the overlay (or add `?overlay=1`). **`R`** resets to fit. **`P`** runs the scripted path.
 * The status line (top right) reads `loading manifest…`, `starting renderer…`, then `ready (overview loading 64
   tiles)` once the pinned base (levels 3–5, 21 tiles) is resident and `ready` once the 3840-px overview level has
-  loaded too; while the scripted path runs it reads `scripted path running n/m — hands off`, then
+  loaded too (on a phone-sized GPU array the overview level is skipped and the status is `ready` at once); while
+  the scripted path runs it reads `scripted path running n/m — hands off`, then
   `scripted path done (run N) — export or copy the summary`.
 * Buttons on the panel: **Run scripted path**, **Export JSON** (downloads the full log), **Copy summary**
   (clipboard), **Reset view**, **Evict GPU tiles** (drops every non-pinned tile from the GPU for a GPU-cold rerun;
@@ -142,7 +143,9 @@ summariser parses this form; any other text is used as-is) · `?network=` / `?ca
 
 The tile array holds `layers × 1.25 MiB` (512² RGBA8 plus one mip level). The pinned base is every level
 ≤ 2048 px (levels 3–5 of the CAMELYON pyramid: 21 tiles, 26 MiB, loaded first and never evicted); the 3840-px level
-(64 tiles) is the *warm base*: loaded at open behind everything else and evicted only when nothing else can be. The
+(64 tiles) is the *warm base*: loaded at open behind everything else and evicted only when nothing else can be — but
+only when the array leaves two viewports of L* tiles free beside it (`WARM_BASE_MIN_FREE_VIEWPORTS`; on the 112-layer
+phone budget it does not, prefetch would churn it out, so it is skipped and the pinned level 3 is the fallback). The
 default layer count is pinned + warm + 2.5 viewports of L* tiles at s = 0.5, clamped to 128…256, then capped by
 device class — **phone 112 layers (140 MiB)**, **tablet 192 (240 MiB)** — or to 112 on any device reporting
 `deviceMemory ≤ 4`: 160 layers (200 MiB) on a 1280×800 laptop, 112 on a phone at render DPR 2, 192 on an iPad. The
