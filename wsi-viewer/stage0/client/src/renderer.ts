@@ -3,7 +3,7 @@
  * per frame samples two sources per cell (fine + coarse / fade-from) and mixes them in the shader.
  * 04 F5 (texture array, texSubImage, per-frame upload budget), 04 F7 (trilinear, cross-fade), A §2/§3.
  */
-import { LOWMEM_GIB, MAX_INSTANCES, TEXTURE_LAYERS_LOWMEM_MAX, TEXTURE_LAYERS_MAX, TEXTURE_LAYERS_MIN, TEXTURE_MIP_LEVELS, TEXTURE_VIEWPORT_HEADROOM } from './constants';
+import { LOD_S_MIN, LOWMEM_GIB, MAX_INSTANCES, TEXTURE_LAYERS_LOWMEM_MAX, TEXTURE_LAYERS_MAX, TEXTURE_LAYERS_MIN, TEXTURE_MIP_LEVELS, TEXTURE_VIEWPORT_HEADROOM } from './constants';
 import type { TileResponse } from './decode-messages';
 import { keyLevel } from './pyramid';
 import type { TileCache } from './tile-cache';
@@ -68,12 +68,13 @@ void main() {
 
 /**
  * Layers to request for the tile array (constants.ts "GPU upload"): the pinned base plus TEXTURE_VIEWPORT_HEADROOM
- * viewports of L* tiles at s = 0.5 (one tile covers 2·tileSize device px per axis, +1 for grid alignment), clamped,
- * and capped when the browser reports a small deviceMemory. Pure so it can be checked by hand from the export.
+ * viewports of L* tiles at s = LOD_S_MIN (a tile then covers tileSize·s = 256 device px per axis; +1 for grid
+ * alignment), clamped, and capped when the browser reports a small deviceMemory. Pure so it can be checked by hand
+ * from the export: 1280×800 → 6×5 tiles → 160 layers; a 786×1704 phone → 5×8 → 185; a 2048×2732 iPad → 256.
  */
 export function chooseLayerCount(viewportW: number, viewportH: number, tileSize: number, basePinTiles: number, deviceMemoryGiB: number | null): number {
-  const cols = Math.ceil(viewportW / (2 * tileSize)) + 1;
-  const rows = Math.ceil(viewportH / (2 * tileSize)) + 1;
+  const cols = Math.ceil(viewportW / (tileSize * LOD_S_MIN)) + 1;
+  const rows = Math.ceil(viewportH / (tileSize * LOD_S_MIN)) + 1;
   const need = basePinTiles + Math.ceil(TEXTURE_VIEWPORT_HEADROOM * cols * rows);
   let layers = Math.min(TEXTURE_LAYERS_MAX, Math.max(TEXTURE_LAYERS_MIN, need));
   if (deviceMemoryGiB !== null && deviceMemoryGiB <= LOWMEM_GIB) layers = Math.min(layers, TEXTURE_LAYERS_LOWMEM_MAX);

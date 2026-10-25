@@ -99,10 +99,10 @@ export class Overlay {
       ? 'gesture: active'
       : g === null
         ? 'gesture: none yet'
-        : `last gesture: TTS ${g.timeToSharpMs === null ? (g.timedOut ? 'timeout' : 'n/a') : `${g.timeToSharpMs.toFixed(0)} ms`} (settle ${g.settleAfterInputMs?.toFixed(0) ?? '?'} + tiles ${g.sharpAfterSettleMs?.toFixed(0) ?? '?'})  maxBlur ${g.maxBlurMs.toFixed(0)} ms  deficitFrames ${g.framesWithDeficit}/${g.frames}  dropped ${g.droppedFrames}`;
+        : `last gesture (${g.kind}${g.levelsZoomed !== 0 ? ` ${g.levelsZoomed > 0 ? '+' : ''}${g.levelsZoomed}L` : ''}): sharp ${g.sharpAfterSettleMs === null ? (g.timedOut ? 'timeout' : 'n/a') : `${g.sharpAfterSettleMs.toFixed(0)} ms`} after settle  TTS ${g.timeToSharpMs?.toFixed(0) ?? '?'} ms from last input (settle tail ${g.settleAfterInputMs?.toFixed(0) ?? '?'})  maxBlur ${g.maxBlurMs.toFixed(0)} ms  deficitFrames ${g.framesWithDeficit}/${g.frames}  dropped ${g.droppedFrames}  ${(g.bytes / 1e6).toFixed(1)} MB`;
     this.hudText.textContent =
       `L* ${st.lstar}  centre@L${st.centreLevel}  sharp ${(100 * st.sharpFraction).toFixed(0)}%  deficit ${st.deficitCells}/${st.cells}  blank ${st.blankCells}  lod ${st.lodFraction.toFixed(2)}${st.fading ? '  fading' : ''}\n` +
-      `frame ${live.frameMs.toFixed(1)} ms  upload ${live.uploadMs.toFixed(2)} ms (${live.uploads})  inflight ${live.inflight}/${live.maxInflight}  decode ${live.decodeOutstanding}  uploadQ ${live.uploadQueue}\n` +
+      `frame ${live.frameMs.toFixed(1)} ms (${(1000 / metrics.displayIntervalMs).toFixed(0)} Hz)  upload ${live.uploadMs.toFixed(2)} ms (${live.uploads})  inflight ${live.inflight}/${live.maxInflight}  decode ${live.decodeOutstanding}  uploadQ ${live.uploadQueue}\n` +
       `resident ${live.resident}/${live.layers}  zoom 2^${live.logZoom.toFixed(2)}${umPerPx}  fetched ${(live.bytes / 1e6).toFixed(1)} MB  path ${live.pathProgress}\n` +
       gestureLine;
     this.drawSpark(metrics.displayIntervalMs);

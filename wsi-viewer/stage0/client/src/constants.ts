@@ -149,8 +149,18 @@ export const GESTURE_IDLE_MS = 150;
 export const ZOOM_GESTURE_MIN_LEVELS = 0.05;
 /** Frame counted as dropped when its rAF delta exceeds this multiple of the detected display interval. task "1.5x". */
 export const DROPPED_FRAME_FACTOR = 1.5;
-/** Frames used to estimate the display interval from rAF cadence (median). task. */
+/**
+ * Display interval from rAF cadence (task): rAF never fires faster than the display, so the interval is the shortest
+ * frame delta that recurs, not the median (a struggling renderer would otherwise report 30 Hz). Deltas go into
+ * DISPLAY_INTERVAL_BIN_MS bins; the lowest bin holding >= DISPLAY_INTERVAL_MIN_SHARE of all samples (and at least
+ * 3 samples) is taken, re-estimated every DISPLAY_INTERVAL_SAMPLE_FRAMES frames, and snapped to a standard refresh
+ * rate when within DISPLAY_INTERVAL_SNAP_TOLERANCE of one (the raw value is exported too).
+ */
 export const DISPLAY_INTERVAL_SAMPLE_FRAMES = 60;
+export const DISPLAY_INTERVAL_BIN_MS = 0.25;
+export const DISPLAY_INTERVAL_MIN_SHARE = 0.05;
+export const DISPLAY_INTERVAL_SNAP_TOLERANCE = 0.08;
+export const STANDARD_REFRESH_HZ = [240, 165, 144, 120, 90, 75, 60, 50] as const;
 /** Per-frame log capacity (10 min at 60 Hz). Recording stops when full; the count of unrecorded frames is exported. task. */
 export const FRAME_LOG_CAPACITY = 36_000;
 /** A gesture that is not sharp this long after the camera settled is recorded as timed out. task. */

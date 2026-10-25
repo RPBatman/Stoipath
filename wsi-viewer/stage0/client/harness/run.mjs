@@ -1,7 +1,7 @@
 // Headless harness: serve stage0/ statically, open the built viewer with ?path=1 in Playwright Chromium,
 // wait for window.__stage0Summary, save the full export and print the key percentiles.
 // Usage: node harness/run.mjs [--label NAME] [--manifest URL] [--width 1280 --height 800] [--dpr 1]
-//        [--latency MS] [--kbps N] [--workers N] [--layers N] [--timeout MS] [--headed]
+//        [--latency MS] [--kbps N] [--workers N] [--layers N] [--timeout MS] [--headed] [--network NAME --cache cold|warm]
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -59,6 +59,8 @@ if (!existsSync(resolve(clientDir, 'dist', 'index.html'))) {
 const { server, port } = await startServer({ root: stage0Dir, port: Number(args.port ?? 0), host: '127.0.0.1', latencyMs: Number(args.latency ?? 0), kbps: Number(args.kbps ?? 0), quiet: true });
 const q = new URLSearchParams({ path: '1', overlay: '1', label });
 if (args.manifest) q.set('manifest', args.manifest);
+if (args.network) q.set('network', args.network);
+if (args.cache) q.set('cache', args.cache);
 if (args.workers) q.set('workers', args.workers);
 if (args.layers) q.set('layers', args.layers);
 const url = `http://127.0.0.1:${port}/client/dist/index.html?${q.toString()}`;
@@ -87,28 +89,35 @@ const outPath = resolve(resultsDir, `${stamp}-${label}.json`);
 writeFileSync(outPath, exportJson);
 
 const p = (x) => (x && x.p50 !== null ? `p50 ${x.p50}  p95 ${x.p95}  max ${x.max}  (n=${x.n})` : 'n/a');
-console.log(`\nrun took ${((Date.now() - t0) / 1000).toFixed(1)} s; ${summary.frames} frames; display interval ${summary.displayIntervalMs} ms`);
+console.log(`\nrun took ${((Date.now() - t0) / 1000).toFixed(1)} s; ${summary.frames} frames; display interval ${summary.displayIntervalMs} ms (raw ${summary.displayIntervalRawMs}); build ${summary.build}`);
 console.log(`device: ${summary.device.gpuRenderer}`);
 console.log(`protocol: ${summary.device.protocol || 'unknown'}  workers ${summary.device.workers}  layers ${summary.device.textureLayers}  mipmaps ${summary.device.mipmaps}`);
-console.log(`frame ms (all):            ${p(summary.frameMs)}   dropped ${summary.droppedFramePct}%`);
+const su = summary.startup;
+console.log(`startup: renderer init ${su.rendererInitMs} ms, frame after first draw ${su.firstDrawFrameMs} ms, longest startup frame ${su.maxFrameMs} ms, base loaded at ${su.baseLoadedAtMs} ms (${su.framesExcluded} startup frames excluded from frame stats)`);
+console.log(`frame ms (steady state):   ${p(summary.frameMs)}   dropped ${summary.droppedFramePct}%`);
 console.log(`frame ms (gestures):       ${p(summary.frameMsDuringGestures)}   dropped ${summary.droppedFramePctDuringGestures}%`);
 console.log(`upload ms/frame (CPU):     ${p(summary.uploadMsPerFrame)}   max uploads/frame ${summary.uploadsPerFrameMax}`);
-console.log(`input→rAF ms:              ${p(summary.inputToRafMs)}`);
-console.log(`input→draw submit ms:      ${p(summary.inputToDrawSubmitMs)}`);
+console.log(`input→rAF ms (real input): ${p(summary.inputToRafMs)}`);
+console.log(`input→rAF ms (scripted):   ${p(summary.inputToRafScriptedMs)}   (loop latency only: synthetic inputs carry the frame timestamp)`);
 const g = summary.gestures;
-console.log(`gestures: ${g.n} (completed ${g.completed}, timed out ${g.timedOut}, interrupted ${g.interrupted}, zoom ${g.zoomGestures})`);
-console.log(`  time-to-sharp ms:        ${p(g.timeToSharpMs)}`);
-console.log(`    settle after input:    ${p(g.settleAfterInputMs)}`);
-console.log(`    sharp after settle:    ${p(g.sharpAfterSettleMs)}`);
-console.log(`  max blur ms:             ${p(g.maxBlurMs)}`);
-console.log(`  deficit-frame %:         ${p(g.deficitFramePct)}`);
-console.log(`  blur-area-time level·s:  ${p(g.blurAreaTimeLevelS)}`);
+console.log(`gestures: ${g.n} (completed ${g.completed}, timed out ${g.timedOut}, interrupted ${g.interrupted}) by kind ${Object.entries(g.byKind).map(([k, v]) => `${k} ${v}`).join(', ')}`);
+const block = (name, s) => {
+  console.log(`${name} (n=${s.n}):`);
+  console.log(`  sharp after settle ms:   ${p(s.sharpAfterSettleMs)}   <- tile pipeline only; the A §3 targets (headline, protocol §6)`);
+  console.log(`  TTS from last input ms:  ${p(s.timeToSharpMs)}   (04 F8; includes the easing tail, settle ${p(s.settleAfterInputMs)})`);
+  console.log(`  max blur ms:             ${p(s.maxBlurMs)}`);
+  console.log(`  deficit-frame %:         ${p(s.deficitFramePct)}`);
+  console.log(`  blur-area-time level·s:  ${p(s.blurAreaTimeLevelS)}`);
+  console.log(`  bytes per gesture:       ${p(s.bytesPerGesture)}`);
+};
+block('all gestures', g);
+block('zoom-in bursts', summary.zoomInBursts);
 const t = summary.tiles;
 console.log(`tiles: base ${t.requestedBase} tier0 ${t.requestedTier0} prefetch ${t.requestedPrefetch} received ${t.received} (${(t.bytes / 1e6).toFixed(1)} MB) cancelled ${t.cancelled} (late ${t.cancelledLate}) aborted ${t.aborted} errors ${t.errors}`);
 console.log(`  fetch ms: ${p(t.fetchMs)}`);
 console.log(`  decode ms: ${p(t.decodeMs)}`);
-console.log(`  prefetch waste: ${t.prefetchWastePct ?? 'n/a'}%   cache: ${summary.cache.resident}/${summary.cache.layers} resident, ${summary.cache.evictions} evictions`);
+console.log(`  prefetch waste: ${t.prefetchWastePct ?? 'n/a'}%   cache: ${summary.cache.resident}/${summary.cache.layers} resident, ${summary.cache.evictions} evictions, ${summary.cache.uploadStalls} upload stalls`);
 console.log(`  by kind: ${Object.entries(t.byKind).map(([k, v]) => `${k} ${v.requested}/${v.received}/${v.drawn}`).join('  ')}  (requested/received/drawn)`);
-console.log(`base loaded at ${summary.baseLoadedAtMs} ms; blank frames after base: ${summary.blankFramesAfterBase}`);
-if (summary.notes.length) console.log('notes: ' + summary.notes.join(' | '));
+console.log(`blank frames after base: ${summary.blankFramesAfterBase}`);
+if (summary.notes.length) console.log('notes:\n  ' + summary.notes.join('\n  '));
 console.log(`\nwrote ${outPath}`);

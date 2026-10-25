@@ -3,10 +3,14 @@
  * run the single requestAnimationFrame loop (A §2 "one rAF", 04 "Implications" item 1).
  *
  * URL parameters: ?manifest=URL  ?path=1 (auto-run the scripted path, store the summary in window.__stage0Summary)
- *                 ?overlay=1  ?dpr=N (render DPR override)  ?layers=N  ?workers=N  ?label=text
+ *                 ?overlay=1  ?dpr=N (render DPR override)  ?layers=N  ?workers=N
+ *                 ?label=<device>_<browser>_<network>_<cache>[_runN|_manual] (MEASUREMENT_PROTOCOL §1; the summariser parses it)
+ *                 ?network= ?cache= (optional explicit copies into summary.run)
  */
+/** Injected by vite.config.ts `define`: UTC time of the build. */
+declare const __BUILD_ID__: string;
 import { Camera } from './camera';
-import { DPR_CAP, FOCUS_HOLD_MS, LOWMEM_GIB, TEXTURE_LAYERS_DEFAULT, TEXTURE_LAYERS_LOWMEM, UPLOAD_BUDGET_MS_GESTURE, UPLOAD_BUDGET_MS_IDLE, UPLOAD_MAX_PER_FRAME_GESTURE, UPLOAD_MAX_PER_FRAME_IDLE } from './constants';
+import { DPR_CAP, FOCUS_HOLD_MS, OVERLAY_REFRESH_FRAMES, UPLOAD_BUDGET_MS_GESTURE, UPLOAD_BUDGET_MS_IDLE, UPLOAD_MAX_PER_FRAME_GESTURE, UPLOAD_MAX_PER_FRAME_IDLE } from './constants';
 import { DecodePool, chooseWorkerCount } from './decode-pool';
 import type { WorkerResponse } from './decode-messages';
 import { FramePlanner } from './frame-planner';
@@ -15,7 +19,7 @@ import { LodSelector } from './lod';
 import { Metrics, type DeviceInfo, type FrameInput, type Summary } from './metrics';
 import { Overlay } from './overlay';
 import { loadPyramid, resolveManifestUrl } from './pyramid';
-import { Renderer } from './renderer';
+import { Renderer, chooseLayerCount } from './renderer';
 import { Scheduler } from './scheduler';
 import { ScriptedPath } from './scripted-path';
 import { TileCache } from './tile-cache';
@@ -107,14 +111,13 @@ async function main(): Promise<void> {
   const canvas = document.getElementById('view') as HTMLCanvasElement | null;
   if (canvas === null) throw new Error('missing #view canvas');
   const label = params.get('label') ?? 'manual';
-  const metrics = new Metrics(label);
+  const metrics = new Metrics(label, __BUILD_ID__, params.get('network'), params.get('cache'));
 
   // Render at the device pixel ratio, capped (04 F7, A §3).
   const dprOverride = paramNum(params, 'dpr');
   const renderDpr = dprOverride ?? Math.min(DPR_CAP, window.devicePixelRatio || 1);
   const navx = navigator as Navigator & NavigatorExtras;
   const deviceMemory = typeof navx.deviceMemory === 'number' ? navx.deviceMemory : null;
-  const layersWanted = paramNum(params, 'layers') ?? (deviceMemory !== null && deviceMemory <= LOWMEM_GIB ? TEXTURE_LAYERS_LOWMEM : TEXTURE_LAYERS_DEFAULT);
 
   overlay.setStatus('loading manifest…');
   const manifestUrl = await resolveManifestUrl(params.get('manifest'));
@@ -122,7 +125,12 @@ async function main(): Promise<void> {
   const protocol = protocolOf(pyramid.manifestUrl);
   overlay.setStatus('starting renderer…');
 
+  // Texture array sized to this screen: pinned base + headroom viewports of L* tiles at s = 0.5 (constants.ts "GPU upload").
+  const viewportDevW = (canvas.clientWidth || window.innerWidth) * renderDpr;
+  const viewportDevH = (canvas.clientHeight || window.innerHeight) * renderDpr;
+  const layersWanted = paramNum(params, 'layers') ?? chooseLayerCount(viewportDevW, viewportDevH, pyramid.tileSize, pyramid.basePinTileCount, deviceMemory);
   const renderer = new Renderer(canvas, pyramid.tileSize, layersWanted);
+  metrics.rendererInitMs = renderer.initMs;
   const cache = new TileCache(renderer.layerCount);
   const cam = new Camera();
   cam.setSlide(pyramid.width, pyramid.height);
@@ -190,14 +198,17 @@ async function main(): Promise<void> {
   overlay.setDevice(
     device,
     `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}, pinned base from level ${pyramid.basePinLevel} (${pyramid.basePinTileCount} tiles)\n` +
-      `in-flight cap ${scheduler.maxInflight} (prefetch ${scheduler.prefetchSlots})  keys: O overlay, R reset, P path, +/- zoom, arrows pan`,
+      `in-flight cap ${scheduler.maxInflight} (prefetch ${scheduler.prefetchSlots})  renderer init ${renderer.initMs.toFixed(0)} ms  build ${__BUILD_ID__}  label ${label}${metrics.run.network ? ` net ${metrics.run.network}` : ''}${metrics.run.cache ? ` cache ${metrics.run.cache}` : ''}\n` +
+      `keys: O overlay, R reset, P path, +/- zoom, arrows pan`,
   );
 
   const finishSummary = (): Summary => {
     const s = metrics.summary();
     if (!renderer.mipEnabled) s.notes.push('GPU mipmaps disabled: the decode worker could not downscale on this browser');
     if (!device.gpuTimerQuery) s.notes.push('uploadMsPerFrame is CPU time in texSubImage3D (no EXT_disjoint_timer_query_webgl2)');
-    s.notes.push('inputToRafMs = next rAF timestamp - event.timeStamp; the frame presents about one display interval later');
+    s.notes.push('inputToRafMs = next rAF timestamp - event.timeStamp for real DOM input only; the frame presents about one display interval later. Scripted inputs are in inputToRafScriptedMs (one frame by construction).');
+    s.notes.push('timeToSharpMs = last input → first sharp frame (04 F8) and includes the easing tail settleAfterInputMs; sharpAfterSettleMs = camera settled → first sharp frame is the tile-pipeline number the A §3 targets refer to (0 when sharp at settle).');
+    if (s.startup.framesExcluded > 0) s.notes.push(`frameMs percentiles exclude the ${s.startup.framesExcluded} frames before the pinned base was resident; see startup.*`);
     return s;
   };
   const exportJson = (): string => JSON.stringify(metrics.exportBundle(finishSummary()));
@@ -221,6 +232,7 @@ async function main(): Promise<void> {
   };
   window.__stage0 = api;
   path.onDone = () => {
+    metrics.run.pathRuns++;
     const s = finishSummary();
     window.__stage0Summary = s;
     api.pathDone = true;
@@ -272,7 +284,9 @@ async function main(): Promise<void> {
     const now = rafTs;
     cam.step(now);
     const lstar = lod.select(cam.k, pyramid.levels.length);
-    const gestureActive = metrics.gestureActive || cam.animating || cam.dragging;
+    // The tight upload budget applies while the view is moving (04 F5: uploads must not stall a moving frame);
+    // once the camera is still, the frame has slack and getting tiles on screen is what matters.
+    const moving = cam.animating || cam.dragging;
 
     // Focus: pointer during zoom, viewport centre otherwise (task "Scheduler" item).
     if (now - cam.lastZoomInputTime < FOCUS_HOLD_MS || cam.dragging) {
@@ -287,13 +301,15 @@ async function main(): Promise<void> {
     const up = renderer.upload(
       cache,
       frame,
-      gestureActive ? UPLOAD_BUDGET_MS_GESTURE : UPLOAD_BUDGET_MS_IDLE,
-      gestureActive ? UPLOAD_MAX_PER_FRAME_GESTURE : UPLOAD_MAX_PER_FRAME_IDLE,
+      moving ? UPLOAD_BUDGET_MS_GESTURE : UPLOAD_BUDGET_MS_IDLE,
+      moving ? UPLOAD_MAX_PER_FRAME_GESTURE : UPLOAD_MAX_PER_FRAME_IDLE,
       pyramid.basePinLevel,
       isUrgent,
     );
     metrics.uploadStalls += up.stalled;
-    if (cache.residentCount !== lastResident) {
+    // Redraw when residency changed: any upload counts (a full cache evicts one tile per upload, so the resident
+    // count alone would miss the new tile), as does any camera motion.
+    if (up.count > 0 || cache.residentCount !== lastResident) {
       dirty = true;
       lastResident = cache.residentCount;
     }
@@ -312,9 +328,10 @@ async function main(): Promise<void> {
     scheduler.update(frame, now, cam, lstar);
     renderer.pollTimerQueries();
     if (metrics.baseLoadedAt === null && scheduler.basePinned) {
-      metrics.baseLoadedAt = now;
-      overlay.setStatus('');
+      metrics.noteBaseLoaded(now, frame);
+      overlay.setStatus('ready');
     }
+    if (path.running && frame % OVERLAY_REFRESH_FRAMES === 0) overlay.setStatus(`scripted path running ${path.progress} — hands off`);
 
     frameInput.now = now;
     frameInput.drawn = drawn;
