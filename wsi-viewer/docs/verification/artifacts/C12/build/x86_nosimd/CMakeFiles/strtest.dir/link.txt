@@ -1,1 +1,0 @@
-/usr/bin/cc -O3 -DNDEBUG -static CMakeFiles/strtest.dir/src/strtest.c.o -o strtest 
