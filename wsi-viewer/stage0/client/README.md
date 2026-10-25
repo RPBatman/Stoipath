@@ -21,7 +21,7 @@ in [`../results/README.md`](../results/README.md). What changed since the first 
 | `src/input.ts` | Pointer Events (pinch, drag, double-tap), wheel normalisation (`deltaMode` read first, clamp ≤ 1 level/event, ctrl+wheel = trackpad pinch ×3), keyboard `+`/`-`/arrows |
 | `src/scheduler.ts` | priority heap keyed (tier, \|level − L*\|, distance to focus = pointer while zooming, centre otherwise); de-dup; `AbortController` cancellation after 3 frames out of the wanted set (kept if ≥ 30 % of bytes arrived); prefetch (ring of 1 at the predicted level, pan prediction 175 ms ahead, zoom-intent destination level L*−1/−2 under the pointer); prefetch capped at 25 % of slots; concurrency 6 on HTTP/1.1, 16 on h2/h3 |
 | `src/decode-worker.ts`, `src/decode-pool.ts` | `clamp(hardwareConcurrency − 1, 1, 3)` workers: streamed fetch → `createImageBitmap(blob, {colorSpaceConversion:'none', premultiplyAlpha:'none'})` → half-size mip → transfer |
-| `src/tile-cache.ts` | residency table: tile key → layer of the texture array; LRU eviction that never touches the pinned base or layers drawn in the last frame |
+| `src/tile-cache.ts` | residency table: tile key → layer of the texture array; LRU eviction that never touches the pinned base or layers drawn by the most recent frame plan; wanted-but-not-drawn tiles stay fresh in the LRU |
 | `src/renderer.ts` | WebGL2 `TEXTURE_2D_ARRAY` (512² RGBA8, 2 mip levels, `LINEAR_MIPMAP_LINEAR`), layer count sized to the screen (`chooseLayerCount`), `texSubImage3D` under a per-frame budget (2 ms / 4 tiles while moving, 6 ms / 12 when still), one instanced draw per frame, two-source blend shader |
 | `src/frame-planner.ts` | residency-first draw list: L* tile or best resident ancestor (never blank); trilinear blend with the L*+1 tile by fractional LOD; ≤ 100 ms cross-fade in the shader when a finer source arrives |
 | `src/metrics.ts` | per-frame typed-array log, per-gesture records, input→rAF latency (real and scripted input kept apart), Event Timing, display-interval detection, tile timings, p50/p95 summary, JSON export |
@@ -30,6 +30,9 @@ in [`../results/README.md`](../results/README.md). What changed since the first 
 | `src/main.ts` | bootstrap, URL parameters and the single `requestAnimationFrame` loop |
 | `harness/serve.mjs` | dependency-free static server for `stage0/` (optional per-tile latency / bandwidth emulation) |
 | `harness/run.mjs` | Playwright headless run of the scripted path; writes `harness/results/<timestamp>-<label>.json` |
+| `harness/browser.mjs` | shared Playwright loader (local or global install), Chromium flags for software WebGL, arg parser |
+| `harness/screens.mjs`, `harness/verify_screens.py` | screenshots of twelve fixed views into `harness/results/screens/`; eight are exact 1:1 renders of one level that the Python script compares pixel-for-pixel with the tiles on disk (needs numpy + Pillow) |
+| `harness/check-metrics.mjs` | drives the viewer with real Playwright mouse input and asserts the gesture-metric arithmetic against the frame log (TTS from the last input, sharp fraction over the viewport only, real-input latency populated) |
 
 ## Build
 
@@ -138,7 +141,9 @@ It waits for `window.__stage0Summary`, writes `harness/results/<timestamp>-<labe
 columns + per-gesture records + latency arrays + tile timings) and prints the key percentiles. Playwright is
 resolved from the local `node_modules` or the global npm root. Headless Chromium here renders with SwiftShader
 (software), so frame times from the harness validate the pipeline, not GPU performance; the summariser flags
-such exports with `!` and they are never quoted as device numbers.
+such exports with `!` and they are never quoted as device numbers. What the headless numbers mean, and the
+placement / metrics checks (`node harness/screens.mjs && python3 harness/verify_screens.py`,
+`node harness/check-metrics.mjs`), are described in [`harness/results/README.md`](harness/results/README.md).
 
 ## What the export contains
 
@@ -149,9 +154,12 @@ frame-time percentiles), frame time (steady state / during gestures), dropped-fr
 Timing (`PerformanceObserver` type `event`, `durationThreshold` 16 — discrete events only; wheel and pointermove
 are excluded by the API), `gestures` (all gestures, with counts by kind) and `zoomInBursts` (gestures with
 `levelsZoomed > 0`, the unit the abstract reports): `timeToSharpMs`, `settleAfterInputMs`, `sharpAfterSettleMs`,
-`maxBlurMs`, deficit-frame %, blur-area-time in level·s (04 F8 "BAT"), minimum sharp fraction, bytes per gesture,
-`inputToFirstChangeMs`; tile counts per request kind (base / visible / partner / intent / ring with requested /
-received / drawn), fetch and decode ms, prefetch waste, cache stats; `device` (UA, DPR, cores, memory, GPU
+`blurEndAfterInputMs` (last input → last frame that still drew an ancestor; 0 if none; independent of the settle
+criterion), `maxBlurMs`, deficit-frame %, blur-area-time in level·s (04 F8 "BAT"), minimum sharp fraction, bytes
+per gesture, `inputToFirstChangeMs`; tile counts per request kind (base / visible / partner / intent / ring with
+requested / received / drawn), fetch and decode ms, prefetch waste, cache stats (layers, resident, pinned,
+evictions, upload stalls, `prefetchHeldFrames` = frames in which prefetch waited for room in the texture array);
+`device` (UA, DPR, cores, memory, GPU
 renderer, `navigator.connection`, protocol, layers, workers); `run` (label, network, cache, completed path runs);
 `build`. `gestures[]` holds every gesture (`kind`, `kinds`, `synthetic`, `levelsZoomed`, the three TTS
 quantities, `maxBlurMs`, `framesWithDeficit`, `frames`, `droppedFrames`, `requests`, `bytes`, `timedOut`,
@@ -173,7 +181,9 @@ flight, decode queue, upload queue, upload ms, uploads, drawn, gesture, log zoom
   the tiles land before the view stops, so `sharpAfterSettleMs` is 0 and the blur shows up in `maxBlurMs` and the
   deficit-frame % *during* the gesture instead.
 * "Settled" means the presented transform moved < 0.5 device px at the viewport edge in a frame
-  (`SETTLE_MOTION_PX`) and no input arrived for 150 ms (`GESTURE_IDLE_MS`).
+  (`SETTLE_MOTION_PX`) and no input arrived for 150 ms (`GESTURE_IDLE_MS`). The criterion is per frame, so a
+  renderer running at 15 fps settles later than one at 60 fps for the same easing (on SwiftShader the tail is
+  1–1.7 s); on a device that holds its refresh rate it is 0.5–0.7 s. `blurEndAfterInputMs` does not depend on it.
 * The display interval is the shortest recurring rAF delta (histogram, snapped to a standard refresh rate; the
   raw value is exported too). Dropped frames are counted from rAF cadence only; the compositor can drop frames the
   page never sees.
@@ -204,4 +214,11 @@ levels from `width`/`height` when `levels` is missing. Levels whose longest side
 * The velocity model is a plain EMA (One-Euro/Kalman from 04 F3 not implemented); idle fan-out and bundle
   requests from the plan are not implemented.
 * The GPU memory budget is above A §2's 128 MiB phone figure because this pyramid's pinned base is 85 tiles
-  (level 2 is 3840 px); untested on 2–3 GB devices.
+  (level 2 is 3840 px); untested on 2–3 GB devices. The other side of the same coin: a DPR-2 phone in portrait
+  (≈ 1570×3400 device px) needs up to ~100 L* tiles for the viewport alone at s = 0.5, which does not fit in the
+  75 non-pinned layers of a 160-layer array (the `deviceMemory ≤ 4 GiB` cap). Prefetch now yields to visible tiles
+  (`prefetchHeldFrames` in the export) but visible tiles themselves would then stall (`uploadStalls`); if a device
+  export shows either, run it with `?layers=256` or lower `PINNED_BASE_MAX_PX` to 2048 (21-tile base).
+* The fragment shader uses `highp` for tile coordinates (fp16 `mediump` on Mali/Adreno is ~½ texel on a 512-texel
+  tile); this has only been verified on SwiftShader, which promotes `mediump` anyway, so the phone runs are the
+  first real test of it.

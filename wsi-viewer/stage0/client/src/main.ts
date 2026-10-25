@@ -47,6 +47,8 @@ interface Stage0Api {
     lstar: number;
     sharpFraction: number;
     deficitCells: number;
+    partnerCells: number;
+    cells: number;
     resident: number;
     inflight: number;
     decodeOutstanding: number;
@@ -60,6 +62,8 @@ interface Stage0Api {
     /** Scheduler room for prefetch (non-pinned layers minus wanted residents, decoded-awaiting-upload and in flight). */
     room: number;
     evictions: number;
+    viewW: number;
+    viewH: number;
   };
   pathDone: boolean;
 }
@@ -244,6 +248,8 @@ async function main(): Promise<void> {
       lstar: lod.current,
       sharpFraction: planner.stats.sharpFraction,
       deficitCells: planner.stats.deficitCells,
+      partnerCells: planner.stats.partnerCells,
+      cells: planner.stats.cells,
       resident: cache.residentCount,
       inflight: scheduler.inflightCount,
       decodeOutstanding: pool.outstanding,
@@ -256,6 +262,8 @@ async function main(): Promise<void> {
       cameraAnimating: cam.animating || cam.dragging,
       room: scheduler.lastRoom,
       evictions: cache.evictions,
+      viewW: cam.viewW,
+      viewH: cam.viewH,
     }),
     pathDone: false,
   };

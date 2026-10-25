@@ -62,22 +62,35 @@ for (const v of views) {
     },
     v,
   );
-  // Sharp at L*, nothing in flight, then two more frames so the cross-fade (100 ms) has finished.
-  await page.waitForFunction(
-    () => {
-      const s = window.__stage0.state();
-      return s.sharpFraction >= 0.999 && s.inflight === 0 && s.uploadQueue === 0 && s.decodeOutstanding === 0;
-    },
-    null,
-    { timeout: 60_000, polling: 50 },
+  // Wait until the view is sharp at L* and the pipeline has been idle (nothing in flight, decoding or waiting for
+  // upload) for 30 consecutive frames: prefetch is dispatched two tiles at a time, so a single `inflight === 0`
+  // sample can fall in the gap between batches while the trilinear partners are still on their way.
+  await page.evaluate(
+    () =>
+      new Promise((res, rej) => {
+        const t0 = performance.now();
+        let idle = 0;
+        const f = () => {
+          const s = window.__stage0.state();
+          idle = s.sharpFraction >= 0.999 && s.inflight === 0 && s.uploadQueue === 0 && s.decodeOutstanding === 0 ? idle + 1 : 0;
+          if (idle >= 30) res();
+          else if (performance.now() - t0 > 60_000) rej(new Error('view did not settle'));
+          else requestAnimationFrame(f);
+        };
+        requestAnimationFrame(f);
+      }),
   );
-  await page.waitForTimeout(250);
   const state = await page.evaluate(() => window.__stage0.state());
   const file = resolve(outDir, `${v.name}.png`);
   await page.screenshot({ path: file, clip: { x: 0, y: 0, width, height }, omitBackground: false });
-  const r = { ...v, logZoom: state.logZoom, lstar: state.lstar, sharpFraction: state.sharpFraction, resident: state.resident, waitMs: Date.now() - t0, file: `${v.name}.png` };
+  // page.screenshot() can disturb the page (a transient viewport change re-plans the frame); record the state
+  // at capture and note any change afterwards so a lower sharp fraction is not mistaken for a renderer fault.
+  await page.waitForTimeout(100);
+  const after = await page.evaluate(() => window.__stage0.state());
+  const disturbed = after.sharpFraction !== state.sharpFraction || after.viewW !== state.viewW || after.viewH !== state.viewH;
+  const r = { ...v, logZoom: state.logZoom, lstar: state.lstar, sharpFraction: state.sharpFraction, partnerCells: `${state.partnerCells}/${state.cells}`, resident: state.resident, viewport: [state.viewW, state.viewH], waitMs: Date.now() - t0, file: `${v.name}.png`, afterScreenshot: disturbed ? { sharpFraction: after.sharpFraction, viewport: [after.viewW, after.viewH], inflight: after.inflight } : 'unchanged' };
   results.push(r);
-  console.log(`${v.name.padEnd(16)} L*=${state.lstar} logZoom=${state.logZoom.toFixed(3)} sharp=${state.sharpFraction} resident=${state.resident} (${r.waitMs} ms)`);
+  console.log(`${v.name.padEnd(16)} L*=${state.lstar} logZoom=${state.logZoom.toFixed(3)} sharp=${state.sharpFraction} partners=${state.partnerCells}/${state.cells} resident=${state.resident} view=${state.viewW}x${state.viewH} (${r.waitMs} ms)${disturbed ? `  after screenshot: sharp=${after.sharpFraction} view=${after.viewW}x${after.viewH} inflight=${after.inflight}` : ''}`);
 }
 const device = await page.evaluate(() => ({ gpu: window.__stage0.summary().device.gpuRenderer, ua: navigator.userAgent }));
 await browser.close();

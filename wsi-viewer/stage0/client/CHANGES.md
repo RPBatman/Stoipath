@@ -59,3 +59,44 @@ No file was rewritten for style; `metrics.ts` was rewritten because most of it c
 `npm run build` (tsc strict, no `any`) passes; `npm run harness` runs end to end in headless Chromium
 (SwiftShader) on this machine; `python3 tools/summarize_results.py` reads the resulting exports (zoom-in bursts
 4/11, TTS, sharp-after-settle, MB/burst, Hz, headless flag). Numbers in the final report.
+
+# Integration pass (2026-10-25, build 2026-10-25T00:30Z)
+
+End-to-end run against the real CAMELYON16 pyramid on the build machine (headless Chromium, SwiftShader, loopback
+HTTP/1.1). Manifest/tile addressing matched the data layout without changes. Headless numbers are documented in
+`harness/results/README.md`; they validate the pipeline and are not device numbers.
+
+## Fixes
+
+- **Eviction protection was frame-fragile** (`tile-cache.ts`, `frame-planner.ts`, `main.ts`): a layer was safe
+  from eviction only if the planner had touched it in the previous frame, but the planner only runs when the frame
+  is dirty, so a tile on screen could be evicted by a prefetch upload a few frames after the camera stopped. Layers
+  are now protected when they were drawn by the most recent plan (`cache.beginPlan(frame)` / `drawnFrame`), however
+  many frames ago that was; `planner.isCellVisible(key)` uses the same stamp for upload ordering.
+- **Capacity-aware prefetch** (`scheduler.ts`): resident tiles still in the wanted set, decoded tiles awaiting
+  upload and in-flight requests are counted against the non-pinned layers; prefetch tiers are dispatched only while
+  there is room (tier 0 always is). Wanted resident tiles also refresh their LRU position, so tiles nobody wants any
+  more are evicted before prefetched tiles that are about to scroll in. Exported as `cache.prefetchHeldFrames`.
+- **Fragment shader precision** (`renderer.ts`): `precision highp float` (was `mediump`). On Mali/Adreno mediump is
+  fp16, which resolves tile UVs to ~½ texel on a 512-texel tile and would have blurred every tile on phones while
+  looking fine on desktop drivers. No visible effect on SwiftShader.
+
+## Measurement
+
+- New per-gesture field `blurEndAfterInputMs` (+ `GestureSummary` percentiles, harness print): last input event →
+  last frame that still drew an ancestor/blank cell, 0 if none. Independent of the settle criterion, so it is the
+  number that is non-trivial on a fast network where `sharpAfterSettleMs` is 0 and `timeToSharpMs` is the easing
+  tail. Existing field names unchanged.
+- `window.__stage0` test API: `fitLogZoom()`, and `state()` now also returns `deficitCells`, `partnerCells`,
+  `cells`, `decodeOutstanding`, `uploadQueue`, `cx`, `cy`, `gestureActive`, `cameraAnimating`, `room`,
+  `evictions`, `viewW`, `viewH`. Planner stat `partnerCells` (sharp cells blended with their L*+1 partner).
+
+## Harness
+
+- `harness/browser.mjs`: shared Playwright loader / Chromium flags / arg parser (run.mjs uses it).
+- `harness/screens.mjs` + `harness/verify_screens.py`: twelve fixed views screenshotted into
+  `harness/results/screens/`; eight of them exact 1:1 renders of one level compared pixel-for-pixel with the tiles on
+  disk (all 0.00 mean difference).
+- `harness/check-metrics.mjs`: real mouse wheel / drag through Playwright; asserts the TTS arithmetic against the
+  frame log, the viewport-only sharp fraction (tier-0 requests == visible cells), real-input latency populated.
+- `harness/results/README.md`: what the headless numbers mean.

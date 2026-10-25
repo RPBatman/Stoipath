@@ -24,6 +24,8 @@ export interface PlanStats {
   blurArea: number;
   /** Cells with nothing resident at all (should only happen before the base is loaded). */
   blankCells: number;
+  /** Sharp cells whose L*+1 trilinear partner is resident and blended in (lodFraction > 0). */
+  partnerCells: number;
   cells: number;
   fading: boolean;
   truncated: boolean;
@@ -90,6 +92,7 @@ export class FramePlanner {
     deficitCells: 0,
     blurArea: 0,
     blankCells: 0,
+    partnerCells: 0,
     cells: 0,
     fading: false,
     truncated: false,
@@ -113,6 +116,7 @@ export class FramePlanner {
     st.deficitCells = 0;
     st.blurArea = 0;
     st.blankCells = 0;
+    st.partnerCells = 0;
     st.cells = 0;
     st.fading = false;
     st.truncated = false;
@@ -195,6 +199,7 @@ export class FramePlanner {
             climbB = 1;
             mix = lod;
             inst[o + I_A + 3] = 0;
+            st.partnerCells++;
           }
         }
 
