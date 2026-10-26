@@ -1,0 +1,582 @@
+/* =============================================================================
+   Stoipath design system · tokens.css
+   Design phase document 2a · 2026-10-26 · status: draft for the UX/UI review
+   on Thu 2026-10-29.
+
+   One file of CSS custom properties. No build step, no network fonts, no
+   dependencies. Loaded by every wireframe and component sheet by relative path
+   before base.css.
+
+   THEMES
+   - Default (no attribute, or data-theme="dark"): the dark diagnostic theme.
+     This is the only theme permitted on diagnostic surfaces (Clinical-IH, Dx,
+     and any Viewer session on a reading-room display). Principle P7, D14.
+   - data-theme="light": the light chrome theme (Stoipath Learn may offer it;
+     Viewer may offer it on non-diagnostic surfaces). The canvas backdrop
+     stays neutral dark grey in both themes: tissue is never framed by white.
+   - data-theme="auto": follows prefers-color-scheme. Only a build that is
+     allowed a light theme sets "auto"; the default deliberately ignores the OS
+     preference so that a clinical surface can never flip to light. This is
+     Design note DS-1 (see README.md).
+   - Any element may carry data-theme to scope a theme to a subtree; the
+     component sheet uses this to render each component in both themes.
+
+   NAMING
+   --color-*   semantic colours (what it is for, not what it looks like)
+   --grey-*    the raw neutral ramp (sRGB greys, chroma 0; the number is the
+               approximate CIE L*). Use semantic tokens in components; the ramp
+               exists so that a new semantic token is still neutral.
+   --ann-*     the eight-colour CVD-safe annotation palette (same in both
+               themes: it is drawn over tissue, not over chrome).
+   --font-*, --text-*, --space-*, --radius-*, --shadow-*, --focus-*,
+   --motion-*, --z-*, --target-*, --layout-*  are documented inline.
+
+   HARD RULES THE TOKENS ENCODE
+   - Chrome within 32 CSS px of the canvas edge uses only --grey-* /
+     --color-surface-* / --color-text-* (OKLCH chroma 0). Accent and semantic
+     colours never touch that margin (P7 test).
+   - Focus ring is luminance-based (near-white on dark, near-black on light),
+     2 px, with a 1 px contrasting halo, so it is visible on neutral chrome and
+     is never a saturated colour beside tissue (NFR-A3; principles §8.3).
+   - Motion durations collapse to 0 ms under prefers-reduced-motion (NFR-A4).
+   - Targets: 24 px minimum (WCAG 2.2 SC 2.5.8), 44 px on coarse pointers.
+   ========================================================================== */
+
+/* -----------------------------------------------------------------------------
+   0. Theme-independent tokens
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  /* --- Neutral ramp: sRGB greys, chroma 0. Suffix ≈ CIE L*. --------------- */
+  --grey-6:   #141414;
+  --grey-9:   #1a1a1a;
+  --grey-12:  #202020;
+  --grey-15:  #262626;
+  --grey-17:  #2b2b2b;
+  --grey-20:  #303030;
+  --grey-22:  #353535;
+  --grey-24:  #3a3a3a;
+  --grey-27:  #404040;
+  --grey-31:  #4a4a4a;
+  --grey-35:  #525252;
+  --grey-39:  #5c5c5c;
+  --grey-47:  #707070;
+  --grey-57:  #8a8a8a;
+  --grey-66:  #a0a0a0;
+  --grey-72:  #b0b0b0;
+  --grey-75:  #b8b8b8;
+  --grey-83:  #d0d0d0;
+  --grey-91:  #e6e6e6;
+  --grey-95:  #f2f2f2;
+  --grey-98:  #f9f9f9;
+  --white:    #ffffff;
+
+  /* --- Canvas backdrop (identical in both themes) ---------------------------
+     The area of the viewport outside the slide bounds, and the colour the
+     engine clears to. L* ≈ 24, chroma 0: a neutral mid-dark grey, not black
+     (brightfield slides are near-white; a black surround maximises the
+     adaptation step; ux-conventions §12, Design note D14). To be confirmed on
+     the pilot lab's displays against reading-room ambient light.          */
+  --color-canvas-bg:        var(--grey-24);
+  --color-canvas-bg-dim:    rgba(0, 0, 0, 0.40);   /* S16 "last frame dimmed 40 %" */
+  --color-canvas-grid:      rgba(255, 255, 255, 0.18); /* HPF reticle, G */
+  --color-canvas-viewport:  var(--grey-95);          /* navigator viewport rectangle */
+
+  /* --- Annotation palette: 8 colours, CVD-safe, luminance-separated ---------
+     Basis: Okabe & Ito (2008) qualitative set, re-derived so that it passes
+     the P7 acceptance test (pairwise CIEDE2000 ≥ 20 after deuteranopia and
+     protanopia simulation, Machado 2009) with eight classes. A dichromat
+     keeps two dimensions: lightness and the blue-yellow axis. The palette
+     therefore places three colours on a "blue side" (deep blue, teal, sky
+     blue) and three on a "yellow side" (sienna, amber, yellow), each side a
+     lightness ladder with ΔL* ≥ 20, and adds two neutrals (Ink, Chalk) at the
+     extremes. Okabe-Ito's bluish green becomes teal (green collapses onto the
+     yellow side under deutan), vermilion and orange are darkened to keep
+     ΔL* from yellow, and the reddish purple (#CC79A7) is dropped because it
+     sits on the eosin-hematoxylin axis. Every stroke carries a 1 px halo of
+     the opposite luminance (--ann-halo-dark / --ann-halo-light) so it is
+     visible on glass, eosin and hematoxylin alike; the halo, not the hue, is
+     what guarantees on-H&E legibility. Deep blue is ΔE00 ≈ 10 from the
+     hematoxylin nucleus colour, so it is reserved for large ROI outlines
+     (Region*), never for per-cell markers. Pairwise ΔE00 after CVD simulation and
+     contrast against H&E reference colours are recorded in README.md
+     (validated by contrast-check.py). QuPath class names are kept verbatim
+     and QuPath's own RGB is restored on GeoJSON export (plan FR-A2;
+     principles §3.4).                                                        */
+  --ann-1: #7cc3f0;   /* Sky blue      L* 76  blue side     default: Lymphocytes / Immune */
+  --ann-2: #8e3a15;   /* Sienna        L* 36  yellow side   default: Tumor                 */
+  --ann-3: #f0e442;   /* Yellow        L* 90  yellow side   default: Positive              */
+  --ann-4: #173f86;   /* Deep blue     L* 28  blue side     default: Region* (dashed ROI)  */
+  --ann-5: #1a8893;   /* Teal          L* 52  blue side     default: Stroma                */
+  --ann-6: #be7b00;   /* Amber         L* 57  yellow side   default: Other                 */
+  --ann-7: #1a1a1a;   /* Ink           L* 9   neutral       default: Necrosis, Ignore*     */
+  --ann-8: #f7f7f7;   /* Chalk         L* 97  neutral       default: Negative, measurements */
+  --ann-halo-dark:  rgba(0, 0, 0, 0.85);
+  --ann-halo-light: rgba(255, 255, 255, 0.90);
+  --ann-fill-alpha: 0.18;                 /* polygon fill when "fill" is on */
+  --ann-stroke:     1.5px;                /* constant screen-space stroke   */
+  --ann-stroke-selected: 2.5px;
+  --ann-measure:    var(--ann-8);         /* measurement lines/ticks        */
+
+  /* AI overlay presentation defaults (principles §3.2: outline/tissue-map
+     first, heatmap on demand) */
+  --overlay-outline-alpha: 0.95;
+  --overlay-heatmap-alpha: 0.55;
+
+  /* --- Typography ---------------------------------------------------------
+     System stacks only (NFR-O4: no external fonts). UI text 13-14 px on
+     desktop, 15-16 px on coarse pointers (principles §7 density).         */
+  --font-ui:   system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+               Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono",
+               "DejaVu Sans Mono", monospace;
+
+  --text-2xs: 10px;   /* HUD tertiary, legend sub-labels (never body text)   */
+  --text-xs:  11px;   /* chips, HUD secondary line (µm/px · pitch), captions */
+  --text-sm:  12px;   /* status strip, tray labels, table meta              */
+  --text-md:  13px;   /* desktop chrome body (default)                      */
+  --text-lg:  14px;   /* desktop body on 4K, panel titles                   */
+  --text-xl:  16px;   /* touch body, dialog titles                          */
+  --text-2xl: 18px;   /* h3                                                  */
+  --text-3xl: 22px;   /* h2, HUD magnification readout                      */
+  --text-4xl: 28px;   /* h1, launch interstitial accession                  */
+
+  --font-size-body:    var(--text-md);     /* re-set under (pointer: coarse) */
+  --font-size-strip:   var(--text-sm);
+  --font-size-hud:     var(--text-sm);
+  --font-size-hud-big: var(--text-3xl);
+
+  --leading-tight: 1.2;
+  --leading-body:  1.45;
+  --tracking-caps: 0.06em;   /* badges and small caps */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+  --weight-bold:    700;
+  --tabular: "tnum" 1, "lnum" 1;   /* numerals in HUD, tables, measurements */
+
+  /* --- Spacing (4 px base) ------------------------------------------------- */
+  --space-0:  0;
+  --space-1:  2px;
+  --space-2:  4px;
+  --space-3:  6px;
+  --space-4:  8px;
+  --space-5:  12px;
+  --space-6:  16px;
+  --space-7:  20px;
+  --space-8:  24px;
+  --space-9:  32px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 64px;
+
+  /* --- Radii --------------------------------------------------------------- */
+  --radius-1:   2px;    /* chips, keys, HUD backdrops */
+  --radius-2:   4px;    /* buttons, inputs, rows      */
+  --radius-3:   6px;    /* cards, panels              */
+  --radius-4:   8px;    /* dialogs, sheets, popovers  */
+  --radius-5:   12px;   /* bottom sheets (top corners)*/
+  --radius-full: 999px; /* pills, toggles, progress   */
+
+  /* --- Elevation ----------------------------------------------------------
+     Dark chrome gets little from shadows; elevation is mostly a 1 px border
+     plus a slightly lighter surface. Shadows are kept soft and neutral.   */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.40);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.48);
+  --shadow-4: 0 16px 48px rgba(0, 0, 0, 0.55);
+
+  /* --- Focus ring (luminance-based; see header) ---------------------------- */
+  --focus-width:  2px;
+  --focus-offset: 1px;
+  --focus-ring:   var(--grey-95);         /* re-set per theme below */
+  --focus-halo:   var(--grey-6);
+  --focus-shadow: 0 0 0 var(--focus-offset) var(--focus-halo),
+                  0 0 0 calc(var(--focus-offset) + var(--focus-width)) var(--focus-ring);
+
+  /* --- Motion -------------------------------------------------------------
+     The engine's camera easing is log-space, 80-120 ms (FR-V1). Chrome
+     motion never runs during a gesture (P2); these durations are for panel
+     open/close, toasts and reveals between gestures only. All collapse to 0
+     under prefers-reduced-motion (NFR-A4), without slowing content.      */
+  --motion-fast:  80ms;
+  --motion-base:  120ms;
+  --motion-panel: 200ms;
+  --motion-toast: 240ms;
+  --motion-ease:  cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --hud-label-fade-delay: 800ms;  /* "Sharp" label fades after 800 ms (§5.3) */
+  --hud-soft-threshold:   400ms;  /* settled > 400 ms with deficit → Soft    */
+
+  /* --- Z-index layers (shell) --------------------------------------------
+     The canvas is the floor; GPU overlays are inside the canvas, not DOM.
+     Only HUD text sits in DOM over the canvas (P2).                       */
+  --z-canvas:    0;
+  --z-hud:       10;   /* corner HUD text, scale bar label, identity line  */
+  --z-navigator: 20;   /* region F                                          */
+  --z-rail:      30;   /* regions C, D                                      */
+  --z-bars:      40;   /* regions A, E                                      */
+  --z-banner:    50;   /* under-top-bar banners                             */
+  --z-drawer:    55;   /* dock as drawer over the canvas edge               */
+  --z-sheet:     60;   /* bottom sheets (tablet portrait, phone)            */
+  --z-modal:     70;   /* dialogs (inset from badge/label/mode slots)       */
+  --z-palette:   75;   /* command palette, anchored to the top bar          */
+  --z-toast:     80;
+  --z-tooltip:   90;
+  --z-live:      100;  /* the "live" marker tags on mocks                   */
+
+  /* --- Targets (WCAG 2.2 SC 2.5.8) ----------------------------------------- */
+  --target-min:   24px;   /* AA minimum everywhere                          */
+  --target-touch: 44px;   /* recommended on tablets/phones; set under coarse */
+  --target:       var(--target-min);
+  --icon-size:    20px;   /* 20 px glyph in a 24 px target (§7 density)      */
+
+  /* --- Layout: shell geometry per principles §3.1 and §7 ------------------
+     Fixed tracks so the canvas never re-lays out during a gesture (P2).
+     Re-set by breakpoints in base.css; the names stay the same.          */
+  --layout-topbar:   48px;
+  --layout-rail:     56px;
+  --layout-dock:     320px;
+  --layout-dock-min: 320px;
+  --layout-dock-max: 520px;
+  --layout-strip:    32px;
+  --layout-navigator: 240px;
+  --layout-bottombar: 56px;   /* phone/tablet-portrait tool bar (72 on tablet) */
+  --layout-sheet-max: 40vh;   /* dock as bottom sheet ≤ 40 % height          */
+  --layout-canvas-margin: 32px; /* the P7 neutral margin                      */
+  --layout-hud-inset: 12px;
+
+  /* --- Controlled strings as tokens (Design note D2) ------------------------
+     The RUO wording is [unverified, 21 CFR 809.10(c)(2)(i)]; counsel's final
+     text replaces it here, once. CSS content tokens are used only by the
+     `.badge-string` helper; product code reads the same strings from the
+     i18n bundle. These are English regulatory strings and are also shown in
+     English in About in every locale (principles §2.5 rule 6).            */
+  --string-ruo:      "For Research Use Only. Not for use in diagnostic procedures.";
+  --string-learn:    "For educational use. Not a medical device. Contains no protected health information.";
+  --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within \2039 laboratory name \203A under CLIA/CAP validation.";
+  --string-dx:       "Stoipath Dx \00B7 cleared configuration \00B7 see About for UDI, version and hashes.";
+}
+
+/* -----------------------------------------------------------------------------
+   1. Dark diagnostic theme (default) — also re-applied by data-theme="dark"
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces: a shallow stack. -1 is behind everything (status strip, app
+     background), 0 is the standard panel/top-bar surface adjacent to the
+     canvas (L* 20, D14), 1 is a raised row/card, 2 is a popover/dialog.   */
+  --color-surface--1: var(--grey-15);
+  --color-surface-0:  var(--grey-20);
+  --color-surface-1:  var(--grey-24);
+  --color-surface-2:  var(--grey-27);
+  --color-surface-inverse: var(--grey-95);  /* tooltips */
+  --color-backdrop:   rgba(0, 0, 0, 0.55);   /* behind modals; never over the canvas centre at rest */
+  --color-hud-backdrop: rgba(20, 20, 20, 0.62); /* quiet neutral HUD backdrop */
+
+  /* Text */
+  --color-text:          var(--grey-91);   /* 10.6:1 on surface-0 */
+  --color-text-secondary: var(--grey-72);  /* ≥ 4.5:1 on surface-0..2 */
+  --color-text-disabled: var(--grey-57);   /* not required to meet 4.5:1 */
+  --color-text-inverse:  var(--grey-6);    /* on inverse / accent fills */
+  --color-text-on-canvas: var(--grey-95);  /* HUD text over the canvas backdrop */
+
+  /* Borders and dividers (non-text contrast ≥ 3:1 where they carry meaning) */
+  --color-border:        var(--grey-31);   /* decorative dividers            */
+  --color-border-strong: var(--grey-57);   /* control outlines (≥ 3:1)        */
+  --color-divider:       rgba(255, 255, 255, 0.08);
+
+  /* Interactive neutrals (luminance-only states; P7) */
+  --color-control-bg:        var(--grey-31);   /* buttons, chips on any surface      */
+  --color-control-bg-hover:  var(--grey-35);
+  --color-control-bg-active: var(--grey-39);
+  --color-control-selected:  var(--grey-27);   /* selected row / tool, + indicator bar */
+  --color-control-selected-indicator: var(--grey-95); /* the 2 px bar on a selected rail tool */
+  --color-row-hover:         var(--grey-24);   /* list rows on surface 0 */
+  --color-control-strong:    var(--grey-95);   /* the neutral "primary" button fill   */
+  --color-on-strong:         var(--grey-6);
+
+  /* Accent — used sparingly: the .btn--accent primary action inside modal
+     dialogs, sheets and the command palette (all inset ≥ 32 px from the
+     canvas), and link text in dialogs/About. Never in the top bar, rail, dock
+     or strip (all adjacent to tissue), never for the focus ring, never as
+     the only cue. The default primary button is the neutral .btn--primary. */
+  --color-accent:        #8ab4e8;   /* 6.1:1 on surface-0 as text */
+  --color-accent-hover:  #a3c4ee;
+  --color-accent-active: #6f9fdd;
+  --color-accent-text:   #a8c8f0;   /* link colour on dark surfaces */
+  --color-on-accent:     var(--grey-6);
+
+  /* Semantic (status is also always carried by glyph + text) */
+  --color-info:    #8ab4e8;
+  --color-success: #5ec9a4;
+  --color-warning: #e6a93a;
+  --color-danger:  #f5956c;
+  --color-info-bg:    rgba(138, 180, 232, 0.08);  /* tints: composite chroma ≤ 0.03, so they pass P7 */
+  --color-success-bg: rgba(94, 201, 164, 0.08);
+  --color-warning-bg: rgba(230, 169, 58, 0.08);
+  --color-danger-bg:  rgba(245, 149, 108, 0.08);
+  --color-on-info:    var(--grey-6);
+  --color-on-success: var(--grey-6);
+  --color-on-warning: var(--grey-6);
+  --color-on-danger:  var(--grey-6);
+
+  /* Product badges (principles §2.1). Badges are text, never colour alone;
+     the fills are neutral luminance steps. The badge sits in the 48 px top
+     bar, within 32 px of the canvas edge, so even the Dx badge is neutral:
+     it is told apart by its text ("DX"), the check glyph and a double rule. */
+  --color-badge-ruo-bg:      var(--grey-83);
+  --color-badge-ruo-fg:      var(--grey-6);
+  --color-badge-learn-bg:    var(--grey-72);
+  --color-badge-learn-fg:    var(--grey-6);
+  --color-badge-clinical-bg: var(--grey-95);
+  --color-badge-clinical-fg: var(--grey-6);
+  --color-badge-dx-bg:       var(--grey-98);
+  --color-badge-dx-fg:       var(--grey-6);
+  --color-mode-nav-bg:       var(--grey-31);
+  --color-mode-nav-fg:       var(--grey-91);
+  --color-mode-dx-bg:        var(--grey-95);
+  --color-mode-dx-fg:        var(--grey-6);
+
+  /* Sharpness / Rendering Complete glyphs: luminance only (§5.3, §5.4) */
+  --color-sharp:       var(--grey-95);   /* filled dot              */
+  --color-sharpening:  var(--grey-72);   /* ring                    */
+  --color-soft:        var(--grey-72);   /* half dot                */
+  --color-offline:     var(--grey-57);   /* hollow dot with slash   */
+
+  /* Skeleton / loading (never over tissue; P3) */
+  --color-skeleton:      var(--grey-24);
+  --color-skeleton-hi:   var(--grey-27);
+
+  /* Focus */
+  --focus-ring: var(--grey-95);
+  --focus-halo: var(--grey-6);
+
+  /* Scrollbars (Firefox) */
+  --color-scrollbar: var(--grey-39);
+}
+
+/* -----------------------------------------------------------------------------
+   2. Light chrome theme — data-theme="light" (opt-in by build; see header)
+   -------------------------------------------------------------------------- */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-surface--1: var(--grey-91);
+  --color-surface-0:  var(--grey-95);
+  --color-surface-1:  var(--white);
+  --color-surface-2:  var(--white);
+  --color-surface-inverse: var(--grey-12);
+  --color-backdrop:   rgba(20, 20, 20, 0.45);
+  --color-hud-backdrop: rgba(20, 20, 20, 0.62); /* HUD sits on the dark canvas in both themes */
+
+  --color-text:           var(--grey-9);
+  --color-text-secondary: var(--grey-31);
+  --color-text-disabled:  var(--grey-57);
+  --color-text-inverse:   var(--grey-95);
+  --color-text-on-canvas: var(--grey-95);
+
+  --color-border:         var(--grey-83);
+  --color-border-strong:  var(--grey-47);
+  --color-divider:        rgba(0, 0, 0, 0.08);
+
+  --color-control-bg:        var(--grey-91);
+  --color-control-bg-hover:  var(--grey-83);
+  --color-control-bg-active: var(--grey-75);
+  --color-control-selected:  var(--grey-83);
+  --color-control-selected-indicator: var(--grey-9);
+  --color-row-hover:         var(--grey-91);
+  --color-control-strong:    var(--grey-12);
+  --color-on-strong:         var(--grey-95);
+
+  --color-accent:        #2b63a8;
+  --color-accent-hover:  #245489;
+  --color-accent-active: #1c436e;
+  --color-accent-text:   #245489;
+  --color-on-accent:     var(--white);
+
+  --color-info:    #2b63a8;
+  --color-success: #0e7a5a;
+  --color-warning: #8a5a00;
+  --color-danger:  #b03a12;
+  --color-info-bg:    rgba(43, 99, 168, 0.10);
+  --color-success-bg: rgba(14, 122, 90, 0.10);
+  --color-warning-bg: rgba(138, 90, 0, 0.12);
+  --color-danger-bg:  rgba(176, 58, 18, 0.10);
+  --color-on-info:    var(--white);
+  --color-on-success: var(--white);
+  --color-on-warning: var(--white);
+  --color-on-danger:  var(--white);
+
+  --color-badge-ruo-bg:      var(--grey-12);
+  --color-badge-ruo-fg:      var(--grey-95);
+  --color-badge-learn-bg:    var(--grey-31);
+  --color-badge-learn-fg:    var(--grey-95);
+  --color-badge-clinical-bg: var(--grey-6);
+  --color-badge-clinical-fg: var(--grey-95);
+  --color-badge-dx-bg:       var(--grey-6);
+  --color-badge-dx-fg:       var(--grey-98);
+  --color-mode-nav-bg:       var(--grey-83);
+  --color-mode-nav-fg:       var(--grey-9);
+  --color-mode-dx-bg:        var(--grey-9);
+  --color-mode-dx-fg:        var(--grey-95);
+
+  --color-sharp:      var(--grey-9);
+  --color-sharpening: var(--grey-39);
+  --color-soft:       var(--grey-39);
+  --color-offline:    var(--grey-47);
+
+  --color-skeleton:    var(--grey-91);
+  --color-skeleton-hi: var(--grey-95);
+
+  --focus-ring: var(--grey-6);
+  --focus-halo: var(--white);
+
+  --color-scrollbar: var(--grey-75);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.12);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.14);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.18);
+  --shadow-4: 0 16px 48px rgba(0, 0, 0, 0.22);
+}
+
+/* -----------------------------------------------------------------------------
+   3. data-theme="auto": honour prefers-color-scheme (opt-in; never default)
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] {
+    color-scheme: light;
+
+    --color-surface--1: var(--grey-91);
+    --color-surface-0:  var(--grey-95);
+    --color-surface-1:  var(--white);
+    --color-surface-2:  var(--white);
+    --color-surface-inverse: var(--grey-12);
+    --color-backdrop:   rgba(20, 20, 20, 0.45);
+    --color-hud-backdrop: rgba(20, 20, 20, 0.62);
+
+    --color-text:           var(--grey-9);
+    --color-text-secondary: var(--grey-31);
+    --color-text-disabled:  var(--grey-57);
+    --color-text-inverse:   var(--grey-95);
+    --color-text-on-canvas: var(--grey-95);
+
+    --color-border:         var(--grey-83);
+    --color-border-strong:  var(--grey-47);
+    --color-divider:        rgba(0, 0, 0, 0.08);
+
+    --color-control-bg:        var(--grey-91);
+    --color-control-bg-hover:  var(--grey-83);
+    --color-control-bg-active: var(--grey-75);
+    --color-control-selected:  var(--grey-83);
+    --color-control-selected-indicator: var(--grey-9);
+    --color-row-hover:         var(--grey-91);
+    --color-control-strong:    var(--grey-12);
+    --color-on-strong:         var(--grey-95);
+
+    --color-accent:        #2b63a8;
+    --color-accent-hover:  #245489;
+    --color-accent-active: #1c436e;
+    --color-accent-text:   #245489;
+    --color-on-accent:     var(--white);
+
+    --color-info:    #2b63a8;
+    --color-success: #0e7a5a;
+    --color-warning: #8a5a00;
+    --color-danger:  #b03a12;
+    --color-info-bg:    rgba(43, 99, 168, 0.10);
+    --color-success-bg: rgba(14, 122, 90, 0.10);
+    --color-warning-bg: rgba(138, 90, 0, 0.12);
+    --color-danger-bg:  rgba(176, 58, 18, 0.10);
+    --color-on-info:    var(--white);
+    --color-on-success: var(--white);
+    --color-on-warning: var(--white);
+    --color-on-danger:  var(--white);
+
+    --color-badge-ruo-bg:      var(--grey-12);
+    --color-badge-ruo-fg:      var(--grey-95);
+    --color-badge-learn-bg:    var(--grey-31);
+    --color-badge-learn-fg:    var(--grey-95);
+    --color-badge-clinical-bg: var(--grey-6);
+    --color-badge-clinical-fg: var(--grey-95);
+    --color-badge-dx-bg:       var(--grey-6);
+    --color-badge-dx-fg:       var(--grey-98);
+    --color-mode-nav-bg:       var(--grey-83);
+    --color-mode-nav-fg:       var(--grey-9);
+    --color-mode-dx-bg:        var(--grey-9);
+    --color-mode-dx-fg:        var(--grey-95);
+
+    --color-sharp:      var(--grey-9);
+    --color-sharpening: var(--grey-39);
+    --color-soft:       var(--grey-39);
+    --color-offline:    var(--grey-47);
+
+    --color-skeleton:    var(--grey-91);
+    --color-skeleton-hi: var(--grey-95);
+
+    --focus-ring: var(--grey-6);
+    --focus-halo: var(--white);
+
+    --color-scrollbar: var(--grey-75);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.12);
+    --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.14);
+    --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.18);
+    --shadow-4: 0 16px 48px rgba(0, 0, 0, 0.22);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   4. Input- and preference-dependent overrides
+   -------------------------------------------------------------------------- */
+
+/* Coarse pointer (tablet, phone): 44 px targets, 15-16 px body text,
+   pen-friendly 64 px rail. Principles §7.                                  */
+@media (pointer: coarse) {
+  :root {
+    --target:          var(--target-touch);
+    --font-size-body:  15px;
+    --font-size-strip: var(--text-md);
+    --icon-size:       24px;
+    --layout-rail:     64px;
+    --layout-bottombar: 72px;
+  }
+}
+
+/* Reduced motion: every chrome duration becomes 0 ms. The engine separately
+   disables inertia, flyTo easing and level cross-fades (NFR-A4).           */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast:  0ms;
+    --motion-base:  0ms;
+    --motion-panel: 0ms;
+    --motion-toast: 0ms;
+    --hud-label-fade-delay: 0ms;
+  }
+}
+
+/* High-contrast preference: stronger borders, opaque HUD backdrop. */
+@media (prefers-contrast: more) {
+  :root, [data-theme="dark"] {
+    --color-border:        var(--grey-57);
+    --color-border-strong: var(--grey-83);
+    --color-hud-backdrop:  rgba(20, 20, 20, 0.92);
+    --color-text-secondary: var(--grey-83);
+  }
+  [data-theme="light"] {
+    --color-border:        var(--grey-47);
+    --color-border-strong: var(--grey-12);
+    --color-text-secondary: var(--grey-12);
+  }
+}
+
+/* Forced colours (Windows High Contrast): let the UA paint; keep focus visible. */
+@media (forced-colors: active) {
+  :root {
+    --focus-ring: Highlight;
+    --focus-halo: Canvas;
+  }
+}
