@@ -164,10 +164,25 @@ h4, .h4 { font-size: var(--text-xl);  font-weight: var(--weight-semibold); line-
   contain: layout paint style;
 }
 .topbar__slot-badge { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3); }   /* fixed-width slot; never pushed off */
-.topbar__label { flex: 0 1 auto; min-width: 0; font-size: var(--text-sm); color: var(--color-text-secondary); white-space: nowrap; }
-.topbar__identity { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: var(--space-4); overflow: hidden; }
-.topbar__identity .accession { font-family: var(--font-mono); font-weight: var(--weight-semibold); font-size: var(--text-lg); white-space: nowrap; }
-.topbar__identity .title { font-weight: var(--weight-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The full label string never shrinks or truncates at ≥ 1024 px (principles
+   §2.5 rule 2): the identity slot gives way first (its title truncates). */
+.topbar__label { flex: 0 0 auto; font-size: var(--text-sm); color: var(--color-text-secondary); white-space: nowrap; }
+/* Identity slot: the title is the only shrinkable item (width 0 + grow), so
+   the slot's minimum is accession + meta + chip and the accession never clips
+   (P5). The top bar is a size container: it collapses by its own width, which
+   also makes narrow demos behave like narrow viewports. */
+.topbar { container-type: inline-size; container-name: topbar; }
+.topbar__identity { flex: 1 1 auto; min-width: min-content; display: flex; align-items: baseline; gap: var(--space-4); overflow: hidden; }
+.topbar__identity .accession { flex: 0 0 auto; font-family: var(--font-mono); font-weight: var(--weight-semibold); font-size: var(--text-lg); white-space: nowrap; }
+.topbar__identity .title { flex: 1 1 0; width: 0; min-width: 0; font-weight: var(--weight-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar__identity .meta, .topbar__identity .chip { flex: 0 0 auto; }
+@container topbar (max-width: 1279px) {
+  .topbar__identity .meta, .topbar__identity .chip, .topbar__slot-mode .chip { display: none; }   /* chips move to the dock */
+}
+@container topbar (max-width: 1023px) {
+  .topbar { gap: var(--space-3); }
+  .topbar__label, .badge-string, .topbar__identity .title { display: none; }                      /* label string behind the badge tap */
+}
 .topbar__identity .meta { color: var(--color-text-secondary); font-size: var(--text-sm); white-space: nowrap; }
 .topbar__slot-mode { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3); margin-left: auto; }
 
@@ -341,8 +356,8 @@ body.show-guides .canvas-area::after { display: block; }
 /* Adjustment indicator (FR-V14) */
 .hud__adjust { font-family: var(--font-ui); font-size: var(--text-xs); }
 
-/* Sharpness dot inside the HUD (phones, where the strip is hidden) */
-.hud__sharp { display: none; }
+/* Sharpness dot inside the HUD (phones only, where the strip is hidden) */
+.hud .hud__sharp { display: none; }
 
 /* -----------------------------------------------------------------------------
    6. Components
@@ -1073,7 +1088,17 @@ body.show-live [data-synthetic] { position: relative; }
   }
   :root { --layout-navigator: 180px; --layout-rail: 0px; }
   .topbar__identity .meta { display: none; }
+  /* Keep the badge, the full label string (≥ 1024) and the mode indicator:
+     the identity compacts to the accession and the QA/worklist chips move
+     into the dock's Display QA and Case sections. */
+  .topbar__identity .chip, .topbar__slot-mode .chip, .topbar__identity .title { display: none; }
+  .topbar { gap: var(--space-3); }
+  .topbar__identity { min-width: min-content; }               /* the accession never clips (P5) */
   .hud__position { display: none; }
+}
+/* Below 1024 px the label string is one tap away (badge → About) */
+@media (max-width: 1023px) {
+  .topbar__label, .badge-string { display: none; }
 }
 
 /* Phone */
@@ -1091,11 +1116,11 @@ body.show-live [data-synthetic] { position: relative; }
     border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet);
   }
   .topbar__label, .badge-string { display: none; }           /* (1) label string behind the badge tap */
-  .topbar__identity .title, .topbar__identity .meta { display: none; }
+  .topbar__identity .title, .topbar__identity .meta, .topbar__identity .chip, .topbar__slot-mode .chip { display: none; }
   .navigator { display: none; }                               /* (5) navigator behind O */
   .app.nav-open .navigator { display: block; }
   .hud__secondary, .hud__position, .magnification__line2 { display: none; }  /* (6) */
-  .hud__sharp { display: inline-flex; }                       /* sharpness dot joins the HUD */
+  .hud .hud__sharp { display: inline-flex; }                  /* sharpness dot joins the HUD */
   .hud { max-width: 45%; }
   .tool--drawing { display: none; }                            /* (7) point marker + measure only */
   .toast { width: calc(100vw - 16px); }

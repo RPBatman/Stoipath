@@ -255,8 +255,8 @@
      English in About in every locale (principles §2.5 rule 6).            */
   --string-ruo:      "For Research Use Only. Not for use in diagnostic procedures.";
   --string-learn:    "For educational use. Not a medical device. Contains no protected health information.";
-  --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within \2039 laboratory name \203A under CLIA/CAP validation.";
-  --string-dx:       "Stoipath Dx \00B7 cleared configuration \00B7 see About for UDI, version and hashes.";
+  --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within ‹laboratory name› under CLIA/CAP validation.";
+  --string-dx:       "Stoipath Dx · cleared configuration · see About for UDI, version and hashes.";
 }
 
 /* -----------------------------------------------------------------------------
