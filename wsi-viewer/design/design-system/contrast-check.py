@@ -17,8 +17,16 @@ reports, as Markdown:
      ΔE00 ≥ 20 for every pair after simulation; and the WCAG contrast of each
      palette colour (and of the two halo colours) against five H&E reference
      colours.
+  4. HUD text over tissue (added 2026-11-01): the HUD backdrop composited over
+     each of the five H&E reference colours, then the primary line, the
+     secondary line (grey-83), the dimmed "Sharp" label (0.7 × text) and the
+     navigator pan glyph on its pad, all required ≥ 4.5:1. The 2026-10-26 run
+     only checked the HUD over the canvas backdrop, which is why 0.62 passed
+     while the real-tissue case failed (a11y-ux critique).
 
 Exit status is 1 if any required pair fails. No third-party imports.
+Geometry (top-bar clipping, central-zone intrusions, target sizes) is checked
+by layout-check.mjs next to this file.
 
 Usage:  python3 -I contrast-check.py [--markdown-out results.md]
 """
@@ -279,7 +287,8 @@ TEXT_PAIRS = [
     ("--color-text-inverse", ["--color-surface-inverse"], "tooltip text on inverse surface"),
     ("--color-text-on-canvas", ["--color-canvas-bg"], "HUD text directly on canvas backdrop"),
     ("--color-text-on-canvas", ["--color-canvas-bg", "--color-hud-backdrop"], "HUD text on HUD backdrop over canvas"),
-    ("--grey-75", ["--color-canvas-bg", "--color-hud-backdrop"], "HUD secondary line (grey-75) on HUD backdrop"),
+    ("--grey-75", ["--color-canvas-bg", "--color-hud-backdrop"], "HUD tertiary (grey-75; now only decorative) on HUD backdrop over canvas"),
+    ("--grey-83", ["--color-canvas-bg", "--color-hud-backdrop"], "HUD secondary line (grey-83, 12 px) on HUD backdrop over canvas"),
     ("--grey-83", ["--color-canvas-bg", "--color-hud-backdrop"], "plate body text (grey-83) on plate card"),
     ("--color-accent-text", ["--color-surface-2"], "link text on surface 2 (dialogs/About only)"),
     ("--color-on-accent", ["--color-accent"], "accent button label (dialog layer)"),
@@ -304,7 +313,13 @@ TEXT_PAIRS = [
     ("--color-mode-nav-fg", ["--color-mode-nav-bg"], "mode indicator NAV"),
     ("--color-mode-dx-fg", ["--color-mode-dx-bg"], "mode indicator DX"),
     ("--color-text-secondary", ["--color-surface-1"], "key hint (.key) on surface 1"),
+    ("--color-text-secondary", ["--color-surface-0"], "hidden layer-row name / kind / % (.layer-row.is-off, colour-dimmed, not opacity)"),
+    ("--color-text-secondary", ["--color-row-hover"], "hidden layer-row name on hovered row"),
+    ("--color-text-secondary", ["--color-control-selected"], "hidden layer-row name on selected row"),
+    ("--color-text", ["--color-surface--1"], "settled 'Sharp' label at rest (0.7 × text) on the strip", 0.7),
+    ("--color-text", ["--color-surface-0"], "settled 'Sharp' label at rest (0.7 × text) in the dock / top bar", 0.7),
 ]
+# fg_alpha (5th element, optional) models an opacity applied to the text.
 
 NONTEXT_PAIRS = [
     ("--color-border-strong", ["--color-surface-0"], "control outline on surface 0"),
@@ -380,10 +395,12 @@ def main(argv):
         out.append(f"\n### {theme.capitalize()} theme\n")
         out.append("| Pair | Colours | Ratio | Req. | Result |")
         out.append("|---|---|---:|---:|---|")
-        for fg, chain, label in TEXT_PAIRS:
+        for pair in TEXT_PAIRS:
+            fg, chain, label = pair[0], pair[1], pair[2]
+            fg_alpha = pair[3] if len(pair) > 3 else 1.0
             f = col(tokens, fg)
             b = bg_of(tokens, chain)
-            f = composite(f, b)
+            f = composite((f[0], f[1], f[2], f[3] * fg_alpha), b)
             r = contrast(f, b)
             ok = r >= 4.5
             fails += 0 if ok else 1
@@ -422,8 +439,37 @@ def main(argv):
             _, C = oklch_chroma(c)
             out.append(f"| `{t}` | `{to_hex(c)}` | {C:.3f} | no (dialog layer only) | n/a |")
 
-    # Annotation palette
+    # HUD over tissue (both themes share the HUD tokens; the dark theme is representative)
     tokens = theme_tokens(blocks, "dark")
+    out.append("\n### HUD text over H&E (both themes; backdrop composited over each reference colour)\n")
+    out.append("Requirement 4.5:1 for every cell. Rows: primary HUD text (`--color-text-on-canvas`), secondary lines (`--grey-83`: µm/px · pitch, position), the settled `Sharp` label at rest (0.7 × text), the navigator pan glyph (`--grey-95` on `--color-navigator-pan-bg`), and, for reference, the former 11 px `--grey-75` secondary line and the former 0.62 backdrop.\n")
+    out.append("| Text | " + " | ".join(f"{n} `{h}`" for n, h in HE_REFS) + " | canvas bg | min | Result |")
+    out.append("|---|" + "---:|" * (len(HE_REFS) + 1) + "---:|---|")
+    hud_bd = col(tokens, "--color-hud-backdrop")
+    pan_bd = col(tokens, "--color-navigator-pan-bg")
+    canvas = col(tokens, "--color-canvas-bg")
+    hud_rows = [
+        ("HUD primary line (text-on-canvas) on HUD backdrop", col(tokens, "--color-text-on-canvas"), hud_bd, 1.0, True),
+        ("HUD secondary line (grey-83, 12 px) on HUD backdrop", col(tokens, "--grey-83"), hud_bd, 1.0, True),
+        ("'Sharp' label at rest in the HUD (0.7 × text-on-canvas) on HUD backdrop", col(tokens, "--color-text-on-canvas"), hud_bd, 0.7, True),
+        ("navigator pan glyph (grey-95) on pan pad", col(tokens, "--grey-95"), pan_bd, 1.0, True),
+        ("plate body text (grey-83) on plate card", col(tokens, "--grey-83"), hud_bd, 1.0, True),
+        ("reference: former secondary line grey-75 on the former 0.62 backdrop (not shipped)", col(tokens, "--grey-75"), parse_color("rgba(20,20,20,0.62)"), 1.0, False),
+    ]
+    for label, fg, bd, alpha, required in hud_rows:
+        vals = []
+        for _, h in HE_REFS + [("canvas", None)]:
+            base = canvas if h is None else parse_color(h)
+            b = composite(bd, base)
+            f = composite((fg[0], fg[1], fg[2], fg[3] * alpha), b)
+            vals.append(contrast(f, b))
+        ok = min(vals) >= 4.5
+        if required and not ok:
+            fails += 1
+        res = ("pass" if ok else "**FAIL**") if required else ("info" if ok else "fails (reference)")
+        out.append(f"| {label} | " + " | ".join(f"{v:.2f}" for v in vals) + f" | {min(vals):.2f} | {res} |")
+
+    # Annotation palette
     out.append("\n### Annotation palette (both themes)\n")
     out.append("| Token | Name | Hex | CIE L* | Deutan sim | Protan sim | Tritan sim |")
     out.append("|---|---|---|---:|---|---|---|")
@@ -506,7 +552,7 @@ def main(argv):
                 low.append(f"{n1}/{n2} ({d:.1f})")
         out.append(f"| {cond} | {worst[0]:.1f} | {worst[1]} | {', '.join(low) if low else 'none'} |")
 
-    summary = f"\n**Result: {'all required pairs pass' if fails == 0 else str(fails) + ' required check(s) FAILED'}.**\n"
+    summary = f"\n**Result: {'all required pairs pass' if fails == 0 else str(fails) + ' required check(s) FAILED'}** ({len(TEXT_PAIRS)} text pairs and {len(NONTEXT_PAIRS)} non-text pairs × 2 themes, {len(MARGIN_TOKENS) + len(MARGIN_TINTS)} chroma rows × 2 themes, {sum(1 for r in hud_rows if r[4])} HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).\n"
     out.append(summary)
     text = "\n".join(out)
     print(text)

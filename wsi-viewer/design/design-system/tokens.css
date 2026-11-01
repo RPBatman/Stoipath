@@ -1,7 +1,7 @@
 /* =============================================================================
    Stoipath design system · tokens.css
-   Design phase document 2a · 2026-10-26 · status: draft for the UX/UI review
-   on Thu 2026-10-29.
+   Design phase document 2a · 2026-10-26 · revised 2026-11-01 after the
+   pathologist and a11y-ux critiques of the three final screens (README §10).
 
    One file of CSS custom properties. No build step, no network fonts, no
    dependencies. Loaded by every wireframe and component sheet by relative path
@@ -39,7 +39,13 @@
      2 px, with a 1 px contrasting halo, so it is visible on neutral chrome and
      is never a saturated colour beside tissue (NFR-A3; principles §8.3).
    - Motion durations collapse to 0 ms under prefers-reduced-motion (NFR-A4).
-   - Targets: 24 px minimum (WCAG 2.2 SC 2.5.8), 44 px on coarse pointers.
+   - Targets: 24 px minimum (WCAG 2.2 SC 2.5.8); under (pointer: coarse)
+     --target is 44 px, --target-min rises to 32 px and --target-control (the
+     size of chips, badges, small buttons, menu items, layer-row controls) is
+     44 px, so nothing stays at 24 px on a tablet or phone.
+   - HUD backdrop is opaque enough (α 0.80) that 12 px grey-83 secondary text
+     reaches ≥ 4.5:1 over glass and over light eosin, not only over the
+     canvas backdrop (contrast-check.py, "HUD over H&E").
    ========================================================================== */
 
 /* -----------------------------------------------------------------------------
@@ -82,6 +88,11 @@
   --color-canvas-bg-dim:    rgba(0, 0, 0, 0.40);   /* S16 "last frame dimmed 40 %" */
   --color-canvas-grid:      rgba(255, 255, 255, 0.18); /* HPF reticle, G */
   --color-canvas-viewport:  var(--grey-95);          /* navigator viewport rectangle */
+  /* Navigator pan buttons sit over the thumbnail (tissue), so their pad is a
+     theme-independent translucent black: grey-95 glyph ≥ 4.5:1 over every
+     H&E reference colour (contrast-check.py). Always visible (SC 2.5.7). */
+  --color-navigator-pan-bg:       rgba(0, 0, 0, 0.60);
+  --color-navigator-pan-bg-hover: rgba(0, 0, 0, 0.78);
 
   /* --- Annotation palette: 8 colours, CVD-safe, luminance-separated ---------
      Basis: Okabe & Ito (2008) qualitative set, re-derived so that it passes
@@ -206,7 +217,7 @@
   --motion-toast: 240ms;
   --motion-ease:  cubic-bezier(0.2, 0, 0, 1);
   --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --hud-label-fade-delay: 800ms;  /* "Sharp" label fades after 800 ms (§5.3) */
+  --hud-label-fade-delay: 800ms;  /* "Sharp" label dims to 70 % after 800 ms (§5.3); it never disappears */
   --hud-soft-threshold:   400ms;  /* settled > 400 ms with deficit → Soft    */
 
   /* --- Z-index layers (shell) --------------------------------------------
@@ -227,9 +238,10 @@
   --z-live:      100;  /* the "live" marker tags on mocks                   */
 
   /* --- Targets (WCAG 2.2 SC 2.5.8) ----------------------------------------- */
-  --target-min:   24px;   /* AA minimum everywhere                          */
-  --target-touch: 44px;   /* recommended on tablets/phones; set under coarse */
+  --target-min:   24px;   /* AA minimum everywhere; 32 px under coarse        */
+  --target-touch: 44px;   /* tablets/phones; --target under coarse            */
   --target:       var(--target-min);
+  --target-control: var(--target-min);  /* chips, badges, .btn--sm, menu items, layer-row controls, class chips: 24 → 44 under coarse */
   --icon-size:    20px;   /* 20 px glyph in a 24 px target (§7 density)      */
 
   /* --- Layout: shell geometry per principles §3.1 and §7 ------------------
@@ -275,7 +287,7 @@
   --color-surface-2:  var(--grey-27);
   --color-surface-inverse: var(--grey-95);  /* tooltips */
   --color-backdrop:   rgba(0, 0, 0, 0.55);   /* behind modals; never over the canvas centre at rest */
-  --color-hud-backdrop: rgba(20, 20, 20, 0.62); /* quiet neutral HUD backdrop */
+  --color-hud-backdrop: rgba(20, 20, 20, 0.80); /* quiet neutral HUD backdrop; 0.80 (was 0.62) so 12 px grey-83 text is ≥ 4.5:1 over glass and eosin (revision 2026-11-01) */
 
   /* Text */
   --color-text:          var(--grey-91);   /* 10.6:1 on surface-0 */
@@ -371,7 +383,7 @@
   --color-surface-2:  var(--white);
   --color-surface-inverse: var(--grey-12);
   --color-backdrop:   rgba(20, 20, 20, 0.45);
-  --color-hud-backdrop: rgba(20, 20, 20, 0.62); /* HUD sits on the dark canvas in both themes */
+  --color-hud-backdrop: rgba(20, 20, 20, 0.80); /* HUD sits over tissue in both themes; same α as the dark theme */
 
   --color-text:           var(--grey-9);
   --color-text-secondary: var(--grey-31);
@@ -456,7 +468,7 @@
     --color-surface-2:  var(--white);
     --color-surface-inverse: var(--grey-12);
     --color-backdrop:   rgba(20, 20, 20, 0.45);
-    --color-hud-backdrop: rgba(20, 20, 20, 0.62);
+    --color-hud-backdrop: rgba(20, 20, 20, 0.80);
 
     --color-text:           var(--grey-9);
     --color-text-secondary: var(--grey-31);
@@ -534,10 +546,17 @@
    -------------------------------------------------------------------------- */
 
 /* Coarse pointer (tablet, phone): 44 px targets, 15-16 px body text,
-   pen-friendly 64 px rail. Principles §7.                                  */
+   pen-friendly 64 px rail. Principles §7. --target-min rises to 32 px so
+   every component sized from it (range rows, toggles, legend items, the
+   magnification readout) grows too, and --target-control becomes 44 px for
+   the controls a thumb or pen must hit (chips, badges, mode, .btn--sm, menu
+   items, layer-row visibility, class chips). base.css mirrors this block
+   under the .is-coarse class for the component sheet's coarse column.  */
 @media (pointer: coarse) {
   :root {
     --target:          var(--target-touch);
+    --target-min:      32px;
+    --target-control:  var(--target-touch);
     --font-size-body:  15px;
     --font-size-strip: var(--text-md);
     --icon-size:       24px;
@@ -547,7 +566,9 @@
 }
 
 /* Reduced motion: every chrome duration becomes 0 ms. The engine separately
-   disables inertia, flyTo easing and level cross-fades (NFR-A4).           */
+   disables inertia, flyTo easing and level cross-fades (NFR-A4). The sharp
+   label then dims to 70 % immediately instead of after 800 ms; it is still
+   readable (base.css never takes it to opacity 0).                        */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --motion-fast:  0ms;
@@ -563,7 +584,7 @@
   :root, [data-theme="dark"] {
     --color-border:        var(--grey-57);
     --color-border-strong: var(--grey-83);
-    --color-hud-backdrop:  rgba(20, 20, 20, 0.92);
+    --color-hud-backdrop:  rgba(20, 20, 20, 0.94);
     --color-text-secondary: var(--grey-83);
   }
   [data-theme="light"] {

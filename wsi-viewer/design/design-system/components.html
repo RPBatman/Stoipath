@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stoipath design system · component sheet</title>
-<meta name="description" content="Living component sheet for the Stoipath WSI viewer design system: every shell component rendered in the dark diagnostic theme and the light chrome theme, with states, ARIA notes and the engine contract each one consumes. Draft for the UX/UI review of 2026-10-29. All case and patient content is synthetic.">
+<meta name="description" content="Living component sheet for the Stoipath WSI viewer design system: every shell component rendered in the dark diagnostic theme and the light chrome theme, with states, ARIA notes and the engine contract each one consumes. Revised 2026-11-01 after the pathologist and a11y-ux critiques of the three final screens (README §10). All case and patient content is synthetic.">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="base.css">
 <style>
@@ -14,10 +14,10 @@
 .ds-nav h1 { font-size: var(--text-lg); margin-bottom: var(--space-1); }
 .ds-nav .sub { color: var(--color-text-secondary); font-size: var(--text-xs); margin-bottom: var(--space-5); }
 .ds-nav ol { counter-reset: n; }
-.ds-nav li a { display: block; padding: 3px 0; color: var(--color-text-secondary); text-decoration: none; }
+.ds-nav li a { display: flex; align-items: center; min-height: var(--target); padding: 0; color: var(--color-text-secondary); text-decoration: none; }   /* 24 px rows, 44 under coarse (SC 2.5.8) */
 .ds-nav li a:hover { color: var(--color-text); }
 .ds-nav li a::before { counter-increment: n; content: counter(n, decimal-leading-zero) "  "; font-family: var(--font-mono); font-size: var(--text-2xs); opacity: .7; }
-.ds-nav .grp { margin: var(--space-4) 0 var(--space-1); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-disabled); }
+.ds-nav .grp { margin: var(--space-4) 0 var(--space-1); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }   /* 6.1:1; was text-disabled at 3.8:1 */
 .ds-main { min-width: 0; padding: 0 var(--space-9) var(--space-12); }
 .ds-head { position: sticky; top: 0; z-index: 6; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); padding: var(--space-4) 0; margin: 0 0 var(--space-6); background: var(--color-surface--1); border-bottom: 1px solid var(--color-border); }
 .ds-head .lbl { font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); margin-right: var(--space-2); }
@@ -38,7 +38,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
 .states__h { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
 .states__v { font-size: var(--text-xs); color: var(--color-text-secondary); }
 .notes { margin-top: var(--space-4); font-size: var(--text-sm); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
-.notes > summary { padding: var(--space-3) var(--space-5); font-weight: var(--weight-medium); color: var(--color-text-secondary); }
+.notes > summary { display: flex; align-items: center; min-height: var(--target); padding: var(--space-2) var(--space-5); font-weight: var(--weight-medium); color: var(--color-text-secondary); }
 .notes > summary::before { content: "▸ "; } .notes[open] > summary::before { content: "▾ "; }
 .notes ul { padding: 0 var(--space-5) var(--space-4) var(--space-8); list-style: disc; display: flex; flex-direction: column; gap: 4px; max-width: 96ch; }
 .notes code { font-size: var(--text-xs); }
@@ -46,7 +46,9 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
 .demo-canvas svg.tissue { position: absolute; width: 70%; height: 70%; left: 15%; top: 15%; }
 .demo-canvas--sm { height: 200px; }
 .frame-demo { height: 560px; border: 1px solid var(--color-border); border-radius: var(--radius-3); overflow: hidden; }
-.frame-demo .app { height: 100%; }
+.frame-demo .app { height: 100%; --layout-navigator: min(240px, 22%); }   /* the demo app is narrower than the viewport; keep the navigator under 25 % of its canvas so the P1 check holds in the sheet too */
+.coarse-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); align-items: start; }
+.coarse-col > div > h4 { margin-bottom: var(--space-3); }
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
 .sw { display: flex; flex-direction: column; gap: 4px; font-size: var(--text-xs); }
 .sw__chip { height: 44px; border-radius: var(--radius-2); border: 1px solid var(--color-border); background: var(--c); }
@@ -319,11 +321,11 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
       <div class="space-row" aria-label="Spacing scale">
         <span style="--w:2px" title="space-1"></span><span style="--w:4px" title="space-2"></span><span style="--w:6px"></span><span style="--w:8px"></span><span style="--w:12px"></span><span style="--w:16px"></span><span style="--w:20px"></span><span style="--w:24px"></span><span style="--w:32px"></span><span style="--w:40px"></span><span style="--w:48px"></span><span style="--w:64px"></span>
       </div>
-      <p class="text-xs text-secondary mt-2">--space-1 … --space-12: 2 4 6 8 12 16 20 24 32 40 48 64 px. Radii 2 4 6 8 12 px and pill. Targets: 24 px minimum everywhere (SC 2.5.8), 44 px under <code>(pointer: coarse)</code>; 20 px glyphs in 24 px targets, 24 px glyphs in 44 px targets.</p>
+      <p class="text-xs text-secondary mt-2">--space-1 … --space-12: 2 4 6 8 12 16 20 24 32 40 48 64 px. Radii 2 4 6 8 12 px and pill. Targets: 24 px minimum everywhere (SC 2.5.8); under <code>(pointer: coarse)</code> <code>--target</code> is 44 px, <code>--target-min</code> 32 px and <code>--target-control</code> (chips, badges, mode, small buttons, menu items, layer-row controls, class chips) 44 px; 20 px glyphs in 24 px targets, 24 px glyphs in 44 px targets. The <code>.is-coarse</code> class reproduces the coarse sizing on a desktop (used by the coarse columns below).</p>
       <div class="inline-demo mt-4">
-        <span class="btn btn--icon" style="--target:24px" aria-label="24 px target"><svg class="icon" style="width:20px;height:20px"><use href="#i-point"/></svg></span>
+        <button type="button" class="btn btn--icon" style="--target:24px" aria-label="24 px target"><svg class="icon" style="width:20px;height:20px"><use href="#i-point"/></svg></button>
         <span class="text-xs text-secondary">24 px (desktop minimum)</span>
-        <span class="btn btn--icon" style="--target:44px" aria-label="44 px target"><svg class="icon" style="width:24px;height:24px"><use href="#i-point"/></svg></span>
+        <button type="button" class="btn btn--icon" style="--target:44px" aria-label="44 px target"><svg class="icon" style="width:24px;height:24px"><use href="#i-point"/></svg></button>
         <span class="text-xs text-secondary">44 px (tablet, phone)</span>
       </div>
     </div>
@@ -346,7 +348,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <header class="topbar region" aria-label="Top bar">
           <div class="topbar__slot-badge"><span class="badge badge--clinical" data-live="launch:product">Clinical-IH</span><span class="chip chip--purpose" data-live="launch:purposeOfUse">Sign-out</span></div>
           <span class="topbar__label badge-string badge-string--clinical truncate" aria-label="Product label"></span>
-          <div class="topbar__identity" data-live="launch"><span class="accession" data-synthetic>AP-26-04417</span><span class="title">Sentinel lymph node, left axilla · parts A–C</span><span class="meta" data-synthetic>DOE, JANE · 1958</span><span class="chip chip--worklist" data-live="events:caseStatusChanged">In review</span></div>
+          <div class="topbar__identity" data-live="launch"><span class="accession" data-synthetic>AP-26-04417</span><div class="topbar__identity-rest"><span class="title">Sentinel lymph node, left axilla · parts A–C</span><span class="meta" data-synthetic>DOE, JANE · 1958</span><span class="chip chip--worklist" data-live="events:caseStatusChanged">In review</span></div></div>
           <div class="topbar__slot-mode"><span class="chip" data-live="dx:displayqa">QA passed 3 days ago</span><span class="mode mode--dx" data-live="state.render_mode">DX</span><button class="btn btn--icon btn--ghost" aria-label="More: About, settings, help"><svg class="icon"><use href="#i-more"/></svg></button></div>
         </header>
         <nav class="rail region" aria-label="Tools">
@@ -376,7 +378,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <svg class="canvas tissue" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="padding:6%"><use href="#tissue-he"/><g fill="none" stroke-width=".8"><ellipse cx="150" cy="40" rx="17" ry="11" stroke="rgba(0,0,0,.85)" stroke-width="2.2"/><ellipse cx="150" cy="40" rx="17" ry="11" stroke="#8e3a15"/><path d="M133 52h34M133 50v4M167 50v4" stroke="#000" stroke-width="2"/><path d="M133 52h34M133 50v4M167 50v4" stroke="#f7f7f7"/></g></svg>
           <div class="hud hud--tl"><div class="hud__item hud__identity" data-live="launch"><span data-synthetic>A1-1 · H&amp;E · AP-26-04417</span></div></div>
           <div class="hud hud--bl">
-            <span class="hud__item hud__sharp indicator indicator--sharp" data-live="events:tilesettled" aria-label="Sharp"><span class="indicator__glyph"></span></span>
+            <span class="hud__item hud__sharp indicator indicator--sharp" data-live="events:tilesettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span>
             <div class="hud__item scalebar" data-live="state.scale" aria-label="Scale bar 200 micrometres"><span class="scalebar__bar" style="--scalebar-length:120px"></span><span class="scalebar__label">200 µm</span></div>
             <div class="hud__item hud__item--quiet hud__position" data-live="state.center_um">x 42.18 mm · y 18.03 mm</div>
           </div>
@@ -393,7 +395,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <aside class="dock region" aria-label="Context dock">
           <div class="dock__tabs tabs tabs--fill" role="tablist"><button class="tab" role="tab" aria-selected="true">Slides <span class="count">3</span></button><button class="tab" role="tab" aria-selected="false">Annotations <span class="count">2</span></button><button class="tab" role="tab" aria-selected="false">Layers <span class="count">1</span></button></div>
           <div class="dock__body" role="tabpanel">
-            <div class="tray" data-live="state.slides">
+            <div class="tray" role="listbox" aria-label="Slides in AP-26-04417" data-live="state.slides">
               <button class="tray__slide is-viewed" aria-selected="true" role="option"><span class="tray__thumb"><svg viewBox="0 0 200 100"><use href="#tissue-he"/></svg><span class="tray__viewed" aria-label="Viewed"></span><span class="tray__coverage"><span style="--coverage:78%"></span></span></span><span class="tray__label"><span class="id">A1-1</span><span class="text">Sentinel node, level I</span></span><span class="chip chip--stain">H&amp;E</span></button>
               <button class="tray__slide is-partial" role="option"><span class="tray__thumb"><svg viewBox="0 0 200 100"><use href="#tissue-ihc"/></svg><span class="tray__viewed" aria-label="Partly viewed"></span><span class="tray__coverage"><span style="--coverage:31%"></span></span></span><span class="tray__label"><span class="id">A1-2</span><span class="text">CK AE1/AE3</span></span><span class="chip chip--stain">IHC</span></button>
               <button class="tray__slide is-unviewed" role="option"><span class="tray__thumb"><svg viewBox="0 0 200 100"><use href="#tissue-he"/></svg><span class="tray__coverage"><span style="--coverage:0%"></span></span></span><span class="tray__label"><span class="id">A2-1</span><span class="text">Sentinel node, level II</span></span><span class="chip chip--stain">H&amp;E</span></button>
@@ -442,25 +444,25 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <header class="topbar" style="border-radius:6px;border:1px solid var(--color-border)" aria-label="Stoipath Viewer top bar">
           <div class="topbar__slot-badge"><button class="badge badge--ruo" data-live="launch:product" aria-label="Stoipath Viewer, for research use only. Open product label and About">RUO</button></div>
           <span class="topbar__label badge-string badge-string--ruo truncate"></span>
-          <div class="topbar__identity"><span class="title mono" data-live="state.slides">CAMELYON16 · tumor_014</span><span class="chip chip--licence">CC0</span></div>
+          <div class="topbar__identity"><div class="topbar__identity-rest"><span class="title mono" data-live="state.slides">CAMELYON16 · tumor_014</span><span class="chip chip--licence">CC0</span></div></div>
           <div class="topbar__slot-mode"><button class="btn btn--icon btn--ghost" aria-label="More"><svg class="icon"><use href="#i-more"/></svg></button></div>
         </header>
         <header class="topbar" style="border-radius:6px;border:1px solid var(--color-border)" aria-label="Stoipath Learn top bar">
           <div class="topbar__slot-badge"><button class="badge badge--learn" data-live="launch:product">Learn</button></div>
           <span class="topbar__label badge-string badge-string--learn truncate"></span>
-          <div class="topbar__identity"><span class="title" data-live="lti">Sentinel lymph node: finding the metastasis</span><span class="meta stepper" data-live="lti:step">Step 4 of 9 <span class="stepper__dots" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-current"></span><span></span><span></span><span></span><span></span><span></span></span></span></div>
+          <div class="topbar__identity"><div class="topbar__identity-rest"><span class="title" data-live="lti">Sentinel lymph node: finding the metastasis</span><span class="meta stepper" data-live="lti:step">Step 4 of 9 <span class="stepper__dots" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-current"></span><span></span><span></span><span></span><span></span><span></span></span></span></div></div>
           <div class="topbar__slot-mode"><span class="chip chip--tier" data-live="telemetry:tier">Tier 2 · 60 Hz</span><button class="btn btn--icon btn--ghost" aria-label="More"><svg class="icon"><use href="#i-more"/></svg></button></div>
         </header>
         <header class="topbar" style="border-radius:6px;border:1px solid var(--color-border)" aria-label="Stoipath Clinical-IH top bar, Nav mode">
           <div class="topbar__slot-badge"><button class="badge badge--clinical" data-live="launch:product">Clinical-IH</button><span class="chip chip--purpose" data-live="launch:purposeOfUse">Consultation · preliminary only</span></div>
           <span class="topbar__label badge-string badge-string--clinical truncate"></span>
-          <div class="topbar__identity"><span class="accession" data-synthetic>AP-26-04417</span><span class="title">Sentinel lymph node, left axilla</span><span class="chip chip--worklist is-ready" data-live="events:caseStatusChanged">Ready for review</span></div>
+          <div class="topbar__identity"><span class="accession" data-synthetic>AP-26-04417</span><div class="topbar__identity-rest"><span class="title">Sentinel lymph node, left axilla</span><span class="chip chip--worklist is-ready" data-live="events:caseStatusChanged">Ready for review</span></div></div>
           <div class="topbar__slot-mode"><span class="mode mode--nav" data-live="state.render_mode">NAV</span><button class="btn btn--icon btn--ghost" aria-label="More"><svg class="icon"><use href="#i-more"/></svg></button></div>
         </header>
         <header class="topbar" style="border-radius:6px;border:1px solid var(--color-border)" aria-label="Stoipath Dx top bar, Dx mode">
           <div class="topbar__slot-badge"><button class="badge badge--dx" data-live="launch:product">Dx</button><span class="chip chip--purpose">Sign-out</span></div>
           <span class="topbar__label badge-string badge-string--dx truncate"></span>
-          <div class="topbar__identity"><span class="accession" data-synthetic>AP-26-04417</span><span class="title">Sentinel lymph node, left axilla</span><span class="chip chip--worklist is-reviewed" data-live="events:caseStatusChanged">Reviewed</span></div>
+          <div class="topbar__identity"><span class="accession" data-synthetic>AP-26-04417</span><div class="topbar__identity-rest"><span class="title">Sentinel lymph node, left axilla</span><span class="chip chip--worklist is-reviewed" data-live="events:caseStatusChanged">Reviewed</span></div></div>
           <div class="topbar__slot-mode"><span class="chip" data-live="dx:displayqa">QA passed 3 days ago</span><span class="mode mode--dx" data-live="state.render_mode">DX</span><button class="btn btn--icon btn--ghost" aria-label="More"><svg class="icon"><use href="#i-more"/></svg></button></div>
         </header>
       </div>
@@ -471,6 +473,15 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <span class="chip chip--purpose">Sign-out</span><span class="chip chip--purpose">Tumour board</span><span class="chip chip--purpose">QA review · blinded</span>
         <span class="chip chip--tier">Tier 2 · reduced memory</span><span class="chip chip--tier">Tier 3 · best effort</span>
         <span class="chip chip--worklist is-ready">Ready for review</span><span class="chip chip--worklist">In review</span><span class="chip chip--worklist is-reviewed">Reviewed</span>
+      </div>
+      <h4 class="text-sm text-secondary mt-6 mb-4">Interactive pieces by pointer: fine (24 px) and coarse (44 px, <code>--target-control</code>)</h4>
+      <div class="coarse-col">
+        <div><h4 class="text-xs text-secondary">Fine pointer</h4><div class="inline-demo">
+          <button class="badge badge--clinical" aria-label="Stoipath Clinical-IH. Open the product label and About">Clinical-IH</button><button class="mode mode--dx" aria-label="Render mode DX. Opens the Dx gate (Shift+D)">DX</button><button class="chip chip--worklist">In review</button><button class="chip" data-live="dx:displayqa">QA passed 3 days ago</button><button class="chip chip--tier">Tier 2 · 60 Hz</button><button class="indicator indicator--sharp"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></button>
+        </div></div>
+        <div class="is-coarse"><h4 class="text-xs text-secondary">Coarse pointer (tablet, phone)</h4><div class="inline-demo">
+          <button class="badge badge--clinical" aria-label="Stoipath Clinical-IH. Open the product label and About">Clinical-IH</button><button class="mode mode--dx" aria-label="Render mode DX. Opens the Dx gate (Shift+D)">DX</button><button class="chip chip--worklist">In review</button><button class="chip" data-live="dx:displayqa">QA passed 3 days ago</button><button class="chip chip--tier">Tier 2 · 60 Hz</button><button class="indicator indicator--sharp"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></button>
+        </div></div>
       </div>
     </div>
   </div>
@@ -496,7 +507,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <div class="demo demo--wide">
     <div class="demo__pane" data-theme="dark">
       <div class="stack stack--tight">
-        <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--sharp is-quiet" data-live="events:tilesettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="text-xs">S4 · label fades after 800 ms</span></div></footer>
+        <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--sharp is-quiet" data-live="events:tilesettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="text-xs">S4 · at rest: label dims to 70 % after 800 ms</span></div></footer>
         <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--sharp" data-live="events:tilesettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="text-xs">S4 · just settled</span></div></footer>
         <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--sharpening" data-live="events:tilesettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharpening…</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="chip chip--solid" data-live="telemetry:network">Link OK (12 Mbps)</span><span class="text-xs">S2/S3</span></div></footer>
         <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--soft" data-live="events:tilesettled"><span class="indicator__glyph"></span><span class="indicator__label">Soft</span><span class="indicator__reason">— slow link</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="chip chip--solid">Slow link (6 Mbps) — reduced detail while moving</span><span class="text-xs">S5/S6</span></div></footer>
@@ -535,10 +546,10 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   </div>
   <details class="notes"><summary>ARIA, timing and honesty notes</summary><ul>
     <li>The indicator is a <code>&lt;button&gt;</code> (opens the quality sheet: NTF %, deficit in octaves, upload age, link estimate). Its text is mirrored verbatim into the polite live region at settle, debounced to one announcement per 500 ms; no second wording exists.</li>
-    <li><code>Sharp</code> is shown only when the settled frame has NTF % = 0 and resolution deficit ≤ 0.15 octave (NFR-P16); the label fades after 800 ms (<code>--hud-label-fade-delay</code>), the glyph stays. <code>Soft</code> appears after 400 ms settled with deficit &gt; 0.15 and always names a reason.</li>
+    <li><code>Sharp</code> is shown only when the settled frame has NTF % = 0 and resolution deficit ≤ 0.15 octave (NFR-P16); the label dims to 70 % after 800 ms (<code>--hud-label-fade-delay</code>; immediately under reduced motion) and never disappears, the glyph stays. On phones the same label travels with the dot into the HUD. <code>Soft</code> appears after 400 ms settled with deficit &gt; 0.15 and always names a reason.</li>
     <li>Glyph grammar: filled dot = sharp, ring = in progress, half dot = soft, slashed ring = offline, check = Rendering Complete, square with "!" = Not complete. Luminance and shape only; no red/green.</li>
     <li>In Dx mode the strip never shows the Nav sharpness vocabulary; <code>DX</code> in the top bar is never shown without one of the three Rendering Complete strings here.</li>
-    <li>On phones the strip is hidden and the sharpness dot joins the HUD (<code>.hud__sharp</code>); notices move to a sheet.</li>
+    <li>On phones the strip is hidden and the sharpness dot <b>with its label</b> joins the HUD (<code>.hud__sharp</code>); notices move to a sheet.</li>
   </ul></details>
 </section>
 
@@ -594,6 +605,14 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
             <div class="navigator__pan"><button class="up" aria-label="Pan up">↑</button><button class="left" aria-label="Pan left">←</button><button class="right" aria-label="Pan right">→</button><button class="down" aria-label="Pan down">↓</button></div></div>
           <div class="navigator__label"><span class="mono">A1-1 · H&amp;E</span><span class="navigator__labelimg" data-live="launch:label" data-synthetic>AP-26-04417<br>A1-1 H&amp;E<br>DOE, JANE</span></div>
         </aside>
+        <div class="is-coarse stack stack--tight">
+          <aside class="navigator" style="position:static;width:180px" aria-label="Navigator, coarse pointer, tablet portrait" data-live="state">
+            <div class="navigator__thumb"><svg viewBox="0 0 200 100" aria-hidden="true"><use href="#tissue-he"/></svg><div class="navigator__viewport" style="left:40%;top:30%;width:26%;height:34%"></div>
+              <div class="navigator__pan"><button class="up" aria-label="Pan up">↑</button><button class="left" aria-label="Pan left">←</button><button class="right" aria-label="Pan right">→</button><button class="down" aria-label="Pan down">↓</button></div></div>
+            <div class="navigator__label"><span class="mono">A1-1 · H&amp;E</span></div>
+          </aside>
+          <span class="text-xs text-secondary" style="max-width:180px">Coarse pointer: 44 px hit areas hug the edges; the visible pad stays 28 px</span>
+        </div>
         <aside class="navigator" style="position:static;width:200px" aria-label="Navigator, Learn build (no label image)">
           <div class="navigator__thumb"><svg viewBox="0 0 200 100" aria-hidden="true"><use href="#tissue-he"/></svg><div class="navigator__viewport" style="left:20%;top:30%;width:35%;height:45%"></div></div>
           <div class="navigator__label"><span class="mono">tumor_014</span><span class="text-xs">Fit: <kbd class="key">0</kbd></span></div>
@@ -607,7 +626,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     </div>
   </div>
   <details class="notes"><summary>ARIA and behaviour notes</summary><ul>
-    <li><code>&lt;aside aria-label="Navigator"&gt;</code>; the thumbnail is a button ("Recentre on this point") operable by click/tap; the four pan buttons move 10 % of the viewport and are visible on hover and on focus-within (they are always in the tab order).</li>
+    <li><code>&lt;aside aria-label="Navigator"&gt;</code>; the thumbnail is a button ("Recentre on this point") operable by click/tap; the four pan buttons move 10 % of the viewport and are <b>always visible</b> (24 px; under a coarse pointer a 44 px hit area with a 28 px visible pad), darker on hover and focus-within. They are the SC 2.5.7 alternative to dragging the rectangle and are always in the tab order (revision 2026-11-01: they were hover-only).</li>
     <li>The rectangle is <code>aria-hidden</code>; the live region carries position. The label image has <code>alt</code> text equal to the label text from the launch context, never OCR.</li>
     <li>Sizes: 320 px on 4K, 240 px desktop/laptop, 180 px tablet portrait, 140 px phone (hidden by default, <kbd class="key">O</kbd> shows it). It never enters the central 50 %.</li>
     <li>Presenter mode shows follower cursors as GPU layers in the canvas, not in the navigator.</li>
@@ -708,6 +727,16 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
             <div class="rail__group"><button class="tool" aria-label="Layers"><svg class="icon"><use href="#i-layers"/></svg><span class="tool__key">⇧H</span></button><button class="tool" aria-label="Compare (C)"><svg class="icon"><use href="#i-compare"/></svg><span class="tool__key">C</span></button><button class="tool" aria-label="Curtain (/)"><svg class="icon"><use href="#i-curtain"/></svg><span class="tool__key">/</span></button></div>
           </nav>
         </div>
+        <div class="is-coarse">
+          <h4 class="text-sm text-secondary mb-4">Coarse pointer (pen rail, 64 px; 44 px tools, 24 px glyphs, no key hints)</h4>
+          <nav class="rail" style="height:auto;width:64px;border:1px solid var(--color-border);border-radius:6px;padding:8px 0" aria-label="Tools, coarse pointer">
+            <div class="rail__group"><button class="tool" aria-pressed="true" aria-label="Select / pan"><svg class="icon"><use href="#i-select"/></svg><span class="tool__key">V</span></button><button class="tool" aria-label="Fit"><svg class="icon"><use href="#i-fit"/></svg><span class="tool__key">0</span></button></div>
+            <div class="rail__divider"></div>
+            <div class="rail__group"><button class="tool" aria-label="Polygon"><svg class="icon"><use href="#i-polygon"/></svg></button><button class="tool" aria-label="Freehand"><svg class="icon"><use href="#i-freehand"/></svg></button><button class="tool" aria-label="Measure"><svg class="icon"><use href="#i-measure"/></svg></button></div>
+            <div class="rail__divider"></div>
+            <div class="rail__group"><button class="tool" aria-label="Layers"><svg class="icon"><use href="#i-layers"/></svg></button><button class="tool" aria-label="Compare"><svg class="icon"><use href="#i-compare"/></svg></button></div>
+          </nav>
+        </div>
         <div>
           <h4 class="text-sm text-secondary mb-4">Pen-tip palette (transient; GPU layer in product)</h4>
           <div class="tool-palette" role="menu" aria-label="Pen tools" style="--target:44px" data-live="commands">
@@ -767,10 +796,10 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="states" style="grid-template-columns:120px repeat(4,max-content)">
           <span class="states__h">States</span><span class="states__h">Hover</span><span class="states__h">Focus</span><span class="states__h">Selected</span><span class="states__h">Disabled</span>
           <span></span>
-          <div class="segmented"><button class="segmented__item is-hover">Lock</button><button class="segmented__item">Affine</button></div>
-          <div class="segmented"><button class="segmented__item is-focus">Lock</button><button class="segmented__item">Affine</button></div>
-          <div class="segmented"><button class="segmented__item" aria-checked="true">Lock</button><button class="segmented__item">Affine</button></div>
-          <div class="segmented"><button class="segmented__item" disabled>Lock</button><button class="segmented__item" disabled>Affine</button></div>
+          <div class="segmented" role="radiogroup" aria-label="Hover state"><button class="segmented__item is-hover" role="radio" aria-checked="false">Lock</button><button class="segmented__item" role="radio" aria-checked="false">Affine</button></div>
+          <div class="segmented" role="radiogroup" aria-label="Focus state"><button class="segmented__item is-focus" role="radio" aria-checked="false">Lock</button><button class="segmented__item" role="radio" aria-checked="false">Affine</button></div>
+          <div class="segmented" role="radiogroup" aria-label="Selected state"><button class="segmented__item" role="radio" aria-checked="true">Lock</button><button class="segmented__item" role="radio" aria-checked="false">Affine</button></div>
+          <div class="segmented" role="radiogroup" aria-label="Disabled state"><button class="segmented__item" role="radio" aria-checked="false" disabled>Lock</button><button class="segmented__item" role="radio" aria-checked="false" disabled>Affine</button></div>
         </div>
       </div>
     </div>
@@ -1081,14 +1110,14 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <div class="layer-row__opacity"><input type="range" min="0" max="100" value="55" aria-label="Opacity"><span class="num">55 %</span></div>
           <div class="layer-row__provenance"><span>unet-lnmet</span><span>v1.3</span><span title="inputHash">in:7f3a…c9e1</span><span>2026-10-24</span><span class="marker-notvalidated" data-live="dx">Not validated for diagnostic use on this viewer</span></div>
           <div class="layer-row__legend">
-            <div class="row" style="gap:8px;margin-bottom:6px"><div class="segmented" style="padding:1px"><button class="segmented__item" aria-checked="true" style="min-height:20px;font-size:11px">Outline</button><button class="segmented__item" style="min-height:20px;font-size:11px">Heatmap</button></div><span class="text-xs text-secondary">p ≥ 0.70</span></div>
+            <div class="row" style="gap:8px;margin-bottom:6px"><div class="segmented" role="radiogroup" aria-label="Presentation"><button class="segmented__item" role="radio" aria-checked="true" style="font-size:11px">Outline</button><button class="segmented__item" role="radio" aria-checked="false" style="font-size:11px">Heatmap</button></div><span class="text-xs text-secondary">p ≥ 0.70</span></div>
             <div class="legend" role="list" aria-label="Legend; activate a class to jump to it">
               <button class="legend__item" role="listitem"><span class="swatch swatch--outline" style="--swatch:var(--ann-2)"></span>Metastasis <span class="count">3</span></button>
               <button class="legend__item" role="listitem"><span class="swatch swatch--outline" style="--swatch:var(--ann-6)"></span>Suspicious <span class="count">7</span><span class="pattern">dashed</span></button>
             </div>
           </div>
         </div>
-        <div class="layer-row is-hidden">
+        <div class="layer-row is-off">
           <button class="layer-row__vis" aria-pressed="false" aria-label="Nuclei segmentation, hidden"><svg class="icon icon--sm"><use href="#i-eye-off"/></svg></button>
           <div class="layer-row__name"><span class="truncate">Nuclei segmentation</span><span class="kind">labels</span></div>
           <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="More"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
@@ -1214,7 +1243,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <table class="table table--dense" aria-label="Export jobs" data-live="python:jobs">
           <thead><tr><th>Job</th><th>Format</th><th class="num">Items</th><th>Progress</th><th>Provenance</th><th>Identity</th><th></th></tr></thead>
           <tbody>
-            <tr><td>Patches 256 px · level 1</td><td class="mono">parquet</td><td class="num">18,420</td><td><div class="progress-bar" style="--value:62%"><span></span></div></td><td class="mono text-xs">manifest.json · sha256</td><td><span class="chip chip--solid" style="min-height:18px;font-size:10px">byte-identical</span></td><td><button class="btn btn--sm btn--ghost" disabled><svg class="icon icon--sm"><use href="#i-download"/></svg></button></td></tr>
+            <tr><td>Patches 256 px · level 1</td><td class="mono">parquet</td><td class="num">18,420</td><td><div class="progress-bar" style="--value:62%"><span></span></div></td><td class="mono text-xs">manifest.json · sha256</td><td><span class="chip chip--solid" style="min-height:18px;font-size:10px">byte-identical</span></td><td><button class="btn btn--sm btn--icon btn--ghost" disabled aria-label="Download, not ready (62 %)"><svg class="icon icon--sm"><use href="#i-download"/></svg></button></td></tr>
             <tr><td>Regions · Tumor</td><td class="mono">GeoJSON (QuPath)</td><td class="num">3</td><td><div class="progress-bar" style="--value:100%"><span></span></div></td><td class="mono text-xs">manifest.json · sha256</td><td><span class="chip chip--solid" style="min-height:18px;font-size:10px">byte-identical</span></td><td><button class="btn btn--sm btn--ghost" aria-label="Download"><svg class="icon icon--sm"><use href="#i-download"/></svg></button></td></tr>
             <tr><td>Slide A1-1</td><td class="mono">OME-TIFF</td><td class="num">1</td><td><div class="progress-bar progress-bar--indeterminate"><span></span></div></td><td class="mono text-xs">pending</td><td><span class="text-xs text-secondary">Tier C re-mux: pixel-identical, not byte-identical</span></td><td></td></tr>
           </tbody>
@@ -1291,7 +1320,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
 <!-- =============================================================== MODAL / SHEET -->
 <section class="comp" id="modal" aria-labelledby="h-modal">
   <h2 id="h-modal">Modal dialog and sheet</h2>
-  <p class="comp__desc">Dialogs are inset below the top bar and above the strip so the badge, label string and mode indicator stay visible (P4); they are the one layer where the accent and semantic colours may appear. Sheets replace dialogs on tablets and phones (bottom, ≤ 40 % height; focus-trapped; grabber for touch, header close for keyboard). Nothing modal ever appears during a gesture.</p>
+  <p class="comp__desc">Dialogs sit in <code>.modal-layer</code>: anchored to the top-right of the canvas area at dock width (never wider than a quarter of the viewport), so they cover the dock column and never the canvas centre (P1), and inset below the top bar and above the strip so the badge, label string and mode indicator stay visible (P4); <code>.modal-layer--left</code> anchors the command palette to the rail and only a blocking plate is centred. They are the one layer where the accent and semantic colours may appear. Below 1080 px every dialog becomes a bottom sheet (≤ 40 % height; focus-trapped; grabber for touch, header close for keyboard); a sheet is a transient layer, not a rest state for the P1 test. Nothing modal ever appears during a gesture.</p>
   <dl class="comp__meta">
     <dt>Rendering</dt><dd>DOM (<code>&lt;dialog&gt;</code> element where available, with a polyfilled focus trap).</dd>
     <dt>Engine contract</dt><dd><code>signoutRequested</code> (hand-off dialog; Clinical-IH and Dx only), <code>stoi:dxattestation</code> (Dx entry confirmation), measurements/annotations/accepted AI results summarised from the stores, tier record for the Tier-2 sheet.</dd>
@@ -1345,13 +1374,13 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         </div>
         <div style="position:relative;width:320px;height:300px;background:var(--color-canvas-bg);border-radius:8px;overflow:hidden">
           <svg class="tissue" viewBox="0 0 200 100" style="position:absolute;inset:10% 15%;width:70%;height:50%"><use href="#tissue-he"/></svg>
-          <div class="sheet" role="menu" aria-label="Here" style="max-height:60%">
+          <div class="sheet is-coarse" role="dialog" aria-modal="true" aria-labelledby="sh-here-t">
             <div class="sheet__grabber" aria-hidden="true"></div>
-            <div class="sheet__header"><h4 class="sheet__title">Here · 20×</h4></div>
-            <div class="sheet__body" style="padding-top:0">
-              <button class="menu__item" role="menuitem" style="min-height:44px"><svg class="icon"><use href="#i-point"/></svg>Mark this point</button>
-              <button class="menu__item" role="menuitem" style="min-height:44px"><svg class="icon"><use href="#i-measure"/></svg>Measure from here</button>
-              <button class="menu__item" role="menuitem" style="min-height:44px"><svg class="icon"><use href="#i-bookmark"/></svg>Bookmark here</button>
+            <div class="sheet__header"><h4 class="sheet__title" id="sh-here-t">Here · 20×</h4></div>
+            <div class="sheet__body" style="padding-top:0" role="menu" aria-labelledby="sh-here-t">
+              <button class="menu__item" role="menuitem"><svg class="icon"><use href="#i-point"/></svg>Mark this point</button>
+              <button class="menu__item" role="menuitem"><svg class="icon"><use href="#i-measure"/></svg>Measure from here</button>
+              <button class="menu__item" role="menuitem"><svg class="icon"><use href="#i-bookmark"/></svg>Bookmark here</button>
             </div>
           </div>
         </div>
@@ -1362,7 +1391,8 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <details class="notes"><summary>ARIA and keyboard notes</summary><ul>
     <li><code>role="dialog" aria-modal="true"</code> labelled by its title; focus moves to the first focusable element (or the title for destructive dialogs), is trapped, and returns to the invoker on close. <kbd class="key">Esc</kbd> closes; the primary action responds to <kbd class="key">Enter</kbd> only when it is not destructive.</li>
     <li>The hand-off dialog is the only route to <code>signoutRequested</code>; <kbd class="key">⇧↵</kbd> always opens it and is ignored while a drawing tool is in progress. It exists only in Clinical-IH and Dx builds (CI asserts its absence elsewhere).</li>
-    <li>Sheets: the grabber is decorative; drag-to-dismiss has the header close button and <kbd class="key">Esc</kbd> as alternatives (SC 2.5.7). Max height 40 % of the viewport so the canvas remains the majority.</li>
+    <li>Sheets: the grabber is decorative; drag-to-dismiss has the header close button and <kbd class="key">Esc</kbd> as alternatives (SC 2.5.7). Max height 40 % of the viewport (<code>--layout-sheet-max</code>, also for the dock as a sheet on phones) so the canvas remains the majority; because even a 40 % sheet reaches into the central 50 % on a portrait tablet, a sheet counts as transient, not as a rest state (README §1).</li>
+    <li>The long-press sheet is a <code>dialog</code> whose body is the <code>menu</code>: a <code>role="menu"</code> may contain only menu items, so the heading sits outside it.</li>
     <li>The backdrop never covers the top bar or strip (<code>.modal-layer</code> is inset).</li>
   </ul></details>
 </section>
@@ -1396,7 +1426,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     <div class="demo__pane" data-theme="dark">
       <div class="dialog dialog--wide" role="dialog" aria-modal="true" aria-labelledby="km-t" style="width:auto" data-live="commands:registry">
         <div class="dialog__header"><h4 class="dialog__title" id="km-t">Keyboard shortcuts</h4>
-          <div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented"><button class="segmented__item" aria-checked="true">Default</button><button class="segmented__item">Left-hand</button><button class="segmented__item">Right-hand</button></div><span class="text-xs text-secondary">Reserved here: numeric keypad (dictation push-to-talk)</span></div>
+          <div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup" aria-label="Keyboard preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand</button></div><span class="text-xs text-secondary">Reserved here: numeric keypad (dictation push-to-talk)</span></div>
           <button class="btn btn--icon btn--ghost" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
         <div class="dialog__body">
           <div class="keymap">
@@ -1620,12 +1650,12 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <div class="dialog__body">
             <p class="text-sm text-secondary">Choose the candidate region that contains the focus. <i>Fly there</i> moves the view to 20× so you can look before you answer. Scoring uses the same geometry as pointer marking.</p>
             <div role="radiogroup" aria-label="Candidate regions" class="stack stack--tight">
-              <div class="candidate" role="radio" aria-checked="false" tabindex="0"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span><button class="btn btn--sm btn--secondary" data-live="commands:flyTo">Fly there</button></div>
-              <div class="candidate" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, left cortex — tingible-body macrophages</span><button class="btn btn--sm btn--secondary">Fly there</button></div>
-              <div class="candidate is-selected" role="radio" aria-checked="true" tabindex="-1"><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span><button class="btn btn--sm btn--secondary">Fly there</button></div>
-              <div class="candidate" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span><button class="btn btn--sm btn--secondary">Fly there</button></div>
-              <div class="candidate" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span><button class="btn btn--sm btn--secondary">Fly there</button></div>
-              <div class="candidate" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, inferior — fibrous tissue only</span><button class="btn btn--sm btn--secondary">Fly there</button></div>
+              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="0"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region A" data-live="commands:flyTo">Fly there</button></div>
+              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, left cortex — tingible-body macrophages</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region B">Fly there</button></div>
+              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="true" tabindex="-1"><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region C">Fly there</button></div>
+              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region D">Fly there</button></div>
+              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region E">Fly there</button></div>
+              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, inferior — fibrous tissue only</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region F">Fly there</button></div>
             </div>
           </div>
           <div class="dialog__footer"><button class="btn btn--ghost">Cancel</button><button class="btn btn--secondary">Answer in text instead</button><button class="btn btn--accent">Commit C <kbd class="key">↵</kbd></button></div>
@@ -1645,7 +1675,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   </div>
   <details class="notes"><summary>ARIA and scoring notes</summary><ul>
     <li>MCQ: a <code>&lt;fieldset&gt;</code> radiogroup labelled by the stem; letter keys select; the committed answer is announced. Revealed options carry text feedback ("correct", "incorrect", "yours") read with the option.</li>
-    <li>Region-marking: the item card states the text alternative key in text. Candidates are a radiogroup with roving tabindex; <i>Fly there</i> dispatches <code>flyTo</code> on the command bus (instant under reduced motion). Choosing a candidate places the mark on that region's hidden geometry; IoU/point-in-polygon scoring is identical to pointer marking, so CI runs the keyboard path and asserts equal scores.</li>
+    <li>Region-marking: the item card states the text alternative key in text. Candidates are a radiogroup with roving tabindex; each radio is its own button (letter + description) and <i>Fly there</i> is a labelled sibling, so no control nests inside another (revision 2026-11-01); <i>Fly there</i> dispatches <code>flyTo</code> on the command bus (instant under reduced motion). Choosing a candidate places the mark on that region's hidden geometry; IoU/point-in-polygon scoring is identical to pointer marking, so CI runs the keyboard path and asserts equal scores.</li>
     <li>Authors cannot publish a region item without at least one alternative (candidates or rubric). The zoom gate is satisfied by keyboard zoom (<kbd class="key">5</kbd> = 20×).</li>
     <li>Gradebook status (S27) uses the dot + text pair; the failure variant is an alert with the retry promise.</li>
   </ul></details>
