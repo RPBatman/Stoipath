@@ -328,7 +328,7 @@ function showPanel(tab: DockTab): void {
   dock.show(tab, true);
 }
 function refuse(text: string, assertively = false): void {
-  notices.transient(text, 6000);
+  notices.transient(text, 6000, !assertively); // spoken once: politely at settle, or assertively now
   if (assertively) assertive.textContent = text;
 }
 
