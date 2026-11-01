@@ -29,34 +29,32 @@
   --layout-dock: var(--dock-w);
   --cta-h: 56px;           /* the one primary action per step */
 }
-@media (min-width: 3200px) { :root { --layout-rail: 80px; --dock-w: 440px; --cta-h: 64px; --layout-navigator: 320px; } }
+@media (min-width: 3200px) { :root { --layout-rail: 80px; --dock-w: 440px; --cta-h: 64px; } }   /* --layout-navigator: base.css ladder (sweep 2026-11-01) */
 html { height: auto; }
 body { min-height: 100dvh; display: flex; flex-direction: column; }
 body.host-on { --host-h: 40px; }
-/* Demo switches (review only; revision 2026-11-01). "44 px targets" puts base.css's .is-coarse class on <html>: it carries the
-   same custom properties as the (pointer: coarse) block in tokens.css, so nothing is re-declared here; only the two layout rows
-   this page sizes for touch are mirrored. "Reduced motion" zeroes the motion tokens exactly as prefers-reduced-motion does
-   (tokens.css has no class twin for that block: design note DF-9). */
-@media (pointer: coarse) { :root { --layout-strip: 48px; } }   /* 44 px strip chips and the sharpness button need a 48 px strip (as the clinical final) */
-html.is-coarse { --layout-bottombar: 72px; --layout-strip: 48px; }
-html[data-rm="1"] { --motion-fast: 0ms; --motion-base: 0ms; --motion-panel: 0ms; --motion-toast: 0ms; --hud-label-fade-delay: 0ms; }
-html[data-rm="1"] .skeleton::after, html[data-rm="1"] .progress-bar--indeterminate span, html[data-rm="1"] .rec-dot { animation: none !important; }
+/* Demo switches (review only; revision 2026-11-01, sweep 2026-11-01). "44 px targets" puts base.css's .is-coarse class on <html>: it
+   carries the same custom properties as the (pointer: coarse) block in tokens.css, so nothing is re-declared here; only the layout
+   rows this page sizes for touch are mirrored (strip and flow bar, and the review-only header and demo strip so their 44 px controls
+   fit). "Reduced motion" sets data-motion="reduce" on <html>, tokens.css's class twin of prefers-reduced-motion (DF-9 resolved): the
+   five motion tokens, the skeleton and the indeterminate bar come from the design system; only this page's recording dot is mirrored. */
+@media (pointer: coarse) { :root { --layout-strip: 48px; --review-h: 48px; --demo-h: 56px; } }   /* 44 px strip chips and the sharpness button need a 48 px strip (as the clinical final) */
+html.is-coarse { --layout-bottombar: 72px; --layout-strip: 48px; --review-h: 48px; --demo-h: 56px; }
 
 /* --- Review chrome (not product) ------------------------------------------------ */
 .review { flex: 0 0 var(--review-h); display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-5); background: #1c1724; color: #d9d0e3; font-size: var(--text-sm); border-bottom: 1px dashed #5b4a6b; white-space: nowrap; overflow: hidden; }
 .review b { color: #fff; font-weight: 600; }
 .review .sep { opacity: .4; }
 .review .grow { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.review .segmented { --target: 24px; }
-.review .segmented__item { color: #c9bfd6; font-size: var(--text-xs); min-height: 24px; }
+.review .segmented__item { color: #c9bfd6; font-size: var(--text-xs); }   /* heights from base.css: 24 px, 44 px under a coarse pointer (the header grows to 48) */
 .review .segmented__item[aria-checked="true"] { color: #fff; background: #3a2f47; box-shadow: inset 0 -2px 0 #e879f9; }
 .review .segmented__item:disabled { opacity: .4; }
 .demo { flex: 0 0 var(--demo-h); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); background: #1c1724; color: #d9d0e3; border-top: 1px dashed #5b4a6b; font-size: var(--text-xs); overflow-x: auto; overflow-y: hidden; white-space: nowrap; scrollbar-width: thin; }
 .demo label { display: inline-flex; align-items: center; gap: 4px; color: #b9aec8; }
-.demo select { height: 26px; padding: 0 20px 0 6px; font-size: var(--text-xs); background: #2a2234; color: #fff; border: 1px solid #5b4a6b; border-radius: 3px; -webkit-appearance: none; appearance: none; }
+.demo select { width: auto; min-width: var(--target-control); height: max(26px, var(--target-control)); min-height: 0; padding: 0 20px 0 6px; font-size: var(--text-xs); background: #2a2234; color: #fff; border: 1px solid #5b4a6b; border-radius: 3px; -webkit-appearance: none; appearance: none; }   /* width: auto — base.css's .select select { width: 100% } inside an inline-block wrapper collapsed every demo select to 28 px (sweep 2026-11-01) */
 .demo .select { display: inline-block; }
 .demo .select::after { right: 7px; border-color: #c9bfd6; width: 6px; height: 6px; top: calc(50% - 4px); pointer-events: none; }
-.demo .tgl { height: 26px; padding: 0 8px; border: 1px solid #5b4a6b; border-radius: 3px; color: #c9bfd6; font-size: var(--text-xs); white-space: nowrap; }
+.demo .tgl { height: max(26px, var(--target-control)); padding: 0 8px; border: 1px solid #5b4a6b; border-radius: 3px; color: #c9bfd6; font-size: var(--text-xs); white-space: nowrap; }   /* 26 px; 44 px under a coarse pointer */
 .demo .tgl[aria-pressed="true"] { background: #e879f9; color: #1a0b1f; border-color: #e879f9; font-weight: 600; }
 .demo .tgl:disabled { opacity: .35; }
 .demo .demo__title { color: #fff; font-weight: 600; margin-right: var(--space-2); }
@@ -90,8 +88,8 @@ html[data-product="clinical"] .identity-clin, html[data-product="dx"] .identity-
 html[data-product="clinical"] .identity-learn, html[data-product="dx"] .identity-learn, html[data-product="ruo"] .identity-learn { display: none; }
 .identity-ruo { display: none; }
 html[data-product="ruo"] .identity-ruo { display: inline; }
-.badge-string--ruo, .badge-string--learn, .badge-string--clinical, .badge-string--dx { display: none; }
-html[data-product="learn"] .badge-string--learn, html[data-product="ruo"] .badge-string--ruo, html[data-product="clinical"] .badge-string--clinical, html[data-product="dx"] .badge-string--dx { display: inline; }
+/* The regulatory label string is real text (sweep 2026-11-01): render() writes STRINGS[product] into every .js-label-string
+   (top bars and About); the .badge-string--* CSS-content helpers are for the component sheet only (README D-F13). */
 .badge--learn, .badge--ruo, .badge--clinical, .badge--dx { display: none; }
 html[data-product="learn"] .badge--learn, html[data-product="ruo"] .badge--ruo, html[data-product="clinical"] .badge--clinical, html[data-product="dx"] .badge--dx { display: inline-flex; }
 .mode { display: none; }
@@ -313,6 +311,7 @@ html:not([data-view="author"]) .author-only { display: none !important; }
 .rec-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-text); animation: rec-blink 1.2s steps(2) infinite; }
 @keyframes rec-blink { to { opacity: .2; } }
 @media (prefers-reduced-motion: reduce) { .rec-dot { animation: none; } }
+[data-motion="reduce"] .rec-dot { animation: none; }   /* class twin (tokens.css §4, sweep 2026-11-01): the Reduce-motion switches set data-motion="reduce" on <html> */
 .rec__time { font-family: var(--font-mono); margin-left: auto; }
 .rec__sig { display: flex; gap: var(--space-2); }
 .rec__sig .k { font-family: var(--font-mono); font-size: var(--text-2xs); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; color: var(--color-text-secondary); }
@@ -346,18 +345,14 @@ html[data-view="author"][data-phase="screen"] .hud__rec { display: inline-flex; 
 .hud .hud__item { font-family: var(--font-mono); }
 .hud__learnslide { font-family: var(--font-ui); font-weight: var(--weight-semibold); }
 .hud__learnslide .hud__secondary { margin-left: 2px; }
-.hud__secondary { font-size: var(--text-sm); color: var(--grey-83); }     /* 12 px, ≥ 4.5:1 on the raised backdrop (judges' note) */
-.hud__position { font-size: var(--text-sm); color: var(--grey-83); background: var(--color-hud-backdrop); }
-.magnification__line2 { font-size: var(--text-sm); color: var(--grey-83); }
+.hud__position { background: var(--color-hud-backdrop); }   /* the quiet position line keeps the backdrop so base.css's 12 px grey-83 text stays ≥ 4.5:1 over tissue; size and colour are base.css's (sweep 2026-11-01) */
 .hud__motion { display: none; font-family: var(--font-ui); font-size: var(--text-xs); }
-html[data-rm="1"] .hud__motion { display: inline-flex; }
+html[data-motion="reduce"] .hud__motion { display: inline-flex; }
 /* Zoom-gate chip anchored beside the magnification readout (B graft) */
 .hud__gate { display: none; font-family: var(--font-ui); font-size: var(--text-xs); }
 .hud__gate.is-on { display: inline-flex; }
 .hud__gate .key { margin-left: 2px; }
-/* Sharpness dot in the HUD (phones, where the strip is hidden): never a bare dot, a low-emphasis label stays */
-.hud .hud__sharp { display: none; align-items: center; gap: var(--space-2); font-family: var(--font-ui); font-size: var(--text-xs); }
-.hud__sharp .indicator__glyph { width: 10px; height: 10px; }
+/* Sharpness indicator in the HUD (phones, where the strip is hidden): base.css shows it with its 12 px text label, never a bare dot; no page rule (sweep 2026-11-01) */
 .hud__cohort { display: none; font-family: var(--font-ui); font-size: var(--text-xs); }
 html[data-cohort="1"] .hud__cohort { display: inline-flex; }
 .navigator__thumb svg { display: block; }
@@ -378,36 +373,26 @@ html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence
 @media (max-width: 1599px) { .identity-clin .meta, .identity-clin .chip { display: none; } }
 #banner-slot:empty { display: none; }
 .magnification input { width: 7ch; font-size: var(--font-size-hud-big); }
-/* Dialog layer (revision 2026-11-01). base.css anchors dialogs top-right, dock-wide, and lets no input through the layer itself.
-   This page: the layer starts below the context bar; the width keeps a right-anchored panel out of the central 50 % while the
-   rail is 64 px (25 vw − 16 px − rail / 4: at 1440 the panel's left edge meets the zone's right edge); there is no scrim, so the
-   slide stays visible beside a panel and a pointer-down outside a modal dialog closes it (as the clinical final). Below 1080 px
-   base.css makes every dialog a bottom sheet ≤ 40 %. The candidates panel is aria-modal="false": the slide keeps its keys. */
+/* Dialog layer (revision 2026-11-01; sweep 2026-11-01): base.css's .modal-layer--dock. Dialogs take the task-card column exactly:
+   flush with the top bar and the right edge, dock-wide but never wider than 25 vw − rail/4, so a right-anchored panel stays out of
+   the central 50 % while the card is a closed drawer (1080–1599); no scrim, the slide stays visible beside a panel and a pointer-down
+   outside a modal dialog closes it (as the clinical final). Below 1080 px base.css makes every dialog a bottom sheet ≤ 40 %. The
+   candidates panel is aria-modal="false": the slide keeps its keys. The page's width rule is deleted; its one offset stays: the
+   layer starts below the context bar (a page element). */
 .modal-layer { top: calc(var(--layout-topbar) + var(--ctx-h)); }
-@media (min-width: 1080px) { .modal-layer .dialog, .modal-layer .dialog--wide { width: min(var(--dock-w), calc(25vw - 16px - var(--layout-rail) / 4)); max-height: calc(100% - var(--space-4)); } }
 .dialog--wide .keymap { grid-template-columns: 1fr; gap: var(--space-5); }
-/* Command palette: drops from the top bar over the task-card column (the drawer track at 1080–1599), never the slide centre;
-   below 1080 px a bottom sheet ≤ 40 % above the bottom bar. Design note: one .palette-layer rule belongs in base.css §6.9. */
-.palette-layer { position: absolute; top: calc(var(--layout-topbar) + var(--ctx-h)); right: 0; width: min(var(--dock-w), calc(25vw - 20px - var(--layout-rail) / 4)); max-height: calc(100% - var(--layout-topbar) - var(--ctx-h) - var(--layout-strip)); z-index: var(--z-palette); display: flex; flex-direction: column; }
-.palette-layer .palette { width: 100%; max-height: 100%; display: flex; flex-direction: column; border-top: 0; border-right: 0; border-radius: 0 0 0 var(--radius-4); }
-.palette-layer .palette__list { flex: 1 1 auto; min-height: 0; max-height: min(420px, 55vh); }
-@media (max-width: 1079px) {
-  .palette-layer { top: auto; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); left: 0; right: 0; width: auto; max-height: var(--layout-sheet-max); }
-  .palette-layer .palette { border-radius: var(--radius-5) var(--radius-5) 0 0; border-top: 1px solid var(--color-border-strong); border-left: 0; border-right: 0; border-bottom: 0; }
-  .palette-layer .palette__list { max-height: none; }
-}
-@media (max-width: 599px) { .palette-layer { bottom: var(--layout-bottombar); } }
-.palette__item.is-off { opacity: .6; }
+/* Command palette (sweep 2026-11-01): placement is base.css §6.9's one .palette-layer rule (over the task-card column at ≥ 1080 px,
+   never the slide centre; the grid's in-flow "sheet" row above the bottom bar at ≤ 1079 px, where .app.palette-open hides the dock
+   sheet meanwhile; hidden with the `hidden` attribute). The page's copies are deleted; the one page-owned offset is the context bar. */
+@media (min-width: 1080px) and (max-width: 1599px) { .palette-layer { top: calc(var(--layout-topbar) + var(--ctx-h)); max-height: calc(100% - var(--layout-topbar) - var(--ctx-h) - var(--layout-strip)); } }
+/* "Not in this build" rows: dimmed by colour, not opacity (as base.css dims .layer-row.is-off): secondary text, ≥ 4.5:1 on the palette surface; the rows still run (they explain themselves) */
+.palette__item.is-off { color: var(--color-text-secondary); }
 .palette__item .meta { white-space: nowrap; }
-/* Candidate rows (revision 2026-11-01): a native radio (visually hidden; the letter box and the row border show the state) inside
-   a label, and "Fly there" as a sibling button, so no control nests in another (axe nested-interactive); arrow keys move
-   between the radios natively and the Tab order is radio group → Fly there × 6 → footer. */
-.dialog .candidate { grid-template-columns: auto 1fr auto; position: relative; }
-.candidate__radio { cursor: pointer; }
-.candidate__radio input { position: absolute; left: var(--space-3); top: 50%; width: var(--target); height: var(--target); margin: calc(var(--target) / -2) 0 0; clip-path: inset(50%); pointer-events: none; }   /* hidden by clipping, not by size or opacity: it keeps a --target box (24 px, 44 under coarse) under the letter and stays focusable */
-.candidate:has(input:checked) { border-color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-text); }
-.candidate:has(input:checked) .candidate__letter { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
-.candidate:has(input:focus-visible) .candidate__radio { box-shadow: var(--focus-shadow); }
+/* Candidate rows (revision 2026-11-01; sweep 2026-11-01): a native radio (visually hidden by clipping; the letter box and the row
+   border show the state) inside a label, and "Fly there" as a sibling button, so no control nests in another (axe nested-interactive);
+   arrow keys move between the radios natively and the Tab order is radio group → Fly there × 6 → footer. The row grid, the hidden
+   radio's --target box, the checked ring and the focus ring are base.css's .candidate__radio rules (this page's pattern, adopted by
+   the design system); the page's copies are deleted. */
 .cand-sheet-note { display: none; }
 @media (max-width: 1079px) { .cand-sheet-note { display: inline; } .cand-dock-note { display: none; } }
 .about { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--text-sm); }
@@ -520,15 +505,14 @@ html[data-view="director"] .director { display: grid; }
   .flowrail .phase__sub { display: none; }
   .phase { min-height: 48px; }
   .rail__h { display: none; }
-  :root { --layout-navigator: 220px; }
 }
 /* Tablet portrait (600–1079): step rail → bottom flow bar; task card → bottom sheet that peeks (title + stem + CTA) and expands to ≤ 40 % */
 @media (min-width: 600px) and (max-width: 1079px) {
-  .app.ed, .app.ed.dock-closed, .app.ed.dock-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar) var(--layout-strip); grid-template-areas: "topbar" "canvas" "bottombar" "strip"; }
+  .app.ed, .app.ed.dock-closed, .app.ed.dock-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-bottombar) var(--layout-strip); grid-template-areas: "topbar" "canvas" "sheet" "bottombar" "strip"; }   /* the auto row is the in-flow "sheet" (base.css .palette-layer at ≤ 1079 px); 0 px while empty */
   .rail, .ctxbar, .handle, .capcard { display: none !important; }
   .bottombar { display: flex; }
   .app.ed .dock { display: none; }
-  .app.ed.dock-open .dock { display: flex; position: absolute; left: 0; right: 0; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
+  .app.ed.dock-open:not(.palette-open) .dock { display: flex; position: absolute; left: 0; right: 0; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
   .app.ed.dock-open.sheet-peek .dock { max-height: none; }
   .dock__resizer { display: none; }
   .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
@@ -543,16 +527,17 @@ html[data-view="director"] .director { display: grid; }
   .hud { max-width: 40%; }
   .app.ed.dock-open .hud--bl, .app.ed.dock-open .hud--br, .app.ed.dock-open .hud--bc { bottom: calc(var(--sheet-h, 196px) + var(--layout-hud-inset)); }
   .app.ed.dock-open .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--sheet-h, 196px) + var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
+  .app.ed.dock-open.palette-open .hud--bl, .app.ed.dock-open.palette-open .hud--br, .app.ed.dock-open.palette-open .hud--bc { bottom: var(--layout-hud-inset); }   /* the palette holds the sheet row and the dock is hidden: the canvas has already yielded the height */
+  .app.ed.dock-open.palette-open .toast-stack { bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
   .topbar .stepper__dots { display: none; }
-  :root { --layout-navigator: 180px; }
 }
 /* Phone (≤ 599): compact flow bar; sheet peek; strip hidden (sharpness joins the HUD with a label); expanded sheet ≤ 40 % (scrolls) */
 @media (max-width: 599px) {
-  .app.ed, .app.ed.dock-closed, .app.ed.dock-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar); grid-template-areas: "topbar" "canvas" "bottombar"; }
+  .app.ed, .app.ed.dock-closed, .app.ed.dock-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-bottombar); grid-template-areas: "topbar" "canvas" "sheet" "bottombar"; }   /* auto row: the in-flow "sheet" (palette layer) */
   .rail, .ctxbar, .strip, .handle, .capcard { display: none !important; }
   .bottombar { display: flex; }
   .app.ed .dock { display: none; }
-  .app.ed.dock-open .dock { display: flex; position: absolute; left: 0; right: 0; bottom: var(--layout-bottombar); width: auto; height: auto; max-height: 40vh; border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
+  .app.ed.dock-open:not(.palette-open) .dock { display: flex; position: absolute; left: 0; right: 0; bottom: var(--layout-bottombar); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
   .app.ed.dock-open.sheet-peek .dock { max-height: none; }
   .dock__resizer { display: none; }
   .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
@@ -578,11 +563,11 @@ html[data-view="director"] .director { display: grid; }
   .topbar .stepper__dots { display: none; }
   .step-long { display: none; } .step-short { display: inline; }
   .topbar__slot-mode [data-action="keymap"] { display: none; }
-  .hud .hud__sharp { display: inline-flex; }
-  .hud__position, .magnification__line2 { display: none; }
-  .hud { max-width: 48%; }
+  .hud { max-width: 48%; }   /* the sharpness indicator joins the HUD and the position / µm lines leave it: base.css ≤ 599 px */
   .app.ed.dock-open .hud--bl, .app.ed.dock-open .hud--br, .app.ed.dock-open .hud--bc { bottom: calc(var(--sheet-h, 176px) + var(--layout-hud-inset)); }
   .app.ed.dock-open .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--sheet-h, 176px) + var(--layout-bottombar) + var(--space-4)); }
+  .app.ed.dock-open.palette-open .hud--bl, .app.ed.dock-open.palette-open .hud--br, .app.ed.dock-open.palette-open .hud--bc { bottom: var(--layout-hud-inset); }
+  .app.ed.dock-open.palette-open .toast-stack { bottom: calc(var(--layout-bottombar) + var(--space-4)); }
   .review .long, .review__angle, .review__date { display: none; }
   .review { font-size: var(--text-xs); padding: 0 var(--space-3); gap: var(--space-2); }
   .host__note { display: none; }
@@ -592,7 +577,7 @@ html[data-view="director"] .director { display: grid; }
 /* Short viewports: fewer sub-labels, no position line */
 @media (max-height: 760px) { .phase { min-height: 48px; } .flowrail .phase__sub { display: none; } }
 /* Coarse pointer: every control sizes from the tokens (--target, --target-control = 44 px) that tokens.css sets under (pointer: coarse)
-   and base.css under .is-coarse; the only page-level coarse rules are the two layout rows at the top and the taller context bar here. */
+   and base.css under .is-coarse; the only page-level coarse rules are the layout rows at the top and the taller context bar here. */
 @media (min-width: 1080px) and (max-width: 1599px) and (pointer: coarse) { :root { --ctx-h: 52px; } }
 @media (min-width: 1080px) and (max-width: 1599px) { html.is-coarse { --ctx-h: 52px; } }
 /* While a gesture is in progress nothing in the chrome animates (P2); the resizer is deferred too */
@@ -710,7 +695,7 @@ html[data-view="director"] .director { display: grid; }
       <button class="badge badge--ruo" data-live="launch:product" data-action="about" aria-label="Stoipath Viewer. For Research Use Only. Not for use in diagnostic procedures. Open About">RUO</button>
       <button class="badge badge--clinical" data-live="launch:product" data-action="about" aria-label="Stoipath Clinical-IH. In-house laboratory-validated tool. Open About">CLINICAL-IH</button>
       <button class="badge badge--dx" data-live="launch:product" data-action="about" aria-label="Stoipath Dx. Cleared configuration. Open About">DX</button>
-      <span class="topbar__label"><span class="badge-string badge-string--learn" data-live="launch:product"></span><span class="badge-string badge-string--ruo"></span><span class="badge-string badge-string--clinical"></span><span class="badge-string badge-string--dx"></span></span>
+      <span class="topbar__label js-label-string" id="label-string" role="note" data-live="launch:product">For educational use. Not a medical device. Contains no protected health information.</span>
     </div>
     <div class="topbar__identity">
       <span class="identity-learn title" id="module-title" data-live="lti">Sentinel lymph node: finding the metastasis</span>
@@ -851,7 +836,7 @@ html[data-view="director"] .director { display: grid; }
           <button class="down" data-pan="0,1" aria-label="Pan down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button>
         </div>
       </div>
-      <div class="navigator__label"><span id="nav-label">A1-1 · overview · <kbd class="key">O</kbd> hides</span><span class="navigator__labelimg" data-live="launch:slideLabelText" data-synthetic aria-label="Slide label image (Tier 2)">AP-26-04417<br>A1-1 H&amp;E<br>▮▯▮▮▯▮▯</span></div>
+      <div class="navigator__label"><span id="nav-label">A1-1 · overview · <kbd class="key">O</kbd> hides</span><span class="navigator__labelimg" role="img" data-live="launch:slideLabelText" data-synthetic aria-label="Slide label image (Tier 2): AP-26-04417, A1-1 H and E, barcode">AP-26-04417<br>A1-1 H&amp;E<br>▮▯▮▮▯▮▯</span></div>
     </aside>
 
     <div class="banner-slot" id="banner-slot"></div>
@@ -1360,8 +1345,8 @@ html[data-view="director"] .director { display: grid; }
 
   <div class="toast-stack" id="toasts" aria-hidden="true"></div>
 
-  <!-- Dialog layer (revision 2026-11-01): anchored over the task-card column below the top bar and the context bar (base.css), never over the slide centre; no scrim, so the slide stays visible beside a dialog and a pointer-down outside a modal dialog closes it. Below 1080 px every dialog is a bottom sheet ≤ 40 %. -->
-  <div class="modal-layer" id="modal-layer" hidden>
+  <!-- Dialog layer (revision 2026-11-01; sweep 2026-11-01: base.css .modal-layer--dock): dialogs flush in the task-card column below the top bar and the context bar, never over the slide centre; no scrim, so the slide stays visible beside a dialog and a pointer-down outside a modal dialog closes it. Below 1080 px every dialog is a bottom sheet ≤ 40 %. -->
+  <div class="modal-layer modal-layer--dock" id="modal-layer" hidden>
 
     <div class="dialog dialog--wide" id="dlg-keymap" role="dialog" aria-modal="true" aria-labelledby="km-t" hidden>
       <div class="dialog__header"><h2 class="dialog__title" id="km-t">Keyboard map · <span id="km-product">Stoipath Learn</span></h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
@@ -1444,7 +1429,7 @@ html[data-view="director"] .director { display: grid; }
       <div class="dialog__header"><h2 class="dialog__title" id="ab-t">About this build</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
       <div class="dialog__body about">
         <div><div class="lbl">Product</div><div id="ab-product">Stoipath Learn</div></div>
-        <div><div class="lbl">Label</div><div><span class="badge-string badge-string--learn"></span><span class="badge-string badge-string--ruo"></span><span class="badge-string badge-string--clinical"></span><span class="badge-string badge-string--dx"></span></div></div>
+        <div><div class="lbl">Label</div><div class="js-label-string" id="ab-label" data-live="launch:product">For educational use. Not a medical device. Contains no protected health information.</div></div>
         <div><div class="lbl">Version</div><div class="num" data-live="launch:build">0.7.0 · build_hash 4f1c9e2 · engine 0.7.0 · separate build per product (never a runtime flag)</div></div>
         <div><div class="lbl">Launch</div><div data-live="launch" id="ab-launch">LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn</div></div>
         <div><div class="lbl">Data</div><div>No protected health information. Slides: CAMELYON16 (CC0). Viewing trace is pseudonymous and leaves only as course aggregates. Telemetry switch: on (Settings).</div></div>
@@ -1505,7 +1490,7 @@ html[data-view="director"] .director { display: grid; }
   <header class="topbar region" role="banner">
     <div class="topbar__slot-badge">
       <button class="badge badge--learn" data-live="launch:product" data-action="about" aria-label="Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About">LEARN</button>
-      <span class="topbar__label"><span class="badge-string badge-string--learn" data-live="launch:product"></span></span>
+      <span class="topbar__label js-label-string" role="note" data-live="launch:product">For educational use. Not a medical device. Contains no protected health information.</span>
     </div>
     <div class="topbar__identity"><span class="title" data-live="lti:nrps">Director analytics · PATH 601 · Module 3 · Sentinel lymph node <span data-synthetic>(synthetic cohort)</span></span></div>
     <div class="topbar__slot-mode">
@@ -1677,10 +1662,10 @@ html[data-view="director"] .director { display: grid; }
       <li><b>DF-2 · Region C.</b> The IA names region C the tool rail; here it is a step rail that discloses tools per phase (C's DN-C1), 64 px wide (80 at 4K). Principles §3.1 should say "step / tool rail" and the module schema gains a phase-aware tool allowlist that the command registry honours (engineering judge).</li>
       <li><b>DF-3 · Per-ROI settle query.</b> "Never reveal while a tile under the mark is stale" needs <code>geometry.settled(roi)</code> or an equivalent from the quality record; file against the core backlog with an <code>FR-</code> id before the item engine relies on it.</li>
       <li><b>DF-4 · Tier chip in Learn.</b> Shown as information on the iPad (brief §10.3) although it limits no mode in Learn; owner to confirm whether Learn shows it at all.</li>
-      <li><b>DF-5 · Design-system tokens.</b> Resolved on 2026-11-01: <code>tokens.css</code> now carries <code>--color-hud-backdrop</code> 0.80 and <code>base.css</code> the always-visible 44 px navigator pads (28 px visible pad on the frame), the 0.7 settled-label rule and the 24 px segmented items; this page's copies are deleted (§8). Still page-level: HUD secondary lines at 12 px.</li>
-      <li><b>DF-9 · Reduced-motion class twin.</b> <code>base.css</code> mirrors the <code>(pointer: coarse)</code> tokens under <code>.is-coarse</code>, which the demo switch now uses; there is no <code>.is-reduced-motion</code> twin of the <code>prefers-reduced-motion</code> block, so the demo switch still zeroes the five motion tokens itself. One class in <code>tokens.css</code> would remove the last re-declaration.</li>
-      <li><b>DF-10 · Shared rules still carried per page.</b> <code>.palette-layer</code> (dock-column anchor ≥ 1080 px, bottom sheet below) exists in all three finals; the components sheet's candidate rows (<code>components.html</code>) still nest "Fly there" inside <code>role="radio"</code> and should take the native-radio markup used here (§8).</li>
-      <li><b>DF-6 · Sheet rule.</b> Base.css allows a 60 vh sheet on phones; this screen caps every sheet at 40 % and lets the body scroll. If the owner prefers taller phone sheets, principles §3.1 and base.css should agree on one number.</li>
+      <li><b>DF-5 · Design-system tokens.</b> Resolved on 2026-11-01: <code>tokens.css</code> now carries <code>--color-hud-backdrop</code> 0.80 and <code>base.css</code> the always-visible 44 px navigator pads (28 px visible pad on the frame), the 0.7 settled-label rule and the 24 px segmented items; this page's copies are deleted (§8). <s>Still page-level: HUD secondary lines at 12 px.</s> Sweep 2026-11-01: the 12 px grey-83 lines are base.css's too; the page keeps only the position line's backdrop (§9).</li>
+      <li><b>DF-9 · Reduced-motion class twin.</b> <s><code>base.css</code> mirrors the <code>(pointer: coarse)</code> tokens under <code>.is-coarse</code>, which the demo switch now uses; there is no <code>.is-reduced-motion</code> twin of the <code>prefers-reduced-motion</code> block, so the demo switch still zeroes the five motion tokens itself. One class in <code>tokens.css</code> would remove the last re-declaration.</s> Sweep 2026-11-01: resolved — <code>tokens.css</code> carries <code>[data-motion="reduce"]</code>; the demo switch, the settings switch and the palette command set it on <code>&lt;html&gt;</code> and the page's re-declaration is deleted (§9).</li>
+      <li><b>DF-10 · Shared rules still carried per page.</b> <s><code>.palette-layer</code> (dock-column anchor ≥ 1080 px, bottom sheet below) exists in all three finals; the components sheet's candidate rows (<code>components.html</code>) still nest "Fly there" inside <code>role="radio"</code> and should take the native-radio markup used here (§8).</s> Sweep 2026-11-01: resolved — base.css §6.9 carries one <code>.palette-layer</code> rule and <code>.candidate__radio</code> takes this page's native-radio markup (components.html follows it); the page's copies are deleted (§9).</li>
+      <li><b>DF-6 · Sheet rule.</b> <s>Base.css allows a 60 vh sheet on phones; this screen caps every sheet at 40 % and lets the body scroll. If the owner prefers taller phone sheets, principles §3.1 and base.css should agree on one number.</s> Sweep 2026-11-01: resolved — base.css caps every sheet at <code>--layout-sheet-max</code> (40 %) and principles §3.1 says a sheet is a transient layer; the page's phone <code>40vh</code> now reads the token (§9).</li>
       <li><b>DF-7 · "Submit to your course".</b> As C's DN-C4: AGS posts each item on <code>itemAnswered</code>; the last step is a completion marker, and the card says so.</li>
       <li><b>DF-8 · Mock liberties.</b> Tissue is a seeded SVG; "soft" is a CSS blur standing in for a magnified ancestor; marks, labels, pins and the scale bar are DOM here but GPU layers in the product (principles D11); the CVD remap is a Machado deutan matrix, not the Dalton 2026 LUT.</li>
     </ul>
@@ -1698,6 +1683,16 @@ html[data-view="director"] .director { display: grid; }
       <li><b>Revision 2026-11-01</b> · <i>Label string at exactly 1024 px.</i> The simulated LMS frame's 1 px side borders made the top bar 1022 px wide, 1 px under base.css's container threshold for the label string; the review-only border is gone (an iframe draws none), so the Learn label shows at 1024 as principles §2.5 asks, with no page rule.</li>
       <li><b>Revision 2026-11-01</b> · <i>Page copies of design-system rules deleted (low).</i> <code>--color-hud-backdrop</code>, the 1024–1079 label-string rules, the navigator pan-button rules (base.css now keeps a 28 px visible pad on the frame inside the 44 px hit area, so four pads no longer hide a 180 px thumbnail), the <code>.is-quiet</code> opacity, the strip chip heights, the <code>.modal-layer</code> tweaks and the coarse token re-declarations. Kept: the reduced-motion demo switch (DF-9). Review chrome: the LMS host bar text is #5b6670 (5.1:1).</li>
       <li><b>Revision 2026-11-01</b> · <i>Pan during a fly-to.</i> The reported "ArrowRight changes the magnification at fit" did not reproduce with a settled camera (the readout stays 0.98× at 1920 and 0.79× at 1440 before and after a pan); it matches a key pressed during the 520 ms fit animation, when the readout shows an intermediate value. <code>panBy()</code> now clamps the centre explicitly without touching the scale, and any pan or zoom during a fly lands the fly first, so a key mid-flight never leaves a half-way magnification.</li>
+    </ul>
+    <h3>9. Sweep 2026-11-01 (cross-scope items the critique-stage revisers deferred; design-system rules adopted)</h3>
+    <ul>
+      <li><b>Sweep 2026-11-01</b> · <i>Dialog layer.</i> <code>#modal-layer</code> is base.css's <code>.modal-layer.modal-layer--dock</code>: the keymap, settings, About, tier, sharpness, hand-off and candidates panels take the task-card column exactly (flush with the top bar and the right edge, bottom-left radius only, dock-wide but never wider than 25 vw − rail/4), as the clinical final's dialogs do. The page's <code>@media (min-width: 1080px) .modal-layer .dialog</code> width rule (<code>25 vw − 16 px − rail/4</code>) is deleted; the one page-owned offset stays: the layer starts below the context bar. Measured (candidates panel): __DLG__.</li>
+      <li><b>Sweep 2026-11-01</b> · <i>Command palette.</i> Placement is base.css §6.9's one <code>.palette-layer</code> rule; the page's ten lines (desktop drop, ≤ 1079 px bottom-anchored sheet, ≤ 599 px offset) are deleted, leaving the context-bar offset at 1080–1599 px as the one page-owned rule. On tablets and phones the palette is now the grid's in-flow <code>sheet</code> row above the bottom bar (the two touch grids gained the <code>auto</code> row): the canvas yields height instead of being covered, <code>openPalette()</code> / <code>closePalette()</code> toggle <code>.palette-open</code> on the app so base.css hides the dock sheet meanwhile, and the page's <code>.app.ed.dock-open .dock</code> rules carry <code>:not(.palette-open)</code> so the system rule wins without a copy (same lesson as the research final). The HUD's bottom items and the toast stack drop their sheet offset while the palette holds the row. Measured: __PAL__.</li>
+      <li><b>Sweep 2026-11-01</b> · <i>Regulatory label string as text.</i> The top bars' <code>.topbar__label</code> (<code>role="note"</code>) and About's Label row are real text written by <code>render()</code> from the page's <code>STRINGS</code> table (the i18n bundle stand-in; the same English strings as tokens.css) into every <code>.js-label-string</code>; the four empty <code>.badge-string--*</code> spans whose text was CSS generated content are gone, and so are the page's display rules for them (README D-F13: the helpers are for the component sheet only). No role-less span carries an <code>aria-label</code>: the navigator's mock label image is <code>role="img"</code> with a label that names the accession and the slide. T1 (label not truncated at ≥ 1024) still passes at every viewport.</li>
+      <li><b>Sweep 2026-11-01</b> · <i>Reduce motion.</i> The demo switch, the settings switch and the palette command set <code>data-motion="reduce"</code> on <code>&lt;html&gt;</code> (tokens.css's class twin of the media query) through <code>state.rm</code>; the page's <code>html[data-rm="1"]</code> token block is deleted (the skeleton and indeterminate-bar mirrors are base.css's) and only this page's recording dot and the "Reduced motion · fly-to jumps" HUD chip read the attribute. Measured on: <code>--motion-base</code> and <code>--hud-label-fade-delay</code> 0 ms; off: tokens.css's values.</li>
+      <li><b>Sweep 2026-11-01</b> · <i>Page copies of design-system rules deleted.</i> The 12 px grey-83 HUD secondary / position / µm-per-px lines (the position line keeps only its backdrop), the HUD sharpness indicator's display and glyph rules and the phone block's copies of base.css's ≤ 599 px HUD rules, the six <code>.candidate</code> / <code>.candidate__radio</code> rules (base.css adopted this page's native-radio pattern), and the navigator ladder values at 4K, 1080–1599 and 600–1079 px (base.css: 320 / 240 / 180 / 140 with the 25 % cap, DS-17; the navigator at 1080–1599 is 240 px, was 220, and stays outside the central zone at every viewport). The palette's "Not in this build" rows are dimmed by colour (<code>--color-text-secondary</code>), not opacity, as base.css dims <code>.layer-row.is-off</code>; this page has no layer rows.</li>
+      <li><b>Sweep 2026-11-01</b> · <i>Targets.</i> The review header's view switch takes base.css's segmented height (24 px; 44 px under a coarse pointer, the header grows 34 → 48 px); the demo strip's selects and toggles are 44 px under a coarse pointer on a 56 px strip (26 px otherwise). <code>#d-launch</code> and the other demo selects were 28 px wide because base.css's <code>.select select { width: 100% }</code> inside the page's inline-block wrapper collapsed to padding + border; they now size to their content (<code>width: auto; min-width: --target-control</code>). <code>layout-check.mjs</code>: __LC__.</li>
+      <li><b>Sweep 2026-11-01</b> · <i>Sharpness label.</i> Both indicators already carry visible text ("Sharp" in the strip button, with the reason span, and in the phone HUD item); A3 measures the settled label at opacity 0.70. No change beyond deleting the page's display rules.</li>
     </ul>
   </details>
 </section>
@@ -1801,6 +1796,8 @@ var TARGETS = {
 var CAND_POS = { A: [7600, 1210], B: [7400, 3900], C: [FOCUS.x, FOCUS.y], D: [4200, 4250], E: [2100, 4200], F: [7600, 6950] };
 var CAND_TEXT = { A: 'Subcapsular sinus, upper pole', B: 'Germinal centre, central cortex', C: 'Subcapsular sinus, right pole', D: 'Medullary cords', E: 'Hilum', F: 'Capsule, lower border' };
 
+/* Regulatory label strings (i18n bundle stand-in; the same English strings as tokens.css --string-*; counsel's final wording replaces them once). */
+var STRINGS = { learn: 'For educational use. Not a medical device. Contains no protected health information.', ruo: 'For Research Use Only. Not for use in diagnostic procedures.', clinical: 'In-house laboratory-validated tool. Not FDA cleared. For use only within \u2039laboratory name\u203a under CLIA/CAP validation.', dx: 'Stoipath Dx \u00b7 cleared configuration \u00b7 see About for UDI, version and hashes.' };
 var state = {
   view: 'learner', product: 'learn', audience: 'ms', idx: 3, maxIdx: 3, viewIdx: { learner: 3, author: 1 }, dirIdx: 1,
   items: { 4: 'awaiting', 5: 'awaiting', 6: 'awaiting', res: 'awaiting' },
@@ -1888,7 +1885,8 @@ function render() {
   var st = steps[state.idx], n = steps.length, i = state.idx + 1, kind = flowKind();
   html.dataset.view = state.view; html.dataset.product = state.product; html.dataset.audience = state.audience;
   html.dataset.phase = PH[st.ph]; html.dataset.step = String(st.s); html.dataset.item = itemState(st);
-  ['alltools', 'timer', 'rm', 'coarse', 'cohort'].forEach(function (k) { var v = { alltools: state.allTools, timer: state.timer, rm: state.rm, coarse: state.coarse, cohort: state.cohort }[k]; if (v) html.dataset[k] = '1'; else delete html.dataset[k]; });
+  ['alltools', 'timer', 'coarse', 'cohort'].forEach(function (k) { var v = { alltools: state.allTools, timer: state.timer, coarse: state.coarse, cohort: state.cohort }[k]; if (v) html.dataset[k] = '1'; else delete html.dataset[k]; });
+  if (state.rm) html.dataset.motion = 'reduce'; else delete html.dataset.motion;   /* tokens.css's class twin of prefers-reduced-motion: the five motion tokens go to 0 ms without the OS preference (DF-9 resolved) */
   html.classList.toggle('is-coarse', !!state.coarse);   /* base.css's class twin of (pointer: coarse): the demo switch re-declares no token */
   if (state.dxRefused) html.dataset.dxrefused = '1'; else delete html.dataset.dxrefused;
   $$('.task').forEach(function (t) { t.hidden = t.dataset.task !== st.task; });
@@ -2026,6 +2024,7 @@ function applyEnv() {
   canvasArea.setAttribute('aria-label', 'Slide canvas, ' + (state.slideId === 'ihc' ? 'A1-2 CK AE1 AE3' : 'A1-1 H and E') + ', ' + fmtMag(10 / state.cam.scale).replace('×', ' times') + ', use arrow keys to pan and plus or minus to zoom');
   var AB = { learn: ['Stoipath Learn', 'LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn'], ruo: ['Stoipath Viewer (RUO)', 'Standalone · manifest URL · product viewer-ruo · no LIS write-back, no sign-out event, no Dx gate'], clinical: ['Stoipath Clinical-IH', 'Epic Beaker worklist launch (IID URL + token) · product clinical-ih · purposeOfUse consultation · companion window'], dx: ['Stoipath Dx', 'Epic Beaker worklist launch · product dx · purposeOfUse ' + (dx ? 'sign-out' : 'consultation') + ' · UDI, build_hash and pathway_hash shown at start-up'] };
   txt('#ab-product', AB[state.product][0]); txt('#ab-launch', AB[state.product][1]); txt('#km-product', AB[state.product][0]);
+  $$('.js-label-string').forEach(function (el) { el.textContent = STRINGS[state.product]; });   /* the regulatory label string is real text (the product writes it from the i18n bundle), never CSS generated content (README D-F13) */
   txt('#km-dx', clinicalBuild ? (dx ? 'Dx mode: leave (confirms)' : 'Dx mode: refused on this surface') : 'Dx mode: not in this build'); $('#km-dictation').hidden = !clinicalBuild;
   $$('.review .segmented__item[data-view]').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.view === state.view)); b.disabled = state.product !== 'learn' && b.dataset.view !== 'learner'; });
   var cvdSel = $('#set-cvd'); if ((cvdSel.value !== 'off') !== state.cvd) cvdSel.value = state.cvd ? 'deutan' : 'off';
@@ -2233,8 +2232,8 @@ function commands() {
 }
 function dxInfo() { announceStrip('This is Stoipath Learn, for educational use. Diagnostic mode is not part of this build.'); }
 function announceStrip(s) { state.dxNotice = s; applyEnv(); announce(s, true); setTimeout(function () { state.dxNotice = ''; applyEnv(); }, 6000); }
-function openPalette() { $('#palette-layer').hidden = false; var inp = $('#pal-input'); inp.value = ''; renderPalette(''); inp.focus(); }
-function closePalette() { $('#palette-layer').hidden = true; canvasArea.focus(); }
+function openPalette() { $('#palette-layer').hidden = false; app.classList.add('palette-open'); var inp = $('#pal-input'); inp.value = ''; renderPalette(''); inp.focus(); }   /* .palette-open: base.css hides the dock sheet while the palette holds the sheet row (≤ 1079 px) */
+function closePalette() { $('#palette-layer').hidden = true; app.classList.remove('palette-open'); canvasArea.focus(); }
 function fuzzy(q, s) { q = q.toLowerCase(); s = s.toLowerCase(); if (!q) return true; var i = 0; for (var j = 0; j < s.length && i < q.length; j++) if (s[j] === q[i]) i++; return i === q.length; }
 function renderPalette(q) {
   var all = commands(); var ql = q.toLowerCase(); palItems = ql ? all.filter(function (c) { return (c.g + ' ' + c.l + ' ' + c.k).toLowerCase().indexOf(ql) >= 0; }) : all; if (!palItems.length) palItems = all.filter(function (c) { return fuzzy(q, c.g + ' ' + c.l + ' ' + c.k); }); palSel = 0; var h = '', lastG = '';

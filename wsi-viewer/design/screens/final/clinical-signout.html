@@ -21,9 +21,11 @@
   --review-bottom: 44px;
   --host-bar: 0px;
   --layout-flowbar: 0px;
-  /* The lab name is a build-time constant substituted into the controlled
-     Clinical-IH string (principles §2.1, FR-R0); the token stays the source. */
-  --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.";
+  /* The regulatory label string is written as TEXT into #labelString from the
+     page's STRINGS table (the product reads it from the i18n bundle; README
+     D-F13, sweep 2026-11-01). The lab name is a build-time constant inside the
+     controlled Clinical-IH string (principles §2.1, FR-R0). base.css's
+     .badge-string--* CSS-content helpers are for the component sheet only. */
 }
 body { overflow-x: hidden; }
 body.review-hidden { --review-top: 0px; --review-bottom: 0px; }
@@ -51,6 +53,15 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .review-foot input[type="checkbox"] { accent-color: #9ed0e6; width: 14px; height: 14px; margin: 0; }
 .review-foot .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
 .review-foot .hash { margin-left: auto; font-family: var(--font-mono); font-size: 10px; opacity: .75; max-width: 300px; overflow: hidden; text-overflow: ellipsis; }
+/* Demo controls under a coarse pointer (sweep 2026-11-01): 44 px selects and buttons, 24 px checkboxes inside 44 px labels with
+   12 px gaps so a 44 px box around each clears its neighbours (SC 2.5.8 spacing exception); the foot grows to 56 px. */
+@media (pointer: coarse) {
+  :root { --review-bottom: 56px; }
+  .review-foot { gap: var(--space-5); }
+  .review-foot label { min-height: var(--target); }
+  .review-foot select, .review-foot button { min-height: var(--target); }
+  .review-foot input[type="checkbox"] { width: 24px; height: 24px; }
+}
 
 /* ---- synthetic host (Epic Hyperdrive) frame for the iframe variant */
 .host { position: relative; }
@@ -92,7 +103,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .flow__step[aria-current="step"] .flow__num { border-width: 2px; }
 .app.flow-off .flow__label { display: none; }
 .app.flow-off .flow__step { min-height: 30px; }
-@media (pointer: coarse) { .flow__step { min-height: 48px; } .flow__num { width: 26px; height: 26px; } .flow__label { font-size: 11px; } .app.fin .flowbar .flow__step, .app.fin .flowbar .btn { min-height: var(--target); } .app.fin { --layout-strip: 48px; } }   /* 44 px flow-bar steps; 44 px strip chips need a 48 px strip */
+@media (pointer: coarse) { .flow__step { min-height: 48px; } .app.fin.flow-off .flow__step { min-height: var(--target); } .flow__num { width: 26px; height: 26px; } .flow__label { font-size: 11px; } .app.fin .flowbar .flow__step, .app.fin .flowbar .btn { min-height: var(--target); } .app.fin { --layout-strip: 48px; } }   /* 44 px flow-bar steps; 44 px strip chips need a 48 px strip */
 @media (min-width: 3200px) { .flow__label { font-size: 12px; } .flow__num { width: 24px; height: 24px; } }
 
 /* flow bar: tablet portrait and phone (steps to the top, tools to the bottom) */
@@ -113,8 +124,8 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   .app.fin:not(.app--embedded) {
     --layout-flowbar: 44px;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: var(--layout-topbar) var(--layout-flowbar) minmax(0, 1fr) var(--layout-bottombar) var(--layout-strip);
-    grid-template-areas: "topbar" "flowbar" "canvas" "bottombar" "strip";
+    grid-template-rows: var(--layout-topbar) var(--layout-flowbar) minmax(0, 1fr) auto var(--layout-bottombar) var(--layout-strip);   /* auto row: the in-flow "sheet" (base.css .palette-layer); 0 px while empty */
+    grid-template-areas: "topbar" "flowbar" "canvas" "sheet" "bottombar" "strip";
   }
   .app.fin:not(.app--embedded) .flowbar { display: flex; }
   .app.fin .rail { display: none; }
@@ -125,8 +136,8 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 @media (max-width: 599px) {
   .app.fin:not(.app--embedded) {
     --layout-flowbar: 48px;
-    grid-template-rows: var(--layout-topbar) var(--layout-flowbar) minmax(0, 1fr) var(--layout-bottombar);
-    grid-template-areas: "topbar" "flowbar" "canvas" "bottombar";
+    grid-template-rows: var(--layout-topbar) var(--layout-flowbar) minmax(0, 1fr) auto var(--layout-bottombar);   /* auto row: the palette's sheet */
+    grid-template-areas: "topbar" "flowbar" "canvas" "sheet" "bottombar";
   }
   .flowbar .flow li { flex: 0 0 auto; }
   .flowbar .flow li.is-current { flex: 1 1 auto; }
@@ -144,6 +155,10 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   grid-template-areas: "topbar" "canvas" "strip";
   --layout-navigator: 180px;
 }
+@media (max-width: 1079px) {
+  /* the palette's in-flow sheet row (base.css .palette-layer) inside the iframe grid too */
+  .app.fin.app--embedded { grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-strip); grid-template-areas: "topbar" "canvas" "sheet" "strip"; }
+}
 .app.fin.app--embedded .rail, .app.fin.app--embedded .flowbar, .app.fin.app--embedded .bottombar { display: none; }
 .app.fin.app--embedded .dock { display: none; }
 .app.fin.app--embedded.dock-open .dock {
@@ -158,8 +173,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .app--embedded .not-embedded { display: none !important; }
 .embed-tray { display: none; align-items: center; gap: var(--space-2); }
 .app--embedded .embed-tray { display: inline-flex; }
-.embed-tray .chip { min-height: var(--target-control); }
-.flow-chip.chip { min-height: var(--target-control); }
+/* embed-tray chips and the flow chip are button.chip: base.css sizes them from --target-control (sweep 2026-11-01) */
 .embed-tray .chip .v { font-family: var(--font-mono); font-size: 10px; }
 @container topbar (max-width: 1599px) { .app--embedded .embed-tray .chip .stain { display: none; } }
 @container topbar (max-width: 1279px) { .app--embedded .embed-tray { display: none; } }
@@ -188,12 +202,16 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 @container topbar (max-width: 1263px) { .chip--purpose .chip__long { display: none; } .chip--purpose .chip__short { display: inline; } }
 /* Consult variant: the specimen title leaves the bar below 1600 so the full label string keeps its natural width (P4, D1). */
 @container topbar (max-width: 1599px) { .app[data-variant="consult"] .topbar__identity .title { display: none; } }
-/* Phone: the strip is hidden, so the purpose stays in the bar as the short chip beside the badge (P4, D1). */
-@media (max-width: 599px) { .app.fin .topbar__slot-badge .chip--purpose { display: inline-flex; } .chip--purpose .chip__long { display: none; } .chip--purpose .chip__short { display: inline; } }
+/* Phone: the strip is hidden, so the purpose stays in the bar as the short chip beside the badge (P4, D1). Sweep 2026-11-01 (T1):
+   the empty .topbar__identity-rest wrapper (title, meta and chips are all hidden here) no longer costs its 8 px flex gap, and the
+   badge slot may shrink as the LAST resort, so the chip truncates before the mode slot or the More button can leave the bar. */
+@media (max-width: 599px) {
+  .app.fin .topbar__slot-badge .chip--purpose { display: inline-flex; } .chip--purpose .chip__long { display: none; } .chip--purpose .chip__short { display: inline; }
+  .app.fin .topbar__identity-rest { display: none; }
+  .app.fin .topbar__slot-badge { flex: 0 1 auto; min-width: 0; }
+}
 .topbar__slot-mode button.mode { cursor: pointer; }
-/* Inverted danger banner: its button and key inherit the inverse colour (base.css recolours only links; filed as a design-system issue). */
-.app.fin .banner--danger .btn, .app.fin .banner--danger .key { color: inherit; border-color: currentColor; background: transparent; }
-.app.fin .banner--danger .btn:hover { background: rgba(0,0,0,.08); }
+/* Danger banner button and key colours: base.css §6.12 (sweep 2026-11-01; the page copy is gone). */
 /* Rail: the step list and the three foot tools never shrink; the per-step tool group scrolls when the rail is short (1366 × 1024 coarse, 1440 × 900). */
 .app.fin .rail .flow, .app.fin .rail .rail__divider, .app.fin .rail .tool { flex-shrink: 0; }
 .app.fin #railTools { flex: 0 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
@@ -263,7 +281,6 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .legend-hud { font-family: var(--font-ui); font-size: var(--text-xs); flex-direction: column; align-items: flex-end; gap: 3px; display: none; }
 .app.legend-on.overlay-on .legend-hud { display: inline-flex; }
 .legend-hud .legend { justify-content: flex-end; }
-.legend-hud .legend__item { min-height: var(--target-control); }
 .legend-hud .marker-notvalidated { font-size: var(--text-2xs); }
 .hud--br { max-width: 36%; }
 .hud--bl { max-width: 36%; }
@@ -280,11 +297,9 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .cluster__tray, .cluster__tabs { display: none; }
 .app.fin:not(.dock-open):not(.app--embedded) .cluster__tray { display: flex; }
 .app.fin:not(.dock-open):not(.app--embedded) .cluster__tabs { display: grid; }
-/* while it is the at-rest state the cluster is wider than the plain navigator (A: 300 / 320 / 360 / 220) */
-@media (min-width: 600px) and (max-width: 1079px) { .app.fin:not(.dock-open):not(.app--embedded) .navigator { width: 220px; } }
-@media (min-width: 1080px) { .app.fin:not(.dock-open):not(.app--embedded) .navigator { width: 300px; } }
-@media (min-width: 1600px) { .app.fin:not(.dock-open):not(.app--embedded) .navigator { width: 320px; } }
-@media (min-width: 3200px) { .app.fin:not(.dock-open):not(.app--embedded) .navigator { width: 400px; } }
+/* while it is the at-rest state (dock closed, not embedded) the cluster carries base.css's .navigator--wide, toggled in
+   renderChrome() with dock-open: ladder --layout-navigator-wide 400 / 320 / 300 / 220 / 140, capped by base.css at 25 % of the
+   canvas minus the inset so it never enters the central zone (sweep 2026-11-01; the page's own width ladder is gone) */
 .cluster__tray { gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--color-border); }
 .cluster__tray .tray__slide { grid-template-columns: 1fr; width: auto; flex: 1 1 0; min-width: 0; padding: 3px; min-height: 44px; text-align: center; border-radius: var(--radius-1); }
 .cluster__tray .tray__thumb { width: 100%; height: 30px; }
@@ -432,7 +447,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .strip .indicator { padding-left: 0; }
 .strip .chip { min-height: var(--target-control); font-size: var(--text-xs); }     /* 24 px; 44 under coarse (strip grows to 48) */
 .strip .strip__notice b { font-weight: var(--weight-semibold); }
-.strip .btn--sm { min-height: var(--target-control); font-size: var(--text-xs); }   /* strip sign-out button 24 px (A had 22) */
+.strip .btn--sm { font-size: var(--text-xs); }   /* height from base.css .btn--sm (--target-control: 24 px; 44 under coarse) */
 @media (max-width: 1079px) { .strip .strip-signout, .strip #stripMic { display: none; } }
 @media (pointer: coarse) { .strip .strip-signout, .flowbar .key, .strip .key { display: none; } }
 
@@ -450,19 +465,13 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .app.is-refused #stripMic, .app.is-refused .strip-signout, .app.is-refused .strip__group--end .chip { display: none !important; }
 
 /* ---- dialog layer: ANCHORED, never over the canvas centre (P1; B's dock-side panels) ----
-   Dialogs open at the top-right over the dock column; the palette at the top-left over the
-   rail column; both inset below the top bar so badge, label string and mode stay visible (P4). */
-.modal-layer { inset: var(--layout-topbar) 0 var(--layout-strip) 0; display: grid; place-items: start end; padding: var(--space-4) var(--space-4) 0 0; }
-.modal-layer.is-left { place-items: start start; padding: var(--space-4) 0 0 calc(var(--layout-rail) + var(--space-4)); }
-.modal-layer { pointer-events: none; }            /* the layer never blocks the slide; only the dialog itself takes input (B's non-modal panels) */
-.modal-layer > * { pointer-events: auto; }
-.modal-layer .dialog, .modal-layer .dialog--wide { width: min(440px, calc(100vw - 32px)); max-height: calc(100% - var(--space-4)); }
-.modal-layer .palette { width: min(360px, calc(100vw - 32px)); max-height: calc(100% - var(--space-4)); }
-/* widths chosen so a right-anchored dialog never crosses the central 50 % zone even with the panel closed: 1600-1919 → 360 px, 1080-1599 → 320 px */
-@media (min-width: 1600px) and (max-width: 1919px) { .modal-layer .dialog, .modal-layer .dialog--wide { width: 360px; } }
-@media (min-width: 1080px) and (max-width: 1599px) { .modal-layer .dialog, .modal-layer .dialog--wide { width: 320px; } }
-@media (min-width: 3200px) { .modal-layer .dialog { width: 560px; } .modal-layer .dialog--wide { width: 760px; } .modal-layer .palette { width: 520px; } }
-.backdrop { display: none !important; }   /* no scrim over tissue; a click outside closes the dialog (B) */
+   Sweep 2026-11-01: the layer is base.css's .modal-layer--dock (dialogs flush in the dock
+   column, dock-wide but never wider than 25 vw − rail/4, inset below the top bar so badge,
+   label string and mode stay visible (P4); a bottom sheet ≤ --layout-sheet-max below 1080 px)
+   and the command palette is base.css's .palette-layer (over the dock column at ≥ 1080 px,
+   the grid's in-flow "sheet" row above the bottom bar below). No scrim: base.css hides
+   .backdrop; a pointer-down outside closes the dialog (page script). The page's own layer
+   rules, width steps, .is-left palette variant and 50 vh sheet height are gone. */
 .dialog__body .checklist { padding: 0; }
 .dialog .alert { font-size: var(--text-sm); }
 .gate { display: grid; grid-template-columns: 18px 1fr; gap: 4px 8px; font-size: var(--text-sm); }
@@ -478,13 +487,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .keymap__filter { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
 .keymap__filter .input { flex: 1 1 200px; }
 .palette__item .grp { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); min-width: 64px; }
-@media (max-width: 1079px) {
-  /* on touch surfaces the dialog layer is a bottom sheet (≤ 50 % with internal scroll; the dock sheet stays ≤ 40 %) */
-  .modal-layer, .modal-layer.is-left { place-items: end stretch; padding: 0; inset: var(--layout-topbar) 0 0 0; }
-  .modal-layer .dialog, .modal-layer .dialog--wide, .modal-layer .palette { width: 100%; max-height: 50vh; border-radius: var(--radius-5) var(--radius-5) 0 0; }
-  .app:not(.app--embedded) .modal-layer { bottom: calc(var(--layout-bottombar) + var(--layout-strip)); }
-}
-@media (max-width: 599px) { .app:not(.app--embedded) .modal-layer { bottom: var(--layout-bottombar); } }
+/* ≤ 1079 px: dialog sheets (≤ --layout-sheet-max, above the bottom bar and strip) and the palette's sheet row come from base.css (sweep 2026-11-01) */
 
 /* context menu at the pointer (principles §4.1; A's radial deferred to post-MVP) */
 .ctxmenu { position: absolute; z-index: var(--z-drawer); display: none; }
@@ -675,7 +678,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
         <span class="chip chip--purpose not-embedded" id="purposeChip" data-live="launch:purposeOfUse"><span class="chip__long">Sign-out</span><span class="chip__short">Sign-out</span></span>
         <button class="chip chip--solid flow-chip embed-only" id="embedFlowChip" aria-label="Current step; opens the step list" data-live="commands"><span class="n">3/5</span> Examine <svg class="icon icon--sm"><use href="#i-next"/></svg></button>
       </div>
-      <span class="topbar__label badge-string badge-string--clinical" id="labelString" role="note"></span>
+      <span class="topbar__label" id="labelString" role="note" data-live="launch:product">In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.</span>
       <div class="topbar__identity" data-live="launch">
         <span class="accession" data-synthetic>AP-26-04417</span>
         <span class="topbar__identity-rest">
@@ -727,7 +730,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
         <div class="hud__item hud__echo" id="echo" aria-hidden="true" data-live="telemetry:commandInvoked (proposed)"></div>
       </div>
       <div class="hud hud--bl">
-        <span class="hud__item hud__sharp indicator indicator--sharp" id="hudSharp" role="img" data-live="events:tileSettled" aria-label="Sharp"><span class="indicator__glyph"></span></span>
+        <span class="hud__item hud__sharp indicator indicator--complete" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label" id="hudSharpLabel">Rendering Complete</span></span>
         <div class="hud__item scalebar" id="scalebar" data-live="state.views[0].scale_um_per_px" aria-label="Scale bar"><span class="scalebar__bar" id="scalebarBar" style="--scalebar-length:200px"></span><span class="scalebar__label" id="scalebarLabel">100 µm</span></div>
         <div class="hud__item hud__item--quiet hud__position" id="hudPos" data-live="state.views[0].center_um">x 9.25 mm · y 2.35 mm</div>
         <div class="hud__item hud__toolpill" id="toolPill" data-live="commands" aria-hidden="true"></div>
@@ -1062,9 +1065,10 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
       </div>
     </footer>
 
-    <!-- Dialog layer: anchored over the dock column (right) or the rail column (left, palette); never the canvas centre -->
-    <div class="backdrop" id="backdrop" hidden></div>
-    <div class="modal-layer" id="modalLayer" hidden></div>
+    <!-- Dialog layer (base.css .modal-layer--dock: flush in the dock column; a bottom sheet below 1080 px) and the command palette's
+         layer (base.css .palette-layer: over the dock column at >= 1080 px, the grid's in-flow "sheet" row below); never the canvas centre; no scrim -->
+    <div class="modal-layer modal-layer--dock" id="modalLayer" hidden></div>
+    <div class="palette-layer" id="paletteLayer" hidden></div>
     <div class="toast-stack" id="toasts" aria-live="polite"></div>
     <div class="live-region" aria-live="polite" id="lr-polite">Rendering Complete. 20 times. A1-1.</div>
     <div class="live-region" aria-live="assertive" id="lr-assertive"></div>
@@ -1086,6 +1090,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <label><input type="checkbox" id="ctlOverlay"> AI overlay</label>
   <label><input type="checkbox" id="ctlLive"> Live markers</label>
   <label><input type="checkbox" id="ctlGuides"> P1 zone</label>
+  <label title="Sets data-motion=&quot;reduce&quot; on the html element (tokens.css class twin of prefers-reduced-motion)"><input type="checkbox" id="ctlMotion"> Reduce motion</label>
   <label>Open <select id="ctlDialog"><option value="">—</option><option value="keymap">Keys ?</option><option value="palette">Palette ⌃K</option><option value="signout">Sign-out ⇧↵</option><option value="dxgate">Dx gate ⇧D</option><option value="consult">Request consult</option><option value="about">About</option></select></label>
   <button id="ctlReset">Reset</button>
   <button id="ctlHide">Hide review chrome</button>
@@ -1222,7 +1227,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <thead><tr><th>Question</th><th>Positions</th><th>Decision</th></tr></thead>
 <tbody>
 <tr><td>Should the step drawer open by default at laptop width?</td><td>C opened it on step entry (DN-C4); pathologist: a sign-out reader resents a fifth of the tissue covered; ux-a11y: test for friction; engineering: a static per-surface rule</td><td>Closed by default at 1080–1599 px and on iPad portrait; open at ≥ 1600 px. The dock header says why; <kbd class="key">K</kbd> opens it over the canvas edge and a step change does not force it open on those widths</td></tr>
-<tr><td>Dialogs: anchored panels (B) or centred modals (A, C)?</td><td>ux-a11y: P1 explicitly forbids centred dialogs; pathologist preferred B's non-modal hand-off; engineering noted B's dock-anchored popovers cost little</td><td>All dialogs anchor over the dock column, the palette over the rail column; the dock sheet on touch stays ≤ 40 %, dialog sheets ≤ 50 % with internal scroll (noted as a residual intrusion on phones, which are not a sign-out surface)</td></tr>
+<tr><td>Dialogs: anchored panels (B) or centred modals (A, C)?</td><td>ux-a11y: P1 explicitly forbids centred dialogs; pathologist preferred B's non-modal hand-off; engineering noted B's dock-anchored popovers cost little</td><td>All dialogs anchor over the dock column (base.css <code>.modal-layer--dock</code>) and so does the palette (<code>.palette-layer</code>; it took the rail column until the sweep of 2026-11-01); on touch the dock sheet and the dialog sheets stay ≤ 40 % (<code>--layout-sheet-max</code>; dialog sheets were 50 % until the sweep) with internal scroll (noted as a residual intrusion on phones, which are not a sign-out surface)</td></tr>
 <tr><td>Governor: runtime measurer or static table?</td><td>B measured computed styles at runtime; engineering wanted a static table decided at the breakpoint; pathologist wanted the mechanism and the explanation</td><td>Static table with the explanation in the dock header; the measured share is review chrome only</td></tr>
 <tr><td>Two docks (B) versus region D?</td><td>Pathologist and ux-a11y: two docks split attention; engineering: most expensive shell by far (DN-B1)</td><td>One dock (region D); B's Inspector sections became step panels or anchored dialogs</td></tr>
 <tr><td>Is the step rail a wizard?</td><td>Pathologist: 40,000-case attendings will call Next a wizard; mitigation (nothing gated, Shift+G) must stay</td><td>Nothing is gated; every key works at every step; Shift+G yields plain tabs with the same contents; the cluster gives the expert A's canvas share</td></tr>
@@ -1297,7 +1302,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li><span class="dn">DN-F2</span> Scale bar: at 20× (0.50 µm/px, DPR 1) a 200 µm bar is 400 CSS px, outside the 80–200 px snap rule (§5.2), so this screen shows <b>100 µm</b> at 20× and 200 µm at 10× (DN-A1 / DN-C2). The brief's example pairing cannot hold under the plan's rule; the owner should confirm which rule wins.</li>
   <li><span class="dn">DN-F3</span> Clinical context from the LIS (narrative, prior accession, specimen parts with scanning status) and the frozen-section timestamps need a read-only integration-service contract outside the launch-context contract (plan 04 §8 / plan 12 §1.1) and carry PHI; file with an FR- id before any pillar relies on them.</li>
   <li><span class="dn">DN-F4</span> Layout policy table (principles §7 made explicit): panel open at ≥ 1600 px; closed at 1080–1599 and on touch surfaces; the dock header states the decision. Replaces DN-C4 (drawer open on step entry) and B's runtime governor (DN-B2).</li>
-  <li><span class="dn">DN-F5</span> On touch surfaces the dock sheet is capped at 40 % of the viewport and dialog sheets at 50 % with internal scroll; both are closed by default. While either is open it covers the lower part of the central 50 % × 50 % zone on a portrait tablet or phone (a sheet taller than 25 % of the canvas cannot avoid it); the sheet is transient and user-opened, and phones are not a sign-out surface. The headless audit records these as the only central-zone intrusions; since the revision of 2026-11-01 the bottom HUD lifts above the open sheet (P8), which on a 390 px phone places the magnification and scale bar inside the central zone while the sheet is open (not on a portrait tablet, where they clear it horizontally).</li>
+  <li><span class="dn">DN-F5</span> On touch surfaces the dock sheet is capped at 40 % of the viewport and, since the sweep of 2026-11-01, dialog sheets too (<code>--layout-sheet-max</code>; they were 50 %), with internal scroll; both are closed by default. While either is open it covers the lower part of the central 50 % × 50 % zone on a portrait tablet or phone (a sheet taller than 25 % of the canvas cannot avoid it); the sheet is transient and user-opened, and phones are not a sign-out surface. The headless audit records these as the only central-zone intrusions; since the revision of 2026-11-01 the bottom HUD lifts above the open sheet (P8), which on a 390 px phone places the magnification and scale bar inside the central zone while the sheet is open (not on a portrait tablet, where they clear it horizontally).</li>
   <li><span class="dn">DN-F6</span> A's radial tool is kept as a post-MVP, static-time, DOM-only option; this screen ships the plan's right-click / long-press context menu (§4.1) instead.</li>
   <li><span class="dn">DN-F7</span> The frozen-consult variant keeps the Tier-2 label image on an in-lab iPad under MDM (role-scoped); a share-link consult is Tier 0 and shows none (DN-C3). The purpose strings are the plan's four; "Frozen · in review" as a worklist state is a proposal (DN-B5).</li>
   <li><span class="dn">DN-F8</span> The preset ladder follows the plan (1.25 / 2.5 / 5 / 10 / 20 / 40×, derived, D8); the brief's "4×" is reachable by typed zoom.</li>
@@ -1315,12 +1320,25 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li><span class="dn">Revision 2026-11-01</span> Tablet portrait, phone and the embedded sheet: the bottom-left and bottom-right HUD (magnification, scale bar, Pitch unknown) and the toasts lift above the open dock sheet by its measured height (<code>--sheet-h</code>, written once at settle, never per frame; P8).</li>
   <li><span class="dn">Revision 2026-11-01</span> The 2.3 mm measurement no longer reads as a stitch seam: halo 2.5 px and ink 1.5 px (both non-scaling, <code>--ann-halo-dark</code>), end ticks ± 25 µm, and the label is a <b>HUD-layer pill in screen space</b> clamped to the visible midpoint of the on-screen segment (12 px mono on <code>--color-hud-backdrop</code>), hidden when less than 24 px of the line is in view. User measurements use the same pill. The default view opens at x 9.25 mm · y 2.35 mm so the right tick is in the field on ≥ 1366 px canvases. Engine rule for the handoff: measurement labels and ticks are HUD-layer text, never slide-space geometry.</li>
   <li><span class="dn">Revision 2026-11-01</span> Coarse-pointer targets: strip chips and the strip button use <code>--target-control</code> (the strip grows to 48 px under a coarse pointer); flow-bar steps and Next, dock buttons, section summaries, Accept / Reject / More, Close panel and the layer visibility toggle are 44 px; the legend rows and the embedded tray chips follow <code>--target-control</code>; the rail's per-step tool group scrolls instead of squeezing the foot tools when the rail is short (1366 × 1024 coarse, 1440 × 900). Navigator pan buttons are always visible and 44 px under coarse (base.css).</li>
-  <li><span class="dn">Revision 2026-11-01</span> axe: <code>aria-pressed</code> is written to <code>button[data-tool]</code> only (the app root keeps <code>data-tool</code> for the cursor); <code>#hudSharp</code> is <code>role="img"</code>; the label string is a <code>role="note"</code> without <code>aria-label</code> (its generated content is read); the badge's name carries the full regulatory string, so a phone screenshot and a screen reader both get the claim.</li>
+  <li><span class="dn">Revision 2026-11-01</span> axe: <code>aria-pressed</code> is written to <code>button[data-tool]</code> only (the app root keeps <code>data-tool</code> for the cursor); <code>#hudSharp</code> was <code>role="img"</code> and the label string a <code>role="note"</code> whose generated content was read (both replaced by real text in the sweep, below); the badge's name carries the full regulatory string, so a phone screenshot and a screen reader both get the claim.</li>
   <li><span class="dn">Revision 2026-11-01</span> Rapid preset keys: <code>flyTo()</code> cancels the previous flight's settle, soft and not-complete timers, so the live region and the pressed preset are written only at the landed scale.</li>
   <li><span class="dn">Revision 2026-11-01</span> Tier, purpose and layout are three inputs: the device tier comes from the quality record (demo <i>Tier</i> control; default Tier 1 on a fine pointer, Tier 2 on a coarse one), the session purpose from the launch context (the surface variant), and only the layout from the width. A Tier-1 companion window narrowed below 1080 px keeps <i>Sign-out</i> and its DX chip; the gate names the first failing row, so the consult variant on a desktop is refused for <i>Session purpose: Consultation · preliminary only</i>, not for a tier it does not have. The attestation line, Tier chip, QA chip, banner and About follow the same inputs.</li>
   <li><span class="dn">Revision 2026-11-01</span> Identity mismatch / session expired / manifest 503: the step panel's body and footer are <code>inert</code> and its controls read as unavailable while the canvas is blocked.</li>
-  <li><span class="dn">Revision 2026-11-01</span> Danger banner (attestation lost): its button and key inherit the inverse colour (was 1.11:1). Scoped here because base.css is outside this revision's scope; filed for the design system together with the navigator width ladder (lines kept here) and a <code>.modal-layer--dock</code> variant for the anchored dialog layer and the no-scrim rule.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Danger banner (attestation lost): its button and key inherit the inverse colour (was 1.11:1). Scoped here at the time because base.css was outside this revision's scope, and filed for the design system together with the navigator width ladder and a <code>.modal-layer--dock</code> variant with the no-scrim rule; all three landed in base.css and the page copies were deleted in the sweep (below).</li>
   <li><span class="dn">Revision 2026-11-01</span> Removed page copies of rules base.css now owns: 24 px segmented items, the hidden layer-row state (<code>.layer-row.is-off</code>), the mode-chip minimum, the 1280–1599 meta rule and the title override.</li>
+</ul>
+
+<h3>Sweep 2026-11-01 (cross-scope items the critique-stage revisers deferred; design-system README §10 "Deferred to the pages")</h3>
+<ul>
+  <li><span class="dn">Sweep 2026-11-01</span> Regulatory label string: <code>#labelString</code> is real text written from the page's <code>STRINGS</code> table (<code>textContent</code>; the product writes it from the i18n bundle), no longer base.css's <code>.badge-string--clinical::before</code> generated content; it keeps <code>role="note"</code> and has no <code>aria-label</code>. The page's <code>--string-clinical</code> override is gone (README D-F13).</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Sharpness indicator: the phone HUD twin <code>#hudSharp</code> carries a visible <code>.indicator__label</code> with the same text as the strip indicator (Sharp / Sharpening… / Soft — slow link / Rendering Complete / Not complete — do not interpret / Offline — cached tiles only) instead of <code>role="img"</code> + <code>aria-label</code> on a span, and takes <code>.is-quiet</code> together with the strip (label dims to .7, never a bare dot).</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Dialog layer: <code>#modalLayer</code> is base.css's <code>.modal-layer.modal-layer--dock</code>; the page's <code>.modal-layer</code> rules, the 320 / 360 / 440 / 560 / 760 px width steps, the <code>.is-left</code> palette variant, the 50 vh dialog-sheet height, the <code>.backdrop { display: none !important }</code> rule and the backdrop element are deleted. Dialogs are dock-wide (never wider than 25 vw − rail/4), flush with the top bar and the right edge; below 1080 px they are bottom sheets ≤ <code>--layout-sheet-max</code> (40 %, was 50 %).</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Command palette: rendered into <code>#paletteLayer</code> (base.css <code>.palette-layer</code>): over the dock column at ≥ 1080 px (it took the rail column before), and below 1080 px the grid's in-flow <code>sheet</code> row above the bottom bar, so the canvas yields height instead of being covered; <code>.app.palette-open</code> hides the dock sheet meanwhile. The page's three ≤ 1079 px grids (flow bar, phone, embedded) gained the <code>auto</code> sheet row. Click-outside, the focus trap and Esc handle both layers.</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Corner cluster: the page's 400 / 320 / 300 / 220 px width ladder is deleted; <code>renderChrome()</code> toggles base.css's <code>.navigator--wide</code> while the dock is closed and the build is not embedded (ladder <code>--layout-navigator-wide</code>, capped by base.css at 25 % of the canvas minus the inset). Measured at 1280 × 800 with the panel closed: cluster left edge 978 px = the central zone's right edge; 0 intrusions at every viewport.</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Deleted page copies of rules base.css now owns: the danger-banner button and key colours, the embed-tray and flow-chip <code>min-height</code>, the legend-row minimum and the strip button height (<code>.layer-row.is-off</code> dimming was already base.css's). Reduced-motion class twin adopted: the demo's <i>Reduce motion</i> switch sets <code>data-motion="reduce"</code> on <code>&lt;html&gt;</code> (hash <code>motion=reduce</code>) and the script's <code>RM</code> follows the OS preference or the attribute, so the fades and the settle timers can be reviewed without changing the OS setting.</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Targets under a coarse pointer: the rail's flow steps keep 44 px with the labels off (<code>.flow-off</code> had set 30 px; measured 70 × 34 at 1366 × 1024 coarse before); demo controls: selects and buttons 44 px, checkboxes 24 px inside 44 px labels with 12 px gaps (SC 2.5.8 spacing exception), the review foot 56 px — <code>#ctlGuided</code> at 14 × 14 was the page's last A1 failure. The bottom-bar tools were already 44 × 44 under coarse at every tablet and phone viewport.</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Phone top bar (T1): at 390 px the mode slot's right edge was 389 px in a 382 px bar. The empty <code>.topbar__identity-rest</code> wrapper no longer costs its 8 px flex gap on phones and the badge slot may shrink as the last resort (the purpose chip truncates before the mode slot or More can leave the bar). Measured after the fix: mode slot right edge 382 px in the 382 px bar at 390 × 844 coarse (T1 passes; the chip is 72 px, untruncated — a narrower phone or a wider system font truncates it before the mode slot or More can leave the bar). <b>Design note</b> for base.css: an identity-rest wrapper whose children are all hidden still takes the identity slot's flex gap.</li>
+  <li><span class="dn">Sweep 2026-11-01</span> Re-measured after the sweep: <code>layout-check.mjs</code> passes at all eight viewports (T1 1/1 bars, Z1 0 intrusions, S1 none, A1 0 failures incl. 390 / 1024 / 1366 coarse — the remaining "by spacing" items are the review foot's 26 px selects and 24 px checkboxes, A2 0 invisible, A3 settled label ≥ 0.5; was 4 failures); the behaviour harness reproduces every earlier result with no page errors (Dx truth on Cold 4G and tile errors, Shift+Enter while drawing, Backspace / Delete / Ctrl+Z, the Shift+D gate, the hand-off dialog's button swap, the tablet sheet's HUD lift, rapid presets, the inert panel on mismatch, the danger banner now coloured by base.css). The six shots were re-taken (coarse pointer emulated on the tablet and phone viewports).</li>
 </ul>
 
 <h3>Known weaknesses of this mock</h3>
@@ -1346,7 +1364,13 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 'use strict';
 const $ = (id) => document.getElementById(id);
 const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
-const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* Reduced motion (sweep 2026-11-01): the OS preference OR tokens.css's class twin data-motion="reduce" on <html>, which the demo's
+   "Reduce motion" switch sets (hash motion=reduce). Both zero the five motion tokens; the script's own timers follow RM. */
+function applyMotion() {
+  if (S.motion) document.documentElement.setAttribute('data-motion', 'reduce'); else document.documentElement.removeAttribute('data-motion');
+  RM = matchMedia('(prefers-reduced-motion: reduce)').matches || !!S.motion;
+}
 const SLIDE_W = 12000, SLIDE_H = 6000;              /* µm; the synthetic node is 12 × 6 mm */
 const SCAN = 0.25;                                   /* µm/px at the 40× scan */
 const PRESETS = [8, 4, 2, 1, 0.5, 0.25];             /* µm/px for 1.25 · 2.5 · 5 · 10 · 20 · 40× (derived, D8) */
@@ -1372,7 +1396,7 @@ const S = {
   compare: false, overlay: false, heat: false, legend: true, live: false, guides: false, dock: true, dockSet: false, nav: true, label: true, grid: false,
   tool: 'select', slide: 0, cx: 9250, cy: 2350, scale: 0.5, lastScale: 2, adjust: false, aiDecision: null, tier: 1, selected: null,
   sync: 'lock', cls: 'Tumor', clsVar: 'ann-2', regions: 1, measures: 1, bookmarks: 2, reviewed: false, sent: false, markReviewed: true,
-  dialog: null, settled: true, soft: false, opacity: 55, qHeld: false, echo: true, ncShown: false
+  dialog: null, settled: true, soft: false, opacity: 55, qHeld: false, echo: true, ncShown: false, motion: false
 };
 const app = $('app'), host = $('host'), canvas = $('canvas');
 let paneSize = { w: 1200, h: 700 };
@@ -1555,9 +1579,9 @@ function scheduleSettle() {
   }, delay);
 }
 function renderIndicator() {
-  const ind = $('stripIndicator'), lab = $('stripIndicatorLabel'), hud = $('hudSharp');
+  const ind = $('stripIndicator'), lab = $('stripIndicatorLabel'), hud = $('hudSharp'), hudLab = $('hudSharpLabel');
   let cls, text;
-  clearTimeout(quietTimer); ind.classList.remove('is-quiet');
+  clearTimeout(quietTimer); ind.classList.remove('is-quiet'); hud.classList.remove('is-quiet');
   if (isDx()) {
     /* FR-V4: Rendering Complete is asserted only when every drawn slot is resident at L*; a soft frame or missing tiles can never carry it.
        Any other state reads Rendering… and, after the D6 timeout (2 s), Not complete — do not interpret (assertive). */
@@ -1570,10 +1594,10 @@ function renderIndicator() {
   else if (S.soft) { cls = 'soft'; text = 'Soft — slow link'; }
   else if (S.cond === 'tileerror') { cls = 'soft'; text = 'Soft — level not yet available'; }
   else if (S.cond === 'slow') { cls = 'sharpening'; text = 'Sharpening…'; }
-  else { cls = 'sharp'; text = 'Sharp'; if (!RM) quietTimer = setTimeout(() => ind.classList.add('is-quiet'), 800); }
+  else { cls = 'sharp'; text = 'Sharp'; if (!RM) quietTimer = setTimeout(() => { ind.classList.add('is-quiet'); hud.classList.add('is-quiet'); }, 800); }
   if (!isDx()) { S.ncShown = false; clearTimeout(ncTimer); ncTimer = null; }
   ind.className = 'indicator indicator--' + cls; lab.textContent = text;
-  hud.className = 'hud__item hud__sharp indicator indicator--' + cls; hud.setAttribute('aria-label', text);
+  hud.className = 'hud__item hud__sharp indicator indicator--' + cls; hudLab.textContent = text;   /* the HUD twin (phones, where the strip is hidden) carries the same visible text */
 }   /* the indicator is the only strip element that changes with the pixels; the notice and mode chip change only with state (renderStrip) */
 function announce(text, assertive) { $(assertive ? 'lr-assertive' : 'lr-polite').textContent = text; }
 function announceView() { announce($('stripIndicatorLabel').textContent + '. ' + magText(S.scale).replace('×', ' times') + '. ' + SLIDES[S.slide].id + '.'); }
@@ -1646,7 +1670,7 @@ function renderProduct() {
   const m = map[S.product];
   const badge = $('badge'); badge.className = 'badge badge--' + m[1]; badge.textContent = m[0];
   badge.setAttribute('aria-label', 'Product: Stoipath ' + (S.product === 'ruo' ? 'Viewer, research use only' : m[0]) + '. ' + STRINGS[S.product] + ' Opens the full label and About');
-  $('labelString').className = 'topbar__label badge-string badge-string--' + m[1];
+  $('labelString').textContent = STRINGS[S.product];   /* real text, never CSS generated content (README D-F13) */
   app.classList.toggle('is-refused', S.product === 'ruo'); $('plateRefused').hidden = S.product !== 'ruo';
   app.dataset.build = S.product;
   $('purposeChip').hidden = S.product !== 'clinical-ih';
@@ -1812,6 +1836,8 @@ function renderOverlay() {
 /* ---- chrome classes, layout policy note and demo controls -------------- */
 function renderChrome() {
   app.classList.toggle('dock-open', S.dock); app.classList.toggle('nav-open', S.nav); app.classList.toggle('label-off', !S.label);
+  $('navigator').classList.toggle('navigator--wide', !S.dock && S.variant !== 'embedded');   /* base.css width ladder for the at-rest corner cluster (sweep 2026-11-01) */
+  applyMotion();
   app.classList.toggle('grid-on', S.grid); app.dataset.tool = S.tool; app.classList.toggle('echo-off', !S.echo);
   $('panes').classList.toggle('is-compare', S.compare);
   $$('[data-cmd="compare"]').forEach((b) => b.setAttribute('aria-pressed', S.compare ? 'true' : 'false'));
@@ -1842,7 +1868,7 @@ function renderToolPill() {
 function renderControls() {
   $('ctlProduct').value = S.product; $('ctlVariant').value = S.variant; $('ctlCond').value = S.cond; $('ctlStep').value = String(S.step); $('ctlTier').value = String(S.tier);
   $('ctlGuided').checked = S.guided; $('ctlDx').checked = S.dxWanted; $('ctlCompare').checked = S.compare; $('ctlOverlay').checked = S.overlay;
-  $('ctlLive').checked = S.live; $('ctlGuides').checked = S.guides; $('ctlDock').checked = S.dock; $('ctlDialog').value = S.dialog && $('ctlDialog').querySelector('[value="' + S.dialog + '"]') ? S.dialog : '';
+  $('ctlLive').checked = S.live; $('ctlGuides').checked = S.guides; $('ctlMotion').checked = S.motion; $('ctlDock').checked = S.dock; $('ctlDialog').value = S.dialog && $('ctlDialog').querySelector('[value="' + S.dialog + '"]') ? S.dialog : '';
 }
 function applyAll() {
   renderProduct(); renderVariant(); renderCond(); renderFlow(); renderOverlay(); renderChrome(); measure(); paintView(); renderIndicator(); renderStrip(); renderChecklist(); renderTray(); renderTrail(); renderSettled(); renderControls(); writeHash();
@@ -1854,7 +1880,7 @@ function writeHash() {
   if (S.heat) p.set('heat', '1'); if (!S.legend) p.set('legend', '0'); if (S.live) p.set('live', '1'); if (S.guides) p.set('guides', '1');
   if (S.dockSet) p.set('dock', S.dock ? '1' : '0'); if (!S.nav) p.set('nav', '0');
   if (S.slide) p.set('slide', S.slide); if (S.dialog) p.set('dialog', S.dialog); if (S.adjust) p.set('adjust', '1'); if (S.tool !== 'select') p.set('tool', S.tool);
-  if (!S.echo) p.set('echo', '0'); if (S.tier !== defaultTier()) p.set('tier', S.tier);
+  if (!S.echo) p.set('echo', '0'); if (S.tier !== defaultTier()) p.set('tier', S.tier); if (S.motion) p.set('motion', 'reduce');
   const mt = magText(S.scale); if (mt !== '20×') p.set('mag', mt.replace('×', ''));
   const h = '#' + p.toString();
   try { history.replaceState(null, '', h); } catch (e) { /* file:// in some browsers */ }
@@ -1867,7 +1893,7 @@ function readHash() {
   S.step = h.get('step') ? Math.min(5, Math.max(1, parseInt(h.get('step'), 10) || 3)) : 3;
   S.guided = h.get('guided') !== '0'; S.dxWanted = h.get('dx') !== '0';
   S.compare = h.get('compare') === '1'; S.overlay = h.get('overlay') === '1'; S.heat = h.get('heat') === '1'; S.live = h.get('live') === '1'; S.guides = h.get('guides') === '1';
-  S.legend = h.get('legend') !== '0'; S.echo = h.get('echo') !== '0';
+  S.legend = h.get('legend') !== '0'; S.echo = h.get('echo') !== '0'; S.motion = h.get('motion') === 'reduce';
   S.tier = h.get('tier') === '2' ? 2 : (h.get('tier') === '1' ? 1 : defaultTier());
   if (h.has('dock')) { S.dock = h.get('dock') !== '0'; S.dockSet = true; } else { S.dockSet = false; S.dock = layoutPolicy().open; }
   S.nav = h.get('nav') !== '0'; S.adjust = h.get('adjust') === '1';
@@ -1890,6 +1916,7 @@ $('ctlCompare').addEventListener('change', (e) => { S.compare = e.target.checked
 $('ctlOverlay').addEventListener('change', (e) => { S.overlay = e.target.checked; renderOverlay(); renderChecklist(); writeHash(); });
 $('ctlLive').addEventListener('change', (e) => { S.live = e.target.checked; renderChrome(); writeHash(); });
 $('ctlGuides').addEventListener('change', (e) => { S.guides = e.target.checked; renderChrome(); writeHash(); });
+$('ctlMotion').addEventListener('change', (e) => { S.motion = e.target.checked; applyMotion(); renderIndicator(); writeHash(); });
 $('ctlDialog').addEventListener('change', (e) => { if (e.target.value) openDialog(e.target.value); else closeDialog(); });
 $('ctlReset').addEventListener('click', () => { location.hash = ''; location.reload(); });
 $('ctlHide').addEventListener('click', () => { document.body.classList.toggle('review-hidden'); requestAnimationFrame(() => { measure(); paintView(); updateShare(); }); });
@@ -2024,7 +2051,7 @@ function runCmd(cmd, src) {
 document.addEventListener('click', (e) => {
   const t = e.target;
   if (!t.closest('#ctxmenu')) closeCtx();
-  if (S.dialog && !t.closest('#modalLayer') && !t.closest('.review-foot')) closeDialog(true);   /* click outside closes; the click still acts on what was clicked */
+  if (S.dialog && !t.closest('#modalLayer, #paletteLayer') && !t.closest('.review-foot')) closeDialog(true);   /* click outside closes; the click still acts on what was clicked */
   const closeBtn = t.closest('[data-close]'); if (closeBtn) { closeDialog(); return; }
   const ctx = t.closest('button[data-ctx]'); if (ctx) { const p = ctxPoint; closeCtx(); setTool(ctx.dataset.ctx); if (p) startDraftAt(p); return; }
   const cmd = t.closest('button[data-cmd]'); if (cmd) { if (!cmd.disabled) runCmd(cmd.dataset.cmd, cmd); return; }
@@ -2044,7 +2071,7 @@ document.addEventListener('click', (e) => {
   const pres = t.closest('button[data-present]'); if (pres) { S.heat = pres.dataset.present === 'heatmap'; renderOverlay(); writeHash(); echo('overlay.' + pres.dataset.present); return; }
   const cls = t.closest('button[data-cls]'); if (cls) { S.cls = cls.dataset.cls; S.clsVar = cls.dataset.sw; renderChrome(); echo('class.' + S.cls.toLowerCase()); return; }
   const tpl = t.closest('button[data-tpl]'); if (tpl) { $('prelimText').value = tpl.dataset.tpl; return; }
-  const sw = t.closest('.toggle[role="switch"]'); if (sw && !t.closest('.modal-layer')) { const on = sw.getAttribute('aria-checked') !== 'true'; sw.setAttribute('aria-checked', on ? 'true' : 'false'); if (sw.id === 'markReviewed') S.markReviewed = on; return; }
+  const sw = t.closest('.toggle[role="switch"]'); if (sw && !t.closest('.modal-layer, .palette-layer')) { const on = sw.getAttribute('aria-checked') !== 'true'; sw.setAttribute('aria-checked', on ? 'true' : 'false'); if (sw.id === 'markReviewed') S.markReviewed = on; return; }
   if (t.closest('#badge, #moreBtn')) { openDialog('about'); return; }
   if (t.closest('#modeChip')) { openDialog('dxgate'); return; }
   if (t.closest('#embedFlowChip')) { openDialog('steps'); return; }
@@ -2271,7 +2298,7 @@ function addBookmark() {
 
 /* ---- keyboard (every action has a key; no Ctrl/Alt/F-keys; NOTHING bound inside the Hyperdrive iframe) ---- */
 function trapFocus(e) {
-  const f = $$('button, input, select, textarea, [tabindex]:not([tabindex="-1"])', $('modalLayer')).filter((x) => !x.disabled && x.offsetParent !== null);
+  const f = $$('button, input, select, textarea, [tabindex]:not([tabindex="-1"])', $(S.dialog === 'palette' ? 'paletteLayer' : 'modalLayer')).filter((x) => !x.disabled && x.offsetParent !== null);
   if (!f.length) return;
   const i = f.indexOf(document.activeElement);
   if (e.shiftKey && i <= 0) { f[f.length - 1].focus(); e.preventDefault(); } else if (!e.shiftKey && i === f.length - 1) { f[0].focus(); e.preventDefault(); }
@@ -2368,12 +2395,12 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => { if (e.key === 'q' || e.key === 'Q') S.qHeld = false; if (e.key === ' ') { spaceHeld = false; canvas.classList.remove('space-pan'); } });
 
-/* ---- dialogs: anchored over the dock column (right) or the rail column (left: palette); the three top-bar slots stay visible ---- */
+/* ---- dialogs: base.css .modal-layer--dock (dock column); the palette: base.css .palette-layer (dock column at >= 1080 px, the in-flow sheet row below); the three top-bar slots stay visible ---- */
 function openDialog(name) {
   const tpl = $('tpl-' + name); if (!tpl) return;
   closeDialog(true); closeCtx();
   const node = tpl.content.firstElementChild.cloneNode(true);
-  const layer = $('modalLayer'); layer.innerHTML = ''; layer.appendChild(node); layer.hidden = false; layer.classList.toggle('is-left', name === 'palette'); $('backdrop').hidden = false; S.dialog = name;
+  const layer = $(name === 'palette' ? 'paletteLayer' : 'modalLayer'); layer.innerHTML = ''; layer.appendChild(node); layer.hidden = false; app.classList.toggle('palette-open', name === 'palette'); S.dialog = name;
   let focusEl = null;
   if (name === 'signout') { renderSignoutDialog(node); focusEl = node.querySelector(SLIDES.some((s) => !s.opened) ? '#soOpenFirst' : '#soReturn'); }
   if (name === 'send') { const v = $('prelimText').value.trim(); if (v) node.querySelector('#sdNote').textContent = v; node.querySelector('#sdViewed').textContent = SLIDES.filter((s) => s.opened).length + ' of 3'; node.querySelector('#sdTat').textContent = $('tatBig').textContent; node.querySelector('#sdMode').textContent = isDx() ? 'Dx mode' : 'Nav mode (' + (dxGate().reason || '').replace(/\.$/, '') + ')'; }
@@ -2394,8 +2421,8 @@ function openDialog(name) {
   echo('dialog.' + name); renderControls(); writeHash();
 }
 function closeDialog(silent) {
-  const layer = $('modalLayer'); if (layer.hidden && !S.dialog) return;
-  layer.hidden = true; layer.innerHTML = ''; $('backdrop').hidden = true; S.dialog = null;
+  const ml = $('modalLayer'), pl = $('paletteLayer'); if (ml.hidden && pl.hidden && !S.dialog) return;
+  ml.hidden = pl.hidden = true; ml.innerHTML = pl.innerHTML = ''; app.classList.remove('palette-open'); S.dialog = null;
   if (!silent) { renderControls(); writeHash(); if (!matchMedia('(pointer: coarse)').matches) canvas.focus({ preventScroll: true }); }
 }
 function renderSignoutDialog(node) {

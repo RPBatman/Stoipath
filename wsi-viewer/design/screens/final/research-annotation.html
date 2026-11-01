@@ -19,6 +19,10 @@
    decisions). The design system's 2026-11-01 revision owns segmented heights,
    navigator pads, layer-row dimming and coarse-pointer control sizes; the
    page's earlier copies of those rules are gone.
+   Sweep 2026-11-01: the palette placement (.palette-layer) and the selected
+   palette row come from base.css §6.9; the layer is hidden with the `hidden`
+   attribute; the widget surface is .app--widget; the Reduce-motion switch
+   sets data-motion="reduce" (tokens.css class twin). See decisions §4c.
    ========================================================================== */
 :root {
   --review-h: 28px;            /* review header (not product chrome)            */
@@ -392,14 +396,7 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }   
 .about p { padding: 0 var(--space-5); font-size: var(--text-sm); line-height: 1.5; }
 .about .label-text { white-space: normal; display: block; margin: 0; padding: 0 var(--space-5); font-size: var(--text-md); color: var(--color-text); line-height: 1.5; }
 
-/* Command palette: drops from the top-bar search field over the Context column (never the canvas centre); below 1080 px it is a bottom sheet above the bottom bar. No scrim (revision 2026-11-01): the canvas stays hittable and a click outside closes it, as in the clinical final. Design note: one .palette-layer rule belongs in base.css §6.9 (design-system scope). */
-.palette-layer { position: absolute; top: var(--layout-topbar); right: 0; width: var(--layout-dock); max-height: calc(100% - var(--layout-topbar) - var(--layout-strip)); z-index: var(--z-palette); display: none; }
-.app.palette-open .palette-layer { display: block; }
-.palette-layer .palette { width: 100%; border-radius: 0 0 0 var(--radius-4); border-top: 0; }
-.palette-layer .palette__list { max-height: min(420px, 55vh); }
-/* Selected row: the selected colour, not the hover colour, so the secondary line keeps ≥ 4.5:1 (page override until base.css §6.9 and .menu__item change) */
-.palette__item[aria-selected="true"], .palette__item.is-selected { background: var(--color-control-selected); }
-.palette__item[aria-selected="true"] .meta, .palette__item.is-selected .meta { color: var(--color-text); }
+/* Command palette (sweep 2026-11-01): placement is base.css §6.9's one .palette-layer rule (drops from the top bar over the dock column ≥ 1080 px, never the canvas centre; the in-flow sheet row ≤ 1079 px; hidden with the `hidden` attribute; no scrim, a pointer-down outside closes it) and the selected row is base.css's selection colour + indicator bar. The page's copies of both are gone; below is only the page's own row layout (icon · label / meta · keys) and the pill. */
 .palette__item .pill { font-size: var(--text-2xs); padding: 0 5px; border-radius: 3px; background: var(--color-control-bg); color: var(--color-text-secondary); font-family: var(--font-mono); }
 .palette__item { display: grid; grid-template-columns: minmax(16px, auto) minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; }
 .palette__item > .icon, .palette__item > .swatch, .palette__item > .pill { grid-column: 1; grid-row: 1 / span 2; }
@@ -407,7 +404,6 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }   
 .palette__item .meta { grid-column: 2; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); margin: 0; }
 .palette__item .keys { grid-column: 3; grid-row: 1 / span 2; margin: 0; }
 .palette__item[aria-disabled] { display: flex; }
-.app.focus .palette-layer { width: min(360px, 25%); }
 
 /* Bottom bar (tablet portrait, phone): labelled 44 px targets */
 .bottombar { justify-content: space-around; padding: 0 var(--space-2); gap: var(--space-1); }
@@ -442,7 +438,6 @@ body.surface-widget > .app.wb { display: none; }
 .nb__widget .app.wb .rail-toggle { display: inline-flex; }
 .nb__widget .app.wb .badge { min-height: 20px; }
 .nb__widget .app.wb .hud__position { display: none; }
-.nb__widget .app.wb .palette-layer { width: 360px; }
 .nb__widget .app.wb .strip { font-size: var(--text-xs); }
 .nb__note { font-size: var(--text-sm); color: #4a4a4a; margin: 0; padding-left: 84px; }
 
@@ -478,7 +473,7 @@ body.surface-widget > .app.wb { display: none; }
   .app.wb .pstrip { display: flex; }
   .app.wb.lib-open .lib { display: flex; position: absolute; left: var(--layout-rail); top: var(--layout-topbar); bottom: var(--layout-strip); width: var(--lib-w); z-index: var(--z-drawer); box-shadow: var(--shadow-3); border-right: 1px solid var(--color-border-strong); }
   .app.wb.dock-open .ctx { display: flex; position: absolute; right: var(--pstrip-w); top: var(--layout-topbar); bottom: var(--layout-strip); width: var(--layout-dock); z-index: var(--z-drawer); box-shadow: var(--shadow-3); border-left: 1px solid var(--color-border-strong); }
-  .app.wb .palette-layer { right: var(--pstrip-w); width: var(--layout-dock); }
+  .app.wb:not(.focus) .palette-layer { right: var(--pstrip-w); }   /* page-owned offset only: the palette drops over the drawer track, left of the panel strip (a page element; hidden in focus mode, where the offset would push the palette 12 px into the central zone at 1440); its width is base.css's */
   .app.wb.dock-open .tr-stack, .app.wb.dock-open .view-a .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   .app.wb.dock-open { --layout-navigator: 180px; }
   .app.wb.dock-open .view-b .panelabel, .app.wb.dock-open .view-b .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
@@ -496,7 +491,7 @@ body.surface-widget > .app.wb { display: none; }
   .app.wb .rail, .app.wb .pstrip { display: none; }
   .app.wb .bottombar { display: flex; }
   .app.wb .dock { grid-area: sheet; position: relative; inset: auto; width: auto; height: var(--sheet-peek); max-height: none; border-left: 0; border-right: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail); }
-  .app.wb.lib-open .lib, .app.wb.dock-open .ctx { display: flex; }
+  .app.wb.lib-open:not(.palette-open) .lib, .app.wb.dock-open:not(.palette-open) .ctx { display: flex; }   /* yields to base.css's .app.palette-open .dock { display: none } (same specificity, earlier in the cascade): the palette takes the sheet row alone */
   .app.wb.sheet-expanded .dock { height: var(--layout-sheet-max); }
   .app.wb:not(.sheet-expanded) .dock .dock__body, .app.wb:not(.sheet-expanded) .dock .dock__resizer, .app.wb:not(.sheet-expanded) .dock .paneloverlay { display: none; }
   .dock__resizer { display: none; }
@@ -507,11 +502,7 @@ body.surface-widget > .app.wb { display: none; }
   .grabbtn .title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-semibold); font-size: var(--text-sm); }
   .grabbtn .hintlbl { font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
   .dock__switch { display: inline-flex; flex: 0 0 auto; margin-right: var(--space-2); }
-  /* Palette as the in-flow sheet (C's pattern, D-F2): it takes the sheet row in place of the dock while open, ≤ 40 % high, so the canvas yields height and nothing covers the slide centre (P1) */
-  .palette-layer, .app.wb .palette-layer { position: static; grid-area: sheet; top: auto; bottom: auto; left: auto; right: auto; width: auto; max-height: var(--layout-sheet-max); z-index: var(--z-rail); }
-  .app.wb.palette-open .dock { display: none; }
-  .palette-layer .palette { display: flex; flex-direction: column; max-height: var(--layout-sheet-max); border-radius: var(--radius-5) var(--radius-5) 0 0; border-top: 1px solid var(--color-border-strong); border-left: 0; border-right: 0; border-bottom: 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); }
-  .palette-layer .palette__list { flex: 1 1 auto; min-height: 0; max-height: none; }
+  /* Palette as the in-flow sheet row (C's pattern, D-F2): base.css's ≤ 1079 px .palette-layer rule (sweep 2026-11-01) takes the sheet row in place of the dock while open, ≤ 40 % high; the page's copy is gone */
   .toast-stack { right: var(--space-4); bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
   .pstrip { display: none !important; }
   .canvas-area.is-side { grid-template-columns: 1fr; grid-template-rows: 1fr 1px 1fr; }
@@ -565,6 +556,7 @@ body.surface-widget > .app.wb { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .canvas-area .world { transition: none !important; }
 }
+[data-motion="reduce"] .canvas-area .world { transition: none !important; }   /* class twin (tokens.css §4, sweep 2026-11-01): the Reduce-motion switch sets data-motion="reduce" on <html> */
 @media print {
   .review-head, .demo, .decisions { display: none; }
 }
@@ -1386,7 +1378,7 @@ body.surface-widget > .app.wb { display: none; }
   </footer>
 
   <!-- Command palette: drops from the top-bar search field over the Context column (B's field, C's placement rule); a bottom sheet below 1080 px; no scrim, click outside closes -->
-  <div class="palette-layer" id="paletteLayer">
+  <div class="palette-layer" id="paletteLayer" hidden>
     <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
       <div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Type a command, slide, layer, class or bookmark…" aria-label="Search commands, slides, layers, classes and bookmarks" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off"><kbd class="key">Esc</kbd></div>
       <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
@@ -1519,16 +1511,29 @@ v.state</pre></div>
   <h3>4b. Revision 2026-11-01 · fixes from the pathologist and a11y-ux critiques</h3>
   <ul>
     <li><b>Revision 2026-11-01</b> · <i>Wrong-slide hazard (high).</i> One launch-context object drives every identity surface. <code>renderIdentity()</code> writes the top-bar accession (+ part-block), the HUD identity line, the navigator caption and label image, the Inspector and Slides "this slide" headers, the Case row, the annotation layer name, the compare view's label, the canvas <code>aria-label</code>, the snapshot and bookmark footers and the live region from <code>SLIDES[k]</code> in the RUO build and from <code>LAUNCH</code> (accession · part-block · stain) in Clinical-IH / Dx. Clinical builds show no cohort text, no CC0 chip, no Cohort panel and no CAMELYON ground-truth layer; the top bar reads <code>AP-26-04417 · A1-1</code> and the HUD <code>AP-26-04417 · A1-1 · H&amp;E</code>. The demo readout's <b>identity</b> field asserts that every surface names the same slide (its visible text contains the identity tokens; the top bar must carry the case key, and the part-block may leave it ≤ 1263 px) and turns amber if one disagrees.</li>
-    <li><b>Revision 2026-11-01</b> · <i>Palette placement (P1).</i> The scrim is gone (the canvas stays hittable; a pointer-down outside the palette closes it, as in the clinical final). Below 1080 px the palette is the in-flow sheet: it takes the sheet row in place of the dock while open (≤ 40 % high, rounded top corners), so the canvas yields height and the slide centre is never covered (a bottom-anchored overlay would still reach 190 px into the central zone on a portrait tablet); at ≥ 1080 px it keeps dropping over the Context column (over the drawer track at 1080–1599). Design note: the three finals still each carry a <code>.palette-layer</code> rule; one rule belongs in base.css §6.9 (design-system scope).</li>
+    <li><b>Revision 2026-11-01</b> · <i>Palette placement (P1).</i> The scrim is gone (the canvas stays hittable; a pointer-down outside the palette closes it, as in the clinical final). Below 1080 px the palette is the in-flow sheet: it takes the sheet row in place of the dock while open (≤ 40 % high, rounded top corners), so the canvas yields height and the slide centre is never covered (a bottom-anchored overlay would still reach 190 px into the central zone on a portrait tablet); at ≥ 1080 px it keeps dropping over the Context column (over the drawer track at 1080–1599). Design note: the three finals still each carry a <code>.palette-layer</code> rule; one rule belongs in base.css §6.9 (design-system scope). Sweep 2026-11-01: base.css §6.9 carries it; this page's copies are deleted (§4c).</li>
     <li><b>Revision 2026-11-01</b> · <i>Clinical top bar at 1024 / 390 px (P4).</i> The identity is accession + a separate part-block span inside the design system's <code>.topbar__identity-rest</code> structure; the page's own container queries now sit on the system's ladder (1599 / 1319 / 1263 / 1063): in clinical builds the progress chip hides ≤ 1599 (it lives in the Library) and the part-block ≤ 1263 (it stays in the HUD identity line, the navigator caption and the label image), the search field becomes a 44 px icon ≤ 1263 and hides ≤ 1063 where the bottom bar carries Search (≤ 1079 in clinical builds, where one more pixel would truncate the string). Measured: the string is complete and the mode indicator on screen in every build at 1024, 1366, 1440, 1920 and 3840. The label string and the NAV / DX indicator stay on screen at 1024 in every build.</li>
     <li><b>Revision 2026-11-01</b> · <i>Keyboard focus.</i> <code>closeRadial()</code> returns focus to the canvas whenever the wheel held it or the active element fell back to <code>&lt;body&gt;</code>, so <kbd class="key">Q</kbd> then a digit, a wheel pick and Esc all end on the canvas. The canvas area precedes the rail in DOM order (top bar → canvas → rail → Library → Context, principles §8.3); each dock's resizer is its last child, so Tab reaches the panel before the separator. The palette returns focus to the canvas after a command and to the search button after Esc (or to the canvas when the button is hidden).</li>
     <li><b>Revision 2026-11-01</b> · <i>Coarse-pointer targets.</i> The panel strip is 44 px wide with 44 px buttons under a coarse pointer (<code>--pstrip-w</code>); the search field, progress chip, badge, class chips, sheet footer buttons, legend rows and layer / channel controls are sized from <code>--target-control</code>; the dock resizer has a 24 px hit box around its 6 px bar and the curtain handle a 24 px (44 px coarse) hit box via <code>::before</code>; the GeoJSON and manifest snippets are focusable regions. Navigator pan buttons follow the design system (always visible, 44 px hit area with a 28 px pad hugging the thumbnail edges under coarse), so the viewport rectangle stays readable on the 220 px navigator.</li>
     <li><b>Revision 2026-11-01</b> · <i>Label string.</i> The RUO / Clinical-IH / Dx string is real text written from the i18n bundle stand-in (<code>LABEL[product]</code>, the same strings as tokens.css) into <code>#labelString</code> and the About sheet; the <code>.badge-string--*</code> CSS-content helper and the <code>aria-label</code> on a role-less span are no longer used here. Design note for README §1: product code must not rely on the CSS helper (not selectable, not in <code>innerText</code>, not localised, exposed inconsistently to AT). The same change is due in clinical-signout.html (out of this revision's scope).</li>
     <li><b>Revision 2026-11-01</b> · <i>Click handling (found while verifying focus).</i> The delegated click handler matched <code>[data-surface]</code>, which the app root also carries, so every click inside the product re-ran <code>setSurface()</code>: the app node was re-inserted (focus fell to <code>&lt;body&gt;</code>) and <code>initLayout()</code> closed any open drawer. The selector is now scoped to the demo strip, and a pointer-down on the canvas focuses it explicitly.</li>
-    <li><b>Revision 2026-11-01</b> · <i>Palette contrast.</i> The selected palette row uses the selected colour and its secondary line the primary text colour (page override until base.css §6.9 and <code>.menu__item</code> change).</li>
+    <li><b>Revision 2026-11-01</b> · <i>Palette contrast.</i> The selected palette row uses the selected colour and its secondary line the primary text colour (page override until base.css §6.9 and <code>.menu__item</code> change). Sweep 2026-11-01: base.css §6.9 changed; the override is deleted (§4c).</li>
     <li><b>Revision 2026-11-01</b> · <i>Nested interactive.</i> The candidate queue is a list whose rows are one button each (fly to the region) with the reviewed checkbox as a sibling cell; the annotation list stays a text-only listbox.</li>
     <li><b>Revision 2026-11-01</b> · <i>Drawer width at 1080–1599 px.</i> <code>--layout-dock</code> is at most 25 % of the canvas track (viewport − rail − panel strip; 336 px at 1440, 318 at 1366, 314 with the pen rail), floored at 272 px so the panels stay usable; the palette follows. The floor intrudes ≤ 25 px into the central zone only between 1080 and 1179 px.</li>
-    <li><b>Revision 2026-11-01</b> · <i>Page copies of design-system rules deleted</i>: segmented heights, navigator pan buttons, layer-row grid and opacity dimming, coarse control sizes, the HUD sharpness display rules, the second container-query ladder; sheet heights use <code>--layout-sheet-max</code>. Kept, as page-scoped overrides with a note: the palette selected-row colours and the <code>.palette-layer</code> placement. Role-less labelled containers (identity group, pan group, pen palette, channel grid, canvas region, snippets, viewed marker) carry explicit roles.</li>
+    <li><b>Revision 2026-11-01</b> · <i>Page copies of design-system rules deleted</i>: segmented heights, navigator pan buttons, layer-row grid and opacity dimming, coarse control sizes, the HUD sharpness display rules, the second container-query ladder; sheet heights use <code>--layout-sheet-max</code>. Kept, as page-scoped overrides with a note: the palette selected-row colours and the <code>.palette-layer</code> placement (sweep 2026-11-01: both deleted, §4c). Role-less labelled containers (identity group, pan group, pen palette, channel grid, canvas region, snippets, viewed marker) carry explicit roles.</li>
+  </ul>
+
+  <h3>4c. Sweep 2026-11-01 · design-system adoption (the deferred cross-scope items)</h3>
+  <ul>
+    <li><b>Sweep 2026-11-01</b> · <i>Palette layer.</i> The page's five <code>.palette-layer</code> rules (the desktop drop, the focus-mode width, the widget width, the 1080–1599 px width and the ≤ 1079 px in-flow sheet copy) are deleted; base.css §6.9's one rule places it. The layer is hidden with the <code>hidden</code> attribute (<code>openPalette()</code> / <code>closePalette()</code> toggle it next to <code>.palette-open</code>, which base.css reads to hide the dock while the palette holds the sheet row). One offset stays page-owned: <code>right: var(--pstrip-w)</code> at 1080–1599 px, because the panel strip is a page element with no base.css counterpart; it is scoped to <code>:not(.focus)</code> because the strip is hidden in focus mode and the offset pushed the palette 12 px into the central zone at 1440 px (left edge 1068 → 1104 px). Measured with the palette open: 400 × 510 px at 3840, 360 at 1920 and 1600, 336 at 1440, 319 at 1366, 297 at 1280 and 256 at 1080 (there base.css's 25 vw − rail/4 term wins and the left edge reaches 9 px into the zone, down from 25 px with the page's 272 px floor); on the tablet and phone the palette is the 40 % sheet row (546 of 1366, 338 of 844 px), the dock is hidden while it is open and returns at its 89 px peek on Esc; the zone is clear at every other size. The screenshots caught one regression on the way: with the page's <code>.app.wb.palette-open .dock</code> copy gone, the page's own <code>.app.wb.dock-open .ctx { display: flex }</code> (same specificity, later in the cascade) beat base.css's rule and the sheet's grab row sat over the palette's input; that page rule now carries <code>:not(.palette-open)</code> so the system rule wins without a copy.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Selected palette row.</i> The page's selection colours are deleted; base.css §6.9 now paints <code>.palette__item[aria-selected="true"]</code> with <code>--color-control-selected</code> and the 2 px indicator bar (measured: secondary line rgb(176,176,176) on rgb(64,64,64), the README's 4.78:1 pair). D-F12 is resolved.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Widget surface.</i> <code>setSurface('widget')</code> adds <code>.app--widget</code>, so the widget's palette width (360 px, measured) and layout tokens come from base.css's widget variant; the page's widget-width copy is gone (the page's widget frame still sets the same 36 / 24 px bar and strip heights).</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Reduce motion.</i> The settings switch sets <code>data-motion="reduce"</code> on <code>&lt;html&gt;</code> (tokens.css's class twin of the media query) besides <code>state.reduceMotion</code>; measured on: <code>--motion-base</code> and <code>--hud-label-fade-delay</code> 0 ms and the world transition 0 s, off: 120 ms. The page's own <code>.canvas-area .world</code> transition rule has the same class twin.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Dock dialogs.</i> This page has no <code>.modal-layer</code>: the keymap, About and pixel-quality overlays are in-dock panel overlays (they replace the panel, never the slide) and the fault states are plates, so there is nothing to migrate to <code>.modal-layer--dock</code>; a floating dialog added later uses it.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Navigator ladder.</i> No page ladder copy exists; the three page values are states, not a ladder (180 px while the laptop drawer is open, 180 px in the widget, 220 px under a coarse pointer so the 28 px pan pads leave a readable thumbnail), and all sit under base.css's 25 % cap.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Dimmed rows.</i> <code>.layer-row.is-off</code> has been base.css's since the revision; the channel rows (<code>.ch-row</code>, a page element) mirror it with colour dimming and the "hidden" chip, the one page-owned copy, kept because base.css has no channel row.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Label strings and sharpness, re-verified.</i> <code>#labelString</code> and <code>#aboutString</code> are text from <code>LABEL[product]</code> (RUO and Clinical-IH strings measured), with no generated content and no <code>aria-label</code> on a role-less span (0 found); the strip indicator reads "Sharp" (label at .7 once settled) and the phone HUD indicator "Sharp" at 12 px, opacity 1.</li>
+    <li><b>Sweep 2026-11-01</b> · <i>Targets.</i> <code>layout-check.mjs</code> passes at all eight viewports (0 of 40–76 operable targets under 24 / 44 px; the 19–21 "by spacing" items under coarse are the review-only demo strip at 26 px and base.css's 40 px segmented items inside 44 px controls); the panel-strip buttons measure 44 × 72 px under a coarse pointer (the deferred note's "28 px-wide strip" predates the revision's <code>--pstrip-w: 44px</code>). The page harness reports 0 axe violations and the same focus paths as before.</li>
   </ul>
 
   <h3>5. Design notes carried forward for the plan owner</h3>
@@ -1537,8 +1542,8 @@ v.state</pre></div>
   <div class="dn"><b>D-F3</b> · "Run a model", the job list, the uncertainty queue, "Mark slide complete" and the "Slide 14 of 48" collection state are research-package services (job service and collection store), not engine contracts; they belong on the v0.9 backlog with FR- IDs (plan 12 §1.1 rule).</div>
   <div class="dn"><b>D-F4</b> · <s>base.css: the navigator pan buttons are 24 px and hover-revealed; under a coarse pointer they must be 44 px and visible. The phone badge (34 × 24) is below the coarse-pointer target size.</s> Revision 2026-11-01: resolved in base.css (always-visible pads, <code>--target-control</code> for badges); this page's override is deleted.</div>
   <div class="dn"><b>D-F5</b> · <s>base.css: <code>.segmented__item</code> computes to 18 px at the 24 px target.</s> Revision 2026-11-01: resolved in base.css; this page's copy is deleted.</div>
-  <div class="dn"><b>D-F12</b> · base.css §6.9: <code>.palette__item[aria-selected="true"]</code> and <code>.menu__item[aria-selected="true"]</code> use the hover colour, which leaves the secondary line at 3.6:1; use <code>--color-control-selected</code> (this page overrides locally). One shared <code>.palette-layer</code> rule (dock-column anchor ≥ 1080 px, bottom sheet below) would replace the three finals' variants.</div>
-  <div class="dn"><b>D-F13</b> · README §1 / components.html: the <code>.badge-string--*</code> helpers render the regulatory string as CSS generated content; keep them for the component sheet only and state that product code writes the string as text from the i18n bundle (this page does).</div>
+  <div class="dn"><b>D-F12</b> · <s>base.css §6.9: <code>.palette__item[aria-selected="true"]</code> and <code>.menu__item[aria-selected="true"]</code> use the hover colour, which leaves the secondary line at 3.6:1; use <code>--color-control-selected</code> (this page overrides locally). One shared <code>.palette-layer</code> rule (dock-column anchor ≥ 1080 px, bottom sheet below) would replace the three finals' variants.</s> Sweep 2026-11-01: resolved in base.css §6.9 (selection colour + indicator bar; one <code>.palette-layer</code> rule); this page's overrides are deleted (§4c).</div>
+  <div class="dn"><b>D-F13</b> · <s>README §1 / components.html: the <code>.badge-string--*</code> helpers render the regulatory string as CSS generated content; keep them for the component sheet only and state that product code writes the string as text from the i18n bundle (this page does).</s> Sweep 2026-11-01: README §1 now says so (sheet-only helpers; product code writes the string as text from the i18n bundle); this page already did.</div>
   <div class="dn"><b>D-F6</b> · New bindings proposed for the registry: <kbd class="key">\</kbd> focus mode, <kbd class="key">⇧G</kbd> channel grid, <kbd class="key">⇧V</kbd> tool wheel, <kbd class="key">N</kbd> mark slide complete and open the next to-do slide (free in maps A and B; N is Learn's "next step", same mental model). All rebindable; the palette lists every command whether or not it has a key.</div>
   <div class="dn"><b>D-F7</b> · Session purpose in the Clinical-IH variant is <i>QA review · blinded</i>, one of D1's four fixed strings; an in-house model review is a QA purpose. If counsel wants a fifth string ("Research session") it is one token, and A's chip is not used.</div>
   <div class="dn"><b>D-F8</b> · The 8-channel pseudo-colours (blue, green, magenta, red, yellow, cyan, white, orange) are user-set LUTs, not the annotation palette; the same ΔE00 ≥ 20 warning should apply when a user recolours a channel, and deep blue / sienna are avoided on the black IF background (A's D-A5).</div>
@@ -2056,11 +2061,11 @@ v.state</pre></div>
     palInput.setAttribute('aria-activedescendant', palRows.length ? 'pal-' + palIdx : '');
     $('#palCount').textContent = `${palRows.length} of ${CMDS.length} · one registry: keys, voice, Python, tests`;
   }
-  function openPalette() { closeOverlays(true); app.classList.add('palette-open'); palInput.value = ''; palIdx = 0; renderPalette(); palInput.focus(); $('#paletteBtn').setAttribute('aria-expanded', 'true'); $('#demoPalette').setAttribute('aria-pressed', 'true'); }
+  function openPalette() { closeOverlays(true); $('#paletteLayer').hidden = false; app.classList.add('palette-open'); palInput.value = ''; palIdx = 0; renderPalette(); palInput.focus(); $('#paletteBtn').setAttribute('aria-expanded', 'true'); $('#demoPalette').setAttribute('aria-pressed', 'true'); }
   /* to: 'button' (Esc: back to the opener; the canvas when the button is hidden), 'canvas' (after a command), undefined (pointer outside: the canvas only if the palette held focus) */
   function closePalette(to) {
     const held = $('#paletteLayer').contains(document.activeElement);
-    app.classList.remove('palette-open'); $('#paletteBtn').setAttribute('aria-expanded', 'false'); $('#demoPalette').setAttribute('aria-pressed', 'false');
+    app.classList.remove('palette-open'); $('#paletteLayer').hidden = true; $('#paletteBtn').setAttribute('aria-expanded', 'false'); $('#demoPalette').setAttribute('aria-pressed', 'false');
     const btn = $('#paletteBtn'), btnVisible = btn.offsetParent !== null;
     if (to === 'button' || to === true) (btnVisible ? btn : canvasA).focus({ preventScroll: true });
     else if (to === 'canvas' || (held && !to)) canvasA.focus({ preventScroll: true });
@@ -2249,7 +2254,7 @@ v.state</pre></div>
   }
   function setSurface(s) {
     state.surface = s; app.dataset.surface = s;
-    body.classList.toggle('surface-widget', s === 'widget');
+    body.classList.toggle('surface-widget', s === 'widget'); app.classList.toggle('app--widget', s === 'widget');   /* base.css widget variant (palette width, layout tokens) */
     $$('[data-surface]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.surface === s)));
     if (s === 'widget') {
       $('#nbWidget').appendChild(app); app.classList.add('rail-closed'); $('#railToggle').setAttribute('aria-pressed', 'false');
@@ -2333,7 +2338,7 @@ v.state</pre></div>
   $('#libPin').addEventListener('click', (e) => { state.libPinned = !state.libPinned; e.currentTarget.setAttribute('aria-pressed', String(state.libPinned)); });
   $('#railToggle').addEventListener('click', (e) => { const closed = app.classList.toggle('rail-closed'); e.currentTarget.setAttribute('aria-pressed', String(!closed)); });
   $('#fillToggle').addEventListener('click', () => setFill(!state.fill));
-  $('#motionToggle').addEventListener('click', (e) => { state.reduceMotion = e.currentTarget.getAttribute('aria-checked') !== 'true'; e.currentTarget.setAttribute('aria-checked', String(state.reduceMotion)); });
+  $('#motionToggle').addEventListener('click', (e) => { state.reduceMotion = e.currentTarget.getAttribute('aria-checked') !== 'true'; e.currentTarget.setAttribute('aria-checked', String(state.reduceMotion)); if (state.reduceMotion) document.documentElement.dataset.motion = 'reduce'; else delete document.documentElement.dataset.motion; });   /* data-motion="reduce": tokens.css's class twin zeroes the five motion tokens without the OS preference */
   $('#cvdRemapToggle').addEventListener('click', (e) => { const on = e.currentTarget.getAttribute('aria-checked') !== 'true'; e.currentTarget.setAttribute('aria-checked', String(on)); notice(on ? 'CVD-friendly stain remap on · shader LUT (tissue only)' : 'CVD-friendly stain remap off', 2500); });
   $('#themeToggle').addEventListener('click', (e) => { const on = e.currentTarget.getAttribute('aria-checked') !== 'true'; e.currentTarget.setAttribute('aria-checked', String(on)); document.documentElement.dataset.theme = on ? 'light' : 'dark'; });
   $$('.toggle[role="switch"]').forEach(el => el.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); el.click(); } }));
