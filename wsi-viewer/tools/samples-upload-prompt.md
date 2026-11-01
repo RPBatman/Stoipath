@@ -47,12 +47,14 @@ Steps:
    the asset as uploaded, SHA-256 of each original, source URL or OpenSlide path, licence.
 6. Show me the table (asset, format, size, licence, source) plus the excluded files and why. Wait for
    my "yes".
-7. Create the release and upload:
-   `gh release create samples-v1 --repo RPBatman/Stoipath --prerelease --title "Format test corpus v1" --notes "Public de-identified whole-slide test files (OpenSlide test data) for format tests. See samples-manifest.json for sources, licences and SHA-256."`
+7. Create the release as a private DRAFT first, so nothing is public until every file is checked:
+   `gh release create samples-v1 --repo RPBatman/Stoipath --draft --prerelease --title "Format test corpus v1" --notes "Public de-identified whole-slide test files (OpenSlide test data) for format tests. See samples-manifest.json for sources, licences and SHA-256."`
    then upload the manifests and every asset with
    `gh release upload samples-v1 <files> --repo RPBatman/Stoipath`, a few files per call so one
    failure does not lose the rest. If the release already exists, upload into it and use `--clobber`
    only for files whose checksum changed.
-8. Verify with `gh release view samples-v1 --repo RPBatman/Stoipath --json assets` that every asset
-   is present with the expected size. Report the release URL, the asset list with sizes, the excluded
-   files and the total bytes uploaded, so I can paste the result to the cloud session.
+8. Verify with `gh release view samples-v1 --repo RPBatman/Stoipath --json assets,isDraft` that every
+   asset is present with the expected size (and digest where GitHub reports one). Only then publish it:
+   `gh release edit samples-v1 --repo RPBatman/Stoipath --draft=false --prerelease`.
+   Report the release URL, the asset list with sizes, the excluded files and the total bytes
+   uploaded, so I can paste the result to the cloud session.
