@@ -151,8 +151,8 @@ body.review-hidden .app.wb { height: 100vh; height: 100dvh; }
 .gutter { background: var(--color-border-strong); }
 .canvas-area.is-curtain .view-b { display: block; position: absolute; inset: 0; clip-path: inset(0 0 0 var(--curtain, 55%)); z-index: 1; }
 .canvas-area.is-curtain .view-b .hud, .canvas-area.is-curtain .view-b .navigator { display: none; }
-.view-b .panelabel { position: absolute; top: var(--layout-hud-inset); left: var(--layout-hud-inset); z-index: var(--z-hud); }
-.canvas-area.is-curtain .view-b .panelabel { left: auto; right: var(--layout-hud-inset); }
+/* The second view's identity sits bottom-right above its magnification readout in both compare modes: never under the navigator or the compare bar */
+.view-b .panelabel { position: absolute; right: var(--layout-hud-inset); bottom: calc(var(--layout-hud-inset) + 62px); z-index: var(--z-hud); }
 .curtain-line { position: absolute; top: 0; bottom: 0; left: var(--curtain, 55%); width: 2px; margin-left: -1px; background: var(--grey-95); box-shadow: 0 0 0 1px rgba(0,0,0,.6); display: none; z-index: 2; cursor: col-resize; }
 .curtain-line:focus-visible { box-shadow: var(--focus-shadow); }
 .canvas-area.is-curtain .curtain-line { display: block; }
@@ -289,6 +289,10 @@ body.show-live .tr-stack .navigator[data-live] { position: static; }
 .layer-row__legend { grid-row: 5; }
 .layer-row__legend .legend { align-items: center; }
 .layer-row__legend .legend .btn { margin-left: auto; }
+.layer-row.is-off .layer-row__name, .layer-row.is-off .layer-row__opacity, .layer-row.is-off .layer-row__legend { opacity: .5; }   /* base.css .is-hidden is display:none, so a hidden layer row needs its own class (D-F11) */
+.refused-empty { display: none; }
+.app.is-refused .refused-empty { display: flex; }
+.app.is-refused .dock .tabpanel, .app.is-refused .topbar__identity, .app.is-refused .progress, .app.is-refused .view-a .hud, .app.is-refused .tr-stack { display: none !important; }
 .annlist .list__item { gap: var(--space-3); padding: var(--space-2) var(--space-5); min-height: 32px; font-size: var(--text-sm); cursor: default; }
 .annlist .list__item .id { font-family: var(--font-mono); color: var(--color-text-secondary); font-size: var(--text-xs); min-width: 3.5ch; }
 .annlist .list__item .what { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -319,6 +323,10 @@ body.show-live .tr-stack .navigator[data-live] { position: static; }
 .ch-row { display: grid; grid-template-columns: var(--target-min) 1fr auto; grid-template-rows: auto auto; column-gap: var(--space-3); row-gap: 2px; padding: var(--space-2) var(--space-4) var(--space-3) var(--space-3); border-bottom: 1px solid var(--color-divider); }
 .ch-row .ch-name { display: flex; align-items: center; gap: var(--space-3); font-weight: var(--weight-medium); font-size: var(--text-sm); min-width: 0; }
 .ch-row .ch-name .marker { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.ch-row .ch-name .swatch { width: 14px; height: 14px; border-radius: 50%; }
+.ch-row .ch-name .truncate { flex: 0 0 auto; }
+.ch-row .ch-name .marker { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ch-row .chsel { max-width: 92px; flex: 0 0 auto; }
 .ch-row .ch-bits { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); align-self: center; white-space: nowrap; }
 .ch-row .ch-wl { grid-column: 2 / span 2; display: grid; grid-template-columns: 1fr 9ch; gap: var(--space-3); align-items: center; font-size: var(--text-xs); color: var(--color-text-secondary); font-family: var(--font-mono); }
 .ch-row .histogram { height: 22px; padding: 0 2px; }
@@ -358,6 +366,8 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 .paneloverlay .keymap { grid-template-columns: 1fr; gap: var(--space-5); padding: var(--space-2) var(--space-5); }
 .paneloverlay .keymap__keys { flex-basis: 112px; }
 .paneloverlay .keymap__row { min-height: 24px; }
+.paneloverlay .keymap .key { font-size: var(--text-xs); height: 20px; min-width: 20px; }
+.paneloverlay .keymap__preset { gap: var(--space-3); }
 .about dl { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-4); font-size: var(--text-sm); padding: 0 var(--space-5); }
 .about dt { color: var(--color-text-secondary); } .about dd { font-family: var(--font-mono); min-width: 0; }
 .about p { padding: 0 var(--space-5); font-size: var(--text-sm); line-height: 1.5; }
@@ -369,7 +379,12 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 .palette-layer .palette { width: 100%; border-radius: 0 0 0 var(--radius-4); border-top: 0; }
 .palette-layer .palette__list { max-height: min(420px, 55vh); }
 .palette__item .pill { font-size: var(--text-2xs); padding: 0 5px; border-radius: 3px; background: var(--color-control-bg); color: var(--color-text-secondary); font-family: var(--font-mono); }
-.palette__item .meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.palette__item { display: grid; grid-template-columns: minmax(16px, auto) minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; }
+.palette__item > .icon, .palette__item > .swatch, .palette__item > .pill { grid-column: 1; grid-row: 1 / span 2; }
+.palette__item .lbl { grid-column: 2; grid-row: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette__item .meta { grid-column: 2; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); margin: 0; }
+.palette__item .keys { grid-column: 3; grid-row: 1 / span 2; margin: 0; }
+.palette__item[aria-disabled] { display: flex; }
 .app.focus .palette-layer { width: min(360px, 25%); }
 .scrim { position: absolute; inset: var(--layout-topbar) 0 var(--layout-strip) 0; display: none; z-index: calc(var(--z-palette) - 1); }
 .app.palette-open .scrim { display: block; }
@@ -402,7 +417,8 @@ body.surface-widget > .app.wb { display: none; }
 .nb__widget .app.wb .lib, .nb__widget .app.wb .ctx, .nb__widget .app.wb .pstrip, .nb__widget .app.wb .rail .lib-switch { display: none !important; }
 .nb__widget .app.wb .topbar { padding: 0 var(--space-3); gap: var(--space-3); }
 .nb__widget .app.wb .topbar__label, .nb__widget .app.wb .topbar__identity .title, .nb__widget .app.wb .topbar__identity .cohort, .nb__widget .app.wb .progress { display: none; }
-.nb__widget .app.wb .topbar__search { flex-basis: 220px; min-height: 24px; }
+.nb__widget .app.wb .topbar__search { flex: 0 1 240px; width: auto; min-height: 24px; padding: 0 var(--space-3); justify-content: flex-start; }
+.nb__widget .app.wb .topbar__search .ph { display: inline; }
 .nb__widget .app.wb .rail-toggle { display: inline-flex; }
 .nb__widget .app.wb .badge { min-height: 20px; }
 .nb__widget .app.wb .hud__position { display: none; }
@@ -444,6 +460,7 @@ body.surface-widget > .app.wb { display: none; }
   .app.wb .palette-layer { right: var(--pstrip-w); width: var(--layout-dock); }
   .app.wb.dock-open .tr-stack, .app.wb.dock-open .view-a .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   .app.wb.dock-open { --layout-navigator: 180px; }
+  .app.wb.dock-open .view-b .panelabel, .app.wb.dock-open .view-b .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   .app.wb.lib-open .view-a .hud--tl, .app.wb.lib-open .view-a .hud--bl { left: calc(var(--lib-w) + var(--layout-hud-inset)); }
   .toast-stack { right: calc(var(--pstrip-w) + var(--space-4)); }
 }
@@ -514,6 +531,7 @@ body.surface-widget > .app.wb { display: none; }
   .segmented__item { min-height: 40px; }
   .dock__switch .segmented__item { min-height: 36px; }
   .navigator__pan button { width: 44px; height: 44px; opacity: .85; }
+  .app.wb { --layout-navigator: 220px; }
   .layer-row { grid-template-columns: 44px 1fr auto; }
   .layer-row__vis { width: 44px; height: 44px; }
   .ch-row { grid-template-columns: 44px 1fr auto; }
@@ -828,7 +846,7 @@ body.surface-widget > .app.wb { display: none; }
           <div class="layer-row__legend"><div class="legend" role="group" aria-label="Legend; activate a class to jump to it"><button class="legend__item" data-fly="met"><span class="swatch swatch--dash" style="--swatch:var(--ann-3)"></span>outline · p ≥ 0.50 <span class="count">2</span><span class="pattern">dash</span></button><span class="legend__item"><span class="swatch" style="--swatch:var(--ann-6)"></span>heat 0.5 – 1.0</span><button class="btn btn--sm btn--ghost" data-cmd="accept" aria-label="Accept result (Shift+A)" data-live="events:aiResultAccepted"><svg class="icon icon--sm"><use href="#i-check"/></svg>Accept</button><button class="btn btn--sm btn--ghost" data-cmd="reject" aria-label="Reject result (Shift+X)" data-live="events:aiResultRejected"><svg class="icon icon--sm"><use href="#i-close"/></svg>Reject</button></div></div>
         </div>
 
-        <div class="layer-row is-hidden he-layer" data-layer="labels" data-live="layers:labels">
+        <div class="layer-row is-off he-layer" data-layer="labels" data-live="layers:labels">
           <button class="layer-row__vis" aria-pressed="false" aria-label="Tumour and normal labels: hidden" data-vis="labels"><svg class="icon icon--sm"><use href="#i-eye-off"/></svg></button>
           <div class="layer-row__name"><span class="truncate">Tumour / normal labels</span><span class="kind">labels · LUT</span></div>
           <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Layer menu"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
@@ -870,7 +888,7 @@ body.surface-widget > .app.wb { display: none; }
           <div class="layer-row__provenance"><span data-synthetic>r.example</span><span>9 objects</span><span>op log · 41 ops</span><span>GeoJSON (QuPath dialect)</span></div>
         </div>
 
-        <div class="layer-row is-hidden he-layer" data-layer="gt" data-live="layers:labels">
+        <div class="layer-row is-off he-layer" data-layer="gt" data-live="layers:labels">
           <button class="layer-row__vis" aria-pressed="false" aria-label="Ground truth mask: hidden" data-vis="gt"><svg class="icon icon--sm"><use href="#i-eye-off"/></svg></button>
           <div class="layer-row__name"><span class="truncate">Ground truth (CAMELYON16)</span><span class="kind">label raster</span></div>
           <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Layer menu"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
@@ -880,6 +898,7 @@ body.surface-widget > .app.wb { display: none; }
 
         <div class="empty" style="padding:16px 20px" data-live="layers"><span class="text-xs">No more overlays. Drop a label pyramid, GeoJSON or Parquet file here, or add one from Python.</span></div>
       </section>
+      <div class="empty refused-empty"><span class="empty__glyph"></span><span class="empty__title">Nothing was opened</span><span>The launch context named a product this build is not. Close the plate and open a slide from the cohort.</span></div>
     </div>
     <div class="dock__resizer" role="separator" aria-orientation="vertical" aria-label="Resize the Library (arrow keys, 240 to 400 pixels)" aria-valuemin="240" aria-valuemax="400" aria-valuenow="300" tabindex="0" data-resize="lib"></div>
   </aside>
@@ -983,7 +1002,7 @@ body.surface-widget > .app.wb { display: none; }
       <div class="hud hud--bl">
         <span class="hud__item hud__sharp indicator indicator--sharp" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label" id="hudSharpLabel">Sharp</span></span>
         <div class="hud__item scalebar" id="scalebar" data-live="state.views[0].scale_um_per_px" style="--scalebar-length:125px"><span class="scalebar__bar"></span><span class="scalebar__label" id="scaleLabel">500 µm</span></div>
-        <div class="hud__item hud__item--quiet hud__position" id="hudPos" data-live="state.views[0].center_um">x 3.18 mm · y 1.96 mm</div>
+        <div class="hud__item hud__position" id="hudPos" data-live="state.views[0].center_um">x 3.18 mm · y 1.96 mm</div>
       </div>
       <div class="hud hud--br">
         <div class="hud__item magnification" id="magBox" data-live="state.views[0].scale_um_per_px">
@@ -1257,12 +1276,14 @@ body.surface-widget > .app.wb { display: none; }
         <p class="note">The byte-identity badge means a re-export from this manifest produced the same bytes in CI (research reproducibility). Snapshots burn in the scale bar and the product footer, so the RUO string travels with every image.</p>
         <div class="footer-actions"><button class="btn btn--primary btn--sm" data-cmd="export:submit" data-live="commands:export.submit"><svg class="icon icon--sm"><use href="#i-download"/></svg>Submit export</button><button class="btn btn--sm btn--secondary" data-cmd="snapshot">Snapshot <kbd class="key">⇧S</kbd></button><button class="btn btn--sm btn--secondary" data-cmd="slide:complete" data-live="state.collection"><svg class="icon icon--sm"><use href="#i-check"/></svg>Mark slide complete · next <kbd class="key">N</kbd></button></div>
       </section>
+      <div class="empty refused-empty"><span class="empty__glyph"></span><span class="empty__title">Nothing was opened</span><span>The launch context asked for a different product. Nothing is selected and no layer is attached.</span></div>
     </div>
 
     <!-- In-dock overlays (C): keymap, About, quality sheet — they replace the panel, never the slide -->
     <div class="paneloverlay" id="keymapOverlay" role="dialog" aria-modal="false" aria-labelledby="keymapTitle">
-      <div class="paneloverlay__head"><h2 id="keymapTitle">Keyboard map</h2><div class="segmented" role="radiogroup" aria-label="Keymap preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand</button></div><button class="btn btn--icon btn--ghost" data-act="closeOverlay" aria-label="Close the keyboard map"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="paneloverlay__head"><h2 id="keymapTitle">Keyboard map</h2><button class="btn btn--icon btn--ghost" data-act="closeOverlay" aria-label="Close the keyboard map"><svg class="icon"><use href="#i-close"/></svg></button></div>
       <div class="dock__body">
+        <div class="keymap__preset pad"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup" aria-label="Keymap preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand cluster</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand cluster</button></div><span class="text-xs text-secondary">reserved: none (no dictation here)</span></div>
         <div class="keymap" id="keymapGroups" data-live="commands:registry"></div>
         <p class="hint">Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for the editing set and Ctrl+K; no Alt, no F-keys (Hyperdrive rule). All bindings are rebindable and exported with the command registry. Reserved here: none (research build; no dictation).</p>
       </div>
@@ -1484,6 +1505,7 @@ v.state</pre></div>
   <div class="dn"><b>D-F7</b> · Session purpose in the Clinical-IH variant is <i>QA review · blinded</i>, one of D1's four fixed strings; an in-house model review is a QA purpose. If counsel wants a fifth string ("Research session") it is one token, and A's chip is not used.</div>
   <div class="dn"><b>D-F8</b> · The 8-channel pseudo-colours (blue, green, magenta, red, yellow, cyan, white, orange) are user-set LUTs, not the annotation palette; the same ΔE00 ≥ 20 warning should apply when a user recolours a channel, and deep blue / sienna are avoided on the black IF background (A's D-A5).</div>
   <div class="dn"><b>D-F9</b> · Strip notice priority is documented as transient &gt; error &gt; Dx &gt; multiplex tier line &gt; local-tiler notice (A's rule); the live region speaks the same string.</div>
+  <div class="dn"><b>D-F11</b> · base.css: <code>.layer-row.is-hidden</code> is meant to dim a hidden layer's row, but the utility <code>.is-hidden { display: none !important }</code> in the same file removes the row entirely (all three concepts carried the defect). This page uses <code>.layer-row.is-off</code>; the design system should rename the layer-row state.</div>
   <div class="dn"><b>D-F10</b> · The canvas-share readout measures the product frame (top bar to strip) and the viewport; the review header and demo strip are not product chrome. A CI assertion for P1 should use the product frame at the six named viewports.</div>
 
   <h3>6. Elements that map to an engine contract (plan 12 §1.1, plan 04 §8); toggle <i>Live markers</i></h3>
@@ -1511,12 +1533,12 @@ v.state</pre></div>
   <div class="table-wrap"><table class="table table--dense">
     <thead><tr><th>Viewport</th><th>Layout</th><th>Canvas share</th></tr></thead>
     <tbody id="shareTable">
-      <tr><td>3840 × 2160 (DPR 1)</td><td>Rail 64 · Library 340 pinned · Context 400 · navigator 320 · body 14 px</td><td>≈ 76 %</td></tr>
-      <tr><td>1920 × 1080</td><td>Rail 56 · Library collapsed · Context 360 · strip 32</td><td>≈ 72 % (≈ 61 % with the Library pinned, B-3)</td></tr>
-      <tr><td>1440 × 900</td><td>Both docks are drawers over the canvas edge; Context tabs as the 36 px panel strip</td><td>≈ 85 % closed · ≈ 61 % with the Context drawer open</td></tr>
-      <tr><td>1366 × 1024 (pen)</td><td>Rail 64 (pen-friendly) · panel strip · drawer · pen-tip palette and "finger pans · pen draws" in the left band</td><td>≈ 85 %</td></tr>
-      <tr><td>1024 × 1366</td><td>Rail → labelled bottom bar 72 · docks → one in-flow sheet (peek 89 px; expanded 42 %) with a Library | Context switch</td><td>≈ 81 % (sheet collapsed)</td></tr>
-      <tr><td>390 × 844</td><td>Top bar 44 · sheet peek 89 · bottom bar 56 · strip hidden (sharpness dot and label in the HUD) · navigator behind O · point + measure only</td><td>≈ 76 % (sheet collapsed)</td></tr>
+      <tr><td>3840 × 2160 (DPR 1)</td><td>Rail 64 · Library 340 pinned · Context 400 · navigator 320 · body 14 px</td><td>76 % measured (74 % of the viewport with the review chrome)</td></tr>
+      <tr><td>1920 × 1080</td><td>Rail 56 · Library collapsed · Context 360 · strip 32</td><td>72 % measured (68 % of the viewport with the review chrome; 58 % with the Library pinned, B-3)</td></tr>
+      <tr><td>1440 × 900</td><td>Both docks are drawers over the canvas edge; Context tabs as the 36 px panel strip; navigator 180 px while a drawer is open</td><td>85 % measured (an open drawer covers the right 336 px of the canvas, never the centre)</td></tr>
+      <tr><td>1366 × 1024 (pen)</td><td>Rail 64 (pen-friendly) · panel strip · drawer · pen-tip palette and "finger pans · pen draws" in the left band · navigator 220 px with 44 px pan buttons</td><td>85 % measured</td></tr>
+      <tr><td>1024 × 1366</td><td>Rail → labelled bottom bar 72 · docks → one in-flow sheet (peek 89 px; expanded 42 %) with a Library | Context switch</td><td>81 % measured with the sheet collapsed (44 % expanded, user-invoked)</td></tr>
+      <tr><td>390 × 844</td><td>Top bar 44 · sheet peek 89 · bottom bar 56 · strip hidden (sharpness dot and label in the HUD) · navigator behind O · point + measure only</td><td>76 % measured with the sheet collapsed (70 % of the viewport with the review chrome; 31 % expanded, user-invoked)</td></tr>
     </tbody>
   </table></div>
 
@@ -1633,10 +1655,11 @@ v.state</pre></div>
     if (state.demo === 'launch-refused') return STR.launch;
     if (state.demo === 'dx-refused') return state.product === 'ruo' ? STR.dxRuo : STR.dxAttest;
     if (state.product === 'dx') return STR.dxEntered;
-    if (state.product === 'clinical') return 'Nav mode · QA review · ' + (state.slide === 'if' ? STR.mx : STR.tiler);
-    if (state.slide === 'if') return STR.mx;
+    if (state.product === 'clinical') return 'Nav mode · QA review · ' + (state.slide === 'if' ? mxNotice() : STR.tiler);
+    if (state.slide === 'if') return mxNotice();
     return STR.tiler;
   }
+  const mxNotice = () => `8-bit preview tier while moving · 16-bit at settle · ${enabled().filter(Boolean).length} of 8 channels`;
   function renderNotice() { $('#stripNotice').textContent = transientNotice || defaultNotice(); }
   function notice(text, ms) {
     clearTimeout(noticeTimer); transientNotice = text; renderNotice(); announce(text);
@@ -1932,9 +1955,9 @@ v.state</pre></div>
     let last = ''; const html = [];
     palRows.forEach((c, i) => {
       if (c.g !== last) { html.push(`<div class="palette__group">${c.g}</div>`); last = c.g; }
-      const lead = c.sw ? `<span class="swatch${c.sw.dash ? ' swatch--dash' : ''}" style="--swatch:var(--ann-${c.sw.ann})"></span>` : c.pill ? `<span class="pill">${c.pill}</span>` : c.icon ? `<svg class="icon icon--sm"><use href="#i-${c.icon}"/></svg>` : '<span style="width:16px"></span>';
+      const lead = c.sw ? `<span class="swatch${c.sw.dash ? ' swatch--dash' : ''}" style="--swatch:var(--ann-${c.sw.ann})"></span>` : c.pill ? `<span class="pill">${c.pill}</span>` : `<svg class="icon icon--sm"><use href="#i-${c.icon || 'target'}"/></svg>`;
       const label = q && c.t.toLowerCase().includes(q.toLowerCase()) ? c.t.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'i'), '<mark>$1</mark>') : c.t;
-      html.push(`<div class="palette__item" role="option" id="pal-${i}" aria-selected="${i === palIdx}" data-i="${i}">${lead}<span>${label}</span>${c.m ? `<span class="meta">${c.m}</span>` : ''}<span class="keys">${c.k.map(k => `<kbd class="key">${k}</kbd>`).join('')}</span></div>`);
+      html.push(`<div class="palette__item" role="option" id="pal-${i}" aria-selected="${i === palIdx}" data-i="${i}">${lead}<span class="lbl">${label}</span><span class="meta">${c.m || c.g}</span><span class="keys">${c.k.map(k => `<kbd class="key">${k}</kbd>`).join('')}</span></div>`);
     });
     palList.innerHTML = html.join('') || '<div class="empty"><span class="empty__title">No command matches</span><span>Try a panel name, a tool, a class or a slide.</span></div>';
     palInput.setAttribute('aria-activedescendant', palRows.length ? 'pal-' + palIdx : '');
@@ -2054,8 +2077,8 @@ v.state</pre></div>
       const bars = Array.from({ length: 24 }, (_, k) => Math.round(4 + 18 * Math.exp(-Math.pow((k - 6 - (i % 3) * 3) / 5, 2)))).map(h => `<span style="height:${h}px"></span>`).join('');
       return `<div class="ch-row${on ? '' : ' is-off'}" data-ch="${c.id}" data-live="state.views[0].channels[${i}]">
         <button class="layer-row__vis" aria-pressed="${on}" ${capped ? 'aria-disabled="true"' : ''} aria-label="${c.name}, ${on ? 'visible' : capped ? 'cannot be enabled: ' + cap + ' of ' + cap + ' channels on this device class' : 'hidden'}" data-chvis="${c.id}">${iconSvg(on ? 'eye' : 'eye-off')}</button>
-        <div class="ch-name"><select class="chsel" aria-label="${c.name} colour" data-chcolour="${c.id}" style="color:${c.colour}">${Object.keys(COLOURS).map(n => `<option${COLOURS[n] === c.colour ? ' selected' : ''}>${n}</option>`).join('')}</select><span class="truncate">${c.name}</span><span class="marker">${c.marker}</span></div>
-        <span class="ch-bits">ch ${i + 1}/8 · 16-bit</span>
+        <div class="ch-name"><span class="swatch" style="--swatch:${c.colour}" aria-hidden="true"></span><select class="chsel" aria-label="${c.name} colour" data-chcolour="${c.id}">${Object.keys(COLOURS).map(n => `<option${COLOURS[n] === c.colour ? ' selected' : ''}>${n}</option>`).join('')}</select><span class="truncate">${c.name}</span><span class="marker">${c.marker}</span></div>
+        <span class="ch-bits">16-bit</span>
         ${capped ? `<div class="ch-reason">Channel cap reached (${cap} on this device class) — hide another channel to enable</div>` :
         `<div class="ch-wl"><div><div class="histogram histogram--channel" style="--channel:${c.colour}" aria-hidden="true">${bars}</div><div class="range-dual" aria-label="${c.name} window"><span class="range-dual__track"></span><span class="range-dual__fill" style="--lo:${c.lo}%;--hi:${c.hi}%"></span><input type="range" min="0" max="100" value="${c.lo}" aria-label="${c.name} window low"${on ? '' : ' disabled'}><input type="range" min="0" max="100" value="${c.hi}" aria-label="${c.name} window high"${on ? '' : ' disabled'}></div></div><span>${c.win}</span></div>`}
       </div>`;
@@ -2111,6 +2134,7 @@ v.state</pre></div>
     $('#qLink').textContent = name === 'cold4g' ? '6 Mbps · RTT 140 ms' : name.startsWith('offline') ? 'offline · ' + (name === 'offline-pack' ? 'pack' : 'cache only') : '38 Mbps · RTT 21 ms';
     canvasArea.classList.toggle('has-tileerr', name === 'tile-error');
     $('#plateManifest').hidden = name !== 'manifest-fail'; $('#plateLaunch').hidden = name !== 'launch-refused';
+    app.classList.toggle('is-refused', name === 'launch-refused');
     const plated = name === 'launch-refused' || name === 'manifest-fail';
     $('.tr-stack').hidden = plated; $('#stripSharp').hidden = plated; $('#hudSharp').hidden = plated;
     $('#runModelBtn').disabled = name === 'offline-nopack'; $('#modelOffline').hidden = name !== 'offline-nopack';
@@ -2177,7 +2201,7 @@ v.state</pre></div>
       const on = t.getAttribute('aria-pressed') !== 'true';
       t.setAttribute('aria-pressed', String(on)); t.innerHTML = `<svg class="icon icon--sm"><use href="#i-${on ? 'eye' : 'eye-off'}"/></svg>`;
       t.setAttribute('aria-label', t.getAttribute('aria-label').replace(/(visible|hidden)/, on ? 'visible' : 'hidden'));
-      t.closest('.layer-row').classList.toggle('is-hidden', !on);
+      t.closest('.layer-row').classList.toggle('is-off', !on);
       const map = { prob: ['ai-off', !on], labels: ['labels-on', on], detect: ['det-off', !on], ann: ['ann-off', !on], gt: ['gt-on', on], seg: ['seg-off', !on] };
       const m = map[t.dataset.vis]; if (m) canvasArea.classList.toggle(m[0], m[1]);
       return;
