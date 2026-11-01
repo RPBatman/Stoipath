@@ -22,9 +22,11 @@
  *                than the BDP rule allows: NFR-P17 asks for the first byte within RTT + 1 BDP (≈ 2 RTT), plus the
  *                tile body at the link estimate; floored at 1 s because the engine's in-flight age includes the
  *                worker's decode, which a slow CPU must not turn into a "slow link".
- *   "low memory" nothing is in flight, decoding or waiting for upload and the destination level is still missing
- *                (the texture array could not keep it).
- * While fetches, decodes or uploads are progressing normally the state stays "Sharpening…". "level not yet available"
+ *   "low memory" the destination level is still missing and the pipeline is idle or stalled: nothing in flight,
+ *                decoding or waiting for upload, or that work made no progress (no tile received, uploaded or
+ *                evicted) for longer than the same bound. A texture array too small for the view leaves decoded
+ *                tiles queued for upload with no room (measured: ?layers=30 at 1920 × 1080 DPR 2 holds 33 forever).
+ * While fetches, decodes or uploads are progressing the state stays "Sharpening…". "level not yet available"
  * never applies to a complete pyramid; magnification beyond level 0 is not a level deficit (the strip notice says so).
  */
 export type SharpState = 'sharp' | 'sharpening' | 'soft' | 'offline';
@@ -57,6 +59,9 @@ export interface SharpInput {
   oldestUrgentMs: number;
   /** Mean tile size seen so far (bytes / received), or null before the first tile. */
   tileBytes: number | null;
+  /** Tiles received this session and tiles resident now: progress of the fill (engine snapshot). */
+  received: number;
+  resident: number;
   online: boolean;
   downlinkMbps: number | null;
   rttMs: number | null;
@@ -87,6 +92,9 @@ export class SharpnessMachine {
   since = 0;
   /** The last input, kept for window.__shell (tests compare it with __stage0.state()). */
   last: SharpInput | null = null;
+  /** Last time the fill progressed (a tile arrived, the upload queue or the resident set changed). */
+  private progressAt = 0;
+  private progressKey = '';
 
   get key(): string {
     return this.state === 'soft' ? `soft-${this.reason ?? 'link'}` : this.state;
@@ -99,6 +107,11 @@ export class SharpnessMachine {
   update(i: SharpInput): boolean {
     this.last = i;
     const before = this.key;
+    const pk = `${i.received}|${i.uploadQueue}|${i.resident}`;
+    if (pk !== this.progressKey) {
+      this.progressKey = pk;
+      this.progressAt = i.now;
+    }
     if (!i.settled) this.settledAt = -1;
     else if (this.settledAt < 0 || i.moved) this.settledAt = i.now; // settled now, or an instant view change
 
@@ -121,13 +134,14 @@ export class SharpnessMachine {
       }
       const past = i.now - this.settledAt > SOFT_THRESHOLD_MS;
       if (past && i.blurArea > DEFICIT_OCTAVE_MAX) {
-        const slow =
-          (i.downlinkMbps !== null && i.downlinkMbps < SLOW_LINK_MBPS) || i.oldestUrgentMs > tier0BoundMs(i.rttMs, i.downlinkMbps, i.tileBytes);
+        const bound = tier0BoundMs(i.rttMs, i.downlinkMbps, i.tileBytes);
+        const slow = (i.downlinkMbps !== null && i.downlinkMbps < SLOW_LINK_MBPS) || i.oldestUrgentMs > bound;
         const pending = i.inflight > 0 || i.decodeOutstanding > 0 || i.uploadQueue > 0;
+        const stalled = i.now - this.progressAt > bound;
         if (slow) this.set('soft', 'link');
         else if (this.state === 'soft') {
           /* stays Soft (reason unchanged) until sharp or the view changes: no flapping while the fill resumes */
-        } else if (pending) this.set('sharpening', null);
+        } else if (pending && !stalled) this.set('sharpening', null);
         else this.set('soft', 'memory');
       } else if (this.state !== 'soft') {
         this.set('sharpening', null);

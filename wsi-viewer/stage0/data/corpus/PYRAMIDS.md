@@ -151,7 +151,9 @@ instances were unpacked to.
 present and decodable with the cropped edge shape the manifest implies, file count = manifest, per-level
 bytes and medians = manifest. `--check-downsample` (each level ≈ 2×2 mean of the level below, JPEG
 error only) on the pyramids whose level 0 fits in memory: CMU-1-Small-Region (mean |Δ| 2.70–3.03,
-p99 18–19) and JP2K-33003-1 (mean 2.23–3.75, p99 12–18). DOWNSAMPLE_RESULTS
+p99 18–19), JP2K-33003-1 (mean 2.23–3.75, p99 12–18) and Hamamatsu-2 (mean 1.62–2.01, p99 12–15;
+peak RSS 10.96 GiB). The check holds every level in memory, so it was not run on the larger slides
+(a CMU-1 run was stopped to stay clear of the VM's 15 GB).
 
 ### Pixel spot check against OpenSlide (oracle_psnr.py)
 
@@ -167,9 +169,9 @@ OpenSlide 4.0.1 `read_region` over the same window, all RGB samples. Full per-ti
 | CMU-1-Small-Region | 28.17 / 29.30 | 46.52 | 30.87 / 38.16 | 48.17 | bit-identical | 36.58 / ×1.62 |
 | CMU-1 | 30.01 / 31.10 | 47.67 | 30.38 / 41.50 | 49.37 | bit-identical | 37.88 / ×1.61 |
 | Hamamatsu-2 | 33.41 / 34.77 | 48.77 | 35.04 / 40.86 | 42.15 | build reads via OpenSlide; pydicom frame decode bit-identical to OpenSlide (11/11 tiles) | 44.69 / ×1.40 |
-| JP2K-33003-1 | 26.24 / 26.70 | 33.98 | 26.19 / 28.21 | 35.27 | ≥ 51.33 dB (max \|Δ\| 1–2, YCbCr rounding) | 29.59 / ×1.49 |
+| JP2K-33003-1 | 26.24 / 26.70 | 33.98 | 26.19 / 28.21 | 35.27 | ≥ 51.33 dB (max \|Δ\| 1, YCbCr rounding) | 29.59 / ×1.49 |
 | CMU-3 | 29.71 / 32.89 | 48.43 | 28.64 / 48.42 | 52.46 | bit-identical | 39.45 / ×1.59 |
-| JP2K-33003-2 | 26.22 / 26.46 | 33.84 | 26.13 / 33.90 | 38.54 | ≥ 51.31 dB | 29.39 / ×1.49 |
+| JP2K-33003-2 | 26.22 / 26.46 | 33.84 | 26.13 / 33.90 | 38.54 | ≥ 51.31 dB (max \|Δ\| 1) | 29.39 / ×1.49 |
 | CMU-1-JP2K-33005 | 35.47 / 36.14 | 40.19 | 34.92 / 43.37 | 48.82 | bit-identical | 38.60 / ×1.24 |
 | CMU-2 | 27.40 / 30.01 | 45.98 | 29.15 / 49.82 | 49.79 | bit-identical | 37.00 / ×1.59 |
 
@@ -212,8 +214,8 @@ and failed responses. Screenshots: `wsi-viewer/design/screens/integrated/shots/s
 
 The only console messages were 4 SwiftShader "GPU stall due to ReadPixels" warnings on the first slide
 (from the screenshot readback); there were no errors. The dark band along the top of CMU-3 is in the
-source: its top 168 level-0 rows are dark scan edge, and our level 4 matches OpenSlide's level 2 there
-within 2 grey levels.
+source (scan edge): in a 4000 px wide strip, 168 of its first 400 level-0 rows average below 200, and
+our level 4 matches OpenSlide's level 2 there within 2 grey levels.
 
 ## Open points for the owner and the shell workflow
 

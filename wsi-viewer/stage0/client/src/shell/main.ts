@@ -990,6 +990,8 @@ function onFrame(s: FrameSnapshot): void {
       uploadQueue: s.uploadQueue,
       oldestUrgentMs: s.oldestUrgentMs,
       tileBytes: s.received > 0 ? s.bytes / s.received : null,
+      received: s.received,
+      resident: s.resident,
       online: navigator.onLine,
       downlinkMbps: downlink(),
       rttMs: rtt(),
