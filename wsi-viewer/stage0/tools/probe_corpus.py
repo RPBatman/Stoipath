@@ -158,7 +158,7 @@ def diff_stats(a: np.ndarray, b: np.ndarray, valid: np.ndarray | None = None) ->
         return {"comparedPixels": 0}
     mse = float(np.mean(e.astype(np.float64) ** 2))
     return {
-        "comparedPixels": int(e.size // 3) if e.ndim == 2 else int(e.size // 3),
+        "comparedPixels": int(e.size // 3),
         "maxAbsDiff": int(e.max()),
         "meanAbsDiff": round(float(e.mean()), 4),
         "psnrDb": None if mse == 0 else round(10 * math.log10(255.0**2 / mse), 2),
@@ -240,12 +240,10 @@ def j2k_header(data: bytes) -> dict:
             comps = [(data[i + 40 + 3 * k], data[i + 41 + 3 * k], data[i + 42 + 3 * k]) for k in range(nc)]
             out["size"] = [xs, ys]
             out["components"] = [{"bits": (c[0] & 0x7F) + 1, "dx": c[1], "dy": c[2]} for c in comps]
-            # chroma from the component subsampling (dx, dy): luma 1x1, chroma 2x1 = 4:2:2
-            c3 = [(0, 1, 1)] + [(0, 1 if c[1] == 1 else 1, 1) for c in comps[1:]]
+            # chroma from the component subsampling (dx, dy) of the second component: 2x1 = 4:2:2
             if len(comps) == 3:
                 dx, dy = comps[1][1], comps[1][2]
                 out["chroma"] = {(1, 1): "4:4:4", (2, 1): "4:2:2", (2, 2): "4:2:0"}.get((dx, dy), f"{dx}x{dy}")
-            del c3
         elif m == 0x52:  # COD
             out["progressionOrder"] = ["LRCP", "RLCP", "RPCL", "PCRL", "CPRL"][data[i + 5]] if data[i + 5] < 5 else data[i + 5]
             out["layers"] = struct.unpack(">H", data[i + 6 : i + 8])[0]
@@ -373,7 +371,7 @@ def parse_aperio_description(desc: str) -> dict:
     other = sorted(k for k in fields if k not in APERIO_TECHNICAL_KEYS)
     return {
         "software": first,
-        "summary": second[:240],
+        "summary": second.split(";")[0][:240],
         "technicalFields": tech,
         "identifyingFieldsPresent": other,
         "dateFieldPresent": any(k in APERIO_DATE_KEYS for k in fields),
@@ -412,11 +410,11 @@ def probe_svs_structure(path: str) -> tuple[dict, list[str]]:
             if p.is_tiled:
                 bc = np.asarray(p.databytecounts)
                 rec.update({
-                    "level": levels.index(p), "tileWidth": p.tilewidth, "tileHeight": p.tilelength,
+                    "level": [q.index for q in levels].index(p.index), "tileWidth": p.tilewidth, "tileHeight": p.tilelength,
                     "tiles": int(bc.size), "emptyTiles": int((bc == 0).sum()), "medianTileBytes": int(np.median(bc[bc > 0])),
                     "compressedBytes": int(bc.sum()),
                     "downsampleX": round(W0 / p.shape[1], 6), "downsampleY": round(H0 / p.shape[0], 6),
-                    "descriptionSummary": line2.split("|")[0].strip()[:200] if p is not levels[0] else None,
+                    "descriptionSummary": line2.split("|")[0].strip()[:200] if p.index != levels[0].index else None,
                 })
                 # codestream of the median-size tile
                 med = int(np.argsort(bc)[bc.size // 2])
@@ -424,7 +422,7 @@ def probe_svs_structure(path: str) -> tuple[dict, list[str]]:
                 fh.seek(p.dataoffsets[med])
                 data = fh.read(p.databytecounts[med])
                 rec["codestream"] = jpeg_header(data) if p.compression == 7 else j2k_header(data)
-                del rec["codestream"]["markers"] if "markers" in rec["codestream"] else None
+                rec["codestream"].pop("markers", None)
             else:
                 assoc[role] = {"width": int(p.shape[1]), "height": int(p.shape[0]), "compression": p.compression.name,
                                "photometric": p.photometric.name, "page": p.index}
@@ -601,6 +599,14 @@ class DicomReader:
         pass
 
 
+def as_list(v) -> list[str] | None:
+    if v is None:
+        return None
+    if isinstance(v, (str, bytes)) or not hasattr(v, "__iter__"):
+        return [str(v)]
+    return [str(x) for x in v]
+
+
 def ts_name(uid) -> str:
     try:
         return f"{uid.name} ({uid})"
@@ -626,10 +632,8 @@ def probe_dicom_structure(directory: str) -> tuple[dict, DicomReader, list[str]]
             pre = fh.read(4)
         for kw in DICOM_PHI_KEYWORDS:
             if kw in ds:
-                v = ds.get(kw)
-                nonempty = bool(v) if not hasattr(v, "__len__") or isinstance(v, (str, bytes)) else len(v) > 0
-                if nonempty and isinstance(v, str):
-                    nonempty = bool(v.strip())
+                el = ds[kw]
+                nonempty = len(el.value) > 0 if el.VR == "SQ" else (el.value is not None and str(el.value).strip() != "")
                 if phi.get(kw) != "non-empty":
                     phi[kw] = "non-empty" if nonempty else "empty"
         it = list(ds.get("ImageType", []))
@@ -660,7 +664,8 @@ def probe_dicom_structure(directory: str) -> tuple[dict, DicomReader, list[str]]
             "bitsStored": int(ds.get("BitsStored", 0)),
             "planarConfiguration": int(ds.PlanarConfiguration) if "PlanarConfiguration" in ds else None,
             "lossyImageCompression": str(ds.get("LossyImageCompression", "")) or None,
-            "lossyMethod": [str(v) for v in (ds.get("LossyImageCompressionMethod") or [])] if ds.get("LossyImageCompressionMethod") is not None and not isinstance(ds.get("LossyImageCompressionMethod"), str) else ds.get("LossyImageCompressionMethod"),
+            "lossyMethod": as_list(ds.get("LossyImageCompressionMethod")),
+            "lossyRatio": [float(v) for v in as_list(ds.get("LossyImageCompressionRatio")) or []] or None,
             "pixelSpacingUm": [round(v * 1000, 6) for v in ps] if ps else None,
             "opticalPaths": [{"id": str(o.get("OpticalPathIdentifier")),
                               "iccProfileBytes": len(o.ICCProfile) if "ICCProfile" in o else None,
@@ -674,10 +679,8 @@ def probe_dicom_structure(directory: str) -> tuple[dict, DicomReader, list[str]]
             "dualPersonalityTiff": pre in (b"II*\0", b"II+\0", b"MM\0*", b"MM\0+"),
             "manufacturer": str(ds.get("Manufacturer", "")),
             "model": str(ds.get("ManufacturerModelName", "")),
-            "software": [str(v) for v in ds.get("SoftwareVersions", [])] if not isinstance(ds.get("SoftwareVersions", ""), str) else [str(ds.SoftwareVersions)],
+            "software": as_list(ds.get("SoftwareVersions")),
         }
-        if isinstance(rec["lossyMethod"], str):
-            rec["lossyMethod"] = [rec["lossyMethod"]]
         instances.append((p, ds, rec))
     # codestream header of a representative frame of each compressed instance (label/overview read
     # only as far as the JPEG header; never decoded)
@@ -697,9 +700,9 @@ def probe_dicom_structure(directory: str) -> tuple[dict, DicomReader, list[str]]
             h = jpeg_header(data)
             h.pop("markers", None)
             rec["codestream"] = h
-            prog = sum(1 for o2, l2 in frags if b"\xff\xc2" in full.PixelData[o2 : o2 + min(l2, 4096)][:4096]
-                       and full.PixelData[o2 : o2 + min(l2, 4096)].find(b"\xff\xc2") < full.PixelData[o2 : o2 + min(l2, 4096)].find(b"\xff\xda"))
-            rec["progressiveFrames"] = prog
+            pdat = full.PixelData
+            rec["progressiveFrames"] = sum(1 for o2, l2 in frags
+                                           if jpeg_header(pdat[o2 : o2 + min(l2, 8192)])["sof"] == "SOF2 progressive")
         else:
             rec["codestream"] = j2k_header(data)
         del full
@@ -805,8 +808,7 @@ def openslide_summary(path: str) -> tuple[dict, object | None]:
         "tileSize": [[int(pr.get(f"openslide.level[{i}].tile-width", 0)), int(pr.get(f"openslide.level[{i}].tile-height", 0))]
                      for i in range(s.level_count)],
         "propertiesCount": len(pr),
-        "associatedImages": {k: list(v) for k, v in sorted(s.associated_images.items())} if False else
-                            {k[len("openslide.associated."):-len(".width")]: [int(pr[k]), int(pr[k[:-len("width")] + "height"])]
+        "associatedImages": {k[len("openslide.associated."):-len(".width")]: [int(pr[k]), int(pr[k[:-len("width")] + "height"])]
                              for k in sorted(pr) if k.startswith("openslide.associated.") and k.endswith(".width")},
         "mppX": float(pr["openslide.mpp-x"]) if "openslide.mpp-x" in pr else None,
         "mppY": float(pr["openslide.mpp-y"]) if "openslide.mpp-y" in pr else None,
@@ -1130,6 +1132,23 @@ def safe_extract(zpath: str, dest: str) -> list[str]:
     return [n for n in names if not n.endswith("/")]
 
 
+def compact_json(obj) -> str:
+    """Indented JSON with short scalar-only arrays/objects kept on one line (reviewable and small).
+
+    Only newline+indent runs are rewritten; JSON strings never contain a literal newline."""
+    text = json.dumps(obj, indent=1, ensure_ascii=False)
+    pat = re.compile(r"[\[{][^\[\]{}]*[\]}]")
+
+    def one_line(m):
+        flat = re.sub(r"\n\s*", " ", m.group(0)).replace("[ ", "[").replace(" ]", "]").replace("{ ", "{").replace(" }", "}")
+        return flat if len(flat) <= 160 else m.group(0)
+
+    prev = None
+    while prev != text:
+        prev, text = text, pat.sub(one_line, text)
+    return text
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("samples", help="directory holding the downloaded release assets and samples-manifest.json")
@@ -1269,8 +1288,14 @@ def main(argv=None) -> int:
             if name in DERIVED_FROM and DERIVED_FROM[name] in readers:
                 pr, pst = readers[DERIVED_FROM[name]]
                 rec["derivedFrom"] = derived_check(name, st, reader, region, pr, pst)
+            if kind == "dicom" and any(re.search(r"\d{4}-\d{2}-\d{2}", m["file"]) for m in rec["members"]):
+                quirks.append("member file names embed a scan date/time; a de-identifying ingest must rename files, not only "
+                              "clean attributes")
             rec["quirks"] = quirks
-            readers[name] = (reader, st)
+            if name in DERIVED_FROM.values():
+                readers[name] = (reader, st)
+            else:
+                reader.close()
         finally:
             if os_slide is not None:
                 os_slide.close()
@@ -1291,8 +1316,9 @@ def main(argv=None) -> int:
         "release": release,
         "manifest": {"file": "samples-manifest.json", "sha256": sha256_file(man_path), "entries": len(manifest),
                      "sha256MatchesGithubDigest": (sha256_file(man_path) == digests.get("samples-manifest.json")) if digests else None},
-        "privacy": "values of identifying fields (dates, user GUIDs, scanner serials, file names, patient/accession/container "
-                   "attributes, label text) are not copied, only their presence; label/macro pixels are never decoded",
+        "privacy": "values of identifying metadata fields (dates, user GUIDs, scanner serials, embedded file names, "
+                   "patient/accession/container attributes, label text) are not copied, only their presence; member file "
+                   "names are kept as published in the release manifest; label/macro pixels are never decoded",
         "coverage": {
             "formatFamilies": sorted({a["formatFamily"] for a in assets_out}),
             "vendors": [f"{f}: {v}" for f, v in vendors],
@@ -1318,8 +1344,7 @@ def main(argv=None) -> int:
     }
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w") as fh:
-        json.dump(out, fh, indent=1, ensure_ascii=False)
-        fh.write("\n")
+        fh.write(compact_json(out) + "\n")
     log(f"wrote {args.out} ({os.path.getsize(args.out)} bytes)")
     return 0
 

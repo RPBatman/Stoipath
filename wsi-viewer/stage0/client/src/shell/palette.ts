@@ -5,9 +5,11 @@
  *
  * Placement is base.css's .palette-layer (under the top bar over the dock column ≥ 1080 px, the in-flow sheet row
  * ≤ 1079 px); no scrim; a pointer-down outside closes it. ARIA: combobox input + listbox with
- * aria-activedescendant; ↑↓ move, ↵ run, Esc close. After a command focus goes to the canvas; after Esc to the opener.
+ * aria-activedescendant; ↑↓ move, ↵ run, Esc close. After a command focus goes to the canvas; after Esc to the opener
+ * (the canvas when the palette was opened from the slide, or when the opener is no longer rendered).
  */
 import { h, keycaps } from './dom';
+import { restoreFocus } from './panels';
 
 export interface Command {
   id: string;
@@ -112,14 +114,14 @@ export class Palette {
     this.input.focus();
   }
 
-  close(restoreFocus: boolean): void {
+  close(restore: boolean): void {
     if (!this.isOpen) return;
     this.isOpen = false;
     this.layer.hidden = true;
     this.app.classList.remove('palette-open');
     this.input.removeAttribute('aria-activedescendant');
     this.onToggle(false);
-    if (restoreFocus) (this.opener ?? null)?.focus();
+    if (restore) restoreFocus(this.opener, this.focusCanvas);
   }
 
   toggle(opener: HTMLElement | null): void {

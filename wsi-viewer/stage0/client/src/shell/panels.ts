@@ -3,9 +3,15 @@
  * Docked ≥ 1600 px (open by default), drawer 1080–1599 and in-flow sheet ≤ 1079 (closed by default; DN-F4).
  * Dialogs live in base.css's .modal-layer--dock (the dock column, never over the slide centre) and are non-modal
  * (aria-modal="false", the research final's in-dock overlay): the slide keeps its keys, Esc closes, focus returns
- * to the opener.
+ * to the opener, or to the canvas when the opener is no longer rendered (a top-bar button hidden ≤ 1079 px).
  */
 import { $$ } from './dom';
+
+/** Focus `opener` if it is still in the document and rendered; otherwise call `fallback` (outside the frame loop). */
+export function restoreFocus(opener: HTMLElement | null, fallback: () => void): void {
+  if (opener !== null && opener.isConnected && opener.getClientRects().length > 0) opener.focus({ preventScroll: true });
+  else fallback();
+}
 
 export type DockTab = 'slide' | 'meas' | 'engine';
 
@@ -77,7 +83,10 @@ export class DialogLayer {
   private opener: HTMLElement | null = null;
   onToggle: (open: boolean) => void = () => {};
 
-  constructor(private readonly layer: HTMLElement) {
+  constructor(
+    private readonly layer: HTMLElement,
+    private readonly fallbackFocus: () => void = () => {},
+  ) {
     for (const b of $$<HTMLElement>('[data-close-dialog]', layer)) b.addEventListener('click', () => this.close(true));
     layer.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -103,13 +112,13 @@ export class DialogLayer {
     else this.open(dlg, opener, focusEl);
   }
 
-  close(restoreFocus: boolean): boolean {
+  close(restore: boolean): boolean {
     if (this.current === null) return false;
     this.current.hidden = true;
     this.current = null;
     this.layer.hidden = true;
     this.onToggle(false);
-    if (restoreFocus) this.opener?.focus();
+    if (restore) restoreFocus(this.opener, this.fallbackFocus);
     this.opener = null;
     return true;
   }
