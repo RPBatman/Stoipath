@@ -110,7 +110,7 @@ body.review-hidden .app.wb { height: 100vh; height: 100dvh; }
 .topbar .progress { flex: 0 0 auto; font-family: var(--font-mono); cursor: pointer; min-height: var(--target-min); }
 .topbar .progress .short { display: none; }
 .topbar__search {
-  flex: 0 0 300px; display: flex; align-items: center; gap: var(--space-3);
+  flex: 0 1 300px; min-width: var(--target); display: flex; align-items: center; gap: var(--space-3);
   min-height: 28px; padding: 0 var(--space-4);
   background: var(--color-surface--1); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2);
   color: var(--color-text-secondary); font-size: var(--text-sm); text-align: left; white-space: nowrap; overflow: hidden;
@@ -120,7 +120,7 @@ body.review-hidden .app.wb { height: 100vh; height: 100dvh; }
 .topbar__search .keys { display: inline-flex; gap: 2px; }
 .topbar__slot-mode { margin-left: 0; }
 .rail-toggle { display: none; }
-@container topbar (max-width: 1599px) { .topbar__search { flex-basis: 220px; } }
+@container topbar (max-width: 1599px) { .topbar__search { flex-basis: 220px; } .topbar__identity .patient { display: none; } }
 @container topbar (max-width: 1279px) {
   .topbar__search { flex: 0 0 auto; width: var(--target); min-height: var(--target); padding: 0; justify-content: center; }
   .topbar__search .ph, .topbar__search .keys { display: none; }
@@ -189,10 +189,14 @@ body.review-hidden .app.wb { height: 100vh; height: 100dvh; }
 .magnification__value { min-width: 4.2ch; text-align: right; font-variant-numeric: tabular-nums; }
 .magnification__line2 { min-width: 17ch; text-align: right; }
 .scalebar__label { min-width: 6ch; }
+.scalebar .scalebar__bar { margin-bottom: 6px; }
 .hud__position { min-width: 21ch; }
 .hud .hud__sharp { display: none; }
 .hud .hud__sharp .indicator__glyph { width: 9px; height: 9px; }
 .magnification input.zoom-input { width: 6ch; }
+#magBtn { min-height: var(--target-min); }
+.job .btn, .jmeta .btn { min-height: var(--target-min); padding: 0 var(--space-3); }
+.review-head a { display: inline-flex; align-items: center; min-height: 24px; }
 .magnification .zoom-input[hidden] { display: none; }
 /* Tool line (A): what the next click will do. Shown in focus mode or with the legend. */
 .hud__tool { font-family: var(--font-ui); display: none; align-items: center; gap: var(--space-3); padding: 0 var(--space-3) 0 0; min-height: var(--target-min); }
@@ -278,7 +282,7 @@ body.show-live .tr-stack .navigator[data-live] { position: static; }
 .tray__slide .state { font-size: var(--text-2xs); font-family: var(--font-mono); color: var(--color-text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
 .layer-row { grid-template-columns: var(--target-min) 1fr auto; }
 .layer-row__name { flex-wrap: wrap; }
-.layer-row__opacity input[type="range"] { height: 20px; }
+.layer-row__opacity input[type="range"] { height: var(--target-min); }
 .layer-row .thr { grid-row: 3; grid-column: 2 / span 2; display: grid; grid-template-columns: auto auto 1fr 4ch; gap: var(--space-3); align-items: center; font-size: var(--text-xs); color: var(--color-text-secondary); }
 .layer-row .thr input[type="range"] { height: 24px; }
 .layer-row__provenance { grid-row: 4; }
@@ -439,6 +443,7 @@ body.surface-widget > .app.wb { display: none; }
   .app.wb.dock-open .ctx { display: flex; position: absolute; right: var(--pstrip-w); top: var(--layout-topbar); bottom: var(--layout-strip); width: var(--layout-dock); z-index: var(--z-drawer); box-shadow: var(--shadow-3); border-left: 1px solid var(--color-border-strong); }
   .app.wb .palette-layer { right: var(--pstrip-w); width: var(--layout-dock); }
   .app.wb.dock-open .tr-stack, .app.wb.dock-open .view-a .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.wb.dock-open { --layout-navigator: 180px; }
   .app.wb.lib-open .view-a .hud--tl, .app.wb.lib-open .view-a .hud--bl { left: calc(var(--lib-w) + var(--layout-hud-inset)); }
   .toast-stack { right: calc(var(--pstrip-w) + var(--space-4)); }
 }
@@ -458,11 +463,12 @@ body.surface-widget > .app.wb { display: none; }
   .app.wb:not(.sheet-expanded) .dock .dock__body, .app.wb:not(.sheet-expanded) .dock .dock__resizer, .app.wb:not(.sheet-expanded) .dock .paneloverlay { display: none; }
   .dock__resizer { display: none; }
   .dock__head { display: none; }
-  .dock__grab { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 44px; padding: 0 var(--space-4); flex: 0 0 auto; color: var(--color-text); text-align: left; }
-  .dock__grab .bar { width: 40px; height: 4px; border-radius: 2px; background: var(--color-border-strong); flex: 0 0 auto; }
-  .dock__grab .title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-semibold); font-size: var(--text-sm); }
-  .dock__grab .hintlbl { font-size: var(--text-xs); color: var(--color-text-secondary); }
-  .dock__switch { display: inline-flex; flex: 0 0 auto; }
+  .dock__grab { display: flex; align-items: center; gap: var(--space-2); width: 100%; min-height: 44px; padding: 0 var(--space-3) 0 0; flex: 0 0 auto; }
+  .grabbtn { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: var(--space-3); min-height: 44px; padding: 0 var(--space-4); color: var(--color-text); text-align: left; }
+  .grabbtn .bar { width: 40px; height: 4px; border-radius: 2px; background: var(--color-border-strong); flex: 0 0 auto; }
+  .grabbtn .title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-semibold); font-size: var(--text-sm); }
+  .grabbtn .hintlbl { font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
+  .dock__switch { display: inline-flex; flex: 0 0 auto; margin-right: var(--space-2); }
   .dock__switch .segmented__item { min-height: 32px; }
   .palette-layer, .app.wb .palette-layer { left: 0; right: 0; width: auto; }
   .palette-layer .palette { border-radius: 0 0 var(--radius-4) var(--radius-4); }
@@ -515,6 +521,7 @@ body.surface-widget > .app.wb { display: none; }
   .dock .section > summary { min-height: 44px; }
   .hint--kbd, .hint .key, .tool__key, .class-chip .key, .tab .key, .footer-actions .key, .btn .key { display: none !important; }
   .legend-hud .legend__item { min-height: 36px; }
+  .job .btn, .jmeta .btn, #magBtn { min-height: 36px; }
   .hud__tool button { min-height: 44px; }
   .classes .class-chip { min-height: 40px; }
   .filters .chip { min-height: 36px; }
@@ -740,7 +747,10 @@ body.surface-widget > .app.wb { display: none; }
 
   <!-- D-left. Library dock: Cohort · Slides · Layers (fixed home; pinnable; resizable 240–400 by keyboard) -->
   <aside class="dock lib region" id="lib" aria-label="Library">
-    <button class="dock__grab" data-sheet="toggle" aria-expanded="false" aria-controls="libBody" aria-label="Expand the Library panel"><span class="bar" aria-hidden="true"></span><span class="title">Library</span><span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" aria-pressed="true" data-sheetdock="lib">Library</button><button class="segmented__item" aria-pressed="false" data-sheetdock="ctx">Context</button></span><span class="hintlbl">tap to expand</span></button>
+    <div class="dock__grab">
+      <button class="grabbtn" data-sheet="toggle" aria-expanded="false" aria-controls="libBody" aria-label="Expand the Library panel"><span class="bar" aria-hidden="true"></span><span class="title">Library · Slides</span><span class="hintlbl">tap to expand</span></button>
+      <span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" aria-pressed="true" data-sheetdock="lib">Library</button><button class="segmented__item" aria-pressed="false" data-sheetdock="ctx">Context</button></span>
+    </div>
     <div class="dock__head"><span class="title">Library</span><span class="meta">cohort · slides · layers</span>
       <button class="btn btn--sm btn--icon btn--ghost" id="libPin" aria-pressed="false" aria-label="Pin the Library open" title="Pinned: stays open between gestures"><svg class="icon icon--sm"><use href="#i-pin"/></svg></button>
       <button class="btn btn--sm btn--icon btn--ghost" data-close="lib" aria-label="Close the Library"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
@@ -1075,7 +1085,10 @@ body.surface-widget > .app.wb { display: none; }
   <!-- D-right. Context dock: Inspector · Annotations · Model · Channels · Export (fixed home; resizable 320–520 by keyboard) -->
   <aside class="dock ctx region" id="ctx" aria-label="Context">
     <div class="dock__resizer" role="separator" aria-orientation="vertical" aria-label="Resize the Context dock (arrow keys, 320 to 520 pixels)" aria-valuemin="320" aria-valuemax="520" aria-valuenow="360" tabindex="0" data-resize="ctx"></div>
-    <button class="dock__grab" data-sheet="toggle" aria-expanded="false" aria-controls="ctxBody" aria-label="Expand the Context panel"><span class="bar" aria-hidden="true"></span><span class="title" id="ctxGrabTitle">Context · Inspector</span><span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" aria-pressed="false" data-sheetdock="lib">Library</button><button class="segmented__item" aria-pressed="true" data-sheetdock="ctx">Context</button></span><span class="hintlbl">tap to expand</span></button>
+    <div class="dock__grab">
+      <button class="grabbtn" data-sheet="toggle" aria-expanded="false" aria-controls="ctxBody" aria-label="Expand the Context panel"><span class="bar" aria-hidden="true"></span><span class="title" id="ctxGrabTitle">Context · Inspector</span><span class="hintlbl">tap to expand</span></button>
+      <span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" aria-pressed="false" data-sheetdock="lib">Library</button><button class="segmented__item" aria-pressed="true" data-sheetdock="ctx">Context</button></span>
+    </div>
     <div class="dock__head"><span class="title">Context</span><span class="meta">resizable 320–520 · <kbd class="key">\</kbd> focus</span><button class="btn btn--sm btn--icon btn--ghost" data-close="ctx" aria-label="Close the Context dock"><svg class="icon icon--sm"><use href="#i-close"/></svg></button></div>
     <div class="dock__tabs tabs tabs--fill" role="tablist" aria-label="Context panels" id="ctxTabs">
       <button class="tab" role="tab" id="tab-inspector" data-tab="inspector" aria-selected="true" aria-controls="tp-inspector">Inspector</button>
@@ -1182,10 +1195,10 @@ body.surface-widget > .app.wb { display: none; }
           <div class="alert alert--neutral" id="modelOffline" role="status" hidden><span class="alert__glyph">!</span><div><div class="alert__title">Inference unavailable offline</div><div>Runs are queued and start when the link returns.</div></div></div>
         </div>
         <div class="sub"><span class="title">Jobs</span><span class="meta">1 running · 2 done · 1 failed</span></div>
-        <div class="job" data-live="events:aiResultArrived"><span class="jname">hovernet-pannuke 1.0 · ROI 1</span><span class="mono text-xs">62 %</span><div class="progress-bar" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="hovernet job progress" style="--value:62%"><span></span></div><div class="jmeta"><span>started 10:31</span><span>30 of 48 tiles</span><button class="btn btn--sm btn--ghost" style="min-height:18px;padding:0 6px">Cancel</button></div></div>
+        <div class="job" data-live="events:aiResultArrived"><span class="jname">hovernet-pannuke 1.0 · ROI 1</span><span class="mono text-xs">62 %</span><div class="progress-bar" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="hovernet job progress" style="--value:62%"><span></span></div><div class="jmeta"><span>started 10:31</span><span>30 of 48 tiles</span><button class="btn btn--sm btn--ghost">Cancel</button></div></div>
         <div class="job"><span class="jname">unet-lnmet 1.3 · whole slide</span><span class="state-tag is-solid">done</span><div class="jmeta"><span>→ layer “Metastasis probability”</span><span>2026-10-30 10:41</span><span>inputHash 9f3a…c21e</span><span class="state-tag">research</span></div></div>
         <div class="job"><span class="jname">cell-detect 2.0 · whole slide</span><span class="state-tag is-solid">done</span><div class="jmeta"><span>→ layer “Cell detections” · 1,240,000</span><span>local tiler</span><span class="state-tag">research</span></div></div>
-        <div class="job"><span class="jname">unet-lnmet 1.3 · tumor_015</span><span class="state-tag is-dashed">failed</span><div class="jmeta"><span><span class="dot dot--fail"></span>worker out of memory (16-bit tiles)</span><button class="btn btn--sm btn--ghost" style="min-height:18px;padding:0 6px" data-cmd="model:retry8">Retry at 8-bit tier</button></div></div>
+        <div class="job"><span class="jname">unet-lnmet 1.3 · tumor_015</span><span class="state-tag is-dashed">failed</span><div class="jmeta"><span><span class="dot dot--fail"></span>worker out of memory (16-bit tiles)</span><button class="btn btn--sm btn--ghost" data-cmd="model:retry8">Retry at 8-bit tier</button></div></div>
         <div class="sub"><span class="title">Candidate regions</span><span class="meta" data-live="events:aiResultArrived">uncertainty queue · 1 of 4 reviewed</span></div>
         <div class="queue" role="listbox" aria-label="Candidate regions from unet-lnmet 1.3; Space flies to the focused row" id="queueList">
           <div class="list__item is-reviewed" role="option" aria-selected="false" tabindex="0" data-fly="met"><span class="rid">R1</span><span class="what">Metastasis · p 0.97 · 2.3 mm</span><button class="btn btn--sm btn--secondary" data-fly="met" aria-label="Fly to region R1">Fly there</button><span class="meta2">reviewed 10:42 · annotated A1</span></div>
@@ -1238,9 +1251,9 @@ body.surface-widget > .app.wb { display: none; }
 }</pre></div>
         </details>
         <div class="sub"><span class="title">Jobs</span><span class="meta">3</span></div>
-        <div class="job"><span class="jname"><span class="mono text-secondary">#412</span> GeoJSON · QuPath dialect · 9 objects</span><span class="state-tag is-solid">done</span><div class="jmeta"><span><span class="dot dot--ok"></span>10:52</span><span class="identical">byte-identical</span><span>2.1 MB</span><button class="btn btn--sm btn--ghost" style="min-height:18px;padding:0 6px" aria-label="Download job 412">Download</button></div></div>
+        <div class="job"><span class="jname"><span class="mono text-secondary">#412</span> GeoJSON · QuPath dialect · 9 objects</span><span class="state-tag is-solid">done</span><div class="jmeta"><span><span class="dot dot--ok"></span>10:52</span><span class="identical">byte-identical</span><span>2.1 MB</span><button class="btn btn--sm btn--ghost" aria-label="Download job 412">Download</button></div></div>
         <div class="job"><span class="jname"><span class="mono text-secondary">#413</span> Patches 256 px + labels · 1,842 tiles</span><span class="state-tag">running</span><div class="progress-bar" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Patch export progress" style="--value:64%"><span></span></div><div class="jmeta"><span><span class="dot dot--pending"></span>64 %</span><span>PNG16 + GeoParquet</span><span>deterministic pixels (hash-stable)</span></div></div>
-        <div class="job"><span class="jname"><span class="mono text-secondary">#414</span> DICOM ANN · 9 objects → STOW-RS</span><span class="state-tag">queued</span><div class="jmeta"><span><span class="dot dot--pending"></span>translator job</span><button class="btn btn--sm btn--ghost" style="min-height:18px;padding:0 6px">Cancel</button></div></div>
+        <div class="job"><span class="jname"><span class="mono text-secondary">#414</span> DICOM ANN · 9 objects → STOW-RS</span><span class="state-tag">queued</span><div class="jmeta"><span><span class="dot dot--pending"></span>translator job</span><button class="btn btn--sm btn--ghost">Cancel</button></div></div>
         <p class="note">The byte-identity badge means a re-export from this manifest produced the same bytes in CI (research reproducibility). Snapshots burn in the scale bar and the product footer, so the RUO string travels with every image.</p>
         <div class="footer-actions"><button class="btn btn--primary btn--sm" data-cmd="export:submit" data-live="commands:export.submit"><svg class="icon icon--sm"><use href="#i-download"/></svg>Submit export</button><button class="btn btn--sm btn--secondary" data-cmd="snapshot">Snapshot <kbd class="key">⇧S</kbd></button><button class="btn btn--sm btn--secondary" data-cmd="slide:complete" data-live="state.collection"><svg class="icon icon--sm"><use href="#i-check"/></svg>Mark slide complete · next <kbd class="key">N</kbd></button></div>
       </section>
@@ -1802,7 +1815,7 @@ v.state</pre></div>
   }
   function syncSheet() {
     const expanded = app.classList.contains('sheet-expanded');
-    $$('.dock__grab').forEach(g => { g.setAttribute('aria-expanded', String(expanded)); g.querySelector('.hintlbl').textContent = expanded ? 'tap to collapse' : 'tap to expand'; g.setAttribute('aria-label', (expanded ? 'Collapse ' : 'Expand ') + g.querySelector('.title').textContent); });
+    $$('.grabbtn').forEach(g => { g.setAttribute('aria-expanded', String(expanded)); g.querySelector('.hintlbl').textContent = expanded ? 'tap to collapse' : 'tap to expand'; g.setAttribute('aria-label', (expanded ? 'Collapse ' : 'Expand ') + g.querySelector('.title').textContent); });
     const which = app.classList.contains('lib-open') ? 'lib' : 'ctx';
     $$('[data-sheetdock]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sheetdock === which)));
   }
