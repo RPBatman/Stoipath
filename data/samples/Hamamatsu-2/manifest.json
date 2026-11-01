@@ -1,0 +1,282 @@
+{
+  "schema": "stoipath-stage0-pyramid/1",
+  "width": 30720,
+  "height": 39168,
+  "tileSize": 512,
+  "tileUrl": "tiles/{level}/{x}_{y}.jpg",
+  "tileFormat": "image/jpeg",
+  "levelOrder": "index 0 is full resolution; each level halves; the last level fits in one tile",
+  "levels": [
+    {
+      "index": 0,
+      "width": 30720,
+      "height": 39168,
+      "cols": 60,
+      "rows": 77,
+      "scale": 1,
+      "pinned": false,
+      "tiles": 4620,
+      "bytes": 101703372,
+      "medianBytesPerTile": 12607,
+      "minBytesPerTile": 6361,
+      "maxBytesPerTile": 63198
+    },
+    {
+      "index": 1,
+      "width": 15360,
+      "height": 19584,
+      "cols": 30,
+      "rows": 39,
+      "scale": 2,
+      "pinned": false,
+      "tiles": 1170,
+      "bytes": 28776141,
+      "medianBytesPerTile": 9532,
+      "minBytesPerTile": 2543,
+      "maxBytesPerTile": 83058
+    },
+    {
+      "index": 2,
+      "width": 7680,
+      "height": 9792,
+      "cols": 15,
+      "rows": 20,
+      "scale": 4,
+      "pinned": false,
+      "tiles": 300,
+      "bytes": 6837745,
+      "medianBytesPerTile": 4029,
+      "minBytesPerTile": 714,
+      "maxBytesPerTile": 91950
+    },
+    {
+      "index": 3,
+      "width": 3840,
+      "height": 4896,
+      "cols": 8,
+      "rows": 10,
+      "scale": 8,
+      "pinned": false,
+      "tiles": 80,
+      "bytes": 1754338,
+      "medianBytesPerTile": 2612,
+      "minBytesPerTile": 958,
+      "maxBytesPerTile": 91342
+    },
+    {
+      "index": 4,
+      "width": 1920,
+      "height": 2448,
+      "cols": 4,
+      "rows": 5,
+      "scale": 16,
+      "pinned": true,
+      "tiles": 20,
+      "bytes": 477136,
+      "medianBytesPerTile": 7374,
+      "minBytesPerTile": 1516,
+      "maxBytesPerTile": 86112
+    },
+    {
+      "index": 5,
+      "width": 960,
+      "height": 1224,
+      "cols": 2,
+      "rows": 3,
+      "scale": 32,
+      "pinned": true,
+      "tiles": 6,
+      "bytes": 124793,
+      "medianBytesPerTile": 20456,
+      "minBytesPerTile": 995,
+      "maxBytesPerTile": 46130
+    },
+    {
+      "index": 6,
+      "width": 480,
+      "height": 612,
+      "cols": 1,
+      "rows": 2,
+      "scale": 64,
+      "pinned": true,
+      "tiles": 2,
+      "bytes": 31688,
+      "medianBytesPerTile": 15844,
+      "minBytesPerTile": 2125,
+      "maxBytesPerTile": 29563
+    },
+    {
+      "index": 7,
+      "width": 240,
+      "height": 306,
+      "cols": 1,
+      "rows": 1,
+      "scale": 128,
+      "pinned": true,
+      "tiles": 1,
+      "bytes": 8533,
+      "medianBytesPerTile": 8533,
+      "minBytesPerTile": 8533,
+      "maxBytesPerTile": 8533
+    }
+  ],
+  "mpp": 0.22865,
+  "source": {
+    "input": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Hamamatsu-2.zip",
+    "sizeBytes": 200221637,
+    "etag": null,
+    "lastModified": null,
+    "regionLevel0": {
+      "x": 0,
+      "y": 0,
+      "width": 30720,
+      "height": 39168,
+      "sourceLevel": 0,
+      "fullSlide": true
+    },
+    "regionSelection": "full slide: the whole source level-0 extent, no region cut",
+    "format": {
+      "reader": "OpenSlide 4.0.1 via openslide-python 1.4.7",
+      "vendor": "dicom",
+      "compression": "JPEG baseline (DICOM 1.2.840.10008.1.2.4.50)",
+      "photometric": "YBR_FULL_422",
+      "subsampling": null,
+      "tileSize": [
+        512,
+        512
+      ],
+      "levels": [
+        [
+          30720,
+          39168
+        ],
+        [
+          15360,
+          19584
+        ],
+        [
+          7680,
+          9792
+        ],
+        [
+          3840,
+          4896
+        ],
+        [
+          1920,
+          2448
+        ],
+        [
+          960,
+          1224
+        ],
+        [
+          480,
+          612
+        ],
+        [
+          240,
+          306
+        ]
+      ],
+      "files": 10,
+      "sourceFilesBytes": 207356206,
+      "dicom": {
+        "Manufacturer": "Hamamatsu Photonics K.K.",
+        "ManufacturerModelName": "C16300-21MDEU",
+        "TransferSyntaxUID": "1.2.840.10008.1.2.4.50",
+        "PhotometricInterpretation": "YBR_FULL_422",
+        "DimensionOrganizationType": "TILED_FULL",
+        "LossyImageCompression": "01",
+        "LossyImageCompressionRatio": "24",
+        "NumberOfOpticalPaths": "1",
+        "TotalPixelMatrixFocalPlanes": "1",
+        "Rows": "512",
+        "Columns": "512",
+        "ImageType": "DERIVED\\PRIMARY\\VOLUME\\NONE"
+      },
+      "scannerManufacturer": "Hamamatsu Photonics K.K.",
+      "associatedImages": {
+        "label": [
+          630,
+          648
+        ],
+        "macro": [
+          1890,
+          648
+        ]
+      },
+      "associatedImagesRead": false
+    },
+    "pixelSpacingNote": "DICOM SharedFunctionalGroups PixelMeasures PixelSpacing (mm) x 1000, via OpenSlide",
+    "note": "Pixels are level-0 pixels decoded by OpenSlide read_region (no resampling) re-encoded with the settings below; coarser levels are exact 2x2 box means of the decoded level-0 pixels.",
+    "reader": "OpenSlide 4.0.1 via openslide-python 1.4.7",
+    "scanner": "Hamamatsu Photonics K.K. C16300-21MDEU (DICOM Manufacturer / ManufacturerModelName)",
+    "sourceFilesBytes": 207356206,
+    "unpackedFrom": "Hamamatsu-2.zip",
+    "sha256": "4e5eb397622044167b83b33bd047ded1ea7e35f08146893948d4b1a79dced470",
+    "inputReadFrom": "local copy whose SHA-256 equals source-meta sha256",
+    "dataset": "OpenSlide test data (DICOM)",
+    "file": "DICOM/Hamamatsu-2.zip",
+    "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Hamamatsu-2.zip",
+    "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/DICOM/Hamamatsu-2.zip",
+    "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+    "releaseAssetDigest": "sha256:4e5eb397622044167b83b33bd047ded1ea7e35f08146893948d4b1a79dced470",
+    "description": "H&E stain, brightfield, TILED_FULL, scanned on Hamamatsu NanoZoomer S20MD, 2026",
+    "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+    "licence": "CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)",
+    "licenceId": "CC0-1.0",
+    "stain": "H&E",
+    "stainNote": "from the OpenSlide description ('H&E stain')",
+    "tissue": null,
+    "tissueNote": "not stated in the OpenSlide description ('H&E stain, brightfield, TILED_FULL, scanned on Hamamatsu NanoZoomer S20MD, 2026'), so left out",
+    "deidentified": "Public OpenSlide test data. Only the VOLUME instances' pixels are read (through OpenSlide); the LABEL and OVERVIEW instances (label, macro) are skipped and never published, and no patient, specimen or container identifiers, UIDs, dates or file names are copied.",
+    "archiveMembers": 10,
+    "archiveNote": "The release asset is a zip of the DICOM instances; the build reads them unpacked in a scratch directory after checking every member against original_sha256 in samples-manifest.json."
+  },
+  "jpegQuality": 85,
+  "jpegSubsampling": "4:2:0",
+  "jpegEncoder": "libjpeg-turbo libjpeg_turbo 3.2.0/8.0 via imagecodecs 2026.10.10, baseline, optimized Huffman",
+  "downsample": "2x2 box mean, round half up",
+  "pinnedBaseMaxPx": 4096,
+  "bytes": {
+    "perLevelMedian": {
+      "0": 12607,
+      "1": 9532,
+      "2": 4029,
+      "3": 2612,
+      "4": 7374,
+      "5": 20456,
+      "6": 15844,
+      "7": 8533
+    },
+    "perLevelTotal": {
+      "0": 101703372,
+      "1": 28776141,
+      "2": 6837745,
+      "3": 1754338,
+      "4": 477136,
+      "5": 124793,
+      "6": 31688,
+      "7": 8533
+    },
+    "total": 139713746,
+    "pinnedBase": 642150,
+    "tilesTotal": 6199
+  },
+  "build": {
+    "tool": "stage0/tools/build_pyramid.py",
+    "command": "tools/build_pyramid.py --full --reader openslide --input <unzip-dir>/Hamamatsu-2/A1 - 2026-05-29 10.08.06.1.dcm --input-archive data/samples/samples-v1/Hamamatsu-2.zip --input-url https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Hamamatsu-2.zip --source-meta data/corpus/pyramid-sources/Hamamatsu-2.json --subsampling 420 --out data/samples/pyramids/Hamamatsu-2 --clean",
+    "date": "2026-11-01T17:27:58+00:00",
+    "durationSec": 111.1,
+    "sourceReadSec": 44.2,
+    "encodeSec": 66.1,
+    "network": null,
+    "python": "3.13.17",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10",
+    "numpy": "2.5.4",
+    "openslide": "OpenSlide 4.0.1 via openslide-python 1.4.7",
+    "cpuCount": 4
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "schema": "stoipath-stage0-pyramid/1",
+  "width": 15374,
+  "height": 17497,
+  "tileSize": 512,
+  "tileUrl": "tiles/{level}/{x}_{y}.jpg",
+  "tileFormat": "image/jpeg",
+  "levelOrder": "index 0 is full resolution; each level halves; the last level fits in one tile",
+  "levels": [
+    {
+      "index": 0,
+      "width": 15374,
+      "height": 17497,
+      "cols": 31,
+      "rows": 35,
+      "scale": 1,
+      "pinned": false,
+      "tiles": 1085,
+      "bytes": 71202868,
+      "medianBytesPerTile": 64185,
+      "minBytesPerTile": 461,
+      "maxBytesPerTile": 113571
+    },
+    {
+      "index": 1,
+      "width": 7687,
+      "height": 8749,
+      "cols": 16,
+      "rows": 18,
+      "scale": 2,
+      "pinned": false,
+      "tiles": 288,
+      "bytes": 13012589,
+      "medianBytesPerTile": 34206,
+      "minBytesPerTile": 326,
+      "maxBytesPerTile": 116893
+    },
+    {
+      "index": 2,
+      "width": 3844,
+      "height": 4375,
+      "cols": 8,
+      "rows": 9,
+      "scale": 4,
+      "pinned": false,
+      "tiles": 72,
+      "bytes": 2965028,
+      "medianBytesPerTile": 29871,
+      "minBytesPerTile": 4366,
+      "maxBytesPerTile": 104657
+    },
+    {
+      "index": 3,
+      "width": 1922,
+      "height": 2188,
+      "cols": 4,
+      "rows": 5,
+      "scale": 8,
+      "pinned": true,
+      "tiles": 20,
+      "bytes": 725787,
+      "medianBytesPerTile": 35129,
+      "minBytesPerTile": 2809,
+      "maxBytesPerTile": 74798
+    },
+    {
+      "index": 4,
+      "width": 961,
+      "height": 1094,
+      "cols": 2,
+      "rows": 3,
+      "scale": 16,
+      "pinned": true,
+      "tiles": 6,
+      "bytes": 179749,
+      "medianBytesPerTile": 38025,
+      "minBytesPerTile": 1372,
+      "maxBytesPerTile": 49274
+    },
+    {
+      "index": 5,
+      "width": 481,
+      "height": 547,
+      "cols": 1,
+      "rows": 2,
+      "scale": 32,
+      "pinned": true,
+      "tiles": 2,
+      "bytes": 43076,
+      "medianBytesPerTile": 21538,
+      "minBytesPerTile": 1881,
+      "maxBytesPerTile": 41195
+    },
+    {
+      "index": 6,
+      "width": 241,
+      "height": 274,
+      "cols": 1,
+      "rows": 1,
+      "scale": 64,
+      "pinned": true,
+      "tiles": 1,
+      "bytes": 10653,
+      "medianBytesPerTile": 10653,
+      "minBytesPerTile": 10653,
+      "maxBytesPerTile": 10653
+    }
+  ],
+  "mpp": 0.2498,
+  "source": {
+    "input": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1.svs",
+    "sizeBytes": 63847265,
+    "etag": null,
+    "lastModified": null,
+    "regionLevel0": {
+      "x": 0,
+      "y": 0,
+      "width": 15374,
+      "height": 17497,
+      "sourceLevel": 0,
+      "fullSlide": true
+    },
+    "regionSelection": "full slide: the whole source level-0 extent, no region cut",
+    "format": {
+      "compression": "APERIO_JP2000_YCBC",
+      "photometric": "RGB",
+      "subsampling": null,
+      "tileSize": [
+        256,
+        256
+      ],
+      "levels": [
+        [
+          15374,
+          17497
+        ],
+        [
+          3843,
+          4374
+        ],
+        [
+          1921,
+          2187
+        ]
+      ],
+      "bigtiff": false,
+      "compressionTag": 33003,
+      "aperioLibrary": "Aperio Image Library v10.0.50",
+      "aperioAppMag": "40",
+      "aperioMPP": "0.2498",
+      "sourceLevelCodecs": [
+        {
+          "codec": "J2K/YUV16",
+          "quality": 70
+        },
+        {
+          "codec": "J2K/YUV16",
+          "quality": 70
+        },
+        {
+          "codec": "J2K/YUV16",
+          "quality": 70
+        }
+      ],
+      "jpeg2000": "Aperio JPEG 2000, YCbCr components (decoded to RGB by tifffile/imagecodecs)",
+      "associatedImages": {
+        "thumbnail": [
+          674,
+          768
+        ],
+        "label": [
+          415,
+          422
+        ],
+        "macro": [
+          1280,
+          421
+        ]
+      },
+      "associatedImagesRead": false
+    },
+    "pixelSpacingNote": "Aperio ImageDescription MPP",
+    "note": "Pixels are decoded source tiles (no resampling) re-encoded with the settings below; coarser levels are exact 2x2 box means of the decoded level-0 pixels.",
+    "scanner": "Aperio ScanScope (Aperio Image Library v10.0.50 in the ImageDescription; AppMag 40)",
+    "sha256": "6205ccf75a8fa6c32df7c5c04b7377398971a490fb6b320d50d91f7ba6a0e6fd",
+    "inputReadFrom": "local copy whose SHA-256 equals source-meta sha256",
+    "dataset": "OpenSlide test data (Aperio)",
+    "file": "Aperio/JP2K-33003-1.svs",
+    "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1.svs",
+    "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/JP2K-33003-1.svs",
+    "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+    "releaseAssetDigest": "sha256:6205ccf75a8fa6c32df7c5c04b7377398971a490fb6b320d50d91f7ba6a0e6fd",
+    "description": "Aorta tissue, brightfield, JPEG 2000, YCbCr",
+    "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+    "licence": "distributable (licence field of the OpenSlide test data entry, as recorded in samples-manifest.json)",
+    "licenceId": "distributable",
+    "stain": "H&E, aorta",
+    "stainNote": "H&E as registered for the samples-v1 corpus; the OpenSlide description itself says only 'brightfield'.",
+    "tissue": "aorta",
+    "tissueNote": "from the OpenSlide description ('Aorta tissue, brightfield, JPEG 2000, YCbCr')",
+    "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied."
+  },
+  "jpegQuality": 85,
+  "jpegSubsampling": "4:2:0",
+  "jpegEncoder": "libjpeg-turbo libjpeg_turbo 3.2.0/8.0 via imagecodecs 2026.10.10, baseline, optimized Huffman",
+  "downsample": "2x2 box mean, round half up",
+  "pinnedBaseMaxPx": 4096,
+  "bytes": {
+    "perLevelMedian": {
+      "0": 64185,
+      "1": 34206,
+      "2": 29871,
+      "3": 35129,
+      "4": 38025,
+      "5": 21538,
+      "6": 10653
+    },
+    "perLevelTotal": {
+      "0": 71202868,
+      "1": 13012589,
+      "2": 2965028,
+      "3": 725787,
+      "4": 179749,
+      "5": 43076,
+      "6": 10653
+    },
+    "total": 88139750,
+    "pinnedBase": 959265,
+    "tilesTotal": 1474
+  },
+  "build": {
+    "tool": "stage0/tools/build_pyramid.py",
+    "command": "tools/build_pyramid.py --full --input data/samples/samples-v1/JP2K-33003-1.svs --input-url https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1.svs --source-meta data/corpus/pyramid-sources/JP2K-33003-1.json --subsampling 420 --out data/samples/pyramids/JP2K-33003-1 --clean",
+    "date": "2026-11-01T17:28:37+00:00",
+    "durationSec": 23.5,
+    "sourceReadSec": 8.3,
+    "encodeSec": 14.3,
+    "network": null,
+    "python": "3.13.17",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10",
+    "numpy": "2.5.4",
+    "cpuCount": 4
+  }
+}

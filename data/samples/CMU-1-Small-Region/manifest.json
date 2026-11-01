@@ -1,0 +1,183 @@
+{
+  "schema": "stoipath-stage0-pyramid/1",
+  "width": 2220,
+  "height": 2967,
+  "tileSize": 512,
+  "tileUrl": "tiles/{level}/{x}_{y}.jpg",
+  "tileFormat": "image/jpeg",
+  "levelOrder": "index 0 is full resolution; each level halves; the last level fits in one tile",
+  "levels": [
+    {
+      "index": 0,
+      "width": 2220,
+      "height": 2967,
+      "cols": 5,
+      "rows": 6,
+      "scale": 1,
+      "pinned": true,
+      "tiles": 30,
+      "bytes": 835893,
+      "medianBytesPerTile": 21418,
+      "minBytesPerTile": 1337,
+      "maxBytesPerTile": 73851
+    },
+    {
+      "index": 1,
+      "width": 1110,
+      "height": 1484,
+      "cols": 3,
+      "rows": 3,
+      "scale": 2,
+      "pinned": true,
+      "tiles": 9,
+      "bytes": 347616,
+      "medianBytesPerTile": 38660,
+      "minBytesPerTile": 1394,
+      "maxBytesPerTile": 89551
+    },
+    {
+      "index": 2,
+      "width": 555,
+      "height": 742,
+      "cols": 2,
+      "rows": 2,
+      "scale": 4,
+      "pinned": true,
+      "tiles": 4,
+      "bytes": 98033,
+      "medianBytesPerTile": 19436,
+      "minBytesPerTile": 604,
+      "maxBytesPerTile": 58557
+    },
+    {
+      "index": 3,
+      "width": 278,
+      "height": 371,
+      "cols": 1,
+      "rows": 1,
+      "scale": 8,
+      "pinned": true,
+      "tiles": 1,
+      "bytes": 26166,
+      "medianBytesPerTile": 26166,
+      "minBytesPerTile": 26166,
+      "maxBytesPerTile": 26166
+    }
+  ],
+  "mpp": 0.499,
+  "source": {
+    "input": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-Small-Region.svs",
+    "sizeBytes": 1938955,
+    "etag": null,
+    "lastModified": null,
+    "regionLevel0": {
+      "x": 0,
+      "y": 0,
+      "width": 2220,
+      "height": 2967,
+      "sourceLevel": 0,
+      "fullSlide": true
+    },
+    "regionSelection": "full slide: the whole source level-0 extent, no region cut",
+    "format": {
+      "compression": "JPEG",
+      "photometric": "RGB",
+      "subsampling": [
+        2,
+        2
+      ],
+      "tileSize": [
+        240,
+        240
+      ],
+      "levels": [
+        [
+          2220,
+          2967
+        ]
+      ],
+      "bigtiff": false,
+      "compressionTag": 7,
+      "aperioLibrary": "Aperio Image Library v11.2.1",
+      "aperioAppMag": "20",
+      "aperioMPP": "0.4990",
+      "sourceLevelCodecs": [
+        {
+          "codec": "JPEG/RGB",
+          "quality": 30
+        }
+      ],
+      "associatedImages": {
+        "thumbnail": [
+          574,
+          768
+        ],
+        "label": [
+          387,
+          463
+        ],
+        "macro": [
+          1280,
+          431
+        ]
+      },
+      "associatedImagesRead": false
+    },
+    "pixelSpacingNote": "Aperio ImageDescription MPP",
+    "note": "Pixels are decoded source tiles (no resampling) re-encoded with the settings below; coarser levels are exact 2x2 box means of the decoded level-0 pixels.",
+    "scanner": "Aperio ScanScope (Aperio Image Library v11.2.1 in the ImageDescription; AppMag 20)",
+    "sha256": "ed92d5a9f2e86df67640d6f92ce3e231419ce127131697fbbce42ad5e002c8a7",
+    "inputReadFrom": "local copy whose SHA-256 equals source-meta sha256",
+    "dataset": "OpenSlide test data (Aperio)",
+    "file": "Aperio/CMU-1-Small-Region.svs",
+    "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-Small-Region.svs",
+    "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-1-Small-Region.svs",
+    "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+    "releaseAssetDigest": "sha256:ed92d5a9f2e86df67640d6f92ce3e231419ce127131697fbbce42ad5e002c8a7",
+    "description": "Exported region from CMU-1.svs, brightfield, JPEG, small enough to have a single pyramid level",
+    "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+    "licence": "CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)",
+    "licenceId": "CC0-1.0",
+    "stain": "H&E",
+    "stainNote": "H&E as registered for the samples-v1 corpus; the OpenSlide description itself says only 'brightfield'.",
+    "tissue": null,
+    "tissueNote": "not stated in the OpenSlide description ('Exported region from CMU-1.svs, brightfield, JPEG, small enough to have a single pyramid level'), so left out",
+    "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied."
+  },
+  "jpegQuality": 85,
+  "jpegSubsampling": "4:2:0",
+  "jpegEncoder": "libjpeg-turbo libjpeg_turbo 3.2.0/8.0 via imagecodecs 2026.10.10, baseline, optimized Huffman",
+  "downsample": "2x2 box mean, round half up",
+  "pinnedBaseMaxPx": 4096,
+  "bytes": {
+    "perLevelMedian": {
+      "0": 21418,
+      "1": 38660,
+      "2": 19436,
+      "3": 26166
+    },
+    "perLevelTotal": {
+      "0": 835893,
+      "1": 347616,
+      "2": 98033,
+      "3": 26166
+    },
+    "total": 1307708,
+    "pinnedBase": 1307708,
+    "tilesTotal": 44
+  },
+  "build": {
+    "tool": "stage0/tools/build_pyramid.py",
+    "command": "tools/build_pyramid.py --full --input data/samples/samples-v1/CMU-1-Small-Region.svs --input-url https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-Small-Region.svs --source-meta data/corpus/pyramid-sources/CMU-1-Small-Region.json --subsampling 420 --out data/samples/pyramids/CMU-1-Small-Region --clean",
+    "date": "2026-11-01T17:20:12+00:00",
+    "durationSec": 0.5,
+    "sourceReadSec": 0.1,
+    "encodeSec": 0.4,
+    "network": null,
+    "python": "3.13.17",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10",
+    "numpy": "2.5.4",
+    "cpuCount": 4
+  }
+}
