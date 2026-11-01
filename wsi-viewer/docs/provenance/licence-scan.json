@@ -1,0 +1,1080 @@
+{
+ "generated_at": "2026-11-01T16:52:49Z",
+ "npm": {
+  "package": "stoipath-wsi-stage0-client",
+  "dependencies": {},
+  "devDependencies": {
+   "typescript": "~5.9.3",
+   "vite": "~7.3.7"
+  },
+  "lockfileVersion": 3,
+  "lock_sha256": "a549e4fab2af089f42c4d9a59a8e93aa73c23e23e17e9a7c3cef78cc95cb832c",
+  "packages": [
+   {
+    "name": "typescript",
+    "version": "5.9.3",
+    "licence": "Apache-2.0",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": true,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "vite",
+    "version": "7.3.7",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": true,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@types/estree",
+    "version": "1.0.9",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "esbuild",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "fdir",
+    "version": "6.5.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "nanoid",
+    "version": "3.3.20",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "picocolors",
+    "version": "1.1.1",
+    "licence": "ISC",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "picomatch",
+    "version": "4.0.7",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "postcss",
+    "version": "8.5.31",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "rollup",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "source-map-js",
+    "version": "1.2.2",
+    "licence": "BSD-3-Clause",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "tinyglobby",
+    "version": "0.2.17",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": false,
+    "platform": null,
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/aix-ppc64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "aix/ppc64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/android-arm",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "android/arm",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/android-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "android/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/android-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "android/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/darwin-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "darwin/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/darwin-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "darwin/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/freebsd-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "freebsd/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/freebsd-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "freebsd/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-arm",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/arm",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-ia32",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/ia32",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-loong64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/loong64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-mips64el",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/mips64el",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-ppc64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/ppc64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-riscv64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/riscv64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-s390x",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/s390x",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/linux-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/x64",
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/netbsd-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "netbsd/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/netbsd-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "netbsd/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/openbsd-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "openbsd/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/openbsd-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "openbsd/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/openharmony-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "openharmony/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/sunos-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "sunos/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/win32-arm64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/win32-ia32",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/ia32",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@esbuild/win32-x64",
+    "version": "0.28.2",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@napi-rs/lzma-linux-x64-gnu",
+    "version": "1.5.1",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/x64",
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-android-arm-eabi",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "android/arm",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-android-arm64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "android/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-darwin-arm64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "darwin/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-darwin-x64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "darwin/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-freebsd-arm64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "freebsd/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-freebsd-x64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "freebsd/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-arm-gnueabihf",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/arm",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-arm-musleabihf",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/arm",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-arm64-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-arm64-musl",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-loong64-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/loong64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-loong64-musl",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/loong64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-ppc64-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/ppc64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-ppc64-musl",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/ppc64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-riscv64-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/riscv64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-riscv64-musl",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/riscv64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-s390x-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/s390x",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-x64-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/x64",
+    "installed_here": true,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-linux-x64-musl",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "linux/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-openbsd-x64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "openbsd/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-openharmony-arm64",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "openharmony/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-win32-arm64-msvc",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/arm64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-win32-ia32-msvc",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/ia32",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-win32-x64-gnu",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "@rollup/rollup-win32-x64-msvc",
+    "version": "4.65.0",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "win32/x64",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   },
+   {
+    "name": "fsevents",
+    "version": "2.3.3",
+    "licence": "MIT",
+    "scope": "dev",
+    "optional": true,
+    "platform": "darwin",
+    "installed_here": false,
+    "direct": false,
+    "copyleft": false,
+    "e7_allow_list": true
+   }
+  ]
+ },
+ "bundles": {
+  "published": {
+   "ref": "stage0-deploy",
+   "commit": "2212f8e 2026-11-01T16:51:58+00:00",
+   "files": [
+    {
+     "path": "client/dist/assets/decode-worker-CHXeosd7.js",
+     "bytes": 2655,
+     "sha256": "7271afcc85df8f253e1d9c4bf1a9b59719629607a085bf2b29667ec4acec7de8",
+     "third_party_markers": 0
+    },
+    {
+     "path": "client/dist/assets/index-D56FoO1F.js",
+     "bytes": 78419,
+     "sha256": "030474bc201abe3d9dcbb45d772c9f58def513706cbe6618e816330aefacb29e",
+     "third_party_markers": 0
+    },
+    {
+     "path": "client/dist/assets/shell-DFxV3nv4.js",
+     "bytes": 47230,
+     "sha256": "0f7ce0c82753ca4dde3e8a12624f5a21b51021dc71a583f912915c49588f0ca7",
+     "third_party_markers": 0
+    },
+    {
+     "path": "client/dist/assets/shell-DTEpoU-1.css",
+     "bytes": 92168,
+     "sha256": "cc1dad10a142925ba550a1e6a514c61e59d31233ad7435b20d3cca3bd549dd43",
+     "third_party_markers": 0
+    },
+    {
+     "path": "client/dist/assets/viewer-Cj8wMQS9.js",
+     "bytes": 76476,
+     "sha256": "eb59c2b11f3382e1bf53046391e30ec7e4b84ca7236e3bf70addadcb9d0b29d4",
+     "third_party_markers": 0
+    },
+    {
+     "path": "client/dist/index.html",
+     "bytes": 3125,
+     "sha256": "960e66d4e246a2453cb4b8157e8afbaecfbed49321a2ff80830a716221ea5427",
+     "third_party_markers": 0
+    },
+    {
+     "path": "client/dist/shell.html",
+     "bytes": 24272,
+     "sha256": "c5ccfa5fd80b76b3843475fdebdc309280568bafd600b16672027b5d84e0bc68",
+     "third_party_markers": 0
+    }
+   ]
+  },
+  "local_dist": {
+   "note": "working-tree build, not tracked; read as found (not rebuilt)",
+   "files": [
+    {
+     "path": "stage0/client/dist/index.html",
+     "bytes": 3203,
+     "sha256": "aef1641db367d2f4e78f3312b68d02428600d6a29770864419bc9289e9559fb0",
+     "third_party_markers": 0
+    },
+    {
+     "path": "stage0/client/dist/shell.html",
+     "bytes": 24272,
+     "sha256": "c5ccfa5fd80b76b3843475fdebdc309280568bafd600b16672027b5d84e0bc68",
+     "third_party_markers": 0
+    },
+    {
+     "path": "stage0/client/dist/assets/decode-worker-CHXeosd7.js",
+     "bytes": 2655,
+     "sha256": "7271afcc85df8f253e1d9c4bf1a9b59719629607a085bf2b29667ec4acec7de8",
+     "third_party_markers": 0
+    },
+    {
+     "path": "stage0/client/dist/assets/index-DSs3HyRG.js",
+     "bytes": 4633,
+     "sha256": "331baa37e006ff6b640e258c5b3b0830e57693c8056a549bca83eadb2dffc82d",
+     "third_party_markers": 0
+    },
+    {
+     "path": "stage0/client/dist/assets/shell-DFxV3nv4.js",
+     "bytes": 47230,
+     "sha256": "0f7ce0c82753ca4dde3e8a12624f5a21b51021dc71a583f912915c49588f0ca7",
+     "third_party_markers": 0
+    },
+    {
+     "path": "stage0/client/dist/assets/shell-DTEpoU-1.css",
+     "bytes": 92168,
+     "sha256": "cc1dad10a142925ba550a1e6a514c61e59d31233ad7435b20d3cca3bd549dd43",
+     "third_party_markers": 0
+    },
+    {
+     "path": "stage0/client/dist/assets/viewer-Cj8wMQS9.js",
+     "bytes": 76476,
+     "sha256": "eb59c2b11f3382e1bf53046391e30ec7e4b84ca7236e3bf70addadcb9d0b29d4",
+     "third_party_markers": 0
+    }
+   ]
+  }
+ },
+ "comparator": [
+  {
+   "name": "openseadragon",
+   "version": "6.1.1",
+   "licence": "BSD-3-Clause",
+   "scope": "runtime (comparator page only)",
+   "files": [
+    {
+     "file": "LICENSE.txt",
+     "sha256": "17da96b26ac706d2cbd06d4555dedb43026782f4943faf0156fe7acf89454228"
+    },
+    {
+     "file": "openseadragon.min.js",
+     "sha256": "14d587cd3ee7c4861f1a41077ce642029364a21029956ba635bd8fb1202cf9ad"
+    }
+   ],
+   "licence_file_present": true,
+   "copyleft": false,
+   "e7_allow_list": true
+  }
+ ],
+ "harness": [
+  {
+   "name": "playwright",
+   "version": "1.63.0",
+   "licence": "Apache-2.0",
+   "dependencies": {
+    "playwright-core": "1.63.0"
+   },
+   "scope": "harness only (global install, not in package.json, never shipped)",
+   "copyleft": false,
+   "e7_allow_list": true
+  }
+ ],
+ "python": [
+  {
+   "module": "PIL",
+   "distribution": "pillow",
+   "version": "13.0.0",
+   "licence": "MIT-CMU",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "used_by": [
+    "stage0 harness",
+    "stage0 tools",
+    "verification artefacts"
+   ],
+   "files": [
+    "wsi-viewer/docs/verification/artifacts/C12/make_corpus.py",
+    "wsi-viewer/stage0/client/harness/verify_screens.py",
+    "wsi-viewer/stage0/tools/build_pyramid.py"
+   ],
+   "scope": "tooling (never shipped to a browser)",
+   "copyleft": false,
+   "e7_allow_list": false,
+   "permissive": true
+  },
+  {
+   "module": "imagecodecs",
+   "distribution": "imagecodecs",
+   "version": "2026.10.10",
+   "licence": "BSD-3-Clause",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "used_by": [
+    "stage0 tools",
+    "verification artefacts"
+   ],
+   "files": [
+    "wsi-viewer/docs/verification/artifacts/C07/c07_base_bundle_bytes.py",
+    "wsi-viewer/docs/verification/artifacts/C12/make_corpus.py",
+    "wsi-viewer/docs/verification/artifacts/C14/tile_bytes.py",
+    "wsi-viewer/docs/verification/artifacts/common/extract_tiles.py",
+    "wsi-viewer/stage0/tools/build_pyramid.py",
+    "wsi-viewer/stage0/tools/verify_pyramid.py"
+   ],
+   "scope": "tooling (never shipped to a browser)",
+   "copyleft": false,
+   "e7_allow_list": true,
+   "permissive": true
+  },
+  {
+   "module": "numpy",
+   "distribution": "numpy",
+   "version": "2.5.4",
+   "licence": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "used_by": [
+    "stage0 harness",
+    "stage0 tools",
+    "verification artefacts"
+   ],
+   "files": [
+    "wsi-viewer/docs/verification/artifacts/C07/c07_base_bundle_bytes.py",
+    "wsi-viewer/docs/verification/artifacts/C12/make_corpus.py",
+    "wsi-viewer/docs/verification/artifacts/C12/ojph_diff.py",
+    "wsi-viewer/docs/verification/artifacts/C14/tile_bytes.py",
+    "wsi-viewer/docs/verification/artifacts/common/extract_tiles.py",
+    "wsi-viewer/stage0/client/harness/verify_screens.py",
+    "wsi-viewer/stage0/tools/build_pyramid.py",
+    "wsi-viewer/stage0/tools/verify_pyramid.py",
+    "wsi-viewer/stage0/tools/wsi_source.py"
+   ],
+   "scope": "tooling (never shipped to a browser)",
+   "copyleft": false,
+   "e7_allow_list": false,
+   "permissive": true
+  },
+  {
+   "module": "tifffile",
+   "distribution": "tifffile",
+   "version": "2026.10.15",
+   "licence": "BSD-3-Clause",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "used_by": [
+    "stage0 tools",
+    "verification artefacts"
+   ],
+   "files": [
+    "wsi-viewer/docs/verification/artifacts/C07/c07_base_bundle_bytes.py",
+    "wsi-viewer/docs/verification/artifacts/C12/make_corpus.py",
+    "wsi-viewer/docs/verification/artifacts/C14/tile_bytes.py",
+    "wsi-viewer/docs/verification/artifacts/common/extract_tiles.py",
+    "wsi-viewer/stage0/tools/build_pyramid.py",
+    "wsi-viewer/stage0/tools/wsi_source.py"
+   ],
+   "scope": "tooling (never shipped to a browser)",
+   "copyleft": false,
+   "e7_allow_list": true,
+   "permissive": true
+  },
+  {
+   "module": "yaml",
+   "distribution": "PyYAML",
+   "version": "6.0.3",
+   "licence": "MIT",
+   "metadata_from": "system site-packages",
+   "used_by": [
+    "provenance tools (optional import)"
+   ],
+   "files": [
+    "wsi-viewer/tools/provenance/rollup.py"
+   ],
+   "scope": "tooling (never shipped to a browser)",
+   "copyleft": false,
+   "e7_allow_list": true,
+   "permissive": true
+  }
+ ],
+ "secrets": {
+  "tracked_files": 709,
+  "untracked_not_ignored_files": 14,
+  "text_files_scanned": 439,
+  "binary_files_skipped": 284,
+  "patterns": [
+   "AWS access key id",
+   "AWS secret key assignment",
+   "GitHub token",
+   "Private key block",
+   "Bearer token",
+   "Anthropic API key",
+   "OpenAI-style key",
+   "Slack token",
+   "Google API key",
+   "JSON Web Token",
+   "Stripe live key",
+   "Generic secret assignment"
+  ],
+  "findings": [
+   {
+    "file": "wsi-viewer/docs/verification/artifacts/C04/key.pem",
+    "line": 1,
+    "pattern": "Private key block",
+    "match_length": 27
+   },
+   {
+    "file": "wsi-viewer/docs/verification/artifacts/C15/key.pem",
+    "line": 1,
+    "pattern": "Private key block",
+    "match_length": 27
+   }
+  ],
+  "sensitive_file_names": [
+   "wsi-viewer/docs/verification/artifacts/C04/cert.pem",
+   "wsi-viewer/docs/verification/artifacts/C04/key.pem",
+   "wsi-viewer/docs/verification/artifacts/C15/cert.pem",
+   "wsi-viewer/docs/verification/artifacts/C15/key.pem"
+  ],
+  "note": "values are never printed or stored; only file, line, pattern name and match length"
+ }
+}

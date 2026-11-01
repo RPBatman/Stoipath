@@ -1,0 +1,2917 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "npm",
+          "version": "10.9.4"
+        },
+        {
+          "type": "library",
+          "name": "cyclonedx-library",
+          "group": "@cyclonedx",
+          "version": "10.3.0",
+          "author": "Jan Kowalleck",
+          "description": "Core functionality of CycloneDX for JavaScript (Node.js or WebBrowser).",
+          "licenses": [
+            {
+              "license": {
+                "id": "Apache-2.0"
+              }
+            }
+          ],
+          "externalReferences": [
+            {
+              "url": "https://github.com/CycloneDX/cyclonedx-javascript-library/issues",
+              "type": "issue-tracker",
+              "comment": "as detected from PackageJson property \"bugs.url\""
+            },
+            {
+              "url": "git+https://github.com/CycloneDX/cyclonedx-javascript-library.git",
+              "type": "vcs",
+              "comment": "as detected from PackageJson property \"repository.url\""
+            },
+            {
+              "url": "https://github.com/CycloneDX/cyclonedx-javascript-library#readme",
+              "type": "website",
+              "comment": "as detected from PackageJson property \"homepage\""
+            }
+          ],
+          "properties": [
+            {
+              "name": "cdx:npm:package:constraint:engine:node",
+              "value": ">=20.18.0"
+            }
+          ]
+        },
+        {
+          "type": "application",
+          "name": "cyclonedx-npm",
+          "group": "@cyclonedx",
+          "version": "4.2.1",
+          "author": "Jan Kowalleck",
+          "description": "Create CycloneDX Software Bill of Materials (SBOM) from NPM projects.",
+          "licenses": [
+            {
+              "license": {
+                "id": "Apache-2.0"
+              }
+            }
+          ],
+          "externalReferences": [
+            {
+              "url": "https://github.com/CycloneDX/cyclonedx-node-npm/issues",
+              "type": "issue-tracker",
+              "comment": "as detected from PackageJson property \"bugs.url\""
+            },
+            {
+              "url": "git+https://github.com/CycloneDX/cyclonedx-node-npm.git",
+              "type": "vcs",
+              "comment": "as detected from PackageJson property \"repository.url\""
+            },
+            {
+              "url": "https://github.com/CycloneDX/cyclonedx-node-npm#readme",
+              "type": "website",
+              "comment": "as detected from PackageJson property \"homepage\""
+            }
+          ],
+          "properties": [
+            {
+              "name": "cdx:npm:package:constraint:engine:node",
+              "value": ">=20.18.0"
+            },
+            {
+              "name": "cdx:npm:package:constraint:engine:npm",
+              "value": ">=9"
+            }
+          ]
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "name": "stoipath-wsi-stage0-client",
+      "version": "0.0.1",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1",
+      "description": "Stage-0 whole-slide image viewer prototype: WebGL2 tile renderer that measures its own zoom/pan latency and sharpness.",
+      "purl": "pkg:npm/stoipath-wsi-stage0-client@0.0.1",
+      "properties": [
+        {
+          "name": "cdx:npm:package:path",
+          "value": ""
+        },
+        {
+          "name": "cdx:npm:package:private",
+          "value": "true"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "cdx:reproducible",
+        "value": "true"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "aix-ppc64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/aix-ppc64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/aix-ppc64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "5c4c5c3be76f2cabd5b4d4e26d24c17a3d4d0806da1a15a7f56c3564fc7cd2ab1a8613c57bff238163f421c84d7b41771f0914ee7f1e8e11fc6e3a27aa1b7c99"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/aix-ppc64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "android-arm",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-arm@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/android-arm@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "9175e888f55519072721818e79aa2fc0e511a678830694aae00d37aa443e04c42ab461ba1d86a9df19def42d4ed72a384d1deac65097e48aaa997e9f168d8baa"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/android-arm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "android-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/android-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "e587ca79e23ca967c16485febb6c590b76656f73acfe02d2dac6c428cf88e1939cb169874b658bcac09c4190c0151b250d45393a2ab8e207fa3d8375bc6c06e4"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/android-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "android-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/android-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "3b7f3b8ad7bb4b353209ccb72505f83f86cbb4403b6cb2e4c7e7acbdee491e7c987cd4f1715a57668f6385d07495328de38833b442d3754ee74bc36bd7a16cd5"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/android-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "darwin-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/darwin-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/darwin-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "9f82aa90e42badac4725c82333546fc1b8a07d028828956933bc69f8ab318b2512ad17485e7b7bdd586b3c0c747d5e388607e62152a3c4c37d275b798f249593"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/darwin-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "darwin-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/darwin-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/darwin-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "baaeacb885983f7eeacc675d04a3f0e501103e2e8788b1ac3bb5269297f2698350dc3fab37ac3a59fc07fa7baa7065d6bdac06c31384ae83b86069c587de5acf"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/darwin-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "freebsd-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/freebsd-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/freebsd-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "9fe234053491228cbe77a44f2a7115c2a979530049a25cadbd8e2600e204268aca96a80f208f22c7ab25555adf6794e78fb825219be5a3295b07f1093cc5845f"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/freebsd-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "freebsd-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/freebsd-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/freebsd-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "efc5c94c992f3ecd24cf6c3ad77d353c98d797883bab726a898319fccff2548ef710706b0914e0921bbda2a1bbbcfaaaf9aff269d116f1a0fe6a02a5939c6b9a"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/freebsd-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-arm",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-arm@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-arm@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "5e50e7bb6ab9ca8a9e9acfb16b2eb0480720f430c3ecaf512ca64404e3199b7724369241bce5f6d2d49f6f2f0a7ebae120d0f2bfd57661564a63f4a9a06248f3"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-arm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "a56e000b43f78adf1cedda3d315338a79d45cc7cdd33f4d9adeaeeae045c1c9d964dad55435088ab5f319dc7e9049c38a23922659aca5b6c8805604ff768fa52"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-ia32",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-ia32@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-ia32@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "0986e78fbf07b08780f8386050a80509fbcdb131c584c32b8a752b319a435c95ca37c4f75d589367ffb0b47795c44598f1ec12cd314dfa74664b03b6b5968b51"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-ia32"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-loong64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-loong64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-loong64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "6eec2477c9eca61e11f9a8d1bf0d2a3391e36bf4d7428c37a6dcd63b611b1bf72a70890796846b76506d425b21c98193345bdf91f279b693cb5646380edb0f7d"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-loong64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-mips64el",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-mips64el@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-mips64el@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "655ca46c3ca4ef9d7d57088d6fd2dc8fd9bc5cceafe55f6e28fbeb10c92411e7557b07fed22b6485a869e070e98044578702d1a56172a6c19b1bf27cb3442324"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-mips64el"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-ppc64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-ppc64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-ppc64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "0805e5f83b5df5452e25df2928a77087a30b9b7314322a8c3e6859ded4d25cfa9fc90def0e5e91e6165d67f918a232b8a1f5ed75f4afd6d16af17cd6c7785e35"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-ppc64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-riscv64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-riscv64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-riscv64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "19e5c27a3e0842d53507e4250d5f16fd146f6f32373bf4adb2cfbf6c25efe25665b3958646dbb66bedc9900de2e2a21494c5e970779b5a917c024261013a30b8"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-riscv64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-s390x",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-s390x@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-s390x@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "dc7d707936193f1b7f58e841caccd06726d2f70e652b3527d450ccb2010285b1d64301d841045f071802719bcf8631df2b22632227afbcc98451ac09add63d0e"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-s390x"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "linux-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/linux-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "e314d9af5154992a105b85c85a68addedcd0ad44d933e3773f45d5f3144e298179d177c8ef178ef74fb56d9bcdc3122e7d0f610d0551247e588603d517c03f1d"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/linux-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "netbsd-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/netbsd-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/netbsd-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "b120134633de0c1837a5d807a107e8601a1bd752a4d4519af65ba2e51207642a029096bd40a96f977fef2b3daeb02998623b3bca6251ff6367b2a7be1e3b799f"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/netbsd-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "netbsd-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/netbsd-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/netbsd-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "96a9f3095fa633480800368a8a188283a89f81f5362f7879137deb35004dd58e0c6951a7cebcb39afbdfed41f1a6ba50744f21a6a2e8949f5197e4a42110e9cb"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/netbsd-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "openbsd-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/openbsd-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/openbsd-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "00bdaa2482c7ee5363ac3982403bddc4c7c0508bfc28c3593afaf0010f22f3ffe7b4bf457e584ec8c27c39948c05bf3f0165dedffe6fe52db4cb7cc2a1958aa1"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/openbsd-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "openbsd-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/openbsd-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/openbsd-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "42d8ae3f2b5c851c82e2bc142a17b125d40abc3b99ea15a5a22de282a3d03542424b5feff4488edd44ce5d1e80dc5a0ca387e700a6d625da9a23084ece1f2a13"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/openbsd-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "openharmony-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/openharmony-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/openharmony-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "5a48580e6a538cbbc6952700d6bc234549a197893ca174777086eda969842e053f7457871e51259710ef75670d255f6b6f309ec41e6fcfc82d35ec162e0093ed"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/openharmony-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "sunos-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/sunos-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/sunos-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "18f3129133ad327bf653617c8317b8228eaa995b3e60aca9f37d84b6aab1af48459e0997437af3c32b5e966dc6227ed3e15be245495fdec3a004e89376f69fee"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/sunos-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "win32-arm64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/win32-arm64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "3c886112413db8f06579106b404269527ecc06789b6736c6cd858f998df1f98a1583ff79cdb8c1e02c4f3ce43c979b5860ce2631a0ad845f3fd4321f05043259"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/win32-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "win32-ia32",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-ia32@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/win32-ia32@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "62625b7d396f53b49d9fd041fb83d1112e2807aa71812dfb30038d8fe841aff7295d2d5a04f297c4d9c36eef900963e3d28f5d832c5eabbf60e9ce4ff0a7ae60"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/win32-ia32"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "win32-x64",
+      "group": "@esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40esbuild/win32-x64@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "e5e6e9c6bde758cceb2ffae7508ef9e4992e79ed1b1cbfc6ab459317d96f729bfbdf0029e5ebbc31f0548162bd6e15af6638fbc97f1eb5fffcb48f0d7b2ebde6"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@esbuild/win32-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lzma-linux-x64-gnu",
+      "group": "@napi-rs",
+      "version": "1.5.1",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@napi-rs/lzma-linux-x64-gnu@1.5.1",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40napi-rs/lzma-linux-x64-gnu@1.5.1",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@napi-rs/lzma-linux-x64-gnu/-/lzma-linux-x64-gnu-1.5.1.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "a135c42216b84acb97753038232b248f4929771db255776177be5cdafdf11ab1c57d532c6e14cf654fe730f2f8b162a8e290479b76ae70b6aa1a517af7a753c9"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@napi-rs/lzma-linux-x64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-android-arm-eabi",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-android-arm-eabi@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-android-arm-eabi@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "b7602755b6b6e5b68576aee0733cd2d7727255c76e6cb55b157d57d389b1ae0803ad340f51736fdd733493d1f586be6daaf83b015bed43bdb4407023d2262a86"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-android-arm-eabi"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-android-arm64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-android-arm64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-android-arm64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "74d38d51a1303c6865fe7b8ed8a57c54005695c8d8c94e8ab5918df1d42fe4e4b9254ec9482c4f8a354d2976d125dd22b93cd3889e138cfb7fe1b6ef0d136231"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-android-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-darwin-arm64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-darwin-arm64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-darwin-arm64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "cd642a507fbdcdabebd81c6ecdfa6ebf64881775f7d5caf9f13bd2402f68d468693af92a470afad0691975072e7724ff04481da5d49a7e381dd88d7731b4cbee"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-darwin-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-darwin-x64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-darwin-x64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-darwin-x64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "45062b781156b4ee3ffe122e39a6646149c5fe53d4e25cf7e5dbde0e2983b2158226f562b15b49fec8664fd6e45caf3014963e14917cf57e85dc2ab5a88dcb0b"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-darwin-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-freebsd-arm64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-freebsd-arm64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-freebsd-arm64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "03435f323e82ba1ffd044e64ddac092afe87a311555c870b01be9266a00ca315073c0d5934d2b846c1ae50f0ffbcbee71009bd2c6f99cd75964eb9c2d17b64a4"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-freebsd-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-freebsd-x64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-freebsd-x64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-freebsd-x64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-freebsd-x64/-/rollup-freebsd-x64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "048ebf1fbab768fd08ed2ec63ab8f2c538e01099529e8bd7137f3e6ddc41a6e28deb3f9dfffb85f93f9543743b96d24bffbd69d7bb9f6abb40457f496b980e19"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-freebsd-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-arm-gnueabihf",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm-gnueabihf@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-arm-gnueabihf@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "5b5bd4a6b7f4f5159a5569ec14fd6f954904589cd3665a4e6ce1006195edf45ab451500e60491e1abef0057ecc70aaaa210b245dd067a6238c8303ee8e8add80"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-arm-gnueabihf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-arm-musleabihf",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm-musleabihf@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-arm-musleabihf@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "b3c4137195a0ae5f61685cc4188ab2139056ca8f3da450c62cc04567be76598c64f03270354fced57ea96603f0f36f5df7fb26e82087cab30fddababb7bea9d5"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-arm-musleabihf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-arm64-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm64-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-arm64-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "91ed5fe9d2d1ce4aaf7b28e31767e413041866fc47b4d3708de818f2726bc1c3b405daabf02cc53bfa4a134067b35ddcc74ab3d816b66341ecddd4b031d9c7c4"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-arm64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-arm64-musl",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm64-musl@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-arm64-musl@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "f76e9231e51ccb8cb5f11cffc3668989428e9f20279ba73383bd9b5e440469e7a6b2597e5abd219ec8dbd81191a47bd683000c632e400890a8b5bbdf2c27e3d0"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-arm64-musl"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-loong64-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-loong64-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-loong64-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-loong64-gnu/-/rollup-linux-loong64-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "e93ec93513f585ce21a85d9d52c12854b3adf4af2d98e0e808b95db504589eb75d186418f06a9eda933fa8c314a3b10ca30a4fee86b637de64d3ff2c60afe2a7"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-loong64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-loong64-musl",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-loong64-musl@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-loong64-musl@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-loong64-musl/-/rollup-linux-loong64-musl-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "488986165d497b9929c8080e08f38d553ee1e80495f26014c0646363b799bd58cf83ffcf7c7397808f8fdb8d5117ff87aac0383cfdea0f9dbbcac58528d43285"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-loong64-musl"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-ppc64-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-ppc64-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-ppc64-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-ppc64-gnu/-/rollup-linux-ppc64-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "5de0d36e63c5d58bb96ac7d718facc916a314c3860af241b9b0e50d7e479f363b9d55342936dc9e9fda90ebb00a796249de055070b44c71e9918e6fd0f6690e8"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-ppc64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-ppc64-musl",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-ppc64-musl@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-ppc64-musl@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-ppc64-musl/-/rollup-linux-ppc64-musl-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "552e7925423fd67b258e657f8dfa8d90b657170f2e30ef273657e81e649ebcd7fa7cede77ae8720efc7d76fddcfd8b6df2bff8df548bf106b1d5da58bce3194e"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-ppc64-musl"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-riscv64-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-riscv64-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-riscv64-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "55b970f384db5fb452e256b5638fb243b6a8adefe84b268db456e9a6e06be55b3fe0b7c17972aaf5d21fa04c70eb33af44446a776ad10239d945a3211ffd31e7"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-riscv64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-riscv64-musl",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-riscv64-musl@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-riscv64-musl@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-musl/-/rollup-linux-riscv64-musl-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "efe8078ed38dbca83047d2274ca15a2eae777fa63304992078c44110d7564ec42bfaca5a846a909bc1c5e5a5e9abc8b825a46b3aa632bfa667d5696d0d3c5a65"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-riscv64-musl"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-s390x-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-s390x-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-s390x-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "2af3430b427ab38bd51e1b49e8aac35d4d04af46aefe1991201abffb599a095f13b1e1aea5e2a2cead1b59cadba761c4d53f31a249ef37443f299fd8174a97df"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-s390x-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-x64-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-x64-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-x64-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "184c5d0f5e563efbbfc7f76b10b8d56a6eef5fc12c3e0bd330e6bf8892ffa7fe26fe83aacdb6fb257660f1f5d1e21957b60fec176cf24d9ddb474004b4432585"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-x64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-linux-x64-musl",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-x64-musl@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-linux-x64-musl@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "f2c4fd3de98865f20c103e15778286a0e5d50e3e4231258d70675b85e454c7d4d84b4df2396753d90d255cfc84c8d041f584e29707b021028d20193a3718b42a"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-linux-x64-musl"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-openbsd-x64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-openbsd-x64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-openbsd-x64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-openbsd-x64/-/rollup-openbsd-x64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "a4ee84862d23a39c84d11e8f96d2a1261bfd9a5222cb3049939379354176385eb1b55288fb56dd5f18ffadbd23197cb785c93510b553d103d8dedce4026dfad3"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-openbsd-x64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-openharmony-arm64",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-openharmony-arm64@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-openharmony-arm64@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-openharmony-arm64/-/rollup-openharmony-arm64-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "be8ecddfff9c8e33c362bf2fb710bea9236059af6c0ef27b83c37c479496a856385a2347d542dc014ef448a5721de88864e618c0d3fda538a99a1379b25d4d3f"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-openharmony-arm64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-win32-arm64-msvc",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-arm64-msvc@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-win32-arm64-msvc@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "02bc2f80501b8ca70333baaaa2d67839561ff94313f711f6633902ccae3e02e6520e284c973d449287b820dc01557ce7da69c9cee21839c4b1d3b8930628c645"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-win32-arm64-msvc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-win32-ia32-msvc",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-ia32-msvc@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-win32-ia32-msvc@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "4063262b8fdcc4a13fdfa1682cc4874010b2ca6bff7854e7b02befb01174ae098ebd56ef5fbf1559945eacbddd1daefb7f8a4ce9771cda2183849d74c3fb2f29"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-win32-ia32-msvc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-win32-x64-gnu",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-x64-gnu@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-win32-x64-gnu@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-win32-x64-gnu/-/rollup-win32-x64-gnu-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "5df2981561c83ece073ce0c832c185d482a54b71f57b75a89146488299a7e3eb8d9d90659d10c31c4ca53726b36d05f084c299adeebc3a3b5161b2aa6f9fa3f3"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-win32-x64-gnu"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup-win32-x64-msvc",
+      "group": "@rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-x64-msvc@4.65.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40rollup/rollup-win32-x64-msvc@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "c0f5a2fbe2b806cd554785e284e85f1a2e08197e82b9bec595ead37fc5f6bfed81b431dd7604aa5825f0183fa1db201ee3f9e2221343c0096d8a8382fb012881"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@rollup/rollup-win32-x64-msvc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "estree",
+      "group": "@types",
+      "version": "1.0.9",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|@types/estree@1.0.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40types/estree@1.0.9",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@types/estree/-/estree-1.0.9.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "1a174f832d5e978fc898fd395f4e54c38730dbf33ddc10949a712f599352b650b310a304e05924f98a680393a21cd426a12ec269f6fc5dadcfc9af26d50af37a"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@types/estree"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "esbuild",
+      "version": "0.28.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|esbuild@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/esbuild@0.28.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "1ca54b4bc76f208fb1a0a5bd926ab16d12ab9d61177c926bfc56618499a2a880747b4e7740d605a8e068b9330efe4e6c203e0cbc28940afbfc6fd338877db020"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/esbuild"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fdir",
+      "version": "6.5.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|fdir@6.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/fdir@6.5.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/fdir/-/fdir-6.5.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "b486d8b596ee70eb340511aa3c992c84951874bf920c7edd54cf208f2f84469dd60148cb105244fb4da46a7c87b708d63a7c2b298062c0098cd29e242c90275e"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/fdir"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|fsevents@2.3.3",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/fsevents@2.3.3",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "e71a037d7f9f2fb7da0139da82658fa5b16dc21fd1efb5a630caaa1c64bae42defbc1d181eb805f81d58999df8e35b4c8f99fade4d36d765cda09c339617df43"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/fsevents"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "nanoid",
+      "version": "3.3.20",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|nanoid@3.3.20",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/nanoid@3.3.20",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.20.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "b8a760d86dc63422909fd6f260ea716c6aab4f67c63b9291b7927ff1bde9a24f2b4faab119617a871332262118b407fe155c98b83f6145a0ea5f9b8f15827865"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/nanoid"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|picocolors@1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "purl": "pkg:npm/picocolors@1.1.1",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "c5c787dac9e1b5be4cf658aa0ec984c39ea57b7efa993664117fe311bfd1c4d1727a036e97b78db250973fd1438ff2dcbb45fc284c8c71e3f69eda5a1eb0c454"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/picocolors"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "picomatch",
+      "version": "4.0.7",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|picomatch@4.0.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/picomatch@4.0.7",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "a9c26ef3c436216a89b030f9dbd24a31dc069bf76f2275b81ef427470887f49b62849bf318eb1c0ed1c4df1d6904a794393cac43c91598b9c9da426eef285c18"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/picomatch"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "postcss",
+      "version": "8.5.31",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|postcss@8.5.31",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/postcss@8.5.31",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/postcss/-/postcss-8.5.31.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "6146d6602804af09cc01592352761af8a94c0731a91f0888b7f0c4edfd06df702e5f62c7f5471393a2a05b1777cd153ea4ddeefc2f9797712730b3381de6bb4a"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/postcss"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rollup",
+      "version": "4.65.0",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|rollup@4.65.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/rollup@4.65.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/rollup/-/rollup-4.65.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "4150af4144c60cde894708b78d51826371f86931ef8bdad7d0bca804c90652f761fd9e8ee750b370bcfce415996930831a197ac921aa619b3ec48d6398fa8673"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/rollup"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "source-map-js",
+      "version": "1.2.2",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|source-map-js@1.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "purl": "pkg:npm/source-map-js@1.2.2",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "2868fff18e37c77e5a6550edb7e27898ad61a0b18750b3187d290e0c93508cd0c2de85b53ea3e8c4cc28d292d4b1633f5041b338dfcdc5e1f2c047cd5cd3f757"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/source-map-js"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tinyglobby",
+      "version": "0.2.17",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|tinyglobby@0.2.17",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/tinyglobby@0.2.17",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/tinyglobby/-/tinyglobby-0.2.17.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "c1747f758a5ca8a99f5a911d66388a24ec023459dd0f40cc9eb5bf7188d51adb449017d581c2c51e836b963e3b9a339589cf72c8dbbae5a96c805e0d4324dada"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/tinyglobby"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "5.9.3",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|typescript@5.9.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/typescript@5.9.3",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "8e5d6f6733c38a72ebf5e52ddc9feded5e8580d130f508ef04f772b33f4a7d00c3e357d0ac2d98e2f290762694a454f86d795bd511e12e9a7cc2d9ba3394e04b"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/typescript"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "vite",
+      "version": "7.3.7",
+      "bom-ref": "stoipath-wsi-stage0-client@0.0.1|vite@7.3.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/vite@7.3.7",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/vite/-/vite-7.3.7.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "0071334ce44c6e2effeda5e9ef0eca679f8309475278bb09cf482b63cc47a5cf431dd61bd2f42ee83a897e6dad3b0de00c4c4d80f8272535f133ab326051da08"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:development",
+          "value": "true"
+        },
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/vite"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|typescript@5.9.3",
+        "stoipath-wsi-stage0-client@0.0.1|vite@7.3.7"
+      ]
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/aix-ppc64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-arm@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/darwin-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/darwin-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/freebsd-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/freebsd-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-arm@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-ia32@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-loong64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-mips64el@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-ppc64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-riscv64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-s390x@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/netbsd-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/netbsd-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/openbsd-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/openbsd-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/openharmony-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/sunos-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-arm64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-ia32@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-x64@0.28.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@napi-rs/lzma-linux-x64-gnu@1.5.1"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-android-arm-eabi@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-android-arm64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-darwin-arm64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-darwin-x64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-freebsd-arm64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-freebsd-x64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm-gnueabihf@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm-musleabihf@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm64-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm64-musl@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-loong64-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-loong64-musl@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-ppc64-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-ppc64-musl@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-riscv64-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-riscv64-musl@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-s390x-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-x64-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-x64-musl@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-openbsd-x64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-openharmony-arm64@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-arm64-msvc@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-ia32-msvc@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-x64-gnu@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-x64-msvc@4.65.0"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|@types/estree@1.0.9"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|esbuild@0.28.2",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/aix-ppc64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-arm@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/android-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/darwin-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/darwin-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/freebsd-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/freebsd-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-arm@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-ia32@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-loong64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-mips64el@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-ppc64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-riscv64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-s390x@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/linux-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/netbsd-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/netbsd-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/openbsd-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/openbsd-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/openharmony-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/sunos-x64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-arm64@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-ia32@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|@esbuild/win32-x64@0.28.2"
+      ]
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|fdir@6.5.0",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|picomatch@4.0.7"
+      ]
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|fsevents@2.3.3"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|nanoid@3.3.20"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|picocolors@1.1.1"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|picomatch@4.0.7"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|postcss@8.5.31",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|nanoid@3.3.20",
+        "stoipath-wsi-stage0-client@0.0.1|picocolors@1.1.1",
+        "stoipath-wsi-stage0-client@0.0.1|source-map-js@1.2.2"
+      ]
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|rollup@4.65.0",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|@napi-rs/lzma-linux-x64-gnu@1.5.1",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-android-arm-eabi@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-android-arm64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-darwin-arm64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-darwin-x64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-freebsd-arm64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-freebsd-x64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm-gnueabihf@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm-musleabihf@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm64-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-arm64-musl@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-loong64-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-loong64-musl@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-ppc64-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-ppc64-musl@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-riscv64-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-riscv64-musl@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-s390x-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-x64-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-linux-x64-musl@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-openbsd-x64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-openharmony-arm64@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-arm64-msvc@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-ia32-msvc@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-x64-gnu@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@rollup/rollup-win32-x64-msvc@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|@types/estree@1.0.9",
+        "stoipath-wsi-stage0-client@0.0.1|fsevents@2.3.3"
+      ]
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|source-map-js@1.2.2"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|tinyglobby@0.2.17",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|fdir@6.5.0",
+        "stoipath-wsi-stage0-client@0.0.1|picomatch@4.0.7"
+      ]
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|typescript@5.9.3"
+    },
+    {
+      "ref": "stoipath-wsi-stage0-client@0.0.1|vite@7.3.7",
+      "dependsOn": [
+        "stoipath-wsi-stage0-client@0.0.1|esbuild@0.28.2",
+        "stoipath-wsi-stage0-client@0.0.1|fdir@6.5.0",
+        "stoipath-wsi-stage0-client@0.0.1|fsevents@2.3.3",
+        "stoipath-wsi-stage0-client@0.0.1|picomatch@4.0.7",
+        "stoipath-wsi-stage0-client@0.0.1|postcss@8.5.31",
+        "stoipath-wsi-stage0-client@0.0.1|rollup@4.65.0",
+        "stoipath-wsi-stage0-client@0.0.1|tinyglobby@0.2.17"
+      ]
+    }
+  ]
+}
