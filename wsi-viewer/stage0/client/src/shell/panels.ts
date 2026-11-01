@@ -41,8 +41,9 @@ export class Dock {
   setOpen(open: boolean): void {
     if (open === this.isOpen) return;
     this.isOpen = open;
+    // Only .dock-open: base.css's .app.dock-closed sets three columns, which breaks the one-column grid ≤ 1079 px;
+    // shell.css closes the dock column at ≥ 1600 px for .app.shell:not(.dock-open) instead.
     this.app.classList.toggle('dock-open', open);
-    this.app.classList.toggle('dock-closed', !open);
     for (const b of $$<HTMLElement>('[data-cmd="dock"]', this.app)) b.setAttribute('aria-pressed', String(open));
     this.onToggle(open);
   }

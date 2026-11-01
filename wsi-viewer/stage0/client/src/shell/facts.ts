@@ -99,7 +99,7 @@ export function slideFacts(manifest: unknown, pyramid: Pyramid, id: Identity): F
     const t = num(l, 'tiles');
     const b = num(l, 'bytes');
     if (i === null || w === null) continue;
-    out.push({ term: `L${i}`, value: `${int(w)} px${t !== null ? ` · ${int(t)} tiles` : ''}${b !== null ? ` · ${(b / 1e6).toFixed(1)} MB` : ''}${l['pinned'] === true ? ' · pinned' : ''}` });
+    out.push({ term: `L${i}`, value: `${int(w)} px${t !== null ? ` · ${int(t)} tile${t === 1 ? '' : 's'}` : ''}${b !== null ? ` · ${(b / 1e6).toFixed(1)} MB` : ''}${l['pinned'] === true ? ' · pinned' : ''}` });
   }
   const scanner = str(src, 'scanner');
   if (scanner !== null) out.push({ term: 'Scanner', value: scanner });

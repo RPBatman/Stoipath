@@ -673,7 +673,8 @@ async function start(): Promise<void> {
   licEl.textContent = id.licence ?? '';
   licEl.hidden = id.licence === null;
   if (id.licenceLong !== null) licEl.title = `Licence: ${id.licenceLong}`;
-  $('idTitle').textContent = `${id.stainLong !== null ? (id.stainLong.split(',')[1]?.trim() ?? '') : ''}${p.mpp !== null ? ` · ${p.mpp} µm/px` : ''} · ${p.width.toLocaleString('en-US')} px region`.replace(/^ · /, '');
+  const tissue = id.stainLong !== null ? (id.stainLong.split(',')[1] ?? '').replace(/\s*\(.*\)\s*$/, '').trim() : '';
+  $('idTitle').textContent = `${tissue}${p.mpp !== null ? ` · ${p.mpp} µm/px` : ''} · ${p.width.toLocaleString('en-US')} px region`.replace(/^ · /, '');
   $('hudId').textContent = id.stain !== null ? `${id.name} · ${id.stain}` : id.name;
   $('hudCoh').textContent = [id.cohort, id.licence].filter((x) => x !== null).join(' · ');
   $('navLabel').textContent = id.stain !== null ? `${id.name} · ${id.stain}` : id.name;
@@ -848,7 +849,7 @@ function onFrame(s: FrameSnapshot): void {
     notices.view(st.magnified ? `Beyond the scan’s resolution — level 0 shown at ${st.scaleAtLstar.toFixed(2)}× its ${v.pyramid.mpp ?? '?'} µm pixels (interpolated)` : '');
     if (dock.isOpen && dock.tab === 'engine') {
       eq.state.set(sharp.label);
-      eq.ntf.set(`${((1 - st.sharpFraction) * 100).toFixed(1)} % (${st.deficitCells} of ${st.cells} cells from a coarser level)`);
+      eq.ntf.set(`${st.sharpFraction.toFixed(3)} · NTF ${((1 - st.sharpFraction) * 100).toFixed(1)} % (${st.deficitCells} of ${st.cells} cells from a coarser level)`);
       eq.deficit.set(`${st.blurArea.toFixed(2)} octave (≤ 0.15)`);
       eq.level.set(`L${st.centreLevel} at ${hud.magText} (wanted L${s.lstar}, s ${st.scaleAtLstar.toFixed(2)}${st.magnified ? ', magnified' : ''})`);
       eq.frame.set(`${frameEma.toFixed(1)} ms · display ${(1000 / v.metrics.displayIntervalMs).toFixed(0)} Hz`);

@@ -134,6 +134,10 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 .strip .chip .icon { width: 14px; height: 14px; }
 .strip .chip.num { font-variant-numeric: tabular-nums; min-width: 11ch; justify-content: center; }
 
+/* ---- Dock open / closed (panels.ts toggles only .dock-open) ---- */
+.app.shell:not(.dock-open) .dock { display: none; }
+@media (min-width: 1600px) { .app.shell:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; } }
+
 /* =============================================================================
    Responsive (base.css breakpoints; principles §7 collapse order)
    ========================================================================== */
@@ -147,6 +151,9 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 @media (min-width: 1080px) and (max-width: 1599px) {
   .app.shell { --layout-dock: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
   .app.shell.dock-open { --layout-navigator: 180px; }
+  /* An absolutely positioned grid item that keeps grid-area: dock resolves base.css's top: topbar / bottom: strip
+     against its grid area (row 2), which put the drawer 48 px low; without an area it resolves against the app. */
+  .app.shell.dock-open .dock { grid-area: auto; }
   .app.shell.dock-open .navigator, .app.shell.dock-open .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
 }
 /* Tablet portrait and phone: rail → bottom bar; the dock becomes the grid's in-flow sheet row (the canvas yields
@@ -180,4 +187,15 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 }
 @media print {
   .meas-layer { display: none; }
+}
+
+/* Palette input: shrink inside the 320 px column and drop the native clear button so the Esc hint stays visible. */
+.palette__input input { min-width: 0; }
+.palette__input input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+
+/* Phone navigator (research final, decisions §4d): base.css's 25 % cap leaves ~89 px on a 390 px phone, too narrow for
+   three 44 px pads. On phones the navigator is a toggled overlay (behind O, hidden at rest), so it takes the ladder's
+   140 px phone step with only the canvas-edge cap; at 140 + 24 px tall it stays above the central zone. */
+@media (max-width: 599px) {
+  .shell .canvas-area .navigator { width: 140px; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
 }

@@ -12,6 +12,18 @@ in [`../results/README.md`](../results/README.md). The adversarial review and ho
 [`REVIEW.md`](REVIEW.md); what changed since the first build is in [`CHANGES.md`](CHANGES.md). The Stage-0 overview
 (pyramid build, LAN serving, static deployment) is [`../README.md`](../README.md).
 
+## Two pages: the measurement page and the RUO shell
+
+The build has two pages over **one** engine module (`src/viewer.ts`, `startViewer()`; one rAF loop):
+
+| Page | What it is | Use it for |
+|---|---|---|
+| `index.html` (default) | the measurement page: full-window canvas, debug overlay (`?overlay=1`), keys +/− arrows O R P, `window.__stage0` | every protocol and TSP-grade run (MEASUREMENT_PROTOCOL.md), `harness/run.mjs`, `harness/check-metrics.mjs` |
+| `shell.html` | **Stoipath Viewer (RUO)**: the designed research workspace (design system, top bar with the RUO label string, rail, HUD with magnification / scale bar / position, navigator, measure tool, palette, keymap, Context dock with Slide / Measurements / Engine) around the same engine | looking at the real slide in the product's shell; `harness/shell-check.mjs` |
+
+See [`SHELL.md`](SHELL.md) for the shell: how to run it, URL parameters (`?engine=1`), the keymap, the UI → engine
+contract table, the magnification and scale-bar derivation, deviations from the design and the test results.
+
 ## Layout
 
 | File | What it does |
