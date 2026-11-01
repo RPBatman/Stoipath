@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#1b1b1f" />
+    <title>Stage-0 OpenSeadragon comparator</title>
+    <style>
+      :root { color-scheme: dark; --fg: #e6e6ea; --bg: #1b1b1f; --panel: rgba(20, 20, 24, 0.88); --accent: #6cc3ff; --warn: #ffb86c; }
+      html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 12px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow: hidden; }
+      /* Full-viewport container, like the prototype's canvas (index.html #view), so both viewers show the same CSS area. */
+      #osd { position: fixed; inset: 0; width: 100%; height: 100%; background: #000; touch-action: none; }
+      #status { position: fixed; right: 8px; top: 8px; padding: 4px 8px; background: var(--panel); border-radius: 6px; pointer-events: none; max-width: calc(100vw - 32px); z-index: 10; }
+      #panel { position: fixed; left: 8px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); right: 8px; max-height: 45vh; overflow: auto; padding: 8px; background: var(--panel); border-radius: 6px; z-index: 10; }
+      #panel pre { margin: 0 0 6px 0; white-space: pre-wrap; word-break: break-word; }
+      #panel button { font: inherit; margin: 2px 6px 2px 0; padding: 6px 10px; background: #2b2b33; color: var(--fg); border: 1px solid #44444f; border-radius: 4px; cursor: pointer; min-height: 32px; }
+      #panel button:active { background: #3a3a46; }
+      #panel button:disabled { opacity: 0.5; cursor: default; }
+      .warn { color: var(--warn); }
+      .hidden { display: none !important; }
+    </style>
+    <!--
+      Frame instrumentation, installed BEFORE OpenSeadragon captures window.requestAnimationFrame (OSD 6.1.1 binds it at
+      load time). It only records the timestamp of each animation frame (frame count, frame deltas); every callback is
+      passed through unchanged. OSD's behaviour is not modified.
+    -->
+    <script>
+      (function () {
+        var nativeRaf = window.requestAnimationFrame.bind(window);
+        var F = (window.__osdFrames = { n: 0, ts: 0, deltas: [] });
+        function noteFrame(ts) {
+          if (ts !== F.ts) {
+            if (F.ts > 0 && F.deltas.length < 200000) F.deltas.push(ts - F.ts);
+            F.ts = ts;
+            F.n++;
+          }
+        }
+        window.requestAnimationFrame = function (cb) {
+          return nativeRaf(function (ts) {
+            noteFrame(ts);
+            cb(ts);
+          });
+        };
+      })();
+    </script>
+    <!-- OpenSeadragon 6.1.1, vendored from the npm tarball (vendor/openseadragon/LICENSE.txt, BSD-3-Clause); no CDN. -->
+    <script src="vendor/openseadragon/openseadragon.min.js"></script>
+  </head>
+  <body>
+    <div id="osd" aria-label="OpenSeadragon comparator view"></div>
+    <div id="status">loading…</div>
+    <div id="panel">
+      <pre id="device"></pre>
+      <div>
+        <button id="btn-path" type="button" disabled>Run scripted path</button>
+        <button id="btn-export" type="button">Export JSON</button>
+        <button id="btn-copy" type="button">Copy summary</button>
+        <button id="btn-hide" type="button">Hide (key O)</button>
+      </div>
+      <pre id="summary"></pre>
+    </div>
+    <script src="osd.js"></script>
+  </body>
+</html>
