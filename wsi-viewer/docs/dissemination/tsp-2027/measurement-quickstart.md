@@ -72,14 +72,54 @@ After a completed cold run **in the same tab**, **reload** the page with the `wa
 - Suggested order per device: Wi-Fi cold → Wi-Fi warm → `_manual` → (Tue) cellular cold → cellular warm.
 - **Discard and note** (never edit a JSON): touched the screen, call or notification, thermal warning, browser reload, overlay shows
   `context losses > 0`, or a cold run whose export shows cache hits. Delete the file and say why in `results-log.md`.
-- If deployed by the agents: run the REF CSS-transform page and the OpenSeadragon page (default and tuned profiles) once per
-  device × network in the same session, alternating viewers (ours → OSD → ours), scoring 0–3 before looking at numbers.
+- OpenSeadragon comparator (default and tuned profiles): in the same session, in the order of §4b. If the agents deploy
+  the REF CSS-transform page, run it the same way, alternating viewers and scoring 0–3 before looking at numbers.
+
+## 4b. OpenSeadragon comparator (evidence row E3), same device, same session
+
+The page shows the same tiles as ours along the same scripted path and records, per waypoint, the time from the last
+camera command to OSD's "all tiles loaded" event (`stage0/comparator/README.md`; protocol §8). URLs (live once the agents
+publish `comparator/` on Mon 2 Nov; use the same label as your prototype runs of that condition):
+
+| Viewer | URL |
+|---|---|
+| ours | `https://rpbatman.github.io/Stoipath/client/dist/?overlay=1&label=<device>_<browser>_<network>_<cache>` |
+| OSD tuned | `https://rpbatman.github.io/Stoipath/comparator/osd.html?profile=tuned&label=<device>_<browser>_<network>_<cache>` |
+| OSD default | `https://rpbatman.github.io/Stoipath/comparator/osd.html?profile=default&label=<device>_<browser>_<network>_<cache>` |
+
+Add `&path=1` to an OSD URL to start the path automatically at `ready`. The OSD panel is always shown (no `overlay=1`).
+
+**Order per device × network, one cycle = 8 runs:**
+
+1. **ours**: cold (new private window), then warm (§3: reload the same tab with the label's cache token changed to `warm`);
+2. **OSD tuned**: cold, then warm;
+3. **ours**: cold, then warm;
+4. **OSD default**: cold, then warm.
+
+Each run is the §2/§3 routine: wait for `ready`, **Run scripted path** (key P), hands off until `scripted path done
+(run 1)`, score blur and pop-in 0–3 **before** reading any number, **Export JSON**, **Copy summary**, close.
+**Close every private window before the next cold run**: both viewers load the same tile files, and Chrome and Firefox
+share one private cache across private windows until the last one closes, so a leftover window makes the next viewer's
+"cold" run warm. A cold OSD run whose summary's `tiles:` line says `NOT A COLD RUN` (an HTTP-cache hit on a tile's first fetch) is
+discarded like a prototype cold run with cache hits.
+
+How many cycles: the prototype runs inside the cycles count toward its own N (above). For OSD, one cycle per device ×
+network is the minimum (one cold + one warm per profile: "insufficient runs", qualitative only); **three cycles on the
+devices the abstract compares head to head** (the laptop and one phone) give 3 valid cold OSD tuned runs (15 bursts:
+"preliminary", p50 and max); a p95 needs a fourth. Keep the order the same in every cycle.
+
+Phones with a device pixel ratio above 2 (the panel's `dpr`): OSD then loads finer tiles than ours at some waypoints
+(the summary marks them `MISMATCH`). If time allows, add one run per cycle with `?profile=tuned&lod=match&label=…`,
+which makes OSD load the same levels as ours; it is summarised as its own profile.
 
 ## 5. Where the files go
 
 Copy the JSON exports and overlay screenshots (AirDrop / USB / cloud drive) to
 **`wsi-viewer/stage0/results/exports/<YYYY-MM-DD>/`** (one folder per session date), renamed per §1, plus the device-block
-screenshot as `<date>_<device>_<browser>_device.png`. One CSV row per run in `results/results.csv` is optional (template:
+screenshot as `<date>_<device>_<browser>_device.png`. OSD comparator exports download as
+`stage0-osd-<label>-<profile>-<drawer>-<time>.json`; rename them
+`<YYYY-MM-DD>_<device>_<browser>_<network>_<cache>_osd-<profile>-<drawer>_run<N>.json` (e.g.
+`2026-11-02_GalaxyA15_Chrome141_home-wifi_cold_osd-tuned-webgl_run1.json`) and put them in the same folder. One CSV row per run in `results/results.csv` is optional (template:
 `results/results-template.csv`); the JSON is the record and the summariser recomputes every number.
 
 ## 6. Summarise
@@ -88,7 +128,13 @@ screenshot as `<date>_<device>_<browser>_device.png`. One CSV row per run in `re
 cd wsi-viewer/stage0
 python3 tools/summarize_results.py results/exports/2026-11-02/            # writes summary.md + summary.csv into that folder
 python3 tools/summarize_results.py results/ --recursive --out results/summary   # all dates pooled by condition
+python3 tools/summarize_osd.py results/exports/2026-11-02/                        # OSD exports: summary-osd.md + summary-osd.csv
 ```
+
+Each summariser reads only its own exports and skips the other's files in the same folder. `summarize_osd.py` groups by
+device × browser × network × cache × profile × drawer and prints, per condition, runs, waypoints, p50/p95/max of
+"last command → fully loaded" over the five zoom-in bursts, censored count and level mismatches (same `~` and `!`
+marks as below). Quote the **tuned** row as the comparator; the default row is the deployed OSD experience.
 
 Standard library only (Python ≥ 3.9). `summary.md` has a pooled per-condition table and a per-export table. Read the marks:
 `~` before a p95 = fewer than 20 bursts, quote p50 and max instead; `!` before a TTS value = a burst timed out (lower bound; see

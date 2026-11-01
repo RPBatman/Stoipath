@@ -232,25 +232,58 @@ Compare conditions by shift of the distribution, not by a single run (10 F4).
 
 ## 8. Comparing against an existing viewer (OpenSeadragon)
 
-Reference viewer: OpenSeadragon with **default settings** (1.2 s spring, quantised wheel steps
-throttled at 50 ms, no cross-level blend — the deployed experience, 04 Summary and F6), on the same
-tiles. A one-page `osd.html` placed in `stage0/` (not part of the repo; template below) with a custom
-tile source. OSD numbers levels the other way round: OSD level k ↔ our level `5 − k`; verify once by
-comparing a tile.
+Reference viewer: **OpenSeadragon 6.1.1** (vendored in `comparator/vendor/`, BSD-3-Clause) showing the **same tiles**
+along the **same scripted path**: `comparator/osd.html` (`comparator/README.md` has the profiles, every option value,
+the export schema and what the page does not measure). OSD numbers levels from the coarsest: the tile source maps OSD
+level k to our level 5 − k; every page load checks that mapping against the manifest, and the headless probe
+(`comparator/run-osd.mjs`) confirms it pixel for pixel at level 0. The page reproduces `scripted-path.ts` step for step
+with OSD viewport calls (same level-0 waypoints, same absolute zoom targets, 1/3-level notches every 60 ms about the
+same pointer, 1:1 drags with the prototype's inertia distance); the runner checks it against the TypeScript source.
 
-```js
-OpenSeadragon({ id: 'osd', prefixUrl: 'https://cdn.jsdelivr.net/npm/openseadragon@5.0.1/build/openseadragon/images/',
-  tileSources: { width: 15360, height: 15360, tileSize: 512, tileOverlap: 0, minLevel: 0, maxLevel: 5,
-    getTileUrl: (level, x, y) => `data/tiles/${5 - level}/${x}_${y}.jpg` } });
+- **Profiles.** `?profile=default`: OSD's defaults (1.2 s spring, `maxTilesPerFrame` 1, `immediateRender` false,
+  `blendTime` 0, `imageLoaderLimit` 0) — the deployed experience (04 Summary and F6). `?profile=tuned`:
+  `maxTilesPerFrame` 100, `immediateRender` true, `imageLoaderLimit` 0 (in 6.1.1 that is "no OSD-side cap", already
+  the highest setting), `animationTime` 0.3 s at `springStiffness` 6.5 (time constant 46 ms against our 120 ms, so
+  OSD's camera is not its bottleneck). Every effective option value is in the export. Drawer: OSD's own choice
+  (`auto`: WebGL, canvas on iOS/iPadOS) unless `&drawer=canvas|webgl`; the export records the drawer used.
+- **Metric.** Per waypoint, last camera command → the tiled image's `fully-loaded-change` (true), plus when OSD's
+  animation finished; censored 8 s after the animation finished or 12 s after the last command (lower bound). It is
+  an "all visible tiles drawn" proxy, **not a sharpness record and not our TTS** (no blurred-frame record exists for
+  OSD): put the two side by side under their own names. Headline: the five zoom-in bursts, as for our TTS.
+- **Levels.** OSD chooses levels in device pixels, we in render pixels (DPR capped at 2). On screens with DPR > 2 OSD
+  loads the next finer level at some waypoints (export `levelMatch`, summariser "level mismatches"); `&lod=match`
+  makes the levels equal (`minPixelRatio` = 0.5 × DPR / 2). Say which was used.
+
+URLs (GitHub Pages, once the orchestrator has published `comparator/` on `stage0-deploy` next to `client/dist/` and
+`data/`; label tokens as in §1.2):
+
+```
+ours         https://rpbatman.github.io/Stoipath/client/dist/?overlay=1&label=<device>_<browser>_<network>_<cache>
+OSD tuned    https://rpbatman.github.io/Stoipath/comparator/osd.html?profile=tuned&label=<device>_<browser>_<network>_<cache>
+OSD default  https://rpbatman.github.io/Stoipath/comparator/osd.html?profile=default&label=<device>_<browser>_<network>_<cache>
+LAN          http://<laptop-ip>:8000/comparator/osd.html?profile=tuned&label=…   (npm run serve, as for ours)
 ```
 
-Procedure: same device, network and cache state; alternate viewers (ours → OSD → ours …) to spread
-thermal and network drift. Perform the **same gestures by hand** in both: three zoom-in bursts of
-3 levels at the same three landmarks (keep a screenshot of each landmark), two drags, one zoom-out,
-with pauses. Score both on the 0–3 scales before looking at any numbers.
+Procedure (Mon 2 / Tue 3 Nov sessions): same device, network and cache state; alternate viewers in the fixed order
+**ours → OSD tuned → ours → OSD default** per device × network, each viewer **cold** (a fresh private window with no
+other private window open — both pages load the same tile URLs, so one viewer's run warms the HTTP cache for the
+other; Chrome and Firefox share one private cache across private windows until all are closed) **then warm** (reload
+the same tab with the label's cache token `warm`, within 10 min on Pages), to spread thermal and network drift. Score every run on the 0–3 scales before
+looking at any numbers. Press **Run scripted path** (or load with `&path=1`), hands off until `scripted path done`,
+**Export JSON**, **Copy summary**. A cold OSD export with `tiles.cacheHitsOnFirstFetch > 0` was not cold: discard it.
+Rename exports `<date>_<device>_<browser>_<network>_<cache>_osd-<profile>-<drawer>_run<N>.json` and summarise them with
+`python3 tools/summarize_osd.py results/exports/<date>/` (per device × network × cache × profile × drawer; the
+prototype summariser skips them). Any "faster than OpenSeadragon" sentence cites the **tuned** profile; the default
+profile is reported separately as the deployed experience, and a head-to-head sentence also needs the video
+spot-check below.
 
-OSD has no quality record, so measure both viewers **from video**, which also calibrates our
-in-page numbers: film the screen with a second phone in slow-motion (iPhone Camera → Slo-mo,
+For the video spot-check (and for input-to-photon, which the scripted path cannot give), perform the **same gestures by
+hand** in both viewers: three zoom-in bursts of 3 levels at the same three landmarks (keep a screenshot of each
+landmark), two drags, one zoom-out, with pauses; or film one scripted run of each viewer, which follows identical
+waypoints in both, for time-to-sharp and blur duration.
+
+OSD has no quality record (the comparator records when OSD has the tiles, not what is on screen), so check a
+head-to-head claim on both viewers **from video**, which also calibrates our in-page numbers: film the screen with a second phone in slow-motion (iPhone Camera → Slo-mo,
 240 fps; many Androids offer 240 fps) with the finger or mouse hand in frame — 4 ms resolution,
 validated against a photodiode rig within 2.6 ms (04 F8). Where only on-device screen recording is
 available (iOS Control Center, Android Quick Settings, macOS QuickTime/OBS; 60 fps, 120 fps with OBS
@@ -258,6 +291,6 @@ on a 120 Hz monitor) use it, note `recording=on-device` (it costs CPU and pertur
 Step through the video and count frames: finger contact / first wheel notch → first pixel change
 (**input-to-photon**); finger lift → last visible tile change (**time-to-sharp**); frames showing
 magnified, soft tiles (**blur duration**). Multiply by 1000/fps; resolution ±1 frame (±17 ms at
-60 fps, ±4 ms at 240). Report the two viewers side by side, stating that OSD values are
-video-derived and ours are in-page plus a video-calibrated subset; where they disagree by more than
+60 fps, ±4 ms at 240). Report the two viewers side by side, stating which OSD values are
+video-derived and which come from the comparator export, and that ours are in-page plus a video-calibrated subset; where they disagree by more than
 one frame, the video wins (10 F4).

@@ -13,6 +13,8 @@ the device runs described in `../../../MEASUREMENT_PROTOCOL.md` and go to `../..
 |---|---|
 | `<timestamp>-<label>.json` | Full export of one scripted-path run (`format: stoipath-stage0-metrics/1`): summary, per-gesture records, per-frame columns, tile timings. Readable with `tools/summarize_results.py`. |
 | `screens/*.png`, `screens/views.json` | Screenshots of fixed views taken by `harness/screens.mjs` (viewport 1280×800, DPR 1) with the camera state at capture. |
+| `<timestamp>-osd-<label>-<profile>-<drawer>.json` | Export of one OpenSeadragon comparator run by `comparator/run-osd.mjs` (`format: stoipath-stage0-osd/1`: per-waypoint time from the last camera command to OSD's `fully-loaded-change`, profile option values, drawer, mapping probe; the runner adds `harnessParity` and `harnessProbe`). Readable with `tools/summarize_osd.py`; `summarize_results.py` skips it. What it measures and does not: `comparator/README.md`. |
+| `summary-osd.md`, `summary-osd.csv` | `tools/summarize_osd.py` over the `*-osd-*` exports here (headless smoke runs of 1 Nov 2026 on a loaded machine: never device numbers). |
 | `README.md` | This file. |
 
 Labels follow the protocol convention `device_browser_network_cache_runN`; the device here is

@@ -808,13 +808,18 @@
       const osdEntries = performance.getEntriesByType('resource').filter((e) => e.startTime >= tProbe && levelIndexOfUrl(e.name) !== null);
       const requested = osdEntries.map((e) => new URL(e.name).pathname.split('/').slice(-2).join('/') + ` (index ${levelIndexOfUrl(e.name)})`);
       const finest = osdEntries.length ? Math.min.apply(null, osdEntries.map((e) => levelIndexOfUrl(e.name))) : null;
+      // OSD draws each tile 1 px larger when the drawer requires overlap and the source has none (TiledImage
+      // _positionTile: sizeC.plus(1, 1) if drawer.minimumOverlapRequired(); true for the canvas drawer, false for
+      // WebGL), so the reference JPEG is drawn at that size too: a 512 px tile shown at 513 px is a 0.2 % resample.
+      const enlarge = typeof viewer.drawer.minimumOverlapRequired === 'function' && viewer.drawer.minimumOverlapRequired(tiledImage) ? 1 : 0;
       const ref = async (ix, iy) => {
         const im = await loadImage(tileUrl(0, ix, iy));
         const c = document.createElement('canvas');
         c.width = tileSize;
         c.height = tileSize;
         const g = c.getContext('2d');
-        g.drawImage(im, 0, 0);
+        g.imageSmoothingEnabled = true;
+        g.drawImage(im, 0, 0, tileSize + enlarge, tileSize + enlarge);
         return g.getImageData(0, 0, w, h).data;
       };
       const mad = (a, b) => {
@@ -834,6 +839,7 @@
       out.pixel = {
         tile: { index: 0, x: tx, y: ty, url: tileUrl(0, tx, ty) },
         drawer: viewer.drawer.getType(),
+        drawerEnlargesTilesPx: enlarge,
         devicePixelRatio: dpr,
         canvas: [cw, ch],
         region: [x0, y0, w, h],

@@ -18,6 +18,8 @@ stage0/
     harness/                static server, Playwright runs, metric self-checks, headless results
     REVIEW.md, CHANGES.md   adversarial review with a Resolution line per finding; change log
     README.md               client details: layout, overlay, export schema, caveats, limitations
+  comparator/               OpenSeadragon 6.1.1 comparator page (same tiles, same scripted path, per-waypoint
+                            export), its headless runner and the vendored OSD build (README.md; evidence row E3)
   data/                     the tile pyramid (manifest.json, tiles/{level}/{x}_{y}.jpg) and SOURCE.md
   tools/                    pyramid builder / verifier (Python) and the results summariser
   results/                  device exports, screenshots, CSV, generated summary tables (README.md)
@@ -81,12 +83,14 @@ cd wsi-viewer/stage0
 rm -rf /tmp/stage0-deploy && mkdir -p /tmp/stage0-deploy/client
 cp -r client/dist /tmp/stage0-deploy/client/dist      # the built viewer
 cp -r data          /tmp/stage0-deploy/data           # manifest + tiles (97.8 MB, 1 210 files)
+mkdir -p /tmp/stage0-deploy/comparator && cp -r comparator/osd.html comparator/osd.js comparator/vendor comparator/README.md /tmp/stage0-deploy/comparator/   # OSD comparator (finds ../data/manifest.json)
 touch /tmp/stage0-deploy/.nojekyll                    # serve files as they are
 ```
 
 Publish the *contents* of `/tmp/stage0-deploy/` as the root of the `gh-pages` branch (the
 orchestrator does the git part: commit on an orphan `gh-pages` branch and enable Pages for it). The
-viewer is then at `https://<user>.github.io/<repo>/client/dist/?overlay=1&label=…`. Notes:
+viewer is then at `https://<user>.github.io/<repo>/client/dist/?overlay=1&label=…` and the OpenSeadragon comparator at
+`https://<user>.github.io/<repo>/comparator/osd.html?profile=tuned&label=…` (`comparator/README.md`). Notes:
 
 - Pages negotiates HTTP/2, so the viewer uses 16 parallel requests instead of 6; the export records
   `device.protocol` — copy it to the CSV `http_version` column.

@@ -5,6 +5,7 @@
 // Usage: node comparator/run-osd.mjs [--profile default|tuned] [--drawer canvas|webgl|auto] [--label NAME]
 //          [--network NAME] [--cache cold|warm] [--latency MS] [--kbps N] [--width 1280 --height 800] [--dpr 1]
 //          [--lod match] [--manifest URL] [--timeout MS] [--port N] [--headed] [--no-probe] [--no-parity]
+//          [--warm]   (after the cold run, reload in the same browser context with the cache token `warm` and run again)
 //        node comparator/run-osd.mjs --check FILE.json     (re-run the export checks on a saved export; no browser)
 //
 // Before the measurement the runner compares the page's copy of the scripted path (steps and constants) with
@@ -237,24 +238,41 @@ const t0 = Date.now();
 const context = await browser.newContext(contextOptions);
 const page = await context.newPage();
 attach(page, 'page');
-await page.goto(url, { waitUntil: 'load' });
-await page.waitForFunction(() => window.__osd !== undefined, null, { timeout: 30_000 });
-let parity = null;
-if (!flagOff('parity')) {
-  parity = parityCheck(await page.evaluate(() => window.__osd.pathDefinition()));
-  printChecks('path parity with client/src (scripted-path.ts, constants.ts)', parity.checks);
+/** Load one page, wait for its ?path=1 run, return the export (null on a page error). */
+async function measure(pageUrl, withParity) {
+  await page.goto(pageUrl, { waitUntil: 'load' });
+  await page.waitForFunction(() => window.__osd !== undefined, null, { timeout: 30_000 });
+  let par = null;
+  if (withParity) {
+    par = parityCheck(await page.evaluate(() => window.__osd.pathDefinition()));
+    printChecks('path parity with client/src (scripted-path.ts, constants.ts)', par.checks);
+  }
+  await page.waitForFunction(() => window.__osdResult !== undefined || window.__osdError !== undefined, null, { timeout: timeoutMs, polling: 250 });
+  const err = await page.evaluate(() => window.__osdError);
+  if (err) {
+    console.log(`page error: ${err}`);
+    return { ex: null, par };
+  }
+  return { ex: await page.evaluate(() => JSON.parse(window.__osd.exportJson())), par };
 }
-await page.waitForFunction(() => window.__osdResult !== undefined || window.__osdError !== undefined, null, { timeout: timeoutMs, polling: 250 });
-const err = await page.evaluate(() => window.__osdError);
-if (err) {
-  console.log(`page error: ${err}`);
-  await browser.close();
-  server.close();
-  process.exit(1);
-}
-const ex = await page.evaluate(() => JSON.parse(window.__osd.exportJson()));
-await context.close();
+const cold = await measure(url, !flagOff('parity'));
+const parity = cold.par;
+const runsOut = [];
+if (cold.ex) runsOut.push({ ex: cold.ex, label, url });
 console.log(`run took ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+// --warm: reload in the SAME browser context (HTTP cache warm, OSD's own cache empty) with the cache token "warm".
+if (cold.ex && args.warm === 'true') {
+  const m = /^([^_]+)_([^_]+)_([^_]+)_([^_]+)(_.*)?$/.exec(label);
+  const warmLabel = m ? `${m[1]}_${m[2]}_${m[3]}_warm${m[5] ?? ''}` : `${label}_warm`;
+  const wq = new URLSearchParams(q);
+  wq.set('label', warmLabel);
+  wq.set('cache', 'warm');
+  const warmUrl = `http://127.0.0.1:${port}/comparator/osd.html?${wq.toString()}`;
+  console.log(`reloading warm: ${warmUrl}`);
+  const warm = await measure(warmUrl, false);
+  if (warm.ex) runsOut.push({ ex: warm.ex, label: warmLabel, url: warmUrl });
+}
+await context.close();
 
 let probe = null;
 if (!flagOff('probe')) {
@@ -271,26 +289,29 @@ if (!flagOff('probe')) {
 await browser.close();
 server.close();
 
-ex.harness = { runner: 'comparator/run-osd.mjs', url: url.replace(/^http:\/\/127\.0\.0\.1:\d+/, ''), viewport: { width, height, dpr }, latencyMs: Number(args.latency ?? 0), kbps: Number(args.kbps ?? 0), headless: args.headed !== 'true' };
-ex.harnessParity = parity;
-ex.harnessProbe = probe;
-
-mkdirSync(resultsDir, { recursive: true });
-const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-const outPath = resolve(resultsDir, `${stamp}-osd-${label}-${ex.profile.name}-${ex.drawer.actual}.json`);
-writeFileSync(outPath, JSON.stringify(ex));
-
-printExport(ex);
 if (probe) {
   const px = probe.pixel || {};
   printChecks('mapping probe (fresh context, ?probe=1)', [
     ...(probe.edgeTiles || []).map((e) => ({ ok: e.ok, msg: `edge tile of OSD level ${e.osdLevel} (index ${e.index}): decoded ${e.decoded ? e.decoded.join('x') : e.error} vs expected ${e.expected ? e.expected.join('x') : '?'}` })),
-    { ok: px.ok, msg: `pixel probe (${px.drawer}): level-0 tile ${px.tile ? `${px.tile.x},${px.tile.y}` : '?'} drawn 1:1, mean |diff| vs its JPEG ${px.meanAbsDiffSameTile}, vs the neighbouring tile ${px.meanAbsDiffNeighbourTile}; finest level requested ${px.finestLevelRequested}${px.error ? ' — ' + px.error : ''}` },
+    { ok: px.ok, msg: `pixel probe (${px.drawer}): level-0 tile ${px.tile ? `${px.tile.x},${px.tile.y}` : '?'} drawn 1:1 (drawer enlarges tiles by ${px.drawerEnlargesTilesPx} px), mean |diff| vs its JPEG ${px.meanAbsDiffSameTile}, vs the neighbouring tile ${px.meanAbsDiffNeighbourTile}; finest level requested ${px.finestLevelRequested}${px.error ? ' — ' + px.error : ''}` },
   ]);
 }
-const checks = checkExport(ex, { profile, drawer });
-printChecks('export checks', checks);
-const fails = checks.filter((c) => !c.ok).length + (parity && !parity.ok ? 1 : 0) + (probe && !probe.ok ? 1 : 0);
-console.log(`\nwrote ${outPath}`);
-console.log(fails ? `${fails} check group(s) FAILED` : 'all checks passed');
+let fails = (parity && !parity.ok ? 1 : 0) + (probe && !probe.ok ? 1 : 0) + (cold.ex ? 0 : 1) + (args.warm === 'true' && runsOut.length < 2 && cold.ex ? 1 : 0);
+mkdirSync(resultsDir, { recursive: true });
+for (const r of runsOut) {
+  const ex = r.ex;
+  ex.harness = { runner: 'comparator/run-osd.mjs', url: r.url.replace(/^http:\/\/127\.0\.0\.1:\d+/, ''), viewport: { width, height, dpr }, latencyMs: Number(args.latency ?? 0), kbps: Number(args.kbps ?? 0), headless: args.headed !== 'true', warmReloadInSameContext: r !== runsOut[0] };
+  ex.harnessParity = parity;
+  ex.harnessProbe = probe;
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const outPath = resolve(resultsDir, `${stamp}-osd-${r.label}-${ex.profile.name}-${ex.drawer.actual}.json`);
+  writeFileSync(outPath, JSON.stringify(ex));
+  printExport(ex);
+  const checks = checkExport(ex, { profile, drawer });
+  if (ex.run && ex.run.cache === 'warm') checks.push({ ok: ex.tiles.cacheHits > 0, msg: `warm run: ${ex.tiles.cacheHits} HTTP-cache hit(s) of ${ex.tiles.requests} tile requests (expected > 0)` });
+  printChecks(`export checks (${r.label})`, checks);
+  fails += checks.filter((c) => !c.ok).length;
+  console.log(`\nwrote ${outPath}`);
+}
+console.log(fails ? `${fails} check(s) FAILED` : 'all checks passed');
 process.exit(fails ? 1 : 0);
