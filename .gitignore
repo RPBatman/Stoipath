@@ -15,3 +15,6 @@ wsi-viewer/stage0/client/harness/results/screens/
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# Format test corpus: originals live in the GitHub release samples-v1; local copies and derived pyramids are caches
+wsi-viewer/stage0/data/samples/
