@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig, searchForWorkspaceRoot, type Plugin } from 'vite';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { resolve, join, extname } from 'node:path';
 
@@ -35,6 +35,9 @@ export default defineConfig({
   // Build id (UTC time of the build) shown in the panel and written into every export, so numbers can be tied to the policy constants that produced them.
   define: { __BUILD_ID__: JSON.stringify(new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')) },
   plugins: [serveSiblingData()],
+  // The RUO shell (shell.html) imports the design system's tokens.css and base.css by relative path from
+  // ../../design/design-system (single source of styling); the dev server may read that directory.
+  server: { fs: { allow: [searchForWorkspaceRoot(process.cwd()), resolve(__dirname, '..', '..', 'design')] } },
   build: {
     target: 'es2022',
     outDir: 'dist',
@@ -42,6 +45,8 @@ export default defineConfig({
     sourcemap: false,
     modulePreload: { polyfill: false },
     reportCompressedSize: true,
+    // Two pages: index.html (the measurement page, the default) and shell.html (Stoipath Viewer (RUO) shell).
+    rollupOptions: { input: { index: resolve(__dirname, 'index.html'), shell: resolve(__dirname, 'shell.html') } },
   },
   worker: { format: 'es' },
 });

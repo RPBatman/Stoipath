@@ -1,0 +1,183 @@
+/* =============================================================================
+   Stoipath Viewer (RUO) · Stage-0 shell · page-scoped CSS
+   Everything visual comes from design/design-system/tokens.css + base.css (imported
+   by src/shell/main.ts). This file holds only what the system leaves to the page,
+   following design/screens/final/research-annotation.html where it already solved
+   it (dock internals, top-bar search ladder, bottom bar, reserved HUD widths), plus
+   the Stage-0 engine specifics (real canvas, measure overlay, transform-only scale
+   bar and navigator rectangle). No transitions on anything over the canvas (P2).
+   ========================================================================== */
+
+/* ---- B. Canvas: the engine's WebGL canvas fills the grid cell (not position: fixed) ---- */
+.shell .canvas-area > .canvas { touch-action: none; -webkit-user-select: none; user-select: none; }
+.shell #view { cursor: grab; outline: none; }
+.shell #view:active { cursor: grabbing; }
+.shell[data-tool="measure"] #view { cursor: crosshair; }
+/* Focus ring on the canvas itself: an outline drawn inside the cell (a canvas paints over inset box-shadows). */
+.shell #view:focus-visible { box-shadow: none; outline: 2px solid var(--grey-95); outline-offset: -3px; border-radius: 0; z-index: 1; }
+.meas-layer { pointer-events: none; z-index: 2; }
+
+/* ---- HUD: reserved widths so textContent updates never shift layout (research final's engineering graft) ---- */
+.shell .hud { z-index: var(--z-hud); }
+.shell .magnification__value { display: inline-flex; align-items: baseline; justify-content: flex-end; min-width: 5.4ch; min-height: var(--target-control); background: none; color: inherit; border: 0; cursor: text; font-variant-numeric: tabular-nums lining-nums; }
+.shell .magnification__value .tilde { margin-right: 1px; }
+.shell .magnification__line2 { min-width: 20ch; text-align: right; }
+.shell .magnification input.zoom-input { width: 6ch; }
+.shell .magnification .zoom-input[hidden] { display: none; }
+.shell .hud__position { min-width: 22ch; }
+.shell .hud__identity { flex-direction: column; align-items: flex-start; gap: 0; }
+.shell .hud__toolline { font-family: var(--font-ui); font-size: var(--text-xs); white-space: normal; max-width: 100%; color: var(--grey-91); }
+.shell .hud__toolline[hidden] { display: none; }
+.shell .hud .hud__sharp .indicator__glyph { width: 9px; height: 9px; }
+
+/* Scale bar (handoff §5.2): a fixed 200 px track whose fill is scaled and whose right tick is translated, so a
+   zoom changes transforms only. The left tick is base.css's ::before; the ::after tick is replaced by .scalebar__end.
+   Shadows are axis-aligned so scaleX never smears them. */
+.shell .scalebar { min-width: calc(200px + 2 * var(--space-3)); }
+.shell .scalebar .scalebar__bar { width: 200px; background: transparent; box-shadow: none; margin-bottom: 6px; }
+.shell .scalebar .scalebar__bar::after { display: none; }
+.scalebar__fill { position: absolute; left: 0; top: 0; width: 200px; height: 4px; background: var(--grey-95); box-shadow: 0 1px 0 rgba(0,0,0,.8), 0 -1px 0 rgba(0,0,0,.8); transform-origin: 0 0; transform: scaleX(0.6); }
+.scalebar__end { position: absolute; left: 0; top: -4px; width: 2px; height: 12px; background: var(--grey-95); box-shadow: 0 0 0 1px rgba(0,0,0,.8); transform: translateX(118px); }
+.shell .scalebar__label { min-width: 7ch; }
+
+/* ---- F. Navigator: real top-level tile(s), rectangle from four transformed edges ---- */
+.shell .navigator { width: var(--layout-navigator); }
+.shell .navigator__thumb { aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; }
+.nav-tiles { position: absolute; inset: 0; }
+.nav-tiles img { position: absolute; display: block; max-width: none; image-rendering: auto; -webkit-user-drag: none; user-select: none; }
+.shell .navigator__viewport { inset: 0; border: 0; box-shadow: none; }
+.nav-edge { position: absolute; left: 0; top: 0; background: var(--color-canvas-viewport); transform-origin: 0 0; }
+.nav-edge--h { width: 1px; height: 2px; box-shadow: 0 1px 0 rgba(0,0,0,.7), 0 -1px 0 rgba(0,0,0,.7); }
+.nav-edge--v { width: 2px; height: 1px; box-shadow: 1px 0 0 rgba(0,0,0,.7), -1px 0 0 rgba(0,0,0,.7); }
+.app.shell.nav-hidden .navigator { display: none; }
+.shell .navigator__label .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+/* ---- A. Top bar: search button and its collapse ladder (research final's page rules, design-system thresholds) ---- */
+.topbar__identity .cohort { font-family: var(--font-mono); }
+.topbar__search {
+  flex: 0 100 300px; min-width: var(--target); display: flex; align-items: center; gap: var(--space-3);
+  min-height: max(28px, var(--target-control)); padding: 0 var(--space-4);
+  background: var(--color-surface--1); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2);
+  color: var(--color-text-secondary); font-size: var(--text-sm); text-align: left; white-space: nowrap; overflow: hidden;
+}
+.topbar__search:hover { border-color: var(--color-text-secondary); color: var(--color-text); }
+.topbar__search .ph { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.topbar__search .keys { display: inline-flex; gap: 2px; }
+.topbar__slot-mode { margin-left: 0; }
+.topbar__slot-mode .btn--icon { width: var(--target-control); height: var(--target-control); }
+@container topbar (max-width: 1599px) { .topbar__search { flex-basis: 220px; } }
+@container topbar (max-width: 1263px) {
+  .topbar__search { flex: 0 0 auto; width: var(--target-control); min-height: var(--target-control); padding: 0; justify-content: center; }
+  .topbar__search .ph, .topbar__search .keys { display: none; }
+}
+@container topbar (max-width: 1063px) { .topbar__search { display: none; } }   /* ≤ 1079 px the bottom bar carries Search */
+
+/* ---- C. Rail: magnification presets as text tools ---- */
+.rail { scrollbar-width: none; }
+.tool.tool--text { width: calc(var(--layout-rail) - 12px); height: var(--target); font: 600 10px/1 var(--font-mono); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.rail__group.presets { gap: 2px; }
+
+/* ---- D. Dock internals (research final) ---- */
+.dock__head { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-2); min-height: 32px; padding: 0 var(--space-3) 0 var(--space-5); border-bottom: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); white-space: nowrap; }
+.dock__head .title { flex: 0 0 auto; }
+.dock__head .meta { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
+.dock .tabs .tab { padding: 0 var(--space-3); font-size: var(--text-xs); gap: 3px; flex: 1 1 0; justify-content: center; }
+.dock .tabs .tab .count { font-size: 9px; padding: 0 4px; }
+.dock__body { display: flex; flex-direction: column; }
+.tabpanel { display: none; padding: 0 0 var(--space-6); }
+.tabpanel.is-active { display: block; }
+.tabpanel:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring), inset 0 0 0 3px var(--focus-halo); }
+.sub { display: flex; align-items: center; gap: var(--space-2); min-height: 30px; padding: 0 var(--space-3) 0 var(--space-5); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); background: var(--color-surface--1); }
+.sub .title { flex: 0 0 auto; }
+.sub .meta { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; text-transform: none; letter-spacing: 0; font-family: var(--font-mono); }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-1) var(--space-4); font-size: var(--text-sm); padding: var(--space-3) var(--space-5); }
+.kv dt { color: var(--color-text-secondary); }
+.kv dd { font-family: var(--font-mono); min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums lining-nums; }
+.kv dd a { color: var(--color-text); }
+.note { padding: var(--space-3) var(--space-5); font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5; }
+.note .key { vertical-align: baseline; }
+.dock-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-5); }
+pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var(--space-4); background: var(--color-surface--1); border: 1px solid var(--color-border); border-radius: var(--radius-2); font: var(--text-xs)/1.5 var(--font-mono); color: var(--color-text); overflow: auto; max-height: 240px; white-space: pre-wrap; overflow-wrap: anywhere; }
+pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
+.dock .section > summary { min-height: var(--target); }
+.meas-list .meas-row { gap: var(--space-3); padding: var(--space-1) var(--space-3) var(--space-1) var(--space-5); }
+.meas-row__name { font-family: var(--font-mono); font-weight: var(--weight-semibold); min-width: 3ch; }
+.meas-row__len { flex: 1 1 auto; min-width: 0; }
+
+/* ---- Palette rows (research final's row layout; placement is base.css .palette-layer) ---- */
+.palette__item { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; cursor: pointer; }
+.palette__item .lbl { grid-column: 1; grid-row: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette__item .meta { grid-column: 1; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); margin: 0; }
+.palette__item .meta:empty { display: none; }
+.palette__item .keys { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+.palette__empty { padding: var(--space-5); }
+.pal-count { margin-left: auto; }
+
+/* ---- Keyboard map inside the dock-column dialog ---- */
+.shell .modal-layer .dialog__body { gap: var(--space-4); }
+.shell .keymap { grid-template-columns: 1fr; gap: var(--space-5); }
+.keymap__h { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-bottom: var(--space-2); font-weight: var(--weight-semibold); }
+.shell .keymap__row { align-items: flex-start; min-height: 24px; padding: 2px 0; }
+.shell .keymap__keys { flex: 0 0 132px; align-items: center; }
+.keymap__or { color: var(--color-text-secondary); font-size: var(--text-2xs); padding: 0 2px; }
+.keymap__what { flex: 1 1 auto; min-width: 0; }
+.about .label-text { font-size: var(--text-md); color: var(--color-text); line-height: 1.5; }
+.about .kv { padding: 0; }
+.about .note { padding: 0; }
+
+/* ---- Bottom bar (research final): labelled 44 px targets ---- */
+.bottombar { justify-content: space-around; padding: 0 var(--space-2); gap: var(--space-1); }
+.bottombar .tool { width: auto; min-width: var(--target); height: var(--target); padding: 0 var(--space-2); flex-direction: column; gap: 2px; }
+.bottombar .tool__label { font-size: 10px; line-height: 1; }
+
+/* ---- Strip ---- */
+.strip .chip .icon { width: 14px; height: 14px; }
+.strip .chip.num { font-variant-numeric: tabular-nums; min-width: 11ch; justify-content: center; }
+
+/* =============================================================================
+   Responsive (base.css breakpoints; principles §7 collapse order)
+   ========================================================================== */
+@media (min-width: 3200px) {
+  .kv, .note { font-size: var(--text-md); }
+  .kv dd { font-size: var(--text-sm); }
+  .topbar__search { flex-basis: 360px; }
+}
+/* Laptop and tablet landscape: the dock is a drawer over the canvas edge (closed by default). While it is open the
+   navigator and the bottom-right HUD move left of it, and the navigator steps down to 180 px (research final). */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell { --layout-dock: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
+  .app.shell.dock-open { --layout-navigator: 180px; }
+  .app.shell.dock-open .navigator, .app.shell.dock-open .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+}
+/* Tablet portrait and phone: rail → bottom bar; the dock becomes the grid's in-flow sheet row (the canvas yields
+   height instead of being covered; base.css already reserves the auto "sheet" row for the palette). */
+@media (max-width: 1079px) {
+  .app.shell.dock-open .dock {
+    display: flex; grid-area: sheet; position: relative; left: auto; right: auto; bottom: auto; top: auto;
+    width: auto; height: var(--layout-sheet-max); max-height: var(--layout-sheet-max);
+    border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0;
+    box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail);
+  }
+  .app.shell.palette-open .dock { display: none; }
+}
+@media (max-width: 599px) {
+  .app.shell .hud { max-width: 48%; }
+  .shell .magnification__line2, .shell .hud__position { display: none; }
+  .shell .scalebar { min-width: 0; }
+  .topbar__identity .accession { font-size: var(--text-md); }
+  .dock .tabs { overflow-x: auto; }
+  .shell .keymap__keys { flex-basis: 104px; }
+}
+@media (pointer: coarse) {
+  .shell .navigator__label .nav-hint { display: none; }   /* "O hide" is a keyboard hint; Nav in the bottom bar toggles it */
+  .tool.tool--text { height: var(--target); }
+  .meas-list .meas-row { min-height: var(--target); }
+  .note .key { display: none; }
+}
+@media (max-height: 760px) and (min-width: 1080px) {
+  .rail { gap: 0; }
+  .rail__group.presets { gap: 0; }
+}
+@media print {
+  .meas-layer { display: none; }
+}

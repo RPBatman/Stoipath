@@ -1,245 +1,259 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#1c1c1c" />
-    <meta name="description" content="Stoipath Viewer (RUO), Stage-0 research shell around the real WebGL2 engine. For Research Use Only. Not for use in diagnostic procedures." />
-    <title>Stoipath Viewer (RUO) · Stage-0 shell</title>
-    <script type="module" src="/src/shell/main.ts"></script>
+    <meta name="theme-color" content="#303030" />
+    <title>Stoipath Viewer (RUO) · tumor_014</title>
+    <!--
+      Stoipath Viewer (RUO) research shell around the real Stage-0 engine (SHELL.md).
+      Styling: design/design-system/tokens.css + base.css, imported by src/shell/main.ts (single source of styling),
+      plus src/shell/shell.css for what the system lacks. Markup follows design/screens/final/research-annotation.html
+      and design/handoff/design-handoff.md; strings are design/handoff/ux-copy.md's.
+      The measurement page is index.html (unchanged); TSP-grade runs use it, not this page.
+    -->
   </head>
   <body>
-    <a class="skip-link" href="#view">Skip to slide</a>
-
-    <!-- Icons (inline, no network). Same glyph grammar as design/screens/final/research-annotation.html. -->
-    <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+    <!-- Icon sprite (paths from design/screens/final/research-annotation.html; zoom-in / zoom-out added) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
       <defs>
-        <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z" /></symbol>
-        <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2" /></symbol>
-        <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" /></symbol>
-        <symbol id="i-zoomin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5M8 11h6M11 8v6" /></symbol>
-        <symbol id="i-zoomout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5M8 11h6" /></symbol>
-        <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1" /><rect x="12" y="11" width="6" height="5" /></symbol>
-        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5" /></symbol>
-        <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12" /></symbol>
-        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></symbol>
-        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.5" /></symbol>
-        <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1" /><path d="M15 4v16" /></symbol>
-        <symbol id="i-model" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1" /><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10h4v4h-4z" /></symbol>
+        <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+        <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+        <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+        <symbol id="i-zoomin" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></symbol>
+        <symbol id="i-zoomout" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M7.5 10.5h6"/></symbol>
+        <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><rect x="12" y="11" width="6" height="5"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+        <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+        <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l12 8-12 8z"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
+        <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-model" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10h4v4h-4z"/></symbol>
+        <symbol id="i-ann" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/></symbol>
       </defs>
     </svg>
 
-    <!--
-      THE PRODUCT (Stoipath Viewer, RUO build). Regions per principles §3.1: A top bar · B canvas · C rail · D context
-      dock · E status strip · F navigator. DOM (= Tab) order: top bar → canvas → rail → dock → strip (principles §8.3).
-      The canvas is the real Stage-0 WebGL2 engine (src/viewer.ts); everything over it is HUD text, the navigator frame
-      and one 2D overlay canvas for measurements (a stand-in for the engine's GPU annotation layer).
-    -->
-    <div class="app shell" id="app" data-product="ruo" data-tool="select">
-      <!-- A. Top bar -->
+    <a class="skip-link" href="#view" id="skipLink">Skip to slide</a>
+
+    <!-- Regions per principles §3.1 (A top bar · B canvas · C rail · D dock · E strip · F navigator). DOM (= Tab)
+         order: top bar → canvas (+ HUD readout, navigator) → rail → dock → strip; grid areas keep the visual positions. -->
+    <div class="app" id="app" data-product="ruo" data-surface="workspace">
+
+      <!-- A. Top bar: badge + the full label string as text (never dismissible), slide identity, search, keymap -->
       <header class="topbar region" aria-label="Top bar">
         <div class="topbar__slot-badge">
-          <button class="badge badge--ruo" id="badge" type="button" aria-haspopup="dialog" aria-controls="aboutDlg" aria-label="Stoipath Viewer, for research use only. Open the product label and About">RUO</button>
+          <button class="badge badge--ruo" id="badge" type="button" data-testid="badge" aria-haspopup="dialog" aria-controls="aboutDialog"
+                  aria-label="RUO. Stoipath Viewer. For Research Use Only. Not for use in diagnostic procedures. Opens the full label and About">RUO</button>
         </div>
-        <span class="topbar__label" id="labelString" role="note">For Research Use Only. Not for use in diagnostic procedures.</span>
-        <div class="topbar__identity" id="identity" role="group" aria-label="Slide identity">
+        <span class="topbar__label" id="labelString" role="note" data-testid="topbar-label">For Research Use Only. Not for use in diagnostic procedures.</span>
+        <div class="topbar__identity" id="identity" role="group" aria-label="Slide identity" data-live="launch:context">
           <span class="accession" id="idName">slide</span>
           <span class="topbar__identity-rest">
             <span class="meta cohort" id="idCohort"></span>
-            <span class="chip chip--stain" id="idStain" hidden></span>
-            <span class="chip chip--licence" id="idLic" hidden></span>
+            <span class="chip chip--stain" id="idStain">H&amp;E</span>
+            <span class="chip chip--licence" id="idLic" title="Licence from the manifest"></span>
             <span class="title" id="idTitle"></span>
           </span>
         </div>
-        <button class="topbar__search" id="paletteBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="paletteLayer" aria-label="Search commands and magnifications (Ctrl K)">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-search" /></svg><span class="ph">Search commands, magnifications…</span><span class="keys" aria-hidden="true"><kbd class="key" data-mod>Ctrl</kbd><kbd class="key">K</kbd></span>
+        <button class="topbar__search" id="paletteBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="paletteLayer"
+                aria-label="Search commands and measurements (Ctrl K)">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-search"/></svg><span class="ph">Search commands, measurements, panels…</span><span class="keys"><kbd class="key">Ctrl</kbd><kbd class="key">K</kbd></span>
         </button>
         <div class="topbar__slot-mode">
-          <button class="btn btn--icon btn--ghost" id="keymapBtn" type="button" aria-haspopup="dialog" aria-controls="keymapDlg" aria-label="Keyboard shortcuts (?)" title="Keyboard shortcuts · ?">
-            <svg class="icon" aria-hidden="true"><use href="#i-keyboard" /></svg>
-          </button>
-          <button class="btn btn--icon btn--ghost" id="aboutBtn" type="button" aria-haspopup="dialog" aria-controls="aboutDlg" aria-label="About this build and the product label" title="About">
-            <svg class="icon" aria-hidden="true"><use href="#i-info" /></svg>
-          </button>
+          <button class="btn btn--icon btn--ghost" id="keymapBtn" type="button" aria-haspopup="dialog" aria-controls="keymapDialog" aria-label="Keyboard shortcuts (?)" title="Keyboard shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg></button>
         </div>
       </header>
 
-      <!-- B. Canvas area: the engine's canvas fills the grid cell; HUD in the corners, never in the central 50 % -->
-      <main class="canvas-area region" id="canvasArea" aria-label="Slide canvas area">
-        <canvas id="view" class="canvas" tabindex="0" role="application" aria-roledescription="slide canvas" aria-label="Slide canvas, opening the slide. Arrow keys pan, plus and minus zoom, question mark lists every shortcut." aria-describedby="livePolite"></canvas>
-        <canvas id="measLayer" class="canvas meas-layer" aria-hidden="true"></canvas>
+      <!-- B. Canvas area: the engine's WebGL canvas fills the grid cell; one 2D overlay canvas for measurements -->
+      <div class="canvas-area region" id="canvasArea" role="main" aria-label="Slide canvas area">
+        <canvas id="view" class="canvas canvas--engine" tabindex="0" role="application" aria-roledescription="slide canvas"
+                aria-label="Slide canvas. Arrow keys pan, plus and minus zoom, question mark lists every shortcut." aria-describedby="livePolite"></canvas>
+        <canvas id="measLayer" class="canvas meas-layer" aria-hidden="true" data-live="annotations:measurement"></canvas>
 
         <div class="hud hud--tl">
-          <div class="hud__item hud__identity"><span id="hudId">slide</span><span class="hud__secondary" id="hudCoh"></span></div>
-          <div class="hud__item hud__toolline" id="toolLine" hidden><span id="toolLineText">Measure · click two points or drag · Enter places a point at the centre · Esc cancels</span></div>
+          <div class="hud__item hud__identity" data-live="launch:context"><span id="hudId">slide</span><span class="hud__secondary" id="hudCoh"></span></div>
         </div>
         <div class="hud hud--bl">
-          <span class="hud__item hud__sharp indicator indicator--sharpening" id="hudSharp"><span class="indicator__glyph" aria-hidden="true"></span><span class="indicator__label" id="hudSharpLabel">Sharpening…</span></span>
-          <div class="hud__item scalebar" id="scalebar" aria-hidden="true">
-            <span class="scalebar__bar"><span class="scalebar__fill" id="scaleFill"></span><span class="scalebar__end" id="scaleEnd"></span></span>
-            <span class="scalebar__label" id="scaleLabel">–</span>
+          <span class="hud__item hud__sharp indicator indicator--sharpening" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label" id="hudSharpLabel">Sharpening…</span></span>
+          <div class="hud__item hud__toolline" id="hudTool" hidden></div>
+          <div class="hud__item scalebar" id="scalebar" data-testid="scalebar" data-live="state.views[0].scale_um_per_px" role="img" aria-label="Scale bar">
+            <span class="scalebar__track" aria-hidden="true"><span class="scalebar__bar" id="scaleBarBar"></span><span class="scalebar__tick scalebar__tick--start"></span><span class="scalebar__tick scalebar__tick--end" id="scaleBarEnd"></span></span>
+            <span class="scalebar__label" id="scaleLabel" data-testid="scalebar-label">—</span>
           </div>
-          <div class="hud__item hud__position" id="hudPos" aria-hidden="true">x – mm · y – mm</div>
+          <div class="hud__item hud__position" id="hudPos" data-testid="position" data-live="state.views[0].center_um">x — mm · y — mm</div>
         </div>
         <div class="hud hud--br">
-          <div class="hud__item magnification" id="magBox">
-            <button class="magnification__value" id="magBtn" type="button" aria-label="Magnification, not yet known. Press Enter to type a zoom (times or micrometres per pixel)"><span class="tilde" aria-hidden="true">~</span><span id="magVal">–</span></button>
-            <input class="zoom-input" id="zoomInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Type a zoom: a magnification such as 20 or a pixel size such as 0.5 µm" hidden />
-            <span class="magnification__line2" id="magLine">– µm/px · derived</span>
+          <div class="hud__item magnification" id="magBox" data-live="state.views[0].scale_um_per_px">
+            <button id="magBtn" class="magnification__value" type="button" data-testid="mag-value"
+                    aria-label="Magnification. Press Enter to type a zoom (times or micrometres per pixel)"><span class="tilde">~</span><span id="magNum">—</span></button>
+            <input class="zoom-input" id="zoomInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" hidden
+                   aria-label="Type a zoom: a magnification such as 20 or a pixel size such as 0.5 µm">
+            <span class="magnification__line2" id="magLine" data-testid="mag-line2">— µm/px · derived</span>
           </div>
         </div>
 
-        <!-- F. Navigator: top-right, never auto-fades; pan buttons are the SC 2.5.7 alternative to dragging -->
-        <aside class="navigator" id="navigator" aria-label="Navigator">
+        <!-- F. Navigator: top-level tile as the thumbnail, viewport rectangle by transform only, pan buttons (SC 2.5.7) -->
+        <aside class="navigator" id="navigator" aria-label="Navigator" data-live="state.views[0]">
           <div class="navigator__thumb" id="navThumb" title="Click to recentre">
-            <div class="nav-tiles" id="navTiles" aria-hidden="true"></div>
-            <span class="navigator__viewport" id="navRect" aria-hidden="true"><span class="nav-edge nav-edge--h" id="navTop"></span><span class="nav-edge nav-edge--h" id="navBottom"></span><span class="nav-edge nav-edge--v" id="navLeft"></span><span class="nav-edge nav-edge--v" id="navRight"></span></span>
-            <div class="navigator__pan" role="group" aria-label="Pan">
-              <button class="up" type="button" aria-label="Pan up" data-pan="0,-1">↑</button><button class="left" type="button" aria-label="Pan left" data-pan="-1,0">←</button><button class="right" type="button" aria-label="Pan right" data-pan="1,0">→</button><button class="down" type="button" aria-label="Pan down" data-pan="0,1">↓</button>
-            </div>
+            <div class="navigator__img" id="navImg" aria-hidden="true"></div>
+            <span class="navigator__viewport" id="navRect" aria-hidden="true"><span class="nv-edge nv-edge--t"></span><span class="nv-edge nv-edge--b"></span><span class="nv-edge nv-edge--l"></span><span class="nv-edge nv-edge--r"></span></span>
+            <div class="navigator__pan" role="group" aria-label="Pan"><button class="up" type="button" aria-label="Pan up" data-pan="0,-1">↑</button><button class="left" type="button" aria-label="Pan left" data-pan="-1,0">←</button><button class="right" type="button" aria-label="Pan right" data-pan="1,0">→</button><button class="down" type="button" aria-label="Pan down" data-pan="0,1">↓</button></div>
           </div>
-          <div class="navigator__label"><span class="mono" id="navLabel">slide</span><span class="text-xs nav-hint"><kbd class="key">O</kbd> hide</span></div>
+          <div class="navigator__label"><span class="mono" id="navLabel">slide</span><span class="text-xs nav-keyhint"><kbd class="key">O</kbd> hide</span></div>
         </aside>
 
-        <!-- S15: the slide could not be opened (never a blank canvas without a reason) -->
+        <!-- S15: the slide could not be opened (manifest, WebGL); never a blank canvas without a sentence -->
         <div class="plate" id="plate" hidden>
           <div class="plate__card" role="alert">
             <span class="plate__glyph" aria-hidden="true">!</span>
-            <span class="plate__title">This slide could not be opened</span>
+            <span class="plate__title" id="plateTitle">This slide could not be opened</span>
             <span class="plate__text" id="plateText"></span>
-            <div class="plate__actions"><button class="btn btn--primary" id="plateRetry" type="button">Retry</button></div>
+            <div class="plate__actions"><button class="btn btn--primary" type="button" id="plateRetry">Retry</button></div>
           </div>
         </div>
-      </main>
+      </div>
 
-      <!-- C. Tool rail -->
-      <nav class="rail region" aria-label="Tools">
-        <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="Tool">
-          <button class="tool" type="button" data-cmd="tool:select" aria-pressed="true" aria-label="Select or pan (V)" title="Select / pan · V"><svg class="icon" aria-hidden="true"><use href="#i-select" /></svg><span class="tool__key" aria-hidden="true">V</span></button>
-          <button class="tool" type="button" data-cmd="tool:measure" aria-pressed="false" aria-label="Measure length, two clicks, micrometres (M)" title="Measure · M"><svg class="icon" aria-hidden="true"><use href="#i-measure" /></svg><span class="tool__key" aria-hidden="true">M</span></button>
-        </div>
-        <div class="rail__divider"></div>
-        <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="View">
-          <button class="tool" type="button" data-cmd="zoomin" aria-label="Zoom in 2× (+)" title="Zoom in · +"><svg class="icon" aria-hidden="true"><use href="#i-zoomin" /></svg><span class="tool__key" aria-hidden="true">+</span></button>
-          <button class="tool" type="button" data-cmd="zoomout" aria-label="Zoom out 2× (−)" title="Zoom out · −"><svg class="icon" aria-hidden="true"><use href="#i-zoomout" /></svg><span class="tool__key" aria-hidden="true">−</span></button>
-          <button class="tool" type="button" data-cmd="fit" aria-label="Fit whole slide (0)" title="Fit slide · 0"><svg class="icon" aria-hidden="true"><use href="#i-fit" /></svg><span class="tool__key" aria-hidden="true">0</span></button>
-          <button class="tool" type="button" data-cmd="nav" aria-pressed="true" aria-label="Navigator (O)" title="Navigator · O"><svg class="icon" aria-hidden="true"><use href="#i-nav" /></svg><span class="tool__key" aria-hidden="true">O</span></button>
-        </div>
-        <div class="rail__divider"></div>
-        <div class="rail__group presets" role="toolbar" aria-orientation="vertical" aria-label="Magnification presets, derived" id="presetGroup"></div>
-        <div class="rail__spacer"></div>
-        <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="Panels">
-          <button class="tool" type="button" data-cmd="dock" aria-pressed="false" aria-label="Context panel: slide, measurements, engine (K)" title="Context panel · K"><svg class="icon" aria-hidden="true"><use href="#i-panel" /></svg><span class="tool__key" aria-hidden="true">K</span></button>
-          <button class="tool" type="button" data-cmd="keymap" aria-label="Keyboard shortcuts (?)" title="Shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard" /></svg><span class="tool__key" aria-hidden="true">?</span></button>
+      <!-- C. Tool rail: one vertical toolbar, roving tabindex; printed key hints (hidden under a coarse pointer) -->
+      <nav class="rail region" aria-label="Tools" data-live="commands">
+        <div class="rail__toolbar" id="railToolbar" role="toolbar" aria-orientation="vertical" aria-label="Tools and view">
+          <button class="tool" type="button" data-cmd="tool:select" data-tool="select" aria-pressed="true" aria-label="Select or pan (V)" title="Select / pan · V"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg><span class="tool__key" aria-hidden="true">V</span></button>
+          <button class="tool" type="button" data-cmd="tool:measure" data-tool="measure" aria-pressed="false" aria-label="Measure length, two clicks or a drag, micrometres (M)" title="Measure · M"><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg><span class="tool__key" aria-hidden="true">M</span></button>
+          <div class="rail__divider" role="separator"></div>
+          <button class="tool" type="button" data-cmd="zoom:in" aria-label="Zoom in 2× (+)" title="Zoom in · +"><svg class="icon" aria-hidden="true"><use href="#i-zoomin"/></svg><span class="tool__key" aria-hidden="true">+</span></button>
+          <button class="tool" type="button" data-cmd="zoom:out" aria-label="Zoom out 2× (−)" title="Zoom out · −"><svg class="icon" aria-hidden="true"><use href="#i-zoomout"/></svg><span class="tool__key" aria-hidden="true">−</span></button>
+          <button class="tool" type="button" data-cmd="zoom:fit" aria-label="Fit whole slide (0)" title="Fit slide · 0"><svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="tool__key" aria-hidden="true">0</span></button>
+          <button class="tool" type="button" data-cmd="nav" id="toolNav" aria-pressed="true" aria-label="Navigator (O)" title="Navigator · O"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg><span class="tool__key" aria-hidden="true">O</span></button>
+          <div class="rail__divider" role="separator"></div>
+          <div class="rail__mags" id="railMags" role="group" aria-label="Magnification presets, derived from micrometres per pixel"></div>
+          <div class="rail__spacer"></div>
+          <button class="tool" type="button" data-cmd="dock" id="toolDock" aria-pressed="false" aria-label="Context panel: slide, measurements, engine (K)" title="Context panel · K"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__key" aria-hidden="true">K</span></button>
+          <button class="tool" type="button" data-cmd="keymap" aria-label="Keyboard shortcuts (?)" title="Shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg><span class="tool__key" aria-hidden="true">?</span></button>
         </div>
       </nav>
 
-      <!-- D. Context dock (docked ≥ 1600 px, drawer 1080–1599, in-flow sheet ≤ 1079) -->
+      <!-- D. Context dock (docked ≥ 1600, drawer 1080–1599, bottom sheet ≤ 1079): Slide · Measurements · Engine -->
       <aside class="dock region" id="dock" aria-label="Context">
-        <div class="dock__head"><span class="title" id="dockTitle">Context</span><span class="meta">slide · measurements · engine</span><button class="btn btn--sm btn--icon btn--ghost" id="dockClose" type="button" aria-label="Close the Context panel (K)"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-close" /></svg></button></div>
+        <div class="dock__head"><span class="title" id="dockTitle">Context</span><span class="meta">slide · measurements · engine</span>
+          <button class="btn btn--sm btn--icon btn--ghost" type="button" id="dockClose" aria-label="Close panel (K)"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
         <div class="dock__tabs tabs tabs--fill" role="tablist" aria-label="Context panels" id="dockTabs">
           <button class="tab" role="tab" type="button" id="tab-slide" data-tab="slide" aria-selected="true" aria-controls="tp-slide">Slide</button>
           <button class="tab" role="tab" type="button" id="tab-meas" data-tab="meas" aria-selected="false" aria-controls="tp-meas" tabindex="-1">Measurements <span class="count" id="measCount">0</span></button>
           <button class="tab" role="tab" type="button" id="tab-engine" data-tab="engine" aria-selected="false" aria-controls="tp-engine" tabindex="-1">Engine</button>
         </div>
         <div class="dock__body" id="dockBody">
-          <section class="tabpanel is-active" role="tabpanel" id="tp-slide" aria-labelledby="tab-slide" tabindex="0">
-            <dl class="kv" id="slideFacts"></dl>
+          <section class="tabpanel is-active" role="tabpanel" id="tp-slide" aria-labelledby="tab-slide" data-live="launch:context">
+            <div class="sub"><span class="title">Slide</span><span class="meta mono" id="slideSubId"></span></div>
+            <dl class="kv kv--wrap" id="slideFacts"></dl>
+            <details class="section" id="levelsSection"><summary>Pyramid levels <span class="count" id="levelsCount"></span></summary>
+              <div class="section__body"><div class="table-wrap" tabindex="0" role="region" aria-label="Pyramid levels"><table class="levels-table" id="levelsTable"></table></div></div>
+            </details>
             <p class="note" id="slideNote"></p>
           </section>
-          <section class="tabpanel" role="tabpanel" id="tp-meas" aria-labelledby="tab-meas" tabindex="0">
-            <div class="sub"><span class="title">Measurements · length</span><span class="meta" id="measMeta">µm from MPP</span></div>
-            <ol class="list meas-list" id="measList" aria-label="Measurements on this slide"></ol>
-            <p class="note" id="measEmpty">No measurements yet. Press <kbd class="key">M</kbd>, then click two points, drag, or press <kbd class="key">Enter</kbd> twice (the point lands at the centre; arrow keys pan in between).</p>
-            <div class="dock-actions"><button class="btn btn--sm btn--secondary" type="button" data-cmd="undo">Undo <kbd class="key" data-mod>Ctrl</kbd><kbd class="key">Z</kbd></button><button class="btn btn--sm btn--secondary" type="button" data-cmd="redo">Redo <kbd class="key" data-mod>Ctrl</kbd><kbd class="key">Y</kbd></button></div>
-            <p class="note">Length = level-0 pixel distance × MPP (µm). In the product, annotations are GPU layers of the engine; this 2D overlay is a Stage-0 stand-in. Measurements live in this tab only (not saved).</p>
+
+          <section class="tabpanel" role="tabpanel" id="tp-meas" aria-labelledby="tab-meas" data-live="annotations:measurement">
+            <div class="sub"><span class="title">Measurements</span><span class="meta" id="measMeta">length · µm from MPP</span></div>
+            <div class="toolsrow">
+              <button class="btn btn--sm btn--secondary" type="button" data-cmd="tool:measure" id="measStart">Measure <kbd class="key">M</kbd></button>
+              <button class="btn btn--sm btn--ghost" type="button" data-cmd="meas:clear" id="measClear" disabled>Delete all</button>
+            </div>
+            <ul class="measlist" id="measList" aria-label="Measurements on this slide"></ul>
+            <p class="empty-line" id="measEmpty">No measurements yet. Press <kbd class="key">M</kbd>, then click two points on the slide, drag between them, or press <kbd class="key">Enter</kbd> twice to measure from the centre crosshair while the arrow keys pan.</p>
+            <p class="note">Length = level-0 pixel distance × the manifest's MPP. The overlay is a Stage-0 stand-in for the product's GPU annotation layer (SHELL.md).</p>
           </section>
-          <section class="tabpanel" role="tabpanel" id="tp-engine" aria-labelledby="tab-engine" tabindex="0">
-            <div class="sub"><span class="title">Engine · this frame</span><span class="meta" id="engStatus">starting…</span></div>
+
+          <section class="tabpanel" role="tabpanel" id="tp-engine" aria-labelledby="tab-engine" data-live="telemetry:quality">
+            <div class="sub"><span class="title">Engine · live</span><span class="meta" id="engineWhen">updates between gestures</span></div>
             <dl class="kv" id="engineLive">
-              <dt>State</dt><dd id="eqState">Sharpening…</dd>
-              <dt>NTF %</dt><dd id="eqNtf">–</dd>
-              <dt>Resolution deficit</dt><dd id="eqDeficit">–</dd>
-              <dt>Level drawn</dt><dd id="eqLevel">–</dd>
-              <dt>Frame time</dt><dd id="eqFrame">–</dd>
-              <dt>Tiles</dt><dd id="eqTiles">–</dd>
-              <dt>Fetched</dt><dd id="eqBytes">–</dd>
-              <dt>Last gesture</dt><dd id="eqGesture">none yet</dd>
+              <dt>State</dt><dd id="eqState">—</dd>
+              <dt>Frame time</dt><dd id="eqFrame">—</dd>
+              <dt>Last gesture</dt><dd id="eqGesture">—</dd>
+              <dt>Sharp fraction</dt><dd id="eqSharp">—</dd>
+              <dt>Level drawn</dt><dd id="eqLevel">—</dd>
+              <dt>Resident tiles</dt><dd id="eqResident">—</dd>
+              <dt>In flight · queues</dt><dd id="eqInflight">—</dd>
+              <dt>Loaded</dt><dd id="eqBytes">—</dd>
+              <dt>Viewport</dt><dd id="eqViewport">—</dd>
             </dl>
-            <p class="note">Updated at rest (≤ 4 per second), never during a gesture, so the chrome stays out of the frame budget. Sharp = NTF 0 % and deficit ≤ 0.15 octave on the settled frame.</p>
-            <div class="sub"><span class="title">Measurement protocol</span><span class="meta" id="engLabel">label manual</span></div>
-            <div class="dock-actions">
-              <button class="btn btn--sm btn--primary" type="button" id="btnPath">Run scripted path</button>
-              <button class="btn btn--sm btn--secondary" type="button" id="btnExport">Export JSON</button>
+            <p class="note" id="engineStatus" role="status">starting…</p>
+            <div class="sub"><span class="title">Measurement protocol</span><span class="meta">window.__stage0</span></div>
+            <div class="footer-actions footer-actions--top">
+              <button class="btn btn--sm btn--primary" type="button" id="btnPath"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-play"/></svg>Run scripted path</button>
+              <button class="btn btn--sm btn--secondary" type="button" id="btnExport"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>Export JSON</button>
               <button class="btn btn--sm btn--secondary" type="button" id="btnCopy">Copy summary</button>
               <button class="btn btn--sm btn--secondary" type="button" id="btnEvict" title="Drop every non-pinned tile from the GPU cache for a GPU-cold rerun. The browser HTTP cache stays warm: label the run warm.">Evict GPU tiles</button>
+              <button class="btn btn--sm btn--ghost" type="button" id="btnReset">Reset view</button>
             </div>
-            <p class="note">TSP-grade runs use the official measurement page, <a id="measPageLink" href="./index.html?overlay=1">index.html?overlay=1</a> (MEASUREMENT_PROTOCOL.md): same engine without this chrome. Numbers taken in this shell are indicative.</p>
-            <pre class="snippet" id="engSummary" tabindex="0" role="region" aria-label="Scripted path summary" hidden></pre>
-            <details class="section"><summary>Device and build</summary><pre class="snippet" id="engDevice" tabindex="0" role="region" aria-label="Device and build"></pre></details>
+            <p class="note">TSP-grade runs use the official measurement page, <a id="measPageLink" href="index.html?overlay=1">index.html?overlay=1</a> (MEASUREMENT_PROTOCOL.md): it carries no shell chrome, so its numbers are the engine's alone. This page runs the same engine and the same export format, for inspection.</p>
+            <details class="section" id="summarySection"><summary>Last summary <span class="count" id="summaryWhen">none yet</span></summary>
+              <div class="section__body"><pre class="snippet" id="engineSummary" tabindex="0" role="region" aria-label="Scripted path summary">Run the scripted path to fill this.</pre></div>
+            </details>
+            <details class="section"><summary>Device and build</summary>
+              <div class="section__body"><pre class="snippet" id="engineDevice" tabindex="0" role="region" aria-label="Device and build">—</pre></div>
+            </details>
           </section>
         </div>
       </aside>
 
       <!-- Bottom bar (tablet portrait / phone): labelled 44 px targets -->
-      <nav class="bottombar region" aria-label="Tools (touch)">
-        <button class="tool tool--labelled" type="button" data-cmd="tool:select" aria-pressed="true" aria-label="Select or pan"><svg class="icon" aria-hidden="true"><use href="#i-select" /></svg><span class="tool__label">Pan</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="tool:measure" aria-pressed="false" aria-label="Measure"><svg class="icon" aria-hidden="true"><use href="#i-measure" /></svg><span class="tool__label">Measure</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="zoomin" aria-label="Zoom in"><svg class="icon" aria-hidden="true"><use href="#i-zoomin" /></svg><span class="tool__label">In</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="zoomout" aria-label="Zoom out"><svg class="icon" aria-hidden="true"><use href="#i-zoomout" /></svg><span class="tool__label">Out</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="fit" aria-label="Fit whole slide"><svg class="icon" aria-hidden="true"><use href="#i-fit" /></svg><span class="tool__label">Fit</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="nav" aria-pressed="false" aria-label="Navigator"><svg class="icon" aria-hidden="true"><use href="#i-nav" /></svg><span class="tool__label">Nav</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="dock" aria-pressed="false" aria-label="Panels: slide, measurements, engine"><svg class="icon" aria-hidden="true"><use href="#i-panel" /></svg><span class="tool__label">Panels</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="palette" aria-label="Search and commands"><svg class="icon" aria-hidden="true"><use href="#i-search" /></svg><span class="tool__label">Search</span></button>
+      <nav class="bottombar region" aria-label="Tools (touch)" data-live="commands">
+        <button class="tool tool--labelled" type="button" data-cmd="tool:select" data-tool="select" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg><span class="tool__label">Select</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="tool:measure" data-tool="measure" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg><span class="tool__label">Measure</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="zoom:in"><svg class="icon" aria-hidden="true"><use href="#i-zoomin"/></svg><span class="tool__label">Zoom in</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="zoom:out"><svg class="icon" aria-hidden="true"><use href="#i-zoomout"/></svg><span class="tool__label">Zoom out</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="zoom:fit"><svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="tool__label">Fit</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="nav" data-navbtn aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg><span class="tool__label">Navigator</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="dock" data-dockbtn aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__label">Panels</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="palette"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span class="tool__label">Search</span></button>
       </nav>
 
       <!-- E. Status strip: the polite live region's visual twin -->
       <footer class="strip region" aria-label="Status">
-        <button class="indicator indicator--sharpening" id="stripSharp" type="button" aria-label="Sharpness: Sharpening…. Open details"><span class="indicator__glyph" aria-hidden="true"></span><span class="indicator__label" id="stripSharpLabel">Sharpening…</span></button>
-        <span class="strip__notice" id="stripNotice"></span>
+        <button class="indicator indicator--sharpening" type="button" id="stripSharp" data-testid="strip-indicator" data-live="events:tileSettled" aria-label="Sharpness: Sharpening…. Open details"><span class="indicator__glyph"></span><span class="indicator__label" id="stripSharpLabel">Sharpening…</span></button>
+        <span class="strip__notice" id="stripNotice" data-testid="strip-notice"></span>
         <div class="strip__group strip__group--end">
-          <span class="chip num" id="chipTiles" title="Tiles resident in the GPU texture array / layers">Tiles –</span>
-          <span class="chip" id="chipNet" title="Network Information API estimate (where the browser provides it)">Network –</span>
-          <button class="chip chip--solid" id="engineBtn" type="button" aria-label="Engine: frame time, sharpness and measurement-protocol controls"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-model" /></svg>Engine</button>
+          <span class="chip" id="chipTiles" data-live="telemetry:quality" title="Tiles resident in the GPU tile array / layers">— tiles</span>
+          <span class="chip" id="chipNet" data-live="telemetry:network" title="Network Information API (where the browser has it)">network —</span>
+          <button class="btn btn--sm btn--secondary" type="button" id="engineBtn" aria-controls="tp-engine">Engine</button>
         </div>
       </footer>
 
-      <!-- Command palette: drops from the top bar over the dock column (≥ 1080), in-flow sheet row (≤ 1079); no scrim -->
+      <!-- Command palette: one placement rule (.palette-layer: over the dock column ≥ 1080 px, the in-flow sheet row below); no scrim -->
       <div class="palette-layer" id="paletteLayer" hidden>
-        <div class="palette" role="dialog" aria-label="Command palette">
-          <div class="palette__input">
-            <svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
-            <input type="search" id="palInput" placeholder="Type a command or a zoom (20, 0.5 µm)…" aria-label="Search commands and magnifications" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false" />
-            <kbd class="key">Esc</kbd>
-          </div>
-          <div class="palette__list" id="palList" role="listbox" aria-label="Commands"></div>
-          <div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span class="pal-count" id="palCount"></span></div>
+        <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
+          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Type a command, measurement or panel…" aria-label="Search commands and measurements" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
+          <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
+          <div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span class="palcount" id="palCount"></span></div>
         </div>
       </div>
 
-      <!-- Dialog layer in the dock column (never over the slide centre): keyboard map and About -->
+      <!-- Dialog layer in the dock column (.modal-layer--dock): keymap and About; non-modal, the slide keeps its keys -->
       <div class="modal-layer modal-layer--dock" id="modalLayer" hidden>
-        <div class="dialog" role="dialog" aria-modal="false" aria-labelledby="keymapTitle" id="keymapDlg" hidden>
-          <div class="dialog__header"><h2 class="dialog__title" id="keymapTitle">Keyboard map</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close the keyboard map (Esc)"><svg class="icon" aria-hidden="true"><use href="#i-close" /></svg></button></div>
-          <div class="dialog__body" id="keymapBody" tabindex="0" role="region" aria-label="Keyboard shortcuts">
-            <input class="input" type="search" id="keymapFilter" placeholder="Filter keys or commands" aria-label="Filter the keyboard map" autocomplete="off" />
-            <div class="keymap" id="keymapList"></div>
-            <p class="note" id="keymapNote"></p>
+        <div class="dialog" id="keymapDialog" role="dialog" aria-modal="false" aria-labelledby="keymapTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="keymapTitle">Keyboard map · Stoipath Viewer (RUO)</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close (Esc)"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="keymap__filterrow"><input class="input" type="search" id="keymapFilter" placeholder="Filter shortcuts…" aria-label="Filter shortcuts" autocomplete="off" spellcheck="false"></div>
+          <div class="dialog__body" id="keymapBody" tabindex="0" role="region" aria-label="Shortcuts"><div class="keymap" id="keymapGroups" data-live="commands:registry"></div>
+            <p class="hint">Default preset. Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for Ctrl+K; no Alt, no F-keys. Ctrl/Cmd + and − stay browser zoom. On the measurement page (index.html) O, R and P are the protocol keys; here O is the navigator and R, P are not bound (SHELL.md, keymap).</p>
           </div>
         </div>
-        <div class="dialog" role="dialog" aria-modal="false" aria-labelledby="aboutTitle" id="aboutDlg" hidden>
-          <div class="dialog__header"><h2 class="dialog__title" id="aboutTitle">About this build</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close About (Esc)"><svg class="icon" aria-hidden="true"><use href="#i-close" /></svg></button></div>
-          <div class="dialog__body about" id="aboutBody" tabindex="0" role="region" aria-label="About this build">
-            <p class="label-text">For Research Use Only. Not for use in diagnostic procedures.</p>
-            <dl class="kv" id="aboutFacts"></dl>
-            <p class="note">Telemetry: none. This Stage-0 shell sends nothing anywhere; the engine's metrics stay in the page until you export them.</p>
+        <div class="dialog" id="aboutDialog" role="dialog" aria-modal="false" aria-labelledby="aboutTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="aboutTitle">About this build</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close (Esc)"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="dialog__body" tabindex="0" role="region" aria-label="About this build">
+            <div><span class="badge badge--ruo">RUO</span></div>
+            <p class="label-text" id="aboutString">For Research Use Only. Not for use in diagnostic procedures.</p>
+            <dl class="kv kv--about" id="aboutFacts"></dl>
+            <p class="text-sm">Stage-0 prototype shell: the real tile engine (WebGL2, workers, scheduler) inside the designed research workspace. No PHI: the slide is a public, de-identified CC0 challenge image.</p>
           </div>
         </div>
       </div>
 
-      <!-- Live regions: the strip's spoken twin (polite, at settle only) and the assertive region for failures -->
+      <div class="toast-stack" id="toasts" aria-live="off"></div>
       <div class="live-region" id="livePolite" aria-live="polite" aria-atomic="true"></div>
       <div class="live-region" id="liveAssertive" aria-live="assertive" aria-atomic="true"></div>
     </div>
+    <script type="module" src="/src/shell/main.ts"></script>
   </body>
 </html>

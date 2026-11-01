@@ -177,6 +177,9 @@ export interface FrameSnapshot {
   cssH: number;
   /** Render DPR: device px per CSS px of the canvas backing store. */
   renderDpr: number;
+  /** Canvas top-left in the viewport, CSS px, as of the last resize (0, 0 unless ViewerOptions.trackOrigin). */
+  originX: number;
+  originY: number;
   fitLogZoom: number;
   minLogZoom: number;
   maxLogZoom: number;
@@ -215,6 +218,8 @@ export interface Viewer {
   readonly build: string;
   readonly snapshot: FrameSnapshot;
   readonly commands: ViewerCommands;
+  /** Canvas top-left in the viewport, CSS px (kept current by the resize handler when `trackOrigin`; else 0, 0). */
+  readonly origin: { readonly x: number; readonly y: number };
   /** Subscribe to the per-frame snapshot (called inside the engine's rAF loop). Returns an unsubscribe function. */
   onFrame(cb: (s: FrameSnapshot) => void): () => void;
   /** Subscribe to viewport resizes (called from the engine's resize handling, never per frame). */
@@ -431,6 +436,8 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     cssW,
     cssH,
     renderDpr,
+    originX: 0,
+    originY: 0,
     fitLogZoom: 0,
     minLogZoom: 0,
     maxLogZoom: 0,
@@ -447,6 +454,8 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     snapshot.cssW = cssW;
     snapshot.cssH = cssH;
     snapshot.renderDpr = renderDpr;
+    snapshot.originX = origin.x;
+    snapshot.originY = origin.y;
     snapshot.fitLogZoom = cam.fitLogZoom;
     snapshot.minLogZoom = cam.minLogZoom;
     snapshot.maxLogZoom = cam.maxLogZoom;
@@ -846,6 +855,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     build: __BUILD_ID__,
     snapshot,
     commands,
+    origin,
     onFrame(cb) {
       frameHooks.push(cb);
       return () => {
