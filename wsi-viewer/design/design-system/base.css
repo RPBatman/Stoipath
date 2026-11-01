@@ -325,14 +325,22 @@ body.show-guides .canvas-area::after { display: block; }
 .navigator__label { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); font-size: var(--text-xs); border-top: 1px solid var(--color-border); }
 .navigator__labelimg { width: 64px; height: 40px; background: var(--grey-91); color: var(--grey-6); font: 600 9px/1.1 var(--font-mono); padding: 3px 4px; border-radius: 2px; overflow: hidden; }
 .navigator__pan {
-  position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;
+  position: absolute; inset: 0; display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   pointer-events: none;
 }
 /* Pan buttons: the SC 2.5.7 alternative to dragging the viewport rectangle.
    Always visible (touch has no hover; revision 2026-11-01), --target wide
    and tall (24 px, 44 px under coarse). Under coarse the hit area is 44 px
    but the visible pad stays 28 px (padding + background-clip) so four pads
-   do not hide a 180 px thumbnail; hover/focus darkens the pad. */
+   do not hide a 180 px thumbnail; hover/focus darkens the pad.
+   Tracks are minmax(0, 1fr) thirds in every pointer mode (second revision
+   2026-11-01): a plain 1fr track is minmax(auto, 1fr) and cannot shrink
+   below the 44 px button, so three of them (132 px) overflowed the 70-120 px
+   thumbnails of the 140-240 px navigators and the down pad sat in the label
+   row. Shrinkable thirds centre each button in its third: the 28 px visible
+   pad stays inside the thumbnail at every ladder step, and the 44 px hit box
+   overlaps the thumbnail edge by at most 7 px (70 px thumbnail). */
 .navigator__pan button {
   pointer-events: auto; opacity: 1;
   width: var(--target); height: var(--target); align-self: center; justify-self: center;
@@ -507,7 +515,12 @@ button.chip:hover, button.chip.is-hover { background: var(--color-control-bg-hov
 .btn--ghost { background: transparent; }
 .btn--ghost:hover, .btn--ghost.is-hover { background: var(--color-control-bg-hover); }
 .btn--danger { background: transparent; border-color: var(--color-danger); color: var(--color-danger); }   /* dialog layer only; in the dock use .btn--secondary + text */
-.btn--danger:hover, .btn--danger.is-hover { background: var(--color-danger-bg); }
+/* Hover and active fill with the validated solid pair (--color-on-danger on --color-danger:
+   8.24:1 dark, 6.07:1 light) instead of the --color-danger-bg tint, on which the danger text
+   measured 4.07:1 over the dialog surface (dark) and 4.23:1 over surface −1 (light) —
+   second revision 2026-11-01. The tint stays for .alert--danger, where body text sits on it. */
+.btn--danger:hover, .btn--danger.is-hover, .btn--danger:active, .btn--danger.is-active { background: var(--color-danger); color: var(--color-on-danger); }
+.btn--danger:hover .key, .btn--danger.is-hover .key, .btn--danger:active .key, .btn--danger.is-active .key { color: inherit; border-color: currentColor; }
 .btn--danger.btn--solid { background: var(--color-danger); color: var(--color-on-danger); }
 .btn--icon { padding: 0; width: var(--target); height: var(--target); }
 .btn--sm { min-height: var(--target-control); padding: 0 var(--space-4); font-size: var(--text-sm); }   /* 24 px; 44 px under coarse */
@@ -528,7 +541,7 @@ button.chip:hover, button.chip.is-hover { background: var(--color-control-bg-hov
   background: var(--color-surface-1);
   vertical-align: middle;
 }
-.key--reserved { text-decoration: line-through; opacity: 0.6; }
+.key--reserved { text-decoration: line-through; border-style: dashed; border-bottom-width: 1px; }   /* dimmed by shape, not opacity: the 10 px key name stays text-secondary (≥ 4.5:1); was opacity .6 = 2.8:1 (revision 2026-11-01) */
 
 /* 6.3 Tool buttons, toolbar, palette --------------------------------------- */
 .tool {
@@ -816,6 +829,14 @@ textarea.input { padding: var(--space-3) var(--space-4); min-height: 72px; resiz
    the eye-off glyph and a "hidden" chip carry the state as well. */
 .layer-row.is-off .layer-row__name, .layer-row.is-off .layer-row__name .kind, .layer-row.is-off .layer-row__opacity .num, .layer-row.is-off .layer-row__vis { color: var(--color-text-secondary); }
 .layer-row.is-off .layer-row__name::after { content: "hidden"; font-size: var(--text-2xs); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; white-space: nowrap; }
+/* Capped channel = .layer-row.is-capped (second revision 2026-11-01): the device's channel
+   cap is reached, so the row cannot be enabled until another channel is hidden. Like .is-off
+   it is dimmed by colour, never by opacity, so the provenance sentence that explains the cap
+   keeps --color-text-secondary (≥ 4.5:1; the sheet's inline opacity .6 measured 3.2:1 / 2.96:1).
+   The eye button is aria-disabled and loses its hover affordance; the name gets a "capped" chip. */
+.layer-row.is-capped .layer-row__name, .layer-row.is-capped .layer-row__name .kind, .layer-row.is-capped .layer-row__opacity .num, .layer-row.is-capped .layer-row__vis { color: var(--color-text-secondary); }
+.layer-row.is-capped .layer-row__vis, .layer-row.is-capped .layer-row__vis:hover { background: transparent; color: var(--color-text-secondary); cursor: not-allowed; }
+.layer-row.is-capped .layer-row__name::after { content: "capped"; font-size: var(--text-2xs); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; white-space: nowrap; }
 .layer-row__legend { grid-row: 4; grid-column: 2 / span 2; }
 .marker-notvalidated { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--color-text); border: 1px solid var(--color-text); border-radius: var(--radius-1); padding: 1px var(--space-2); font-family: var(--font-ui); }
 .marker-notvalidated::before { content: "!"; font-family: var(--font-mono); }
@@ -961,6 +982,12 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
 .dialog__header { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--color-border); }
 .dialog__title { flex: 1; font-size: var(--text-xl); font-weight: var(--weight-semibold); }
 .dialog__body { padding: var(--space-5) var(--space-6); overflow: auto; display: flex; flex-direction: column; gap: var(--space-4); }
+/* Scroll containers whose content is text only (a keymap, an About body, a read-only table)
+   cannot be scrolled from the keyboard unless something inside them, or they themselves, can
+   take focus (SC 2.1.1; axe scrollable-region-focusable). Give such a container
+   tabindex="0" with role="region" and a name; the ring is drawn inset so the dialog's
+   overflow clip and the table-wrap border do not hide it (second revision 2026-11-01). */
+.dialog__body[tabindex]:focus-visible, .table-wrap[tabindex]:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring), inset 0 0 0 3px var(--focus-halo); border-radius: inherit; z-index: auto; }
 .dialog__footer { display: flex; gap: var(--space-3); justify-content: flex-end; padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-border); }
 .dialog__footer .btn--ghost { margin-right: auto; }
 /* Modal layer (revision 2026-11-01). Dialogs are anchored to the top-right
@@ -1052,7 +1079,11 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
 .keymap__group h4 { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
 .keymap__row { display: flex; align-items: center; gap: var(--space-4); min-height: 26px; font-size: var(--text-sm); }
 .keymap__keys { flex: 0 0 120px; display: inline-flex; gap: 3px; flex-wrap: wrap; }
-.keymap__row.is-reserved { color: var(--color-text-disabled); }
+/* Reserved rows are explanatory sentences ("Reserved: Dragon Medical One"), not inactive
+   controls, so WCAG 1.4.3 applies: --color-text-secondary (4.78:1 on the dialog surface,
+   6.09:1 on surface 0), never --color-text-disabled (3.00:1; revision 2026-11-01). The
+   struck-through .key--reserved kbd carries the "not available" affordance. */
+.keymap__row.is-reserved { color: var(--color-text-secondary); }
 .keymap__preset { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
 
 /* 6.16 Skeleton / loading -------------------------------------------------------- */
@@ -1319,9 +1350,14 @@ body.show-live [data-synthetic] { position: relative; }
   .toggle__track::after { width: 20px; height: 20px; }
   .toggle[aria-checked="true"] .toggle__track::after, .toggle.is-on .toggle__track::after { transform: translateX(20px); }
   .toggle[aria-checked="true"] .toggle__track::before, .toggle.is-on .toggle__track::before { left: 7px; line-height: 24px; }
-  .navigator__pan { grid-template-columns: auto 1fr auto; grid-template-rows: auto 1fr auto; }   /* 44 px pads hug the thumbnail edges */
-  .navigator__pan .up { align-self: start; } .navigator__pan .down { align-self: end; }
-  .navigator__pan .left { justify-self: start; } .navigator__pan .right { justify-self: end; }
+  /* Navigator pads: shrinkable thirds, every pad centred in its third (second
+     revision 2026-11-01; was auto 1fr auto with start/end alignment, which
+     needs a ≥ 132 px thumbnail and put the down pad 18-43 px below the
+     thumbnail on the 180-240 px navigators). Declared here as well as in the
+     base rule so a page that overrides the fine-pointer grid still gets it. */
+  .navigator__pan { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .navigator__pan .up, .navigator__pan .down { align-self: center; }
+  .navigator__pan .left, .navigator__pan .right { justify-self: center; }
 }
 /* The same rules under a class, so the component sheet can show the coarse
    column on a desktop and a page can force touch sizing for a pen surface
@@ -1335,9 +1371,9 @@ body.show-live [data-synthetic] { position: relative; }
 .is-coarse .toggle__track::after { width: 20px; height: 20px; }
 .is-coarse .toggle[aria-checked="true"] .toggle__track::after, .is-coarse .toggle.is-on .toggle__track::after { transform: translateX(20px); }
 .is-coarse .toggle[aria-checked="true"] .toggle__track::before, .is-coarse .toggle.is-on .toggle__track::before { left: 7px; line-height: 24px; }
-.is-coarse .navigator__pan { grid-template-columns: auto 1fr auto; grid-template-rows: auto 1fr auto; }
-.is-coarse .navigator__pan .up { align-self: start; } .is-coarse .navigator__pan .down { align-self: end; }
-.is-coarse .navigator__pan .left { justify-self: start; } .is-coarse .navigator__pan .right { justify-self: end; }
+.is-coarse .navigator__pan { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); }
+.is-coarse .navigator__pan .up, .is-coarse .navigator__pan .down { align-self: center; }
+.is-coarse .navigator__pan .left, .is-coarse .navigator__pan .right { justify-self: center; }
 
 /* Print: snapshots are produced by the engine with burn-in; the chrome itself
    should print its label string and nothing else of the shell. */

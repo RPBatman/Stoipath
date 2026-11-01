@@ -24,6 +24,11 @@ reports, as Markdown:
      only checked the HUD over the canvas backdrop, which is why 0.62 passed
      while the real-tissue case failed (a11y-ux critique).
 
+Text pairs whose label contains "informational" are reported but never
+counted as failures (second revision 2026-11-01): they document a composite
+that base.css no longer uses for text — the former .btn--danger hover tint —
+so the reason for the change stays measurable in the output.
+
 Exit status is 1 if any required pair fails. No third-party imports.
 Geometry (top-bar clipping, central-zone intrusions, target sizes) is checked
 by layout-check.mjs next to this file.
@@ -305,7 +310,7 @@ TEXT_PAIRS = [
     ("--color-text", ["--color-surface-1", "--color-success-bg"], "body text on success tint (alert)"),
     ("--color-text", ["--color-surface-1", "--color-info-bg"], "body text on info tint (alert)"),
     ("--color-text-secondary", ["--color-surface-1", "--color-danger-bg"], "secondary text on danger tint"),
-    ("--color-on-danger", ["--color-danger"], "label on solid danger button"),
+    ("--color-on-danger", ["--color-danger"], "label on solid danger button (.btn--danger.btn--solid, and .btn--danger on hover / active since the second revision 2026-11-01)"),
     ("--color-badge-ruo-fg", ["--color-badge-ruo-bg"], "badge RUO"),
     ("--color-badge-learn-fg", ["--color-badge-learn-bg"], "badge LEARN"),
     ("--color-badge-clinical-fg", ["--color-badge-clinical-bg"], "badge CLINICAL-IH"),
@@ -313,7 +318,7 @@ TEXT_PAIRS = [
     ("--color-mode-nav-fg", ["--color-mode-nav-bg"], "mode indicator NAV"),
     ("--color-mode-dx-fg", ["--color-mode-dx-bg"], "mode indicator DX"),
     ("--color-text-secondary", ["--color-surface-1"], "key hint (.key) on surface 1"),
-    ("--color-text-secondary", ["--color-surface-0"], "hidden layer-row name / kind / % (.layer-row.is-off, colour-dimmed, not opacity)"),
+    ("--color-text-secondary", ["--color-surface-0"], "hidden / capped layer-row name / kind / % (.layer-row.is-off, .layer-row.is-capped; colour-dimmed, not opacity)"),
     ("--color-text-secondary", ["--color-row-hover"], "hidden layer-row name on hovered row"),
     ("--color-text-secondary", ["--color-control-selected"], "hidden layer-row name on selected row"),
     ("--color-text", ["--color-surface--1"], "settled 'Sharp' label at rest (0.7 × text) on the strip", 0.7),
@@ -323,6 +328,13 @@ TEXT_PAIRS = [
     ("--color-text", ["--color-control-bg-hover"], "palette / menu hovered row: meta and key hint lifted to body text on the hover colour"),
     ("--color-text-inverse", ["--color-surface-inverse"], "danger banner button and key hint (inherit) on the inverse surface (was body text, 1.11:1)"),
     ("--color-surface-inverse", ["--color-text-inverse"], "danger banner button label on hover (inverted fill)"),
+    # second revision 2026-11-01 (reviewed design-system issues)
+    ("--color-text-secondary", ["--color-surface-2"], "keymap reserved rows (.keymap__row.is-reserved, 12 px sentences) on the dialog surface — --color-text-disabled is never used for sentences (was 3.00:1)"),
+    ("--color-text-secondary", ["--color-surface-0"], "keymap reserved rows on surface 0 (research final's keymap panel)"),
+    ("--color-text-secondary", ["--color-surface-1"], "struck-through reserved key name (.key--reserved) on its key background — dimmed by a dashed border, no longer opacity .6 (was 2.8:1)"),
+    ("--color-text-secondary", ["--color-surface-0"], "capped channel row provenance sentence (.layer-row.is-capped; the sheet's inline opacity .6 measured 3.2:1 / 2.96:1)"),
+    ("--color-danger", ["--color-surface-2", "--color-danger-bg"], "informational: danger text on the danger tint over surface 2 — the former .btn--danger hover (4.07:1 dark), replaced by the solid pair"),
+    ("--color-danger", ["--color-surface--1", "--color-danger-bg"], "informational: danger text on the danger tint over surface −1 — the sheet's light states demo (4.23:1 light), replaced by the solid pair"),
 ]
 # fg_alpha (5th element, optional) models an opacity applied to the text.
 
@@ -409,9 +421,11 @@ def main(argv):
             b = bg_of(tokens, chain)
             f = composite((f[0], f[1], f[2], f[3] * fg_alpha), b)
             r = contrast(f, b)
+            informational = "informational" in label
             ok = r >= 4.5
-            fails += 0 if ok else 1
-            out.append(f"| {label} | `{to_hex(f)}` on `{to_hex(b)}` | {r:.2f}:1 | 4.5 | {'pass' if ok else '**FAIL**'} |")
+            fails += 0 if (ok or informational) else 1
+            res = "pass" if ok else ("info (not used for text)" if informational else "**FAIL**")
+            out.append(f"| {label} | `{to_hex(f)}` on `{to_hex(b)}` | {r:.2f}:1 | 4.5 | {res} |")
         for fg, chain, label in NONTEXT_PAIRS:
             f = col(tokens, fg)
             b = bg_of(tokens, chain)
@@ -559,7 +573,8 @@ def main(argv):
                 low.append(f"{n1}/{n2} ({d:.1f})")
         out.append(f"| {cond} | {worst[0]:.1f} | {worst[1]} | {', '.join(low) if low else 'none'} |")
 
-    summary = f"\n**Result: {'all required pairs pass' if fails == 0 else str(fails) + ' required check(s) FAILED'}** ({len(TEXT_PAIRS)} text pairs and {len(NONTEXT_PAIRS)} non-text pairs × 2 themes, {len(MARGIN_TOKENS) + len(MARGIN_TINTS)} chroma rows × 2 themes, {sum(1 for r in hud_rows if r[4])} HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).\n"
+    n_info = sum(1 for pr in TEXT_PAIRS if "informational" in pr[2])
+    summary = f"\n**Result: {'all required pairs pass' if fails == 0 else str(fails) + ' required check(s) FAILED'}** ({len(TEXT_PAIRS) - n_info} required text pairs plus {n_info} informational, and {len(NONTEXT_PAIRS)} non-text pairs × 2 themes, {len(MARGIN_TOKENS) + len(MARGIN_TINTS)} chroma rows × 2 themes, {sum(1 for r in hud_rows if r[4])} HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).\n"
     out.append(summary)
     text = "\n".join(out)
     print(text)

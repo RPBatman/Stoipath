@@ -1,6 +1,6 @@
 # Stoipath design system
 
-Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-11-01** after the pathologist and a11y-ux critiques of the three final screens (changelog in §10), and **swept the same day** for the cross-scope items the page revisers deferred to the design system (§10, *Revisions*).
+Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-11-01** after the pathologist and a11y-ux critiques of the three final screens (changelog in §10), **swept the same day** for the cross-scope items the page revisers deferred to the design system (§10, *Revisions*), and **revised a second time the same day** (§11) for the six reviewed issues that named the shared files (keymap reserved rows, coarse navigator pads, the capped channel row, a prohibited `aria-label`, the danger-button hover tint, keyboard-scrollable regions).
 
 **Inputs.** `design/principles-and-ia.md` (P1–P10, the six regions, HUD and status language §5, state inventory §6, responsive strategy §7, accessibility architecture §8, Design notes D1–D15); `design/research/ux-conventions.md` (§7 palettes, §8 AI labelling, §12 dark chrome, §13 accessibility, keep/break lists); plan sections 01 §3–§5, 02 §2–§3.6 and §5.1, 04 §8–§10, 06 §1–§4, 12 §1.1–§2 and §5; research notes 11-gap-1, 11-gap-6, 11-gap-7. The plan is the source of truth; where this system had to decide something the plan leaves open, the choice is a **Design note** (§9 below).
 
@@ -116,12 +116,13 @@ QuPath class **names** are kept verbatim and QuPath's own RGB is restored on Geo
 
 ## 4. Accessibility checklist (WCAG 2.2 AA, NFR-A1–A5)
 
-- [ ] **Text contrast ≥ 4.5:1** on every surface for `--color-text` and `--color-text-secondary`, for HUD text over the five H&E reference colours (backdrop α 0.80, secondary lines 12 px grey-83), for the dimmed `Sharp` label and for the colour-dimmed hidden layer row (verified §8; `--color-text-disabled` is exempt and used only for disabled controls).
+- [ ] **Text contrast ≥ 4.5:1** on every surface for `--color-text` and `--color-text-secondary`, for HUD text over the five H&E reference colours (backdrop α 0.80, secondary lines 12 px grey-83), for the dimmed `Sharp` label, for the colour-dimmed hidden and capped layer rows (`.layer-row.is-off`, `.is-capped`) and for the keymap's reserved rows (verified §8; `--color-text-disabled` is exempt and used only for disabled controls, never for a sentence or hint; text is never dimmed by opacity).
 - [ ] **Non-text contrast ≥ 3:1** for control outlines, focus ring, indicator glyphs, selected-tool bar, range thumb ring (verified §8).
 - [ ] **No meaning by colour alone**: every status pairs a glyph with text; legend swatches carry pattern text; correct/incorrect pairs ✓/✕ with words; worklist state is ring/filled/check plus text.
 - [ ] **Focus visible** everywhere: 2 px ring + 1 px halo, ≥ 9:1 against every surface; inside `.canvas-area` the ring is forced near-white; nothing steals focus during a gesture.
 - [ ] **Keyboard**: arrows/WASD pan, `+ − 0 Home` zoom, `R` rotate (NFR-A3); every command reachable in ≤ 2 keystrokes without Ctrl/Alt/F; `Tab` always moves focus; `Esc` always cancels; `?` opens the map; roving tabindex in toolbars, tabs, radiogroups, listboxes.
-- [ ] **SC 2.5.7 dragging alternatives**: navigator pan buttons (always visible: 24 px, a 44 px hit area with a 28 px pad on touch; checked by `layout-check.mjs` A2), tap-to-recentre, click-to-place vertices, two-click measurements, hover auto-pan, typeable slider values, sheet close button.
+- [ ] **Keyboard-scrollable regions** (SC 2.1.1): a scroll container with no control inside it — the keymap body, an About body, a read-only `.table-wrap` with a capped height or a wide table on a phone — carries `tabindex="0"`, `role="region"` and a name, and its focus ring is drawn inset (`base.css` §6.11, §6.20); a container that holds a sortable header, a row action or a form field already has a focus stop.
+- [ ] **SC 2.5.7 dragging alternatives**: navigator pan buttons (always visible: 24 px, a 44 px hit area with a 28 px pad on touch, each centred in a shrinkable third of the thumbnail so the pads stay inside every width step of the ladder; checked by `layout-check.mjs` A2), tap-to-recentre, click-to-place vertices, two-click measurements, hover auto-pan, typeable slider values, sheet close button.
 - [ ] **SC 2.5.8 target size**: `--target-min` 24 px (32 px on coarse pointers), `--target` and `--target-control` 44 px on coarse pointers for every control a thumb or pen must hit; segmented items 24 px (40 px inside a 44 px control on coarse); the skip link and a track-only switch are ≥ 44 px under a coarse pointer (the switch track itself grows to 44 × 24); 20/24 px glyphs; checked by `layout-check.mjs` A1 at eight viewports.
 - [ ] **Canvas is `role="application"`** with a descriptive `aria-label` and `aria-describedby` → polite live region; HUD values mirrored at settle, debounced 500 ms; assertive region for identity mismatch, Dx dropped, session expired, score failure; same strings as the strip.
 - [ ] **Lists are real lists**: annotations, layers, bookmarks as `listbox`/`option` or `<ul>`; the tray is a listbox; items are forms; tabs follow the WAI-ARIA tabs pattern; menus the menu pattern; the palette the combobox pattern.
@@ -166,13 +167,15 @@ Revision 2026-11-01 adds coarse-pointer columns rendered through `.is-coarse` (b
 
 The sweep of 2026-11-01 (cross-scope items the page revisers deferred) adds: the danger banner with an outline button and key hint; a coarse-pointer toggle column (44 × 24 px track; a track-only switch); a hovered palette row beside the selected one (hover colour vs selection colour + bar); the candidate dialog rebuilt on native radios in a `<fieldset>`; and three sheet controls — *Show dock dialog* (`.modal-layer--dock` in the app frame), *Show palette layer* (`.palette-layer` in the app frame: over the dock column at ≥ 1080 px, the in-flow sheet row below) and *Reduce motion* (`html[data-motion="reduce"]`). The two layers are hidden at rest, so the geometry check measures the frame without them.
 
+The second revision of 2026-11-01 (§11) adds the capped channel row as `.layer-row.is-capped` (colour-dimmed, with a dashed *capped* chip), named focusable scroll regions (the keymap body, the Display QA log and the class-mapping table), the solid hover / active fill of `.btn--danger`, the dashed-border `.key--reserved`, and the shrinkable-thirds pan grid, shown by the 180 px coarse navigator whose down pad now stays inside the 89 px thumbnail.
+
 ---
 
 ## 7. Validation method
 
 `contrast-check.py` parses `tokens.css`, resolves `var()` chains per theme, composites translucent tokens over their real backgrounds, and computes:
 
-- WCAG 2.x contrast for 54 text pairs (≥ 4.5:1) and 29 non-text pairs (≥ 3:1) per theme (the sweep added the palette / menu selected and hovered rows, the danger-banner controls and their outline, and the selected-row indicator bar), chosen from how `base.css` actually composes components (e.g. the range thumb is checked as its dark ring against the track, which is what identifies it; the focus ring is checked against every surface and against its halo; the dimmed `Sharp` label as 0.7 × text; the hidden layer row as secondary text on surface 0, the hovered row and the selected row).
+- WCAG 2.x contrast for 58 required text pairs (≥ 4.5:1), 2 informational text pairs (reported but never counted: the danger text on the `--color-danger-bg` tint, which `.btn--danger` no longer uses for its hover) and 29 non-text pairs (≥ 3:1) per theme (the sweep added the palette / menu selected and hovered rows, the danger-banner controls and their outline, and the selected-row indicator bar; the second revision added the keymap's reserved rows on surfaces 0 and 2, the struck-through reserved key on its key background, the capped layer row and the two informational tint rows), chosen from how `base.css` actually composes components (e.g. the range thumb is checked as its dark ring against the track, which is what identifies it; the focus ring is checked against every surface and against its halo; the dimmed `Sharp` label as 0.7 × text; the hidden layer row as secondary text on surface 0, the hovered row and the selected row).
 - HUD text over tissue (added 2026-11-01): the HUD backdrop composited over each of the five H&E reference colours and over the canvas backdrop, then the primary line, the 12 px grey-83 secondary line, the dimmed `Sharp` label and the navigator pan glyph on its pad, each required ≥ 4.5:1 in every cell. The 2026-10-26 run checked the HUD only over the canvas backdrop (`#222222`, 7.98:1), which is why α 0.62 passed while the same text measured 2.8:1 over glass on the finals.
 - OKLCH chroma for every token allowed within the 32 px canvas margin (≤ 0.03) and for the tint composites; the accent and semantic colours are reported but excluded from the margin.
 - Annotation palette: CIE L\*, Machado 2009 simulations, pairwise CIEDE2000 (minimum over 28 pairs) in normal, deutan, protan and tritan vision with the P7 target ≥ 20 for deutan and protan, WCAG contrast of each colour and of the two halos against five H&E reference colours, ΔE00 against eosin and hematoxylin, and the unmodified Okabe-Ito set under the same test.
@@ -192,7 +195,7 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 
 ---
 
-## 8. Validation results (2026-11-01 sweep, `python3 -I contrast-check.py` and `node layout-check.mjs`)
+## 8. Validation results (2026-11-01 second revision, `python3 -I contrast-check.py` and `node layout-check.mjs`)
 
 ### 8.1 Colour (`contrast-check.py`)
 ### Dark theme
@@ -236,7 +239,7 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | body text on success tint (alert) | `#e6e6e6` on `#3d4542` | 7.86:1 | 4.5 | pass |
 | body text on info tint (alert) | `#e6e6e6` on `#404448` | 7.88:1 | 4.5 | pass |
 | secondary text on danger tint | `#b0b0b0` on `#49413e` | 4.58:1 | 4.5 | pass |
-| label on solid danger button | `#141414` on `#f5956c` | 8.24:1 | 4.5 | pass |
+| label on solid danger button (.btn--danger.btn--solid, and .btn--danger on hover / active since the second revision 2026-11-01) | `#141414` on `#f5956c` | 8.24:1 | 4.5 | pass |
 | badge RUO | `#141414` on `#d0d0d0` | 11.94:1 | 4.5 | pass |
 | badge LEARN | `#141414` on `#b0b0b0` | 8.49:1 | 4.5 | pass |
 | badge CLINICAL-IH | `#141414` on `#f2f2f2` | 16.46:1 | 4.5 | pass |
@@ -244,7 +247,7 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | mode indicator NAV | `#e6e6e6` on `#4a4a4a` | 7.10:1 | 4.5 | pass |
 | mode indicator DX | `#141414` on `#f2f2f2` | 16.46:1 | 4.5 | pass |
 | key hint (.key) on surface 1 | `#b0b0b0` on `#3a3a3a` | 5.24:1 | 4.5 | pass |
-| hidden layer-row name / kind / % (.layer-row.is-off, colour-dimmed, not opacity) | `#b0b0b0` on `#303030` | 6.09:1 | 4.5 | pass |
+| hidden / capped layer-row name / kind / % (.layer-row.is-off, .layer-row.is-capped; colour-dimmed, not opacity) | `#b0b0b0` on `#303030` | 6.09:1 | 4.5 | pass |
 | hidden layer-row name on hovered row | `#b0b0b0` on `#3a3a3a` | 5.24:1 | 4.5 | pass |
 | hidden layer-row name on selected row | `#b0b0b0` on `#404040` | 4.78:1 | 4.5 | pass |
 | settled 'Sharp' label at rest (0.7 × text) on the strip | `#acacac` on `#262626` | 6.70:1 | 4.5 | pass |
@@ -253,6 +256,12 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | palette / menu hovered row: meta and key hint lifted to body text on the hover colour | `#e6e6e6` on `#525252` | 6.26:1 | 4.5 | pass |
 | danger banner button and key hint (inherit) on the inverse surface (was body text, 1.11:1) | `#141414` on `#f2f2f2` | 16.46:1 | 4.5 | pass |
 | danger banner button label on hover (inverted fill) | `#f2f2f2` on `#141414` | 16.46:1 | 4.5 | pass |
+| keymap reserved rows (.keymap__row.is-reserved, 12 px sentences) on the dialog surface — --color-text-disabled is never used for sentences (was 3.00:1) | `#b0b0b0` on `#404040` | 4.78:1 | 4.5 | pass |
+| keymap reserved rows on surface 0 (research final's keymap panel) | `#b0b0b0` on `#303030` | 6.09:1 | 4.5 | pass |
+| struck-through reserved key name (.key--reserved) on its key background — dimmed by a dashed border, no longer opacity .6 (was 2.8:1) | `#b0b0b0` on `#3a3a3a` | 5.24:1 | 4.5 | pass |
+| capped channel row provenance sentence (.layer-row.is-capped; the sheet's inline opacity .6 measured 3.2:1 / 2.96:1) | `#b0b0b0` on `#303030` | 6.09:1 | 4.5 | pass |
+| informational: danger text on the danger tint over surface 2 — the former .btn--danger hover (4.07:1 dark), replaced by the solid pair | `#f5956c` on `#4e4744` | 4.07:1 | 4.5 | info (not used for text) |
+| informational: danger text on the danger tint over surface −1 — the sheet's light states demo (4.23:1 light), replaced by the solid pair | `#f5956c` on `#372f2c` | 5.87:1 | 4.5 | pass |
 | control outline on surface 0 | `#8a8a8a` on `#303030` | 3.82:1 | 3.0 | pass |
 | control outline on surface 1 | `#8a8a8a` on `#3a3a3a` | 3.29:1 | 3.0 | pass |
 | control outline on surface 2 | `#8a8a8a` on `#404040` | 3.00:1 | 3.0 | pass |
@@ -368,7 +377,7 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | body text on success tint (alert) | `#1a1a1a` on `#e7f2ee` | 15.17:1 | 4.5 | pass |
 | body text on info tint (alert) | `#1a1a1a` on `#eaeff6` | 15.10:1 | 4.5 | pass |
 | secondary text on danger tint | `#4a4a4a` on `#f7ebe7` | 7.61:1 | 4.5 | pass |
-| label on solid danger button | `#ffffff` on `#b03a12` | 6.07:1 | 4.5 | pass |
+| label on solid danger button (.btn--danger.btn--solid, and .btn--danger on hover / active since the second revision 2026-11-01) | `#ffffff` on `#b03a12` | 6.07:1 | 4.5 | pass |
 | badge RUO | `#f2f2f2` on `#202020` | 14.55:1 | 4.5 | pass |
 | badge LEARN | `#f2f2f2` on `#4a4a4a` | 7.92:1 | 4.5 | pass |
 | badge CLINICAL-IH | `#f2f2f2` on `#141414` | 16.46:1 | 4.5 | pass |
@@ -376,7 +385,7 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | mode indicator NAV | `#1a1a1a` on `#d0d0d0` | 11.28:1 | 4.5 | pass |
 | mode indicator DX | `#f2f2f2` on `#1a1a1a` | 15.55:1 | 4.5 | pass |
 | key hint (.key) on surface 1 | `#4a4a4a` on `#ffffff` | 8.86:1 | 4.5 | pass |
-| hidden layer-row name / kind / % (.layer-row.is-off, colour-dimmed, not opacity) | `#4a4a4a` on `#f2f2f2` | 7.92:1 | 4.5 | pass |
+| hidden / capped layer-row name / kind / % (.layer-row.is-off, .layer-row.is-capped; colour-dimmed, not opacity) | `#4a4a4a` on `#f2f2f2` | 7.92:1 | 4.5 | pass |
 | hidden layer-row name on hovered row | `#4a4a4a` on `#e6e6e6` | 7.10:1 | 4.5 | pass |
 | hidden layer-row name on selected row | `#4a4a4a` on `#d0d0d0` | 5.75:1 | 4.5 | pass |
 | settled 'Sharp' label at rest (0.7 × text) on the strip | `#575757` on `#e6e6e6` | 5.77:1 | 4.5 | pass |
@@ -385,6 +394,12 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | palette / menu hovered row: meta and key hint lifted to body text on the hover colour | `#1a1a1a` on `#d0d0d0` | 11.28:1 | 4.5 | pass |
 | danger banner button and key hint (inherit) on the inverse surface (was body text, 1.11:1) | `#f2f2f2` on `#202020` | 14.55:1 | 4.5 | pass |
 | danger banner button label on hover (inverted fill) | `#202020` on `#f2f2f2` | 14.55:1 | 4.5 | pass |
+| keymap reserved rows (.keymap__row.is-reserved, 12 px sentences) on the dialog surface — --color-text-disabled is never used for sentences (was 3.00:1) | `#4a4a4a` on `#ffffff` | 8.86:1 | 4.5 | pass |
+| keymap reserved rows on surface 0 (research final's keymap panel) | `#4a4a4a` on `#f2f2f2` | 7.92:1 | 4.5 | pass |
+| struck-through reserved key name (.key--reserved) on its key background — dimmed by a dashed border, no longer opacity .6 (was 2.8:1) | `#4a4a4a` on `#ffffff` | 8.86:1 | 4.5 | pass |
+| capped channel row provenance sentence (.layer-row.is-capped; the sheet's inline opacity .6 measured 3.2:1 / 2.96:1) | `#4a4a4a` on `#f2f2f2` | 7.92:1 | 4.5 | pass |
+| informational: danger text on the danger tint over surface 2 — the former .btn--danger hover (4.07:1 dark), replaced by the solid pair | `#b03a12` on `#f7ebe7` | 5.21:1 | 4.5 | pass |
+| informational: danger text on the danger tint over surface −1 — the sheet's light states demo (4.23:1 light), replaced by the solid pair | `#b03a12` on `#e1d5d1` | 4.22:1 | 4.5 | info (not used for text) |
 | control outline on surface 0 | `#707070` on `#f2f2f2` | 4.42:1 | 3.0 | pass |
 | control outline on surface 1 | `#707070` on `#ffffff` | 4.95:1 | 3.0 | pass |
 | control outline on surface 2 | `#707070` on `#ffffff` | 4.95:1 | 3.0 | pass |
@@ -544,22 +559,22 @@ Requirement 4.5:1 for every cell. Rows: primary HUD text (`--color-text-on-canva
 | deutan | 11.6 | Orange / Yellow | Orange/Yellow (11.6), Orange/Vermilion (12.5), Sky blue/Reddish purple (15.7), Bluish green/Reddish purple (15.9) |
 | protan | 12.2 | Blue / Reddish purple | Orange/Bluish green (17.9), Orange/Yellow (15.2), Orange/Vermilion (18.2), Sky blue/Reddish purple (14.0), Bluish green/Vermilion (18.2), Blue/Reddish purple (12.2) |
 
-**Result: all required pairs pass** (54 text pairs and 29 non-text pairs × 2 themes, 34 chroma rows × 2 themes, 5 HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).
+**Result: all required pairs pass** (58 required text pairs plus 2 informational, and 29 non-text pairs × 2 themes, 34 chroma rows × 2 themes, 5 HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).
 
-### 8.2 Geometry (`layout-check.mjs`, `components.html`, rest state, 1.4 s after load)
+### 8.2 Geometry (`layout-check.mjs`, `components.html`, rest state, 1.4 s after load; re-run after the second revision)
 
 | Viewport | Top bars (T1) | Central zone (Z1) | Sheets (S1) | Targets < 24/44 (A1) | by spacing | Invisible (A2) | Sharp label (A3) | Result |
 |---|---|---|---|---:|---:|---:|---|---|
-| 390×844 coarse | 10/10 ok · mode right 356/356/331/331/331/331/331/331/331/331 of 364/364/340/340/340/340/340/340/340/340 | 0 intrusions (+2 transient: drawer) | none | 0 of 608 | 57 | 0 | n/a | pass |
-| 1024×1366 coarse | 10/10 ok · mode right 990/990/965/965/965/965/965/965/965/965 of 998/998/974/974/974/974/974/974/974/974 | 0 intrusions (+2 transient: drawer) | none | 0 of 638 | 57 | 0 | 0.70/0.70 | pass |
-| 1280×800 | 10/10 ok · mode right 958/958/933/933/933/933/933/933/933/933 of 966/966/942/942/942/942/942/942/942/942 | 0 intrusions (+2 transient: drawer) | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
-| 1366×1024 coarse | 10/10 ok · mode right 1044/1044/1019/1019/1019/1019/1019/1019/1019/1019 of 1052/1052/1028/1028/1028/1028/1028/1028/1028/1028 | 0 intrusions (+2 transient: drawer) | none | 0 of 682 | 57 | 0 | 0.70/0.70 | pass |
-| 1440×900 | 10/10 ok · mode right 1118/1118/1093/1093/1093/1093/1093/1093/1093/1093 of 1126/1126/1102/1102/1102/1102/1102/1102/1102/1102 | 0 intrusions (+2 transient: drawer) | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
-| 1600×900 | 10/10 ok · mode right 1278/1278/1253/1253/1253/1253/1253/1253/1253/1253 of 1286/1286/1262/1262/1262/1262/1262/1262/1262/1262 | 0 intrusions | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
-| 1920×1080 | 10/10 ok · mode right 1598/1598/1573/1573/1573/1573/1573/1573/1573/1573 of 1606/1606/1582/1582/1582/1582/1582/1582/1582/1582 | 0 intrusions | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
-| 3840×2160 | 10/10 ok · mode right 3518/3518/3493/3493/3493/3493/3493/3493/3493/3493 of 3526/3526/3502/3502/3502/3502/3502/3502/3502/3502 | 0 intrusions | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
+| 390×844 coarse | 10/10 ok · mode right 356/356/331/331/331/331/331/331/331/331 of 364/364/340/340/340/340/340/340/340/340 | 0 intrusions (+2 transient: drawer) | none | 0 of 614 | 57 | 0 | n/a | pass |
+| 1024×1366 coarse | 10/10 ok · mode right 990/990/965/965/965/965/965/965/965/965 of 998/998/974/974/974/974/974/974/974/974 | 0 intrusions (+2 transient: drawer) | none | 0 of 644 | 57 | 0 | 0.70/0.70 | pass |
+| 1280×800 | 10/10 ok · mode right 958/958/933/933/933/933/933/933/933/933 of 966/966/942/942/942/942/942/942/942/942 | 0 intrusions (+2 transient: drawer) | none | 0 of 688 | 8 | 0 | 0.70/0.70 | pass |
+| 1366×1024 coarse | 10/10 ok · mode right 1044/1044/1019/1019/1019/1019/1019/1019/1019/1019 of 1052/1052/1028/1028/1028/1028/1028/1028/1028/1028 | 0 intrusions (+2 transient: drawer) | none | 0 of 688 | 57 | 0 | 0.70/0.70 | pass |
+| 1440×900 | 10/10 ok · mode right 1118/1118/1093/1093/1093/1093/1093/1093/1093/1093 of 1126/1126/1102/1102/1102/1102/1102/1102/1102/1102 | 0 intrusions (+2 transient: drawer) | none | 0 of 688 | 8 | 0 | 0.70/0.70 | pass |
+| 1600×900 | 10/10 ok · mode right 1278/1278/1253/1253/1253/1253/1253/1253/1253/1253 of 1286/1286/1262/1262/1262/1262/1262/1262/1262/1262 | 0 intrusions | none | 0 of 688 | 8 | 0 | 0.70/0.70 | pass |
+| 1920×1080 | 10/10 ok · mode right 1598/1598/1573/1573/1573/1573/1573/1573/1573/1573 of 1606/1606/1582/1582/1582/1582/1582/1582/1582/1582 | 0 intrusions | none | 0 of 688 | 8 | 0 | 0.70/0.70 | pass |
+| 3840×2160 | 10/10 ok · mode right 3518/3518/3493/3493/3493/3493/3493/3493/3493/3493 of 3526/3526/3502/3502/3502/3502/3502/3502/3502/3502 | 0 intrusions | none | 0 of 688 | 8 | 0 | 0.70/0.70 | pass |
 
-**Result: all layout checks pass** (the two transient layers at ≤ 1599 px are the frame demo's dock, open as a drawer/sheet to show that state; a `--reduced-motion` run at 1440 × 900 and 1024 × 1366 also passes with the `Sharp` label at 0.70). The sweep added 13 operable controls to the sheet (the coarse toggle column, the danger banner's two buttons, the candidate radios); the `.modal-layer--dock` and `.palette-layer` demos are hidden at rest and therefore outside this measurement, by design (they are transient layers). "By spacing" counts controls under the nominal size that pass only through WCAG's spacing exception: at coarse viewports these are the 40 px segmented items (DS-14), the native 18 px radio/checkbox inputs inside their 44 px option rows, 31–32 px text inputs (typed zoom, palette input) and the deliberately 24 px target illustration, each with ≥ 44 px of clear space around it; at fine viewports the eight are the 22 px display-only chips used as table badges.
+**Result: all layout checks pass** (the two transient layers at ≤ 1599 px are the frame demo's dock, open as a drawer/sheet to show that state; a `--reduced-motion` run at 1440 × 900 and 1024 × 1366 also passes with the `Sharp` label at 0.70). The sweep added 13 operable controls to the sheet (the coarse toggle column, the danger banner's two buttons, the candidate radios) and the second revision six focusable scroll regions (the keymap body, the Display QA log and the class-mapping table, in each theme pane; §11 #27), which are far larger than any target size and are counted in the totals; the `.modal-layer--dock` and `.palette-layer` demos are hidden at rest and therefore outside this measurement, by design (they are transient layers). "By spacing" counts controls under the nominal size that pass only through WCAG's spacing exception: at coarse viewports these are the 40 px segmented items (DS-14), the native 18 px radio/checkbox inputs inside their 44 px option rows, 31–32 px text inputs (typed zoom, palette input) and the deliberately 24 px target illustration, each with ≥ 44 px of clear space around it; at fine viewports the eight are the 22 px display-only chips used as table badges.
 
 ### 8.3 Geometry of the three final screens (informational; the pages link these files and carry their own CSS)
 
@@ -688,6 +703,25 @@ The critique-stage revisers each fixed only their own file and deferred the item
 - `clinical-signout.html`: now that base.css carries them, delete the local `.banner--danger` colours (195–196), the `.modal-layer` overrides and width steps (422–431; use `.modal-layer--dock`), the `.backdrop` rule (465) and the navigator ladder (283–287; use `.navigator--wide`). Still failing: the 14 px `#ctlGuided` checkbox under a coarse pointer (390 / 1024 / 1366), and at 390 px the mode slot's right edge is 389 px in a 382 px bar because the short purpose chip stays in the bar on phones (T1).
 - `research-annotation.html`: passes every check. Delete the local `.palette__item` selection colours (401–402) and the `.palette-layer` rules (396–399, 410, 445, 481, 511–514) in favour of base.css.
 - `education-module.html`: delete the local `.palette-layer` rules (391–399) and the `.candidate__radio` rules (406–410), now in base.css; the demo's reduced-motion switch can set `data-motion="reduce"` instead of zeroing the tokens itself. Still failing: `#d-launch` (28 px wide) under a coarse pointer.
+
+## 11. Revision 2026-11-01, second pass (reviewed design-system issues)
+
+Fixes to the shared files for the six review findings that named the design system. Token and class names are unchanged; the additions are additive (`.layer-row.is-capped`, the `[tabindex]` focus rule for `.dialog__body` / `.table-wrap`, informational rows in `contrast-check.py`). Everything below was re-measured in headless Chromium (computed styles and rectangles on `components.html` at 1920 × 1080, 1440 × 900, 1024 × 1366 coarse and 390 × 844 coarse, in both theme panes) and both checks were re-run (§8).
+
+| # | Issue (review) | Change | Measured | Files |
+|---|---|---|---|---|
+| 22 | `.keymap__row.is-reserved` used `--color-text-disabled` for 12 px explanatory sentences ("Never bound (browsers, Hyperdrive)", "Dx mode: not in this build", "Reserved: Dragon Medical One"): 3.00:1 on the dialog surface, 3.82:1 on surface 0, 3.45:1 light (medium) | `.keymap__row.is-reserved { color: var(--color-text-secondary) }`; the struck-through `.key--reserved` keeps the "not available" affordance but is dimmed by a dashed 1 px border instead of `opacity: .6` (which left the 10 px key name at 2.8:1); `--color-text-disabled` is documented in `tokens.css` as disabled-controls-only; four pairs added to `contrast-check.py` (reserved rows on surfaces 2 and 0, the reserved key on its key background, the capped row) | Rows 4.78:1 dark dialog, 6.09:1 dark surface 0, 8.86:1 light; key name 5.24:1 dark, 8.86:1 light | `base.css`, `tokens.css` (comments), `contrast-check.py`, `components.html` (keymap note) |
+| 23 | Coarse navigator pads: `grid-template-rows: auto 1fr auto` with 44 px buttons is 132 px of min-content, so on the 180–240 px navigators (89–120 px thumbnails) the down pad sat 18–43 px below the thumbnail (sheet: y 88–132 in a 115 px navigator); the finals carried page copies, clinical's `1fr 1fr 1fr` (= `minmax(auto, 1fr)`) still 15–35 px into the label row (medium) | The pan grid is `minmax(0, 1fr)` thirds with every pad centred in its third — in the base rule and in both coarse blocks (`(pointer: coarse)` and `.is-coarse`), so a page that overrides the fine grid still gets it; comments and the sheet's caption / navigator note rewritten | Sheet, 180 px coarse navigator (89 px thumbnail): down pad hit box y 52–96, i.e. 7 px past the thumbnail edge with the 28 px visible pad inside, at 1920 / 1440 / 1024c; frame navigator 218 × 109 at 1024c: 4 px; fine 24 px pads 8 px inside the edges | `base.css`, `components.html` |
+| 24 | Sheet's capped channel row dimmed by `style="opacity:.6"`, so its explaining sentence measured 3.2:1 dark / 2.96:1 light while base.css documents colour-only dimming (medium) | `.layer-row.is-capped`: name, kind, % and eye button → `--color-text-secondary`, a dashed *capped* chip after the name, the `aria-disabled` eye button loses its hover affordance (`cursor: not-allowed`); the sheet row uses the class | Provenance sentence and name 6.09:1 dark, 7.92:1 light | `base.css`, `components.html`, `contrast-check.py` (label) |
+| 25 | `aria-label="Product label"` on the role-less `span.badge-string` (axe aria-prohibited-attr, serious; the CSS `content` string is already exposed) (medium) | Attribute removed; no other `.badge-string` span carried one; the finals render the string as text | 0 `span.badge-string[aria-label]` | `components.html` |
+| 26 | `.btn--danger:hover` used the `--color-danger-bg` tint: danger text 4.07:1 on the dialog surface (dark) and 4.23:1 on surface −1 (light, the sheet's light states demo); `contrast-check.py` never checked that composite (medium) | Hover and active fill with the already-validated solid pair (`--color-on-danger` on `--color-danger`), the key hint inherits; `--color-danger-bg` stays for `.alert--danger`, where body text sits on it; `contrast-check.py` gained an *informational* text row kind (reported, never a failure) and records both tint composites so the reason stays measurable | Hover 8.24:1 dark, 6.07:1 light; tint rows 4.07:1 dark / 4.22:1 light reported as `info (not used for text)` | `base.css`, `contrast-check.py`, `components.html` (buttons note) |
+| 27 | Scroll containers with no focusable content cannot be scrolled from the keyboard (axe scrollable-region-focusable, SC 2.1.1): the Display QA log (`max-height: 260px`), `#classes .table-wrap` and the keymap body at 390 × 844 (low) | Those three containers are `role="region"` with a name and `tabindex="0"`; `base.css` draws their focus ring inset (`.dialog__body[tabindex]:focus-visible, .table-wrap[tabindex]:focus-visible`) so the dialog's overflow clip and the table border do not hide it; table and keymap notes say when a container needs the stop | Three named regions per pane; at 390 px all three scroll; programmatic focus matches `:focus-visible` and shows the inset 2 px ring + 1 px halo | `base.css`, `components.html` |
+
+**Deferred to the pages** (outside this revision's scope, `screens/final/`; each is a deletion or a one-line change):
+
+- `clinical-signout.html` 320–325: the page's `.app.fin .navigator__pan { grid-template-columns: 1fr 1fr 1fr; … }` copy **must be deleted** — its `.app.fin` specificity still beats the base rule under a coarse pointer and `1fr` cannot shrink below the 44 px button (computed rows `44px 44px 44px`), so the down pad stays in the label row until it goes — measured after this revision at 1024 × 1366 coarse: visible pad 15 px and hit box 23 px below the 109 px thumbnail (35 px for the 89 px embedded / Dx-combination variant). Its `.keymap__row.is-reserved .desc { text-decoration: line-through }` (485) is compatible with #22 and can stay.
+- `education-module.html` 583–595: the page's `minmax(0, 1fr)` copy is now identical to base.css and can be deleted. Line 1443 `.dialog__body.about` (palette → About this build) needs `tabindex="0" role="region" aria-labelledby="<its title id>"` for #27; the page's `.keymap__row.is-reserved` rows (1407–1409) inherit #22 with no change.
+- `research-annotation.html`: inherits #22 (its script-generated reserved rows) and #23 with no change (its education-sized navigator measured rows of 29.7 px with the visible down pad 1 px inside the 89 px thumbnail at 1024 × 1366 coarse on the education page; the research page's own 1024 px navigator state is page CSS).
 
 ## References
 

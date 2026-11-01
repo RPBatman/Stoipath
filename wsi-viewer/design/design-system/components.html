@@ -350,7 +350,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
       <div class="app app--fixed dock-open" data-build="clinical-ih">
         <header class="topbar region" aria-label="Top bar">
           <div class="topbar__slot-badge"><span class="badge badge--clinical" data-live="launch:product">Clinical-IH</span><span class="chip chip--purpose" data-live="launch:purposeOfUse">Sign-out</span></div>
-          <span class="topbar__label badge-string badge-string--clinical truncate" aria-label="Product label"></span>
+          <span class="topbar__label badge-string badge-string--clinical truncate"></span>
           <div class="topbar__identity" data-live="launch"><span class="accession" data-synthetic>AP-26-04417</span><div class="topbar__identity-rest"><span class="title">Sentinel lymph node, left axilla · parts A–C</span><span class="meta" data-synthetic>DOE, JANE · 1958</span><span class="chip chip--worklist" data-live="events:caseStatusChanged">In review</span></div></div>
           <div class="topbar__slot-mode"><span class="chip" data-live="dx:displayqa">QA passed 3 days ago</span><span class="mode mode--dx" data-live="state.render_mode">DX</span><button class="btn btn--icon btn--ghost" aria-label="More: About, settings, help"><svg class="icon"><use href="#i-more"/></svg></button></div>
         </header>
@@ -638,7 +638,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
               <div class="navigator__pan"><button class="up" aria-label="Pan up">↑</button><button class="left" aria-label="Pan left">←</button><button class="right" aria-label="Pan right">→</button><button class="down" aria-label="Pan down">↓</button></div></div>
             <div class="navigator__label"><span class="mono">A1-1 · H&amp;E</span></div>
           </aside>
-          <span class="text-xs text-secondary" style="max-width:180px">Coarse pointer: 44 px hit areas hug the edges; the visible pad stays 28 px</span>
+          <span class="text-xs text-secondary" style="max-width:180px">Coarse pointer: 44 px hit areas centred in shrinkable thirds; the visible 28 px pad stays inside the 90 px thumbnail (the hit box may overlap its edge by ≤ 7 px)</span>
         </div>
         <aside class="navigator" style="position:static;width:200px" aria-label="Navigator, Learn build (no label image)">
           <div class="navigator__thumb"><svg viewBox="0 0 200 100" aria-hidden="true"><use href="#tissue-he"/></svg><div class="navigator__viewport" style="left:20%;top:30%;width:35%;height:45%"></div></div>
@@ -653,7 +653,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     </div>
   </div>
   <details class="notes"><summary>ARIA and behaviour notes</summary><ul>
-    <li><code>&lt;aside aria-label="Navigator"&gt;</code>; the thumbnail is a button ("Recentre on this point") operable by click/tap; the four pan buttons move 10 % of the viewport and are <b>always visible</b> (24 px; under a coarse pointer a 44 px hit area with a 28 px visible pad), darker on hover and focus-within. They are the SC 2.5.7 alternative to dragging the rectangle and are always in the tab order (revision 2026-11-01: they were hover-only).</li>
+    <li><code>&lt;aside aria-label="Navigator"&gt;</code>; the thumbnail is a button ("Recentre on this point") operable by click/tap; the four pan buttons move 10 % of the viewport and are <b>always visible</b> (24 px; under a coarse pointer a 44 px hit area with a 28 px visible pad), darker on hover and focus-within; the pan grid is three shrinkable <code>minmax(0, 1fr)</code> thirds with every pad centred in its third, so the pads stay inside the 70–160 px thumbnails of the width ladder in both pointer modes (second revision 2026-11-01; the former coarse <code>auto 1fr auto</code> grid needed a 132 px thumbnail). They are the SC 2.5.7 alternative to dragging the rectangle and are always in the tab order (revision 2026-11-01: they were hover-only).</li>
     <li>The rectangle is <code>aria-hidden</code>; the live region carries position. The label image has <code>alt</code> text equal to the label text from the launch context, never OCR.</li>
     <li>Width ladder (<code>--layout-navigator</code>): 320 px on 4K, 240 px desktop and laptop (1080–3199), 180 px tablet portrait, 140 px phone (hidden by default, <kbd class="key">O</kbd> shows it). A corner cluster (thumbnail + label image + tray while the dock is closed) uses <code>.navigator--wide</code> and <code>--layout-navigator-wide</code>: 400 / 320 / 300 / 220 / 140. Whatever a page sets, <code>.canvas-area .navigator</code> is capped at 25 % of the canvas width minus the inset, so it never enters the central 50 % (sweep 2026-11-01; the clinical final's 300 px cluster reached the zone at 1280 px).</li>
     <li>Presenter mode shows follower cursors as GPU layers in the canvas, not in the navigator.</li>
@@ -693,7 +693,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     <li>Native <code>&lt;button&gt;</code> always; icon-only buttons carry <code>aria-label</code> and a tooltip with the shortcut. Disabled uses the <code>disabled</code> attribute (removed from tab order) except for toolbar tools that must stay discoverable, which use <code>aria-disabled="true"</code> and announce why.</li>
     <li>The shortcut shown in a <code>&lt;kbd&gt;</code> is read as part of the name ("Bookmark, B"); shortcuts are rebindable, so the hint is rendered from the command registry, never hard-coded.</li>
     <li>Focus ring: 2 px near-white (dark) / near-black (light) with a 1 px contrasting halo; ≥ 9:1 against every surface. No colour change on focus.</li>
-    <li>Destructive actions in the dock use <code>.btn--secondary</code> with explicit text; the coloured <code>.btn--danger</code> lives in confirmation dialogs.</li>
+    <li>Destructive actions in the dock use <code>.btn--secondary</code> with explicit text; the coloured <code>.btn--danger</code> lives in confirmation dialogs. Its hover and active states fill with the solid pair (<code>--color-on-danger</code> on <code>--color-danger</code>, 8.24:1 dark / 6.07:1 light) rather than the <code>--color-danger-bg</code> tint, on which the outline text measured 4.07:1 (second revision 2026-11-01).</li>
   </ul></details>
 </section>
 
@@ -1172,7 +1172,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <div class="layer-row__opacity"><input type="range" min="0" max="100" value="100" aria-label="Opacity"><span class="num">100 %</span></div>
           <div class="layer-row__provenance"><span>8-bit preview tier while moving · 16-bit at settle</span></div>
         </div>
-        <div class="layer-row" style="opacity:.6">
+        <div class="layer-row is-capped">
           <button class="layer-row__vis" aria-pressed="false" aria-disabled="true" aria-label="PD-L1, cannot be enabled: 3 of 3 channels on this device"><svg class="icon icon--sm"><use href="#i-eye-off"/></svg></button>
           <div class="layer-row__name"><span class="swatch" style="--swatch:var(--ann-6)"></span><span class="truncate">PD-L1</span><span class="kind">channel 6/8</span></div>
           <div class="layer-row__actions"></div>
@@ -1199,7 +1199,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     <li>Visibility is a toggle button (<code>aria-pressed</code>) whose name includes the layer and state; opacity is a labelled range; the legend is a list of buttons ("Metastasis, 3, jump to").</li>
     <li>Legend swatches carry pattern text ("dashed", "hatched") so classes are not distinguished by colour alone; outlines use the palette with the 1 px halo.</li>
     <li>The not-validated marker is fixed text (FR-R11) rendered in the row, the legend and as a GPU marker on the layer itself in Dx mode; it is never a colour.</li>
-    <li>Channel rows say <i>why</i> a channel cannot be enabled (device-class cap) rather than greying silently.</li>
+    <li>Channel rows say <i>why</i> a channel cannot be enabled (device-class cap) rather than greying silently. That row is <code>.layer-row.is-capped</code>: like <code>.is-off</code> it is dimmed by colour (name, kind, eye button → <code>--color-text-secondary</code>, a dashed <i>capped</i> chip), never by opacity, so the explaining sentence stays ≥ 4.5:1; the eye button is <code>aria-disabled</code>. (Second revision 2026-11-01: the sheet's inline <code>opacity: .6</code> measured 3.2:1.)</li>
   </ul></details>
 </section>
 
@@ -1229,8 +1229,8 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <button class="toggle" role="switch" aria-checked="false"><span class="toggle__track"></span><span class="toggle__text">Simulate deuteranopia<span class="toggle__hint">Author-side check; applies to overlays only</span></span></button>
         <button class="toggle" role="switch" aria-checked="false"><span class="toggle__track"></span><span class="toggle__text">Fill polygons <span class="text-xs text-secondary">(α 0.18)</span></span></button>
       </div>
-      <h4 class="text-sm text-secondary mt-6 mb-4">Default class → palette mapping (export restores QuPath RGB)</h4>
-      <div class="table-wrap"><table class="table table--dense">
+      <h4 class="text-sm text-secondary mt-6 mb-4" id="h-classmap">Default class → palette mapping (export restores QuPath RGB)</h4>
+      <div class="table-wrap" role="region" aria-labelledby="h-classmap" tabindex="0"><table class="table table--dense">
         <thead><tr><th>QuPath class</th><th>QuPath RGB (export)</th><th>On-screen token</th><th>Why</th></tr></thead>
         <tbody>
           <tr><td>Tumor</td><td class="mono">200,0,0</td><td><span class="swatch" style="--swatch:var(--ann-2)"></span> Sienna</td><td>keeps the red family; L* 36 separates from amber under deutan</td></tr>
@@ -1261,7 +1261,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   </dl>
   <div class="demo demo--wide">
     <div class="demo__pane" data-theme="dark">
-      <div class="table-wrap" style="max-height:260px" data-live="dx:displayqa">
+      <div class="table-wrap" style="max-height:260px" data-live="dx:displayqa" role="region" aria-label="Display QA log, scrolls" tabindex="0">
         <table class="table" aria-label="Display QA log">
           <thead><tr><th aria-sort="descending">Date</th><th>Display</th><th>Test</th><th class="num">ΔE00 max</th><th class="num">L max cd/m²</th><th>Result</th><th>Operator</th></tr></thead>
           <tbody>
@@ -1288,6 +1288,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <details class="notes"><summary>ARIA notes</summary><ul>
     <li>Real <code>&lt;table&gt;</code> with <code>&lt;th scope&gt;</code>; sortable headers are buttons with <code>aria-sort</code>; the selected row uses <code>aria-selected</code> and the 2 px bar.</li>
     <li>Status cells pair a glyph (filled = pass, square = fail, ring = pending) with text. Progress bars have <code>role="progressbar"</code> with <code>aria-valuenow</code>; indeterminate bars are static under reduced motion.</li>
+    <li>A <code>.table-wrap</code> that scrolls (a capped height, or a wide table on a phone) and holds no control gets <code>role="region"</code>, a name and <code>tabindex="0"</code>, so keyboard users can scroll it (SC 2.1.1; the focus ring is drawn inset). Tables with sortable headers or row actions already have a focus stop inside.</li>
   </ul></details>
 </section>
 
@@ -1463,7 +1464,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="dialog__header"><h4 class="dialog__title" id="km-t">Keyboard shortcuts</h4>
           <div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup" aria-label="Keyboard preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand</button></div><span class="text-xs text-secondary">Reserved here: numeric keypad (dictation push-to-talk)</span></div>
           <button class="btn btn--icon btn--ghost" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
-        <div class="dialog__body">
+        <div class="dialog__body" role="region" aria-label="Shortcut list, scrolls" tabindex="0">
           <div class="keymap">
             <div class="keymap__group"><h4>Navigate</h4>
               <div class="keymap__row"><span class="keymap__keys"><kbd class="key">←↑↓→</kbd><kbd class="key">WASD</kbd></span>Pan 10 % · held = continuous</div>
@@ -1516,7 +1517,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     </div>
   </div>
   <details class="notes"><summary>ARIA and rules</summary><ul>
-    <li>A dialog with a two-column definition list semantics (<code>&lt;dl&gt;</code> in product); every row is text, so it is searchable and readable by assistive tech. Reserved keys are marked in text ("Reserved: Dragon Medical One"), not only struck through.</li>
+    <li>A dialog with a two-column definition list semantics (<code>&lt;dl&gt;</code> in product); every row is text, so it is searchable and readable by assistive tech. Reserved keys are marked in text ("Reserved: Dragon Medical One"), not only struck through. Reserved rows are sentences, so they use <code>--color-text-secondary</code> (4.78:1 on the dialog surface), never <code>--color-text-disabled</code>; the struck-through key keeps a dashed border instead of opacity (second revision 2026-11-01). The body is a named <code>region</code> with <code>tabindex="0"</code>: it holds no control, so without a focus stop it could not be scrolled from the keyboard (SC 2.1.1).</li>
     <li>Rules (principles §4.5): unmodified and Shift keys only inside the canvas; no F-keys, no Alt, no Ctrl except <kbd class="key">Ctrl</kbd>+<kbd class="key">Z/Y/C/V/A</kbd> and <kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd>; never Ctrl+T/W/N/L/D/F/P/S/R/+/−/0, Ctrl+Tab, Ctrl+Space, Ctrl+1–9, or the numeric keypad; <kbd class="key">Tab</kbd> always moves focus; <kbd class="key">Esc</kbd> always cancels.</li>
   </ul></details>
 </section>

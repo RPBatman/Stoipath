@@ -294,7 +294,7 @@
   /* Text */
   --color-text:          var(--grey-91);   /* 10.6:1 on surface-0 */
   --color-text-secondary: var(--grey-72);  /* ≥ 4.5:1 on surface-0..2 */
-  --color-text-disabled: var(--grey-57);   /* not required to meet 4.5:1 */
+  --color-text-disabled: var(--grey-57);   /* disabled CONTROLS only (3.00:1 on surface-2 is exempt under 1.4.3); never for a sentence or a hint — explanatory rows such as the keymap's reserved keys use --color-text-secondary (second revision 2026-11-01) */
   --color-text-inverse:  var(--grey-6);    /* on inverse / accent fills */
   --color-text-on-canvas: var(--grey-95);  /* HUD text over the canvas backdrop */
 
@@ -389,7 +389,7 @@
 
   --color-text:           var(--grey-9);
   --color-text-secondary: var(--grey-31);
-  --color-text-disabled:  var(--grey-57);
+  --color-text-disabled:  var(--grey-57);   /* disabled controls only; never sentences (see the dark theme) */
   --color-text-inverse:   var(--grey-95);
   --color-text-on-canvas: var(--grey-95);
 
@@ -474,7 +474,7 @@
 
     --color-text:           var(--grey-9);
     --color-text-secondary: var(--grey-31);
-    --color-text-disabled:  var(--grey-57);
+    --color-text-disabled:  var(--grey-57);   /* disabled controls only; never sentences (see the dark theme) */
     --color-text-inverse:   var(--grey-95);
     --color-text-on-canvas: var(--grey-95);
 
