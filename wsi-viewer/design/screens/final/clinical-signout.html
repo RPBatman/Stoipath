@@ -92,7 +92,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .flow__step[aria-current="step"] .flow__num { border-width: 2px; }
 .app.flow-off .flow__label { display: none; }
 .app.flow-off .flow__step { min-height: 30px; }
-@media (pointer: coarse) { .flow__step { min-height: 48px; } .flow__num { width: 26px; height: 26px; } .flow__label { font-size: 11px; } .flowbar .flow__step, .flowbar .btn { min-height: var(--target); } .app.fin { --layout-strip: 48px; } }   /* 44 px strip chips need a 48 px strip */
+@media (pointer: coarse) { .flow__step { min-height: 48px; } .flow__num { width: 26px; height: 26px; } .flow__label { font-size: 11px; } .app.fin .flowbar .flow__step, .app.fin .flowbar .btn { min-height: var(--target); } .app.fin { --layout-strip: 48px; } }   /* 44 px flow-bar steps; 44 px strip chips need a 48 px strip */
 @media (min-width: 3200px) { .flow__label { font-size: 12px; } .flow__num { width: 24px; height: 24px; } }
 
 /* flow bar: tablet portrait and phone (steps to the top, tools to the bottom) */
@@ -300,6 +300,14 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 @media (min-width: 3200px) { .cluster__tabs .tab { min-height: 28px; font-size: 12px; } .cluster__tray .tray__thumb { height: 40px; } .navigator__labelimg { width: 96px; font-size: 10px; } }
 @media (pointer: coarse) { .cluster__tabs .tab { min-height: var(--target); font-size: 12px; } .cluster__tabs .tab .key { display: none; } .cluster__tray .tray__slide { min-height: var(--target); } }
 .app.has-banner .hud--tl, .app.has-banner .navigator { top: calc(var(--layout-hud-inset) + 38px); }
+/* Navigator pan pads under a coarse pointer: base.css hugs the four 44 px pads to the thumbnail edges, which needs a thumbnail
+   ≥ 132 px tall; the 180–240 px navigators of this page (88–120 px thumbnails) overflowed the down pad into the label row.
+   Centred thirds keep every pad inside the thumbnail (design-system note filed). */
+@media (pointer: coarse) and (max-width: 1599px) {
+  .app.fin .navigator__pan { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+  .app.fin .navigator__pan .up, .app.fin .navigator__pan .down { align-self: center; }
+  .app.fin .navigator__pan .left, .app.fin .navigator__pan .right { justify-self: center; }
+}
 
 /* ---- dock: one panel per step; layout-policy note (B) --------------------- */
 .dock__note { display: none; padding: var(--space-2) var(--space-5); font-size: var(--text-xs); color: var(--color-text-secondary); background: var(--color-surface--1); border-bottom: 1px solid var(--color-border); }
@@ -649,7 +657,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 </svg>
 
 <!-- ====== Review header (not product) ====== -->
-<header class="review-head" aria-label="Review header">
+<header class="review-head" aria-label="Review header" tabindex="0">
   <b>Final design</b><span class="sep">·</span>Screen: <b>Clinical sign-out viewer</b> (Stoipath Clinical-IH / Dx)<span class="sep">·</span>Synthesis of concepts C (structure) + B (policy, gate, hand-off, gating) + A (cluster, echo)<span class="sep">·</span>2026-11-01<span class="sep">·</span>Synthetic case and patient
   <span class="share" id="shareOut" title="Measured canvas share of the app frame at rest (P1 floor 70 %)">canvas –</span>
   <span class="hint"><kbd class="key">N</kbd> next step · <kbd class="key">K</kbd> panel · <kbd class="key">?</kbd> keys · <kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd> palette · drag / wheel / pinch the slide · right-click for tools here</span>
@@ -1232,7 +1240,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li>The status strip carries one notice plus chips, never two notices; the offline pack is a chip.</li>
   <li>HUD text is the only per-frame DOM write (<code>paintView</code>); preset state, aria labels, trail, tray and checklist update at settle (<code>renderSettled</code>).</li>
   <li>Focus: canvas before the rail in DOM order; dialogs trap focus and return it to the canvas; the keymap opens on its filter; the sign-out dialog opens on <i>Open A2-1 first</i> when a slide is unviewed.</li>
-  <li>Phone: flow-bar step chips 32 px; the dock sheet is capped at 40 % everywhere; the phone shows NAV, <code>~</code> magnification and <i>Pitch unknown</i>.</li>
+  <li>Phone: flow-bar step chips 24 px (44 px under a coarse pointer); the dock sheet is capped at 40 % everywhere; the phone shows NAV, <code>~</code> magnification and <i>Pitch unknown</i>.</li>
   <li>Preset keys fly to the exact µm/px and the pressed state is written at settle, so a preset never lands "mid-animation".</li>
 </ul>
 
@@ -1255,7 +1263,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <tr><td>Rendering Complete / Rendering… / Not complete — do not interpret</td><td>Event bus <code>stoi:renderingcomplete</code> (Class C verifier flag; D6 timeout)</td><td>event → DOM</td></tr>
 <tr><td>Mode indicator, Dx gate checklist, refusal and dropped strings, QA chip, attestation line</td><td>State document <code>render_mode</code>; <code>stoi:dxattestation</code>, <code>displayQaStatus</code>; FR-I10, FR-R7</td><td>both</td></tr>
 <tr><td>AI layer rows, in-viewport legend, markers, accept / reject, "AI-flagged regions viewed at ≥ 10×"</td><td>Layer API with provenance tuple <code>{producer, version, inputHash, createdAt, regulatoryStatus}</code> and ACL; geometry <code>pointInPolygon</code> × <code>viewChanged</code>; event bus <code>aiResultAccepted/Rejected</code>; FR-R11 marker</td><td>both</td></tr>
-<tr><td>Class chips, annotation list, polygon, measurement 2.3 mm, tool status line</td><td>Annotation API (op-based, stable ids, GeoJSON-QuPath / DICOM ANN / SR adapters); geometry distance in µm; event bus <code>annotationCreated</code>, <code>measurementCreated</code></td><td>both</td></tr>
+<tr><td>Class chips, annotation list, selection, delete, polygon, measurement 2.3 mm and its HUD-layer label, tool status line</td><td>Annotation API (op-based, stable ids, GeoJSON-QuPath / DICOM ANN / SR adapters); geometry distance in µm; event bus <code>annotationCreated</code>, <code>annotationDeleted</code>, <code>measurementCreated</code>; measurement labels and ticks are HUD-layer text in screen space</td><td>both</td></tr>
 <tr><td>Bookmarks, snapshot</td><td>State document (saved views); <code>snapshot({scaleBar, burnIn})</code> with the product footer</td><td>both</td></tr>
 <tr><td>B/C/γ panel, adjust indicator, reset</td><td>State document <code>views[].display</code>; event bus <code>adjustChanged</code> (logged in Dx; FR-V14)</td><td>both</td></tr>
 <tr><td>Network, slow-translator, tier, offline-pack chips; tile-error notice; context-loss notice</td><td>Telemetry / quality record (link estimate, Server-Timing, tier); offline pack / PWA cache; <code>stoi:error</code></td><td>read</td></tr>
@@ -1289,11 +1297,30 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li><span class="dn">DN-F2</span> Scale bar: at 20× (0.50 µm/px, DPR 1) a 200 µm bar is 400 CSS px, outside the 80–200 px snap rule (§5.2), so this screen shows <b>100 µm</b> at 20× and 200 µm at 10× (DN-A1 / DN-C2). The brief's example pairing cannot hold under the plan's rule; the owner should confirm which rule wins.</li>
   <li><span class="dn">DN-F3</span> Clinical context from the LIS (narrative, prior accession, specimen parts with scanning status) and the frozen-section timestamps need a read-only integration-service contract outside the launch-context contract (plan 04 §8 / plan 12 §1.1) and carry PHI; file with an FR- id before any pillar relies on them.</li>
   <li><span class="dn">DN-F4</span> Layout policy table (principles §7 made explicit): panel open at ≥ 1600 px; closed at 1080–1599 and on touch surfaces; the dock header states the decision. Replaces DN-C4 (drawer open on step entry) and B's runtime governor (DN-B2).</li>
-  <li><span class="dn">DN-F5</span> On touch surfaces the dock sheet is capped at 40 % of the viewport and dialog sheets at 50 % with internal scroll; both are closed by default. While either is open it covers the lower part of the central 50 % × 50 % zone on a portrait tablet or phone (a sheet taller than 25 % of the canvas cannot avoid it); the sheet is transient and user-opened, and phones are not a sign-out surface. The headless audit records these as the only central-zone intrusions.</li>
+  <li><span class="dn">DN-F5</span> On touch surfaces the dock sheet is capped at 40 % of the viewport and dialog sheets at 50 % with internal scroll; both are closed by default. While either is open it covers the lower part of the central 50 % × 50 % zone on a portrait tablet or phone (a sheet taller than 25 % of the canvas cannot avoid it); the sheet is transient and user-opened, and phones are not a sign-out surface. The headless audit records these as the only central-zone intrusions; since the revision of 2026-11-01 the bottom HUD lifts above the open sheet (P8), which on a 390 px phone places the magnification and scale bar inside the central zone while the sheet is open (not on a portrait tablet, where they clear it horizontally).</li>
   <li><span class="dn">DN-F6</span> A's radial tool is kept as a post-MVP, static-time, DOM-only option; this screen ships the plan's right-click / long-press context menu (§4.1) instead.</li>
   <li><span class="dn">DN-F7</span> The frozen-consult variant keeps the Tier-2 label image on an in-lab iPad under MDM (role-scoped); a share-link consult is Tier 0 and shows none (DN-C3). The purpose strings are the plan's four; "Frozen · in review" as a worklist state is a proposal (DN-B5).</li>
   <li><span class="dn">DN-F8</span> The preset ladder follows the plan (1.25 / 2.5 / 5 / 10 / 20 / 40×, derived, D8); the brief's "4×" is reachable by typed zoom.</li>
   <li><span class="dn">DN-F9</span> Selecting the RUO product shows the launch-refused plate rather than a research workspace: the clinical launch has no home in that build (plan 04 §8, FR-R3).</li>
+</ul>
+
+<h3>Revision 2026-11-01 (critique round: pathologist and a11y-ux critics)</h3>
+<ul>
+  <li><span class="dn">Revision 2026-11-01</span> Top bar (P4, P5): deleted the page override that gave the specimen title a natural width (it defeated base.css's width-0 title and pushed the mode slot and More button off screen at 1280–1600); title, meta and worklist chip now sit in base.css's <code>.topbar__identity-rest</code> wrapper; the purpose chip may shrink and has a short form (<i>Prelim only</i>) below a 1264 px container; the consult variant drops the title below 1600 so the full label string keeps 659 px; the page-level 1280–1599 meta rule and the 24 px mode-chip override are gone (base.css owns both). Measured after the fix: mode indicator, More button and accession inside the bar at 1024 / 1280 / 1366 / 1440 / 1600 / 1920 in both variants; the review header prints <b>TOP BAR OVERFLOW</b> if that ever regresses.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Dx truth (FR-V4): in Dx mode the mock never applies the soft (moving-tier) frame; the settle tier is fetched (longer wait on Cold 4G) and the indicator reads <i>Rendering…</i> until every slot is resident, <i>Not complete — do not interpret</i> (assertive) after the 2 s D6 timeout in every unsettled state, not only tile errors; <i>Rendering Complete</i> is asserted only when the frame is settled, not soft and no tiles are missing. The Dx net chip reads <i>Slow link (6 Mbps)</i> without "reduced detail while moving".</li>
+  <li><span class="dn">Revision 2026-11-01</span> Shift+D now takes the same route as the mode chip: the gate dialog. Leaving Dx is a confirmed action (<i>Leave Dx mode</i>, with focus on <i>Stay in Dx mode</i>) and is announced assertively: "Dx mode ended by the user. Viewing in Nav mode." A stray Shift+D during sign-out no longer drops the case to Nav.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Shift+Enter is ignored while a drawing tool is in progress (key handler and <code>finalAction()</code>); the keymap row says so.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Backspace / Delete act on a tracked selection (annotation list row, or a click on the shape) and otherwise say <i>Nothing selected</i>; while a polygon is being drawn Backspace removes the last vertex. Nothing but Ctrl+Z reverts a committed annotation; a delete is itself undoable. The two seeded annotations are separate symbols so each can be deleted on its own.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Sign-out hand-off dialog: with a slide unviewed, <i>Open A2-1 first</i> is the accent (primary) button and <i>Return to LIS</i> is secondary; the classes swap back once every slide has been opened.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Tablet portrait, phone and the embedded sheet: the bottom-left and bottom-right HUD (magnification, scale bar, Pitch unknown) and the toasts lift above the open dock sheet by its measured height (<code>--sheet-h</code>, written once at settle, never per frame; P8).</li>
+  <li><span class="dn">Revision 2026-11-01</span> The 2.3 mm measurement no longer reads as a stitch seam: halo 2.5 px and ink 1.5 px (both non-scaling, <code>--ann-halo-dark</code>), end ticks ± 25 µm, and the label is a <b>HUD-layer pill in screen space</b> clamped to the visible midpoint of the on-screen segment (12 px mono on <code>--color-hud-backdrop</code>), hidden when less than 24 px of the line is in view. User measurements use the same pill. The default view opens at x 9.25 mm · y 2.35 mm so the right tick is in the field on ≥ 1366 px canvases. Engine rule for the handoff: measurement labels and ticks are HUD-layer text, never slide-space geometry.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Coarse-pointer targets: strip chips and the strip button use <code>--target-control</code> (the strip grows to 48 px under a coarse pointer); flow-bar steps and Next, dock buttons, section summaries, Accept / Reject / More, Close panel and the layer visibility toggle are 44 px; the legend rows and the embedded tray chips follow <code>--target-control</code>; the rail's per-step tool group scrolls instead of squeezing the foot tools when the rail is short (1366 × 1024 coarse, 1440 × 900). Navigator pan buttons are always visible and 44 px under coarse (base.css).</li>
+  <li><span class="dn">Revision 2026-11-01</span> axe: <code>aria-pressed</code> is written to <code>button[data-tool]</code> only (the app root keeps <code>data-tool</code> for the cursor); <code>#hudSharp</code> is <code>role="img"</code>; the label string is a <code>role="note"</code> without <code>aria-label</code> (its generated content is read); the badge's name carries the full regulatory string, so a phone screenshot and a screen reader both get the claim.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Rapid preset keys: <code>flyTo()</code> cancels the previous flight's settle, soft and not-complete timers, so the live region and the pressed preset are written only at the landed scale.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Tier, purpose and layout are three inputs: the device tier comes from the quality record (demo <i>Tier</i> control; default Tier 1 on a fine pointer, Tier 2 on a coarse one), the session purpose from the launch context (the surface variant), and only the layout from the width. A Tier-1 companion window narrowed below 1080 px keeps <i>Sign-out</i> and its DX chip; the gate names the first failing row, so the consult variant on a desktop is refused for <i>Session purpose: Consultation · preliminary only</i>, not for a tier it does not have. The attestation line, Tier chip, QA chip, banner and About follow the same inputs.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Identity mismatch / session expired / manifest 503: the step panel's body and footer are <code>inert</code> and its controls read as unavailable while the canvas is blocked.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Danger banner (attestation lost): its button and key inherit the inverse colour (was 1.11:1). Scoped here because base.css is outside this revision's scope; filed for the design system together with the navigator width ladder (lines kept here) and a <code>.modal-layer--dock</code> variant for the anchored dialog layer and the no-scrim rule.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Removed page copies of rules base.css now owns: 24 px segmented items, the hidden layer-row state (<code>.layer-row.is-off</code>), the mode-chip minimum, the 1280–1599 meta rule and the title override.</li>
 </ul>
 
 <h3>Known weaknesses of this mock</h3>
@@ -1301,7 +1328,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li>The tissue is synthetic SVG; tile loading, sharpening and the Dx verifier are simulated by timers, not measured.</li>
   <li>Rotation, curtain compare, snapshot and the B/C/γ panel are stubs (toasts); pen pressure is not simulated; only the lock sync mode is honoured in the compare panes.</li>
   <li>Coverage percentages grow with the trail but are not computed from the true viewport union; "AI-flagged regions viewed" is static.</li>
-  <li>A2-1 reuses the A1-1 drawing; measurement labels are drawn in slide space and scale with zoom, where the engine's HUD text would not.</li>
+  <li>A2-1 reuses the A1-1 drawing. Measurement labels are HUD-layer pills in screen space (as the engine would draw them); the end ticks are still slide-space geometry (± 25 µm) and so grow with zoom, where the engine's would be fixed-length HUD marks. The pill is one DOM transform per measurement per frame, alongside the HUD text and the navigator rectangle.</li>
   <li>Tested in headless Chromium only (mouse, keyboard and touch taps); Apple Pencil hover, palm rejection and 120 Hz pen latency are not represented.</li>
 </ul>
 </details>
@@ -1343,18 +1370,23 @@ const STEP_SETS = {
 const S = {
   product: 'clinical-ih', variant: 'signout', cond: 'normal', step: 3, guided: true, dxWanted: true,
   compare: false, overlay: false, heat: false, legend: true, live: false, guides: false, dock: true, dockSet: false, nav: true, label: true, grid: false,
-  tool: 'select', slide: 0, cx: 8700, cy: 2400, scale: 0.5, lastScale: 2, adjust: false, aiDecision: null,
+  tool: 'select', slide: 0, cx: 9250, cy: 2350, scale: 0.5, lastScale: 2, adjust: false, aiDecision: null, tier: 1, selected: null,
   sync: 'lock', cls: 'Tumor', clsVar: 'ann-2', regions: 1, measures: 1, bookmarks: 2, reviewed: false, sent: false, markReviewed: true,
   dialog: null, settled: true, soft: false, opacity: 55, qHeld: false, echo: true, ncShown: false
 };
 const app = $('app'), host = $('host'), canvas = $('canvas');
 let paneSize = { w: 1200, h: 700 };
 
-/* ---- surface class (B): decided at runtime from pointer, width and window --- */
+/* ---- surface (revision 2026-11-01): three separate inputs. LAYOUT comes from the pointer and the width (this function);
+   the DEVICE TIER comes from the quality record (S.tier; demo control, default Tier 1 on a fine pointer, Tier 2 on a coarse one);
+   the SESSION PURPOSE comes from the launch context (the surface variant). Width never relabels a session or refuses Dx. --- */
 function surface() {
   const coarse = matchMedia('(pointer: coarse)').matches, w = innerWidth;
-  return { coarse, width: w, embedded: S.variant === 'embedded', tablet: coarse || w < 1080, phone: w < 600 };
+  return { coarse, width: w, embedded: S.variant === 'embedded', narrow: w < 1080, phone: w < 600 };
 }
+const purpose = () => S.variant === 'consult' ? 'consult' : 'signout';
+const defaultTier = () => surface().coarse ? 2 : 1;
+const PURPOSE_REASON = 'Consultation · preliminary only; sign-out is not available in this session. Viewing in Nav mode.';
 /* ---- the Dx gate (FR-V4, FR-R7, FR-R9, FR-R10, FR-I10): every row must pass; the first failure gives the refusal string (B) --- */
 function dxGate() {
   const sf = surface(), rows = [];
@@ -1362,7 +1394,8 @@ function dxGate() {
   const fail = (g, t, msg) => rows.push({ ok: false, g, t, msg });
   if (S.product === 'ruo') fail('Build', 'Stoipath Viewer (RUO)', 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.'); else ok('Build', S.product === 'dx' ? 'Stoipath Dx · cleared configuration' : 'Stoipath Clinical-IH · lab-validated');
   if (sf.embedded) fail('Window', 'embedded (EHR iframe)', 'Dx mode unavailable inside an embedded window. Open on the diagnostic display to continue.'); else ok('Window', 'top-level companion window');
-  if (sf.tablet || S.variant === 'consult') fail('Device tier', sf.coarse ? 'Tier 2 (tablet · 60 Hz)' : 'Tier 2 (consult surface)', 'Dx mode unavailable on this device (Tier 2). Consultation · preliminary only.'); else ok('Device tier', 'Tier 1 · N-Desk');
+  if (purpose() === 'consult') fail('Session purpose', 'Consultation · preliminary only (launch context)', PURPOSE_REASON); else ok('Session purpose', 'sign-out (launch context purposeOfUse)');
+  if (S.tier === 2) fail('Device tier', sf.coarse ? 'Tier 2 (tablet · 60 Hz)' : 'Tier 2 (60 Hz display · W60)', 'Dx mode unavailable on this device (Tier 2).'); else ok('Device tier', 'Tier 1 · N-Desk');
   if (S.cond === 'dxrefused') fail('Display attestation', 'none (no EDID, no dx_profile.json)', 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.');
   else if (S.cond === 'dropped') fail('Display attestation', 'lost during the session', 'Dx mode ended: display attestation lost. Viewing in Nav mode.');
   else ok('Display attestation', 'EDID · Barco MDPC-8127');
@@ -1374,7 +1407,7 @@ function dxGate() {
 }
 const isDx = () => S.dxWanted && dxGate().ok;
 const isBlocked = () => S.cond === 'mismatch' || S.cond === 'expired' || S.cond === 'manifest' || S.product === 'ruo';
-const attested = () => !surface().embedded && !surface().tablet && S.variant !== 'consult' && S.cond !== 'dxrefused' && S.cond !== 'dropped';
+const attested = () => !surface().embedded && S.tier === 1 && S.cond !== 'dxrefused' && S.cond !== 'dropped';   /* a display property: tier and attestation, never width or purpose */
 const pitchKnown = () => attested();
 const pitchLabel = () => pitchKnown() ? 'pitch EDID' : 'pitch unknown';
 const steps = () => STEP_SETS[S.variant];
@@ -1394,6 +1427,7 @@ function updateShare() {
   const c = canvas.getBoundingClientRect(), a = app.getBoundingClientRect();
   const share = (c.width * c.height) / ((a.width * a.height) || 1);
   el.textContent = 'canvas ' + (share * 100).toFixed(0) + ' %' + (S.dock && innerWidth < 1600 && innerWidth >= 1080 && !surface().embedded ? ' (drawer overlays)' : '');
+  const tb = document.querySelector('.topbar'); if (tb) { const r = tb.getBoundingClientRect(); const bad = ['modeChip', 'moreBtn'].map($).concat([document.querySelector('.topbar__identity .accession')]).filter((e) => e && e.offsetParent !== null && e.getBoundingClientRect().right > r.right + 0.5); el.classList.toggle('is-low', share < 0.70 || bad.length > 0); if (bad.length) el.textContent += ' · TOP BAR OVERFLOW'; return; }
   el.classList.toggle('is-low', share < 0.70);
 }
 
@@ -1425,6 +1459,7 @@ let flyRaf = null;
 function flyTo(cx, cy, scale, opts) {
   opts = opts || {};
   cancelAnimationFrame(flyRaf);
+  clearTimeout(settleTimer); clearTimeout(softTimer); clearTimeout(ncTimer); ncTimer = null;   /* rapid preset keys: only the landed scale is announced or written (revision 2026-11-01) */
   const target = { cx, cy, scale: clampScale(scale) };
   if (RM || opts.immediate) { setView(target.cx, target.cy, target.scale); return; }
   const from = { cx: S.cx, cy: S.cy, scale: S.scale }, t0 = performance.now(), dur = 380;
@@ -1458,7 +1493,33 @@ function paintView() {
   const l = Math.max(0, (S.cx - w / 2) / SLIDE_W * 100), t = Math.max(0, (S.cy - h / 2) / SLIDE_H * 100);
   const r = Math.min(100, (S.cx + w / 2) / SLIDE_W * 100), b = Math.min(100, (S.cy + h / 2) / SLIDE_H * 100);
   nv.style.left = l + '%'; nv.style.top = t + '%'; nv.style.width = Math.max(1, r - l) + '%'; nv.style.height = Math.max(1, b - t) + '%';
+  paintMeas();
 }
+/* ---- measurement labels: HUD-layer pills at the visible midpoint of the on-screen segment (engine rule; revision 2026-11-01) ---- */
+const measPills = [];   /* { el, x1, y1, x2, y2, hidden } in µm */
+function clipSeg(x1, y1, x2, y2, W, H) {
+  let t0 = 0, t1 = 1; const dx = x2 - x1, dy = y2 - y1;
+  const clip = (p, q) => { if (p === 0) return q >= 0; const r = q / p; if (p < 0) { if (r > t1) return false; if (r > t0) t0 = r; } else { if (r < t0) return false; if (r < t1) t1 = r; } return true; };
+  if (!clip(-dx, x1) || !clip(dx, W - x1) || !clip(-dy, y1) || !clip(dy, H - y1)) return null;
+  return { x1: x1 + t0 * dx, y1: y1 + t0 * dy, x2: x1 + t1 * dx, y2: y1 + t1 * dy };
+}
+function paintMeas() {
+  const W = paneSize.w, H = paneSize.h, showAnn = SLIDES[S.slide].hasAnn;
+  measPills.forEach((m) => {
+    if (m.hidden || (m.seed && !showAnn)) { m.el.classList.remove('is-on'); return; }
+    const sx1 = W / 2 + (m.x1 - S.cx) / S.scale, sy1 = H / 2 + (m.y1 - S.cy) / S.scale, sx2 = W / 2 + (m.x2 - S.cx) / S.scale, sy2 = H / 2 + (m.y2 - S.cy) / S.scale;
+    const c = clipSeg(sx1, sy1, sx2, sy2, W, H);
+    if (!c || Math.hypot(c.x2 - c.x1, c.y2 - c.y1) < 24) { m.el.classList.remove('is-on'); return; }
+    const mx = Math.min(W - 44, Math.max(44, (c.x1 + c.x2) / 2)), my = Math.min(H - 8, Math.max(30, (c.y1 + c.y2) / 2 - 8));
+    m.el.style.transform = 'translate(' + mx.toFixed(1) + 'px,' + my.toFixed(1) + 'px) translate(-50%, -100%)';
+    m.el.classList.add('is-on');
+  });
+}
+function addMeasPill(x1, y1, x2, y2, text, seed) {
+  const el = document.createElement('span'); el.className = 'meas-pill'; el.textContent = text; $('measLayer').appendChild(el);
+  const m = { el, x1, y1, x2, y2, hidden: false, seed: !!seed }; measPills.push(m); paintMeas(); return m;
+}
+function removeMeasPill(m) { if (!m) return; const i = measPills.indexOf(m); if (i >= 0) measPills.splice(i, 1); m.el.remove(); }
 /* ---- settle-time writes: everything that is not HUD text (engineering judge) ---- */
 function renderSettled() {
   const mt = magText(S.scale);
@@ -1479,12 +1540,15 @@ function gesturing() {
 }
 function scheduleSettle() {
   S.settled = false; S.soft = false;
-  clearTimeout(settleTimer); clearTimeout(softTimer); clearTimeout(ncTimer);
-  if (S.cond === 'cold4g') app.classList.add('is-soft');
+  clearTimeout(settleTimer); clearTimeout(softTimer); clearTimeout(ncTimer); ncTimer = null;
+  const dx = isDx();
+  /* Nav mode on a slow link shows the best resident ancestor (soft) and says so; Dx NEVER draws the moving tier (FR-V4):
+     it fetches the settle tier, so the frame stays unchanged and reads Rendering… until every slot is resident (revision 2026-11-01). */
+  if (S.cond === 'cold4g' && !dx) app.classList.add('is-soft'); else app.classList.remove('is-soft');
   renderIndicator();
-  const delay = S.cond === 'cold4g' ? 900 : (S.cond === 'slow' ? 700 : (S.cond === 'offline' ? 180 : 320));
+  const delay = S.cond === 'cold4g' ? (dx ? 1600 : 900) : (S.cond === 'slow' ? 700 : (S.cond === 'offline' ? 180 : 320));
   settleTimer = setTimeout(() => {
-    S.settled = true; S.soft = S.cond === 'cold4g';
+    S.settled = true; S.soft = S.cond === 'cold4g' && !isDx();
     if (!S.soft) app.classList.remove('is-soft');
     addTrail(); renderIndicator(); renderSettled(); announceView();
     if (S.soft) softTimer = setTimeout(() => { S.soft = false; app.classList.remove('is-soft'); renderIndicator(); }, 1800);
@@ -1495,18 +1559,19 @@ function renderIndicator() {
   let cls, text;
   clearTimeout(quietTimer); ind.classList.remove('is-quiet');
   if (isDx()) {
-    if (!S.settled) { cls = 'rendering'; text = 'Rendering…'; }
-    else if (S.cond === 'tileerror' || S.cond === 'ctxloss') {
-      if (S.ncShown) { cls = 'notcomplete'; text = 'Not complete — do not interpret'; }
-      else { cls = 'rendering'; text = 'Rendering…'; clearTimeout(ncTimer); ncTimer = setTimeout(() => { S.ncShown = true; renderIndicator(); announce('Not complete. Do not interpret.', true); }, 2000); }
-    } else { cls = 'complete'; text = 'Rendering Complete'; }
+    /* FR-V4: Rendering Complete is asserted only when every drawn slot is resident at L*; a soft frame or missing tiles can never carry it.
+       Any other state reads Rendering… and, after the D6 timeout (2 s), Not complete — do not interpret (assertive). */
+    const resident = S.settled && !S.soft && !app.classList.contains('is-soft') && S.cond !== 'tileerror' && S.cond !== 'ctxloss';
+    if (resident) { cls = 'complete'; text = 'Rendering Complete'; S.ncShown = false; clearTimeout(ncTimer); ncTimer = null; }
+    else if (S.ncShown) { cls = 'notcomplete'; text = 'Not complete — do not interpret'; }
+    else { cls = 'rendering'; text = 'Rendering…'; if (!ncTimer) ncTimer = setTimeout(() => { ncTimer = null; S.ncShown = true; renderIndicator(); announce('Not complete. Do not interpret.', true); }, 2000); }
   } else if (S.cond === 'offline') { cls = 'offline'; text = 'Offline — cached tiles only'; }
   else if (!S.settled) { cls = 'sharpening'; text = 'Sharpening…'; }
   else if (S.soft) { cls = 'soft'; text = 'Soft — slow link'; }
   else if (S.cond === 'tileerror') { cls = 'soft'; text = 'Soft — level not yet available'; }
   else if (S.cond === 'slow') { cls = 'sharpening'; text = 'Sharpening…'; }
   else { cls = 'sharp'; text = 'Sharp'; if (!RM) quietTimer = setTimeout(() => ind.classList.add('is-quiet'), 800); }
-  if (S.cond !== 'tileerror' && S.cond !== 'ctxloss') S.ncShown = false;
+  if (!isDx()) { S.ncShown = false; clearTimeout(ncTimer); ncTimer = null; }
   ind.className = 'indicator indicator--' + cls; lab.textContent = text;
   hud.className = 'hud__item hud__sharp indicator indicator--' + cls; hud.setAttribute('aria-label', text);
 }   /* the indicator is the only strip element that changes with the pixels; the notice and mode chip change only with state (renderStrip) */
@@ -1580,7 +1645,7 @@ function renderProduct() {
   const map = { 'clinical-ih': ['Clinical-IH', 'clinical'], dx: ['Dx', 'dx'], ruo: ['RUO', 'ruo'] };
   const m = map[S.product];
   const badge = $('badge'); badge.className = 'badge badge--' + m[1]; badge.textContent = m[0];
-  badge.setAttribute('aria-label', 'Product: Stoipath ' + (S.product === 'ruo' ? 'Viewer, research use only' : m[0]) + '. Opens the full label and About');
+  badge.setAttribute('aria-label', 'Product: Stoipath ' + (S.product === 'ruo' ? 'Viewer, research use only' : m[0]) + '. ' + STRINGS[S.product] + ' Opens the full label and About');
   $('labelString').className = 'topbar__label badge-string badge-string--' + m[1];
   app.classList.toggle('is-refused', S.product === 'ruo'); $('plateRefused').hidden = S.product !== 'ruo';
   app.dataset.build = S.product;
@@ -1592,22 +1657,25 @@ function renderVariant() {
   $$('.consult-only').forEach((e) => { e.hidden = v !== 'consult'; });
   $$('.not-consult').forEach((e) => { e.hidden = v === 'consult'; });
   $('frozenLine').hidden = v !== 'consult';
-  const consultish = v === 'consult' || (sf.tablet && v !== 'embedded');
-  $('kvPurpose').textContent = consultish ? 'consultation · preliminary only' : 'sign-out';
-  $('purposeChip').textContent = consultish ? 'Consultation · preliminary only' : 'Sign-out';
+  const consult = purpose() === 'consult';
+  $('kvPurpose').textContent = consult ? 'consultation · preliminary only' : 'sign-out';
+  $('purposeChip').querySelector('.chip__long').textContent = consult ? 'Consultation · preliminary only' : 'Sign-out';
+  $('purposeChip').querySelector('.chip__short').textContent = consult ? 'Prelim only' : 'Sign-out';
+  $('purposeChip').title = 'Purpose of use (launch context)';
   const wl = S.reviewed ? 'Reviewed' : (v === 'consult' ? 'Frozen · in review' : 'In review');
   $('worklistChip').textContent = $('worklistChip2').textContent = wl;
   $('worklistChip').classList.toggle('is-reviewed', S.reviewed); $('worklistChip2').classList.toggle('is-reviewed', S.reviewed);
   const at = $('attestLine');
-  if (v === 'consult' || (sf.tablet && v !== 'embedded')) at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>iPad Pro 12.9</span> · MDM profile · Tier 2 (60 Hz) · no display attestation → Nav mode · <b>Consultation · preliminary only</b></span>';
+  if (v !== 'embedded' && S.tier === 2) at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>' + (sf.coarse ? 'iPad Pro 12.9 · MDM profile' : '60 Hz display · W60') + '</span> · Tier 2 · no display attestation → Nav mode' + (consult ? ' · <b>Consultation · preliminary only</b>' : '') + '</span>';
+  else if (v === 'consult') at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · session purpose <b>Consultation · preliminary only</b> → Nav mode (Dx is reserved for sign-out sessions)</span>';
   else if (v === 'embedded') at.innerHTML = '<span class="g off">–</span><span>Embedded window (Hyperdrive) · attestation not available inside an iframe → Nav mode · hand off to the companion window for Dx</span>';
   else if (S.cond === 'dxrefused') at.innerHTML = '<span class="g attn">!</span><span>This display cannot be attested (no EDID, no dx_profile.json) · Nav mode · ask your display administrator</span>';
   else if (S.cond === 'dropped') at.innerHTML = '<span class="g attn">!</span><span>Display attestation lost during the session · Dx mode ended · Nav mode</span>';
   else if (S.cond === 'qastale') at.innerHTML = '<span class="g attn">!</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">display QA overdue · last pass 34 days ago</span> · Nav mode</span>';
   else at.innerHTML = '<span class="g ok">✓</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span>';
-  $('stripMic').hidden = v !== 'signout' || sf.tablet;
-  $('stripTier').hidden = !(v === 'consult' || (sf.tablet && v !== 'embedded'));
-  const qa = $('qaChip'); qa.hidden = v !== 'signout' || sf.tablet || S.cond === 'dxrefused' || S.cond === 'dropped'; qa.textContent = S.cond === 'qastale' ? 'QA overdue · 34 days' : 'QA passed 3 days ago';
+  $('stripMic').hidden = v !== 'signout' || sf.coarse;
+  $('stripTier').hidden = S.tier !== 2 || v === 'embedded'; $('stripTier').textContent = sf.coarse ? 'Tier 2 · 60 Hz' : 'Tier 2 · 60 Hz · W60';
+  const qa = $('qaChip'); qa.hidden = v !== 'signout' || S.tier === 2 || S.cond === 'dxrefused' || S.cond === 'dropped'; qa.textContent = S.cond === 'qastale' ? 'QA overdue · 34 days' : 'QA passed 3 days ago';
   const fin = $('finalBtn');
   fin.innerHTML = v === 'consult' ? '<svg class="icon"><use href="#i-send"/></svg>Send preliminary to OR <kbd class="key">⇧↵</kbd>' : (v === 'embedded' ? 'Open on diagnostic display <kbd class="key">⇧↵</kbd>' : '<svg class="icon"><use href="#i-signout"/></svg>Request sign-out <kbd class="key">⇧↵</kbd>');
   fin.disabled = (v === 'signout' && S.reviewed) || (v === 'consult' && S.sent);
@@ -1621,12 +1689,14 @@ function renderCond() {
   app.dataset.cond = S.cond;
   const blocked = S.cond === 'mismatch' || S.cond === 'expired' || S.cond === 'manifest';
   app.classList.toggle('is-blocked', blocked); app.classList.toggle('is-mismatch', S.cond === 'mismatch');
+  ['dockBody', 'dockFoot'].forEach((id) => { if (blocked) $(id).setAttribute('inert', ''); else $(id).removeAttribute('inert'); });   /* the step panel is inert while the canvas is blocked */
   $('plateMismatch').hidden = S.cond !== 'mismatch'; $('plateExpired').hidden = S.cond !== 'expired'; $('plateManifest').hidden = S.cond !== 'manifest';
   $('stripNet').hidden = S.cond !== 'cold4g'; $('stripOffline').hidden = S.cond !== 'offline'; $('stripSlow').hidden = S.cond !== 'slow';
+  $('stripNet').textContent = isDx() ? 'Slow link (6 Mbps)' : 'Slow link (6 Mbps) — reduced detail while moving';   /* Dx never draws the moving tier */
   const idl = $('identityLine');
   idl.innerHTML = S.cond === 'mismatch' ? '<span class="g attn">!</span><span><b>Identity mismatch</b> · manifest <span class="mono">sid</span> differs from the launch context · viewing is blocked · <span class="mono">AuditEvent</span> recorded</span>' : '<span class="g ok">✓</span><span><b>Identity verified</b> · launch context matches the manifest (<span class="mono">sid</span>, Study UID) before the first tile was drawn</span>';
   const g = dxGate(), slot = $('bannerSlot'); let banner = '';
-  if (S.product !== 'ruo' && S.variant === 'signout' && !surface().tablet) {
+  if (S.product !== 'ruo' && S.variant === 'signout' && S.tier === 1) {
     if (S.cond === 'dropped') banner = '<div class="banner banner--danger" role="alert" data-live="dx:attestation"><span class="banner__glyph">!</span><span class="banner__text"><b>Dx mode ended:</b> display attestation lost. Viewing in Nav mode.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary" data-cmd="step1">Display record <kbd class="key">I</kbd></button></div></div>';
     else if (S.dxWanted && !g.ok && (S.cond === 'dxrefused' || S.cond === 'qastale')) banner = '<div class="banner banner--warning" role="status" data-live="dx:attestation"><span class="banner__glyph">!</span><span class="banner__text">' + g.reason.replace(/^(Dx mode unavailable:)/, '<b>$1</b>') + '</span><div class="banner__actions"><button class="btn btn--sm btn--secondary" data-cmd="dxgate">Why? <kbd class="key">⇧D</kbd></button><button class="btn btn--sm btn--secondary" data-cmd="step1">Display record <kbd class="key">I</kbd></button></div></div>';
   }
@@ -1748,15 +1818,21 @@ function renderChrome() {
   $$('[data-cmd="nav"]').forEach((b) => b.setAttribute('aria-pressed', S.nav ? 'true' : 'false'));
   $$('[data-cmd="dock"]').forEach((b) => b.setAttribute('aria-pressed', S.dock ? 'true' : 'false'));
   $$('[data-cmd="grid"]').forEach((b) => b.setAttribute('aria-pressed', S.grid ? 'true' : 'false'));
-  $$('[data-tool]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tool === S.tool ? 'true' : 'false'));
+  $$('button[data-tool]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tool === S.tool ? 'true' : 'false'));
   $$('[data-sync]').forEach((b) => b.setAttribute('aria-checked', b.dataset.sync === S.sync ? 'true' : 'false'));
   $('syncLabel').textContent = 'sync ' + S.sync;
   $$('.class-chip').forEach((c) => c.setAttribute('aria-pressed', c.dataset.cls === S.cls ? 'true' : 'false'));
   document.body.classList.toggle('show-live', S.live); document.body.classList.toggle('show-guides', S.guides);
   const pol = layoutPolicy(), note = $('dockNote');
   note.textContent = 'Layout policy · ' + pol.note; note.classList.toggle('is-on', S.dock && !!pol.note);
-  renderToolPill();
+  renderToolPill(); updateSheetVar();
   requestAnimationFrame(updateShare);
+}
+/* the dock sheet's measured height, written once at settle (never per frame), lifts the HUD and toasts above it (P8) */
+function updateSheetVar() {
+  const sheet = S.dock && (innerWidth <= 1079 || S.variant === 'embedded');
+  if (!sheet) { app.style.removeProperty('--sheet-h'); return; }
+  requestAnimationFrame(() => { const h = $('dock').getBoundingClientRect().height; app.style.setProperty('--sheet-h', Math.round(h) + 'px'); });
 }
 function renderToolPill() {
   const pill = $('toolPill');
@@ -1764,7 +1840,7 @@ function renderToolPill() {
   pill.innerHTML = txt || ''; pill.classList.toggle('is-on', !!txt);
 }
 function renderControls() {
-  $('ctlProduct').value = S.product; $('ctlVariant').value = S.variant; $('ctlCond').value = S.cond; $('ctlStep').value = String(S.step);
+  $('ctlProduct').value = S.product; $('ctlVariant').value = S.variant; $('ctlCond').value = S.cond; $('ctlStep').value = String(S.step); $('ctlTier').value = String(S.tier);
   $('ctlGuided').checked = S.guided; $('ctlDx').checked = S.dxWanted; $('ctlCompare').checked = S.compare; $('ctlOverlay').checked = S.overlay;
   $('ctlLive').checked = S.live; $('ctlGuides').checked = S.guides; $('ctlDock').checked = S.dock; $('ctlDialog').value = S.dialog && $('ctlDialog').querySelector('[value="' + S.dialog + '"]') ? S.dialog : '';
 }
@@ -1778,7 +1854,7 @@ function writeHash() {
   if (S.heat) p.set('heat', '1'); if (!S.legend) p.set('legend', '0'); if (S.live) p.set('live', '1'); if (S.guides) p.set('guides', '1');
   if (S.dockSet) p.set('dock', S.dock ? '1' : '0'); if (!S.nav) p.set('nav', '0');
   if (S.slide) p.set('slide', S.slide); if (S.dialog) p.set('dialog', S.dialog); if (S.adjust) p.set('adjust', '1'); if (S.tool !== 'select') p.set('tool', S.tool);
-  if (!S.echo) p.set('echo', '0');
+  if (!S.echo) p.set('echo', '0'); if (S.tier !== defaultTier()) p.set('tier', S.tier);
   const mt = magText(S.scale); if (mt !== '20×') p.set('mag', mt.replace('×', ''));
   const h = '#' + p.toString();
   try { history.replaceState(null, '', h); } catch (e) { /* file:// in some browsers */ }
@@ -1792,6 +1868,7 @@ function readHash() {
   S.guided = h.get('guided') !== '0'; S.dxWanted = h.get('dx') !== '0';
   S.compare = h.get('compare') === '1'; S.overlay = h.get('overlay') === '1'; S.heat = h.get('heat') === '1'; S.live = h.get('live') === '1'; S.guides = h.get('guides') === '1';
   S.legend = h.get('legend') !== '0'; S.echo = h.get('echo') !== '0';
+  S.tier = h.get('tier') === '2' ? 2 : (h.get('tier') === '1' ? 1 : defaultTier());
   if (h.has('dock')) { S.dock = h.get('dock') !== '0'; S.dockSet = true; } else { S.dockSet = false; S.dock = layoutPolicy().open; }
   S.nav = h.get('nav') !== '0'; S.adjust = h.get('adjust') === '1';
   S.slide = h.get('slide') ? Math.min(2, Math.max(0, parseInt(h.get('slide'), 10) || 0)) : 0;
@@ -1803,6 +1880,7 @@ function readHash() {
 /* demo controls → state */
 $('ctlProduct').addEventListener('change', (e) => { S.product = e.target.value; applyAll(); });
 $('ctlVariant').addEventListener('change', (e) => { S.variant = e.target.value; S.dockSet = false; S.dock = layoutPolicy().open; applyAll(); scheduleSettle(); });
+$('ctlTier').addEventListener('change', (e) => { S.tier = parseInt(e.target.value, 10) === 2 ? 2 : 1; S.ncShown = false; applyAll(); scheduleSettle(); announce(isDx() ? 'Dx mode.' : (dxGate().reason || 'Nav mode.'), !isDx()); });
 $('ctlCond').addEventListener('change', (e) => { S.cond = e.target.value; S.ncShown = false; if (S.cond === 'dropped') S.dxWanted = true; applyAll(); scheduleSettle(); if (S.cond === 'mismatch') announce('Slide identity mismatch. The launch context (AP-26-04417 · A1-1) does not match this slide\'s manifest. Viewing is blocked. Report to the laboratory.', true); if (S.cond === 'dropped') announce('Dx mode ended: display attestation lost. Viewing in Nav mode.', true); });
 $('ctlStep').addEventListener('change', (e) => gotoStep(parseInt(e.target.value, 10), { open: true }));
 $('ctlGuided').addEventListener('change', (e) => { S.guided = e.target.checked; renderFlow(); renderChrome(); writeHash(); });
@@ -1860,13 +1938,21 @@ function toggleOverlay() {
   announce(S.overlay ? 'Metastasis detector shown. Not validated for diagnostic use on this viewer.' : 'AI overlay hidden.');
 }
 function toggleDx() {
-  if (isDx()) { S.dxWanted = false; applyAll(); scheduleSettle(); announce('Nav mode.'); toast('Nav mode', 'Dx mode left · the sharpness indicator now describes the pixels'); echo('dx.leave'); return; }
-  openDialog('dxgate');   /* the gate dialog is also the "why not" surface: the failing row is bold, Enter is disabled */
+  /* Shift+D and the mode chip take the same route: the gate dialog. Entering needs every row to pass; leaving is a confirmed
+     action in the same dialog (focus lands on Stay in Dx mode), so a stray Shift+D during sign-out cannot drop the case to Nav
+     (revision 2026-11-01). The dialog is also the "why not" surface: the failing row is bold and Enter is disabled. */
+  openDialog('dxgate');
   const g = dxGate(); if (!g.ok) announce(g.reason, true);
+}
+function leaveDx() {
+  closeDialog(); S.dxWanted = false; applyAll(); scheduleSettle(); echo('dx.leave');
+  announce('Dx mode ended by the user. Viewing in Nav mode.', true);
+  toast('Nav mode', 'Dx mode ended by the user · the sharpness indicator now describes the pixels · Shift+D re-enters through the gate');
 }
 function nextUnviewed() { const i = SLIDES.findIndex((s) => !s.opened); if (i >= 0) setSlide(i); else toast('All slides opened', 'Coverage ' + SLIDES.map((s) => s.id + ' ' + Math.round(s.coverage) + ' %').join(' · ')); }
 function panBy(dx, dy, frac) { gesturing(); setView(S.cx + dx * paneSize.w * S.scale * frac, S.cy + dy * paneSize.h * S.scale * frac, S.scale); echo(frac >= 1 ? 'pan.viewport' : 'pan'); }
 function finalAction() {
+  if (draft) return;                                                              /* principles §4.5: Shift+Enter is ignored while a drawing tool is in progress */
   if (S.product === 'ruo') { toast('No sign-out in this build', STRINGS.ruo, { glyph: '!' }); return; }
   if (isBlocked()) return;
   if (S.variant === 'embedded') { runCmd('handoff'); return; }
@@ -1909,6 +1995,8 @@ function runCmd(cmd, src) {
     case 'confirmSend': closeDialog(); S.sent = true; renderVariant(); echo('preliminary.send'); toast('Preliminary sent', 'OR 4 · ORU / FHIR Observation (preliminary) · ' + $('tatBig').textContent + ' of the 20-minute target · surgeon paged'); announce('Preliminary diagnosis sent to the OR.'); break;
     case 'confirmDx': if (!dxGate().ok) return; closeDialog(); S.dxWanted = true; S.adjust = false; S.overlay = false; applyAll(); scheduleSettle(); echo('dx.enter'); announce('Dx mode. Display attested, EDID, Barco MDPC-8127. QA passed 3 days ago.'); break;
     case 'dx': toggleDx(); break;
+    case 'leaveDx': leaveDx(); break;
+    case 'deleteSelected': deleteSelected(); break;
     case 'handoff': echo('handoff.companion'); toast('Hand-off sent', 'Companion window on the diagnostic display · launch token · BroadcastChannel / postMessage · no popup, no top navigation'); announce('Hand-off sent to the companion window.'); break;
     case 'nextUnviewed': nextUnviewed(); break;
     case 'nextSlide': setSlide((S.slide + 1) % 3); break;
@@ -1923,7 +2011,7 @@ function runCmd(cmd, src) {
     case 'label': if (isDx()) toast('Label image fixed in Dx mode', 'FR-R9 · D13: the label image cannot be collapsed in Dx', { glyph: '!' }); else { S.label = !S.label; renderChrome(); echo(S.label ? 'label.show' : 'label.hide'); } break;
     case 'hoverpan': echo('pan.hover'); toast('Hover auto-pan', 'Drag alternative (SC 2.5.7): the view follows the pointer near the canvas edge · stub'); break;
     case 'copylink': echo('view.copy-link'); toast('View link copied', 'Compact state-document URL · Tier 0 · opens at this centre and scale'); break;
-    case 'netsheet': toast('Slow link (6 Mbps)', 'Reduced detail while moving · the centre sharpens within about half a second after the gesture · never blank'); break;
+    case 'netsheet': toast('Slow link (6 Mbps)', isDx() ? 'Dx fetches the settle tier and never draws the moving tier: the frame reads Rendering… until every slot is resident, Not complete after 2 s · never blank' : 'Reduced detail while moving · the centre sharpens within about half a second after the gesture · never blank'); break;
     case 'slowsheet': toast('Server slow (p95 1.2 s)', 'Prefetch paused so the visible tiles arrive first · the indicator says Sharpening… until they do'); break;
     case 'tiersheet': toast('Tier 2 · 60 Hz (iPad Safari)', 'Never blank · at most one level soft during fast bursts · centre sharp within about half a second on a cold burst · Dx not available on this tier'); break;
     case 'offsheet': toast('Offline pack · AP-26-04417 frozen', '3 slides · 412 MB · saved 09:43 · L* tiles for the frozen; permanents are not in the pack'); break;
@@ -1947,7 +2035,7 @@ document.addEventListener('click', (e) => {
     const p = fly.dataset.fly.split(',').map(parseFloat);
     if (!SLIDES[S.slide].hasAnn && fly.closest('.annlist, .legend, .bookmarks, .layer-row')) setSlide(0, { keepView: true });
     flyTo(p[0], p[1], p[2]); echo('flyTo');
-    $$('.annlist [role="option"]').forEach((o) => o.setAttribute('aria-selected', o === fly ? 'true' : 'false'));
+    if (fly.closest('.annlist')) selectAnn(fly); else clearSelection();
     return;
   }
   const sl = t.closest('button[data-slide]'); if (sl) { setSlide(SLIDES.findIndex((s) => s.id === sl.dataset.slide)); return; }
@@ -2047,7 +2135,10 @@ function endPointer(e) {
   if (!drag) return;
   const d = drag; drag = null; canvas.classList.remove('is-dragging');
   if (d.drawing) { if (S.tool === 'freehand') finishFreehand(); else placePoint(e, d.pane); return; }
-  if (d.moved) { setView(S.cx, S.cy, S.scale); echo('pan'); }
+  if (d.moved) { setView(S.cx, S.cy, S.scale); echo('pan'); return; }
+  const shape = e.target && e.target.closest && e.target.closest('#userAnn > g, #annPoly, #annLine');
+  if (shape) { const li = shape.__li || document.querySelector('.annlist [data-ann="' + (shape.id === 'annPoly' ? 'poly' : 'line') + '"]'); if (li) { selectAnn(li); return; } }
+  if (S.selected) clearSelection();
 }
 canvas.addEventListener('pointerup', endPointer); canvas.addEventListener('pointercancel', endPointer);
 canvas.addEventListener('dblclick', (e) => {
@@ -2065,8 +2156,33 @@ canvas.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 /* ---- drawing tools (annotation API, op-based) --------------------------- */
-let draft = null; const undoStack = [];
+let draft = null; const undoStack = [];   /* entries: { label, undo() } — created shapes and deletions both revert through Ctrl+Z */
+let draftPill = null;
 const clsColor = () => 'var(--' + S.clsVar + ')';
+/* selection (annotation list row or a click on the shape); Backspace / Delete act on it and on nothing else (revision 2026-11-01) */
+function selectAnn(li) { S.selected = li; $$('.annlist [role="option"]').forEach((o) => o.setAttribute('aria-selected', o === li ? 'true' : 'false')); }
+function clearSelection() { S.selected = null; $$('.annlist [role="option"]').forEach((o) => o.setAttribute('aria-selected', 'false')); }
+function deleteSelected() {
+  const li = S.selected;
+  if (!li || !li.isConnected) { toast('Nothing selected', 'Select an annotation first (list or click on the shape); Ctrl+Z undoes', { glyph: 'i' }); return; }
+  const label = li.querySelector('.t').textContent.replace(/\s+/g, ' ');
+  let restore;
+  if (li.dataset.ann) {                                           /* the two annotations seeded from the earlier session: hide the symbol, keep the DOM for undo */
+    const use = $(li.dataset.ann === 'poly' ? 'annPoly' : 'annLine'), pill = li.dataset.ann === 'line' ? seedPill : null, parent = li.parentNode, next = li.nextSibling;
+    use.style.display = 'none'; if (pill) pill.hidden = true; li.remove();
+    if (li.dataset.ann === 'line') S.measures--; else S.regions--;
+    restore = () => { use.style.display = ''; if (pill) pill.hidden = false; parent.insertBefore(li, next); if (li.dataset.ann === 'line') S.measures++; else S.regions++; };
+  } else {
+    const g = li.__g, pill = li.__pill, parent = li.parentNode, next = li.nextSibling, isMeas = !!pill;
+    if (g) g.remove(); if (pill) pill.hidden = true; li.remove();
+    if (isMeas) S.measures--; else S.regions--;
+    restore = () => { if (g) $('userAnn').appendChild(g); if (pill) pill.hidden = false; parent.insertBefore(li, next); if (isMeas) S.measures++; else S.regions++; };
+  }
+  clearSelection(); paintMeas(); renderChecklist(); echo('annotation.delete');
+  undoStack.push({ label: 'delete · ' + label, undo: () => { restore(); paintMeas(); renderChecklist(); } });
+  toast('Deleted · ' + label, 'annotationDeleted op recorded · Ctrl+Z restores it');
+  announce(label + ' deleted. Control Z restores it.');
+}
 function startDraftAt(p) { cancelDraft(); if (S.tool === 'point') { commitShape('point', [p]); return; } draft = { kind: S.tool, pts: [p], g: el('g') }; $('userAnn').appendChild(draft.g); drawDraft(p); }
 function placePoint(e, pane) {
   const p = worldAt(e.clientX, e.clientY, pane);
@@ -2088,7 +2204,8 @@ function drawDraft(cursor) {
     const a = pts[0], b = pts[1]; if (!b) return;
     g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'halo', 'vector-effect': 'non-scaling-stroke' }));
     g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'tick', 'vector-effect': 'non-scaling-stroke' }));
-    const t = el('text', { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 10 * S.scale, 'text-anchor': 'middle', 'font-size': 13 * S.scale }); t.textContent = fmtLen(Math.hypot(a.x - b.x, a.y - b.y)); g.appendChild(t);
+    if (!draftPill) draftPill = addMeasPill(a.x, a.y, b.x, b.y, '');
+    draftPill.x1 = a.x; draftPill.y1 = a.y; draftPill.x2 = b.x; draftPill.y2 = b.y; draftPill.el.textContent = fmtLen(Math.hypot(a.x - b.x, a.y - b.y)); paintMeas();
   } else { const a = pts[0], b = pts[1]; if (b) shapeEl(draft.kind, a, b, g, true); }
 }
 function shapeEl(kind, a, b, g, open) {
@@ -2107,7 +2224,8 @@ function commitDraft() {
 }
 function commitShape(kind, pts, g) {
   g = g || el('g'); g.innerHTML = ''; $('userAnn').appendChild(g);
-  const col = clsColor(), sid = SLIDES[S.slide].id; let title, sub, sw = 'sw', swStyle = 'background:' + col, meta, c;
+  removeMeasPill(draftPill); draftPill = null;
+  const col = clsColor(), sid = SLIDES[S.slide].id; let title, sub, sw = 'sw', swStyle = 'background:' + col, meta, c, pill = null;
   if (kind === 'point') {
     const p = pts[0], r = 5 * S.scale; c = p;
     g.appendChild(el('circle', { cx: p.x, cy: p.y, r, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('circle', { cx: p.x, cy: p.y, r, class: 'ink pt', style: 'fill:' + col + ';stroke:' + col, 'vector-effect': 'non-scaling-stroke' }));
@@ -2115,7 +2233,9 @@ function commitShape(kind, pts, g) {
   } else if (kind === 'measure') {
     const a = pts[0], b = pts[1], len = Math.hypot(a.x - b.x, a.y - b.y); c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
     g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'tick', 'vector-effect': 'non-scaling-stroke' }));
-    const t = el('text', { x: c.x, y: c.y - 10 * S.scale, 'text-anchor': 'middle', 'font-size': 13 * S.scale }); t.textContent = fmtLen(len); g.appendChild(t);
+    const ang = Math.atan2(b.y - a.y, b.x - a.x), tx = -Math.sin(ang) * 25, ty = Math.cos(ang) * 25;   /* end ticks ± 25 µm, perpendicular */
+    [a, b].forEach((q) => { g.appendChild(el('line', { x1: q.x - tx, y1: q.y - ty, x2: q.x + tx, y2: q.y + ty, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('line', { x1: q.x - tx, y1: q.y - ty, x2: q.x + tx, y2: q.y + ty, class: 'tick', 'vector-effect': 'non-scaling-stroke' })); });
+    pill = addMeasPill(a.x, a.y, b.x, b.y, fmtLen(len));
     title = 'Measurement · <b>' + fmtLen(len) + '</b>'; sub = sid + ' · µm from MPP (0.25 µm/px scan) · ' + now(); sw = 'sw sw--line'; swStyle = 'background:var(--ann-8)'; meta = 'M'; S.measures++;
     toast('measurementCreated', fmtLen(len) + ' · returns to the LIS as SR TID 1500');
   } else if (kind === 'polygon' || kind === 'freehand') {
@@ -2129,11 +2249,12 @@ function commitShape(kind, pts, g) {
   const li = document.createElement('button'); li.className = 'list__item'; li.setAttribute('role', 'option'); li.dataset.fly = c.x + ',' + c.y + ',' + S.scale;
   li.innerHTML = '<span class="' + sw + '" style="' + swStyle + '"></span><span class="txt"><span class="t">' + title + '</span><span class="s">' + esc(sub) + '</span></span><span class="meta">' + meta + '</span>';
   document.querySelector('.annlist').prepend(li);
-  undoStack.push({ g, li, kind });
+  li.__g = g; li.__pill = pill; g.__li = li;
+  undoStack.push({ label: kind, undo: () => { g.remove(); li.remove(); removeMeasPill(pill); if (kind === 'measure') S.measures--; else S.regions--; if (S.selected === li) clearSelection(); renderChecklist(); } });
   renderChecklist(); echo('annotation.create'); announce(title.replace(/<[^>]+>/g, '') + ' created.');
 }
-function cancelDraft() { if (draft) { draft.g.remove(); draft = null; } }
-function undo() { const u = undoStack.pop(); if (!u) { toast('Nothing to undo'); return; } u.g.remove(); u.li.remove(); if (u.kind === 'measure') S.measures--; else S.regions--; renderChecklist(); echo('undo'); toast('Undone', u.kind + ' removed · annotation op reverted'); }
+function cancelDraft() { if (draft) { draft.g.remove(); draft = null; } removeMeasPill(draftPill); draftPill = null; }
+function undo() { const u = undoStack.pop(); if (!u) { toast('Nothing to undo'); return; } u.undo(); echo('undo'); toast('Undone', u.label + ' · annotation op reverted'); }
 function startFreehand(e) { cancelDraft(); draft = { kind: 'freehand', pts: [worldAt(e.clientX, e.clientY, paneOf(e))], g: el('g') }; $('userAnn').appendChild(draft.g); }
 function extendFreehand(e) { const p = worldAt(e.clientX, e.clientY, paneOf(e)), last = draft.pts[draft.pts.length - 1]; if (Math.hypot(p.x - last.x, p.y - last.y) > 2 * S.scale) { draft.pts.push(p); drawDraft(); } }
 function finishFreehand() { if (draft && draft.pts.length > 4) commitDraft(); else cancelDraft(); }
@@ -2199,14 +2320,14 @@ function key(k) {
     case 'shift+A': runCmd('acceptAi'); return true;
     case 'shift+X': runCmd('rejectAi'); return true;
     case 'Enter': if (draft) { commitDraft(); return true; } return false;
-    case 'Backspace': case 'Delete': if (draft) { cancelDraft(); } else undo(); return true;
+    case 'Backspace': case 'Delete': if (draft) { if (draft.kind === 'polygon' && draft.pts.length > 1) { draft.pts.pop(); drawDraft(); } else cancelDraft(); } else deleteSelected(); return true;   /* never a silent undo: Ctrl+Z only */
     case ' ': spaceHeld = true; canvas.classList.add('space-pan'); return true;
     case 'N': gotoStep(S.step + 1); return true;
     case 'shift+N': gotoStep(S.step - 1); return true;
     case 'shift+G': runCmd('guided'); return true;
     case 'K': toggleDock(); return true;
     case 'I': gotoStep(1, { open: true }); return true;
-    case 'shift+Enter': finalAction(); return true;
+    case 'shift+Enter': if (draft) return true; finalAction(); return true;   /* ignored while a drawing tool is in progress (principles §4.5) */
     case 'shift+D': toggleDx(); return true;
     case '?': openDialog('keymap'); return true;
     case 'ContextMenu': { const p = lastPointer || { x: canvas.getBoundingClientRect().left + 48, y: canvas.getBoundingClientRect().top + 72 }; openCtx(p.x, p.y); return true; }
@@ -2222,6 +2343,7 @@ document.addEventListener('keydown', (e) => {
     if ($('ctxmenu').classList.contains('is-open')) { closeCtx(); canvas.focus({ preventScroll: true }); return; }
     if (inField) return;
     if (draft) { cancelDraft(); return; }
+    if (S.selected) { clearSelection(); return; }
     if (S.tool !== 'select') { setTool('select'); return; }
     if (S.dock && innerWidth < 1600) { S.dock = false; S.dockSet = true; renderChrome(); renderControls(); writeHash(); echo('panel.close'); }
     return;
@@ -2254,17 +2376,19 @@ function openDialog(name) {
   const layer = $('modalLayer'); layer.innerHTML = ''; layer.appendChild(node); layer.hidden = false; layer.classList.toggle('is-left', name === 'palette'); $('backdrop').hidden = false; S.dialog = name;
   let focusEl = null;
   if (name === 'signout') { renderSignoutDialog(node); focusEl = node.querySelector(SLIDES.some((s) => !s.opened) ? '#soOpenFirst' : '#soReturn'); }
-  if (name === 'send') { const v = $('prelimText').value.trim(); if (v) node.querySelector('#sdNote').textContent = v; node.querySelector('#sdViewed').textContent = SLIDES.filter((s) => s.opened).length + ' of 3'; node.querySelector('#sdTat').textContent = $('tatBig').textContent; }
+  if (name === 'send') { const v = $('prelimText').value.trim(); if (v) node.querySelector('#sdNote').textContent = v; node.querySelector('#sdViewed').textContent = SLIDES.filter((s) => s.opened).length + ' of 3'; node.querySelector('#sdTat').textContent = $('tatBig').textContent; node.querySelector('#sdMode').textContent = isDx() ? 'Dx mode' : 'Nav mode (' + (dxGate().reason || '').replace(/\.$/, '') + ')'; }
   if (name === 'about') {
     node.querySelector('#aboutString').textContent = STRINGS[S.product];
     node.querySelector('#aboutProduct').textContent = { 'clinical-ih': 'Stoipath Clinical-IH · UT Example Lab', dx: 'Stoipath Dx · cleared edition · UDI (01)00850000000000 (synthetic)', ruo: 'Stoipath Viewer · research use only' }[S.product];
-    node.querySelector('#aboutLaunch').textContent = 'product=' + S.product + ' · purposeOfUse=' + (S.variant === 'consult' ? 'TREAT (consultation)' : 'TREAT') + ' · surface=' + (S.variant === 'embedded' ? 'iframe' : (surface().tablet ? 'tablet' : 'companion window'));
+    node.querySelector('#aboutLaunch').textContent = 'product=' + S.product + ' · purposeOfUse=' + (S.variant === 'consult' ? 'TREAT (consultation · preliminary only)' : 'TREAT (sign-out)') + ' · surface=' + (S.variant === 'embedded' ? 'iframe' : (surface().coarse ? 'tablet' : 'companion window')) + ' · tier=' + S.tier + ' (quality record)';
   }
-  if (name === 'dxgate') { renderGate(node); focusEl = node.querySelector(dxGate().ok ? '#gateEnter' : '#gateStay'); }
+  if (name === 'dxgate') { renderGate(node); focusEl = node.querySelector(dxGate().ok && !isDx() ? '#gateEnter' : '#gateStay'); }   /* in Dx the safe choice (Stay) takes focus */
   if (name === 'keymap') { renderKeymap(node); focusEl = node.querySelector('#kmFilter'); }
   if (name === 'steps') node.querySelector('#flowDialogList').innerHTML = flowHTML();
   if (name === 'palette') { wirePalette(node); focusEl = node.querySelector('input'); }
   node.querySelectorAll('.toggle[role="switch"]').forEach((t) => t.addEventListener('click', () => t.setAttribute('aria-checked', t.getAttribute('aria-checked') === 'true' ? 'false' : 'true')));
+  /* a dialog body that scrolls and holds no control is itself focusable, so keyboard users can scroll it (axe scrollable-region-focusable) */
+  requestAnimationFrame(() => node.querySelectorAll('.dialog__body').forEach((b) => { if (b.scrollHeight > b.clientHeight + 1 && !b.querySelector('button, input, select, textarea, a[href], [tabindex]')) { b.tabIndex = 0; b.setAttribute('role', 'region'); b.setAttribute('aria-label', 'Dialog content, scrollable'); } }));
   const f = focusEl || node.querySelector('.dialog__footer .btn--accent') || node.querySelector('.dialog__footer .btn--secondary') || node.querySelector('button');
   if (f) f.focus({ preventScroll: true });
   echo('dialog.' + name); renderControls(); writeHash();
@@ -2279,32 +2403,35 @@ function renderSignoutDialog(node) {
   node.querySelector('#soList').innerHTML = rowsHTML(rows);
   const warn = node.querySelector('#soWarn'); warn.hidden = !unv.length;
   if (unv.length) { node.querySelector('#soWarnTitle').textContent = unv.map((s) => s.id).join(', ') + ' has not been viewed'; node.querySelector('#soWarnText').textContent = 'Slide ' + unv[0].id + ' (H&E, level II) was never opened in this session. The LIS will record it as unviewed.'; }
-  const of = node.querySelector('#soOpenFirst'); of.hidden = !unv.length; if (unv.length) of.textContent = 'Open ' + unv[0].id + ' first';
+  const of = node.querySelector('#soOpenFirst'), ret = node.querySelector('#soReturn'); of.hidden = !unv.length; if (unv.length) of.textContent = 'Open ' + unv[0].id + ' first';
+  /* the visual primary follows the safe action: with a slide unviewed, Open … first is the accent button and Return to LIS is secondary */
+  of.classList.toggle('btn--accent', !!unv.length); of.classList.toggle('btn--secondary', !unv.length);
+  ret.classList.toggle('btn--accent', !unv.length); ret.classList.toggle('btn--secondary', !!unv.length);
 }
 function renderGate(node) {
   const g = dxGate(), dx = isDx();
   node.querySelector('#dx-title').textContent = dx ? 'Dx mode · active' : (g.ok ? 'Enter Dx mode?' : 'Dx mode unavailable');
   node.querySelector('#gateRows').innerHTML = g.rows.map((r) => '<span class="g ' + (r.ok ? 'ok' : 'fail') + '" aria-hidden="true">' + (r.ok ? '✓' : '!') + '</span><span class="' + (r.ok ? '' : 'fail-row') + '">' + r.g + ': ' + esc(r.t) + (r.ok ? '' : ' — fails') + '</span>').join('');
   node.querySelector('#gateNote').textContent = dx ? 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago' : (g.ok ? 'All gates pass. Entering Dx confirms the attestation source: EDID · Barco MDPC-8127.' : g.reason);
-  const enter = node.querySelector('#gateEnter');
-  if (dx) { enter.innerHTML = 'Leave Dx mode <kbd class="key">⇧D</kbd>'; enter.dataset.cmd = 'dx'; enter.classList.remove('btn--accent'); enter.classList.add('btn--secondary'); }
+  const enter = node.querySelector('#gateEnter'), stay = node.querySelector('#gateStay');
+  if (dx) { enter.innerHTML = 'Leave Dx mode'; enter.dataset.cmd = 'leaveDx'; enter.classList.remove('btn--accent'); enter.classList.add('btn--secondary'); stay.textContent = 'Stay in Dx mode'; stay.classList.remove('btn--ghost'); stay.classList.add('btn--accent'); }
   else { enter.disabled = !g.ok; enter.setAttribute('aria-disabled', g.ok ? 'false' : 'true'); }
 }
 
 /* ---- command registry: renders the palette, the keyboard map and (through key()) the handler ---- */
 const COMMANDS = [
   ['nextStep', 'Next step', 'Flow', ['N']], ['prevStep', 'Previous step', 'Flow', ['⇧N']], ['guided', 'Guided flow on / off (plain tabs)', 'Flow', ['⇧G']], ['dock', 'Show / hide the step panel', 'Flow', ['K']], ['step1', 'Identity and case (step 1)', 'Flow', ['I']],
-  ['signout', 'Request sign-out · hand status and evidence back', 'Flow', ['⇧↵']], ['dx', 'Enter / leave Dx mode (gate checklist)', 'Flow', ['⇧D']], ['keymap', 'Keyboard shortcuts', 'Flow', ['?']], ['palette', 'Command palette', 'Flow', ['⌃K']], ['about', 'About this build · label · UDI · hashes', 'Flow', []],
+  ['signout', 'Request sign-out · hand status and evidence back (ignored while drawing)', 'Flow', ['⇧↵']], ['dx', 'Enter / leave Dx mode (gate checklist; leaving is confirmed in the gate)', 'Flow', ['⇧D']], ['keymap', 'Keyboard shortcuts', 'Flow', ['?']], ['palette', 'Command palette', 'Flow', ['⌃K']], ['about', 'About this build · label · UDI · hashes', 'Flow', []],
   ['fit', 'Fit whole slide', 'Navigate', ['0']], ['zoomin', 'Zoom in 2×', 'Navigate', ['+']], ['zoomout', 'Zoom out 2×', 'Navigate', ['−']], ['togglemag', 'Toggle the last two magnifications', 'Navigate', ['Z']], ['rotate', 'Rotate 90°', 'Navigate', ['R']],
   ['nextSlide', 'Next slide', 'Navigate', [']']], ['prevSlide', 'Previous slide', 'Navigate', ['[']], ['nextUnviewed', 'Open the next unviewed slide', 'Navigate', []], ['nav', 'Navigator on / off', 'Navigate', ['O']], ['label', 'Label image (Nav mode only)', 'Navigate', ['L']],
   ['bookmark', 'Bookmark this view', 'Navigate', ['B']], ['gallery', 'Bookmark gallery', 'Navigate', ['⇧B']], ['snapshot', 'Snapshot with scale bar and footer', 'Navigate', ['⇧S']], ['compare', 'Compare H&E and IHC side by side', 'Navigate', ['C']], ['curtain', 'Curtain compare', 'Navigate', ['/']],
   ['overlay', 'AI overlay on / off', 'Navigate', ['⇧H']], ['hideAll', 'Hide all overlays', 'Navigate', ['H']], ['legend', 'AI legend on / off', 'Navigate', ['⇧Q']], ['grid', 'HPF reticle', 'Navigate', ['G']], ['adjust', 'Brightness / contrast / γ', 'Navigate', ['J']], ['resetAdjust', 'Reset adjustments', 'Navigate', ['⇧J']], ['hoverpan', 'Hover auto-pan (drag alternative)', 'Navigate', ['⇧L']],
   ['tool:select', 'Select / pan', 'Annotate', ['V']], ['tool:polygon', 'Polygon', 'Annotate', ['P']], ['tool:freehand', 'Freehand (pen)', 'Annotate', ['F']], ['tool:rect', 'Rectangle', 'Annotate', ['X']], ['tool:ellipse', 'Ellipse', 'Annotate', ['E']], ['tool:point', 'Point marker', 'Annotate', ['T']], ['tool:measure', 'Measure length (two clicks)', 'Annotate', ['M']],
-  ['acceptAi', 'Accept the AI result', 'Annotate', ['⇧A']], ['rejectAi', 'Reject the AI result', 'Annotate', ['⇧X']], ['consult', 'Request consult', 'Annotate', []], ['copylink', 'Copy view link', 'Annotate', []]
+  ['acceptAi', 'Accept the AI result', 'Annotate', ['⇧A']], ['rejectAi', 'Reject the AI result', 'Annotate', ['⇧X']], ['deleteSelected', 'Delete the selected annotation (nothing selected: no-op)', 'Annotate', ['⌫']], ['consult', 'Request consult', 'Annotate', []], ['copylink', 'Copy view link', 'Annotate', []]
 ];
 const KEYMAP_EXTRA = [
   ['Navigate', ['←↑↓→', 'WASD'], 'Pan 10 % of the viewport (held = continuous)'], ['Navigate', ['⇧ + ←↑↓→'], 'Pan one full viewport (systematic coverage)'], ['Navigate', ['1 … 6'], '1.25× · 2.5× · 5× · 10× · 20× · 40× (objective-equivalent, derived)'], ['Navigate', [',', '.'], 'Overlay opacity down / up'],
-  ['Annotate', ['Q then 1–9'], 'Class picker'], ['Annotate', ['↵', '⌫', 'Esc'], 'Commit · delete selected · cancel tool / close sheet'], ['Annotate', ['⌃Z', '⌃Y'], 'Undo / redo'], ['Annotate', ['Space'], 'Held: temporary pan while a drawing tool is active · in a list: fly to the item'], ['Annotate', ['Menu', 'right-click', 'long-press'], 'Tools here: bookmark, measure from here, annotate here, copy view link'],
+  ['Annotate', ['Q then 1–9'], 'Class picker'], ['Annotate', ['↵', '⌫', 'Esc'], 'Commit · remove last vertex / delete selected (never an undo) · clear selection, cancel tool, close sheet'], ['Annotate', ['⌃Z', '⌃Y'], 'Undo / redo (the only keys that revert a committed annotation)'], ['Annotate', ['Space'], 'Held: temporary pan while a drawing tool is active · in a list: fly to the item'], ['Annotate', ['Menu', 'right-click', 'long-press'], 'Tools here: bookmark, measure from here, annotate here, copy view link'],
   ['Reserved', ['F1–F12', 'Alt'], 'Hyperdrive', true], ['Reserved', ['⌃Space', 'Num 0–9'], 'Epic search · Dragon push-to-talk', true]
 ];
 function renderKeymap(node) {
@@ -2373,7 +2500,8 @@ setInterval(() => {
 /* ---- init ---------------------------------------------------------------- */
 (function init() {
   const h = readHash();
-  if (!h.has('variant') && surface().coarse) S.variant = 'consult';           /* tablets always carry Consultation · preliminary only (principles §2.3) */
+  if (!h.has('variant') && surface().coarse) S.variant = 'consult';           /* demo default: a tablet session carries Consultation · preliminary only (principles §2.3); the purpose itself comes from the launch context */
+  window.seedPill = addMeasPill(7250, 2300, 9550, 2300, '2.3 mm', true);      /* the 2.3 mm label: HUD-layer pill, not slide-space text */
   if (!h.has('dock')) S.dock = layoutPolicy().open;                            /* layout policy decides the default (DN-F4) */
   if (!h.has('nav') && innerWidth <= 599) S.nav = false;
   renderProduct(); renderVariant(); renderCond(); renderChrome();
@@ -2381,12 +2509,11 @@ setInterval(() => {
   applyAll();
   measure(); setView(S.cx, S.cy, S.scale, { silent: true });
   S.settled = true; renderIndicator(); renderStrip(); renderTrail(); renderSettled();
-  $$('#svgA text').forEach((t) => t.setAttribute('font-size', 13 * S.scale));
   booting = false; renderControls(); writeHash();
   if (S.cond === 'cold4g' || S.cond === 'slow') scheduleSettle();
   if (h.get('dialog')) openDialog(h.get('dialog'));
   if ('ResizeObserver' in window) new ResizeObserver(() => { measure(); paintView(); updateShare(); }).observe($('paneA'));
-  let rsz; window.addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => { if (!S.dockSet) S.dock = layoutPolicy().open; renderVariant(); renderCond(); renderChrome(); renderStrip(); renderChecklist(); renderControls(); measure(); paintView(); }, 120); });
+  let rsz; window.addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => { if (!S.dockSet) S.dock = layoutPolicy().open; renderVariant(); renderCond(); renderChrome(); renderStrip(); renderChecklist(); renderControls(); measure(); paintView(); updateSheetVar(); }, 120); });
   window.addEventListener('hashchange', () => { const h = readHash(); if (!h.has('variant') && surface().coarse) S.variant = 'consult'; setSlide(S.slide, { keepView: true }); applyAll(); scheduleSettle(); if (h.get('dialog')) openDialog(h.get('dialog')); else closeDialog(true); });
   announceView();
 })();

@@ -28,14 +28,17 @@
   --dock-w: 320px;         /* task card width; keyboard-resizable 320–520 (B) */
   --layout-dock: var(--dock-w);
   --cta-h: 56px;           /* the one primary action per step */
-  --color-hud-backdrop: rgba(20, 20, 20, 0.78);   /* raised from .62: 12 px HUD text ≥ 4.5:1 over tissue (judges' note) */
 }
 @media (min-width: 3200px) { :root { --layout-rail: 80px; --dock-w: 440px; --cta-h: 64px; --layout-navigator: 320px; } }
 html { height: auto; }
 body { min-height: 100dvh; display: flex; flex-direction: column; }
 body.host-on { --host-h: 40px; }
-html[data-coarse="1"] { --target: var(--target-touch); --font-size-body: 15px; --font-size-strip: var(--text-md); --icon-size: 24px; --layout-bottombar: 72px; --layout-strip: 36px; }
-html[data-coarse="1"] .tool__key { display: none; }
+/* Demo switches (review only; revision 2026-11-01). "44 px targets" puts base.css's .is-coarse class on <html>: it carries the
+   same custom properties as the (pointer: coarse) block in tokens.css, so nothing is re-declared here; only the two layout rows
+   this page sizes for touch are mirrored. "Reduced motion" zeroes the motion tokens exactly as prefers-reduced-motion does
+   (tokens.css has no class twin for that block: design note DF-9). */
+@media (pointer: coarse) { :root { --layout-strip: 48px; } }   /* 44 px strip chips and the sharpness button need a 48 px strip (as the clinical final) */
+html.is-coarse { --layout-bottombar: 72px; --layout-strip: 48px; }
 html[data-rm="1"] { --motion-fast: 0ms; --motion-base: 0ms; --motion-panel: 0ms; --motion-toast: 0ms; --hud-label-fade-delay: 0ms; }
 html[data-rm="1"] .skeleton::after, html[data-rm="1"] .progress-bar--indeterminate span, html[data-rm="1"] .rec-dot { animation: none !important; }
 
@@ -45,7 +48,7 @@ html[data-rm="1"] .skeleton::after, html[data-rm="1"] .progress-bar--indetermina
 .review .sep { opacity: .4; }
 .review .grow { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .review .segmented { --target: 24px; }
-.review .segmented__item { color: #c9bfd6; font-size: var(--text-xs); min-height: 22px; }
+.review .segmented__item { color: #c9bfd6; font-size: var(--text-xs); min-height: 24px; }
 .review .segmented__item[aria-checked="true"] { color: #fff; background: #3a2f47; box-shadow: inset 0 -2px 0 #e879f9; }
 .review .segmented__item:disabled { opacity: .4; }
 .demo { flex: 0 0 var(--demo-h); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); background: #1c1724; color: #d9d0e3; border-top: 1px dashed #5b4a6b; font-size: var(--text-xs); overflow-x: auto; overflow-y: hidden; white-space: nowrap; scrollbar-width: thin; }
@@ -63,15 +66,14 @@ html[data-rm="1"] .skeleton::after, html[data-rm="1"] .progress-bar--indetermina
 .host { display: none; flex: 0 0 var(--host-h); align-items: center; gap: var(--space-4); padding: 0 var(--space-5); background: #f5f5f5; color: #2d3b45; font-size: 13px; border-bottom: 1px solid #c7cdd1; overflow: hidden; }
 body.host-on .host { display: flex; }
 .host__brand { font-weight: 700; letter-spacing: .02em; }
-.host__crumb { color: #6b7780; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.host__note { margin-left: auto; font-size: 11px; color: #6b7780; white-space: nowrap; }
+.host__crumb { color: #5b6670; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.host__note { margin-left: auto; font-size: 11px; color: #5b6670; white-space: nowrap; }   /* 5.1:1 on #f5f5f5 (was #6b7780, 4.2:1) */
 
 /* --- App frame ----------------------------------------------------------------------- */
 .app.ed { height: calc(100dvh - var(--review-h) - var(--demo-h) - var(--host-h)); min-height: 520px; flex: 0 0 auto;
   grid-template-columns: var(--layout-rail) minmax(0, 1fr) var(--dock-w);
   grid-template-rows: var(--layout-topbar) var(--ctx-h) minmax(0, 1fr) var(--layout-strip);
   grid-template-areas: "topbar topbar topbar" "ctx ctx ctx" "rail canvas dock" "strip strip strip"; }
-body.host-on .app.ed { border: 1px solid #c7cdd1; border-top: 0; }
 .app.ed.dock-closed { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
 .app.ed.dock-closed .dock { display: none; }
 html[data-view="director"] .app.ed { display: none; }
@@ -96,11 +98,15 @@ html[data-product="learn"] .badge--learn, html[data-product="ruo"] .badge--ruo, 
 html[data-product="clinical"] .mode--nav, html[data-product="dx"][data-dxrefused="1"] .mode--nav { display: inline-flex; }
 html[data-product="dx"]:not([data-dxrefused="1"]) .mode--dx { display: inline-flex; }
 .chip--purpose { display: none; }
-html[data-product="clinical"] .chip--purpose, html[data-product="dx"] .chip--purpose { display: inline-flex; }
+html[data-product="clinical"] .topbar__slot-mode .chip--purpose, html[data-product="dx"] .topbar__slot-mode .chip--purpose { display: inline-flex; }
 .step-short { display: none; }
-/* The full label string is visible at exactly 1024 px (principles §2.5 rule 2); the top-bar container query would hide it because of its padding */
-@media (min-width: 1024px) and (max-width: 1079px) { .topbar .topbar__label { display: inline; } }
-@media (max-width: 1023px) { .topbar__label .badge-string { display: none !important; } }
+/* Clinical builds (revision 2026-11-01): the purpose-of-use chip lives in the mode slot from 1280 px and in the strip below it,
+   and between 600 and 1079 px the three slot buttons give way to the 659 px clinical label string (keymap: ?; settings and the
+   palette: the bottom bar's Commands button), so the badge, the label string, the accession and the mode indicator never leave
+   the bar (P4/P5). Learn keeps its buttons: its label string is short. Below 600 px the settings button goes too (palette). */
+@media (max-width: 1279px) { .topbar__slot-mode .chip--purpose { display: none !important; } html[data-product="clinical"] #strip-purpose, html[data-product="dx"] #strip-purpose { display: inline-flex; } }
+@media (min-width: 600px) and (max-width: 1079px) { html[data-product="clinical"] .topbar__slot-mode .btn, html[data-product="dx"] .topbar__slot-mode .btn { display: none; } }
+@media (max-width: 599px) { html[data-product="clinical"] .topbar__slot-mode [data-action="settings"], html[data-product="dx"] .topbar__slot-mode [data-action="settings"] { display: none; } }
 
 /* --- Step rail (region C: steps + the tools each phase needs) ------------------------- */
 .flowrail { padding: var(--space-3) 0; gap: 0; align-items: stretch; }
@@ -110,16 +116,20 @@ html[data-product="clinical"] .chip--purpose, html[data-product="dx"] .chip--pur
 .phase:hover { background: var(--color-row-hover); color: var(--color-text); }
 .phase:focus-visible { box-shadow: var(--focus-shadow); }
 .phase__num { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center; font: 700 11px/1 var(--font-mono); flex: 0 0 auto; }
+.flowrail .phase { width: 100%; min-width: var(--target); }   /* fills the 48 px rail column; 44 px wide under a coarse pointer (SC 2.5.8) */
 .phase__text { display: block; min-width: 0; }
 .phase__label { display: block; font-size: var(--text-2xs); line-height: 1.1; font-weight: var(--weight-medium); }
-.phase__sub { display: block; font-size: 9px; line-height: 1.1; color: var(--color-text-secondary); opacity: .85; }
+.phase__sub { display: block; font-size: 9px; line-height: 1.1; color: var(--color-text-secondary); }
 .phase.is-done .phase__num { background: var(--color-text-secondary); border-color: transparent; color: var(--color-surface-0); }
 .phase.is-done .phase__num::before { content: "\2713"; }
 .phase.is-done .phase__num span { display: none; }
 .phase.is-current, .phase[aria-current="step"] { background: var(--color-control-selected); color: var(--color-text); }
 .phase.is-current::before { content: ""; position: absolute; left: -4px; top: 18%; height: 64%; width: 2px; border-radius: 1px; background: var(--color-control-selected-indicator); }
 .phase.is-current .phase__num { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
-.phase.is-locked { opacity: .55; }
+/* Locked phases (revision 2026-11-01): secondary text at full opacity (grey-72 on surface-0, 5.6:1), a dashed number ring and
+   aria-disabled carry the state; the button stays in the Tab order so the shape of the task is discoverable */
+.phase.is-locked, .phase.is-locked:hover { color: var(--color-text-secondary); background: transparent; cursor: default; }
+.phase.is-locked .phase__num { border-style: dashed; }
 .flow__link { width: 1px; height: 6px; background: var(--color-border-strong); margin: 0 auto; }
 .rail__tools { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); padding: var(--space-2) 0; }
 .rail__tools .tool { width: var(--target); height: var(--target); }
@@ -148,7 +158,7 @@ html[data-alltools="1"] .rail__h { display: none; }
 .ctxbar__stem { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-medium); }
 .ctxbar__hint { color: var(--color-text-secondary); white-space: nowrap; font-size: var(--text-sm); display: inline-flex; align-items: center; gap: var(--space-2); }
 .ctxbar .btn { flex: 0 0 auto; }
-.ctxbar .btn--sm { min-height: 28px; }
+.ctxbar .btn--sm { min-height: max(28px, var(--target-control)); }   /* 28 px on the 40 px bar; 44 px on a 52 px bar under a coarse pointer */
 
 /* --- Task card (region D) ---------------------------------------------------------------- */
 .taskdock { position: relative; }
@@ -200,6 +210,7 @@ html[data-alltools="1"] .rail__h { display: none; }
 
 /* Items */
 .item-card { background: var(--color-surface-1); }
+html:not([data-item="committed"]) [data-action="changeanswer"] { display: none; }   /* "Change answer" exists only between commit and reveal */
 .item-card__stem { font-size: var(--text-xl); }
 .gatebox { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-2); font-size: var(--text-sm); }
 .gatebox .glyph { font: 700 var(--text-sm)/1 var(--font-mono); width: 20px; height: 20px; display: grid; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; }
@@ -265,8 +276,7 @@ html[data-timer="1"] .timer-off { display: none; }
 .ranked { display: flex; flex-direction: column; gap: 1px; counter-reset: dd; }
 .ranked li { display: grid; grid-template-columns: 22px 1fr auto auto; gap: var(--space-2); align-items: center; min-height: var(--target); padding: 0 var(--space-2); border-bottom: 1px solid var(--color-divider); font-size: var(--text-sm); counter-increment: dd; list-style: none; }
 .ranked li::before { content: counter(dd); font-family: var(--font-mono); color: var(--color-text-secondary); font-size: var(--text-xs); }
-.ranked .btn--icon { width: 28px; height: 28px; min-width: 28px; }
-html[data-coarse="1"] .ranked .btn--icon { width: 44px; height: 44px; }
+.ranked .btn--icon { width: max(28px, var(--target-control)); height: max(28px, var(--target-control)); min-width: 28px; }
 .progress-line { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--text-sm); }
 .progress-line .progress-bar { grid-column: 1 / -1; }
 .chip--state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
@@ -350,8 +360,6 @@ html[data-rm="1"] .hud__motion { display: inline-flex; }
 .hud__sharp .indicator__glyph { width: 10px; height: 10px; }
 .hud__cohort { display: none; font-family: var(--font-ui); font-size: var(--text-xs); }
 html[data-cohort="1"] .hud__cohort { display: inline-flex; }
-.navigator__pan { pointer-events: none; }
-.navigator__pan button { opacity: 1; background: rgba(0,0,0,.38); width: var(--target); height: var(--target); }   /* SC 2.5.7: always visible; 44 px under a coarse pointer (fixes the design-system defect in-page) */
 .navigator__thumb svg { display: block; }
 .navigator__labelimg { display: none; }
 html[data-product="clinical"] .navigator__labelimg, html[data-product="dx"] .navigator__labelimg { display: block; }
@@ -370,14 +378,38 @@ html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence
 @media (max-width: 1599px) { .identity-clin .meta, .identity-clin .chip { display: none; } }
 #banner-slot:empty { display: none; }
 .magnification input { width: 7ch; font-size: var(--font-size-hud-big); }
-/* The modal layer never covers the top bar; the canvas keeps its focus ring */
-.modal-layer[hidden] { display: none; }
-.modal-layer { align-content: start; }
-.palette-layer { position: absolute; top: var(--layout-topbar); left: 50%; transform: translateX(-50%); z-index: var(--z-palette); padding-top: var(--space-3); }
-.palette-layer[hidden] { display: none; }
+/* Dialog layer (revision 2026-11-01). base.css anchors dialogs top-right, dock-wide, and lets no input through the layer itself.
+   This page: the layer starts below the context bar; the width keeps a right-anchored panel out of the central 50 % while the
+   rail is 64 px (25 vw − 16 px − rail / 4: at 1440 the panel's left edge meets the zone's right edge); there is no scrim, so the
+   slide stays visible beside a panel and a pointer-down outside a modal dialog closes it (as the clinical final). Below 1080 px
+   base.css makes every dialog a bottom sheet ≤ 40 %. The candidates panel is aria-modal="false": the slide keeps its keys. */
+.modal-layer { top: calc(var(--layout-topbar) + var(--ctx-h)); }
+@media (min-width: 1080px) { .modal-layer .dialog, .modal-layer .dialog--wide { width: min(var(--dock-w), calc(25vw - 16px - var(--layout-rail) / 4)); max-height: calc(100% - var(--space-4)); } }
+.dialog--wide .keymap { grid-template-columns: 1fr; gap: var(--space-5); }
+/* Command palette: drops from the top bar over the task-card column (the drawer track at 1080–1599), never the slide centre;
+   below 1080 px a bottom sheet ≤ 40 % above the bottom bar. Design note: one .palette-layer rule belongs in base.css §6.9. */
+.palette-layer { position: absolute; top: calc(var(--layout-topbar) + var(--ctx-h)); right: 0; width: min(var(--dock-w), calc(25vw - 20px - var(--layout-rail) / 4)); max-height: calc(100% - var(--layout-topbar) - var(--ctx-h) - var(--layout-strip)); z-index: var(--z-palette); display: flex; flex-direction: column; }
+.palette-layer .palette { width: 100%; max-height: 100%; display: flex; flex-direction: column; border-top: 0; border-right: 0; border-radius: 0 0 0 var(--radius-4); }
+.palette-layer .palette__list { flex: 1 1 auto; min-height: 0; max-height: min(420px, 55vh); }
+@media (max-width: 1079px) {
+  .palette-layer { top: auto; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); left: 0; right: 0; width: auto; max-height: var(--layout-sheet-max); }
+  .palette-layer .palette { border-radius: var(--radius-5) var(--radius-5) 0 0; border-top: 1px solid var(--color-border-strong); border-left: 0; border-right: 0; border-bottom: 0; }
+  .palette-layer .palette__list { max-height: none; }
+}
+@media (max-width: 599px) { .palette-layer { bottom: var(--layout-bottombar); } }
 .palette__item.is-off { opacity: .6; }
 .palette__item .meta { white-space: nowrap; }
-.dialog .candidate { grid-template-columns: auto 1fr auto; }
+/* Candidate rows (revision 2026-11-01): a native radio (visually hidden; the letter box and the row border show the state) inside
+   a label, and "Fly there" as a sibling button, so no control nests in another (axe nested-interactive); arrow keys move
+   between the radios natively and the Tab order is radio group → Fly there × 6 → footer. */
+.dialog .candidate { grid-template-columns: auto 1fr auto; position: relative; }
+.candidate__radio { cursor: pointer; }
+.candidate__radio input { position: absolute; left: var(--space-3); top: 50%; width: var(--target); height: var(--target); margin: calc(var(--target) / -2) 0 0; clip-path: inset(50%); pointer-events: none; }   /* hidden by clipping, not by size or opacity: it keeps a --target box (24 px, 44 under coarse) under the letter and stays focusable */
+.candidate:has(input:checked) { border-color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-text); }
+.candidate:has(input:checked) .candidate__letter { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
+.candidate:has(input:focus-visible) .candidate__radio { box-shadow: var(--focus-shadow); }
+.cand-sheet-note { display: none; }
+@media (max-width: 1079px) { .cand-sheet-note { display: inline; } .cand-dock-note { display: none; } }
 .about { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--text-sm); }
 .about .lbl { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
 .dialog--wide .keymap { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
@@ -387,11 +419,8 @@ html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence
 @media (min-width: 1600px) { .toast-stack { width: calc(var(--dock-w) - 2 * var(--space-4)); } .toast-stack .toast { width: 100%; } }
 
 /* Strip */
-.strip .chip { min-height: 22px; }
-.strip button.chip { min-height: 24px; }
-.strip__notice .btn--sm { margin-left: var(--space-3); min-height: 22px; padding: 0 var(--space-3); }
+.strip__notice .btn--sm { margin-left: var(--space-3); padding: 0 var(--space-3); }   /* heights from base.css: 24 px, 44 px under a coarse pointer */
 button.indicator { cursor: pointer; }
-.indicator--sharp.is-quiet .indicator__label { opacity: .7; }          /* low-emphasis label at rest, never a bare dot (judges' note 4) */
 #strip-rc { display: none; }
 html[data-product="dx"]:not([data-dxrefused="1"]) #strip-rc { display: inline-flex; }
 html[data-product="dx"]:not([data-dxrefused="1"]) #strip-sharp { display: none; }
@@ -562,10 +591,10 @@ html[data-view="director"] .director { display: grid; }
 }
 /* Short viewports: fewer sub-labels, no position line */
 @media (max-height: 760px) { .phase { min-height: 48px; } .flowrail .phase__sub { display: none; } }
-/* Coarse pointer: 44 px phase buttons and navigator pan buttons (fixes the shared design-system defect) */
-@media (pointer: coarse) { .flowbar .phase { min-width: 44px; min-height: 44px; } .navigator__pan button { width: 44px; height: 44px; } .ranked .btn--icon { width: 44px; height: 44px; } :root { --layout-strip: 36px; } }
-html[data-coarse="1"] .flowbar .phase { min-width: 44px; min-height: 44px; }
-html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
+/* Coarse pointer: every control sizes from the tokens (--target, --target-control = 44 px) that tokens.css sets under (pointer: coarse)
+   and base.css under .is-coarse; the only page-level coarse rules are the two layout rows at the top and the taller context bar here. */
+@media (min-width: 1080px) and (max-width: 1599px) and (pointer: coarse) { :root { --ctx-h: 52px; } }
+@media (min-width: 1080px) and (max-width: 1599px) { html.is-coarse { --ctx-h: 52px; } }
 /* While a gesture is in progress nothing in the chrome animates (P2); the resizer is deferred too */
 .app.is-gesturing .dock__resizer { pointer-events: none; }
 
@@ -704,6 +733,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <span class="ctxbar__stem" id="ctx-stem">Mark the metastatic focus on this sentinel lymph node.</span>
     <span class="ctxbar__hint" id="ctx-hint"></span>
     <button class="btn btn--sm btn--secondary" id="ctx-alt" data-action="candidates" hidden>Mark without a pointer <kbd class="key">⇧↵</kbd></button>
+    <button class="btn btn--sm btn--secondary" id="ctx-change" data-action="changeanswer">Change answer</button>
     <button class="btn btn--sm btn--secondary" id="ctx-dock" data-action="dock" aria-expanded="false" aria-controls="dock">Task card <kbd class="key">K</kbd></button>
     <button class="btn btn--sm btn--primary" id="ctx-cta" data-action="primary">Commit answer <kbd class="key">↵</kbd></button>
   </div>
@@ -837,6 +867,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
       <div class="capcard__row">
         <button class="btn btn--sm btn--secondary" data-action="prev">Back <kbd class="key">⇧N</kbd></button>
         <button class="btn btn--sm btn--secondary" id="cap-alt" data-action="candidates" hidden>Mark without a pointer <kbd class="key">⇧↵</kbd></button>
+        <button class="btn btn--sm btn--secondary" id="cap-change" data-action="changeanswer">Change answer</button>
         <button class="btn btn--sm btn--ghost" data-action="keymap">All keys <kbd class="key">?</kbd></button>
         <button class="btn btn--primary" id="cap-cta" data-action="primary">Commit answer <kbd class="key">↵</kbd></button>
       </div>
@@ -1012,7 +1043,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
               <div class="alert alert--neutral" id="gate-warn" hidden><span class="alert__glyph">!</span><div>You have not viewed the focus at 20× yet. Commit now for half credit, or press <kbd class="key">5</kbd> to jump to 20× first.</div></div>
             </div>
             <div class="istate" data-i="committed">
-              <div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><b>Answer saved.</b> Press <kbd class="key">U</kbd> to reveal. <span class="text-secondary">Your mark and confidence are locked; the answer key is still hidden (layer ACL <code>revealOn(itemAnswered)</code>).</span></div></div>
+              <div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><b>Answer saved.</b> Press <kbd class="key">U</kbd> to reveal. <span class="text-secondary">You can still change your mark and confidence until you reveal (<i>Change answer</i>, below); the answer key stays hidden (layer ACL <code>revealOn(itemAnswered)</code>).</span></div></div>
               <div class="alert alert--neutral" id="reveal-wait" hidden role="status" data-live="events:tileSettled"><span class="alert__glyph">◐</span><div><b>Reveal is waiting for sharp pixels.</b> 3 tiles under your mark have not settled (retrying). The key is only scored against the pixels you could actually see.</div></div>
             </div>
             <div class="istate" data-i="revealed postfail">
@@ -1066,7 +1097,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
             <div class="diff" aria-label="Add to the differential"><button class="chip" type="button" data-add="Melanoma">+ Melanoma</button><button class="chip" type="button" data-add="Lymphoma">+ Lymphoma</button><button class="chip" type="button" data-add="Mesothelial inclusion">+ Mesothelial inclusion</button></div>
             <div class="field diag-entry"><label class="field__label" for="dx-final">Final diagnosis</label><textarea class="input" id="dx-final">Metastatic carcinoma in subcapsular sinus, 2.3 mm (macrometastasis)</textarea></div>
             <div class="field" role="radiogroup" aria-label="Confidence"><span class="field__label">Confidence <span class="text-xs">(feeds your review queue, nothing is graded)</span></span><div class="confidence"><button class="opt" role="radio" aria-checked="false" type="button">Guessing</button><button class="opt" role="radio" aria-checked="false" type="button">Unsure</button><button class="opt" role="radio" aria-checked="true" type="button">Fairly sure</button><button class="opt" role="radio" aria-checked="false" type="button">Certain</button></div></div>
-            <div class="istate" data-i="committed"><div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><b>Diagnosis recorded 06:12 into the case.</b> Press <kbd class="key">U</kbd> to reveal.</div></div></div>
+            <div class="istate" data-i="committed"><div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><b>Diagnosis recorded 06:12 into the case.</b> Press <kbd class="key">U</kbd> to reveal; <i>Change answer</i> reopens it until then.</div></div></div>
           </div>
           <div class="istate" data-i="revealed postfail">
             <div class="feedback" role="status"><span class="feedback__glyph">✓</span><div><div class="feedback__title">Revealed · concordant</div><div class="text-sm">Attending: <b>metastatic ductal carcinoma, 2.3 mm, no extranodal extension</b>. Your first-ranked diagnosis matches; the size category matches.</div></div></div>
@@ -1080,7 +1111,8 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
       </div>
       <footer class="task__cta">
         <button class="btn btn--primary btn--cta js-cta">Commit answer <kbd class="key">↵</kbd></button>
-        <div class="task__secondary"><button class="btn btn--secondary" data-action="prev">Back <kbd class="key">⇧N</kbd></button><button class="btn btn--ghost" data-action="keymap">All keys <kbd class="key">?</kbd></button></div>
+        <p class="cta-note" id="cta-note">On the slide, <kbd class="key">↵</kbd> closes the polygon and moves focus here; <kbd class="key">↵</kbd> again commits. You can change your answer until you reveal.</p>
+        <div class="task__secondary"><button class="btn btn--secondary" data-action="prev">Back <kbd class="key">⇧N</kbd></button><button class="btn btn--secondary" data-action="changeanswer">Change answer</button><button class="btn btn--ghost" data-action="keymap">All keys <kbd class="key">?</kbd></button></div>
       </footer>
     </section>
 
@@ -1318,6 +1350,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <span class="strip__notice" id="strip-notice" data-live="events"></span>
     <div class="strip__group strip__group--end">
       <span class="chip chip--solid" id="net-chip" data-live="telemetry:network" hidden></span>
+      <span class="chip chip--purpose" id="strip-purpose" data-live="launch:purposeOfUse">Consultation · preliminary only</span>
       <button class="chip chip--tier" id="tier-chip" data-live="telemetry:tier" data-action="tier" hidden>Tier 2 · 60 Hz</button>
       <span class="chip chip--state learner-only" id="gb-chip" data-live="lti:ags" hidden>Posted to gradebook</span>
       <span class="chip learner-only" id="lti-chip" data-live="lti">LTI 1.3 · Canvas</span>
@@ -1327,9 +1360,8 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
 
   <div class="toast-stack" id="toasts" aria-hidden="true"></div>
 
-  <!-- Dialog layer: inset below the top bar so the badge and label string are never covered -->
+  <!-- Dialog layer (revision 2026-11-01): anchored over the task-card column below the top bar and the context bar (base.css), never over the slide centre; no scrim, so the slide stays visible beside a dialog and a pointer-down outside a modal dialog closes it. Below 1080 px every dialog is a bottom sheet ≤ 40 %. -->
   <div class="modal-layer" id="modal-layer" hidden>
-    <div class="backdrop" data-action="close"></div>
 
     <div class="dialog dialog--wide" id="dlg-keymap" role="dialog" aria-modal="true" aria-labelledby="km-t" hidden>
       <div class="dialog__header"><h2 class="dialog__title" id="km-t">Keyboard map · <span id="km-product">Stoipath Learn</span></h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
@@ -1339,7 +1371,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
           <div class="keymap__group"><h4>The flow (Learn)</h4>
             <div class="keymap__row"><span class="keymap__keys"><kbd class="key">N</kbd></span>Next step or item</div>
             <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">N</kbd></span>Previous step</div>
-            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">↵</kbd></span>The step's primary action (commit)</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">↵</kbd></span>The step's primary action. On an item, ↵ on the slide closes the polygon and moves focus to the action; ↵ again commits</div>
             <div class="keymap__row"><span class="keymap__keys"><kbd class="key">U</kbd></span>Uncover: reveal the answer key (after commit)</div>
             <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">↵</kbd></span>Mark without a pointer</div>
             <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">E</kbd></span>Expert's view on / off</div>
@@ -1382,19 +1414,19 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
       </div>
     </div>
 
-    <div class="dialog" id="dlg-cand" role="dialog" aria-modal="true" aria-labelledby="cand-t" data-live="lti:item:keyboard" hidden>
+    <div class="dialog" id="dlg-cand" role="dialog" aria-modal="false" aria-labelledby="cand-t" aria-describedby="cand-help" data-live="lti:item:keyboard" hidden>
       <div class="dialog__header"><h2 class="dialog__title" id="cand-t">Mark the metastatic focus without a pointer</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
       <div class="tabs tabs--fill" role="tablist" aria-label="Answer method"><button class="tab" role="tab" aria-selected="true" aria-controls="cand-p1" id="cand-tab1">Candidate regions</button><button class="tab" role="tab" aria-selected="false" aria-controls="cand-p2" id="cand-tab2" tabindex="-1">Answer in text</button></div>
       <div class="dialog__body" id="cand-p1" role="tabpanel" aria-labelledby="cand-tab1">
-        <p class="text-sm text-secondary">Choose the region that contains the focus; arrow keys move and choose, <kbd class="key">↵</kbd> commits the chosen region as your mark. <i>Fly there</i> moves the view to 20×, which also meets the zoom gate. Scoring uses the same geometry as a drawn mark.</p>
-        <div role="radiogroup" aria-label="Candidate regions" class="stack stack--tight" id="cand-list">
-          <div class="candidate" role="radio" aria-checked="false" tabindex="0" data-c="A"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span><button class="btn btn--sm btn--secondary" data-fly="cA" data-live="commands:flyTo" tabindex="-1">Fly there</button></div>
-          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="B"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, central cortex — tingible-body macrophages</span><button class="btn btn--sm btn--secondary" data-fly="cB" tabindex="-1">Fly there</button></div>
-          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="C"><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span><button class="btn btn--sm btn--secondary" data-fly="cC" tabindex="-1">Fly there</button></div>
-          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="D"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span><button class="btn btn--sm btn--secondary" data-fly="cD" tabindex="-1">Fly there</button></div>
-          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="E"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span><button class="btn btn--sm btn--secondary" data-fly="cE" tabindex="-1">Fly there</button></div>
-          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="F"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, lower border — fibrous tissue only</span><button class="btn btn--sm btn--secondary" data-fly="cF" tabindex="-1">Fly there</button></div>
-        </div>
+        <p class="text-sm text-secondary" id="cand-help">Choose the region that contains the focus: arrow keys move between the regions and choose, <kbd class="key">↵</kbd> commits the chosen region as your mark. <i>Fly there</i> moves the slide to 20× over a region (which also meets the zoom gate) without choosing it<span class="cand-dock-note">; this panel sits beside the slide, so what you fly to stays in view</span><span class="cand-sheet-note">; the sheet closes so you can see it, and <kbd class="key">⇧↵</kbd> or <i>Mark without a pointer</i> reopens it on the same region</span>. Scoring uses the same geometry as a drawn mark.</p>
+        <fieldset class="stack stack--tight" id="cand-list"><legend class="visually-hidden">Candidate regions</legend>
+          <div class="candidate" data-c="A"><label class="candidate__radio"><input type="radio" name="cand" value="A"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span></label><button class="btn btn--sm btn--secondary" type="button" data-fly="cA" data-live="commands:flyTo" aria-label="Fly there: region A at 20 times">Fly there</button></div>
+          <div class="candidate" data-c="B"><label class="candidate__radio"><input type="radio" name="cand" value="B"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, central cortex — tingible-body macrophages</span></label><button class="btn btn--sm btn--secondary" type="button" data-fly="cB" aria-label="Fly there: region B at 20 times">Fly there</button></div>
+          <div class="candidate" data-c="C"><label class="candidate__radio"><input type="radio" name="cand" value="C" checked><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span></label><button class="btn btn--sm btn--secondary" type="button" data-fly="cC" aria-label="Fly there: region C at 20 times">Fly there</button></div>
+          <div class="candidate" data-c="D"><label class="candidate__radio"><input type="radio" name="cand" value="D"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span></label><button class="btn btn--sm btn--secondary" type="button" data-fly="cD" aria-label="Fly there: region D at 20 times">Fly there</button></div>
+          <div class="candidate" data-c="E"><label class="candidate__radio"><input type="radio" name="cand" value="E"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span></label><button class="btn btn--sm btn--secondary" type="button" data-fly="cE" aria-label="Fly there: region E at 20 times">Fly there</button></div>
+          <div class="candidate" data-c="F"><label class="candidate__radio"><input type="radio" name="cand" value="F"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, lower border — fibrous tissue only</span></label><button class="btn btn--sm btn--secondary" type="button" data-fly="cF" aria-label="Fly there: region F at 20 times">Fly there</button></div>
+        </fieldset>
       </div>
       <div class="dialog__body" id="cand-p2" role="tabpanel" aria-labelledby="cand-tab2" hidden>
         <p class="text-sm text-secondary">Describe where the focus is. Scored against the author's rubric (compartment, position, size, feature); recorded as <code>modality: text</code>, never discounted.</p>
@@ -1423,12 +1455,12 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <div class="dialog" id="dlg-settings" role="dialog" aria-modal="true" aria-labelledby="st-t" hidden>
       <div class="dialog__header"><h2 class="dialog__title" id="st-t">Settings and accessibility</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
       <div class="dialog__body">
-        <div class="settings-row"><span>Colour-vision remap <span class="hint">Applied to the slide in the shader (per user); marks keep their patterns and halos</span></span><span class="select" style="width:140px"><select id="set-cvd" data-live="colour:cvdLut"><option value="off">Off</option><option value="deutan">Deutan</option><option value="protan">Protan</option><option value="tritan">Tritan</option></select></span></div>
-        <div class="settings-row"><span>Captions</span><button class="toggle" role="switch" aria-checked="true"><span class="toggle__track"></span></button></div>
-        <div class="settings-row"><span>Audio narration <span class="hint">Off by default in a classroom</span></span><button class="toggle" role="switch" aria-checked="false"><span class="toggle__track"></span></button></div>
-        <div class="settings-row"><span>Reduced motion <span class="hint">Follows your system; fly-to becomes an instant jump</span></span><button class="toggle" role="switch" aria-checked="false" id="set-rm" data-action="rm"><span class="toggle__track"></span></button></div>
-        <div class="settings-row"><span>Larger targets <span class="hint">44 px everywhere (on by default with touch or pen)</span></span><button class="toggle" role="switch" aria-checked="false" id="set-coarse" data-action="coarse"><span class="toggle__track"></span></button></div>
-        <div class="settings-row"><span>Focus mode <span class="hint">Rail and task card fold into edge handles; desktop only (⇧K)</span></span><button class="toggle" role="switch" aria-checked="false" id="set-focus" data-action="focus"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span><span id="lbl-cvd">Colour-vision remap</span> <span class="hint" id="hint-cvd">Applied to the slide in the shader (per user); marks keep their patterns and halos</span></span><span class="select" style="width:140px"><select id="set-cvd" aria-labelledby="lbl-cvd" aria-describedby="hint-cvd" data-live="colour:cvdLut"><option value="off">Off</option><option value="deutan">Deutan</option><option value="protan">Protan</option><option value="tritan">Tritan</option></select></span></div>
+        <div class="settings-row"><span id="lbl-cc">Captions</span><button class="toggle" role="switch" aria-checked="true" aria-labelledby="lbl-cc"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span><span id="lbl-audio">Audio narration</span> <span class="hint" id="hint-audio">Off by default in a classroom</span></span><button class="toggle" role="switch" aria-checked="false" aria-labelledby="lbl-audio" aria-describedby="hint-audio"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span><span id="lbl-rm">Reduced motion</span> <span class="hint" id="hint-rm">Follows your system; fly-to becomes an instant jump</span></span><button class="toggle" role="switch" aria-checked="false" id="set-rm" aria-labelledby="lbl-rm" aria-describedby="hint-rm" data-action="rm"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span><span id="lbl-coarse">Larger targets</span> <span class="hint" id="hint-coarse">44 px everywhere (on by default with touch or pen)</span></span><button class="toggle" role="switch" aria-checked="false" id="set-coarse" aria-labelledby="lbl-coarse" aria-describedby="hint-coarse" data-action="coarse"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span><span id="lbl-focus">Focus mode</span> <span class="hint" id="hint-focus">Rail and task card fold into edge handles; desktop only (⇧K)</span></span><button class="toggle" role="switch" aria-checked="false" id="set-focus" aria-labelledby="lbl-focus" aria-describedby="hint-focus" data-action="focus"><span class="toggle__track"></span></button></div>
         <div class="settings-row"><span>Chrome theme <span class="hint">The canvas surround stays neutral grey</span></span><div class="segmented" role="radiogroup" aria-label="Theme"><button class="segmented__item" role="radio" aria-checked="true" data-theme-set="dark">Dark</button><button class="segmented__item" role="radio" aria-checked="false" data-theme-set="light">Light</button></div></div>
         <div class="settings-row"><span>Telemetry <span class="hint">Pseudonymous viewing trace for your own feedback and course aggregates</span></span><div class="segmented" role="radiogroup" aria-label="Telemetry"><button class="segmented__item" role="radio" aria-checked="true">On</button><button class="segmented__item" role="radio" aria-checked="false">Off</button></div></div>
         <div class="settings-row"><span>Pen <span class="hint">Pencil draws, finger pans; double-tap Pencil toggles the last tool; squeeze opens the radial</span></span><span class="text-sm text-secondary">Automatic</span></div>
@@ -1572,7 +1604,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <ul>
       <li><b>Context bar when the card folds</b> (1080–1599 px): step · stem · zoom-gate hint · <i>Mark without a pointer</i> · <i>Task card</i> · primary CTA on one neutral 40 px line. B put it in the banner slot over the canvas edge; here it is a grid row under the top bar, so it is not DOM over the canvas (P2) and sits where the eye already reads the step label.</li>
       <li><b>Zoom-gate chip beside the magnification readout</b> ("Zoom gate · now 5× · need ≥ 20× <kbd class="key">5</kbd>"), shown only while a gated item is live and unmet.</li>
-      <li><b>Candidates dialog focus model:</b> <code>h2</code>, tabs for <i>Answer in text</i>, a focus-trapped arrow-key radiogroup that opens on the current candidate, <kbd class="key">↵</kbd> commits the chosen candidate directly, Escape returns focus to the canvas; the reveal announcement is one assertive sentence ("Revealed. Your mark overlapped the lesion by 62 percent. 1 of 1. Posted to gradebook.").</li>
+      <li><b>Candidates dialog focus model:</b> <code>h2</code>, tabs for <i>Answer in text</i>, an arrow-key radiogroup that opens on the current candidate, <kbd class="key">↵</kbd> commits the chosen candidate directly, Escape returns focus to the canvas; the reveal announcement is one assertive sentence ("Revealed. Your mark overlapped the lesion by 62 percent. 1 of 1. Posted to gradebook."). Revised 2026-11-01 (§8): native radios, a non-modal panel beside the slide, no focus trap.</li>
       <li><b>Keyboard-resizable task card</b> (<code>role="separator"</code>, arrow keys, 320–520 px), deferred while <code>.is-gesturing</code>; pin / width is a logged user choice.</li>
       <li><b>Palette coverage:</b> groups for the flow, steps, <i>Fly to candidates</i>, navigation, slides, marking, layers, layout presets, settings and help, every row with its key; <code>aria-keyshortcuts</code> on the visible search button.</li>
       <li><b>Publish lint</b> in the author studio: keyboard alternative present, keyboard path scores identically (CI), captions on every audio step, no red–green-only meaning, licence and determination logged, no PHI; a missing text rubric is a blocker, not a warning.</li>
@@ -1629,15 +1661,15 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <table class="table" id="p1-table">
       <thead><tr><th>Viewport</th><th>Chrome at rest</th><th>Canvas share</th><th>Central 50 % zone</th></tr></thead>
       <tbody>
-        <tr><td>3840 × 2160 (4K, DPR 1)</td><td>top 48 · rail 80 · card 440 · strip 32</td><td class="num" data-p1="3840x2160">83.0 %</td><td>clear</td></tr>
-        <tr><td>1920 × 1080</td><td>top 48 · rail 64 · card 320 · strip 32</td><td class="num" data-p1="1920x1080">73.2 %</td><td>clear</td></tr>
-        <tr><td>1440 × 900 (laptop)</td><td>top 48 · context bar 40 · rail 64 · strip 32 · drawer closed</td><td class="num" data-p1="1440x900">80.6 %</td><td>clear (drawer covers the edge only)</td></tr>
-        <tr><td>1366 × 1024 (iPad landscape)</td><td>as laptop, 44 px targets</td><td class="num" data-p1="1366x1024">82.0 %</td><td>clear</td></tr>
-        <tr><td>1024 × 1366 (iPad portrait)</td><td>top 48 · flow bar 72 · strip 36 · sheet peek 180 px (title + stem + CTA)</td><td class="num" data-p1="1024x1366">72.8 %</td><td>clear (peek below the zone; expanded ≤ 40 %)</td></tr>
-        <tr><td>390 × 844 (phone)</td><td>top 44 · flow bar 56 · sheet peek 64 px (stem + CTA; the title is in the top bar)</td><td class="num" data-p1="390x844">74.8 %</td><td>clear at peek</td></tr>
+        <tr><td>3840 × 2160 (4K, DPR 1)</td><td>top 48 · rail 80 · card 440 · strip 32</td><td class="num" data-p1="3840x2160">83.1 %</td><td>clear</td></tr>
+        <tr><td>1920 × 1080</td><td>top 48 · rail 64 · card 320 · strip 32</td><td class="num" data-p1="1920x1080">73.3 %</td><td>clear</td></tr>
+        <tr><td>1440 × 900 (laptop)</td><td>top 48 · context bar 40 · rail 64 · strip 32 · drawer closed</td><td class="num" data-p1="1440x900">80.9 %</td><td>clear (drawer covers the edge only)</td></tr>
+        <tr><td>1366 × 1024 (iPad landscape)</td><td>as laptop, 44 px targets: 52 px context bar, 48 px strip</td><td class="num" data-p1="1366x1024">79.7 %</td><td>clear</td></tr>
+        <tr><td>1024 × 1366 (iPad portrait)</td><td>top 48 · flow bar 72 · strip 48 · sheet peek 180 px (title + stem + CTA)</td><td class="num" data-p1="1024x1366">72.0 %</td><td>clear (peek below the zone; expanded ≤ 40 %)</td></tr>
+        <tr><td>390 × 844 (phone)</td><td>top 44 · flow bar 56 · sheet peek 64 px (stem + CTA; the title is in the top bar)</td><td class="num" data-p1="390x844">75.3 %</td><td>clear at peek</td></tr>
       </tbody>
     </table>
-    <p class="note">Measured by the screenshot script from the rendered DOM on 2026-11-01 (canvas area not covered by the sheet or drawer, divided by the app frame that excludes the review header and demo strip; the 1920 and 4K figures include the 40 px LMS host bar inside the frame); no HUD item, navigator or sheet intersected the central 50 % zone and no target was under 24 px in that run. The "Guides" toggle draws the zone for a visual check.</p>
+    <p class="note">Measured by the screenshot script from the rendered DOM on 2026-11-01, revision run (canvas area not covered by the sheet or drawer, divided by the app frame that excludes the review header and demo strip; the 1920 and 4K figures include the 40 px LMS host bar inside the frame; tablet and phone runs emulate a coarse pointer, so their chrome is the 44 px variant); no HUD item, navigator, dialog, palette or drawer intersected the central 50 % zone at 1366 px and above, bottom sheets below 1080 px are transient and ≤ 40 %, and no target was under 24 px (44 px under coarse, base.css components excepted: see §8) in that run; axe-core (WCAG 2.x A/AA, 2.2 AA) reported no violations in 19 states. The "Guides" toggle draws the zone for a visual check.</p>
 
     <h3>7. Design notes for the plan owner</h3>
     <ul>
@@ -1645,10 +1677,27 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
       <li><b>DF-2 · Region C.</b> The IA names region C the tool rail; here it is a step rail that discloses tools per phase (C's DN-C1), 64 px wide (80 at 4K). Principles §3.1 should say "step / tool rail" and the module schema gains a phase-aware tool allowlist that the command registry honours (engineering judge).</li>
       <li><b>DF-3 · Per-ROI settle query.</b> "Never reveal while a tile under the mark is stale" needs <code>geometry.settled(roi)</code> or an equivalent from the quality record; file against the core backlog with an <code>FR-</code> id before the item engine relies on it.</li>
       <li><b>DF-4 · Tier chip in Learn.</b> Shown as information on the iPad (brief §10.3) although it limits no mode in Learn; owner to confirm whether Learn shows it at all.</li>
-      <li><b>DF-5 · Design-system tokens.</b> This page raises <code>--color-hud-backdrop</code> to 0.78 and HUD secondary lines to 12 px so they pass 4.5:1 over tissue; chrome body is 14 px at 4K DPR 1. The navigator pan buttons follow <code>--target</code> (44 px under a coarse pointer). All three should move into <code>tokens.css</code> / <code>base.css</code>.</li>
+      <li><b>DF-5 · Design-system tokens.</b> Resolved on 2026-11-01: <code>tokens.css</code> now carries <code>--color-hud-backdrop</code> 0.80 and <code>base.css</code> the always-visible 44 px navigator pads (28 px visible pad on the frame), the 0.7 settled-label rule and the 24 px segmented items; this page's copies are deleted (§8). Still page-level: HUD secondary lines at 12 px.</li>
+      <li><b>DF-9 · Reduced-motion class twin.</b> <code>base.css</code> mirrors the <code>(pointer: coarse)</code> tokens under <code>.is-coarse</code>, which the demo switch now uses; there is no <code>.is-reduced-motion</code> twin of the <code>prefers-reduced-motion</code> block, so the demo switch still zeroes the five motion tokens itself. One class in <code>tokens.css</code> would remove the last re-declaration.</li>
+      <li><b>DF-10 · Shared rules still carried per page.</b> <code>.palette-layer</code> (dock-column anchor ≥ 1080 px, bottom sheet below) exists in all three finals; the components sheet's candidate rows (<code>components.html</code>) still nest "Fly there" inside <code>role="radio"</code> and should take the native-radio markup used here (§8).</li>
       <li><b>DF-6 · Sheet rule.</b> Base.css allows a 60 vh sheet on phones; this screen caps every sheet at 40 % and lets the body scroll. If the owner prefers taller phone sheets, principles §3.1 and base.css should agree on one number.</li>
       <li><b>DF-7 · "Submit to your course".</b> As C's DN-C4: AGS posts each item on <code>itemAnswered</code>; the last step is a completion marker, and the card says so.</li>
       <li><b>DF-8 · Mock liberties.</b> Tissue is a seeded SVG; "soft" is a CSS blur standing in for a magnified ancestor; marks, labels, pins and the scale bar are DOM here but GPU layers in the product (principles D11); the CVD remap is a Machado deutan matrix, not the Dalton 2026 LUT.</li>
+    </ul>
+
+    <h3>8. Revision 2026-11-01 (critique round: pathologist and UX/a11y judges)</h3>
+    <ul>
+      <li><b>Revision 2026-11-01</b> · <i>Dialogs and the palette off the slide centre (P1, high).</i> The keymap, settings, About, tier, sharpness and hand-off dialogs and the candidates panel are anchored over the task-card column (base.css <code>.modal-layer</code>: top-right, dock-wide, the layer itself takes no input), starting below the context bar, at <code>min(--dock-w, 25 vw − 16 px − rail/4)</code> so the panel's left edge never crosses the central zone's right edge while the rail is 64 px; the scrim is gone (a pointer-down outside a modal dialog closes it) and the command palette drops from the top bar over the same column. Below 1080 px base.css makes every dialog a bottom sheet ≤ 40 % and the palette follows. Measured in the §6 run: no dialog, palette or sheet-free chrome intersects the central 50 % at 1920, 1440, 1366 or 4K.</li>
+      <li><b>Revision 2026-11-01</b> · <i>The keyboard alternative can see what it flies to (high).</i> <code>#dlg-cand</code> is <code>aria-modal="false"</code> with no backdrop: it sits beside the slide, the slide keeps its keys while the panel is open (arrows pan, +/− zoom, Escape closes it, Tab past either end returns to the slide), and <i>Fly there</i> moves the view to 20× without choosing the region (choose = radio, look = button, two actions for AT users too). Below 1080 px the sheet closes on <i>Fly there</i> so the region is visible, and <kbd class="key">⇧↵</kbd> or <i>Mark without a pointer</i> reopens it on the same region; the help text says so per surface.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Candidate rows are native controls (medium).</i> Each row is a <code>&lt;label&gt;</code> with a visually hidden <code>&lt;input type="radio" name="cand"&gt;</code>, the letter box and the description, inside a <code>&lt;fieldset&gt;</code> with a hidden legend; "Fly there" is a sibling button with its own name ("Fly there: region C at 20 times"). Arrow keys move and choose natively, A–F jump, Enter on a radio commits. No control nests inside another (axe nested-interactive clear). Design note DF-10 for the components sheet.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Enter never commits straight from the slide (medium).</i> On an item awaiting an answer, <kbd class="key">↵</kbd> on the canvas closes an open polygon (any drawing tool returns to Select) and moves focus to the primary action, announcing "Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide"; Enter inside the item card commits; the card's CTA (now wired, it had no click handler) and the context-bar and caption-card CTAs commit on click or Enter. A committed answer is reversible until reveal: <i>Change answer</i> appears in the card's secondary row, the context bar and the caption card (and the palette) and reopens the item; the saved-state copy and the live announcement say "You can still change it until you reveal". The CTA keeps its <kbd class="key">↵</kbd> hint because Enter on the focused button is what commits; a note under it explains the two-step.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Locked steps readable (medium).</i> <code>.phase.is-locked</code> uses <code>--color-text-secondary</code> at full opacity (5.6:1 on surface-0) with a dashed number ring and <code>aria-disabled="true"</code>; the label reads "Complete, locked, not yet reached". The buttons stay in the Tab order so the shape of the task is discoverable; activating one still answers "Not yet". The 9 px sub-labels lose their 0.85 opacity too.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Clinical-IH / Dx variant top bar (medium).</i> The purpose-of-use chip sits in the mode slot from 1280 px and in the strip below it; between 600 and 1079 px the clinical variant drops the three slot buttons (keymap <kbd class="key">?</kbd>, settings and the palette via the bottom bar's Commands button) so the 659 px clinical label string, the accession and NAV / DX fit at 1024 under a coarse pointer; below 600 px the settings button goes (palette). The Learn build keeps its buttons.</li>
+      <li><b>Revision 2026-11-01</b> · <i>44 px on tablets and phones (medium).</i> The page no longer caps any control below the tokens: the strip chips, the tier chip and the sharpness button take base.css's 44 px under a coarse pointer on a 48 px strip; the context-bar buttons are <code>max(28px, --target-control)</code> on a 52 px bar; rail phase buttons fill the 48 px column (44 px minimum); the ranked-differential arrows follow <code>--target-control</code>; "Fly there", "Clear" and the badge take base.css's sizes; the review header's view switch is 24 px. The demo's "44 px targets" switch adds base.css's <code>.is-coarse</code> class instead of re-declaring tokens.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Settings dialog names (medium).</i> Every switch and the CVD select carry <code>aria-labelledby</code> to their visible row label and <code>aria-describedby</code> to the hint; the segmented items are 24 px from base.css.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Label string at exactly 1024 px.</i> The simulated LMS frame's 1 px side borders made the top bar 1022 px wide, 1 px under base.css's container threshold for the label string; the review-only border is gone (an iframe draws none), so the Learn label shows at 1024 as principles §2.5 asks, with no page rule.</li>
+      <li><b>Revision 2026-11-01</b> · <i>Page copies of design-system rules deleted (low).</i> <code>--color-hud-backdrop</code>, the 1024–1079 label-string rules, the navigator pan-button rules (base.css now keeps a 28 px visible pad on the frame inside the 44 px hit area, so four pads no longer hide a 180 px thumbnail), the <code>.is-quiet</code> opacity, the strip chip heights, the <code>.modal-layer</code> tweaks and the coarse token re-declarations. Kept: the reduced-motion demo switch (DF-9). Review chrome: the LMS host bar text is #5b6670 (5.1:1).</li>
+      <li><b>Revision 2026-11-01</b> · <i>Pan during a fly-to.</i> The reported "ArrowRight changes the magnification at fit" did not reproduce with a settled camera (the readout stays 0.98× at 1920 and 0.79× at 1440 before and after a pan); it matches a key pressed during the 520 ms fit animation, when the readout shows an intermediate value. <code>panBy()</code> now clamps the centre explicitly without touching the scale, and any pan or zoom during a fly lands the fly first, so a key mid-flight never leaves a half-way magnification.</li>
     </ul>
   </details>
 </section>
@@ -1840,6 +1889,7 @@ function render() {
   html.dataset.view = state.view; html.dataset.product = state.product; html.dataset.audience = state.audience;
   html.dataset.phase = PH[st.ph]; html.dataset.step = String(st.s); html.dataset.item = itemState(st);
   ['alltools', 'timer', 'rm', 'coarse', 'cohort'].forEach(function (k) { var v = { alltools: state.allTools, timer: state.timer, rm: state.rm, coarse: state.coarse, cohort: state.cohort }[k]; if (v) html.dataset[k] = '1'; else delete html.dataset[k]; });
+  html.classList.toggle('is-coarse', !!state.coarse);   /* base.css's class twin of (pointer: coarse): the demo switch re-declares no token */
   if (state.dxRefused) html.dataset.dxrefused = '1'; else delete html.dataset.dxrefused;
   $$('.task').forEach(function (t) { t.hidden = t.dataset.task !== st.task; });
   var card = curCard();
@@ -1855,6 +1905,7 @@ function render() {
   var c = ctaFor(st), ctaHtml = esc(c.label) + keyHtml(c.key);
   $$('.js-cta').forEach(function (b) { if (b.closest('.task') === card) { b.innerHTML = ctaHtml; b.disabled = !!c.disabled; } });
   var cc = $('#ctx-cta'); cc.innerHTML = ctaHtml; cc.disabled = !!c.disabled; var cp = $('#cap-cta'); cp.innerHTML = ctaHtml; cp.disabled = !!c.disabled;
+  var note = $('#cta-note'); if (note) { var aw = !!st.item && itemState(st) === 'awaiting'; note.hidden = !aw; if (aw) note.innerHTML = 'On the slide, <kbd class="key">↵</kbd> ' + (isRes() || st.s !== 4 ? 'moves focus here' : 'closes the polygon and moves focus here') + '; <kbd class="key">↵</kbd> again commits. You can change your answer until you reveal.'; }
   var gradeMeta = isLearner() ? ({ ms: 'Graded · posts to Canvas', ug: 'Practice · not graded', cme: 'CME post-test', res: 'Unknown · ungraded' })[state.audience] : '';
   txt('#ctx-step', stepLabel + (kind === 'learner' ? ' · ' + PHASE_LABELS.learner[st.ph] : '')); txt('#ctx-stem', st.stem || st.title);
   txt('#cap-meta', stepLabel + (kind === 'learner' ? ' · ' + PHASE_LABELS.learner[st.ph] : '') + (st.item && gradeMeta ? ' · ' + gradeMeta : '')); txt('#cap-stem', st.stem || st.title);
@@ -1884,7 +1935,7 @@ function renderFlow(sel, steps, kind) {
     var inPhase = steps.filter(function (s) { return s.ph === p; }); var within = inPhase.indexOf(steps[state.idx]);
     var cls = p < curPh ? 'is-done' : p === curPh ? 'is-current' : (p > maxPh && kind === 'learner') ? 'is-locked' : '';
     var sub = inPhase.length > 1 ? (p === curPh ? 'step ' + (within + 1) + ' of ' + inPhase.length : inPhase.length + ' steps') : '';
-    out += (p ? '<li class="flow__link" aria-hidden="true"></li>' : '') + '<li><button class="phase ' + cls + '" data-phase-go="' + p + '" ' + (p === curPh ? 'aria-current="step"' : '') + ' aria-label="' + esc(lab) + (sub ? ', ' + sub : '') + (p < curPh ? ', done' : p === curPh ? ', current' : cls === 'is-locked' ? ', not yet reached' : '') + '"><span class="phase__num"><span>' + (p + 1) + '</span></span><span class="phase__text"><span class="phase__label">' + esc(lab) + '</span>' + (sub ? '<span class="phase__sub">' + sub + '</span>' : '') + '</span></button></li>';
+    out += (p ? '<li class="flow__link" aria-hidden="true"></li>' : '') + '<li><button class="phase ' + cls + '" data-phase-go="' + p + '" ' + (p === curPh ? 'aria-current="step"' : '') + ' aria-label="' + esc(lab) + (sub ? ', ' + sub : '') + (p < curPh ? ', done' : p === curPh ? ', current' : cls === 'is-locked' ? ', locked, not yet reached' : '') + '"' + (cls === 'is-locked' ? ' aria-disabled="true"' : '') + '><span class="phase__num"><span>' + (p + 1) + '</span></span><span class="phase__text"><span class="phase__label">' + esc(lab) + '</span>' + (sub ? '<span class="phase__sub">' + sub + '</span>' : '') + '</span></button></li>';
   });
   ol.innerHTML = out;
 }
@@ -2022,17 +2073,20 @@ function setSharp(kind, reason) {
   txt('#qu-text', kind === 'sharp' ? 'Sharp: the settled frame shows native-resolution tiles everywhere (0 % not-yet-final, deficit 0.00 octave).' : kind === 'sharpening' ? 'Sharpening: the destination level is still arriving; the best resident ancestor is shown meanwhile.' : kind === 'soft' ? 'Soft — slow link: settled for more than 400 ms with a resolution deficit above 0.15 octave. Nothing is blank; the ancestor is magnified.' : 'Offline — cached tiles only.'); txt('#qu-settle', settleMs() + ' ms');
   if (isLearner() && cur().s === 4) { var st = cur(); if (itemState(st) === 'committed') { renderDecide(st); var c = ctaFor(st); $$('.js-cta').forEach(function (b) { if (b.closest('.task') === curCard()) b.innerHTML = esc(c.label) + keyHtml(c.key); }); $('#ctx-cta').innerHTML = esc(c.label) + keyHtml(c.key); $('#cap-cta').innerHTML = esc(c.label) + keyHtml(c.key); } }
 }
-function zoomAt(factor, px, py) { var s = csize(); var c = state.cam; var s2 = Math.min(16, Math.max(0.125, c.scale / factor)); var x = c.cx - c.scale * s.w / 2, y = c.cy - c.scale * s.h / 2; var sx = x + px * c.scale, sy = y + py * c.scale; var x2 = sx - px * s2, y2 = sy - py * s2; state.prevScale = c.scale; state.cam = { cx: x2 + s2 * s.w / 2, cy: y2 + s2 * s.h / 2, scale: s2 }; applyCam(); disturb(); }
+function zoomAt(factor, px, py) { settleAnim(); var s = csize(); var c = state.cam; var s2 = Math.min(16, Math.max(0.125, c.scale / factor)); var x = c.cx - c.scale * s.w / 2, y = c.cy - c.scale * s.h / 2; var sx = x + px * c.scale, sy = y + py * c.scale; var x2 = sx - px * s2, y2 = sy - py * s2; state.prevScale = c.scale; state.cam = { cx: x2 + s2 * s.w / 2, cy: y2 + s2 * s.h / 2, scale: s2 }; applyCam(); disturb(); }
 function zoomCentre(factor) { var s = csize(); zoomAt(factor, s.w / 2, s.h / 2); }
-function panBy(fx, fy) { var s = csize(); state.cam.cx += fx * s.w * state.cam.scale; state.cam.cy += fy * s.h * state.cam.scale; applyCam(); disturb(); }
-var anim = null;
+/* Keyboard and button pan (revision 2026-11-01): the centre is clamped to the slide and the scale is never touched; a pan or zoom
+   during a fly-to lands the fly first, so a key pressed mid-flight never leaves a half-way magnification on the readout. */
+var anim = null, animTo = null;
+function settleAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; if (animTo) state.cam = animTo; animTo = null; app.classList.remove('is-gesturing'); applyCam(); } }
+function panBy(fx, fy) { settleAnim(); var s = csize(); var c = state.cam; c.cx = Math.min(SLIDE.w, Math.max(0, c.cx + fx * s.w * c.scale)); c.cy = Math.min(SLIDE.h, Math.max(0, c.cy + fy * s.h * c.scale)); applyCam(); disturb(); }
 function flyTo(target, opts) {
-  opts = opts || {}; if (anim) { cancelAnimationFrame(anim); anim = null; app.classList.remove('is-gesturing'); }
+  opts = opts || {}; settleAnim();
   if (target.slide) setSlide(target.slide, true);
-  var to = clampCam(target.cx === undefined ? fitCam() : { cx: target.cx, cy: target.cy, scale: target.scale }); var from = { cx: state.cam.cx, cy: state.cam.cy, scale: state.cam.scale }; state.prevScale = from.scale;
+  var to = clampCam(target.cx === undefined ? fitCam() : { cx: target.cx, cy: target.cy, scale: target.scale }); var from = { cx: state.cam.cx, cy: state.cam.cy, scale: state.cam.scale }; state.prevScale = from.scale; animTo = to;
   if (state.rm || opts.instant) { state.cam = to; applyCam(); disturb(); return; }
   var dur = opts.dur || 520, t0 = performance.now(), la = Math.log(from.scale), lb = Math.log(to.scale); app.classList.add('is-gesturing'); setSharp('sharpening');
-  var step = function (now) { var t = Math.min(1, (now - t0) / dur); var e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; state.cam = { cx: from.cx + (to.cx - from.cx) * e, cy: from.cy + (to.cy - from.cy) * e, scale: Math.exp(la + (lb - la) * e) }; applyCam(); if (t < 1) anim = requestAnimationFrame(step); else { anim = null; app.classList.remove('is-gesturing'); disturb(); } };
+  var step = function (now) { var t = Math.min(1, (now - t0) / dur); var e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; state.cam = { cx: from.cx + (to.cx - from.cx) * e, cy: from.cy + (to.cy - from.cy) * e, scale: Math.exp(la + (lb - la) * e) }; applyCam(); if (t < 1) anim = requestAnimationFrame(step); else { anim = null; animTo = null; app.classList.remove('is-gesturing'); disturb(); } };
   anim = requestAnimationFrame(step);
 }
 function setSlide(id, quiet) { if (state.slideId === id) return; state.slideId = id; applyEnv(); applyLayers(); applyCam(); disturb(); if (!quiet) announce((id === 'ihc' ? 'A1-2 CK AE1/AE3' : 'A1-1 H and E') + ' opened. Same view.'); }
@@ -2065,8 +2119,25 @@ function commit() {
     if (!gateMet() && !state.gateWarned) { state.gateWarned = true; render(); announce('You have not viewed the focus at 20 times yet. Commit now for half credit, or press 5 to jump to 20 times first.'); return; }
   }
   state.items[key] = 'committed'; render();
-  toast(res ? 'Diagnosis recorded' : 'Answer saved', 'The answer key stays hidden until you reveal: layer ACL revealOn(itemAnswered).');
-  announce(res ? 'Diagnosis recorded. Press U to reveal.' : 'Answer saved. Press U to reveal.');
+  toast(res ? 'Diagnosis recorded' : 'Answer saved', 'You can still change it until you reveal. The answer key stays hidden until then: layer ACL revealOn(itemAnswered).');
+  announce(res ? 'Diagnosis recorded. You can still change it until you reveal. Press U to reveal.' : 'Answer saved. You can still change it until you reveal. Press U to reveal.');
+}
+/* Commit is reversible until reveal (revision 2026-11-01): "Change answer" reopens the item */
+function changeAnswer() {
+  var st = cur(); if (!st.item || itemState(st) !== 'committed') { toast('Nothing to change', 'An answer can be changed between commit and reveal.', 'info'); return; }
+  state.items[itemKey(st)] = 'awaiting'; render();
+  var h = $('.task__title', curCard()); if (h && h.offsetParent !== null) { try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } } else canvasArea.focus();
+  toast('Answer unlocked', 'Change your mark or confidence, then commit again.', 'info'); announce('Answer unlocked. Change your mark or confidence, then commit again.');
+}
+/* Enter on the slide never commits directly: it closes an open polygon, then puts focus on the primary action (Enter again commits) */
+function visibleCta() { var cands = [$('#ctx-cta'), $('#cap-cta')].concat($$('.js-cta', curCard() || app)); return cands.filter(function (b) { return b && b.offsetParent !== null && !b.disabled; })[0] || null; }
+function enterToCta() {
+  var closed = state.tool === 'P', drawing = ['P', 'F', 'T', 'M'].indexOf(state.tool) >= 0; if (drawing) setTool('V');
+  var cta = visibleCta(); if (!cta) { dockToggle(); cta = visibleCta(); }
+  if (cta) cta.focus();
+  var label = cta ? cta.textContent.replace(/\s*↵\s*$/, '').trim() : 'the primary action';
+  if (closed) toast('Polygon closed', '7 points · 1.21 mm² (simulated). Enter again commits.');
+  announce((closed ? 'Polygon closed. ' : '') + label + ' has focus. Press Enter again to commit, or Escape to go back to the slide.');
 }
 function reveal() {
   var st = cur(); if (!st.item) return; var key = itemKey(st);
@@ -2115,10 +2186,12 @@ var lastFocus = null;
 function openDialog(id) {
   lastFocus = document.activeElement; var layer = $('#modal-layer'); layer.hidden = false; $$('.dialog', layer).forEach(function (d) { d.hidden = d.id !== id; });
   var d = $('#' + id); if (!d) return;
-  var f = id === 'dlg-cand' ? $('#cand-list .candidate[tabindex="0"]') : (d.querySelector('input:not([type=hidden]):not([disabled]), select, textarea, .segmented__item[aria-checked="true"], .dialog__footer .btn--accent, .dialog__footer .btn--secondary') || d.querySelector('button'));
+  var f = id === 'dlg-cand' ? ($('#cand-list input:checked') || $('#cand-list input')) : (d.querySelector('input:not([type=hidden]):not([disabled]), select, textarea, .segmented__item[aria-checked="true"], .dialog__footer .btn--accent, .dialog__footer .btn--secondary') || d.querySelector('button'));
   if (f) f.focus();
-  announce(($('.dialog__title', d) || {}).textContent + ' dialog opened. Escape closes.');
+  announce(($('.dialog__title', d) || {}).textContent + (d.getAttribute('aria-modal') === 'false' ? ' panel opened beside the slide. Escape closes; Tab past the end returns to the slide.' : ' dialog opened. Escape closes.'));
 }
+function openDialogEl() { var layer = $('#modal-layer'); if (layer.hidden) return null; return $$('.dialog', layer).filter(function (x) { return !x.hidden; })[0] || null; }
+function focusables(root) { return $$('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])', root).filter(function (x) { return x.offsetParent !== null && !(x.type === 'radio' && !x.checked); }); }
 function closeDialog() { var layer = $('#modal-layer'); if (layer.hidden) return; layer.hidden = true; $$('.dialog', layer).forEach(function (d) { d.hidden = true; }); var back = lastFocus && lastFocus.offsetParent !== null ? lastFocus : canvasArea; if (back && back.focus) back.focus(); }
 function trapTab(e, root) { var f = $$('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])', root).filter(function (x) { return x.offsetParent !== null; }); if (!f.length) return; var first = f[0], last = f[f.length - 1]; if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); } }
 var polT = 0, polText = '';
@@ -2134,7 +2207,7 @@ var palItems = [], palSel = 0;
 function commands() {
   var steps = flow(); var learn = state.product === 'learn'; var list = [
     { g: 'The flow', l: 'Next step', k: 'N', run: next }, { g: 'The flow', l: 'Previous step', k: '⇧N', run: prev },
-    { g: 'The flow', l: 'Primary action: ' + ctaFor(cur()).label, k: '↵', run: primary }, { g: 'The flow', l: 'Reveal (uncover the answer key, after commit)', k: 'U', run: reveal },
+    { g: 'The flow', l: 'Primary action: ' + ctaFor(cur()).label, k: '↵', run: primary }, { g: 'The flow', l: 'Change answer (between commit and reveal)', k: '', run: changeAnswer }, { g: 'The flow', l: 'Reveal (uncover the answer key, after commit)', k: 'U', run: reveal },
     { g: 'The flow', l: "Expert's view on / off", k: '⇧E', run: toggleExpert }, { g: 'The flow', l: 'Mark without a pointer', k: '⇧↵', run: function () { openDialog('dlg-cand'); } },
     { g: 'The flow', l: 'Play / pause narration', k: 'Space', run: playToggle }, { g: 'The flow', l: 'Skip to the question', k: '', run: function () { goto(3, { fly: true }); } }
   ];
@@ -2202,14 +2275,14 @@ function closeRadial() { var r = $('#radial'); if (r.hidden) return; r.hidden = 
 
 /* ------------------------------------------------------------------ candidates dialog (B focus model; Enter commits) */
 var candTab = 1, candSel = 'C';
-function selectCand(letter) { candSel = letter; $$('#cand-list .candidate').forEach(function (c) { var on = c.dataset.c === letter; c.setAttribute('aria-checked', String(on)); c.tabIndex = on ? 0 : -1; }); updateCandCommit(); }
+function selectCand(letter) { candSel = letter; $$('#cand-list input[name="cand"]').forEach(function (i) { i.checked = i.value === letter; }); $$('#cand-list .candidate').forEach(function (c) { c.classList.toggle('is-selected', c.dataset.c === letter); }); updateCandCommit(); }
 function setCandTab(n) { candTab = n; $('#cand-tab1').setAttribute('aria-selected', String(n === 1)); $('#cand-tab2').setAttribute('aria-selected', String(n === 2)); $('#cand-tab1').tabIndex = n === 1 ? 0 : -1; $('#cand-tab2').tabIndex = n === 2 ? 0 : -1; $('#cand-p1').hidden = n !== 1; $('#cand-p2').hidden = n !== 2; updateCandCommit(); }
 function updateCandCommit() { $('#cand-commit').innerHTML = (candTab === 2 ? 'Commit my text answer' : 'Commit ' + candSel + ' as my mark') + ' <kbd class="key">↵</kbd>'; }
 function commitCandidate() {
   state.candidate = candTab === 2 ? 'text' : candSel; state.markCleared = false; closeDialog(); var st = cur();
   if (candTab === 2) { state.items[itemKey(st)] = 'committed'; render(); announce('Text answer committed. Press U to reveal.'); return; }
   if (!gateMet()) { state.cam = candSel === 'C' ? Object.assign({}, FOCUS20) : { cx: CAND_POS[candSel][0], cy: CAND_POS[candSel][1], scale: 0.5 }; applyCam(); disturb(); }
-  state.items[itemKey(st)] = 'committed'; render(); announce('Candidate ' + candSel + ', ' + CAND_TEXT[candSel] + ', committed as your mark by keyboard. Zoom gate met. Press U to reveal.');
+  state.items[itemKey(st)] = 'committed'; render(); announce('Candidate ' + candSel + ', ' + CAND_TEXT[candSel] + ', committed as your mark by keyboard. Zoom gate met. You can still change it until you reveal. Press U to reveal.');
 }
 function typedZoom() {
   var mv = $('#mag-value'); if (mv.querySelector('input')) return; var old = mv.textContent; mv.innerHTML = '<input type="text" aria-label="Type a magnification such as 20x or a pitch in micrometres per pixel" value="' + old.replace('×', '') + '">'; var inp = mv.querySelector('input'); inp.focus(); inp.select();
@@ -2221,12 +2294,19 @@ function typedZoom() {
 /* ------------------------------------------------------------------ events */
 function bind() {
   document.addEventListener('click', function (e) {
-    var el = e.target.closest('[data-action], [data-fly], [data-phase-go], [data-dir-go], [data-step-go], [data-pan], [data-slide], [data-theme-set], [data-toast], [data-view], [data-tool], [data-move], [data-add], .confidence .opt, .task__grab, .navigator__thumb, #hud-mag, .candidate, .tab, .palette__item');
+    var el = e.target.closest('[data-action], [data-fly], [data-phase-go], [data-dir-go], [data-step-go], [data-pan], [data-slide], [data-theme-set], [data-toast], [data-view], [data-tool], [data-move], [data-add], .confidence .opt, .task__grab, .navigator__thumb, #hud-mag, .js-cta, .tab, .palette__item');
     if (!el) return;
     if (el.matches('.palette__item')) { palRun(+el.dataset.i); return; }
     if (el.matches('.tab')) { setCandTab(el.id === 'cand-tab2' ? 2 : 1); return; }
-    if (el.matches('.candidate')) { if (e.target.closest('[data-fly]')) { /* handled below */ } else { selectCand(el.dataset.c); return; } }
-    if (el.dataset.fly !== undefined && el.dataset.fly !== '') { var key = el.dataset.fly; if (key === 'rB') { var ch = $('#mcq input:checked'); if (ch) key = 'r' + ch.value; } var t = TARGETS[key]; if (t) { flyTo(t); if (key[0] === 'c') { selectCand(key[1]); announce('Flying to candidate ' + key[1] + ', ' + CAND_TEXT[key[1]] + ', at 20 times. Zoom gate met.'); } } return; }
+    if (el.matches('.js-cta')) { primary(); return; }
+    if (el.dataset.fly !== undefined && el.dataset.fly !== '') {
+      var key = el.dataset.fly; if (key === 'rB') { var ch = $('#mcq input:checked'); if (ch) key = 'r' + ch.value; } var t = TARGETS[key]; if (!t) return;
+      if (key[0] === 'c') {   /* candidates: Fly there looks, it does not choose; below 1080 px the sheet closes so the slide is visible */
+        var sheet = window.innerWidth <= 1079; if (sheet) closeDialog();
+        flyTo(t); announce('Flying to region ' + key[1] + ', ' + CAND_TEXT[key[1]] + ', at 20 times. Zoom gate met.' + (sheet ? ' The list closed so the slide is visible; Shift Enter reopens it.' : ' The list stays open beside the slide.'));
+      } else flyTo(t);
+      return;
+    }
     if (el.dataset.phaseGo !== undefined) { var p = +el.dataset.phaseGo; var steps = flow(); var i = steps.findIndex(function (s) { return s.ph === p; }); var reach = steps[state.maxIdx].ph; if (flowKind() === 'learner' && p > reach) { toast('Not yet', 'Finish the current phase first; Skip to the question is in the card.', 'info'); return; } if (i >= 0) goto(i, { fly: true }); return; }
     if (el.dataset.dirGo !== undefined) { state.dirIdx = +el.dataset.dirGo; renderDirectorFlow(); var ids = ['dir-cohort', 'dir-look', 'dir-items', 'dir-export']; var target = document.getElementById(ids[state.dirIdx]); if (target) target.scrollIntoView({ block: 'start', behavior: state.rm ? 'auto' : 'smooth' }); return; }
     if (el.dataset.stepGo !== undefined) { goto(+el.dataset.stepGo, { fly: true }); return; }
@@ -2246,7 +2326,7 @@ function bind() {
     switch (a) {
       case 'close': closeDialog(); break; case 'about': openDialog('dlg-about'); break; case 'keymap': openDialog('dlg-keymap'); break; case 'settings': openDialog('dlg-settings'); break; case 'palette': openPalette(); break; case 'tier': openDialog('dlg-tier'); break; case 'quality': openDialog('dlg-quality'); break; case 'transcript': openDialog('dlg-transcript'); break;
       case 'candidates': if (isLearner() && !isRes() && cur().s === 4 && itemState(cur()) === 'awaiting') openDialog('dlg-cand'); else toast('Mark without a pointer', 'Available on region-marking items while they await an answer.', 'info'); break;
-      case 'cand-commit': commitCandidate(); break;
+      case 'cand-commit': commitCandidate(); break; case 'changeanswer': changeAnswer(); break;
       case 'prev': prev(); break; case 'next': next(); break; case 'primary': primary(); break; case 'skip': goto(3, { fly: true }); break;
       case 'play': playToggle(); break; case 'cc': state.cc = !state.cc; el.setAttribute('aria-pressed', String(state.cc)); el.setAttribute('aria-label', state.cc ? 'Captions on' : 'Captions off'); announce(state.cc ? 'Captions on.' : 'Captions off.'); break;
       case 'labels': toggleLabels(); break; case 'overlays': toggleOverlays(); break; case 'expert': toggleExpert(); break; case 'nav': toggleNav(); break; case 'fit': flyTo({}); break;
@@ -2263,11 +2343,16 @@ function bind() {
     }
   });
   document.addEventListener('keydown', onKey);
-  document.addEventListener('keydown', function (e) { var layer = $('#modal-layer'); if (!layer.hidden && e.key === 'Tab') { var d = $$('.dialog', layer).filter(function (x) { return !x.hidden; })[0]; if (d) trapTab(e, d); } if (!$('#radial').hidden && e.key === 'Tab') trapTab(e, $('#radial')); });
+  /* Tab stays inside a modal dialog; a non-modal panel (candidates) hands focus back to the slide when Tab leaves it at either end */
+  document.addEventListener('keydown', function (e) { var d = openDialogEl(); if (d && e.key === 'Tab') { if (d.getAttribute('aria-modal') === 'false') { var f = focusables(d); if (f.length && ((!e.shiftKey && document.activeElement === f[f.length - 1]) || (e.shiftKey && document.activeElement === f[0]))) { e.preventDefault(); canvasArea.focus(); announce('Back on the slide. The list stays open; Shift Enter returns to it.'); } } else trapTab(e, d); } if (!$('#radial').hidden && e.key === 'Tab') trapTab(e, $('#radial')); });
+  /* No scrim: a pointer-down outside a modal dialog closes it (the non-modal candidates panel stays while the learner pans) */
+  document.addEventListener('pointerdown', function (e) { var d = openDialogEl(); if (!d || d.getAttribute('aria-modal') === 'false') return; if (e.target.closest('.dialog, .review, .demo, .decisions')) return; closeDialog(); }, true);
   $('#pal-input').addEventListener('input', function (e) { renderPalette(e.target.value); });
   $('#pal-input').addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); palMove(1); } else if (e.key === 'ArrowUp') { e.preventDefault(); palMove(-1); } else if (e.key === 'Enter') { e.preventDefault(); palRun(palSel); } });
-  $('#cand-list').addEventListener('keydown', function (e) { var letters = ['A', 'B', 'C', 'D', 'E', 'F']; var i = letters.indexOf(candSel); if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); selectCand(letters[(i + 1) % 6]); $('#cand-list .candidate[tabindex="0"]').focus(); } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); selectCand(letters[(i + 5) % 6]); $('#cand-list .candidate[tabindex="0"]').focus(); } else if (/^[a-fA-F]$/.test(e.key)) { selectCand(e.key.toUpperCase()); $('#cand-list .candidate[tabindex="0"]').focus(); } else if (e.key === 'Enter' && e.target.matches('.candidate')) { e.preventDefault(); commitCandidate(); } else if (e.key === ' ' && e.target.matches('.candidate')) { e.preventDefault(); } });
-  $('#dlg-cand').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.target.matches('button, select, textarea, .candidate')) { e.preventDefault(); commitCandidate(); } });
+  /* Native radios: arrow keys move and choose by themselves; letters A–F jump; Enter on a radio or a text field commits */
+  $('#cand-list').addEventListener('change', function (e) { if (e.target.name === 'cand') selectCand(e.target.value); });
+  $('#cand-list').addEventListener('keydown', function (e) { if (/^[a-fA-F]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); var L = e.key.toUpperCase(); selectCand(L); var inp = $('#cand-list input[value="' + L + '"]'); if (inp) inp.focus(); } });
+  $('#dlg-cand').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.target.matches('button, select, textarea')) { e.preventDefault(); commitCandidate(); } });
   $$('.tabs [role="tab"]').forEach(function (t) { t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setCandTab(candTab === 1 ? 2 : 1); $('#cand-tab' + candTab).focus(); } }); });
   $('#set-cvd').addEventListener('change', function (e) { state.cvd = e.target.value !== 'off'; render(); });
   $('#mcq').addEventListener('change', function () { renderDecide(cur()); });
@@ -2282,14 +2367,20 @@ function setView(v) {
 }
 function onKey(e) {
   var t = e.target; var editable = t.matches && t.matches('input, textarea, select, [contenteditable="true"]');
-  var dlgOpen = !$('#modal-layer').hidden, palOpen = !$('#palette-layer').hidden, radOpen = !$('#radial').hidden;
-  if (e.key === 'Escape') { if (palOpen) { e.preventDefault(); closePalette(); return; } if (radOpen) { e.preventDefault(); closeRadial(); return; } if (dlgOpen) { e.preventDefault(); closeDialog(); return; } if (state.tool !== 'V') { setTool('V'); return; } return; }
+  var openDlg = openDialogEl(), dlgOpen = !!openDlg, dlgModal = dlgOpen && openDlg.getAttribute('aria-modal') !== 'false', palOpen = !$('#palette-layer').hidden, radOpen = !$('#radial').hidden;
+  if (e.key === 'Escape') { if (palOpen) { e.preventDefault(); closePalette(); return; } if (radOpen) { e.preventDefault(); closeRadial(); return; } if (dlgOpen) { e.preventDefault(); closeDialog(); return; } if (state.tool !== 'V') { setTool('V'); return; } if (t.matches && t.matches('.js-cta, #ctx-cta, #cap-cta')) { canvasArea.focus(); announce('Back on the slide. Nothing was committed.'); return; } return; }
   if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); if (palOpen) closePalette(); else openPalette(); return; }
-  if (palOpen || dlgOpen || radOpen || editable) return;
+  if (palOpen || dlgModal || radOpen || editable || (dlgOpen && t.closest && t.closest('#modal-layer'))) return;   /* the non-modal candidates panel leaves the slide its keys */
   if (e.ctrlKey || e.metaKey || e.altKey) { if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); toast('Undo', 'Last vertex removed (simulated).'); } return; }
   var k = e.key, inItem = !!(t.closest && t.closest('.item-card')); var onChrome = t === body || t === canvasArea || (t.closest && !t.closest('button, a, label, input, select, textarea, [role="radio"], [role="tab"], summary, [role="option"], [role="listitem"], [role="separator"]'));
   var clinical = state.product === 'clinical' || state.product === 'dx';
-  if (k === 'Enter') { if (e.shiftKey) { e.preventDefault(); if (clinical) openDialog('dlg-handoff'); else if (isLearner() && !isRes() && cur().s === 4 && itemState(cur()) === 'awaiting') openDialog('dlg-cand'); else toast('Mark without a pointer', 'Available on region-marking items while they await an answer.', 'info'); return; } if (onChrome) { e.preventDefault(); primary(); } return; }
+  if (k === 'Enter') {
+    if (e.shiftKey) { e.preventDefault(); if (clinical) openDialog('dlg-handoff'); else if (isLearner() && !isRes() && cur().s === 4 && itemState(cur()) === 'awaiting') openDialog('dlg-cand'); else toast('Mark without a pointer', 'Available on region-marking items while they await an answer.', 'info'); return; }
+    var awaitingItem = !!cur().item && itemState(cur()) === 'awaiting';
+    if (inItem && !t.matches('button, textarea, select, a')) { e.preventDefault(); primary(); return; }   /* Enter inside the item card commits (its buttons keep their own Enter) */
+    if (onChrome) { e.preventDefault(); if (awaitingItem) enterToCta(); else primary(); }                    /* on the slide: close the polygon, focus the action; Enter again commits */
+    return;
+  }
   if (k === ' ') { if (onChrome) { e.preventDefault(); playToggle(); } return; }
   if (inItem && cur().s === 5 && /^[a-dA-D]$/.test(k)) { var r = $('#mcq input[value="' + k.toUpperCase() + '"]'); if (r) { r.checked = true; renderDecide(cur()); announce('Option ' + k.toUpperCase() + ' chosen. Enter commits.'); } return; }
   if (inItem && cur().s === 6 && /^[1-3]$/.test(k)) { var rs = $$('.stepblock[data-s="6"] input[name="size"]'); if (rs[+k - 1]) { rs[+k - 1].checked = true; announce('Option ' + k + ' chosen.'); } return; }
