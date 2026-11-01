@@ -767,10 +767,23 @@ def probe_dicom_structure(directory: str) -> tuple[dict, DicomReader, list[str]]
         quirks.append("TILED_SPARSE: frame positions come from PerFrameFunctionalGroupsSequence/PlanePositionSlideSequence")
     if not structure["level0ImageTypeOriginal"]:
         quirks.append(f"level-0 ImageType is {v0['imageType']} (no ORIGINAL VOLUME instance in this set)")
+    if "RESAMPLED" in v0["imageType"]:
+        quirks.append(f"the finest VOLUME level is itself RESAMPLED ({structure['mppLevel0']} µm/px): the scanner's "
+                      "native-resolution level is not part of this set")
     if v0["dualPersonalityTiff"]:
         quirks.append("dual-personality file: the DICOM preamble is a BigTIFF header, tifffile opens the same bytes as a TIFF")
     if steps and max(steps) > 2.01:
         quirks.append(f"sparse vendor pyramid: level steps {steps} (plan FR-V2: synthesise the missing 2x levels)")
+    # hoist fields that are identical in every instance (keeps the committed registry small)
+    keep = {"file", "flavour", "totalPixelMatrix", "imageType"}
+    common = {}
+    for k in recs[0]:
+        if k not in keep and all(k in r and r[k] == recs[0][k] for r in recs):
+            common[k] = recs[0][k]
+    for r in recs:
+        for k in common:
+            r.pop(k, None)
+    structure["instanceCommon"] = common
     return structure, DicomReader(levels), quirks
 
 
@@ -1258,7 +1271,8 @@ def main(argv=None) -> int:
                 rx = st["levels"][0][0] / st["levels"][1][0]
                 ry = st["levels"][0][1] / st["levels"][1][1]
                 if abs(d1 - rx) > 1e-9 or abs(d1 - ry) > 1e-9:
-                    quirks.append(f"OpenSlide level-1 downsample {d1} is the mean of the width ratio {rx:.6f} and height ratio "
+                    rel = "is the mean of" if abs(d1 - (rx + ry) / 2) < 1e-6 else "differs from"
+                    quirks.append(f"OpenSlide level-1 downsample {d1} {rel} the width ratio {rx:.6f} and height ratio "
                                   f"{ry:.6f}; read_region maps level-0 coordinates through it, so coarse-level reads land at "
                                   "sub-pixel offsets from the native tile grid")
             log(f"{name}: region + pixel agreement")

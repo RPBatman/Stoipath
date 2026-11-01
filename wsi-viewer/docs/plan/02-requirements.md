@@ -283,6 +283,16 @@ Priority order follows expected volume and passthrough fidelity (note 01 §a.5):
 | DZI, IIIF Image 3.0 (as sources) | A | client adapters | as published | v0.7 | E, R |
 | Still images: JPEG, PNG, BMP (gross photographs, teaching figures, phone captures) | A (JPEG/PNG bytes kept as the original), D (BMP re-encoded to PNG) | own ingest (libjpeg-turbo, `png`); a single-level image is served as-is up to 4096 px on the long side and tiled into a derived 512² pyramid above that (FR-S10) | lossless (original kept) | MVP 0.5 | E, C |
 
+
+**Corpus findings (samples-v1, 2026-11-01; [`stage0/data/corpus/README.md`](../../stage0/data/corpus/README.md)).** Eleven public test slides
+(7 Aperio SVS, 4 DICOM WSI from 3DHISTECH, Hamamatsu, Leica GT450 and a PixelMed conversion) were probed against OpenSlide 4.0.1 and
+wsidicom 0.36.1; level-0 pixels agree exactly except the JPEG 2000 SVS (±1, ≈51 dB). Facts that adjust the rows above:
+- "Classic SVS = 240²" is not universal: the 2009 ScanScope files CMU-1/2/3 use 256² tiles, so they are **Tier B**; 240² occurs in exports (CMU-1-Small-Region, CMU-1-JP2K-33005).
+- Aperio JPEG tiles are **RGB without an Adobe APP14 marker**: a browser splice of `JPEGTables` + tile decodes wrongly (max error 128–229) unless APP14 (transform 0) is injected, after which libjpeg-turbo and Chromium decode it identically. The TIFF `YCbCrSubSampling` tag (2,2) does not describe the 4:4:4 streams.
+- DICOM `YBR_FULL_422` is not a reliable subsampling statement (Hamamatsu 4:4:4, Leica 4:2:0); 3DHISTECH-1 carries 335 of 3304 level-0 frames as **progressive JPEG under the Baseline transfer syntax**; 3 of 4 sets have no offset table; Leica's TILED_SPARSE frames are not row-major; 3DHISTECH frames are 1024² (outside "frame size divides 512"). The DICOM indexer must sniff each frame's SOF marker and subsampling, and tolerate a missing offset table.
+- JPEG 2000 decode is ≈ 9–10× JPEG per megapixel on one x86 core (68–75 vs 4–8 ms/MP), supporting transcode-once for J2K sources.
+- Every asset carries label/macro images and date/serial fields, and Hamamatsu file names embed the scan time: the de-identification stage (FR-S5) must cover file names as well as tags.
+
 Video (MP4, AVI) and documents (PDF) are not viewer formats. Learn modules and case attachments carry them as media referenced from the module shell or the case record (FR-E2, FR-E7), never as slides **(added 2026-11-01)**.
 
 ### 4.2 Codecs

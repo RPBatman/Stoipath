@@ -1,0 +1,677 @@
+{
+  "date": "2026-11-01T17:42:31.581Z",
+  "shell": "client/dist/shell.html",
+  "viewport": "1440x900 DPR 1",
+  "slides": [
+    {
+      "slide": "CMU-1",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/CMU-1/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 608 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"CMU-1\" == \"CMU-1\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"CC0\" == \"CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"0.50 µm/px · 46,000 px region\" carries tissue \"\", mpp 0.499 (shown 0.50) and width 46,000"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"CMU-1 · H&E\" and navigator caption \"CMU-1 · H&E\" == \"CMU-1 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · CC0\" == \"OpenSlide test data · CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"CMU-1 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -5.3269 == fitLogZoom -5.3269)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~0.5×\" == \"~0.5×\" (s = 20.029 µm/CSS px = mpp 0.499 × dpr 1 / 2^-5.327)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"20.0 µm/px · derived\" == \"20.0 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 608,
+      "screenshot": "design/screens/integrated/shots/samples-CMU-1-1440x900.jpg",
+      "lstar": 5,
+      "logZoom": -5.3269,
+      "resident": 44,
+      "sharpness": "sharp",
+      "mag": "~0.5×",
+      "magLine": "20.0 µm/px · derived",
+      "scaleBar": "2 mm",
+      "identity": {
+        "name": "CMU-1",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "CC0",
+        "title": "0.50 µm/px · 46,000 px region",
+        "hud": "CMU-1 · H&E | OpenSlide test data · CC0"
+      },
+      "tileResponses": 45,
+      "consoleErrors": [],
+      "consoleWarnings": [
+        "[.WebGL-0x11400184400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x11400184400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x11400184400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x11400184400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ],
+      "badResponses": []
+    },
+    {
+      "slide": "CMU-1-JP2K-33005",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/CMU-1-JP2K-33005/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 558 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"CMU-1-JP2K-33005\" == \"CMU-1-JP2K-33005\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"CC0\" == \"CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"0.50 µm/px · 46,000 px region\" carries tissue \"\", mpp 0.499 (shown 0.50) and width 46,000"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"CMU-1-JP2K-33005 · H&E\" and navigator caption \"CMU-1-JP2K-33005 · H&E\" == \"CMU-1-JP2K-33005 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · CC0\" == \"OpenSlide test data · CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"CMU-1-JP2K-33005 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -5.3260 == fitLogZoom -5.3260)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~0.5×\" == \"~0.5×\" (s = 20.017 µm/CSS px = mpp 0.499 × dpr 1 / 2^-5.326)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"20.0 µm/px · derived\" == \"20.0 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 558,
+      "screenshot": "design/screens/integrated/shots/samples-CMU-1-JP2K-33005-1440x900.jpg",
+      "lstar": 5,
+      "logZoom": -5.326,
+      "resident": 44,
+      "sharpness": "sharp",
+      "mag": "~0.5×",
+      "magLine": "20.0 µm/px · derived",
+      "scaleBar": "2 mm",
+      "identity": {
+        "name": "CMU-1-JP2K-33005",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "CC0",
+        "title": "0.50 µm/px · 46,000 px region",
+        "hud": "CMU-1-JP2K-33005 · H&E | OpenSlide test data · CC0"
+      },
+      "tileResponses": 45,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    },
+    {
+      "slide": "CMU-1-Small-Region",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/CMU-1-Small-Region/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 691 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"CMU-1-Small-Region\" == \"CMU-1-Small-Region\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"CC0\" == \"CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"0.50 µm/px · 2,220 px region\" carries tissue \"\", mpp 0.499 (shown 0.50) and width 2,220"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"CMU-1-Small-Region · H&E\" and navigator caption \"CMU-1-Small-Region · H&E\" == \"CMU-1-Small-Region · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · CC0\" == \"OpenSlide test data · CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"CMU-1-Small-Region · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -1.8553 == fitLogZoom -1.8553)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~5.5×\" == \"~5.5×\" (s = 1.806 µm/CSS px = mpp 0.499 × dpr 1 / 2^-1.855)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"1.81 µm/px · derived\" == \"1.81 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 691,
+      "screenshot": "design/screens/integrated/shots/samples-CMU-1-Small-Region-1440x900.jpg",
+      "lstar": 1,
+      "logZoom": -1.8553,
+      "resident": 44,
+      "sharpness": "sharp",
+      "mag": "~5.5×",
+      "magLine": "1.81 µm/px · derived",
+      "scaleBar": "200 µm",
+      "identity": {
+        "name": "CMU-1-Small-Region",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "CC0",
+        "title": "0.50 µm/px · 2,220 px region",
+        "hud": "CMU-1-Small-Region · H&E | OpenSlide test data · CC0"
+      },
+      "tileResponses": 45,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    },
+    {
+      "slide": "CMU-2",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/CMU-2/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 545 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"CMU-2\" == \"CMU-2\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"CC0\" == \"CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"0.50 µm/px · 78,000 px region\" carries tissue \"\", mpp 0.499 (shown 0.50) and width 78,000"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"CMU-2 · H&E\" and navigator caption \"CMU-2 · H&E\" == \"CMU-2 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · CC0\" == \"OpenSlide test data · CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"CMU-2 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -5.8166 == fitLogZoom -5.8166)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~0.36×\" == \"~0.36×\" (s = 28.123 µm/CSS px = mpp 0.499 × dpr 1 / 2^-5.817)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"28.1 µm/px · derived\" == \"28.1 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 545,
+      "screenshot": "design/screens/integrated/shots/samples-CMU-2-1440x900.jpg",
+      "lstar": 5,
+      "logZoom": -5.8166,
+      "resident": 16,
+      "sharpness": "sharp",
+      "mag": "~0.36×",
+      "magLine": "28.1 µm/px · derived",
+      "scaleBar": "5 mm",
+      "identity": {
+        "name": "CMU-2",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "CC0",
+        "title": "0.50 µm/px · 78,000 px region",
+        "hud": "CMU-2 · H&E | OpenSlide test data · CC0"
+      },
+      "tileResponses": 17,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    },
+    {
+      "slide": "CMU-3",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/CMU-3/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 1047 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"CMU-3\" == \"CMU-3\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"CC0\" == \"CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"0.50 µm/px · 66,000 px region\" carries tissue \"\", mpp 0.499 (shown 0.50) and width 66,000"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"CMU-3 · H&E\" and navigator caption \"CMU-3 · H&E\" == \"CMU-3 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · CC0\" == \"OpenSlide test data · CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"CMU-3 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -5.7910 == fitLogZoom -5.7910)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~0.36×\" == \"~0.36×\" (s = 27.629 µm/CSS px = mpp 0.499 × dpr 1 / 2^-5.791)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"27.6 µm/px · derived\" == \"27.6 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 1047,
+      "screenshot": "design/screens/integrated/shots/samples-CMU-3-1440x900.jpg",
+      "lstar": 5,
+      "logZoom": -5.791,
+      "resident": 24,
+      "sharpness": "sharp",
+      "mag": "~0.36×",
+      "magLine": "27.6 µm/px · derived",
+      "scaleBar": "5 mm",
+      "identity": {
+        "name": "CMU-3",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "CC0",
+        "title": "0.50 µm/px · 66,000 px region",
+        "hud": "CMU-3 · H&E | OpenSlide test data · CC0"
+      },
+      "tileResponses": 25,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    },
+    {
+      "slide": "Hamamatsu-2",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/Hamamatsu-2/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 641 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"Hamamatsu-2\" == \"Hamamatsu-2\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"CC0\" == \"CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"0.23 µm/px · 30,720 px region\" carries tissue \"\", mpp 0.22865 (shown 0.23) and width 30,720"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"Hamamatsu-2 · H&E\" and navigator caption \"Hamamatsu-2 · H&E\" == \"Hamamatsu-2 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · CC0\" == \"OpenSlide test data · CC0\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"Hamamatsu-2 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -5.5779 == fitLogZoom -5.5779)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~0.92×\" == \"~0.92×\" (s = 10.922 µm/CSS px = mpp 0.22865 × dpr 1 / 2^-5.578)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"10.9 µm/px · derived\" == \"10.9 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 641,
+      "screenshot": "design/screens/integrated/shots/samples-Hamamatsu-2-1440x900.jpg",
+      "lstar": 5,
+      "logZoom": -5.5779,
+      "resident": 29,
+      "sharpness": "sharp",
+      "mag": "~0.92×",
+      "magLine": "10.9 µm/px · derived",
+      "scaleBar": "2 mm",
+      "identity": {
+        "name": "Hamamatsu-2",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "CC0",
+        "title": "0.23 µm/px · 30,720 px region",
+        "hud": "Hamamatsu-2 · H&E | OpenSlide test data · CC0"
+      },
+      "tileResponses": 30,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    },
+    {
+      "slide": "JP2K-33003-1",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/JP2K-33003-1/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 528 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"JP2K-33003-1\" == \"JP2K-33003-1\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"distributable\" == \"distributable\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"Aorta · 0.25 µm/px · 15,374 px region\" carries tissue \"aorta\", mpp 0.2498 (shown 0.25) and width 15,374"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"JP2K-33003-1 · H&E\" and navigator caption \"JP2K-33003-1 · H&E\" == \"JP2K-33003-1 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · distributable\" == \"OpenSlide test data · distributable\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"JP2K-33003-1 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -4.4153 == fitLogZoom -4.4153)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~1.88×\" == \"~1.88×\" (s = 5.330 µm/CSS px = mpp 0.2498 × dpr 1 / 2^-4.415)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"5.33 µm/px · derived\" == \"5.33 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 528,
+      "screenshot": "design/screens/integrated/shots/samples-JP2K-33003-1-1440x900.jpg",
+      "lstar": 4,
+      "logZoom": -4.4153,
+      "resident": 29,
+      "sharpness": "sharp",
+      "mag": "~1.88×",
+      "magLine": "5.33 µm/px · derived",
+      "scaleBar": "1 mm",
+      "identity": {
+        "name": "JP2K-33003-1",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "distributable",
+        "title": "Aorta · 0.25 µm/px · 15,374 px region",
+        "hud": "JP2K-33003-1 · H&E | OpenSlide test data · distributable"
+      },
+      "tileResponses": 30,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    },
+    {
+      "slide": "JP2K-33003-2",
+      "url": "client/dist/shell.html?manifest=../../data/samples/pyramids/JP2K-33003-2/manifest.json",
+      "checks": [
+        {
+          "ok": true,
+          "msg": "fit view settled (sharp, nothing in flight) after base load at 745 ms"
+        },
+        {
+          "ok": true,
+          "msg": "top bar name \"JP2K-33003-2\" == \"JP2K-33003-2\""
+        },
+        {
+          "ok": true,
+          "msg": "cohort \"OpenSlide test data\" == \"OpenSlide test data\""
+        },
+        {
+          "ok": true,
+          "msg": "stain chip \"H&E\" == \"H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "licence chip \"distributable\" == \"distributable\""
+        },
+        {
+          "ok": true,
+          "msg": "title \"Heart · 0.25 µm/px · 32,671 px region\" carries tissue \"heart\", mpp 0.2498 (shown 0.25) and width 32,671"
+        },
+        {
+          "ok": true,
+          "msg": "HUD identity \"JP2K-33003-2 · H&E\" and navigator caption \"JP2K-33003-2 · H&E\" == \"JP2K-33003-2 · H&E\""
+        },
+        {
+          "ok": true,
+          "msg": "HUD cohort line \"OpenSlide test data · distributable\" == \"OpenSlide test data · distributable\""
+        },
+        {
+          "ok": true,
+          "msg": "document title \"JP2K-33003-2 · Stoipath Viewer (RUO)\""
+        },
+        {
+          "ok": true,
+          "msg": "opened at fit (logZoom -5.8432 == fitLogZoom -5.8432)"
+        },
+        {
+          "ok": true,
+          "msg": "magnification at fit \"~0.7×\" == \"~0.7×\" (s = 14.341 µm/CSS px = mpp 0.2498 × dpr 1 / 2^-5.843)"
+        },
+        {
+          "ok": true,
+          "msg": "readout line \"14.3 µm/px · derived\" == \"14.3 µm/px · derived\""
+        },
+        {
+          "ok": true,
+          "msg": "console/page errors: 0"
+        },
+        {
+          "ok": true,
+          "msg": "failed or >= 400 responses: 0"
+        }
+      ],
+      "baseLoadedMs": 745,
+      "screenshot": "design/screens/integrated/shots/samples-JP2K-33003-2-1440x900.jpg",
+      "lstar": 5,
+      "logZoom": -5.8432,
+      "resident": 33,
+      "sharpness": "sharp",
+      "mag": "~0.7×",
+      "magLine": "14.3 µm/px · derived",
+      "scaleBar": "2 mm",
+      "identity": {
+        "name": "JP2K-33003-2",
+        "cohort": "OpenSlide test data",
+        "stain": "H&E",
+        "licence": "distributable",
+        "title": "Heart · 0.25 µm/px · 32,671 px region",
+        "hud": "JP2K-33003-2 · H&E | OpenSlide test data · distributable"
+      },
+      "tileResponses": 34,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "badResponses": []
+    }
+  ],
+  "failures": 0
+}
