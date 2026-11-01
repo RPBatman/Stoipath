@@ -87,9 +87,12 @@ mkdir -p /tmp/stage0-deploy/comparator && cp -r comparator/osd.html comparator/o
 touch /tmp/stage0-deploy/.nojekyll                    # serve files as they are
 ```
 
-Publish the *contents* of `/tmp/stage0-deploy/` as the root of the `gh-pages` branch (the
-orchestrator does the git part: commit on an orphan `gh-pages` branch and enable Pages for it). The
-viewer is then at `https://<user>.github.io/<repo>/client/dist/?overlay=1&label=…` and the OpenSeadragon comparator at
+**Live site (since 2026-10-24):** the Pages branch is `stage0-deploy` (not `gh-pages`); the orchestrator updates it
+in a worktree. **Until the measurement freeze (Wed 4 Nov 18:00 CT) the measured build under `client/dist/` and `data/` must not
+change:** publish the comparator alone by copying `comparator/{osd.html,osd.js,vendor/,README.md}` into the existing
+`stage0-deploy` tree as `/comparator/` and committing only those files; do not run the full snippet above, which copies the
+working-tree `client/dist` (it now also contains the RUO shell build). The viewer is at
+`https://<user>.github.io/<repo>/client/dist/?overlay=1&label=…` and the OpenSeadragon comparator at
 `https://<user>.github.io/<repo>/comparator/osd.html?profile=tuned&label=…` (`comparator/README.md`). Notes:
 
 - Pages negotiates HTTP/2, so the viewer uses 16 parallel requests instead of 6; the export records

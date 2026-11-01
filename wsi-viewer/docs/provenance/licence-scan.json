@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-01T16:52:49Z",
+ "generated_at": "2026-11-01T17:24:14Z",
  "npm": {
   "package": "stoipath-wsi-stage0-client",
   "dependencies": {},
@@ -929,7 +929,7 @@
    "distribution": "pillow",
    "version": "13.0.0",
    "licence": "MIT-CMU",
-   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/pylib",
    "used_by": [
     "stage0 harness",
     "stage0 tools",
@@ -950,7 +950,7 @@
    "distribution": "imagecodecs",
    "version": "2026.10.10",
    "licence": "BSD-3-Clause",
-   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/pylib",
    "used_by": [
     "stage0 tools",
     "verification artefacts"
@@ -961,6 +961,7 @@
     "wsi-viewer/docs/verification/artifacts/C14/tile_bytes.py",
     "wsi-viewer/docs/verification/artifacts/common/extract_tiles.py",
     "wsi-viewer/stage0/tools/build_pyramid.py",
+    "wsi-viewer/stage0/tools/probe_corpus.py",
     "wsi-viewer/stage0/tools/verify_pyramid.py"
    ],
    "scope": "tooling (never shipped to a browser)",
@@ -973,7 +974,7 @@
    "distribution": "numpy",
    "version": "2.5.4",
    "licence": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
-   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/pylib",
    "used_by": [
     "stage0 harness",
     "stage0 tools",
@@ -987,6 +988,7 @@
     "wsi-viewer/docs/verification/artifacts/common/extract_tiles.py",
     "wsi-viewer/stage0/client/harness/verify_screens.py",
     "wsi-viewer/stage0/tools/build_pyramid.py",
+    "wsi-viewer/stage0/tools/probe_corpus.py",
     "wsi-viewer/stage0/tools/verify_pyramid.py",
     "wsi-viewer/stage0/tools/wsi_source.py"
    ],
@@ -996,11 +998,28 @@
    "permissive": true
   },
   {
+   "module": "openslide",
+   "distribution": "openslide",
+   "version": null,
+   "licence": "UNKNOWN (not installed here)",
+   "metadata_from": null,
+   "used_by": [
+    "stage0 tools"
+   ],
+   "files": [
+    "wsi-viewer/stage0/tools/probe_corpus.py"
+   ],
+   "scope": "tooling (never shipped to a browser)",
+   "copyleft": false,
+   "e7_allow_list": false,
+   "permissive": false
+  },
+  {
    "module": "tifffile",
    "distribution": "tifffile",
    "version": "2026.10.15",
    "licence": "BSD-3-Clause",
-   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv/lib/python3.13/site-packages",
+   "metadata_from": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/pylib",
    "used_by": [
     "stage0 tools",
     "verification artefacts"
@@ -1011,6 +1030,7 @@
     "wsi-viewer/docs/verification/artifacts/C14/tile_bytes.py",
     "wsi-viewer/docs/verification/artifacts/common/extract_tiles.py",
     "wsi-viewer/stage0/tools/build_pyramid.py",
+    "wsi-viewer/stage0/tools/probe_corpus.py",
     "wsi-viewer/stage0/tools/wsi_source.py"
    ],
    "scope": "tooling (never shipped to a browser)",
@@ -1037,9 +1057,9 @@
   }
  ],
  "secrets": {
-  "tracked_files": 709,
-  "untracked_not_ignored_files": 14,
-  "text_files_scanned": 439,
+  "tracked_files": 736,
+  "untracked_not_ignored_files": 3,
+  "text_files_scanned": 455,
   "binary_files_skipped": 284,
   "patterns": [
    "AWS access key id",
@@ -1055,26 +1075,8 @@
    "Stripe live key",
    "Generic secret assignment"
   ],
-  "findings": [
-   {
-    "file": "wsi-viewer/docs/verification/artifacts/C04/key.pem",
-    "line": 1,
-    "pattern": "Private key block",
-    "match_length": 27
-   },
-   {
-    "file": "wsi-viewer/docs/verification/artifacts/C15/key.pem",
-    "line": 1,
-    "pattern": "Private key block",
-    "match_length": 27
-   }
-  ],
-  "sensitive_file_names": [
-   "wsi-viewer/docs/verification/artifacts/C04/cert.pem",
-   "wsi-viewer/docs/verification/artifacts/C04/key.pem",
-   "wsi-viewer/docs/verification/artifacts/C15/cert.pem",
-   "wsi-viewer/docs/verification/artifacts/C15/key.pem"
-  ],
+  "findings": [],
+  "sensitive_file_names": [],
   "note": "values are never printed or stored; only file, line, pattern name and match length"
  }
 }

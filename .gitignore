@@ -18,3 +18,7 @@ Thumbs.db
 
 # Format test corpus: originals live in the GitHub release samples-v1; local copies and derived pyramids are caches
 wsi-viewer/stage0/data/samples/
+
+# Benchmark TLS pairs are generated locally (see docs/verification/artifacts/*/TLS-KEYS.md)
+wsi-viewer/docs/verification/artifacts/*/key.pem
+wsi-viewer/docs/verification/artifacts/*/cert.pem
