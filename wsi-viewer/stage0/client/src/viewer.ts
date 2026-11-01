@@ -56,6 +56,20 @@ interface NavigatorExtras {
   deviceMemory?: number;
 }
 
+/**
+ * Read-only view of the scheduler's in-flight records. They are private in scheduler.ts, which this refactor does
+ * not touch (scheduling must stay byte-identical for the measurement protocol); only the host hook reads them, and
+ * only on the shell page (frameHooks is empty on index.html).
+ */
+interface InflightRecordView {
+  readonly tier: number;
+  readonly startedAt: number;
+  readonly cancelled: boolean;
+}
+interface SchedulerInflightView {
+  readonly inflight: ReadonlyMap<number, InflightRecordView>;
+}
+
 export interface Stage0State {
   lstar: number;
   sharpFraction: number;
@@ -170,6 +184,15 @@ export interface FrameSnapshot {
   decodeOutstanding: number;
   uploadQueue: number;
   bytes: number;
+  /** Tiles received this session (scheduler counter; bytes / received is the mean tile size). */
+  received: number;
+  /**
+   * Age (ms) of the oldest in-flight base or visible (tier <= 0) request, 0 when none: the shell's "tier-0 queueing"
+   * input for the sharpness reason (handoff §5.5 BDP rule). Includes the worker's decode, like `inflight`.
+   */
+  oldestUrgentMs: number;
+  /** The WebGL context is lost: the loop neither plans nor draws, so `stats` describe the last drawn frame. */
+  lost: boolean;
   /** Viewport in device px (camera) and in CSS px (canvas client box at the last resize). */
   viewW: number;
   viewH: number;
@@ -236,6 +259,17 @@ export interface ViewerOptions {
    * coordinates are canvas-relative. The measurement page's canvas is position: fixed at (0, 0) and leaves it off.
    */
   trackOrigin?: boolean;
+  /**
+   * Inertia on drag release (input.ts DomInputOptions.inertia); omitted = always (measurement page). The shell passes
+   * `() => !prefersReducedMotion()` (handoff §4.1, principles §8.5).
+   */
+  inertia?: () => boolean;
+  /**
+   * sessionStorage key for the texture-layer hint written after a context loss and read at the next load in this tab.
+   * Omitted = LAYERS_HINT_STORAGE_KEY (measurement page). The shell passes its own key so a loss in the shell never
+   * shrinks the tile array of a measurement run opened from it in the same tab.
+   */
+  layersHintKey?: string;
 }
 
 function paramNum(p: URLSearchParams, name: string): number | null {
@@ -270,18 +304,18 @@ export function detectDeviceClass(ua: string, touchPoints: number): DeviceClass 
   return 'desktop';
 }
 
-function readLayersHint(): number | null {
+function readLayersHint(key: string): number | null {
   try {
-    const v = sessionStorage.getItem(LAYERS_HINT_STORAGE_KEY);
+    const v = sessionStorage.getItem(key);
     const n = v === null ? NaN : Number(v);
     return Number.isFinite(n) && n > 0 ? n : null;
   } catch {
     return null;
   }
 }
-function writeLayersHint(layers: number): void {
+function writeLayersHint(key: string, layers: number): void {
   try {
-    sessionStorage.setItem(LAYERS_HINT_STORAGE_KEY, String(layers));
+    sessionStorage.setItem(key, String(layers));
   } catch {
     /* storage unavailable: the hint is a convenience */
   }
@@ -323,6 +357,7 @@ export async function copyText(text: string): Promise<boolean> {
 
 export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   const { canvas, ui: overlay, params } = opts;
+  const layersHintKey = opts.layersHintKey ?? LAYERS_HINT_STORAGE_KEY;
   const label = params.get('label') ?? 'manual';
   const metrics = new Metrics(label, __BUILD_ID__, params.get('network'), params.get('cache'));
 
@@ -348,7 +383,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   const choice =
     layersParam !== null
       ? { layers: layersParam, reason: '?layers=' }
-      : chooseLayerCount(viewportDevW, viewportDevH, pyramid.tileSize, pyramid.basePinTileCount, pyramid.warmBaseTileCount, deviceMemory, deviceClass, readLayersHint());
+      : chooseLayerCount(viewportDevW, viewportDevH, pyramid.tileSize, pyramid.basePinTileCount, pyramid.warmBaseTileCount, deviceMemory, deviceClass, readLayersHint(layersHintKey));
   const renderer = new Renderer(canvas, pyramid.tileSize, choice.layers);
   metrics.rendererInitMs = renderer.initMs;
   let layersReason = renderer.layerCount === choice.layers ? choice.reason : `${choice.reason}; texStorage3D fell back from ${choice.layers}`;
@@ -428,6 +463,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     decodeOutstanding: 0,
     uploadQueue: 0,
     bytes: 0,
+    received: 0,
+    oldestUrgentMs: 0,
+    lost: false,
     viewW: 1,
     viewH: 1,
     cssW,
@@ -635,6 +673,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
         : false,
     ...(opts.trackOrigin === true ? { origin } : {}),
     ...(opts.acceptPointer !== undefined ? { acceptPointer: opts.acceptPointer } : {}),
+    ...(opts.inertia !== undefined ? { inertia: opts.inertia } : {}),
   });
   if (params.get('overlay') === '1') overlay.setVisible(true);
 
@@ -655,7 +694,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     const previousLayers = renderer.layerCount;
     const layers = Math.max(pyramid.basePinTileCount + TEXTURE_LAYERS_RESERVE, previousLayers >> 1);
     renderer.restore(layers);
-    writeLayersHint(renderer.layerCount);
+    writeLayersHint(layersHintKey, renderer.layerCount);
     applyPinBudget(pyramid, renderer.layerCount);
     applyWarmBudget(pyramid, renderer.layerCount, viewportTilesAtTypicalScale(renderer.width, renderer.height, pyramid.tileSize));
     cache.reset(renderer.layerCount);
@@ -684,6 +723,11 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     cameraAnimating: false,
   };
   const isUrgent = (key: number): boolean => planner.isCellVisible(key);
+  // Host hook only: oldest start time among in-flight base / visible requests (a hoisted visitor: no per-frame closure).
+  let oldestUrgentStart = 0;
+  const visitInflight = (r: InflightRecordView): void => {
+    if (r.tier <= 0 && !r.cancelled && r.startedAt < oldestUrgentStart) oldestUrgentStart = r.startedAt;
+  };
   let autoPathStarted = false;
   let warmNoted = false;
 
@@ -799,6 +843,11 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
       snapshot.decodeOutstanding = pool.outstanding;
       snapshot.uploadQueue = renderer.uploadQueue.length;
       snapshot.bytes = scheduler.counters.bytes;
+      snapshot.received = scheduler.counters.received;
+      oldestUrgentStart = now;
+      (scheduler as unknown as SchedulerInflightView).inflight.forEach(visitInflight);
+      snapshot.oldestUrgentMs = now - oldestUrgentStart;
+      snapshot.lost = renderer.lost;
       snapshot.pathRunning = path.running;
       snapshot.pathProgress = path.progress;
       for (const cb of frameHooks) cb(snapshot);

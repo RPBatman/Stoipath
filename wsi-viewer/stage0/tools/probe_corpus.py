@@ -1,34 +1,39 @@
 #!/usr/bin/env python3
-"""Probe a downloaded format-test corpus (e.g. the GitHub pre-release `samples-v1`) and write a
-registry JSON that describes every slide as our readers see it.
+"""Probe the format test corpus (GitHub pre-release `samples-v1`) and write the corpus registry.
 
-For each slide listed in <samples>/samples-manifest.json and present in <samples>:
-  identity   asset, bytes, SHA-256 (recomputed; compared with the manifest and, with
-             --release-json, with the GitHub release asset digest), source URL, OpenSlide path,
-             licence, description (all text fields come from the manifest)
-  structure  tifffile: pages, series, pyramid levels (dimensions, tile size, codec, photometric,
-             TIFF subsampling tag versus the codestream's real sampling, JPEGTables, ICC), the
-             JPEG SOF / JPEG 2000 SIZ+COD of one tile per level, associated images (sizes only;
-             their pixels are never decoded), Aperio ImageDescription fields with the FR-S5 PHI
-             tier of each, level-0 MPP and the pages selected by our own reader (wsi_source.py)
-  oracle     OpenSlide (openslide-python + openslide-bin): vendor, levels, downsamples, property
-             count, associated images; pixel agreement of tifffile-decoded tiles versus
-             read_region on 512 px regions: level 0 tissue-centred, level 1 on OpenSlide's level
-             grid (exact), and level 1 tissue-centred off-grid (measures OpenSlide's sub-pixel
-             resampling, reported as a quirk, not as a decode disagreement)
-  splice     JPEG slides: JPEGTables + tile spliced into one JPEG and decoded with libjpeg-turbo's
-             default colour rule, with and without an Adobe APP14 (transform 0) marker
-  timing     single-thread decode of 20 level-0 tissue tiles through tifffile's page.decode
-             (median of 5 repeats per tile), labelled with this machine's CPU and load average
-  tier       ingest tier per docs/plan/02-requirements.md section 4.1, with the reason
+For every asset listed in <samples-dir>/samples-manifest.json this records how OUR readers see it
+and how an independent oracle sees it:
 
-Usage (from wsi-viewer/stage0; the libraries need not be installed system-wide):
-  PYTHONPATH=<dir holding numpy, tifffile, imagecodecs, openslide-python, openslide-bin> \\
-    python3 tools/probe_corpus.py data/samples/samples-v1 --out data/corpus/samples-v1.json \\
-      [--release-json release.json]
-  where release.json is `gh api repos/RPBatman/Stoipath/releases/tags/samples-v1` saved to a file.
+  identity   bytes, SHA-256 (recomputed here; compared with the manifest and, if given, with the
+             GitHub release asset digests), licence, source URL, OpenSlide test-data path;
+             for .zip assets every member is hashed and compared with the manifest too.
+  structure  Aperio SVS via tifffile: pages/series, pyramid levels, tile size, compression and the
+             codestream's own view (JPEG SOF/markers, JPEG 2000 SIZ/COD), photometric, TIFF
+             subsampling tag, JPEGTables, BigTIFF, label/macro/thumbnail, ImageDescription fields.
+             DICOM WSI via pydicom: per instance ImageType, transfer syntax, frame size, total pixel
+             matrix, TILED_FULL/TILED_SPARSE, concatenation, optical paths, offset tables, frame
+             codestream headers, dual-personality TIFF preamble.
+  oracles    OpenSlide 4.x (openslide-python + openslide-bin) for every asset; wsidicom for DICOM.
+  pixels     the same 512 px region at level 0 and at the next native level, decoded by our reader
+             (tifffile tiles / pydicom frames + imagecodecs) and by each oracle: max/mean absolute
+             difference and PSNR.
+  timing     single-thread decode time of 20 level-0 tiles/frames (min of 3 runs per tile, median
+             over tiles) on the machine that runs this script.
+  ingest     the tier of docs/plan/02-requirements.md section 4.1 that applies, with the reason.
 
-Read-only on the samples. Run it from a directory that holds no downloaded files.
+Privacy rule for the committed output: values of identifying fields (dates, user GUIDs, scanner
+serials, file names, patient/accession/container attributes, label text) are NOT copied; only their
+presence is recorded. Label and macro images are never decoded, only their geometry is read.
+
+Usage (Python >= 3.10; numpy, tifffile, imagecodecs, openslide-python, openslide-bin, pydicom,
+wsidicom importable, e.g. via PYTHONPATH):
+
+  python3 stage0/tools/probe_corpus.py <samples-dir> --unzip-dir <scratch-dir> \
+      --release-json <gh api repos/OWNER/REPO/releases/tags/samples-v1 output> \
+      --out stage0/data/corpus/samples-v1.json
+
+Zip assets are extracted to <unzip-dir>/<asset stem>/ (never inside the samples directory) after
+checking that every member name is a plain relative path.
 """
 from __future__ import annotations
 
@@ -44,59 +49,227 @@ import statistics
 import struct
 import sys
 import time
+import zipfile
 
 import imagecodecs
 import numpy as np
 import tifffile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import build_pyramid  # noqa: E402  (its region auto-select is exercised, nothing is written)
-import wsi_source  # noqa: E402
-from wsi_source import open_slide, pixel_spacing_um, source_description, tissue_mask  # noqa: E402
+from wsi_source import open_slide as ws_open_slide  # noqa: E402
+from wsi_source import read_region as ws_read_region  # noqa: E402
+from wsi_source import tissue_mask  # noqa: E402
 
 try:
     import openslide
-except Exception as exc:  # noqa: BLE001 - the oracle is optional; its absence is recorded
+except Exception:  # noqa: BLE001
     openslide = None
-    OPENSLIDE_ERROR = f"{type(exc).__name__}: {exc}"
-else:
-    OPENSLIDE_ERROR = None
+try:
+    import pydicom
+    from pydicom.encaps import generate_frames
+except Exception:  # noqa: BLE001
+    pydicom = None
+try:
+    import logging
 
-REGION = 512  # px; the Stage-0 output tile edge (build_pyramid.TILE_SIZE)
+    import wsidicom
+
+    logging.getLogger("wsidicom").setLevel(logging.ERROR)
+except Exception:  # noqa: BLE001
+    wsidicom = None
+
+REGION = 512  # pixel-agreement region edge (the Stage-0 tile size)
 TIMING_TILES = 20
-TIMING_REPEATS = 5
-TIMING_WARMUP = 3
-# A level>0 OpenSlide read takes level-0 coordinates and divides them by the level's non-integer
-# downsample; the fractional remainder is painted with sub-pixel resampling. An "on-grid" read uses
-# a location whose remainder is at most this many level pixels (the measured diff is reported).
-ON_GRID_TOL_PX = 1.0 / 512
-APP14_ADOBE_TRANSFORM0 = b"\xff\xee\x00\x0eAdobe\x00\x64\x00\x00\x00\x00\x00"
+TIMING_REPEATS = 3
+CONTEXT_MIN_PX = 1024  # region selection runs on the coarsest level whose longer side is >= this
 
-# FR-S5 (docs/plan/02-requirements.md): PHI tier 2 = label, macro, barcode, filename, free text;
-# tier 1 = dates, serials, operator. This is the probe's mapping of Aperio ImageDescription keys.
-FR_S5_TIER = {
-    "Filename": 2, "Title": 2, "Barcode": 2,
-    "Date": 1, "Time": 1, "User": 1, "ScanScope ID": 1, "DSR ID": 1, "ImageID": 1,
+# Plan 02-requirements.md section 4.1 rows quoted by the tier rules below.
+PLAN_ROWS = {
+    "svs-jpeg-256": "Aperio SVS, JPEG - GT 450 (256²): Tier B",
+    "svs-jpeg-240": "Aperio SVS, JPEG - classic (240²): Tier C",
+    "svs-j2k": "Aperio SVS, JPEG 2000 (TCGA-era): A bytes, not browser-decodable -> transcode once",
+    "dicom-jpeg": "DICOM WSI, JPEG baseline: Tier A / B (256² frames as four ranges)",
+    "dicom-j2k": "DICOM WSI, HTJ2K / J2K / JPEG-LS / JXL frames: Tier A, WASM decode or transcode to JPEG",
 }
-WITHHELD_VALUES = {"User"}  # operator identifier: recorded as present, value not copied
-DATE_KEYS = ("Date", "Time")
-USER_KEYS = ("User",)
+
+# Aperio ImageDescription keys whose values are technical and safe to copy. Every other key
+# (Date, Time, User, Filename, Title, ScanScope ID, DSR ID, ImageID, Barcode, ...) is recorded by
+# presence only.
+APERIO_TECHNICAL_KEYS = {
+    "AppMag", "MPP", "StripeWidth", "Filtered", "ICC Profile", "Parmset", "OriginalWidth",
+    "OriginalHeight", "Originalheight", "LineCameraSkew", "LineAreaXOffset", "LineAreaYOffset",
+    "Focus Offset", "Left", "Top", "Exposure Time", "Exposure Scale", "Gamma",
+}
+APERIO_DATE_KEYS = {"Date", "Time"}
+APERIO_USER_KEYS = {"User"}
+
+# DICOM attributes of PHI tiers 1/2 (plan FR-S5): presence/emptiness recorded, values never copied.
+DICOM_PHI_KEYWORDS = [
+    "PatientName", "PatientID", "PatientBirthDate", "PatientSex", "PatientAge", "OtherPatientIDsSequence",
+    "AccessionNumber", "StudyID", "StudyDate", "StudyTime", "SeriesDate", "SeriesTime", "ContentDate",
+    "ContentTime", "AcquisitionDateTime", "InstanceCreationDate", "ReferringPhysicianName",
+    "InstitutionName", "InstitutionAddress", "OperatorsName", "StationName", "DeviceSerialNumber",
+    "ContainerIdentifier", "BarcodeValue", "LabelText", "SpecimenDescriptionSequence",
+]
+DICOM_DATE_KEYWORDS = {"PatientBirthDate", "StudyDate", "StudyTime", "SeriesDate", "SeriesTime", "ContentDate",
+                       "ContentTime", "AcquisitionDateTime", "InstanceCreationDate"}
+
+# Assets that are documented derivatives of another asset in the corpus (from the manifest
+# descriptions); the probe measures how close the derivative is to its parent.
+DERIVED_FROM = {
+    "CMU-1-Small-Region.svs": "CMU-1.svs",
+    "CMU-1-JP2K-33005.svs": "CMU-1.svs",
+    "JP2K-33003-1-v2.zip": "JP2K-33003-1.svs",
+}
+
+# Vendor formats of the plan's section 4.1 matrix that this corpus does not cover yet.
+MISSING_FORMATS = [
+    "Hamamatsu NDPI (S360MD; Tier C JPEG / D JPEG XR levels)",
+    "3DHISTECH MRXS (Tier D)",
+    "Leica SCN (Tier B per region / D fluorescence)",
+    "Roche/Ventana BIF (Tier D at level 0)",
+    "Philips TIFF export (Tier B)",
+    "Philips iSyntax / i2Syntax (Tier D)",
+    "Aperio GT 450 SVS with 256² tiles from a GT 450 itself (Tier B; the 256² SVS files here are 2009 ScanScope exports)",
+    "DICOM WSI with HTJ2K, JPEG-LS or JPEG XL frames, and DICOM with concatenations or multiple optical paths/focal planes",
+    "Zeiss CZI, Olympus/Evident VSI, OME-TIFF/QPTIFF, OME-Zarr (fluorescence roadmap)",
+    "Huron/Motic/Mikroscan/ARGOS TIFF, Sakura svslide, Trestle, VMS/VMU, Zeiss ZVI (legacy/niche)",
+]
 
 
-# ------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
 # small helpers
-# ------------------------------------------------------------------------------------------------
-def sha256_file(path: str, chunk: int = 8 << 20) -> str:
+# ----------------------------------------------------------------------------------------------
+def sha256_file(path: str) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as fh:
-        while True:
-            b = fh.read(chunk)
-            if not b:
-                return h.hexdigest()
-            h.update(b)
+        for chunk in iter(lambda: fh.read(8 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
-def cpu_model() -> str | None:
+def diff_stats(a: np.ndarray, b: np.ndarray, valid: np.ndarray | None = None) -> dict:
+    a = a.astype(np.int16)
+    b = b.astype(np.int16)
+    e = np.abs(a - b)
+    if valid is not None:
+        e = e[valid]
+    if e.size == 0:
+        return {"comparedPixels": 0}
+    mse = float(np.mean(e.astype(np.float64) ** 2))
+    return {
+        "comparedPixels": int(e.size // 3) if e.ndim == 2 else int(e.size // 3),
+        "maxAbsDiff": int(e.max()),
+        "meanAbsDiff": round(float(e.mean()), 4),
+        "psnrDb": None if mse == 0 else round(10 * math.log10(255.0**2 / mse), 2),
+        "identical": bool(mse == 0),
+    }
+
+
+def chroma_name(comps: list[tuple[int, int, int]]) -> str | None:
+    """Chroma subsampling from JPEG/J2K component sampling factors (first comp = luma)."""
+    if len(comps) != 3:
+        return None
+    (h0, v0), (h1, v1) = comps[0][1:], comps[1][1:]
+    if (h0, v0) == (h1, v1):
+        return "4:4:4"
+    if h0 == 2 * h1 and v0 == v1:
+        return "4:2:2"
+    if h0 == 2 * h1 and v0 == 2 * v1:
+        return "4:2:0"
+    return f"{h0}x{v0}/{h1}x{v1}"
+
+
+def jpeg_header(data: bytes) -> dict:
+    """Markers up to SOS: SOF type, component ids and sampling, JFIF/Adobe APP14 presence."""
+    out = {"sof": None, "components": None, "jfif": False, "adobeApp14": False, "adobeTransform": None, "markers": []}
+    i = 2
+    while i < len(data) - 4:
+        if data[i] != 0xFF:
+            i += 1
+            continue
+        m = data[i + 1]
+        if m == 0xFF:
+            i += 1
+            continue
+        if m in (0xD8, 0x01) or 0xD0 <= m <= 0xD7:
+            i += 2
+            continue
+        seglen = struct.unpack(">H", data[i + 2 : i + 4])[0]
+        out["markers"].append(f"FF{m:02X}")
+        if m in (0xC0, 0xC1, 0xC2, 0xC3):
+            out["sof"] = {0xC0: "SOF0 baseline", 0xC1: "SOF1 extended", 0xC2: "SOF2 progressive", 0xC3: "SOF3 lossless"}[m]
+            nc = data[i + 9]
+            comps = [(data[i + 10 + 3 * k], data[i + 11 + 3 * k] >> 4, data[i + 11 + 3 * k] & 15) for k in range(nc)]
+            out["components"] = [{"id": c[0], "h": c[1], "v": c[2]} for c in comps]
+            out["chroma"] = chroma_name(comps)
+            ids = [c[0] for c in comps]
+            out["componentIdsRGB"] = ids == [82, 71, 66]
+        if m == 0xE0 and data[i + 4 : i + 9] == b"JFIF\0":
+            out["jfif"] = True
+        if m == 0xEE and data[i + 4 : i + 9] == b"Adobe":
+            out["adobeApp14"] = True
+            out["adobeTransform"] = data[i + 15]
+        if m == 0xDA:
+            break
+        i += 2 + seglen
+    # What a plain JPEG decoder (libjpeg, browsers) assumes for 3 components without JFIF/Adobe:
+    # YCbCr, unless the component ids spell 'R','G','B'.
+    if out["components"] and len(out["components"]) == 3:
+        if out["adobeApp14"]:
+            out["implicitColourSpace"] = "RGB" if out["adobeTransform"] == 0 else "YCbCr"
+        elif out.get("componentIdsRGB"):
+            out["implicitColourSpace"] = "RGB"
+        else:
+            out["implicitColourSpace"] = "YCbCr"
+    return out
+
+
+def j2k_header(data: bytes) -> dict:
+    """JPEG 2000 codestream main header: SIZ components/subsampling, COD MCT, levels, wavelet."""
+    out = {"codestream": "J2K (SOC FF4F)" if data[:2] == b"\xff\x4f" else ("JP2 box" if data[4:8] == b"jP  " else "unknown")}
+    i = 2
+    while i < len(data) - 4 and data[:2] == b"\xff\x4f":
+        if data[i] != 0xFF:
+            break
+        m = data[i + 1]
+        seglen = struct.unpack(">H", data[i + 2 : i + 4])[0]
+        if m == 0x51:  # SIZ
+            xs, ys = struct.unpack(">II", data[i + 6 : i + 14])
+            nc = struct.unpack(">H", data[i + 38 : i + 40])[0]
+            comps = [(data[i + 40 + 3 * k], data[i + 41 + 3 * k], data[i + 42 + 3 * k]) for k in range(nc)]
+            out["size"] = [xs, ys]
+            out["components"] = [{"bits": (c[0] & 0x7F) + 1, "dx": c[1], "dy": c[2]} for c in comps]
+            # chroma from the component subsampling (dx, dy): luma 1x1, chroma 2x1 = 4:2:2
+            c3 = [(0, 1, 1)] + [(0, 1 if c[1] == 1 else 1, 1) for c in comps[1:]]
+            if len(comps) == 3:
+                dx, dy = comps[1][1], comps[1][2]
+                out["chroma"] = {(1, 1): "4:4:4", (2, 1): "4:2:2", (2, 2): "4:2:0"}.get((dx, dy), f"{dx}x{dy}")
+            del c3
+        elif m == 0x52:  # COD
+            out["progressionOrder"] = ["LRCP", "RLCP", "RPCL", "PCRL", "CPRL"][data[i + 5]] if data[i + 5] < 5 else data[i + 5]
+            out["layers"] = struct.unpack(">H", data[i + 6 : i + 8])[0]
+            out["mct"] = data[i + 8]
+            out["decompositionLevels"] = data[i + 9]
+            out["codeBlock"] = [1 << (data[i + 10] + 2), 1 << (data[i + 11] + 2)]
+            out["wavelet"] = {0: "9/7 irreversible", 1: "5/3 reversible"}.get(data[i + 13], data[i + 13])
+        elif m == 0x90:  # SOT: end of main header
+            break
+        i += 2 + seglen
+    return out
+
+
+def decode_jpeg(data: bytes, tables: bytes | None = None, force_rgb: bool = False) -> np.ndarray:
+    if force_rgb:
+        return imagecodecs.jpeg_decode(data, tables=tables, colorspace="RGB", outcolorspace="RGB")
+    return imagecodecs.jpeg_decode(data, tables=tables)
+
+
+def decode_j2k(data: bytes) -> np.ndarray:
+    return imagecodecs.jpeg2k_decode(data, numthreads=1)
+
+
+def cpu_model() -> str:
     try:
         with open("/proc/cpuinfo") as fh:
             for line in fh:
@@ -104,672 +277,1050 @@ def cpu_model() -> str | None:
                     return line.split(":", 1)[1].strip()
     except OSError:
         pass
-    return platform.processor() or None
+    return platform.processor() or "unknown"
 
 
-def loadavg() -> list[float] | None:
-    try:
-        return [round(v, 2) for v in os.getloadavg()]
-    except OSError:
-        return None
+# ----------------------------------------------------------------------------------------------
+# Aperio SVS (tifffile)
+# ----------------------------------------------------------------------------------------------
+class SvsReader:
+    """Pyramid levels of an SVS read tile by tile with tifffile's own per-page decoder."""
+
+    def __init__(self, path: str):
+        self.path = path
+        self.tif = tifffile.TiffFile(path)
+        self.levels = sorted([p for p in self.tif.pages if p.is_tiled], key=lambda p: p.shape[1], reverse=True)
+
+    def dims(self, level: int) -> tuple[int, int]:
+        p = self.levels[level]
+        return int(p.shape[1]), int(p.shape[0])
+
+    def tile_size(self, level: int) -> tuple[int, int]:
+        p = self.levels[level]
+        return p.tilewidth, p.tilelength
+
+    def grid(self, level: int) -> tuple[int, int]:
+        w, h = self.dims(level)
+        tw, th = self.tile_size(level)
+        return -(-w // tw), -(-h // th)
+
+    def tile_bytes(self, level: int, tx: int, ty: int) -> bytes | None:
+        p = self.levels[level]
+        cols, _ = self.grid(level)
+        idx = ty * cols + tx
+        if p.databytecounts[idx] == 0:
+            return None
+        fh = self.tif.filehandle
+        fh.seek(p.dataoffsets[idx])
+        return fh.read(p.databytecounts[idx])
+
+    def decode_tile(self, level: int, tx: int, ty: int) -> np.ndarray | None:
+        p = self.levels[level]
+        data = self.tile_bytes(level, tx, ty)
+        if data is None:
+            return None
+        cols, _ = self.grid(level)
+        seg, _idx, _shape = p.decode(data, ty * cols + tx, jpegtables=p.jpegtables)
+        seg = seg[0] if seg.ndim == 4 else seg
+        return seg[..., :3]
+
+    def timing_decoder(self, level: int):
+        p = self.levels[level]
+        if p.compression == 7:
+            tables = p.jpegtables
+            rgb = p.photometric == 2 and not p.is_jfif
+            return "imagecodecs.jpeg_decode (libjpeg-turbo) with JPEGTables" + (", colorspace=RGB" if rgb else ""), \
+                (lambda d: decode_jpeg(d, tables, force_rgb=rgb))
+        return "imagecodecs.jpeg2k_decode (OpenJPEG, numthreads=1)", decode_j2k
+
+    def read(self, level: int, x: int, y: int, w: int, h: int) -> np.ndarray:
+        return read_tiled(self, level, x, y, w, h)
+
+    def close(self):
+        self.tif.close()
 
 
-def diff_stats(a: np.ndarray, b: np.ndarray) -> dict:
-    d = np.abs(a.astype(np.int16) - b.astype(np.int16))
-    mse = float(np.mean(d.astype(np.float64) ** 2))
-    return {
-        "maxAbsDiff": int(d.max()),
-        "meanAbsDiff": round(float(d.mean()), 4),
-        "psnrDb": None if mse == 0 else round(10 * math.log10(255.0**2 / mse), 2),
-        "identical": bool(d.max() == 0),
-        "pixelsDiffering": round(float(np.mean(d.max(axis=2) > 0)), 4),
-    }
-
-
-def read_segment(tif: tifffile.TiffFile, page, idx: int) -> bytes | None:
-    n = int(page.databytecounts[idx])
-    if n == 0:
-        return None
-    fh = tif.filehandle
-    fh.seek(int(page.dataoffsets[idx]))
-    return fh.read(n)
-
-
-def decode_tile(page, data: bytes, idx: int) -> np.ndarray:
-    seg, _indices, _shape = page.decode(data, idx, jpegtables=page.jpegtables)
-    seg = seg[0] if seg.ndim == 4 else seg
-    return seg[..., :3]
-
-
-def tf_region(tif, page, x: int, y: int, w: int, h: int) -> np.ndarray:
-    """Region of a tiled page from tifffile-decoded tiles (empty tiles -> white)."""
-    tw, th = page.tilewidth, page.tilelength
-    cols = math.ceil(page.shape[1] / tw)
+def read_tiled(reader, level: int, x: int, y: int, w: int, h: int) -> np.ndarray:
+    """Generic region read over a reader exposing dims/tile_size/decode_tile. Missing tiles = 255."""
+    W, H = reader.dims(level)
+    tw, th = reader.tile_size(level)
     out = np.full((h, w, 3), 255, np.uint8)
-    for ty in range(y // th, (y + h - 1) // th + 1):
-        for tx in range(x // tw, (x + w - 1) // tw + 1):
-            idx = ty * cols + tx
-            data = read_segment(tif, page, idx)
-            if data is None:
+    for ty in range(max(0, y // th), min(-(-H // th), (y + h - 1) // th + 1)):
+        for tx in range(max(0, x // tw), min(-(-W // tw), (x + w - 1) // tw + 1)):
+            a = reader.decode_tile(level, tx, ty)
+            if a is None:
                 continue
-            a = decode_tile(page, data, idx)
             X, Y = tx * tw, ty * th
-            sx0, sy0, sx1, sy1 = max(x, X), max(y, Y), min(x + w, X + tw), min(y + h, Y + th)
-            out[sy0 - y : sy1 - y, sx0 - x : sx1 - x] = a[sy0 - Y : sy1 - Y, sx0 - X : sx1 - X]
+            sx0, sy0 = max(x, X), max(y, Y)
+            sx1, sy1 = min(x + w, X + a.shape[1], W), min(y + h, Y + a.shape[0], H)
+            if sx1 > sx0 and sy1 > sy0:
+                out[sy0 - y : sy1 - y, sx0 - x : sx1 - x] = a[sy0 - Y : sy1 - Y, sx0 - X : sx1 - X, :3]
     return out
-
-
-# ------------------------------------------------------------------------------------------------
-# codestream inspection
-# ------------------------------------------------------------------------------------------------
-def jpeg_markers(data: bytes) -> dict:
-    """Walk JPEG marker segments up to SOS; report SOF components and colour-relevant markers."""
-    out: dict = {"markers": []}
-    i = 2 if data[:2] == b"\xff\xd8" else 0
-    while i + 4 <= len(data):
-        if data[i] != 0xFF:
-            break
-        m = data[i + 1]
-        if m == 0xD9:  # EOI (end of a tables-only stream)
-            out["markers"].append("EOI")
-            break
-        seglen = struct.unpack(">H", data[i + 2 : i + 4])[0]
-        name = {0xC0: "SOF0", 0xC1: "SOF1", 0xC2: "SOF2", 0xC4: "DHT", 0xDB: "DQT", 0xDA: "SOS", 0xDD: "DRI",
-                0xE0: "APP0", 0xEE: "APP14", 0xFE: "COM"}.get(m, f"0x{m:02X}")
-        out["markers"].append(name)
-        seg = data[i + 4 : i + 2 + seglen]
-        if m in (0xC0, 0xC1, 0xC2):
-            nc = seg[5]
-            comps = [{"id": seg[6 + 3 * k], "h": seg[7 + 3 * k] >> 4, "v": seg[7 + 3 * k] & 15} for k in range(nc)]
-            out["sof"] = {"type": name, "precision": seg[0], "height": struct.unpack(">H", seg[1:3])[0],
-                          "width": struct.unpack(">H", seg[3:5])[0], "components": comps}
-        elif m == 0xE0 and seg[:5] == b"JFIF\x00":
-            out["jfif"] = True
-        elif m == 0xEE and seg[:5] == b"Adobe":
-            out["adobeTransform"] = seg[11]
-        elif m == 0xDD:
-            out["restartInterval"] = struct.unpack(">H", seg[:2])[0]
-        if m == 0xDA:
-            break
-        i += 2 + seglen
-    return out
-
-
-def chroma_label(samplings: list[tuple[int, int]]) -> str:
-    """samplings: per-component (horizontal, vertical) *divisors* relative to full resolution."""
-    if all(s == (1, 1) for s in samplings):
-        return "4:4:4"
-    if len(samplings) == 3 and samplings[0] == (1, 1) and samplings[1] == samplings[2]:
-        return {(2, 1): "4:2:2", (2, 2): "4:2:0", (4, 1): "4:1:1"}.get(samplings[1], f"chroma 1/{samplings[1]}")
-    return str(samplings)
-
-
-def jpeg_codestream(tables: bytes | None, tile: bytes) -> dict:
-    t = jpeg_markers(tables) if tables else None
-    s = jpeg_markers(tile)
-    comps = s.get("sof", {}).get("components", [])
-    hmax = max((c["h"] for c in comps), default=1)
-    vmax = max((c["v"] for c in comps), default=1)
-    sampl = [(hmax // c["h"], vmax // c["v"]) for c in comps]
-    ids = [c["id"] for c in comps]
-    jfif = bool(s.get("jfif") or (t or {}).get("jfif"))
-    adobe = s.get("adobeTransform", (t or {}).get("adobeTransform"))
-    if jfif:
-        rule = "YCbCr (JFIF marker)"
-    elif adobe is not None:
-        rule = {0: "RGB/CMYK (Adobe transform 0)", 1: "YCbCr (Adobe transform 1)"}.get(adobe, f"Adobe transform {adobe}")
-    elif ids == [82, 71, 66]:
-        rule = "RGB (component ids 'R','G','B')"
-    else:
-        rule = "YCbCr (libjpeg-turbo default when no JFIF/Adobe marker and ids are not 'R','G','B')"
-    return {
-        "codec": "JPEG",
-        "sof": s.get("sof"),
-        "componentIds": ids,
-        "chroma": chroma_label(sampl),
-        "jfifMarker": jfif,
-        "adobeApp14Transform": adobe,
-        "restartInterval": s.get("restartInterval"),
-        "tablesMarkers": t["markers"] if t else None,
-        "tileMarkers": s["markers"],
-        "defaultDecoderColourRule": rule,
-    }
-
-
-def j2k_codestream(tile: bytes) -> dict:
-    out: dict = {"codec": "JPEG 2000", "soc": tile[:2] == b"\xff\x4f"}
-    i = tile.find(b"\xff\x51")
-    if i >= 0:
-        rsiz = struct.unpack(">H", tile[i + 4 : i + 6])[0]
-        xsiz, ysiz = struct.unpack(">II", tile[i + 6 : i + 14])
-        xt, yt = struct.unpack(">II", tile[i + 22 : i + 30])
-        nc = struct.unpack(">H", tile[i + 38 : i + 40])[0]
-        comps = [{"bits": (tile[i + 40 + 3 * k] & 0x7F) + 1, "signed": bool(tile[i + 40 + 3 * k] & 0x80),
-                  "dx": tile[i + 41 + 3 * k], "dy": tile[i + 42 + 3 * k]} for k in range(nc)]
-        out.update({"rsiz": rsiz, "htj2k": bool(rsiz & 0x4000), "size": [xsiz, ysiz], "codeTile": [xt, yt],
-                    "components": comps, "chroma": chroma_label([(c["dx"], c["dy"]) for c in comps])})
-    j = tile.find(b"\xff\x52")
-    if j >= 0:
-        prog = tile[j + 5]
-        out.update({
-            "progression": ["LRCP", "RLCP", "RPCL", "PCRL", "CPRL"][prog] if prog < 5 else prog,
-            "layers": struct.unpack(">H", tile[j + 6 : j + 8])[0],
-            "mct": tile[j + 8],
-            "decompositionLevels": tile[j + 9],
-            "codeBlock": [1 << (tile[j + 10] + 2), 1 << (tile[j + 11] + 2)],
-            "wavelet": {0: "9/7 irreversible", 1: "5/3 reversible"}.get(tile[j + 13], tile[j + 13]),
-        })
-    q = tile.find(b"\xff\x5c")
-    if q >= 0:
-        out["quantization"] = {0: "none", 1: "scalar derived", 2: "scalar expounded"}.get(tile[q + 4] & 0x1F, tile[q + 4] & 0x1F)
-    if out.get("mct") == 1:
-        out["colourModel"] = "RGB coded with the codestream colour transform (MCT=1)"
-    elif out.get("mct") == 0 and len(out.get("components", [])) == 3:
-        out["colourModel"] = (f"YCbCr components without MCT ({out.get('chroma')}); the TIFF Photometric tag says RGB, "
-                              "so the colour space is implied only by compression 33003")
-    return out
-
-
-# ------------------------------------------------------------------------------------------------
-# Aperio ImageDescription
-# ------------------------------------------------------------------------------------------------
-GEOM_RE = re.compile(r"\((\d+)x(\d+)\)(?: -> (\d+)x(\d+))? (\S+) Q=(\d+)")
 
 
 def parse_aperio_description(desc: str) -> dict:
-    head, *items = desc.split("|")
-    fields: list[tuple[str, str]] = []
-    for it in items:
-        if "=" in it:
-            k, v = it.split("=", 1)
-            fields.append((k.strip(), v.strip()))
-    keys = [k for k, _ in fields]
-    dup = sorted({k for k in keys if keys.count(k) > 1})
-    case_variants = sorted({k for k in keys if any(o != k and o.lower() == k.lower() for o in keys)})
-    values: dict[str, object] = {}
-    for k, v in fields:
-        v = "<present; value withheld>" if k in WITHHELD_VALUES else v
-        if k in values:
-            prev = values[k]
-            values[k] = (prev if isinstance(prev, list) else [prev]) + [v]
-        else:
-            values[k] = v
-    lineage = [" ".join(part.split()) for part in head.split(";")]
+    lines = desc.replace("\r\n", "\n").split("\n")
+    first = lines[0].strip()
+    second = lines[1].split("|")[0].strip() if len(lines) > 1 else ""
+    fields: dict[str, str] = {}
+    dups = []
+    for k, v in re.findall(r"\|\s*([^=|]+?)\s*=\s*([^|]*)", desc):
+        k = k.strip()
+        if k in fields:
+            dups.append(k)
+        fields[k] = v.strip()
+    tech = {k: v for k, v in fields.items() if k in APERIO_TECHNICAL_KEYS}
+    other = sorted(k for k in fields if k not in APERIO_TECHNICAL_KEYS)
     return {
-        "software": re.findall(r"Aperio Image Library v[\w.]+", head),
-        "headerLineage": lineage,
-        "keys": keys,
-        "fields": values,
-        "duplicateKeys": dup,
-        "caseVariantKeys": case_variants,
-        "appMag": values.get("AppMag"),
-        "mpp": values.get("MPP"),
-        "scanner": values.get("ScanScope ID"),
-        "dateFieldsPresent": [k for k in DATE_KEYS if k in values],
-        "userFieldPresent": any(k in values for k in USER_KEYS),
-        "frS5Tier": {k: FR_S5_TIER[k] for k in dict.fromkeys(keys) if k in FR_S5_TIER},
-        "iccProfileName": values.get("ICC Profile"),
+        "software": first,
+        "summary": second[:240],
+        "technicalFields": tech,
+        "identifyingFieldsPresent": other,
+        "dateFieldPresent": any(k in APERIO_DATE_KEYS for k in fields),
+        "userFieldPresent": any(k in APERIO_USER_KEYS for k in fields),
+        "duplicateKeys": sorted(set(dups)),
+        "embeddedEarlierDescription": ";" in second,
     }
 
 
-# ------------------------------------------------------------------------------------------------
-# region choice
-# ------------------------------------------------------------------------------------------------
-def integral(mask: np.ndarray) -> np.ndarray:
-    return np.pad(mask.astype(np.int64).cumsum(0).cumsum(1), ((1, 0), (1, 0)))
-
-
-def box_frac(ii: np.ndarray, x0: int, y0: int, x1: int, y1: int) -> float:
-    a = max(1, (x1 - x0) * (y1 - y0))
-    return float(ii[y1, x1] - ii[y0, x1] - ii[y1, x0] + ii[y0, x0]) / a
-
-
-def tissue_target(pages) -> tuple[dict, np.ndarray, float]:
-    """Centre (level-0 px) of the tissue-densest REGION-sized window, found on the coarsest level."""
-    pc = pages[-1]
-    W0, H0 = pages[0].shape[1], pages[0].shape[0]
-    Wc, Hc = pc.shape[1], pc.shape[0]
-    rgb = pc.asarray(maxworkers=1)[..., :3]
-    mask = tissue_mask(rgb)
-    sc = W0 / Wc
-    win = max(1, min(Wc, Hc, round(REGION / sc)))
-    ii = integral(mask)
-    s = ii[win:, win:] - ii[:-win, win:] - ii[win:, :-win] + ii[:-win, :-win]
-    yy, xx = np.unravel_index(int(np.argmax(s)), s.shape)
-    cx, cy = (xx + win / 2) * sc, (yy + win / 2) * sc
-    return ({"coarseLevel": len(pages) - 1, "coarseSize": [Wc, Hc], "windowCoarsePx": win,
-             "tissueFraction": round(float(s[yy, xx]) / (win * win), 3),
-             "centreLevel0": [int(round(cx)), int(round(cy))], "slideTissueFraction": round(float(mask.mean()), 3)},
-            mask, sc)
-
-
-def on_grid_candidates(n_level: int, ds: float) -> np.ndarray:
-    x = np.arange(0, max(1, n_level - REGION + 1))
-    X0 = np.round(x * ds)
-    frac = X0 / ds - x
-    return x[np.abs(frac) <= ON_GRID_TOL_PX]
-
-
-# ------------------------------------------------------------------------------------------------
-# per-slide probe
-# ------------------------------------------------------------------------------------------------
-def auto_select_check(src) -> dict:
-    """Run build_pyramid.choose_region (region mode, default size) in-process; nothing is written."""
-    try:
-        region, _thumb, lvl, _how = build_pyramid.choose_region(src, build_pyramid.DEFAULT_SIZE, None,
-                                                                build_pyramid.DEFAULT_MARGIN, lambda *a: None)
-        return {"ok": True, "region": list(region), "thumbLevel": lvl}
-    except Exception as exc:  # noqa: BLE001 - the failure mode is the finding
-        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"[:240]}
-
-
-def classify_tier(levels: list[dict], compression: str, tw: int, th: int) -> dict:
-    steps = [round(levels[i]["width"] / levels[i + 1]["width"], 3) for i in range(len(levels) - 1)]
-    W0, H0 = levels[0]["width"], levels[0]["height"]
-    out_levels = 1 + max(0, math.ceil(math.log2(max(W0, H0) / REGION)))
-    notes = []
-    if compression == "JPEG":
-        if tw == th and REGION % tw == 0:
-            tier = "B"
-            per = (REGION // tw) ** 2
-            row = f"Aperio SVS, JPEG - GT 450 (256²)" if tw == 256 else "Aperio SVS, JPEG"
-            reason = (f"JPEG frames of {tw}x{th} px; {tw} divides 512, so a logical 512² tile is {per} vendor frames "
-                      f"served byte-identical (section 4 Tier B; ADR-0027 may still choose a re-mux)")
-        else:
-            tier = "C"
-            row = "Aperio SVS, JPEG - classic (240²)"
-            reason = (f"JPEG frames of {tw}x{th} px; {tw} does not divide 512, so frames are losslessly re-muxed in the "
-                      f"DCT domain into 512² frames (section 4 Tier C), identity proven on decoded pixels")
-        notes.append("JPEG frames are RGB without a JFIF/Adobe marker: a byte splice must add an Adobe APP14 "
-                     "(transform 0) marker or browsers decode them as YCbCr (see spliceCheck)")
-    elif compression.startswith("APERIO_JP2000"):
-        tier = "A bytes, not browser-decodable -> transcode once"
-        row = "Aperio SVS, JPEG 2000 (TCGA-era)"
-        reason = ("JPEG 2000 codestreams (" + compression + "); no browser decodes J2K, so the plan transcodes once at "
-                  "ingest: J2K -> reversible HTJ2K where tooling proves it, else JPEG q>=90; output re-tiled to 512²")
-    else:
-        tier, row, reason = "unclassified", None, f"compression {compression} has no section 4.1 row in this probe"
-    if len(levels) == 1:
-        notes.append(f"single native level: derived pyramid of {out_levels} levels (1..{out_levels - 1} synthesised "
-                     "from level 0)")
-    elif any(s > 2.01 for s in steps):
-        notes.append(f"sparse vendor pyramid (steps {steps}): intermediate 2x levels synthesised from the finer native "
-                     f"level (FR-V2); our 512² pyramid needs {out_levels} levels, {len(levels)} are native")
-    return {"tier": tier, "planRow": row, "reason": reason, "levelSteps": steps,
-            "outputLevelsNeeded": out_levels, "nativeLevels": len(levels), "notes": notes}
-
-
-def probe_slide(path: str, entry: dict, release_asset: dict | None, args) -> dict:
-    t_start = time.time()
-    rec: dict = {}
-    size = os.path.getsize(path)
-    digest = None if args.no_sha else sha256_file(path)
-    rec["identity"] = {
-        "asset": entry["asset"],
-        "bytes": size,
-        "bytesMatchesManifest": size == int(entry["bytes"]),
-        "sha256": digest,
-        "sha256MatchesManifest": None if digest is None else digest == entry["asset_sha256"],
-        "sha256MatchesRelease": (None if digest is None or not release_asset
-                                 else release_asset.get("digest") == f"sha256:{digest}"),
-        "releaseAssetState": release_asset.get("state") if release_asset else None,
-        "releaseDownloadUrl": (release_asset or {}).get("browser_download_url") or args.release_url(entry["asset"]),
-        "source": entry.get("source"),
-        "openslidePath": entry.get("openslide_path"),
-        "licence": entry.get("license"),
-        "description": entry.get("description"),
-        "formatFamily": entry.get("format_family"),
-        "vendor": entry.get("vendor"),
-    }
-
-    # --- tifffile structure -------------------------------------------------------------------
-    src = open_slide(path)  # our reader: picks the tiled RGB pyramid pages
-    tif = src.tif
-    pages = src.pages
-    p0 = pages[0]
-    levels = []
-    for li, pg in enumerate(pages):
-        bc = np.asarray(pg.databytecounts, dtype=np.int64)
-        tw, th = pg.tilewidth, pg.tilelength
-        cols, rows = math.ceil(pg.shape[1] / tw), math.ceil(pg.shape[0] / th)
-        nz = np.nonzero(bc)[0]
-        mid = int(nz[np.argmin(np.abs(nz - ((rows // 2) * cols + cols // 2)))]) if len(nz) else None
-        cs = None
-        if mid is not None:
-            data = read_segment(tif, pg, mid)
-            cs = jpeg_codestream(pg.jpegtables, data) if pg.compression == 7 else j2k_codestream(data)
-            cs["sampledTileIndex"] = mid
-        m = GEOM_RE.search(pg.description or "")
-        sub_tag = pg.tags.get(530)
-        levels.append({
-            "level": li,
-            "page": pg.index,
-            "width": int(pg.shape[1]), "height": int(pg.shape[0]),
-            "tile": [tw, th], "grid": [cols, rows],
-            "partialEdgeTilePx": [int(pg.shape[1] % tw), int(pg.shape[0] % th)],
-            "compression": pg.compression.name, "compressionCode": int(pg.compression),
-            "photometric": pg.photometric.name, "planarConfig": int(pg.planarconfig),
-            "tiffYCbCrSubSamplingTag": list(sub_tag.value) if sub_tag else None,
-            "tifffileSubsampling": list(pg.subsampling) if pg.subsampling else None,
-            "jpegTablesBytes": len(pg.jpegtables) if pg.jpegtables is not None else None,
-            "iccProfileBytes": len(pg.tags[34675].value) if 34675 in pg.tags else None,
-            "tiles": int(len(bc)), "zeroByteTiles": int((bc == 0).sum()),
-            "tileBytes": {"median": int(np.median(bc[bc > 0])) if len(nz) else 0,
-                          "min": int(bc[bc > 0].min()) if len(nz) else 0, "max": int(bc.max()), "total": int(bc.sum())},
-            "aperioCodecLabel": m.group(5) if m else None,
-            "aperioQuality": int(m.group(6)) if m else None,
-            "codestream": cs,
-        })
-    assoc = {}
-    for s in tif.series:
-        if s.name in ("Thumbnail", "Label", "Macro"):
-            pg = s.pages[0]
-            assoc[s.name.lower()] = {
-                "page": pg.index, "width": int(pg.shape[1]), "height": int(pg.shape[0]),
-                "compression": pg.compression.name, "photometric": pg.photometric.name,
-                "tiled": bool(pg.is_tiled), "subfileType": int(pg.subfiletype),
-                "frS5Tier": 2 if s.name in ("Label", "Macro") else 0,
-            }
-    desc = parse_aperio_description(p0.description or "") if tif.is_svs else None
-    mpp, mpp_note = pixel_spacing_um(src)
-    wsi_view = source_description(src)
-    rec["structure"] = {
-        "reader": f"tifffile {tifffile.__version__}",
-        "bigtiff": bool(tif.is_bigtiff),
-        "byteorder": tif.byteorder,
-        "isSvs": bool(tif.is_svs),
-        "pages": len(tif.pages),
-        "series": [{"name": s.name, "shape": list(s.shape), "levels": len(s.levels)} for s in tif.series],
-        "levels": levels,
-        "associatedImages": assoc,
-        "hasLabel": "label" in assoc, "hasMacro": "macro" in assoc, "hasThumbnail": "thumbnail" in assoc,
-        "imageDescription": desc,
-        "mppLevel0": mpp, "mppSource": mpp_note,
-        "ourReader": {
-            "module": "stage0/tools/wsi_source.py",
-            "selectedPages": [pg.index for pg in pages],
-            "associatedPagesExcluded": all(a["page"] not in {pg.index for pg in pages} for a in assoc.values()),
-            "selectedMatchesOpenSlideLevels": None,  # filled in by the oracle block
-            "sourceDescription": wsi_view,
-            "hasReadWindow": hasattr(wsi_source, "read_window"),
-            "buildPyramidAutoSelect": auto_select_check(src),
-        },
-    }
-
-    # --- tissue target --------------------------------------------------------------------------
-    target, mask, sc = tissue_target(pages)
-    W0, H0 = int(p0.shape[1]), int(p0.shape[0])
-    cx, cy = target["centreLevel0"]
-    x0 = int(min(max(cx - REGION // 2, 0), W0 - REGION))
-    y0 = int(min(max(cy - REGION // 2, 0), H0 - REGION))
-    ii = integral(mask)
-
-    # --- OpenSlide oracle -----------------------------------------------------------------------
-    if openslide is None:
-        rec["openslide"] = {"error": OPENSLIDE_ERROR}
-    else:
-        osl = openslide.OpenSlide(path)
-        props = dict(osl.properties)
-        tf_dims = [[lv["width"], lv["height"]] for lv in levels]
-        os_dims = [list(d) for d in osl.level_dimensions]
-        os_assoc = {k: list(v.size) for k, v in osl.associated_images.items()}
-        tf_assoc = {k: [v["width"], v["height"]] for k, v in assoc.items()}
-        agree = {}
-
-        def os_region(level, X0, Y0, w, h):
-            a = np.asarray(osl.read_region((int(X0), int(Y0)), level, (w, h)))
-            return a[..., :3], int(a[..., 3].min())
-
-        # level 0, tissue-centred
-        a = tf_region(tif, p0, x0, y0, REGION, REGION)
-        b, amin = os_region(0, x0, y0, REGION, REGION)
-        agree["level0"] = {"level": 0, "region": [x0, y0, REGION, REGION],
-                           "tissueFraction": round(box_frac(ii, int(x0 / sc), int(y0 / sc),
-                                                            int((x0 + REGION) / sc), int((y0 + REGION) / sc)), 3),
-                           "openslideAlphaMin": amin, **diff_stats(a, b)}
-        if len(pages) > 1:
-            p1 = pages[1]
-            ds = float(osl.level_downsamples[1])
-            W1, H1 = int(p1.shape[1]), int(p1.shape[0])
-            xs, ys = on_grid_candidates(W1, ds), on_grid_candidates(H1, ds)
-            if len(xs) and len(ys):
-                r = W0 / W1 / sc  # level-1 px -> coarse px
-                best = None
-                for yv in ys[:: max(1, len(ys) // 400)]:
-                    for xv in xs[:: max(1, len(xs) // 400)]:
-                        f = box_frac(ii, int(xv * r), int(yv * r), int((xv + REGION) * r), int((yv + REGION) * r))
-                        if best is None or f > best[0]:
-                            best = (f, int(xv), int(yv))
-                f, xv, yv = best
-                X0, Y0 = round(xv * ds), round(yv * ds)
-                a = tf_region(tif, p1, xv, yv, REGION, REGION)
-                b, amin = os_region(1, X0, Y0, REGION, REGION)
-                agree["level1OnGrid"] = {
-                    "level": 1, "region": [xv, yv, REGION, REGION], "openslideLocationLevel0": [X0, Y0],
-                    "openslideDownsample": ds, "subPixelOffset": [round(X0 / ds - xv, 5), round(Y0 / ds - yv, 5)],
-                    "tissueFraction": round(f, 3), "openslideAlphaMin": amin, **diff_stats(a, b)}
+def probe_svs_structure(path: str) -> tuple[dict, list[str]]:
+    quirks: list[str] = []
+    with tifffile.TiffFile(path) as tif:
+        pages = []
+        levels = sorted([p for p in tif.pages if p.is_tiled], key=lambda p: p.shape[1], reverse=True)
+        W0, H0 = int(levels[0].shape[1]), int(levels[0].shape[0])
+        assoc = {}
+        for p in tif.pages:
+            desc = p.description or ""
+            line2 = desc.replace("\r\n", "\n").split("\n")[1] if "\n" in desc else ""
+            if p.is_tiled:
+                role = "level"
+            elif line2.lower().startswith("label"):
+                role = "label"
+            elif line2.lower().startswith("macro"):
+                role = "macro"
             else:
-                agree["level1OnGrid"] = {"skipped": f"no location within {ON_GRID_TOL_PX:.4f} px of the level-1 grid"}
-            xv = int(min(max(round(cx / ds) - REGION // 2, 0), W1 - REGION))
-            yv = int(min(max(round(cy / ds) - REGION // 2, 0), H1 - REGION))
-            X0, Y0 = round(xv * ds), round(yv * ds)
-            a = tf_region(tif, p1, xv, yv, REGION, REGION)
-            b, amin = os_region(1, X0, Y0, REGION, REGION)
-            agree["level1TissueOffGrid"] = {
-                "level": 1, "region": [xv, yv, REGION, REGION], "openslideLocationLevel0": [X0, Y0],
-                "openslideDownsample": ds, "subPixelOffset": [round(X0 / ds - xv, 5), round(Y0 / ds - yv, 5)],
-                "openslideAlphaMin": amin, **diff_stats(a, b),
-                "note": "OpenSlide divides the level-0 location by the non-integer downsample and resamples the "
-                        "fractional remainder; this is an API effect, not a decode disagreement"}
+                role = "thumbnail"
+            rec = {
+                "page": p.index, "role": role, "width": int(p.shape[1]), "height": int(p.shape[0]),
+                "tiled": bool(p.is_tiled), "compression": p.compression.name, "compressionTag": int(p.compression),
+                "photometric": p.photometric.name, "subfileType": int(p.subfiletype),
+                "tiffYCbCrSubSampling": list(p.tags[530].value) if 530 in p.tags else None,
+                "jpegTablesBytes": None if p.jpegtables is None else len(p.jpegtables),
+                "iccProfileBytes": len(p.tags[34675].value) if 34675 in p.tags else None,
+            }
+            if p.is_tiled:
+                bc = np.asarray(p.databytecounts)
+                rec.update({
+                    "level": levels.index(p), "tileWidth": p.tilewidth, "tileHeight": p.tilelength,
+                    "tiles": int(bc.size), "emptyTiles": int((bc == 0).sum()), "medianTileBytes": int(np.median(bc[bc > 0])),
+                    "compressedBytes": int(bc.sum()),
+                    "downsampleX": round(W0 / p.shape[1], 6), "downsampleY": round(H0 / p.shape[0], 6),
+                    "descriptionSummary": line2.split("|")[0].strip()[:200] if p is not levels[0] else None,
+                })
+                # codestream of the median-size tile
+                med = int(np.argsort(bc)[bc.size // 2])
+                fh = tif.filehandle
+                fh.seek(p.dataoffsets[med])
+                data = fh.read(p.databytecounts[med])
+                rec["codestream"] = jpeg_header(data) if p.compression == 7 else j2k_header(data)
+                del rec["codestream"]["markers"] if "markers" in rec["codestream"] else None
+            else:
+                assoc[role] = {"width": int(p.shape[1]), "height": int(p.shape[0]), "compression": p.compression.name,
+                               "photometric": p.photometric.name, "page": p.index}
+            pages.append(rec)
+        d = parse_aperio_description(levels[0].description or "")
+        mpp = float(d["technicalFields"]["MPP"]) if "MPP" in d["technicalFields"] else None
+        lv = [r for r in pages if r["role"] == "level"]
+        steps = [round(lv[i]["downsampleX"] / lv[i - 1]["downsampleX"], 3) for i in range(1, len(lv))]
+        structure = {
+            "container": "TIFF (Aperio SVS)",
+            "bigtiff": bool(tif.is_bigtiff),
+            "tifffileIsSvs": bool(tif.is_svs),
+            "pageCount": len(tif.pages),
+            "series": [{"name": s.name, "shape": list(s.shape), "levels": len(s.levels)} for s in tif.series],
+            "pages": pages,
+            "levels": [[r["width"], r["height"]] for r in lv],
+            "levelSteps": steps,
+            "tileSize": [lv[0]["tileWidth"], lv[0]["tileHeight"]],
+            "compression": lv[0]["compression"],
+            "associatedImages": assoc,
+            "hasLabel": "label" in assoc,
+            "hasMacro": "macro" in assoc,
+            "hasThumbnail": "thumbnail" in assoc,
+            "imageDescription": d,
+            "mppLevel0": mpp,
+            "appMag": float(d["technicalFields"]["AppMag"]) if "AppMag" in d["technicalFields"] else None,
+        }
+        p0 = lv[0]
+        cs = p0["codestream"]
+        if p0["compressionTag"] == 7:
+            if p0["photometric"] == "RGB" and cs.get("implicitColourSpace") == "YCbCr":
+                quirks.append("JPEG tiles hold RGB samples (TIFF Photometric=RGB) but carry no JFIF/Adobe APP14 marker and "
+                              "component ids 0,1,2, so any plain JPEG decoder (libjpeg default, browsers) treats them as YCbCr; "
+                              "a header splice for the browser must inject an Adobe APP14 marker with transform=0 "
+                              "(see rgbJpegSpliceCheck)")
+            if p0["tiffYCbCrSubSampling"] and cs.get("chroma") == "4:4:4" and p0["tiffYCbCrSubSampling"] != [1, 1]:
+                quirks.append(f"TIFF YCbCrSubSampling tag says {p0['tiffYCbCrSubSampling']} (tifffile reports subsampling "
+                              f"{p0['tiffYCbCrSubSampling']}) but the JPEG SOF has three 1x1 components: the stream is "
+                              "unsubsampled RGB; trust the codestream, not the tag")
+        if steps and max(steps) > 2.01:
+            quirks.append(f"sparse vendor pyramid: level steps {steps} (plan FR-V2: synthesise the missing 2x levels)")
+        if len(lv) == 1:
+            quirks.append("single pyramid level: the viewer needs a derived pyramid")
+        if any(r["emptyTiles"] for r in lv):
+            quirks.append("zero-byte tiles present on some level")
+    return structure, quirks
+
+
+# ----------------------------------------------------------------------------------------------
+# DICOM WSI (pydicom)
+# ----------------------------------------------------------------------------------------------
+def walk_encapsulated(pixel_data: bytes) -> tuple[int, list[tuple[int, int]]]:
+    """Return (basic offset table length, [(offset, length) of each fragment]) of encapsulated data."""
+    i = 0
+    items = []
+    while i + 8 <= len(pixel_data):
+        tag = pixel_data[i : i + 4]
+        ln = struct.unpack("<I", pixel_data[i + 4 : i + 8])[0]
+        if tag == b"\xfe\xff\xdd\xe0":
+            break
+        if tag != b"\xfe\xff\x00\xe0":
+            raise ValueError(f"unexpected item tag {tag.hex()} at {i}")
+        items.append((i + 8, ln))
+        i += 8 + ln
+    bot = items[0][1] if items else 0
+    return bot, items[1:]
+
+
+class DicomLevel:
+    """One VOLUME level (possibly a concatenation of instances), frames held in memory."""
+
+    def __init__(self, instances: list[tuple[str, object]]):
+        self.instances = instances
+        ds0 = instances[0][1]
+        self.W, self.H = int(ds0.TotalPixelMatrixColumns), int(ds0.TotalPixelMatrixRows)
+        self.tw, self.th = int(ds0.Columns), int(ds0.Rows)
+        self.ts = ds0.file_meta.TransferSyntaxUID
+        self.photometric = str(ds0.PhotometricInterpretation)
+        self.frames: list[bytes] = []
+        self.pos: dict[tuple[int, int], int] = {}
+        self.sparse = str(ds0.get("DimensionOrganizationType", "")) == "TILED_SPARSE"
+        self.fragments_per_frame_1 = True
+        self.unaligned_positions = 0
+        self.row_major = True
+        self.loaded = False
+
+    def load(self):
+        if self.loaded:
+            return
+        cols = -(-self.W // self.tw)
+        for path, _hdr in sorted(self.instances, key=lambda t: int(t[1].get("ConcatenationFrameOffsetNumber", 0) or 0)):
+            ds = pydicom.dcmread(path)
+            n = int(ds.get("NumberOfFrames", 1))
+            pd = ds.PixelData
+            _bot, frags = walk_encapsulated(pd)
+            if len(frags) == n:
+                fr = [pd[o : o + ln] for o, ln in frags]
+            else:
+                self.fragments_per_frame_1 = False
+                fr = list(generate_frames(pd, number_of_frames=n))
+            base = int(ds.get("ConcatenationFrameOffsetNumber", 0) or 0)
+            if base != len(self.frames):
+                base = len(self.frames)
+            self.frames += fr
+            if self.sparse:
+                seq = ds.PerFrameFunctionalGroupsSequence
+                order = []
+                for k, g in enumerate(seq):
+                    pp = g.PlanePositionSlideSequence[0]
+                    x, y = int(pp.ColumnPositionInTotalImagePixelMatrix) - 1, int(pp.RowPositionInTotalImagePixelMatrix) - 1
+                    if x % self.tw or y % self.th:
+                        self.unaligned_positions += 1
+                    self.pos[(x // self.tw, y // self.th)] = base + k
+                    order.append((y, x))
+                self.row_major = order == sorted(order)
+            else:
+                for k in range(n):
+                    g = base + k
+                    self.pos[(g % cols, g // cols)] = g
+        self.loaded = True
+
+    def frame(self, tx: int, ty: int) -> bytes | None:
+        self.load()
+        i = self.pos.get((tx, ty))
+        return None if i is None else self.frames[i]
+
+    def decoder(self):
+        if self.ts in ("1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.4.201",
+                       "1.2.840.10008.1.2.4.202", "1.2.840.10008.1.2.4.203"):
+            return "imagecodecs.jpeg2k_decode (OpenJPEG, numthreads=1)", decode_j2k
+        rgb = self.photometric == "RGB"
+
+        def dec(d):
+            if rgb and not jpeg_header(d[:4096]).get("adobeApp14"):
+                return decode_jpeg(d, force_rgb=True)
+            return decode_jpeg(d)
+
+        return "imagecodecs.jpeg_decode (libjpeg-turbo)", dec
+
+
+class DicomReader:
+    def __init__(self, levels: list[DicomLevel]):
+        self.levels_ = levels
+
+    def dims(self, level):
+        lv = self.levels_[level]
+        return lv.W, lv.H
+
+    def tile_size(self, level):
+        lv = self.levels_[level]
+        return lv.tw, lv.th
+
+    def grid(self, level):
+        lv = self.levels_[level]
+        return -(-lv.W // lv.tw), -(-lv.H // lv.th)
+
+    def tile_bytes(self, level, tx, ty):
+        return self.levels_[level].frame(tx, ty)
+
+    def decode_tile(self, level, tx, ty):
+        data = self.tile_bytes(level, tx, ty)
+        if data is None:
+            return None
+        a = self.levels_[level].decoder()[1](data)
+        return a[..., :3]
+
+    def timing_decoder(self, level):
+        return self.levels_[level].decoder()
+
+    def read(self, level, x, y, w, h):
+        return read_tiled(self, level, x, y, w, h)
+
+    def close(self):
+        pass
+
+
+def ts_name(uid) -> str:
+    try:
+        return f"{uid.name} ({uid})"
+    except Exception:  # noqa: BLE001
+        return str(uid)
+
+
+def probe_dicom_structure(directory: str) -> tuple[dict, DicomReader, list[str]]:
+    quirks: list[str] = []
+    instances = []
+    phi: dict[str, str] = {}
+    dicomdir = None
+    for f in sorted(os.listdir(directory)):
+        p = os.path.join(directory, f)
+        if f == "DICOMDIR":
+            dd = pydicom.dcmread(p)
+            dicomdir = {"present": True, "records": len(dd.get("DirectoryRecordSequence", []))}
+            continue
+        if not f.lower().endswith(".dcm"):
+            continue
+        ds = pydicom.dcmread(p, stop_before_pixels=True)
+        with open(p, "rb") as fh:
+            pre = fh.read(4)
+        for kw in DICOM_PHI_KEYWORDS:
+            if kw in ds:
+                v = ds.get(kw)
+                nonempty = bool(v) if not hasattr(v, "__len__") or isinstance(v, (str, bytes)) else len(v) > 0
+                if nonempty and isinstance(v, str):
+                    nonempty = bool(v.strip())
+                if phi.get(kw) != "non-empty":
+                    phi[kw] = "non-empty" if nonempty else "empty"
+        it = list(ds.get("ImageType", []))
+        flavour = it[2] if len(it) > 2 else None
+        op = ds.get("OpticalPathSequence", [])
+        ps = None
+        try:
+            ps = [float(v) for v in ds.SharedFunctionalGroupsSequence[0].PixelMeasuresSequence[0].PixelSpacing]
+        except Exception:  # noqa: BLE001
+            pass
+        rec = {
+            "file": f,
+            "bytes": os.path.getsize(p),
+            "sopClass": str(ds.SOPClassUID.name),
+            "imageType": it,
+            "flavour": flavour,
+            "transferSyntax": ts_name(ds.file_meta.TransferSyntaxUID),
+            "frameSize": [int(ds.Columns), int(ds.Rows)],
+            "totalPixelMatrix": [int(ds.TotalPixelMatrixColumns), int(ds.TotalPixelMatrixRows)] if "TotalPixelMatrixColumns" in ds else None,
+            "numberOfFrames": int(ds.get("NumberOfFrames", 1)),
+            "dimensionOrganizationType": str(ds.get("DimensionOrganizationType", "")) or None,
+            "concatenation": ({"inConcatenationNumber": int(ds.InConcatenationNumber),
+                               "total": int(ds.get("InConcatenationTotalNumber", 0) or 0),
+                               "frameOffset": int(ds.get("ConcatenationFrameOffsetNumber", 0) or 0)}
+                              if "ConcatenationUID" in ds else None),
+            "photometric": str(ds.get("PhotometricInterpretation")),
+            "samplesPerPixel": int(ds.get("SamplesPerPixel", 0)),
+            "bitsStored": int(ds.get("BitsStored", 0)),
+            "planarConfiguration": int(ds.PlanarConfiguration) if "PlanarConfiguration" in ds else None,
+            "lossyImageCompression": str(ds.get("LossyImageCompression", "")) or None,
+            "lossyMethod": [str(v) for v in (ds.get("LossyImageCompressionMethod") or [])] if ds.get("LossyImageCompressionMethod") is not None and not isinstance(ds.get("LossyImageCompressionMethod"), str) else ds.get("LossyImageCompressionMethod"),
+            "pixelSpacingUm": [round(v * 1000, 6) for v in ps] if ps else None,
+            "opticalPaths": [{"id": str(o.get("OpticalPathIdentifier")),
+                              "iccProfileBytes": len(o.ICCProfile) if "ICCProfile" in o else None,
+                              "illumination": (str(o.IlluminationTypeCodeSequence[0].CodeMeaning)
+                                               if "IlluminationTypeCodeSequence" in o and len(o.IlluminationTypeCodeSequence) else None)}
+                             for o in op],
+            "numberOfOpticalPaths": int(ds.NumberOfOpticalPaths) if "NumberOfOpticalPaths" in ds else None,
+            "focalPlanes": int(ds.TotalPixelMatrixFocalPlanes) if "TotalPixelMatrixFocalPlanes" in ds else None,
+            "perFrameFunctionalGroups": len(ds.get("PerFrameFunctionalGroupsSequence", [])),
+            "extendedOffsetTable": "ExtendedOffsetTable" in ds,
+            "dualPersonalityTiff": pre in (b"II*\0", b"II+\0", b"MM\0*", b"MM\0+"),
+            "manufacturer": str(ds.get("Manufacturer", "")),
+            "model": str(ds.get("ManufacturerModelName", "")),
+            "software": [str(v) for v in ds.get("SoftwareVersions", [])] if not isinstance(ds.get("SoftwareVersions", ""), str) else [str(ds.SoftwareVersions)],
+        }
+        if isinstance(rec["lossyMethod"], str):
+            rec["lossyMethod"] = [rec["lossyMethod"]]
+        instances.append((p, ds, rec))
+    # codestream header of a representative frame of each compressed instance (label/overview read
+    # only as far as the JPEG header; never decoded)
+    for p, ds, rec in instances:
+        if not ds.file_meta.TransferSyntaxUID.is_compressed:
+            rec["codestream"] = "uncompressed"
+            continue
+        full = pydicom.dcmread(p)
+        bot, frags = walk_encapsulated(full.PixelData)
+        rec["basicOffsetTableBytes"] = bot
+        rec["fragments"] = len(frags)
+        sizes = sorted(ln for _o, ln in frags)
+        rec["medianFrameBytes"] = int(sizes[len(sizes) // 2]) if sizes else None
+        o, ln = sorted(frags, key=lambda t: t[1])[len(frags) // 2]
+        data = full.PixelData[o : o + ln]
+        if data[:2] == b"\xff\xd8":
+            h = jpeg_header(data)
+            h.pop("markers", None)
+            rec["codestream"] = h
+            prog = sum(1 for o2, l2 in frags if b"\xff\xc2" in full.PixelData[o2 : o2 + min(l2, 4096)][:4096]
+                       and full.PixelData[o2 : o2 + min(l2, 4096)].find(b"\xff\xc2") < full.PixelData[o2 : o2 + min(l2, 4096)].find(b"\xff\xda"))
+            rec["progressiveFrames"] = prog
         else:
-            agree["level1OnGrid"] = agree["level1TissueOffGrid"] = {"skipped": "single pyramid level"}
-        rec["structure"]["ourReader"]["selectedMatchesOpenSlideLevels"] = os_dims == tf_dims
-        rec["openslide"] = {
-            "openslidePython": openslide.__version__,
-            "openslideLibrary": openslide.__library_version__,
-            "detectFormat": openslide.OpenSlide.detect_format(path),
-            "vendor": props.get("openslide.vendor"),
-            "levelCount": osl.level_count,
-            "levelDimensions": os_dims,
-            "levelDownsamples": [float(d) for d in osl.level_downsamples],
-            "levelTiles": [[int(props.get(f"openslide.level[{i}].tile-width", 0)),
-                            int(props.get(f"openslide.level[{i}].tile-height", 0))] for i in range(osl.level_count)],
-            "propertiesCount": len(props),
-            "aperioPropertiesCount": sum(1 for k in props if k.startswith("aperio.")),
-            "associatedImages": os_assoc,
-            "mpp": [props.get("openslide.mpp-x"), props.get("openslide.mpp-y")],
-            "objectivePower": props.get("openslide.objective-power"),
-            "iccBytes": int(props["openslide.icc-size"]) if "openslide.icc-size" in props else None,
-            "quickhash1": props.get("openslide.quickhash-1"),
-            "duplicateKeysAsKept": ({k: props.get(f"aperio.{k}") for k in desc["duplicateKeys"]} if desc else None),
-            "agreesWithTifffile": {
-                "levelDimensions": os_dims == tf_dims,
-                "levelTiles": [[lv["tile"][0], lv["tile"][1]] for lv in levels]
-                == [[int(props.get(f"openslide.level[{i}].tile-width", 0)), int(props.get(f"openslide.level[{i}].tile-height", 0))]
-                    for i in range(osl.level_count)],
-                "associatedImages": os_assoc == tf_assoc,
-                "mpp": (mpp is not None and props.get("openslide.mpp-x") is not None
-                        and abs(float(props["openslide.mpp-x"]) - mpp) < 1e-9),
-            },
-            "pixelAgreement": agree,
-        }
-        osl.close()
-    rec["tissueTarget"] = target
+            rec["codestream"] = j2k_header(data)
+        del full
+    recs = [r for _p, _d, r in instances]
+    vol = [(p, d, r) for p, d, r in instances if r["flavour"] == "VOLUME"]
+    groups: dict[tuple[int, int], list] = {}
+    for p, d, r in vol:
+        groups.setdefault(tuple(r["totalPixelMatrix"]), []).append((p, d))
+    levels = [DicomLevel(groups[k]) for k in sorted(groups, key=lambda k: -k[0])]
+    W0, H0 = levels[0].W, levels[0].H
+    lvrec = []
+    for lv in levels:
+        r = next(r for p, d, r in vol if tuple(r["totalPixelMatrix"]) == (lv.W, lv.H))
+        lvrec.append({"width": lv.W, "height": lv.H, "frameSize": [lv.tw, lv.th], "frames": sum(int(d.get("NumberOfFrames", 1)) for _p, d in lv.instances),
+                      "instances": len(lv.instances), "downsampleX": round(W0 / lv.W, 6), "downsampleY": round(H0 / lv.H, 6),
+                      "pixelSpacingUm": r["pixelSpacingUm"], "imageType": r["imageType"]})
+    steps = [round(lvrec[i]["downsampleX"] / lvrec[i - 1]["downsampleX"], 3) for i in range(1, len(lvrec))]
+    assoc = {}
+    for p, d, r in instances:
+        if r["flavour"] in ("LABEL", "OVERVIEW", "THUMBNAIL", "LOCALIZER", "REGIONLOCALIZER"):
+            assoc.setdefault(r["flavour"].lower(), []).append({"file": r["file"], "width": r["frameSize"][0], "height": r["frameSize"][1],
+                                                              "transferSyntax": r["transferSyntax"], "photometric": r["photometric"]})
+    v0 = next(r for p, d, r in vol if tuple(r["totalPixelMatrix"]) == (W0, H0))
+    structure = {
+        "container": "DICOM WSI (VL Whole Slide Microscopy Image Storage)",
+        "instances": recs,
+        "dicomdir": dicomdir,
+        "levels": [[lv["width"], lv["height"]] for lv in lvrec],
+        "levelDetail": lvrec,
+        "levelSteps": steps,
+        "frameSize": v0["frameSize"],
+        "transferSyntax": v0["transferSyntax"],
+        "dimensionOrganizationType": v0["dimensionOrganizationType"],
+        "concatenations": any(r["concatenation"] for r in recs),
+        "opticalPaths": len(v0["opticalPaths"]),
+        "focalPlanes": v0["focalPlanes"],
+        "associatedImages": assoc,
+        "hasLabel": "label" in assoc,
+        "hasMacro": "overview" in assoc,
+        "hasThumbnail": "thumbnail" in assoc,
+        "mppLevel0": v0["pixelSpacingUm"][0] if v0["pixelSpacingUm"] else None,
+        "manufacturer": v0["manufacturer"],
+        "model": v0["model"],
+        "software": v0["software"],
+        "identifyingAttributes": dict(sorted(phi.items())),
+        "dateAttributesPresent": sorted(k for k in phi if k in DICOM_DATE_KEYWORDS),
+        "level0ImageTypeOriginal": v0["imageType"][0] == "ORIGINAL",
+    }
+    # quirks derived from the measurements
+    cs = v0.get("codestream") or {}
+    if isinstance(cs, dict) and cs.get("chroma") and "422" in v0["photometric"] and cs["chroma"] != "4:2:2":
+        quirks.append(f"PhotometricInterpretation {v0['photometric']} but the level-0 codestream is {cs['chroma']} "
+                      "(the attribute is not a reliable guide to chroma subsampling; read the SOF/SIZ)")
+    if v0.get("progressiveFrames"):
+        quirks.append(f"{v0['progressiveFrames']} of {v0['numberOfFrames']} level-0 frames are progressive JPEG (SOF2) although "
+                      "the transfer syntax is JPEG Baseline (Process 1); browsers decode them, a baseline-only decoder would not")
+    if not any(r.get("extendedOffsetTable") for r in recs if r["flavour"] == "VOLUME") and all(
+            (r.get("basicOffsetTableBytes") or 0) == 0 for r in recs if r["flavour"] == "VOLUME"):
+        quirks.append("no Basic or Extended Offset Table on the VOLUME instances: frame offsets need one sequential scan of the "
+                      "item headers when the range index is built")
+    if structure["dimensionOrganizationType"] == "TILED_SPARSE":
+        quirks.append("TILED_SPARSE: frame positions come from PerFrameFunctionalGroupsSequence/PlanePositionSlideSequence")
+    if not structure["level0ImageTypeOriginal"]:
+        quirks.append(f"level-0 ImageType is {v0['imageType']} (no ORIGINAL VOLUME instance in this set)")
+    if v0["dualPersonalityTiff"]:
+        quirks.append("dual-personality file: the DICOM preamble is a BigTIFF header, tifffile opens the same bytes as a TIFF")
+    if steps and max(steps) > 2.01:
+        quirks.append(f"sparse vendor pyramid: level steps {steps} (plan FR-V2: synthesise the missing 2x levels)")
+    return structure, DicomReader(levels), quirks
 
-    # --- splice check (JPEG) --------------------------------------------------------------------
-    tw, th = p0.tilewidth, p0.tilelength
-    cols = math.ceil(W0 / tw)
-    tidx = (min(cy // th, math.ceil(H0 / th) - 1)) * cols + min(cx // tw, cols - 1)
-    if p0.compression == 7 and p0.jpegtables is not None:
-        data = read_segment(tif, p0, tidx)
-        ref = decode_tile(p0, data, tidx)
-        naive = imagecodecs.jpeg_decode(p0.jpegtables[:-2] + data[2:])
-        fixed = imagecodecs.jpeg_decode(b"\xff\xd8" + APP14_ADOBE_TRANSFORM0 + p0.jpegtables[2:-2] + data[2:])
-        rec["spliceCheck"] = {
-            "tileIndex": int(tidx),
-            "decoder": f"imagecodecs.jpeg_decode default colour rule (libjpeg-turbo {imagecodecs.jpeg8_version()})",
-            "reference": "tifffile page.decode (Photometric RGB -> colorspace RGB)",
-            "naiveSplice": {k: v for k, v in diff_stats(naive[..., :3], ref).items() if k in ("maxAbsDiff", "meanAbsDiff", "identical")},
-            "withAdobeApp14Transform0": {k: v for k, v in diff_stats(fixed[..., :3], ref).items() if k in ("maxAbsDiff", "meanAbsDiff", "identical")},
-        }
+
+def finish_dicom_level_quirks(reader: DicomReader, structure: dict, quirks: list[str]):
+    lv = reader.levels_[0]
+    lv.load()
+    structure["level0FramesSingleFragment"] = lv.fragments_per_frame_1
+    if lv.sparse:
+        cols, rows = reader.grid(0)
+        structure["sparse"] = {"positions": len(lv.pos), "gridCells": cols * rows, "unalignedPositions": lv.unaligned_positions,
+                               "rowMajorOrder": lv.row_major}
+        if not lv.row_major:
+            quirks.append("TILED_SPARSE frames are not stored in row-major order (frame index != grid position)")
+        if len(lv.pos) < cols * rows:
+            quirks.append(f"TILED_SPARSE level 0 has {cols * rows - len(lv.pos)} absent grid cells (background must be synthesised)")
+
+
+# ----------------------------------------------------------------------------------------------
+# oracles
+# ----------------------------------------------------------------------------------------------
+def openslide_summary(path: str) -> tuple[dict, object | None]:
+    if openslide is None:
+        return {"error": "openslide not installed"}, None
+    try:
+        s = openslide.OpenSlide(path)
+    except Exception as e:  # noqa: BLE001
+        return {"opened": False, "error": f"{type(e).__name__}: {e}".replace(os.path.dirname(path), "<dir>")}, None
+    pr = s.properties
+    out = {
+        "opened": True,
+        "vendor": pr.get("openslide.vendor"),
+        "levelCount": s.level_count,
+        "levelDimensions": [list(d) for d in s.level_dimensions],
+        "levelDownsamples": [round(x, 6) for x in s.level_downsamples],
+        "tileSize": [[int(pr.get(f"openslide.level[{i}].tile-width", 0)), int(pr.get(f"openslide.level[{i}].tile-height", 0))]
+                     for i in range(s.level_count)],
+        "propertiesCount": len(pr),
+        "associatedImages": {k: list(v) for k, v in sorted(s.associated_images.items())} if False else
+                            {k[len("openslide.associated."):-len(".width")]: [int(pr[k]), int(pr[k[:-len("width")] + "height"])]
+                             for k in sorted(pr) if k.startswith("openslide.associated.") and k.endswith(".width")},
+        "mppX": float(pr["openslide.mpp-x"]) if "openslide.mpp-x" in pr else None,
+        "mppY": float(pr["openslide.mpp-y"]) if "openslide.mpp-y" in pr else None,
+        "objectivePower": pr.get("openslide.objective-power"),
+        "iccProfileBytes": int(pr["openslide.icc-size"]) if "openslide.icc-size" in pr else None,
+        "quickhash1": pr.get("openslide.quickhash-1"),
+    }
+    return out, s
+
+
+def os_read(s, x0: int, y0: int, level: int, size: int) -> tuple[np.ndarray, np.ndarray]:
+    a = np.asarray(s.read_region((x0, y0), level, (size, size)))
+    return a[..., :3], a[..., 3] == 255
+
+
+# ----------------------------------------------------------------------------------------------
+# region choice, pixel agreement, timing
+# ----------------------------------------------------------------------------------------------
+def choose_region(reader) -> dict:
+    """Tissue-densest REGION x REGION window at level 0, tile-aligned, found on a coarse level."""
+    n = len(reader.levels_) if hasattr(reader, "levels_") else len(reader.levels)
+    W0, H0 = reader.dims(0)
+    ctx = 0
+    for i in range(n):
+        if max(reader.dims(i)) >= CONTEXT_MIN_PX:
+            ctx = i
+    Wc, Hc = reader.dims(ctx)
+    img = reader.read(ctx, 0, 0, Wc, Hc)
+    mask = tissue_mask(img)
+    ds = W0 / Wc
+    win = max(1, int(round(REGION / ds)))
+    ii = np.pad(mask.astype(np.int32).cumsum(0).cumsum(1), ((1, 0), (1, 0)))
+    if Hc < win or Wc < win:
+        cy, cx = Hc // 2, Wc // 2
+        frac = float(mask.mean())
     else:
-        rec["spliceCheck"] = None
+        s = ii[win:, win:] - ii[:-win, win:] - ii[win:, :-win] + ii[:-win, :-win]
+        y, x = np.unravel_index(int(np.argmax(s)), s.shape)
+        frac = float(s[y, x]) / (win * win)
+        cy, cx = y + win / 2, x + win / 2
+    tw, th = reader.tile_size(0)
+    x0 = int(min(max(cx * ds - REGION / 2, 0), W0 - REGION)) // tw * tw
+    y0 = int(min(max(cy * (H0 / Hc) - REGION / 2, 0), H0 - REGION)) // th * th
+    return {"level0": [x0, y0, REGION, REGION], "selection": f"tissue-densest {REGION}px window on level {ctx} "
+            f"({Wc}x{Hc}), snapped to the level-0 tile grid", "tissueFraction": round(frac, 3), "contextLevel": ctx}
 
-    # --- decode timing --------------------------------------------------------------------------
-    rows = math.ceil(H0 / th)
-    tcx, tcy = tidx % cols, tidx // cols
-    bc = np.asarray(p0.databytecounts)
-    cand = sorted((((x - tcx) ** 2 + (y - tcy) ** 2), y * cols + x) for y in range(rows) for x in range(cols)
-                  if abs(x - tcx) <= 6 and abs(y - tcy) <= 6 and bc[y * cols + x] > 0)
-    chosen = [i for _, i in cand[:TIMING_TILES]]
-    blobs = [(i, read_segment(tif, p0, i)) for i in chosen]
-    for i, d in blobs[:TIMING_WARMUP]:
-        decode_tile(p0, d, i)
-    load_before = loadavg()
-    per_tile = []
-    for i, d in blobs:
-        reps = []
+
+def pixel_agreement(reader, region: dict, os_slide, wsi=None, svs_path: str | None = None) -> dict:
+    x0, y0, _w, _h = region["level0"]
+    out: dict = {"region": region}
+    ours0 = reader.read(0, x0, y0, REGION, REGION)
+    lv0: dict = {"x": x0, "y": y0, "size": REGION}
+    if os_slide is not None:
+        o, valid = os_read(os_slide, x0, y0, 0, REGION)
+        lv0["vsOpenSlide"] = diff_stats(ours0, o, valid)
+        lv0["vsOpenSlide"]["transparentPixels"] = int((~valid).sum())
+    if wsi is not None:
+        try:
+            w = np.asarray(wsi.read_region((x0, y0), 0, (REGION, REGION), as_array=True))[..., :3]
+            lv0["vsWsidicom"] = diff_stats(ours0, w)
+        except Exception as e:  # noqa: BLE001
+            lv0["vsWsidicom"] = {"error": f"{type(e).__name__}: {e}"[:200]}
+    if svs_path is not None:
+        tw, th = reader.tile_size(0)
+        if REGION % tw == 0 and REGION % th == 0:
+            src = ws_open_slide(svs_path)
+            try:
+                a = ws_read_region(src, 0, x0, y0, REGION, REGION, workers=1)
+                lv0["vsStage0WsiSourceReadRegion"] = diff_stats(ours0, a)
+            finally:
+                src.close()
+        else:
+            lv0["vsStage0WsiSourceReadRegion"] = {"skipped": f"wsi_source.read_region needs a region that is a multiple of the {tw}px tile"}
+    out["level0"] = lv0
+    n = len(reader.levels_) if hasattr(reader, "levels_") else len(reader.levels)
+    if n < 2:
+        out["coarse"] = {"skipped": "single-level file"}
+        return out
+    W0, H0 = reader.dims(0)
+    W1, H1 = reader.dims(1)
+    dsx, dsy = W0 / W1, H0 / H1
+    tw, th = reader.tile_size(1)
+    cx, cy = (x0 + REGION / 2) / dsx, (y0 + REGION / 2) / dsy
+    x1 = int(min(max(cx - REGION / 2, 0), W1 - REGION)) // tw * tw
+    y1 = int(min(max(cy - REGION / 2, 0), H1 - REGION)) // th * th
+    ours1 = reader.read(1, x1, y1, REGION, REGION)
+    c: dict = {"level": 1, "x": x1, "y": y1, "size": REGION, "readerDownsample": [round(dsx, 6), round(dsy, 6)]}
+    if os_slide is not None:
+        ods = os_slide.level_downsamples[1]
+        px, py = round(x1 * ods), round(y1 * ods)
+        best = None
+        for dy in range(-2, 3):
+            for dx in range(-2, 3):
+                o, valid = os_read(os_slide, px + dx, py + dy, 1, REGION)
+                st = diff_stats(ours1, o, valid)
+                if best is None or st["meanAbsDiff"] < best[0]["meanAbsDiff"]:
+                    best = (st, px + dx, py + dy)
+                if dx == 0 and dy == 0:
+                    prim = st
+        c["openSlideDownsample"] = round(ods, 6)
+        c["vsOpenSlide"] = {"level0Location": [px, py], "subPixelOffset": [round(px / ods - x1, 4), round(py / ods - y1, 4)], **prim}
+        c["vsOpenSlideBestOf5x5"] = {"level0Location": [best[1], best[2]],
+                                     "subPixelOffset": [round(best[1] / ods - x1, 4), round(best[2] / ods - y1, 4)], **best[0]}
+    if wsi is not None:
+        try:
+            wl = wsi.levels[1].level
+            w = np.asarray(wsi.read_region((x1, y1), wl, (REGION, REGION), as_array=True))[..., :3]
+            c["vsWsidicom"] = {"wsidicomLevel": wl, **diff_stats(ours1, w)}
+        except Exception as e:  # noqa: BLE001
+            c["vsWsidicom"] = {"error": f"{type(e).__name__}: {e}"[:200]}
+    out["coarse"] = c
+    return out
+
+
+def decode_timing(reader, region: dict) -> dict:
+    x0, y0, _w, _h = region["level0"]
+    tw, th = reader.tile_size(0)
+    cols, rows = reader.grid(0)
+    tx0, ty0 = x0 // tw, y0 // th
+    picks = []
+    # 5 x 4 block of level-0 tiles starting at the region's top-left tile, extended row-wise
+    # (row-major) if tiles are missing or the grid edge is reached
+    ty = ty0
+    while len(picks) < TIMING_TILES and ty < rows:
+        for tx in range(tx0, min(cols, tx0 + 5)):
+            d = reader.tile_bytes(0, tx, ty)
+            if d is not None and len(picks) < TIMING_TILES:
+                picks.append(((tx, ty), d))
+        ty += 1
+    name, dec = reader.timing_decoder(0)
+    for _ in range(3):
+        dec(picks[0][1])
+    per = []
+    shapes = set()
+    for _xy, d in picks:
+        best = math.inf
         for _ in range(TIMING_REPEATS):
             t0 = time.perf_counter()
-            decode_tile(p0, d, i)
-            reps.append((time.perf_counter() - t0) * 1000)
-        per_tile.append(statistics.median(reps))
-    load_after = loadavg()
-    med = statistics.median(per_tile)
-    codec = "JPEG" if p0.compression == 7 else f"JPEG 2000 ({p0.compression.name})"
-    rec["decodeTiming"] = {
-        "level": 0, "codec": codec, "tilePx": [tw, th], "tiles": len(per_tile), "repeatsPerTile": TIMING_REPEATS,
-        "medianMs": round(med, 3), "minMs": round(min(per_tile), 3), "maxMs": round(max(per_tile), 3),
-        "msPerMegapixel": round(med / (tw * th / 1e6), 2),
-        "medianTileBytes": int(statistics.median(len(d) for _, d in blobs)),
-        "path": "tifffile page.decode -> " + ("imagecodecs.jpeg_decode (libjpeg-turbo)" if p0.compression == 7
-                                               else "imagecodecs.jpeg2k_decode (OpenJPEG)") + ", one thread, bytes in memory",
-        "loadAverage1mBeforeAfter": [load_before[0] if load_before else None, load_after[0] if load_after else None],
+            a = dec(d)
+            best = min(best, time.perf_counter() - t0)
+        shapes.add(a.shape[:2])
+        per.append(best * 1000)
+    mp = tw * th / 1e6
+    med = statistics.median(per)
+    out = {
+        "decoder": name,
+        "tiles": len(per),
+        "tileSize": [tw, th],
+        "medianMs": round(med, 3),
+        "minMs": round(min(per), 3),
+        "maxMs": round(max(per), 3),
+        "medianMsPerMegapixel": round(med / mp, 3),
+        "medianCompressedBytes": int(statistics.median(len(d) for _xy, d in picks)),
+        "method": f"single thread, min of {TIMING_REPEATS} runs per tile, median over tiles; tiles = row-major block from level-0 tile {tx0},{ty0}",
     }
+    hdrs = [jpeg_header(d[:4096]) for _xy, d in picks if d[:2] == b"\xff\xd8"]
+    if hdrs:
+        out["progressiveTiles"] = sum(1 for h in hdrs if h["sof"] == "SOF2 progressive")
+    out["_picks"] = [xy for xy, _d in picks]
+    return out
 
-    # --- tier -----------------------------------------------------------------------------------
-    rec["ingest"] = classify_tier(levels, p0.compression.name, tw, th)
-    if rec["ingest"]["planRow"] and "GT 450" in rec["ingest"]["planRow"] and desc:
-        rec["ingest"]["notes"].append(
-            f"the plan row is labelled GT 450, but this file was written by {', '.join(desc['software'])} "
-            f"(ScanScope ID {desc['scanner']}): 256² frames are not GT 450-specific, and the tier follows frame size")
-    quirks = []
-    l0 = levels[0]
-    cs0 = l0["codestream"] or {}
-    if l0["tifffileSubsampling"] and cs0.get("chroma") == "4:4:4":
-        quirks.append(f"TIFF YCbCrSubSampling tag {l0['tiffYCbCrSubSamplingTag']} with Photometric {l0['photometric']}, but "
-                      f"the JPEG SOF has components {cs0.get('componentIds')} all 1x1 (4:4:4 RGB); tifffile.subsampling "
-                      f"and wsi_source.source_description report {l0['tifffileSubsampling']}")
-    if cs0.get("codec") == "JPEG" and not cs0.get("jfifMarker") and cs0.get("adobeApp14Transform") is None:
-        quirks.append("RGB JPEG with no JFIF/Adobe marker: decoders using libjpeg-turbo's default rule (and Chromium, "
-                      "see README) read it as YCbCr unless told the colour space")
-    if cs0.get("colourModel"):
-        quirks.append(cs0["colourModel"])
-    if l0["iccProfileBytes"] is None:
-        quirks.append("no ICC profile on the pyramid (the plan's colour path then has no scanner profile to apply)")
-    if desc and desc["duplicateKeys"]:
-        quirks.append(f"ImageDescription repeats keys {desc['duplicateKeys']} (export lineage concatenated); OpenSlide "
-                      f"keeps {rec.get('openslide', {}).get('duplicateKeysAsKept')}")
-    if desc and desc["caseVariantKeys"]:
-        quirks.append(f"case-variant keys {desc['caseVariantKeys']}")
-    if any(lv["zeroByteTiles"] for lv in levels):
-        quirks.append("zero-byte tiles present: " + ", ".join(f"level {lv['level']}: {lv['zeroByteTiles']}" for lv in levels if lv["zeroByteTiles"]))
-    auto = rec["structure"]["ourReader"]["buildPyramidAutoSelect"]
-    if not auto["ok"]:
-        quirks.append("build_pyramid.py region mode cannot auto-select a region on this file (" + auto["error"] + "); "
-                      "use --full (whole slide) or an explicit --region")
-    if REGION % tw:
-        quirks.append(f"{tw} px source tiles: build_pyramid region mode needs --region in multiples of {tw} px "
-                      f"(wsi_source.read_region); --full reads any window through wsi_source.read_window")
-    if not rec["structure"]["ourReader"]["associatedPagesExcluded"]:
-        quirks.append("our reader selected an associated (thumbnail/label/macro) page as a pyramid level")
-    rec["quirks"] = quirks
-    rec["probeSeconds"] = round(time.time() - t_start, 1)
-    src.close()
-    return rec
+
+def reference_timing(tiles_dir: str) -> dict | None:
+    """Decode time of our own Stage-0 512 px q85 tiles (the format the viewer actually fetches)."""
+    if not os.path.isdir(tiles_dir):
+        return None
+    names = sorted(f for f in os.listdir(tiles_dir) if f.endswith(".jpg"))
+    if len(names) < TIMING_TILES:
+        return None
+    mid = len(names) // 2 - TIMING_TILES // 2
+    sel = names[mid : mid + TIMING_TILES]
+    datas = [open(os.path.join(tiles_dir, f), "rb").read() for f in sel]
+    for _ in range(3):
+        imagecodecs.jpeg_decode(datas[0])
+    per = []
+    for d in datas:
+        best = math.inf
+        for _ in range(TIMING_REPEATS):
+            t0 = time.perf_counter()
+            a = imagecodecs.jpeg_decode(d)
+            best = min(best, time.perf_counter() - t0)
+        per.append(best * 1000)
+    hdr = jpeg_header(datas[0])
+    med = statistics.median(per)
+    return {"tilesDir": "stage0/data/tiles/0", "tiles": len(per), "tileSize": [int(a.shape[1]), int(a.shape[0])],
+            "codestream": f"{hdr['sof']}, {hdr.get('chroma')}", "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo)",
+            "medianMs": round(med, 3), "minMs": round(min(per), 3), "maxMs": round(max(per), 3),
+            "medianMsPerMegapixel": round(med / (a.shape[0] * a.shape[1] / 1e6), 3),
+            "medianCompressedBytes": int(statistics.median(len(d) for d in datas))}
+
+
+def rgb_jpeg_splice_check(reader: SvsReader) -> dict | None:
+    """Can an Aperio RGB-JPEG tile be made a standalone, correctly-coloured JPEG by a header splice?
+
+    naive  = JPEGTables (without EOI) + tile (without SOI)
+    app14  = SOI + Adobe APP14 (transform 0 = no colour transform) + tables + tile
+    Both are decoded with libjpeg-turbo defaults (what a browser does) and compared with the
+    tifffile RGB decode.
+    """
+    p = reader.levels[0]
+    if p.compression != 7 or p.jpegtables is None:
+        return None
+    cols, rows = reader.grid(0)
+    tx, ty = cols // 2, rows // 2
+    data = reader.tile_bytes(0, tx, ty)
+    ref = reader.decode_tile(0, tx, ty)
+    naive = p.jpegtables[:-2] + data[2:]
+    app14 = b"\xff\xd8" + b"\xff\xee\x00\x0eAdobe\x00\x64\x00\x00\x00\x00\x00" + p.jpegtables[2:-2] + data[2:]
+    return {"tile": [tx, ty],
+            "naiveSpliceVsTifffile": diff_stats(imagecodecs.jpeg_decode(naive)[..., :3], ref),
+            "app14SpliceVsTifffile": diff_stats(imagecodecs.jpeg_decode(app14)[..., :3], ref),
+            "note": "decoded with libjpeg-turbo default colour handling, i.e. what an <img>/createImageBitmap decoder sees"}
+
+
+# ----------------------------------------------------------------------------------------------
+# ingest tier (plan section 4.1)
+# ----------------------------------------------------------------------------------------------
+def ingest_tier(kind: str, st: dict) -> dict:
+    lv = st["levels"]
+    steps = st.get("levelSteps") or []
+    actions = []
+    if len(lv) == 1:
+        actions.append("derive a 2x pyramid down to one 512 px tile (single native level)")
+    elif steps and max(steps) > 2.01:
+        actions.append(f"synthesise intermediate 2x levels (native steps {steps}; plan FR-V2 sparse vendor pyramid)")
+    if kind == "svs":
+        tw = st["tileSize"][0]
+        comp = st["compression"]
+        if comp == "JPEG":
+            cs = st["pages"][0]["codestream"]
+            rgb_note = ("; tiles are unsubsampled RGB-in-JPEG without an APP14 marker, so the splice must add Adobe APP14 "
+                        "transform=0") if cs.get("implicitColourSpace") == "YCbCr" and st["pages"][0]["photometric"] == "RGB" else ""
+            if 512 % tw == 0:
+                return {"tier": "B", "planRow": PLAN_ROWS["svs-jpeg-256"],
+                        "reason": f"{tw}² JPEG tiles divide 512: four vendor tiles per logical 512² tile, served by header splice "
+                                  f"(TIFF JPEGTables + tile entropy data){rgb_note}. These are 2009 ScanScope files, so the plan's "
+                                  "'classic SVS = 240²' assumption does not hold for every pre-GT 450 file: the tier follows "
+                                  "the tile size, not the scanner generation",
+                        "actions": actions}
+            return {"tier": "C", "planRow": PLAN_ROWS["svs-jpeg-240"],
+                    "reason": f"{tw}² JPEG tiles do not divide 512: lossless DCT-domain re-mux to 512² frames{rgb_note}",
+                    "actions": actions}
+        variant = "33003 (YCbCr, no MCT, chroma 4:2:2)" if st["pages"][0]["compressionTag"] == 33003 else "33005 (RGB with irreversible MCT)"
+        return {"tier": "A bytes, not browser-decodable -> transcode once", "planRow": PLAN_ROWS["svs-j2k"],
+                "reason": f"JPEG 2000 tiles ({variant}, {tw}²): no browser decodes J2K; transcode once to JPEG q>=90 "
+                          "(or reversible HTJ2K where tooling proves it) into our 512² grid; record one lossy generation",
+                "actions": actions}
+    fw = st["frameSize"][0]
+    ts = st["transferSyntax"]
+    if "2000" in ts or "HTJ2K" in ts:
+        return {"tier": "A (bytes), not browser-decodable -> WASM decode or transcode once", "planRow": PLAN_ROWS["dicom-j2k"],
+                "reason": f"{fw}² JPEG 2000 frames: Tier A for the canonical store; the Stage-0 static viewer needs a one-time "
+                          "transcode to JPEG (W-4G/W-iPad never get a WASM J2K path)",
+                "actions": actions}
+    if fw == 512:
+        tier, why = "A", "512² JPEG frames: one vendor frame per logical tile, served as-is (each frame is a complete JPEG)"
+    elif 512 % fw == 0:
+        tier, why = "B", f"{fw}² JPEG frames divide 512: four frames (byte ranges) per logical 512² tile"
+    else:
+        tier, why = "C", (f"{fw}² JPEG frames do not divide 512 (each frame covers 2x2 logical tiles): the plan's Tier A/B "
+                          "wording does not cover frames larger than 512; a lossless DCT-domain crop into four 512² frames "
+                          "(Tier C) keeps the grid, or the layer is served at its native frame size "
+                          "(Manifest carries `tile` per layer)")
+    if st["dimensionOrganizationType"] == "TILED_SPARSE":
+        why += "; TILED_SPARSE, so the range index maps grid cells through the per-frame plane positions"
+    return {"tier": tier, "planRow": PLAN_ROWS["dicom-jpeg"], "reason": why, "actions": actions}
+
+
+# ----------------------------------------------------------------------------------------------
+# derived-asset checks
+# ----------------------------------------------------------------------------------------------
+def derived_check(asset: str, st: dict, reader, region: dict, parent_reader, parent_structure: dict) -> dict:
+    if asset == "JP2K-33003-1-v2.zip":
+        out = {"parent": DERIVED_FROM[asset], "levels": []}
+        for k in range(min(len(reader.levels_), len(parent_reader.levels))):
+            lvd, pp = reader.levels_[k], parent_reader.levels[k]
+            if (lvd.W, lvd.H) != (int(pp.shape[1]), int(pp.shape[0])):
+                out["levels"].append({"level": k, "skipped": "geometry differs"})
+                continue
+            lvd.load()
+            cols, rows = parent_reader.grid(k)
+            exact = padded = other = 0
+            for ty in range(rows):
+                for tx in range(cols):
+                    a = lvd.frame(tx, ty)
+                    b = parent_reader.tile_bytes(k, tx, ty)
+                    if a == b:
+                        exact += 1
+                    elif a is not None and b is not None and len(a) == len(b) + 1 and a[:-1] == b and a[-1:] == b"\0":
+                        padded += 1
+                    else:
+                        other += 1
+            out["levels"].append({"level": k, "tiles": cols * rows, "byteIdentical": exact,
+                                  "identicalExceptOneEvenLengthPadByte": padded, "different": other})
+        return out
+    # pixel closeness of an Aperio export to its parent, at the same slide position
+    desc = st["imageDescription"]["summary"]
+    m = re.search(r"\[(\d+),(\d+) (\d+)x(\d+)\]", desc)
+    ox, oy = (int(m.group(1)), int(m.group(2))) if m else (0, 0)
+    x0, y0, _w, _h = region["level0"]
+    a = reader.read(0, x0, y0, REGION, REGION)
+    b = parent_reader.read(0, x0 + ox, y0 + oy, REGION, REGION)
+    return {"parent": DERIVED_FROM[asset], "offsetInParent": [ox, oy], "offsetSource": "ImageDescription '[x,y WxH]'",
+            "level0VsParent": diff_stats(a, b),
+            "note": "measures the generation loss of the export (re-encode), not a reader disagreement"}
+
+
+# ----------------------------------------------------------------------------------------------
+# main
+# ----------------------------------------------------------------------------------------------
+def safe_extract(zpath: str, dest: str) -> list[str]:
+    with zipfile.ZipFile(zpath) as z:
+        names = z.namelist()
+        for n in names:
+            if n.startswith("/") or ".." in n.split("/") or "\\" in n or ":" in n:
+                raise RuntimeError(f"unsafe member name in {zpath}: {n!r}")
+        if not all(os.path.exists(os.path.join(dest, n)) and os.path.getsize(os.path.join(dest, n)) == z.getinfo(n).file_size
+                   for n in names if not n.endswith("/")):
+            os.makedirs(dest, exist_ok=True)
+            z.extractall(dest)
+    return [n for n in names if not n.endswith("/")]
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("samples", help="directory holding samples-manifest.json and the downloaded slides")
-    ap.add_argument("--out", required=True, help="registry JSON to write")
-    ap.add_argument("--release-json", help="saved `gh api repos/<repo>/releases/tags/<tag>` output, for digest checks")
-    ap.add_argument("--release-repo", default="RPBatman/Stoipath")
-    ap.add_argument("--release-tag", help="default: the samples directory name")
-    ap.add_argument("--no-sha", action="store_true", help="skip recomputing SHA-256 (faster; identity unverified)")
-    ap.add_argument("--only", nargs="*", help="probe only these asset names")
+    ap.add_argument("samples", help="directory holding the downloaded release assets and samples-manifest.json")
+    ap.add_argument("--unzip-dir", required=True, help="scratch directory for extracted zip assets (outside the samples dir)")
+    ap.add_argument("--release-json", help="GitHub release JSON (gh api repos/O/R/releases/tags/TAG) for digest cross-checks")
+    ap.add_argument("--out", default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "corpus", "samples-v1.json"))
+    ap.add_argument("--only", nargs="*", help="probe only these assets (debugging)")
     args = ap.parse_args(argv)
-    tag = args.release_tag or os.path.basename(os.path.normpath(args.samples))
-    args.release_url = lambda name: f"https://github.com/{args.release_repo}/releases/download/{tag}/{name}"
+    samples = os.path.abspath(args.samples)
+    unzip_dir = os.path.abspath(args.unzip_dir)
+    if unzip_dir == samples or unzip_dir.startswith(samples + os.sep):
+        ap.error("--unzip-dir must be outside the samples directory")
+    t_start = time.time()
+    log = lambda *a: print(f"[{time.time() - t_start:7.1f}s]", *a, flush=True)  # noqa: E731
 
-    with open(os.path.join(args.samples, "samples-manifest.json")) as fh:
+    man_path = os.path.join(samples, "samples-manifest.json")
+    with open(man_path) as fh:
         manifest = json.load(fh)
     release = None
-    rel_assets: dict[str, dict] = {}
+    digests = {}
     if args.release_json:
         with open(args.release_json) as fh:
-            release = json.load(fh)
-        rel_assets = {a["name"]: a for a in release.get("assets", [])}
+            rel = json.load(fh)
+        digests = {a["name"]: (a.get("digest") or "").removeprefix("sha256:") for a in rel["assets"]}
+        release = {"repo": re.sub(r"^https://github.com/([^/]+/[^/]+)/.*$", r"\1", rel["html_url"]), "tag": rel["tag_name"],
+                   "name": rel.get("name"), "url": rel["html_url"], "prerelease": rel.get("prerelease"),
+                   "publishedAt": rel.get("published_at"), "assetCount": len(rel["assets"]),
+                   "assetsNotInManifest": sorted(set(digests) - {e["asset"] for e in manifest} - {"samples-manifest.json", "samples-manifest.csv"})}
 
-    slides, not_probed = [], []
-    for entry in manifest:
-        name = entry["asset"]
+    load_before = os.getloadavg()
+    assets_out = []
+    readers: dict[str, tuple] = {}
+    by_name = {e["asset"]: e for e in manifest}
+    order = sorted(manifest, key=lambda e: (e["asset"] in DERIVED_FROM, e["format_family"], e["asset"]))
+    for e in order:
+        name = e["asset"]
         if args.only and name not in args.only:
             continue
-        path = os.path.join(args.samples, name)
-        ra = rel_assets.get(name)
+        path = os.path.join(samples, name)
+        log(f"{name}: hashing")
+        rec: dict = {
+            "asset": name, "formatFamily": e["format_family"], "vendor": e["vendor"], "description": e["description"],
+            "licence": e["license"], "source": e["source"], "openslidePath": e["openslide_path"],
+            "releaseUrl": f"{release['url'].replace('/tag/', '/download/')}/{name}" if release else None,
+        }
         if not os.path.exists(path):
-            status = "listed in samples-manifest.json, not present in the samples directory"
-            if release is not None:
-                status += ("; in the release (state " + str(ra.get("state")) + ", updated " + str(ra.get("updated_at")) + ")"
-                           if ra else "; not in the release")
-            not_probed.append({"asset": name, "status": status, "bytes": entry.get("bytes"),
-                               "manifestSha256": entry.get("asset_sha256"),
-                               "releaseDigestMatchesManifest": (ra.get("digest") == f"sha256:{entry.get('asset_sha256')}") if ra else None,
-                               "source": entry.get("source"), "licence": entry.get("license"),
-                               "description": entry.get("description")})
+            rec["status"] = "listed in manifest, not downloaded"
+            assets_out.append(rec)
             continue
-        print(f"probing {name} ...", flush=True)
-        rec = probe_slide(path, entry, ra, args)
-        print(f"  done in {rec['probeSeconds']} s: tier {rec['ingest']['tier']}", flush=True)
-        slides.append(rec)
+        sha = sha256_file(path)
+        rec.update({"bytes": os.path.getsize(path), "sha256": sha, "bytesMatchManifest": os.path.getsize(path) == e["bytes"],
+                    "sha256MatchesManifest": sha == e["asset_sha256"],
+                    "sha256MatchesGithubDigest": (sha == digests[name]) if name in digests else None})
+        quirks: list[str] = []
+        os_slide = None
+        wsi = None
+        try:
+            if name.lower().endswith(".svs"):
+                kind = "svs"
+                st, q = probe_svs_structure(path)
+                quirks += q
+                reader = SvsReader(path)
+                os_info, os_slide = openslide_summary(path)
+                os_target = path
+            elif name.lower().endswith(".zip"):
+                kind = "dicom"
+                dest = os.path.join(unzip_dir, os.path.splitext(name)[0])
+                members = safe_extract(path, dest)
+                want = dict(kv.split("=", 1) for kv in e["original_sha256"].split("; ")) if "=" in e["original_sha256"] else {}
+                rec["members"] = []
+                for m in sorted(members):
+                    h = sha256_file(os.path.join(dest, m))
+                    rec["members"].append({"file": m, "bytes": os.path.getsize(os.path.join(dest, m)), "sha256": h,
+                                           "matchesManifest": want.get(m) == h if want else None})
+                log(f"{name}: DICOM structure")
+                st, reader, q = probe_dicom_structure(dest)
+                finish_dicom_level_quirks(reader, st, q)
+                quirks += q
+                # OpenSlide is pointed at the level-0 instance; it discovers the rest of the series in the directory
+                l0file = max((r for r in st["instances"] if r["flavour"] == "VOLUME"), key=lambda r: r["totalPixelMatrix"][0])["file"]
+                os_target = os.path.join(dest, l0file)
+                os_info, os_slide = openslide_summary(os_target)
+                if wsidicom is not None:
+                    try:
+                        wsi = wsidicom.WsiDicom.open(dest)
+                        rec["wsidicom"] = {
+                            "opened": True, "version": wsidicom.__version__,
+                            "levels": [{"level": lv.level, "size": [lv.size.width, lv.size.height], "tileSize": [lv.tile_size.width, lv.tile_size.height],
+                                        "mppUm": round(lv.mpp.width, 6)} for lv in wsi.levels],
+                            "labels": len(wsi.labels or []), "overviews": len(wsi.overviews or []),
+                        }
+                    except Exception as ex:  # noqa: BLE001
+                        rec["wsidicom"] = {"opened": False, "error": f"{type(ex).__name__}: {ex}"[:300]}
+                        wsi = None
+            else:
+                rec["status"] = "unsupported asset type"
+                assets_out.append(rec)
+                continue
+            rec["structure"] = st
+            rec["openslide"] = os_info
+            if os_info.get("opened") and os_info["levelCount"] != len(st["levels"]):
+                quirks.append(f"OpenSlide reports {os_info['levelCount']} levels, our reader {len(st['levels'])}")
+            if os_info.get("opened") is False:
+                quirks.append(f"OpenSlide {openslide.__library_version__} cannot open it: {os_info['error']}")
+            if os_info.get("opened") and len(st["levels"]) > 1:
+                d1 = os_info["levelDownsamples"][1]
+                rx = st["levels"][0][0] / st["levels"][1][0]
+                ry = st["levels"][0][1] / st["levels"][1][1]
+                if abs(d1 - rx) > 1e-9 or abs(d1 - ry) > 1e-9:
+                    quirks.append(f"OpenSlide level-1 downsample {d1} is the mean of the width ratio {rx:.6f} and height ratio "
+                                  f"{ry:.6f}; read_region maps level-0 coordinates through it, so coarse-level reads land at "
+                                  "sub-pixel offsets from the native tile grid")
+            log(f"{name}: region + pixel agreement")
+            region = choose_region(reader)
+            rec["pixelAgreement"] = pixel_agreement(reader, region, os_slide, wsi, path if kind == "svs" else None)
+            if kind == "svs":
+                sc = rgb_jpeg_splice_check(reader)
+                if sc:
+                    rec["rgbJpegSpliceCheck"] = sc
+            log(f"{name}: decode timing")
+            timing = decode_timing(reader, region)
+            picks = timing.pop("_picks")
+            if wsi is not None and kind == "dicom":
+                same = 0
+                for tx, ty in picks:
+                    try:
+                        b = wsi.read_encoded_tile(0, (tx, ty), crop_to_image_boundary=False)
+                    except Exception:  # noqa: BLE001
+                        b = None
+                    a = reader.tile_bytes(0, tx, ty)
+                    if b is not None and (a == b or (len(a) == len(b) + 1 and a[:-1] == b) or (len(b) == len(a) + 1 and b[:-1] == a)):
+                        same += 1
+                rec["wsidicom"]["encodedTileIdentity"] = {"tiles": len(picks), "identicalToOurFrameBytes": same,
+                                                         "note": "pad byte to even length ignored"}
+            rec["decodeTiming"] = timing
+            rec["ingest"] = ingest_tier(kind, st)
+            if name in DERIVED_FROM and DERIVED_FROM[name] in readers:
+                pr, pst = readers[DERIVED_FROM[name]]
+                rec["derivedFrom"] = derived_check(name, st, reader, region, pr, pst)
+            rec["quirks"] = quirks
+            readers[name] = (reader, st)
+        finally:
+            if os_slide is not None:
+                os_slide.close()
+            if wsi is not None:
+                wsi.close()
+        assets_out.append(rec)
+    load_after = os.getloadavg()
 
-    listed = {e["asset"] for e in manifest} | {"samples-manifest.json", "samples-manifest.csv"}
-    unlisted = [{"name": a["name"], "bytes": a.get("size"), "state": a.get("state"), "digest": a.get("digest"),
-                 "updatedAt": a.get("updated_at")} for a in (release or {}).get("assets", []) if a["name"] not in listed]
+    # keep manifest order in the output
+    assets_out.sort(key=lambda r: [e["asset"] for e in manifest].index(r["asset"]))
+    ref = reference_timing(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tiles", "0"))
+    for _n, (r, _s) in readers.items():
+        r.close()
+    vendors = sorted({(a["formatFamily"], a["vendor"]) for a in assets_out})
     out = {
         "schema": "stoipath-corpus-registry/1",
-        "corpus": tag,
-        "canonicalCopy": f"GitHub release {args.release_repo}@{tag} (the local samples directory is gitignored)",
-        "release": ({"url": release.get("html_url"), "name": release.get("name"), "prerelease": release.get("prerelease"),
-                     "publishedAt": release.get("published_at"), "assetsNotInManifest": unlisted}
-                    if release else {"url": f"https://github.com/{args.release_repo}/releases/tag/{tag}"}),
-        "generated": {
-            "tool": "stage0/tools/probe_corpus.py",
-            "command": " ".join([os.path.basename(sys.argv[0])] + sys.argv[1:]),
-            "date": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-            "python": platform.python_version(),
-            "tifffile": tifffile.__version__,
-            "imagecodecs": imagecodecs.__version__,
-            "libjpegTurbo": imagecodecs.jpeg8_version(),
-            "openjpeg": imagecodecs.jpeg2k_version(),
-            "numpy": np.__version__,
-            "openslidePython": getattr(openslide, "__version__", None),
-            "openslideLibrary": getattr(openslide, "__library_version__", None),
-            "machine": {"label": "this container's CPU (shared; other workloads may run concurrently)",
-                        "cpu": cpu_model(), "cpuCount": os.cpu_count(), "platform": platform.platform()},
+        "corpus": "samples-v1",
+        "release": release,
+        "manifest": {"file": "samples-manifest.json", "sha256": sha256_file(man_path), "entries": len(manifest),
+                     "sha256MatchesGithubDigest": (sha256_file(man_path) == digests.get("samples-manifest.json")) if digests else None},
+        "privacy": "values of identifying fields (dates, user GUIDs, scanner serials, file names, patient/accession/container "
+                   "attributes, label text) are not copied, only their presence; label/macro pixels are never decoded",
+        "coverage": {
+            "formatFamilies": sorted({a["formatFamily"] for a in assets_out}),
+            "vendors": [f"{f}: {v}" for f, v in vendors],
+            "missingFromPlanMatrix": MISSING_FORMATS,
         },
-        "slides": slides,
-        "notProbed": not_probed,
-        "decodeTimingSummary": [{"asset": s["identity"]["asset"], "codec": s["decodeTiming"]["codec"],
-                                 "tilePx": s["decodeTiming"]["tilePx"], "medianMs": s["decodeTiming"]["medianMs"],
-                                 "msPerMegapixel": s["decodeTiming"]["msPerMegapixel"]} for s in slides],
+        "assets": assets_out,
+        "referenceTiming": ref,
+        "generated": {
+            "date": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+            "tool": "stage0/tools/probe_corpus.py",
+            "command": "probe_corpus.py <samples-dir> --unzip-dir <scratch> --release-json <release.json> --out " + os.path.relpath(args.out, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+            "durationSec": round(time.time() - t_start, 1),
+            "machine": {"label": "this container's CPU (shared cloud VM; timings are relative, not a device class)",
+                        "cpu": cpu_model(), "logicalCpus": os.cpu_count(), "platform": platform.platform(),
+                        "loadAverage1mBefore": round(load_before[0], 2), "loadAverage1mAfter": round(load_after[0], 2)},
+            "versions": {
+                "python": platform.python_version(), "numpy": np.__version__, "tifffile": tifffile.__version__,
+                "imagecodecs": imagecodecs.__version__, "libjpeg-turbo": imagecodecs.jpeg8_version(), "openjpeg": imagecodecs.jpeg2k_version(),
+                "openslide-python": getattr(openslide, "__version__", None), "openslide": getattr(openslide, "__library_version__", None),
+                "pydicom": getattr(pydicom, "__version__", None), "wsidicom": getattr(wsidicom, "__version__", None),
+            },
+        },
     }
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w") as fh:
         json.dump(out, fh, indent=1, ensure_ascii=False)
         fh.write("\n")
-    print(f"wrote {args.out}: {len(slides)} probed, {len(not_probed)} not probed, {len(unlisted)} unlisted release assets")
+    log(f"wrote {args.out} ({os.path.getsize(args.out)} bytes)")
     return 0
 
 

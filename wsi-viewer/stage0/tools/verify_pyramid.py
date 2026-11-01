@@ -69,6 +69,9 @@ def main(argv=None) -> int:
         line = f"level {lv['index']}: {lv['cols']}x{lv['rows']} tiles, {total/1e6:.2f} MB, median {med/1e3:.1f} kB"
         if img is not None and prev is not None:
             h, w = img.shape[:2]
+            ph, pw = prev.shape[:2]
+            if ph % 2 or pw % 2:  # odd edge: replicate the last row/column, as build_pyramid.downsample2x does
+                prev = np.pad(prev, ((0, ph % 2), (0, pw % 2), (0, 0)), mode="edge")
             ds = ((prev[0::2, 0::2].astype(np.uint16) + prev[1::2, 0::2] + prev[0::2, 1::2] + prev[1::2, 1::2] + 2) >> 2)[:h, :w]
             err = np.abs(ds.astype(np.int16) - img.astype(np.int16))
             line += f", |level - 2x2mean(prev)| mean {err.mean():.2f} p99 {np.percentile(err, 99):.0f} (JPEG error only)"

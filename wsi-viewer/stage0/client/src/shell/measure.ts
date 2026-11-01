@@ -1,11 +1,17 @@
 /**
  * Measure tool (design keymap B `M`; handoff §2 annotation list; WCAG 2.5.7 non-drag alternative).
  *
- * Three ways to measure, all producing the same record:
- *  - pointer drag: press at A, drag, release at B;
- *  - click-click (the non-drag alternative): click A, move freely (the line previews), click B;
+ * Ways to measure, all producing the same record:
+ *  - mouse or pen drag: press at A, drag, release at B (the tool claims the pointer; the camera does not drag);
+ *  - mouse or pen click-click (the non-drag alternative): click A, move freely (the line previews), click B;
+ *  - touch tap-tap: touch pointers are never withheld from the engine (handoff §4.2), so one finger pans and two
+ *    fingers pinch-zoom exactly as with Select; a tap (one finger, < 10 CSS px of travel, no second finger) places a
+ *    point. The engine's double tap (a second down within 300 ms and 30 CSS px) zooms and places nothing, and cancels
+ *    the point its first tap placed;
  *  - keyboard: Enter places A at the viewport centre, arrow keys pan the slide under the centre crosshair,
  *    Enter places B. Esc cancels an open measurement; Space held pans with the pointer while the tool is active.
+ * A finger that lands while a pen or mouse measurement is being dragged pans the slide (pen annotates while a finger
+ * pans, FR-V11); the measurement continues in slide coordinates.
  * Points are stored in level-0 (world) px; length = hypot(Δx, Δy) × mpp (µm), independent of zoom and DPR.
  *
  * Drawing: one 2D canvas above the WebGL canvas, same backing size (device px), re-projected inside the engine's
@@ -27,6 +33,25 @@ export interface Measurement {
 type Op = { kind: 'add'; m: Measurement } | { kind: 'delete'; m: Measurement; index: number };
 
 const DRAG_SLOP_CSS = 4;
+const TAP_SLOP_CSS = 10;
+/** The engine's double-tap rule (input.ts bindDomInput), mirrored so the tool never places a point on a zoom tap. */
+const DOUBLE_TAP_MS = 300;
+const DOUBLE_TAP_CSS = 30;
+
+interface TouchRec {
+  x: number;
+  y: number;
+  t: number;
+  /** Not a tap: a second finger joined, it travelled past the slop, or it is the second half of a double tap. */
+  noTap: boolean;
+}
+
+export interface MeasureStrings {
+  /** Coarse primary pointer (cached by the shell on media-query change; read only on user input). */
+  coarse: () => boolean;
+  /** Modifier name for the undo hint ("Ctrl" or "⌘"). */
+  mod: string;
+}
 
 export class MeasureTool {
   active = false;
@@ -52,6 +77,13 @@ export class MeasureTool {
   private movedPastSlop = false;
   private secondPress = false;
   private readonly ctx: CanvasRenderingContext2D | null;
+  /** Touch pointers currently down (seen, never claimed). */
+  private readonly touches = new Map<number, TouchRec>();
+  private lastTouchDownT = -1e9;
+  private lastTouchDownX = 0;
+  private lastTouchDownY = 0;
+  /** Down time of the tap that placed `pending` (to cancel it when that tap was the first half of a double tap). */
+  private pendingTapT = -1;
 
   constructor(
     private readonly overlay: HTMLCanvasElement,
@@ -59,6 +91,7 @@ export class MeasureTool {
     captureRoot: HTMLElement,
     private readonly viewer: Viewer,
     private readonly mpp: number,
+    private readonly strings: MeasureStrings = { coarse: () => false, mod: 'Ctrl' },
   ) {
     this.ctx = overlay.getContext('2d');
     // Capture phase on the canvas area runs before the engine's and this tool's own listeners on the canvas.
@@ -66,18 +99,66 @@ export class MeasureTool {
       'pointerdown',
       (e) => {
         if (e.target !== target) return;
+        if (e.pointerType === 'touch') {
+          this.claim = null; // touch is always the camera's (pan, pinch, double tap); a tap is read on pointerup
+          this.touchDown(e);
+          return;
+        }
         const mine = this.active && !this.spaceHeld && e.button === 0 && this.own === null;
-        if (!mine && this.own !== null && e.pointerId !== this.own) this.abortPointer(); // a second finger: the camera takes over
         this.claim = mine ? e.pointerId : null;
       },
       { capture: true },
     );
     target.addEventListener('pointerdown', (e) => this.down(e));
     target.addEventListener('pointermove', (e) => this.move(e));
-    target.addEventListener('pointerup', (e) => this.up(e));
+    target.addEventListener('pointerup', (e) => (e.pointerType === 'touch' ? this.touchUp(e) : this.up(e)));
     target.addEventListener('pointercancel', (e) => {
+      this.touches.delete(e.pointerId);
       if (e.pointerId === this.own) this.abortPointer();
     });
+  }
+
+  private touchDown(e: PointerEvent): void {
+    const alone = this.touches.size === 0;
+    const dbl = alone && e.timeStamp - this.lastTouchDownT < DOUBLE_TAP_MS && Math.hypot(e.clientX - this.lastTouchDownX, e.clientY - this.lastTouchDownY) < DOUBLE_TAP_CSS;
+    if (dbl) {
+      // The engine zooms on this down. If the first tap of the pair placed point 1, it was a zoom, not a point.
+      if (this.pending !== null && !this.pendingByKeyboard && this.pendingTapT === this.lastTouchDownT) {
+        this.cancel();
+        this.onNotice(this.hint());
+      }
+      this.lastTouchDownT = -1e9; // the engine resets too: a third tap starts a new pair
+    } else if (alone) {
+      this.lastTouchDownT = e.timeStamp;
+      this.lastTouchDownX = e.clientX;
+      this.lastTouchDownY = e.clientY;
+    }
+    for (const t of this.touches.values()) t.noTap = true; // a second finger: a pinch, not a tap
+    this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY, t: e.timeStamp, noTap: dbl || !alone });
+  }
+
+  private touchUp(e: PointerEvent): void {
+    const t = this.touches.get(e.pointerId);
+    this.touches.delete(e.pointerId);
+    if (t === undefined || t.noTap || !this.active) return;
+    if (Math.hypot(e.clientX - t.x, e.clientY - t.y) > TAP_SLOP_CSS) return;
+    const p = this.world(e.clientX, e.clientY);
+    if (this.pending === null || this.pendingByKeyboard) {
+      this.pending = p;
+      this.pendingByKeyboard = false;
+      this.secondPress = false;
+      this.pendingTapT = t.t;
+      this.hover = p;
+      this.dirty = true;
+      this.onNotice('Point 1 placed · tap the second point (Select cancels)');
+    } else {
+      this.commit(this.pending, p);
+    }
+  }
+
+  /** The tool's one-line instruction for the current pointer (ux-copy hud.measure.status; touch wording on coarse). */
+  hint(): string {
+    return this.strings.coarse() ? 'Measure: tap two points · Select cancels' : 'Measure: click two points · Space pan · Esc cancel';
   }
 
   /** Engine pointer filter (ViewerOptions.acceptPointer): false = this tool owns the event. */
@@ -134,6 +215,11 @@ export class MeasureTool {
   }
 
   private move(e: PointerEvent): void {
+    if (e.pointerType === 'touch') {
+      const t = this.touches.get(e.pointerId);
+      if (t !== undefined && !t.noTap && Math.hypot(e.clientX - t.x, e.clientY - t.y) > TAP_SLOP_CSS) t.noTap = true;
+      return;
+    }
     if (!this.active) return;
     if (this.own !== null && e.pointerId !== this.own) return;
     if (this.pending === null || this.pendingByKeyboard) return;
@@ -149,7 +235,7 @@ export class MeasureTool {
     const a = this.pending;
     if (a === null) return;
     if (this.secondPress || this.movedPastSlop) this.commit(a, p);
-    else this.onNotice('Point 1 placed · click the second point (Esc cancels)');
+    else this.onNotice(e.pointerType === 'pen' ? 'Point 1 placed · tap the second point (Esc cancels)' : 'Point 1 placed · click the second point (Esc cancels)');
   }
 
   private abortPointer(): void {
@@ -179,6 +265,7 @@ export class MeasureTool {
     this.pendingByKeyboard = false;
     this.hover = null;
     this.secondPress = false;
+    this.pendingTapT = -1;
     this.dirty = true;
     return had;
   }
@@ -215,7 +302,7 @@ export class MeasureTool {
     this.redoStack.length = 0;
     if (this.selected === id) this.selected = null;
     this.dirty = true;
-    this.onNotice(`Deleted M${m.id} · Ctrl+Z to undo`);
+    this.onNotice(this.strings.coarse() ? `Deleted M${m.id} · Undo is in Search` : `Deleted M${m.id} · ${this.strings.mod}+Z to undo`);
     this.onChange();
     return true;
   }

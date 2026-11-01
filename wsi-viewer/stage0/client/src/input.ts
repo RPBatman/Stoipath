@@ -113,6 +113,11 @@ export interface DomInputOptions {
    * neither drags nor double-click-zooms for it. Omitted = every pointer is the camera's (measurement page).
    */
   acceptPointer?: (e: PointerEvent | MouseEvent) => boolean;
+  /**
+   * Read on each release: `false` cancels the coast that dragEnd would start (prefers-reduced-motion in the shell;
+   * handoff §4.1, principles §8.5). Omitted = inertia always on (measurement page, unchanged).
+   */
+  inertia?: () => boolean;
 }
 
 /** Normalise a wheel event to pyramid levels (positive = zoom in). 04 F6. */
@@ -214,6 +219,7 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
     pointers.delete(e.pointerId);
     if (pointers.size === 0) {
       c.dragEnd(e.timeStamp);
+      if (opts.inertia !== undefined && !opts.inertia()) c.cam.stopInertia();
     } else if (pointers.size === 1) {
       const rest = pointers.values().next().value;
       if (rest !== undefined) c.dragStart(rest.x, rest.y, e.timeStamp, 'touchdrag');
