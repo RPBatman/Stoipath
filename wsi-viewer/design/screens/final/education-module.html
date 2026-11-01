@@ -207,6 +207,8 @@ html[data-alltools="1"] .rail__h { display: none; }
 .gatebox.is-met .glyph { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
 .gatebox small { grid-column: 2; color: var(--color-text-secondary); font-size: var(--text-xs); }
 .mark-row { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+.mark-row .flex-1 { min-width: 0; }
+.mark-row .btn { flex: 0 0 auto; }
 .mark-row .swatch { width: 14px; height: 14px; }
 .confidence { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
 .confidence .opt { min-height: var(--target); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); display: inline-flex; align-items: center; justify-content: center; font-size: var(--text-sm); padding: 0 var(--space-2); text-align: center; color: var(--color-text); }
@@ -349,7 +351,7 @@ html[data-rm="1"] .hud__motion { display: inline-flex; }
 .hud__cohort { display: none; font-family: var(--font-ui); font-size: var(--text-xs); }
 html[data-cohort="1"] .hud__cohort { display: inline-flex; }
 .navigator__pan { pointer-events: none; }
-.navigator__pan button { opacity: 1; background: rgba(0,0,0,.45); width: var(--target); height: var(--target); }   /* SC 2.5.7: always visible; 44 px under a coarse pointer (fixes the design-system defect in-page) */
+.navigator__pan button { opacity: 1; background: rgba(0,0,0,.38); width: var(--target); height: var(--target); }   /* SC 2.5.7: always visible; 44 px under a coarse pointer (fixes the design-system defect in-page) */
 .navigator__thumb svg { display: block; }
 .navigator__labelimg { display: none; }
 html[data-product="clinical"] .navigator__labelimg, html[data-product="dx"] .navigator__labelimg { display: block; }
@@ -361,6 +363,11 @@ html[data-product="clinical"] .navigator__labelimg, html[data-product="dx"] .nav
 .canvas-area.has-tileerr .tile-err { display: block; }
 html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence { display: none; }
 .banner-slot .banner { border-top: 0; }
+#nav-label { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* A refused launch opens nothing: only the top bar, the plate and the strip remain (FR-R0) */
+.app.ed.is-refused .rail, .app.ed.is-refused .dock, .app.ed.is-refused .ctxbar, .app.ed.is-refused .navigator, .app.ed.is-refused .hud, .app.ed.is-refused .bottombar, .app.ed.is-refused .capcard, .app.ed.is-refused .handle { visibility: hidden; }
+/* Clinical builds below 1600 px: the identity compacts to the accession so the purpose chip and the mode indicator never leave the bar (the label string never truncates) */
+@media (max-width: 1599px) { .identity-clin .meta, .identity-clin .chip { display: none; } }
 #banner-slot:empty { display: none; }
 .magnification input { width: 7ch; font-size: var(--font-size-hud-big); }
 /* The modal layer never covers the top bar; the canvas keeps its focus ring */
@@ -563,20 +570,20 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
 .app.is-gesturing .dock__resizer { pointer-events: none; }
 
 /* --- Tissue colours (H&E; the IHC slide recolours the same geometry) --------------------- */
-#slide .glass { fill: #f6f3f4; }
-#slide .bg-cx { fill: #c9a5cc; } #slide .bg-pc { fill: #d4b4d6; } #slide .bg-mantle { fill: #b28cb9; } #slide .bg-gc { fill: #e5d0e2; }
-#slide .bg-sinus { fill: #f1e3ea; } #slide .bg-med { fill: #e0c4dc; } #slide .bg-cord { fill: #d3a9cc; } #slide .bg-cap { fill: #e9b7c9; } #slide .bg-fat { fill: #fbf7f9; } #slide .bg-met { fill: #efcfd8; }
-#slide .nl { fill: #3e2a6d; } #slide .nl2 { fill: #5c4894; } #slide .nh { fill: #6b5597; } #slide .ch { fill: #f0d3de; } #slide .ns { fill: #6a4f8c; }
-#slide .nt { fill: #6a4f9e; stroke: #2f1d5c; stroke-width: 0.7; } #slide .ct { fill: #efbac7; stroke: #d492a8; stroke-width: 0.5; } #slide .nn { fill: #221442; } #slide .adip { fill: #fcf9fb; stroke: #dcb3c9; stroke-width: 2.5; }
-#slide .cap { fill: #e3a3bb; } #slide .trab { fill: #d98fb0; } #slide .ves { fill: #d47a9e; } #slide .lum { fill: #c23a62; } #slide .si { fill: #f3e7ed; }
-.canvas-area.is-ihc #slide .bg-cx, .canvas-area.is-ihc #slide .bg-pc, .canvas-area.is-ihc #slide .bg-mantle, .canvas-area.is-ihc #slide .bg-cord, .canvas-area.is-ihc #slide .bg-med { fill: #e1e5ee; }
-.canvas-area.is-ihc #slide .bg-gc, .canvas-area.is-ihc #slide .bg-sinus, .canvas-area.is-ihc #slide .ch, .canvas-area.is-ihc #slide .si { fill: #eceef4; }
-.canvas-area.is-ihc #slide .nl, .canvas-area.is-ihc #slide .nl2, .canvas-area.is-ihc #slide .nh, .canvas-area.is-ihc #slide .ns { fill: #6a78aa; }
-.canvas-area.is-ihc #slide .bg-met { fill: #b07a4a; } .canvas-area.is-ihc #slide .ct { fill: #8a4f22; stroke: #6a3a14; } .canvas-area.is-ihc #slide .nt { fill: #4a4f7e; stroke: #2a2d4e; } .canvas-area.is-ihc #slide .nn { fill: #22243f; }
-.canvas-area.is-ihc #slide .cap, .canvas-area.is-ihc #slide .trab, .canvas-area.is-ihc #slide .bg-cap { fill: #e4e4ec; }
-.canvas-area.is-ihc #slide .ves { fill: #d9d2da; } .canvas-area.is-ihc #slide .lum { fill: #c9bfc8; }
-.canvas-area.is-ihc #slide .bg-fat { fill: #f7f7fa; } .canvas-area.is-ihc #slide .adip { fill: #fafafc; stroke: #d2d2dc; }
-.canvas-area.is-ihc #slide .rbc { fill: #d9c8cf; } #slide .rbc { fill: #e8828f; }
+#tissue .glass { fill: #f6f3f4; }
+#tissue .bg-cx { fill: #c9a5cc; } #tissue .bg-pc { fill: #d4b4d6; } #tissue .bg-mantle { fill: #b28cb9; } #tissue .bg-gc { fill: #e5d0e2; }
+#tissue .bg-sinus { fill: #f1e3ea; } #tissue .bg-med { fill: #e0c4dc; } #tissue .bg-cord { fill: #d3a9cc; } #tissue .bg-cap { fill: #e9b7c9; } #tissue .bg-fat { fill: #fbf7f9; } #tissue .bg-met { fill: #efcfd8; }
+#tissue .nl { fill: #3e2a6d; } #tissue .nl2 { fill: #5c4894; } #tissue .nh { fill: #6b5597; } #tissue .ch { fill: #f0d3de; } #tissue .ns { fill: #6a4f8c; }
+#tissue .nt { fill: #6a4f9e; stroke: #2f1d5c; stroke-width: 0.7; } #tissue .ct { fill: #efbac7; stroke: #d492a8; stroke-width: 0.5; } #tissue .nn { fill: #221442; } #tissue .adip { fill: #fcf9fb; stroke: #dcb3c9; stroke-width: 2.5; }
+#tissue .cap { fill: #e3a3bb; } #tissue .trab { fill: #d98fb0; } #tissue .ves { fill: #d47a9e; } #tissue .lum { fill: #c23a62; } #tissue .si { fill: #f3e7ed; }
+.canvas-area.is-ihc #tissue .bg-cx, .canvas-area.is-ihc #tissue .bg-pc, .canvas-area.is-ihc #tissue .bg-mantle, .canvas-area.is-ihc #tissue .bg-cord, .canvas-area.is-ihc #tissue .bg-med { fill: #e1e5ee; }
+.canvas-area.is-ihc #tissue .bg-gc, .canvas-area.is-ihc #tissue .bg-sinus, .canvas-area.is-ihc #tissue .ch, .canvas-area.is-ihc #tissue .si { fill: #eceef4; }
+.canvas-area.is-ihc #tissue .nl, .canvas-area.is-ihc #tissue .nl2, .canvas-area.is-ihc #tissue .nh, .canvas-area.is-ihc #tissue .ns { fill: #6a78aa; }
+.canvas-area.is-ihc #tissue .bg-met { fill: #b07a4a; } .canvas-area.is-ihc #tissue .ct { fill: #8a4f22; stroke: #6a3a14; } .canvas-area.is-ihc #tissue .nt { fill: #4a4f7e; stroke: #2a2d4e; } .canvas-area.is-ihc #tissue .nn { fill: #22243f; }
+.canvas-area.is-ihc #tissue .cap, .canvas-area.is-ihc #tissue .trab, .canvas-area.is-ihc #tissue .bg-cap { fill: #e4e4ec; }
+.canvas-area.is-ihc #tissue .ves { fill: #d9d2da; } .canvas-area.is-ihc #tissue .lum { fill: #c9bfc8; }
+.canvas-area.is-ihc #tissue .bg-fat { fill: #f7f7fa; } .canvas-area.is-ihc #tissue .adip { fill: #fafafc; stroke: #d2d2dc; }
+.canvas-area.is-ihc #tissue .rbc { fill: #d9c8cf; } #tissue .rbc { fill: #e8828f; }
 </style>
 </head>
 <body class="host-on">
@@ -617,6 +624,35 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
   <symbol id="i-focus" viewBox="0 0 24 24"><path d="M4 4h5M4 4v5M20 4h-5M20 4v5M4 20h5M4 20v-5M20 20h-5M20 20v-5"/></symbol>
   <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M14 4v16"/></symbol>
+</svg>
+
+<!-- Tissue resources (patterns, the slide-art symbol, filters) live outside the viewer so the director page and every thumbnail can reference them -->
+<svg id="tissue" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs id="tissue-defs">
+        <!-- Nuclei patterns are generated at load (seeded, no lattice): see buildTissue(). Fixed defs below. -->
+        <filter id="f-deutan" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.367 0.861 -0.228 0 0  0.280 0.673 0.047 0 0  -0.012 0.043 0.969 0 0  0 0 0 1 0"/></filter>
+        <filter id="f-heat" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="120"/></filter>
+        <symbol id="slide-art" viewBox="0 0 15000 8000" overflow="visible">
+          <rect class="glass" x="0" y="0" width="15000" height="8000"/>
+          <g class="slide-art-inner">
+            <path fill="url(#p-fat)" d="M900 3000 C500 3600 500 4600 1000 5200 C1300 5600 1900 5500 2200 5200 L2300 4200 L2200 3100 C1800 2800 1200 2700 900 3000Z"/>
+            <path fill="url(#p-fat)" d="M10800 7000 C11600 7500 12800 7600 13600 7000 C13900 6700 13700 6400 13300 6400 L11000 6500 C10700 6500 10500 6800 10800 7000Z"/>
+            <path fill="url(#p-cap)" d="M1800 4000 C1800 2200 4200 950 7600 950 C11000 950 14150 2300 14150 4000 C14150 5700 11000 7050 7600 7050 C4200 7050 2900 6500 2400 5400 C2700 5000 2700 4800 1800 4000Z"/>
+            <path fill="url(#p-cx)" d="M1930 4000 C1930 2330 4300 1080 7600 1080 C10900 1080 14020 2400 14020 4000 C14020 5600 10900 6920 7600 6920 C4300 6920 3000 6420 2520 5380 C2820 5000 2820 4780 1930 4000Z"/>
+            <path fill="url(#p-pc)" d="M3100 4000 C3200 2900 5200 2000 7600 2000 C10200 2000 12600 2900 12700 4000 C12600 5100 10200 6000 7600 6000 C5200 6000 3300 5300 3100 4000Z"/>
+            <path stroke="url(#p-sinus)" stroke-width="90" d="M2060 4000 C2060 2470 4400 1210 7600 1210 C10800 1210 13890 2500 13890 4000 C13890 5500 10800 6790 7600 6790 C4400 6790 3100 6330 2650 5350 C2920 4990 2920 4760 2060 4000Z" fill="none"/>
+            <path fill="url(#p-med)" d="M2600 4000 C2700 3200 4200 2900 5600 3100 C6400 3300 6200 4800 5600 5200 C4600 5600 3300 5400 2800 4900 C2600 4700 2600 4300 2600 4000Z"/>
+            <g fill="none" stroke="url(#p-sinus)" stroke-width="120" stroke-linecap="round"><path d="M5800 3200 C7000 2800 8600 3200 9200 2600"/><path d="M6000 5000 C7200 5200 8600 4800 9500 5400"/><path d="M9800 2400 C10800 2200 11400 2900 12200 3100"/><path d="M9900 5600 C10900 5900 11800 5300 12800 5000"/></g>
+            <g fill="url(#p-mantle)"><circle cx="4300" cy="1900" r="430"/><circle cx="6300" cy="1750" r="480"/><circle cx="8600" cy="1800" r="400"/><circle cx="10700" cy="2100" r="470"/><circle cx="12700" cy="3500" r="420"/><circle cx="12500" cy="5000" r="440"/><circle cx="10600" cy="6050" r="470"/><circle cx="8300" cy="6200" r="430"/><circle cx="6100" cy="6150" r="460"/><circle cx="4200" cy="5900" r="380"/><circle cx="7400" cy="3900" r="520"/><circle cx="9600" cy="4300" r="480"/></g>
+            <g fill="url(#p-gc)"><circle cx="4300" cy="1900" r="220"/><circle cx="6300" cy="1750" r="250"/><circle cx="8600" cy="1800" r="210"/><circle cx="10700" cy="2100" r="240"/><circle cx="12700" cy="3500" r="210"/><circle cx="12500" cy="5000" r="220"/><circle cx="10600" cy="6050" r="240"/><circle cx="8300" cy="6200" r="220"/><circle cx="6100" cy="6150" r="230"/><circle cx="7400" cy="3900" r="280"/><circle cx="9600" cy="4300" r="250"/></g>
+            <g fill="none" stroke="url(#p-cap)" stroke-width="60" stroke-linecap="round"><path d="M7600 1000 L7500 1900"/><path d="M11200 1500 L10700 2500"/><path d="M13900 4800 L13000 4600"/><path d="M9000 6950 L9100 6100"/><path d="M4200 6900 L4800 6200"/></g>
+            <g><circle class="ves" cx="2050" cy="4300" r="140"/><circle class="lum" cx="2050" cy="4300" r="80"/><circle class="ves" cx="2250" cy="3800" r="90"/><circle class="lum" cx="2250" cy="3800" r="45"/><circle class="ves" cx="12100" cy="5200" r="70"/><circle class="lum" cx="12100" cy="5200" r="34"/></g>
+            <!-- Metastatic focus: subcapsular sinus, right pole, ~1.3 × 0.9 mm of cohesive large cells; two satellite nests -->
+            <path fill="url(#p-met)" d="M12000 2250 C12300 1850 13050 1950 13250 2300 C13500 2700 13300 3050 12900 3100 C12500 3150 12050 3000 11950 2700 C11900 2500 11900 2380 12000 2250Z"/>
+            <circle fill="url(#p-met)" cx="11700" cy="2150" r="110"/><circle fill="url(#p-met)" cx="13450" cy="2650" r="95"/>
+          </g>
+        </symbol>
+  </defs>
 </svg>
 
 <!-- Review-only header: not product chrome -->
@@ -702,31 +738,6 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
   <!-- B. Canvas -->
   <main class="canvas-area region" id="canvas" role="application" tabindex="0" aria-roledescription="slide canvas" aria-label="Slide canvas, A1-1 H and E, 20 times, use arrow keys to pan and plus or minus to zoom" aria-describedby="live-polite" data-live="state">
     <svg class="canvas slide" id="slide" viewBox="0 0 15000 8000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <defs id="tissue-defs">
-        <!-- Nuclei patterns are generated at load (seeded, no lattice): see buildTissue(). Fixed defs below. -->
-        <filter id="f-deutan" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.367 0.861 -0.228 0 0  0.280 0.673 0.047 0 0  -0.012 0.043 0.969 0 0  0 0 0 1 0"/></filter>
-        <filter id="f-heat" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="120"/></filter>
-        <symbol id="slide-art" viewBox="0 0 15000 8000" overflow="visible">
-          <rect class="glass" x="0" y="0" width="15000" height="8000"/>
-          <g class="slide-art-inner">
-            <path fill="url(#p-fat)" d="M900 3000 C500 3600 500 4600 1000 5200 C1300 5600 1900 5500 2200 5200 L2300 4200 L2200 3100 C1800 2800 1200 2700 900 3000Z"/>
-            <path fill="url(#p-fat)" d="M10800 7000 C11600 7500 12800 7600 13600 7000 C13900 6700 13700 6400 13300 6400 L11000 6500 C10700 6500 10500 6800 10800 7000Z"/>
-            <path fill="url(#p-cap)" d="M1800 4000 C1800 2200 4200 950 7600 950 C11000 950 14150 2300 14150 4000 C14150 5700 11000 7050 7600 7050 C4200 7050 2900 6500 2400 5400 C2700 5000 2700 4800 1800 4000Z"/>
-            <path fill="url(#p-cx)" d="M1930 4000 C1930 2330 4300 1080 7600 1080 C10900 1080 14020 2400 14020 4000 C14020 5600 10900 6920 7600 6920 C4300 6920 3000 6420 2520 5380 C2820 5000 2820 4780 1930 4000Z"/>
-            <path fill="url(#p-pc)" d="M3100 4000 C3200 2900 5200 2000 7600 2000 C10200 2000 12600 2900 12700 4000 C12600 5100 10200 6000 7600 6000 C5200 6000 3300 5300 3100 4000Z"/>
-            <path stroke="url(#p-sinus)" stroke-width="90" d="M2060 4000 C2060 2470 4400 1210 7600 1210 C10800 1210 13890 2500 13890 4000 C13890 5500 10800 6790 7600 6790 C4400 6790 3100 6330 2650 5350 C2920 4990 2920 4760 2060 4000Z" fill="none"/>
-            <path fill="url(#p-med)" d="M2600 4000 C2700 3200 4200 2900 5600 3100 C6400 3300 6200 4800 5600 5200 C4600 5600 3300 5400 2800 4900 C2600 4700 2600 4300 2600 4000Z"/>
-            <g fill="none" stroke="url(#p-sinus)" stroke-width="120" stroke-linecap="round"><path d="M5800 3200 C7000 2800 8600 3200 9200 2600"/><path d="M6000 5000 C7200 5200 8600 4800 9500 5400"/><path d="M9800 2400 C10800 2200 11400 2900 12200 3100"/><path d="M9900 5600 C10900 5900 11800 5300 12800 5000"/></g>
-            <g fill="url(#p-mantle)"><circle cx="4300" cy="1900" r="430"/><circle cx="6300" cy="1750" r="480"/><circle cx="8600" cy="1800" r="400"/><circle cx="10700" cy="2100" r="470"/><circle cx="12700" cy="3500" r="420"/><circle cx="12500" cy="5000" r="440"/><circle cx="10600" cy="6050" r="470"/><circle cx="8300" cy="6200" r="430"/><circle cx="6100" cy="6150" r="460"/><circle cx="4200" cy="5900" r="380"/><circle cx="7400" cy="3900" r="520"/><circle cx="9600" cy="4300" r="480"/></g>
-            <g fill="url(#p-gc)"><circle cx="4300" cy="1900" r="220"/><circle cx="6300" cy="1750" r="250"/><circle cx="8600" cy="1800" r="210"/><circle cx="10700" cy="2100" r="240"/><circle cx="12700" cy="3500" r="210"/><circle cx="12500" cy="5000" r="220"/><circle cx="10600" cy="6050" r="240"/><circle cx="8300" cy="6200" r="220"/><circle cx="6100" cy="6150" r="230"/><circle cx="7400" cy="3900" r="280"/><circle cx="9600" cy="4300" r="250"/></g>
-            <g fill="none" stroke="url(#p-cap)" stroke-width="60" stroke-linecap="round"><path d="M7600 1000 L7500 1900"/><path d="M11200 1500 L10700 2500"/><path d="M13900 4800 L13000 4600"/><path d="M9000 6950 L9100 6100"/><path d="M4200 6900 L4800 6200"/></g>
-            <g><circle class="ves" cx="2050" cy="4300" r="140"/><circle class="lum" cx="2050" cy="4300" r="80"/><circle class="ves" cx="2250" cy="3800" r="90"/><circle class="lum" cx="2250" cy="3800" r="45"/><circle class="ves" cx="12100" cy="5200" r="70"/><circle class="lum" cx="12100" cy="5200" r="34"/></g>
-            <!-- Metastatic focus: subcapsular sinus, right pole, ~1.3 × 0.9 mm of cohesive large cells; two satellite nests -->
-            <path fill="url(#p-met)" d="M12000 2250 C12300 1850 13050 1950 13250 2300 C13500 2700 13300 3050 12900 3100 C12500 3150 12050 3000 11950 2700 C11900 2500 11900 2380 12000 2250Z"/>
-            <circle fill="url(#p-met)" cx="11700" cy="2150" r="110"/><circle fill="url(#p-met)" cx="13450" cy="2650" r="95"/>
-          </g>
-        </symbol>
-      </defs>
       <g class="slide-art"><use href="#slide-art" x="0" y="0" width="15000" height="8000"/></g>
 
       <!-- Overlays (GPU layers in the product; SVG here). Strokes are non-scaling so they keep screen width at any zoom. -->
@@ -1554,7 +1565,7 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <h3>1. The shell: concept C (Task-flow), kept and corrected</h3>
     <ul>
       <li><b>Kept from C:</b> the phase rail Open → Screen → Examine → Decide → Complete that discloses tools per phase (with <i>All tools</i> and the palette as the expert escape hatches); one task card with one 56 px primary action bound to <kbd class="key">↵</kbd> and a smaller secondary row; card header stating graded / practice / CME post-test / ungraded unknown and the LMS destination; the readiness check before the first tile; low-power coverage during Screen; the honest zoom gate (highest magnification reached over the focus) with the half-credit rule and <kbd class="key">5</kbd> to jump to 20×; <i>Mark without a pointer</i> as a visible button and a rail tool; confidence that feeds the review queue, not the grade, with the calibration line at reveal; reveal as a layer-ACL gate refused while a tile under the mark is stale; the review queue only in the Complete phase; <i>Fly to what you missed</i>; the resident unknown with a button-reordered differential (SC 2.5.7) and "Diagnosis recorded 06:12 into the case"; record-a-tour with VIEW / INK / MIC and pause-cuts-a-step; the LMS host frame around every education mock; focus to the task <code>h2</code> on a step change; the Dx-refused clinical variant proving the shell does not fork.</li>
-      <li><b>Corrected (judges' measured misses):</b> the step rail is 64 px (80 at 4K) instead of 84 and the card 320 px (440 at 4K), which lifts the canvas at 1920 × 1080 from 70.3 % to ≈ 74 % with the LMS frame on (P1 now has margin, see the table in §6); phase buttons and navigator pan buttons are 44 px under a coarse pointer; the sheet <i>peek</i> shows the stem as well as the title and the CTA; the expanded sheet is capped at 40 % of the viewport on tablets <i>and</i> phones (body scrolls) and landscape uses the side drawer, so no sheet ever enters the central zone; the CTA follows the content on pointer surfaces (≥ 1600 px) instead of sitting at the foot of an empty 400 px column at 4K, and stays pinned at the foot of touch sheets where the thumb needs it; the tissue mock is a seeded, non-lattice H&amp;E with lymphocyte-dense cortex, follicles with mantle and germinal centre, sinuses with histiocytes, a fibrous capsule and a cohesive nest of large pale tumour cells, so a 20× field reads as tissue, with a DAB-brown CK AE1/AE3 recolour for A1-2.</li>
+      <li><b>Corrected (judges' measured misses):</b> the step rail is 64 px (80 at 4K) instead of 84 and the card 320 px (440 at 4K), which lifts the canvas at 1920 × 1080 from 70.3 % to 73.2 % with the LMS frame on (P1 now has margin, see the table in §6); phase buttons and navigator pan buttons are 44 px under a coarse pointer; the sheet <i>peek</i> shows the stem as well as the title and the CTA; the expanded sheet is capped at 40 % of the viewport on tablets <i>and</i> phones (body scrolls) and landscape uses the side drawer, so no sheet ever enters the central zone; the CTA follows the content on pointer surfaces (≥ 1600 px) instead of sitting at the foot of an empty 400 px column at 4K, and stays pinned at the foot of touch sheets where the thumb needs it; the tissue mock is a seeded, non-lattice H&amp;E with lymphocyte-dense cortex, follicles with mantle and germinal centre, sinuses with histiocytes, a fibrous capsule and a cohesive nest of large pale tumour cells, so a 20× field reads as tissue, with a DAB-brown CK AE1/AE3 recolour for A1-2.</li>
     </ul>
 
     <h3>2. Grafts from concept B (Workbench)</h3>
@@ -1618,15 +1629,15 @@ html[data-coarse="1"] .navigator__pan button { width: 44px; height: 44px; }
     <table class="table" id="p1-table">
       <thead><tr><th>Viewport</th><th>Chrome at rest</th><th>Canvas share</th><th>Central 50 % zone</th></tr></thead>
       <tbody>
-        <tr><td>3840 × 2160 (4K, DPR 1)</td><td>top 48 · rail 80 · card 440 · strip 32</td><td class="num" data-p1="3840x2160">≈ 84 %</td><td>clear</td></tr>
-        <tr><td>1920 × 1080</td><td>top 48 · rail 64 · card 320 · strip 32</td><td class="num" data-p1="1920x1080">≈ 74 %</td><td>clear</td></tr>
-        <tr><td>1440 × 900 (laptop)</td><td>top 48 · context bar 40 · rail 64 · strip 32 · drawer closed</td><td class="num" data-p1="1440x900">≈ 85 %</td><td>clear (drawer covers the edge only)</td></tr>
-        <tr><td>1366 × 1024 (iPad landscape)</td><td>as laptop, 44 px targets</td><td class="num" data-p1="1366x1024">≈ 85 %</td><td>clear</td></tr>
-        <tr><td>1024 × 1366 (iPad portrait)</td><td>top 48 · flow bar 72 · strip 36 · sheet peek</td><td class="num" data-p1="1024x1366">≈ 71 %</td><td>clear (peek below the zone; expanded ≤ 40 %)</td></tr>
-        <tr><td>390 × 844 (phone)</td><td>top 44 · flow bar 56 · sheet peek</td><td class="num" data-p1="390x844">≈ 71 %</td><td>clear at peek</td></tr>
+        <tr><td>3840 × 2160 (4K, DPR 1)</td><td>top 48 · rail 80 · card 440 · strip 32</td><td class="num" data-p1="3840x2160">83.0 %</td><td>clear</td></tr>
+        <tr><td>1920 × 1080</td><td>top 48 · rail 64 · card 320 · strip 32</td><td class="num" data-p1="1920x1080">73.2 %</td><td>clear</td></tr>
+        <tr><td>1440 × 900 (laptop)</td><td>top 48 · context bar 40 · rail 64 · strip 32 · drawer closed</td><td class="num" data-p1="1440x900">80.6 %</td><td>clear (drawer covers the edge only)</td></tr>
+        <tr><td>1366 × 1024 (iPad landscape)</td><td>as laptop, 44 px targets</td><td class="num" data-p1="1366x1024">82.0 %</td><td>clear</td></tr>
+        <tr><td>1024 × 1366 (iPad portrait)</td><td>top 48 · flow bar 72 · strip 36 · sheet peek 180 px (title + stem + CTA)</td><td class="num" data-p1="1024x1366">72.8 %</td><td>clear (peek below the zone; expanded ≤ 40 %)</td></tr>
+        <tr><td>390 × 844 (phone)</td><td>top 44 · flow bar 56 · sheet peek 64 px (stem + CTA; the title is in the top bar)</td><td class="num" data-p1="390x844">74.8 %</td><td>clear at peek</td></tr>
       </tbody>
     </table>
-    <p class="note">Measured by the screenshot script from the rendered DOM (canvas area not covered by the sheet or drawer, over the app frame); the numbers above were written from that run and the "Guides" toggle draws the zone for a visual check.</p>
+    <p class="note">Measured by the screenshot script from the rendered DOM on 2026-11-01 (canvas area not covered by the sheet or drawer, divided by the app frame that excludes the review header and demo strip; the 1920 and 4K figures include the 40 px LMS host bar inside the frame); no HUD item, navigator or sheet intersected the central 50 % zone and no target was under 24 px in that run. The "Guides" toggle draws the zone for a visual check.</p>
 
     <h3>7. Design notes for the plan owner</h3>
     <ul>
@@ -1887,7 +1898,7 @@ function markRowHtml() {
   if (state.candidate) return { sw: 'swatch swatch--outline swatch--lg', style: '--swatch:var(--ann-5)', html: '<b>Your mark</b> · candidate ' + state.candidate + ' · ' + esc(CAND_TEXT[state.candidate]) + '<br><span class="text-secondary text-xs">Marked by keyboard · <kbd class="key">⇧↵</kbd> to change</span>' };
   if (state.markCleared) return { sw: 'swatch swatch--outline swatch--lg', style: '--swatch:var(--grey-57)', html: '<b>No mark yet</b><br><span class="text-secondary text-xs">Draw with <kbd class="key">P</kbd>, <kbd class="key">F</kbd> or <kbd class="key">T</kbd>, or mark without a pointer</span>' };
   var how = state.modality === 'pen' ? 'Drawn with Pencil' : state.modality === 'touch' ? 'Drawn with a finger' : 'Drawn with the mouse';
-  return { sw: 'swatch swatch--lg', style: '--swatch:var(--ann-5)', html: '<b>Your mark</b> · polygon, 7 points · 1.21 mm²<br><span class="text-secondary text-xs">' + how + ' · press <kbd class="key">P</kbd> to redraw</span>' };
+  return { sw: 'swatch swatch--lg', style: '--swatch:var(--ann-5)', html: '<b>Your mark</b> · polygon · 1.21 mm²<br><span class="text-secondary text-xs">' + how + ' · press <kbd class="key">P</kbd> to redraw</span>' };
 }
 function renderDecide(st) {
   var gb = $('#gatebox'); if (gb) { gb.classList.toggle('is-met', gateMet()); $('.glyph', gb).textContent = gateMet() ? '✓' : '×'; txt('#gate-status', gateMet() ? 'Met · you viewed the focus at ' + fmtMag(state.gateMax) : 'Not met yet · highest magnification over the focus so far: ' + fmtMag(state.gateMax)); }
@@ -1899,6 +1910,7 @@ function renderDecide(st) {
   var score = right ? (full ? '1 / 1' : '0.5 / 1') : '0 / 1';
   var iou = state.candidate === 'text' ? null : state.candidate ? (state.candidate === 'C' ? 71 : 0) : 62;
   txt('#fb-title', 'Revealed · ' + (iou === null ? 'rubric 3 / 3' : 'IoU ' + iou + ' %') + ' · ' + score);
+  state.fbSentence = 'Revealed. ' + (iou === null ? 'Your text answer matched the rubric, 3 of 3.' : 'Your mark overlapped the lesion by ' + iou + ' percent, IoU.') + ' Score ' + score.replace(' / ', ' of ') + '.';
   txt('#fb-text', right ? (full ? (iou === null ? 'Your text answer matched the rubric on compartment, position and size.' : 'Your mark overlapped the lesion by ' + iou + ' % (IoU). Any overlap of 50 % or more with the zoom gate met earns full credit.') : 'Correct region, but you never viewed it at 20×: half credit by the gate rule stated on the card.') : 'Your mark (' + esc(CAND_TEXT[state.candidate] || '') + ') did not overlap the lesion. The key is the dashed outline at the right pole.');
   var ok = right && full;
   var cal = $('#fb-calib'); if (cal) cal.innerHTML = 'You said <b>' + esc(confT) + '</b> and were ' + (ok ? 'right' : 'wrong') + ': this item comes back in ' + (ok ? (confT === 'Certain' ? '21' : confT === 'Fairly sure' ? '9' : '3') : (confT === 'Certain' ? '1' : '2')) + ' days.';
@@ -1929,7 +1941,7 @@ function applyEnv() {
   html.setAttribute('data-theme', state.light && state.product === 'learn' ? 'light' : 'dark');
   $$('[data-theme-set]').forEach(function (b) { b.setAttribute('aria-checked', String((b.dataset.themeSet === 'light') === (state.light && state.product === 'learn'))); });
   $('#set-rm').setAttribute('aria-checked', String(state.rm)); $('#set-coarse').setAttribute('aria-checked', String(state.coarse)); $('#set-focus').setAttribute('aria-checked', String(state.focus));
-  canvasArea.classList.toggle('is-ihc', state.slideId === 'ihc'); canvasArea.classList.toggle('is-cvd', state.cvd); canvasArea.classList.toggle('has-tileerr', state.tileErr);
+  canvasArea.classList.toggle('is-ihc', state.slideId === 'ihc'); body.classList.toggle('is-ihc', state.slideId === 'ihc'); app.classList.toggle('is-refused', state.launch !== 'learn' && state.product === 'learn'); canvasArea.classList.toggle('is-cvd', state.cvd); canvasArea.classList.toggle('has-tileerr', state.tileErr);
   app.classList.toggle('nav-hidden', state.navHidden);
   $('#tool-all').setAttribute('aria-pressed', String(state.allTools)); $('#tool-focus').setAttribute('aria-pressed', String(state.focus));
   $('#tool-labels').setAttribute('aria-pressed', String(state.labels)); $('#tool-overlays').setAttribute('aria-pressed', String(state.overlays));
@@ -2000,7 +2012,7 @@ function applyCam() {
 var sharp = { kind: 'sharp', t1: 0, t2: 0 };
 function settleMs() { var base = { ok: 350, cold4g: 1100, pack: 160, offline: 0, slow: 1300, classroom: 800 }[state.net]; return base + (devProfile() === 'desktop' ? 0 : 150); }
 function disturb() { clearTimeout(sharp.t1); clearTimeout(sharp.t2); if (state.net === 'offline') { setSharp('offline'); return; } setSharp('sharpening'); sharp.t1 = setTimeout(settleNow, settleMs()); }
-function settleNow() { var mag = 10 / state.cam.scale; if (state.net === 'cold4g' && mag >= 19.9) { setSharp('soft', 'Soft — slow link'); sharp.t2 = setTimeout(function () { setSharp('sharp'); }, 1600); } else setSharp('sharp'); announce(fmtMag(mag).replace('×', ' times') + '. ' + posText() + '. ' + $('#sharp-label').textContent); }
+function settleNow() { var mag = 10 / state.cam.scale; if (state.net === 'cold4g' && mag >= 19.9) { setSharp('soft', 'Soft — slow link'); sharp.t2 = setTimeout(function () { setSharp('sharp'); }, 1600); } else setSharp('sharp'); announce(fmtMag(mag).replace('×', ' times') + '. ' + posText() + '. ' + $('#sharp-label').textContent, false, true); }
 function setSharp(kind, reason) {
   sharp.kind = kind; var LBL = { sharp: 'Sharp', sharpening: 'Sharpening…', soft: reason || 'Soft — slow link', offline: 'Offline — cached tiles only' };
   var s = $('#strip-sharp'); s.className = 'indicator indicator--' + kind + (kind === 'sharp' ? ' is-quiet' : ''); txt('#sharp-label', LBL[kind]); s.setAttribute('aria-label', 'Sharpness: ' + LBL[kind] + '. Open details');
@@ -2061,7 +2073,7 @@ function reveal() {
   if (state.items[key] !== 'committed') { if (state.items[key] === 'awaiting') toast('Commit first', 'Reveal unlocks after your answer is saved.', 'info'); return; }
   if (staleUnderMark() && !isRes()) { toast('Reveal is waiting for sharp pixels', '3 tiles under your mark have not settled (retrying). The key is only scored against pixels you could see.', 'warning'); announce('Reveal is waiting for sharp pixels. 3 tiles under your mark have not settled. Retrying.', true); return; }
   state.items[key] = 'revealed'; state.keyLayer = true; if (key === 'res') state.expert = true; render();
-  var fb = key === 'res' ? 'Revealed. Concordant with the attending.' : st.s === 4 ? $('#fb-title').textContent.replace('·', '.').replace(' · ', '. ').replace('IoU', 'Your mark overlapped the lesion by').replace(' %', ' percent (IoU)') : $('.stepblock[data-s="' + st.s + '"] .feedback__title').textContent;
+  var fb = key === 'res' ? 'Revealed. Concordant with the attending.' : st.s === 4 ? state.fbSentence : ('Revealed. ' + $('.stepblock[data-s="' + st.s + '"] .feedback__title').textContent.replace(/ · /g, '. ') + '.');
   var g = gbFailing() ? 'Could not post to gradebook. Your answer is saved; we will retry.' : (state.net === 'pack' ? 'Grade queued; posts when online.' : 'Posted to gradebook.');
   announce(fb + ' ' + g, true); if (gbFailing()) toast('Could not post to gradebook', 'Your answer is saved; we will retry.', 'warning');
 }
@@ -2088,8 +2100,8 @@ function layoutMode() {
 }
 function updateSheetVar() { if (window.innerWidth > 1079) { app.style.removeProperty('--sheet-h'); return; } requestAnimationFrame(function () { var d = $('#dock'); var h = app.classList.contains('dock-open') ? d.getBoundingClientRect().height : 0; app.style.setProperty('--sheet-h', Math.round(h) + 'px'); }); }
 function sheetToggle() { state.peek = !app.classList.contains('sheet-peek'); layoutMode(); announce(state.peek ? 'Task card collapsed to its title, question and action.' : 'Task card expanded.'); }
-function dockToggle() { var w = window.innerWidth; if (w >= 1600) state.dockDesktop = !state.dockDesktop; else if (w >= 1080) state.dockLaptop = !state.dockLaptop; else { sheetToggle(); return; } layoutMode(); announce((w >= 1600 ? state.dockDesktop : state.dockLaptop) ? 'Task card shown.' : 'Task card hidden. Press K to show it.'); }
-function focusToggle() { if (window.innerWidth < 1600) { toast('Focus mode', 'Available on desktop displays (≥ 1600 px). On this surface the rail is already a bottom bar.', 'info'); return; } state.focus = !state.focus; layoutMode(); applyEnv(); announce(state.focus ? 'Focus mode. The step rail and the task card are folded into the edge handles; Shift K restores them.' : 'Focus mode off.'); }
+function dockToggle() { var w = window.innerWidth; if (w >= 1600) state.dockDesktop = !state.dockDesktop; else if (w >= 1080) state.dockLaptop = !state.dockLaptop; else { sheetToggle(); return; } layoutMode(); if (document.activeElement && document.activeElement.closest('#dock') && !(w >= 1600 ? state.dockDesktop : state.dockLaptop)) canvasArea.focus(); announce((w >= 1600 ? state.dockDesktop : state.dockLaptop) ? 'Task card shown.' : 'Task card hidden. Press K to show it.'); }
+function focusToggle() { if (window.innerWidth < 1600) { toast('Focus mode', 'Available on desktop displays (≥ 1600 px). On this surface the rail is already a bottom bar.', 'info'); return; } state.focus = !state.focus; layoutMode(); applyEnv(); if (state.focus && document.activeElement && document.activeElement.closest('#dock, .rail')) canvasArea.focus(); announce(state.focus ? 'Focus mode. The step rail and the task card are folded into the edge handles; Shift K restores them.' : 'Focus mode off.'); }
 function bindResizer() {
   var r = $('#dock-resizer'); var drag = null;
   r.addEventListener('keydown', function (e) { var d = e.key === 'ArrowLeft' ? 16 : e.key === 'ArrowRight' ? -16 : e.key === 'Home' ? 1000 : e.key === 'End' ? -1000 : 0; if (!d) return; e.preventDefault(); var w0 = state.dockW || Math.round($('#dock').getBoundingClientRect().width); state.dockW = Math.max(320, Math.min(520, w0 + d)); layoutMode(); announce('Task card ' + state.dockW + ' pixels wide.'); });
@@ -2109,8 +2121,9 @@ function openDialog(id) {
 }
 function closeDialog() { var layer = $('#modal-layer'); if (layer.hidden) return; layer.hidden = true; $$('.dialog', layer).forEach(function (d) { d.hidden = true; }); var back = lastFocus && lastFocus.offsetParent !== null ? lastFocus : canvasArea; if (back && back.focus) back.focus(); }
 function trapTab(e, root) { var f = $$('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])', root).filter(function (x) { return x.offsetParent !== null; }); if (!f.length) return; var first = f[0], last = f[f.length - 1]; if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); } }
-var polT = 0;
-function announce(text, assertive) { if (assertive) { var a = $('#live-assert'); a.textContent = ''; setTimeout(function () { a.textContent = text; }, 30); return; } clearTimeout(polT); polT = setTimeout(function () { $('#live-polite').textContent = text; }, 500); }
+var polT = 0, polText = '';
+/* polite: debounced to one announcement per 500 ms; `append` joins a settle message onto a pending step message instead of replacing it */
+function announce(text, assertive, append) { if (assertive) { var a = $('#live-assert'); a.textContent = ''; setTimeout(function () { a.textContent = text; }, 30); return; } polText = (append && polT) ? polText + ' ' + text : text; clearTimeout(polT); polT = setTimeout(function () { $('#live-polite').textContent = polText; polT = 0; }, 500); }
 function toast(title, bodyText, kind) {
   var stack = $('#toasts'); var el = document.createElement('div'); el.className = 'toast toast--' + (kind || 'neutral'); el.setAttribute('role', 'status');
   el.innerHTML = '<span class="toast__glyph" aria-hidden="true">' + (kind === 'warning' ? '!' : kind === 'info' ? 'i' : '✓') + '</span><div class="toast__body"><div class="toast__title">' + esc(title) + '</div><div>' + esc(bodyText) + '</div></div><button class="btn btn--sm btn--icon btn--ghost" aria-label="Dismiss"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>';
@@ -2151,7 +2164,7 @@ function openPalette() { $('#palette-layer').hidden = false; var inp = $('#pal-i
 function closePalette() { $('#palette-layer').hidden = true; canvasArea.focus(); }
 function fuzzy(q, s) { q = q.toLowerCase(); s = s.toLowerCase(); if (!q) return true; var i = 0; for (var j = 0; j < s.length && i < q.length; j++) if (s[j] === q[i]) i++; return i === q.length; }
 function renderPalette(q) {
-  var all = commands(); palItems = all.filter(function (c) { return fuzzy(q, c.g + ' ' + c.l + ' ' + c.k); }); palSel = 0; var h = '', lastG = '';
+  var all = commands(); var ql = q.toLowerCase(); palItems = ql ? all.filter(function (c) { return (c.g + ' ' + c.l + ' ' + c.k).toLowerCase().indexOf(ql) >= 0; }) : all; if (!palItems.length) palItems = all.filter(function (c) { return fuzzy(q, c.g + ' ' + c.l + ' ' + c.k); }); palSel = 0; var h = '', lastG = '';
   palItems.forEach(function (c, i) { if (c.g !== lastG) { h += '<div class="palette__group">' + esc(c.g) + '</div>'; lastG = c.g; } h += '<div class="palette__item' + (c.off ? ' is-off' : '') + '" role="option" id="pal-' + i + '" aria-selected="' + (i === 0) + '" data-i="' + i + '"><span>' + esc(c.l) + '</span><span class="keys">' + (c.k ? c.k.split(' · ').map(function (k) { return '<kbd class="key">' + esc(k) + '</kbd>'; }).join(' ') : '') + '</span></div>'; });
   $('#pal-list').innerHTML = h || '<div class="empty"><div class="empty__title">No command matches</div></div>'; $('#pal-input').setAttribute('aria-activedescendant', 'pal-0');
 }
@@ -2394,7 +2407,8 @@ function init() {
   layoutMode(); render();
   var st = cur(); if (st.view === 'fit' && state.product === 'learn') state.cam = fitCam(); else if (st.view && VIEWS[st.view]) state.cam = Object.assign({}, VIEWS[st.view]); else state.cam = Object.assign({}, FOCUS20);
   if (st.slide) state.slideId = st.slide;
-  if (q.get('item')) setItemDemo(q.get('item')); else { applyCam(); render(); }
+  applyCam();
+  if (q.get('item')) setItemDemo(q.get('item')); else render();
   selectCand('C'); setCandTab(1); disturb();
   if (q.get('cand') === '1') openDialog('dlg-cand'); if (q.get('keys') === '1') openDialog('dlg-keymap'); if (q.get('settings') === '1') openDialog('dlg-settings'); if (q.get('about') === '1') openDialog('dlg-about'); if (q.get('pal') === '1') openPalette();
   if (q.get('radial') === '1') setTimeout(function () { openRadial(csize().w * 0.62, csize().h * 0.6); }, 50);
