@@ -23,6 +23,8 @@
    palette row come from base.css §6.9; the layer is hidden with the `hidden`
    attribute; the widget surface is .app--widget; the Reduce-motion switch
    sets data-motion="reduce" (tokens.css class twin). See decisions §4c.
+   Revision 2026-11-01 (second review): the navigator cap moved from the
+   navigator to its .tr-stack wrapper (decisions §4d).
    ========================================================================== */
 :root {
   --review-h: 28px;            /* review header (not product chrome)            */
@@ -225,12 +227,22 @@ body.review-hidden .app.wb { height: 100vh; height: 100dvh; }
 .hud__tool .key, .hud__hint .key, .legend-hud .key { background: rgba(0,0,0,.4); border-color: rgba(255,255,255,.35); color: var(--grey-91); height: 16px; min-width: 16px; }
 .hud__hint { font-family: var(--font-ui); font-size: var(--text-xs); color: var(--grey-83); display: none; }
 .app.focus .hud__hint:not([hidden]) { display: inline-flex; }
-/* Top-right stack: navigator + class legend HUD (A) */
-.tr-stack { position: absolute; top: var(--layout-hud-inset); right: var(--layout-hud-inset); z-index: var(--z-navigator); display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-3); pointer-events: none; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
+/* Top-right stack: navigator + class legend HUD (A).
+   Revision 2026-11-01 (second review): the stack, not the navigator, carries
+   the width and base.css's P1 cap. The stack is an absolutely positioned
+   shrink-to-fit box, so base.css's `.canvas-area .navigator { max-width:
+   calc(25% - inset) }` resolved against the stack's own 240 px instead of
+   the canvas and the navigator measured 48 × 74 px at 1920 (43 × 71 under
+   coarse): the pan pads overflowed the 29 px thumbnail and overlapped each
+   other (axe target-size failed on the up pad). Now the stack is
+   --layout-navigator wide, capped at 25 % of the canvas − inset (the same
+   rule as base.css, so the stack's left edge never enters the central 50 %)
+   and at the canvas width − 2 × inset; the navigator and the legend fill it. */
+.tr-stack { position: absolute; top: var(--layout-hud-inset); right: var(--layout-hud-inset); z-index: var(--z-navigator); display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-3); pointer-events: none; width: var(--layout-navigator); max-width: min(calc(25% - var(--layout-hud-inset)), calc(100% - 2 * var(--layout-hud-inset))); }
 .tr-stack > * { pointer-events: auto; }
-.tr-stack .navigator { position: static; }
+.tr-stack .navigator { position: static; width: 100%; max-width: none; }   /* the cap lives on the stack (above) */
 .app.nav-hidden .tr-stack .navigator { display: none; }
-.legend-hud { display: none; width: var(--layout-navigator); background: var(--color-hud-backdrop); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); color: var(--color-text-on-canvas); font-size: var(--text-xs); padding: var(--space-2) var(--space-3) var(--space-3); }
+.legend-hud { display: none; width: 100%; background: var(--color-hud-backdrop); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); color: var(--color-text-on-canvas); font-size: var(--text-xs); padding: var(--space-2) var(--space-3) var(--space-3); }
 .app.legend-on .legend-hud { display: block; }
 .legend-hud__title { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--grey-75); min-height: 20px; margin-top: var(--space-2); }
 .legend-hud .legend { gap: 0; display: grid; grid-template-columns: 1fr; }
@@ -529,7 +541,9 @@ body.surface-widget > .app.wb { display: none; }
   .review-head .hide-sm, .hide-sm { display: none !important; }
   .tr-stack .navigator { display: none; }
   .app.nav-open .tr-stack .navigator { display: block; }
-  .legend-hud { width: 160px; }
+  /* Page-scoped (decisions §4d): on a 390 px phone base.css's 25 % cap would leave 89 px for the navigator, too narrow for three 44 px pads, and this page's coarse-pointer token (220 px, chosen for tablets, where the cap allows it) would reach 26 px into the central zone. The phone navigator is a toggled overlay (behind O, hidden at rest): the stack keeps the legend's 160 px with only the canvas-edge cap, and the navigator takes the ladder's phone step (140 px), which stays above the central zone. */
+  .tr-stack { width: 160px; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
+  .tr-stack .navigator { width: 140px; }
   .compare-bar { top: auto; bottom: var(--layout-hud-inset); left: 50%; right: auto; transform: translateX(-50%); font-size: var(--text-xs); }
   .compare-bar .curtainctl input[type="range"] { width: 72px; }
   .toast-stack { bottom: calc(var(--layout-bottombar) + var(--space-4)); }
@@ -546,6 +560,7 @@ body.surface-widget > .app.wb { display: none; }
   .annlist .list__item, .slide-row, .tray__slide { min-height: var(--target); }
   .dock .section > summary { min-height: var(--target); }
   .hint--kbd, .hint .key, .tool__key, .class-chip .key, .tab .key, .footer-actions .key, .btn .key, .queue__row .key { display: none !important; }
+  .navigator__label > .text-xs { display: none; }   /* the "O hide" hint is a keyboard hint (revision 2026-11-01, second review); the palette's "Navigator on / off" and the Panels sheet toggle it on touch */
   .curtain-line { width: 6px; margin-left: -3px; }
   .curtain-line::before { left: -19px; right: -19px; }
 }
@@ -1534,6 +1549,12 @@ v.state</pre></div>
     <li><b>Sweep 2026-11-01</b> · <i>Dimmed rows.</i> <code>.layer-row.is-off</code> has been base.css's since the revision; the channel rows (<code>.ch-row</code>, a page element) mirror it with colour dimming and the "hidden" chip, the one page-owned copy, kept because base.css has no channel row.</li>
     <li><b>Sweep 2026-11-01</b> · <i>Label strings and sharpness, re-verified.</i> <code>#labelString</code> and <code>#aboutString</code> are text from <code>LABEL[product]</code> (RUO and Clinical-IH strings measured), with no generated content and no <code>aria-label</code> on a role-less span (0 found); the strip indicator reads "Sharp" (label at .7 once settled) and the phone HUD indicator "Sharp" at 12 px, opacity 1.</li>
     <li><b>Sweep 2026-11-01</b> · <i>Targets.</i> <code>layout-check.mjs</code> passes at all eight viewports (0 of 40–76 operable targets under 24 / 44 px; the 19–21 "by spacing" items under coarse are the review-only demo strip at 26 px and base.css's 40 px segmented items inside 44 px controls); the panel-strip buttons measure 44 × 72 px under a coarse pointer (the deferred note's "28 px-wide strip" predates the revision's <code>--pstrip-w: 44px</code>). The page harness reports 0 axe violations and the same focus paths as before.</li>
+  </ul>
+
+  <h3>4d. Revision 2026-11-01 · second review (navigator cap)</h3>
+  <ul>
+    <li><b>Revision 2026-11-01</b> · <i>Navigator measured 48 × 74 px (high).</i> The page wraps the navigator and the class legend in <code>.tr-stack</code>, an absolutely positioned shrink-to-fit flex column. base.css's P1 cap <code>.canvas-area .navigator { max-width: calc(25% - var(--layout-hud-inset)) }</code> therefore resolved against the stack's own 240 px instead of the canvas: the navigator was 48 × 74 px at 1920 × 1080 and 1440 × 900 (thumbnail 29 px tall), 43 × 71 px at 1024 × 1366 and 1366 × 1024 under a coarse pointer (thumbnail 26 px), 33 × 64 px with the laptop drawer open and in the widget, 68 × 86 px at 4K, and the 24 / 44 px pan pads overflowed the thumbnail and overlapped one another (axe <code>target-size</code> failed on the up pad at 1920 in the Clinical-IH + Dx-refused combination). Fix: the stack carries the width and the cap (<code>width: var(--layout-navigator); max-width: min(calc(25% - inset), calc(100% - 2 × inset))</code>) and <code>.tr-stack .navigator</code> is <code>width: 100%; max-width: none</code>; the legend HUD is <code>width: 100%</code> of the stack, so both follow one ladder (240 → 180 with the drawer open or in the widget, 220 under a coarse pointer, 320 at 4K). Measured after the fix: navigator 240 × 178 px at 1920 and 1440 (thumbnail 238 × 149, pads 24 px, 0 px overflow, no pad touches another), 220 × 162 at 1024 and 1366 coarse (thumbnail 218 × 136, 44 px pads, 0 px overflow), 180 × 140 with the laptop drawer open and in the widget (180 × 137 with the pen drawer at 1366), 320 × 228 at 4K; the stack's left edge sits at 83 % (1920), 81 % (1440), 77 % (1024) and 89 % (4K) of the canvas width, outside the central 50 %. layout-check.mjs and the axe scan pass at the six viewports; the 1920 × 1080 shot now shows the thumbnail top-right at its intended size.</li>
+    <li><b>Revision 2026-11-01</b> · <i>Phone navigator (same root cause).</i> With the percentage resolving against the stack, the phone navigator behind <kbd class="key">O</kbd> measured 27 px. base.css's 25 % cap on a 390 px canvas leaves 89 px, which cannot hold three 44 px pads; the design system's ladder names 140 px for phones; and this page's coarse-pointer token (220 px, set for tablets, where the cap allows it) would have reached 26 px into the central zone (bottom edge 243 px against a zone top of 217). Page-scoped resolution: at ≤ 599 px the stack is 160 px wide (the legend's width), capped only at the canvas width − 2 × inset, and the navigator takes the ladder's 140 px (measured 140 × 112 in the RUO build, thumbnail 138 × 86, bottom edge 190 px against a central-zone top of 217; in the Clinical-IH build the label image shown by default makes it 140 × 137, bottom edge 215, so both stay above the zone; the 44 px pads are centred in shrinkable thirds, none touches another, and the up and down hit boxes reach 8 px past the thumbnail, the overlap base.css documents for the 140 px step). The phone navigator is a toggled overlay, hidden at rest, so the P1 rest-state cap is not what governs it. The caption's <kbd class="key">O</kbd> hide hint is hidden under a coarse pointer like every other key hint (it wrapped the 140 px caption to three lines, 131 px tall; 112 without); the palette's "Navigator on / off" toggles it on touch. <b>Design note</b> for base.css §F / README §1: the 25 % cap and the 140 px phone step of the ladder contradict each other on a 390 px canvas (89 px available); the system should either scope the cap to ≥ 600 px or lower the phone step and shrink the pads, and state which. Both finals that use base.css's navigator directly inherit the 89 px result on phones.</li>
   </ul>
 
   <h3>5. Design notes carried forward for the plan owner</h3>

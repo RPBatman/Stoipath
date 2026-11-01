@@ -65,7 +65,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 
 /* ---- synthetic host (Epic Hyperdrive) frame for the iframe variant */
 .host { position: relative; }
-.host__bar { display: none; height: 44px; align-items: center; gap: var(--space-5); padding: 0 var(--space-6); background: #e9ecf1; color: #1f2a3a; font-size: var(--text-sm); border-bottom: 1px solid #c5ccd6; }
+.host__bar { display: none; height: 44px; align-items: center; gap: var(--space-5); padding: 0 var(--space-6); background: #e9ecf1; color: #1f2a3a; font-size: var(--text-sm); border-bottom: 1px solid #c5ccd6; white-space: nowrap; overflow: hidden; }   /* synthetic host: never wraps over the review header on narrow viewports (revision 2026-11-01) */
 .host__bar .htab { font-weight: 600; border-bottom: 2px solid #1f2a3a; padding: 12px 0; }
 .host__bar .hostnote { margin-left: auto; font-size: var(--text-xs); color: #4d5a6c; }
 .host.is-embedded .host__bar { display: flex; }
@@ -177,6 +177,8 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .embed-tray .chip .v { font-family: var(--font-mono); font-size: 10px; }
 @container topbar (max-width: 1599px) { .app--embedded .embed-tray .chip .stain { display: none; } }
 @container topbar (max-width: 1279px) { .app--embedded .embed-tray { display: none; } }
+/* coarse pointer (44 px chips are wider): the tray truncated the label string by 17 px at 1366 × 1024; it yields up to 1439 (revision 2026-11-01) */
+@media (pointer: coarse) { @container topbar (max-width: 1439px) { .app--embedded .embed-tray { display: none; } } }
 .flow-chip { font-family: var(--font-ui); }
 .flow-chip .n { font-family: var(--font-mono); font-weight: 700; }
 .app--embedded .strip .chip { min-height: 18px; font-size: var(--text-2xs); }
@@ -195,6 +197,26 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 /* top bar extras */
 .topbar__identity .meta .syn { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); border: 1px solid var(--color-border-strong); border-radius: 2px; padding: 0 3px; margin-left: 4px; vertical-align: middle; }
 .topbar .btn--handoff { font-size: var(--text-sm); min-height: 28px; }
+@media (pointer: coarse) { .topbar .btn--handoff { min-height: var(--target-control); } }   /* 44 px, like the mode chip beside it (revision 2026-11-01; was 28 px) */
+/* Embedded top bar below a 1080 px container (revision 2026-11-01, found while measuring the refused state): the 183 px
+   hand-off button pushed the mode slot past a 390 px bar and squeezed the badge out; the label string truncated at 1024.
+   600–1079: short form ("Diagnostic display"); phone: icon only, the full text stays as the accessible name (clipped, not
+   display:none); the label string hides one step early inside the iframe (the badge carries the claim, as on the phone). */
+.btn--handoff .handoff__short, .btn--handoff .handoff__icon { display: none; }
+@container topbar (max-width: 1079px) {
+  .app--embedded .btn--handoff .handoff__long { display: none; }
+  .app--embedded .btn--handoff .handoff__short { display: inline; }
+  .app--embedded .topbar__label { display: none; }
+}
+@container topbar (max-width: 599px) {
+  .app--embedded .btn--handoff { width: var(--target-control); min-width: var(--target-control); min-height: var(--target-control); padding: 0; }
+  .app--embedded .btn--handoff .handoff__short { display: none; }
+  .app--embedded .btn--handoff .handoff__long { display: inline-block; position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .app--embedded .btn--handoff .handoff__icon { display: inline-block; }
+  /* the badge slot shrinks last; when it does, the badge truncates with an ellipsis instead of painting its centred text past its box (the full product name and label string stay in its accessible name) */
+  .app--embedded .topbar__slot-badge .badge { display: block; overflow: hidden; text-overflow: ellipsis; text-align: left; line-height: var(--target-control); padding: 0 var(--space-2); }
+  .app--embedded .flow-chip .flow-chip__name { display: none; }   /* "3/5 ›": the step name is in the step list it opens */
+}
 /* Purpose chip (revision 2026-11-01): may shrink but never pushes the mode slot (P4); its short form
    "Prelim only" takes over below a 1264 px container, one step before base.css hides it (≤ 1183). */
 .topbar__slot-badge .chip--purpose { flex: 0 1 auto; min-width: 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
@@ -458,11 +480,14 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .app.is-blocked.is-mismatch .panes { visibility: hidden; }
 /* while the canvas is blocked the step panel is inert (set in renderCond) and its controls read as unavailable */
 .app.is-blocked .dock :is(.btn, .tool, .tray__slide, .segmented, .class-chip, .legend__item, input, .toggle, .list__item, .bookmark, .layer-row__vis, .layer-row__actions, .presets, .tabs) { opacity: .5; }
-.app.fin.is-refused { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
+/* launch refused (RUO build): the dock column collapses — only in the three-column grid (≥ 1080 px, not the
+   embedded iframe grid). Revision 2026-11-01: this was unguarded and put the whole app in an 80 px first column
+   at 390 / 1024 (and in the iframe variant at every width). */
+@media (min-width: 1080px) { .app.fin.is-refused:not(.app--embedded) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; } }
 .app.is-refused .topbar__identity, .app.is-refused .embed-tray, .app.is-refused #qaChip, .app.is-refused #modeChip,
 .app.is-refused #purposeChip, .app.is-refused .flow, .app.is-refused .flowbar .btn, .app.is-refused #railTools, .app.is-refused .rail__divider,
 .app.is-refused .navigator, .app.is-refused .hud, .app.is-refused .panes, .app.is-refused .dock, .app.is-refused .bottombar .tool:not([data-cmd="keymap"]),
-.app.is-refused #stripMic, .app.is-refused .strip-signout, .app.is-refused .strip__group--end .chip { display: none !important; }
+.app.is-refused #stripMic, .app.is-refused .strip-signout, .app.is-refused .strip__group--end .chip, .app.is-refused #handoffBtn { display: none !important; }
 
 /* ---- dialog layer: ANCHORED, never over the canvas centre (P1; B's dock-side panels) ----
    Sweep 2026-11-01: the layer is base.css's .modal-layer--dock (dialogs flush in the dock
@@ -503,7 +528,6 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 
 /* focus demo: one element shows the ring in the static screenshots */
 .demo-focus { box-shadow: var(--focus-shadow) !important; }
-[hidden] { display: none !important; }
 body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body.show-live .ctxmenu { position: absolute; }
 
 /* phone */
@@ -676,7 +700,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
       <div class="topbar__slot-badge">
         <button class="badge badge--clinical" id="badge" data-live="launch:product" aria-haspopup="dialog" aria-label="Product: Stoipath Clinical-IH. In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation. Opens the full label and About">Clinical-IH</button>
         <span class="chip chip--purpose not-embedded" id="purposeChip" data-live="launch:purposeOfUse"><span class="chip__long">Sign-out</span><span class="chip__short">Sign-out</span></span>
-        <button class="chip chip--solid flow-chip embed-only" id="embedFlowChip" aria-label="Current step; opens the step list" data-live="commands"><span class="n">3/5</span> Examine <svg class="icon icon--sm"><use href="#i-next"/></svg></button>
+        <button class="chip chip--solid flow-chip embed-only" id="embedFlowChip" aria-label="Current step; opens the step list" data-live="commands"><span class="n">3/5</span> <span class="flow-chip__name">Examine</span> <svg class="icon icon--sm"><use href="#i-next"/></svg></button>
       </div>
       <span class="topbar__label" id="labelString" role="note" data-live="launch:product">In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.</span>
       <div class="topbar__identity" data-live="launch">
@@ -693,7 +717,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
         <button class="chip" role="option" data-slide="A2-1">A2-1 <span class="stain">H&amp;E</span> <span class="v">•</span></button>
       </div>
       <div class="topbar__slot-mode">
-        <button class="btn btn--primary btn--handoff embed-only" id="handoffBtn" data-live="commands:handoff">Open on diagnostic display</button>
+        <button class="btn btn--primary btn--handoff embed-only" id="handoffBtn" data-live="commands:handoff"><svg class="icon icon--sm handoff__icon" aria-hidden="true"><use href="#i-share"/></svg><span class="handoff__long">Open on diagnostic display</span><span class="handoff__short">Diagnostic display</span></button>
         <span class="chip not-embedded" id="qaChip" data-live="dx:displayqa">QA passed 3 days ago</span>
         <button class="mode mode--dx" id="modeChip" data-live="state.render_mode" aria-label="Render mode DX. Opens the Dx gate (Shift+D)" aria-haspopup="dialog">DX</button>
         <button class="btn btn--icon btn--ghost" id="moreBtn" aria-label="More: About, settings, help" aria-haspopup="dialog"><svg class="icon"><use href="#i-more"/></svg></button>
@@ -1146,7 +1170,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="cs-title" data-live="events:shareCreated">
     <div class="dialog__header"><h2 class="dialog__title" id="cs-title">Request consult</h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
-      <div class="field"><span class="field__label">Colleague (on-call list from the LIS; synthetic)</span><div class="select"><select class="input"><option>Dr Example · haematopathology · on call</option><option>Dr Sample · breast pathology</option></select></div></div>
+      <div class="field"><label class="field__label" for="consultWho">Colleague (on-call list from the LIS; synthetic)</label><div class="select"><select class="input" id="consultWho" data-live="lis:oncall"><option>Dr Example · haematopathology · on call</option><option>Dr Sample · breast pathology</option></select></div></div>
       <div class="field"><span class="field__label">What they receive</span><div class="text-sm">Expiring link (2 h) to this case at the current view · <b>Tier 0</b> (no label image, no patient identifiers) · your measurement and region · this preliminary note draft · audit logged</div></div>
       <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Page them now</span><span class="toggle__hint">Pager / Teams via the integration service</span></span></label>
       <div class="alert alert--info"><span class="alert__glyph">i</span><div>The consult opens in their build at the same step with <b>Consultation · preliminary only</b>; their reply lands in the LIS as an addendum.</div></div>
@@ -1339,6 +1363,14 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li><span class="dn">Sweep 2026-11-01</span> Targets under a coarse pointer: the rail's flow steps keep 44 px with the labels off (<code>.flow-off</code> had set 30 px; measured 70 × 34 at 1366 × 1024 coarse before); demo controls: selects and buttons 44 px, checkboxes 24 px inside 44 px labels with 12 px gaps (SC 2.5.8 spacing exception), the review foot 56 px — <code>#ctlGuided</code> at 14 × 14 was the page's last A1 failure. The bottom-bar tools were already 44 × 44 under coarse at every tablet and phone viewport.</li>
   <li><span class="dn">Sweep 2026-11-01</span> Phone top bar (T1): at 390 px the mode slot's right edge was 389 px in a 382 px bar. The empty <code>.topbar__identity-rest</code> wrapper no longer costs its 8 px flex gap on phones and the badge slot may shrink as the last resort (the purpose chip truncates before the mode slot or More can leave the bar). Measured after the fix: mode slot right edge 382 px in the 382 px bar at 390 × 844 coarse (T1 passes; the chip is 72 px, untruncated — a narrower phone or a wider system font truncates it before the mode slot or More can leave the bar). <b>Design note</b> for base.css: an identity-rest wrapper whose children are all hidden still takes the identity slot's flex gap.</li>
   <li><span class="dn">Sweep 2026-11-01</span> Re-measured after the sweep: <code>layout-check.mjs</code> passes at all eight viewports (T1 1/1 bars, Z1 0 intrusions, S1 none, A1 0 failures incl. 390 / 1024 / 1366 coarse — the remaining "by spacing" items are the review foot's 26 px selects and 24 px checkboxes, A2 0 invisible, A3 settled label ≥ 0.5; was 4 failures); the behaviour harness reproduces every earlier result with no page errors (Dx truth on Cold 4G and tile errors, Shift+Enter while drawing, Backspace / Delete / Ctrl+Z, the Shift+D gate, the hand-off dialog's button swap, the tablet sheet's HUD lift, rapid presets, the inert panel on mismatch, the danger banner now coloured by base.css). The six shots were re-taken (coarse pointer emulated on the tablet and phone viewports).</li>
+</ul>
+
+<h3>Revision 2026-11-01 (layout and accessibility re-review of the final screens)</h3>
+<ul>
+  <li><span class="dn">Revision 2026-11-01</span> Launch refused (Viewer / RUO build): the page rule that collapses the dock column (<code>.app.fin.is-refused { grid-template-columns: rail 1fr 0 }</code>) was not breakpoint-guarded, so below 1080 px, where the grid areas are a single column, the whole app laid out in an 80 px first column (top bar 80 px wide at 390 × 844 and 1024 × 1366, plate card 118 px wide with letter-wrapped text, <i>More</i> over the badge). The same outranked the embedded iframe grid at every width (top bar 72 px at 1440 × 900 with <code>variant=embedded</code>). The rule is now <code>@media (min-width: 1080px) { .app.fin.is-refused:not(.app--embedded) { … } }</code>; the other blocked states (mismatch, expired, manifest) never had the rule. Measured after the fix with <code>#product=ruo</code>: the grid is one 390 / 1024 px column (coarse) and <code>72px 1368px 0px</code> at 1440; top bar full width at every viewport with the mode slot inside it; <i>More</i> no longer intersects the badge (both 44 × 44 under coarse); the plate card is 342 px wide at 390 (24 px insets) and 520 px from 1024 up; <code>layout-check</code> passes at 390 / 1024 / 1366 coarse and 1440 / 1920 for <code>#product=ruo</code> and for <code>#product=ruo&amp;variant=embedded</code>; axe reports no violation in either state. Found while measuring the iframe case: the top bar's <i>Open on diagnostic display</i> hand-off button stayed visible under the <i>Nothing was opened</i> plate; it is now hidden with the rest of the refused chrome.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Embedded (Hyperdrive iframe) top bar below 1080 px, found while measuring the refused state and pre-existing: the 183 px <i>Open on diagnostic display</i> button pushed the mode slot to 400 px in a 390 px bar and squeezed the product badge out entirely (P4 breached: no product visible), and at 1024 the regulatory string truncated (604 &gt; 407 px). Using the purpose chip's long / short pattern in the <code>topbar</code> container query: 600–1079 px the button reads <i>Diagnostic display</i> (132 px) and the label string hides one step early inside the iframe (as on the phone, the badge's name carries the full claim); on the phone the button is a 44 px icon button (<code>#i-share</code>) whose full text stays as its accessible name (clipped, not <code>display:none</code>); whichever text span is displayed is the name (no <code>aria-hidden</code> on either); under a coarse pointer the button is 44 px tall at every width, like the mode chip beside it (was 28 px). Under a coarse pointer the slide tray also yields up to a 1439 px container (its 44 px chips truncated the label string by 17 px at 1366 × 1024; the fine-pointer 1280–1439 tray is unchanged). Measured after: <code>layout-check</code> passes for <code>#variant=embedded</code> at 390 / 1024 / 1366 coarse and 1440 / 1920. <b>Design note</b>: at 390 px the iframe bar still cannot hold badge, step chip, accession, hand-off, mode and More; the step chip drops its step name (<i>3/5 ›</i>; the name is in the list it opens) and the badge slot, which shrinks last, truncates the badge with an ellipsis at about 60 px (<i>CLINI…</i>; it painted the clipped middle of the word, <i>INICAL-</i>, over the accession before; the full product name is the badge's accessible name and About is one tap away). A phone-width Hyperdrive iframe is not a launch surface in the plan (the EHR client is desktop-only; the phone target is the standalone web build), so this is recorded, not redesigned; if it ever is one, the step chip belongs in the bottom strip.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Request-consult dialog: the colleague <code>&lt;select&gt;</code> had a visible caption but no accessible name (axe <code>select-name</code>, critical, SC 4.1.2, at all four viewports). The caption is now a <code>&lt;label for="consultWho"&gt;</code> and the select carries <code>id="consultWho"</code> and <code>data-live="lis:oncall"</code> (the on-call list comes from the LIS). The dialog's other <code>.field</code> is static text (no control); the preliminary-note textarea in the step panel and every toggle were already label-wrapped.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Deleted the page copy of base.css's <code>[hidden] { display: none !important; }</code> (base.css line 1195 owns it). The education screen's duplicate <code>.dock__resizer</code> rule is that screen's to remove.</li>
 </ul>
 
 <h3>Known weaknesses of this mock</h3>
@@ -1771,7 +1803,7 @@ function renderFlow() {
   next.hidden = S.step === 5; fin.hidden = S.step !== 5;
   if (S.step < 5) next.innerHTML = 'Next: ' + steps()[S.step][0] + ' <kbd class="key">N</kbd>';
   back.disabled = S.step === 1;
-  $('embedFlowChip').innerHTML = '<span class="n">' + S.step + '/5</span> ' + st[0] + ' <svg class="icon icon--sm"><use href="#i-next"/></svg>';
+  $('embedFlowChip').innerHTML = '<span class="n">' + S.step + '/5</span> <span class="flow-chip__name">' + st[0] + '</span> <svg class="icon icon--sm"><use href="#i-next"/></svg>';
   $('flowBarNext').hidden = S.step === 5;
   app.dataset.step = S.step; app.classList.toggle('flow-off', !S.guided);
   $('dock').setAttribute('aria-label', S.guided ? 'Step panel: ' + st[0] : 'Panels');
