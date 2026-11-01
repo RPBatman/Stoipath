@@ -1014,10 +1014,14 @@ export interface ToolController {
   pointerCancel(ev: ToolPointerEvent): void;
   /** Unclaimed mouse / pen movement over the canvas (rubber band to the pointer). */
   hover(ev: ToolPointerEvent): void;
-  /** A touch tap (one finger, < 10 CSS px travel, not half of a double tap); touch never pans less for a tool. */
+  /**
+   * A pointer went down and up without travel (< 10 CSS px touch, < 4 CSS px mouse / pen) and was NOT claimed: a touch
+   * tap (one finger, not half of a double tap; touch is never claimed, it always pans and pinches), or a mouse / pen
+   * click the tool declined in wantsPointer (the select tool's click on empty canvas clears the selection).
+   */
   tap(world: Position, view: ViewHandle, e: PointerEvent): void;
   /** Enter / Backspace / Escape on the slide; true = handled (the shell's own meaning is skipped). */
-  key(k: ToolKey, view: ViewHandle): boolean;
+  onKey(k: ToolKey, view: ViewHandle): boolean;
   /** Keyboard path (WCAG 2.1.1): act at the viewport centre crosshair. */
   placeAtCentre(view: ViewHandle): void;
   /** Cancel an in-progress shape or pick-up; true if something was cancelled. */
@@ -1125,6 +1129,12 @@ export interface GeometryService {
   distanceToGeometry(p: Position, g: Geometry): number;
   /** Ramer–Douglas–Peucker with an absolute tolerance. */
   simplify(points: readonly Position[], tolerance: number): Position[];
+  /**
+   * Marching squares: closed rings where `values` crosses `threshold`, in GRID units (cell corners at integers; the
+   * caller scales by cellPx). Values equal to `nodata` count as below the threshold. Used by the demo-heatmap outline
+   * and the brush trace.
+   */
+  isolines(grid: { cols: number; rows: number; values: ArrayLike<number>; nodata?: number }, threshold: number): Position[][];
 }
 
 export interface InteropService {
@@ -1332,6 +1342,15 @@ export interface PaneElements {
   overlay: HTMLCanvasElement;
   /** Attributes copied onto every new engine canvas (id, class, tabindex, role, aria-*). */
   canvasAttrs: Record<string, string>;
+}
+
+/** What core's createShell() returns to main.ts: the API for modules plus the two calls only main.ts makes. */
+export interface ShellCoreHandle {
+  readonly shell: ShellApi;
+  /** Await one module's install (main.ts installs in the TOOLS.md §5.1 order). */
+  install(module: ShellModule): Promise<void>;
+  /** Resolve the first slide (fragment `s=`, then ?manifest=, then the default) and open it in view A. */
+  start(): Promise<void>;
 }
 
 /** What main.ts (integrator) hands to core's createShell(). */
