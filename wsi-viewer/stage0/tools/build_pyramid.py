@@ -292,7 +292,13 @@ def main(argv=None) -> int:
                     help=f"--full: level-0 rows per band, a multiple of {TILE_SIZE} (default {DEFAULT_BAND_ROWS})")
     ap.add_argument("--input-url", help="canonical URL of the --input file (e.g. its release asset) recorded as "
                     "manifest.source.input; a local --input is then SHA-256 hashed and must match source-meta 'sha256' if given")
+    ap.add_argument("--input-archive", help="with --input-url: the local file the URL serves when --input was unpacked "
+                    "from it (a DICOM WSI zip); it is hashed and sized instead of --input")
+    ap.add_argument("--reader", choices=["tifffile", "openslide"], default="tifffile",
+                    help="tifffile (default; TIFF/SVS, local or https) or openslide (OpenSlide 4.x, local; DICOM WSI; --full only)")
     args = ap.parse_args(argv)
+    if args.reader == "openslide" and (not args.full or args.source_level):
+        ap.error("--reader openslide supports --full builds from source level 0 only")
     if args.full and (args.region or args.annotation):
         ap.error("--full builds the whole slide; it cannot be combined with --region or --annotation")
     if args.band_rows <= 0 or args.band_rows % TILE_SIZE:
@@ -304,7 +310,7 @@ def main(argv=None) -> int:
 
     t_start = time.time()
     log = lambda *a: print(f"[{time.time()-t_start:7.1f}s]", *a, flush=True)  # noqa: E731
-    src = open_slide(args.input)
+    src = open_slide(args.input, reader=args.reader)
     p0 = src.pages[args.source_level]
     log(f"source: {args.input} ({src.size_bytes/1e6:.0f} MB, {'remote' if src.is_remote else 'local'}); "
         f"level {args.source_level} = {p0.shape[1]}x{p0.shape[0]}, tiles {p0.tilewidth}x{p0.tilelength}, "
@@ -314,11 +320,12 @@ def main(argv=None) -> int:
 
     local_sha256 = None
     if args.input_url and not src.is_remote:
-        local_sha256 = sha256_file(args.input)
+        hashed = args.input_archive or args.input
+        local_sha256 = sha256_file(hashed)
         want = meta.get("sha256")
         if want and want.lower() != local_sha256:
-            raise SystemExit(f"sha256 of {args.input} is {local_sha256}, source-meta expects {want}")
-        log(f"local copy sha256 {local_sha256}" + (" == source-meta sha256" if want else ""))
+            raise SystemExit(f"sha256 of {hashed} is {local_sha256}, source-meta expects {want}")
+        log(f"local copy sha256 {local_sha256} ({os.path.basename(hashed)})" + (" == source-meta sha256" if want else ""))
 
     os.makedirs(args.out, exist_ok=True)
     if args.full:
@@ -402,6 +409,18 @@ def write_manifest(src, args, meta, region, how, mpp, mpp_note, levels, fetch_s,
         "note": "Pixels are decoded source tiles (no resampling) re-encoded with the settings below; "
                 "coarser levels are exact 2x2 box means of the decoded level-0 pixels.",
     }
+    if args.reader == "openslide":
+        source["reader"] = src.library
+        source["note"] = ("Pixels are level-0 pixels decoded by OpenSlide read_region (no resampling) re-encoded with "
+                          "the settings below; coarser levels are exact 2x2 box means of the decoded level-0 pixels.")
+        dic = source["format"].get("dicom") or {}
+        if dic.get("Manufacturer"):
+            model = f" {dic['ManufacturerModelName']}" if dic.get("ManufacturerModelName") else ""
+            source["scanner"] = f"{dic['Manufacturer']}{model} (DICOM Manufacturer / ManufacturerModelName)"
+    if args.input_archive:
+        source["sourceFilesBytes"] = src.size_bytes
+        source["sizeBytes"] = os.path.getsize(args.input_archive)
+        source["unpackedFrom"] = os.path.basename(args.input_archive)
     if args.full:
         source["regionLevel0"]["fullSlide"] = True
         lib, mag = source["format"].get("aperioLibrary"), source["format"].get("aperioAppMag")
@@ -449,6 +468,7 @@ def write_manifest(src, args, meta, region, how, mpp, mpp_note, levels, fetch_s,
             "tifffile": tifffile.__version__,
             "imagecodecs": imagecodecs.__version__,
             "numpy": np.__version__,
+            **({"openslide": src.library} if args.reader == "openslide" else {}),
             "cpuCount": os.cpu_count(),
         },
     }

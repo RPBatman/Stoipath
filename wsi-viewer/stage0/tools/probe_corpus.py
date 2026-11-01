@@ -50,6 +50,8 @@ import numpy as np
 import tifffile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import build_pyramid  # noqa: E402  (its region auto-select is exercised, nothing is written)
+import wsi_source  # noqa: E402
 from wsi_source import open_slide, pixel_spacing_um, source_description, tissue_mask  # noqa: E402
 
 try:
@@ -351,6 +353,16 @@ def on_grid_candidates(n_level: int, ds: float) -> np.ndarray:
 # ------------------------------------------------------------------------------------------------
 # per-slide probe
 # ------------------------------------------------------------------------------------------------
+def auto_select_check(src) -> dict:
+    """Run build_pyramid.choose_region (region mode, default size) in-process; nothing is written."""
+    try:
+        region, _thumb, lvl, _how = build_pyramid.choose_region(src, build_pyramid.DEFAULT_SIZE, None,
+                                                                build_pyramid.DEFAULT_MARGIN, lambda *a: None)
+        return {"ok": True, "region": list(region), "thumbLevel": lvl}
+    except Exception as exc:  # noqa: BLE001 - the failure mode is the finding
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"[:240]}
+
+
 def classify_tier(levels: list[dict], compression: str, tw: int, th: int) -> dict:
     steps = [round(levels[i]["width"] / levels[i + 1]["width"], 3) for i in range(len(levels) - 1)]
     W0, H0 = levels[0]["width"], levels[0]["height"]
@@ -476,10 +488,11 @@ def probe_slide(path: str, entry: dict, release_asset: dict | None, args) -> dic
         "ourReader": {
             "module": "stage0/tools/wsi_source.py",
             "selectedPages": [pg.index for pg in pages],
+            "associatedPagesExcluded": all(a["page"] not in {pg.index for pg in pages} for a in assoc.values()),
+            "selectedMatchesOpenSlideLevels": None,  # filled in by the oracle block
             "sourceDescription": wsi_view,
-            "labelMacroExcludedBy": ("is_tiled (Aperio label/macro are stripped; their ImageDescription starts with "
-                                     "'Aperio Image Library', so the 'label'/'macro' prefix test does not fire)"
-                                     if tif.is_svs else None),
+            "hasReadWindow": hasattr(wsi_source, "read_window"),
+            "buildPyramidAutoSelect": auto_select_check(src),
         },
     }
 
@@ -550,6 +563,7 @@ def probe_slide(path: str, entry: dict, release_asset: dict | None, args) -> dic
                         "fractional remainder; this is an API effect, not a decode disagreement"}
         else:
             agree["level1OnGrid"] = agree["level1TissueOffGrid"] = {"skipped": "single pyramid level"}
+        rec["structure"]["ourReader"]["selectedMatchesOpenSlideLevels"] = os_dims == tf_dims
         rec["openslide"] = {
             "openslidePython": openslide.__version__,
             "openslideLibrary": openslide.__library_version__,
@@ -660,15 +674,15 @@ def probe_slide(path: str, entry: dict, release_asset: dict | None, args) -> dic
         quirks.append(f"case-variant keys {desc['caseVariantKeys']}")
     if any(lv["zeroByteTiles"] for lv in levels):
         quirks.append("zero-byte tiles present: " + ", ".join(f"level {lv['level']}: {lv['zeroByteTiles']}" for lv in levels if lv["zeroByteTiles"]))
-    steps = rec["ingest"]["levelSteps"]
-    if len(levels) > 1 and any(s > 2.01 for s in steps):
-        quirks.append("build_pyramid.py auto region selection assumes a factor-2 source pyramid and raises on this "
-                      "file; pass --region (multiple of the source tile size)")
-    if len(levels) == 1:
-        quirks.append("build_pyramid.py auto region selection finds no 16384 px window on a single small level; "
-                      "pass --region (multiple of the source tile size)")
-    if tw != 512 and REGION % tw:
-        quirks.append(f"wsi_source.read_region needs regions in multiples of {tw} px (e.g. 15360 = 64x240 = 30x512)")
+    auto = rec["structure"]["ourReader"]["buildPyramidAutoSelect"]
+    if not auto["ok"]:
+        quirks.append("build_pyramid.py region mode cannot auto-select a region on this file (" + auto["error"] + "); "
+                      "use --full (whole slide) or an explicit --region")
+    if REGION % tw:
+        quirks.append(f"{tw} px source tiles: build_pyramid region mode needs --region in multiples of {tw} px "
+                      f"(wsi_source.read_region); --full reads any window through wsi_source.read_window")
+    if not rec["structure"]["ourReader"]["associatedPagesExcluded"]:
+        quirks.append("our reader selected an associated (thumbnail/label/macro) page as a pyramid level")
     rec["quirks"] = quirks
     rec["probeSeconds"] = round(time.time() - t_start, 1)
     src.close()

@@ -147,8 +147,101 @@ class SlideSource:
         self.tif.close()
 
 
-def open_slide(path_or_url: str) -> SlideSource:
-    """Open a local tiled TIFF/SVS or an https:// URL to one."""
+class OpenSlideSource:
+    """A local slide read through OpenSlide 4.x (openslide-python + openslide-bin) instead of tifffile.
+
+    Used for DICOM WSI (one directory of .dcm instances; pass any instance of the series), which
+    tifffile does not read as a pyramid. Only level-0 windows are read (`read_window`, i.e. --full
+    builds); OpenSlide picks the VOLUME instances and skips LABEL/OVERVIEW, and associated images
+    are listed, never read. Pixels come back RGBA with straight alpha and are composited on white,
+    which is the identity for the opaque (alpha 255) pixels of a TILED_FULL series.
+    """
+
+    remote = None
+    is_remote = False
+
+    def __init__(self, path: str):
+        import openslide  # optional dependency, only needed for --reader openslide
+
+        self.path = path
+        self.osr = openslide.OpenSlide(path)
+        self.library = f"OpenSlide {openslide.__library_version__} via openslide-python {openslide.__version__}"
+        props = self.osr.properties
+        self.props = dict(props)
+        d = os.path.dirname(os.path.abspath(path))
+        if props.get("openslide.vendor") == "dicom":
+            self.files = sorted(os.path.join(d, f) for f in os.listdir(d) if f.lower().endswith(".dcm"))
+        else:
+            self.files = [path]
+        self.size_bytes = sum(os.path.getsize(f) for f in self.files)
+        self.pages = []
+        for i, (w, h) in enumerate(self.osr.level_dimensions):
+            comp = props.get("dicom.TransferSyntaxUID", "")
+            self.pages.append(_OSLevel(
+                shape=(int(h), int(w), 3),
+                tilewidth=int(props.get(f"openslide.level[{i}].tile-width", 0)),
+                tilelength=int(props.get(f"openslide.level[{i}].tile-height", 0)),
+                compression=_Named({"1.2.840.10008.1.2.4.50": "JPEG baseline (DICOM 1.2.840.10008.1.2.4.50)"}.get(comp, comp or "unknown")),
+                photometric=_Named(props.get("dicom.PhotometricInterpretation", "unknown")),
+                subsampling=None, description=""))
+
+    def close(self):
+        self.osr.close()
+
+
+@dataclass
+class _Named:
+    name: str
+
+
+@dataclass
+class _OSLevel:
+    shape: tuple
+    tilewidth: int
+    tilelength: int
+    compression: _Named
+    photometric: _Named
+    subsampling: tuple | None
+    description: str
+
+
+def _read_window_openslide(src: OpenSlideSource, level: int, x0: int, y0: int, w: int, h: int, workers: int,
+                           progress=None, chunk: int = 2048) -> np.ndarray:
+    if level != 0:
+        raise ValueError("--reader openslide reads level 0 only")
+    W, H = src.osr.dimensions
+    if x0 < 0 or y0 < 0 or w <= 0 or h <= 0 or x0 + w > W or y0 + h > H:
+        raise ValueError(f"window {x0},{y0} {w}x{h} is not inside level 0 extent {W}x{H}")
+    out = np.empty((h, w, 3), np.uint8)
+    jobs = [(x, min(chunk, w - x)) for x in range(0, w, chunk)]
+
+    def work(job):
+        x, cw = job
+        a = np.asarray(src.osr.read_region((x0 + x, y0), 0, (cw, h)))  # thread-safe handle; ctypes drops the GIL
+        rgb, alpha = a[:, :, :3], a[:, :, 3:4]
+        if alpha.min() == 255:
+            out[:, x : x + cw] = rgb
+        else:  # straight alpha over white; exact for alpha 255, white for alpha 0 (missing tiles)
+            al = alpha.astype(np.uint16)
+            out[:, x : x + cw] = ((rgb * al + 255 * (255 - al) + 127) // 255).astype(np.uint8)
+        return cw
+
+    done = 0
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        for n in ex.map(work, jobs):
+            done += n
+            if progress:
+                progress(done, w)
+    return out
+
+
+def open_slide(path_or_url: str, reader: str = "tifffile"):
+    """Open a local tiled TIFF/SVS or an https:// URL to one (tifffile), or a local slide through
+    OpenSlide (reader='openslide', e.g. a DICOM WSI instance)."""
+    if reader == "openslide":
+        if path_or_url.startswith(("http://", "https://")):
+            raise ValueError("--reader openslide needs a local path")
+        return OpenSlideSource(path_or_url)
     if path_or_url.startswith(("http://", "https://")):
         rf = RangeFile(path_or_url)
         tif = tifffile.TiffFile(rf)
@@ -176,6 +269,13 @@ def open_slide(path_or_url: str) -> SlideSource:
 
 def pixel_spacing_um(src: SlideSource) -> tuple[float | None, str]:
     """Microns per pixel at source level 0, and a note on where it came from."""
+    if isinstance(src, OpenSlideSource):
+        mm = src.props.get("dicom.SharedFunctionalGroupsSequence[0].PixelMeasuresSequence[0].PixelSpacing[0]")
+        if mm:
+            return float(mm) * 1000.0, "DICOM SharedFunctionalGroups PixelMeasures PixelSpacing (mm) x 1000, via OpenSlide"
+        if src.props.get("openslide.mpp-x"):
+            return float(src.props["openslide.mpp-x"]), "OpenSlide openslide.mpp-x"
+        return None, "unknown (no pixel spacing metadata found)"
     p0 = src.pages[0]
     desc = p0.description or ""
     # Philips TIFF XML: DICOM_PIXEL_SPACING in mm, first occurrence is the scanned-image spacing.
@@ -198,6 +298,8 @@ def pixel_spacing_um(src: SlideSource) -> tuple[float | None, str]:
 
 
 def source_description(src: SlideSource) -> dict:
+    if isinstance(src, OpenSlideSource):
+        return openslide_description(src)
     p0 = src.pages[0]
     desc = p0.description or ""
     info = {
@@ -265,6 +367,46 @@ def aperio_description(src: SlideSource) -> dict:
     return out
 
 
+# DICOM attributes copied into manifest.source.format (technical only: no identifiers, UIDs, dates).
+_DICOM_FIELDS = ("Manufacturer", "ManufacturerModelName", "TransferSyntaxUID", "PhotometricInterpretation",
+                 "DimensionOrganizationType", "LossyImageCompression", "LossyImageCompressionRatio",
+                 "NumberOfOpticalPaths", "TotalPixelMatrixFocalPlanes", "Rows", "Columns")
+
+
+def openslide_description(src: OpenSlideSource) -> dict:
+    p = src.props
+    info = {
+        "reader": src.library,
+        "vendor": p.get("openslide.vendor"),
+        "compression": src.pages[0].compression.name,
+        "photometric": src.pages[0].photometric.name,
+        "subsampling": None,
+        "tileSize": [src.pages[0].tilewidth, src.pages[0].tilelength],
+        "levels": [[int(l.shape[1]), int(l.shape[0])] for l in src.pages],
+        "files": len(src.files),
+        "sourceFilesBytes": src.size_bytes,
+    }
+    if p.get("openslide.vendor") == "dicom":
+        dic = {}
+        for k in _DICOM_FIELDS:
+            v = p.get(f"dicom.{k}", p.get(f"dicom.{k}[0]"))
+            if v is not None:
+                dic[k] = v
+        it = [p[f"dicom.ImageType[{i}]"] for i in range(4) if f"dicom.ImageType[{i}]" in p]
+        if it:
+            dic["ImageType"] = "\\".join(it)
+        info["dicom"] = dic
+        if "Manufacturer" in dic:
+            info["scannerManufacturer"] = dic["Manufacturer"]
+    assoc = {}
+    for name in src.osr.associated_images:  # sizes from properties: the images themselves are not decoded
+        w, h = p.get(f"openslide.associated.{name}.width"), p.get(f"openslide.associated.{name}.height")
+        assoc[name] = [int(w), int(h)] if w and h else None
+    info["associatedImages"] = assoc
+    info["associatedImagesRead"] = False
+    return info
+
+
 def _coalesce(ranges: list[tuple[int, int, int]]) -> list[list[tuple[int, int, int]]]:
     """Group (tile_index, offset, count) tuples into request batches of nearby byte ranges."""
     ranges = sorted(ranges, key=lambda r: r[1])
@@ -314,6 +456,8 @@ def read_window(src: SlideSource, level: int, x0: int, y0: int, w: int, h: int, 
     window the result is the same array `read_region` always returned. Pixels are copied, never
     resampled; source tiles with byte count 0 stay white (255).
     """
+    if isinstance(src, OpenSlideSource):
+        return _read_window_openslide(src, level, x0, y0, w, h, workers, progress)
     page = src.pages[level]
     tw, th = page.tilewidth, page.tilelength
     H, W = page.shape[0], page.shape[1]
