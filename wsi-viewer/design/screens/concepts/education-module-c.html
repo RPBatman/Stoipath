@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-product="learn" data-view="learner" data-phase="decide" data-audience="ms" data-item="awaiting">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Concept C · Task-flow · Education module (Stoipath Learn)</title>
+<meta name="description" content="Stoipath Learn: guided case and assessment screen, concept C (Task-flow angle). Self-contained wireframe; no network, no build step. Open from file:// or any static host.">
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/base.css">
+<style>
+/* =============================================================================
+   Concept C · Task-flow · page-specific CSS (tokens and base classes come from
+   the design system; everything here is scoped to this wireframe).
+   Layout idea: the shell is organised around the task sequence
+   Open → Screen → Examine → Decide → Complete. A step rail replaces the tool
+   rail (desktop) or the bottom bar (tablet/phone); tools are disclosed per
+   phase; the task card (dock / sheet) shows only what the current step needs
+   and always ends in ONE primary action.
+   ========================================================================== */
+:root {
+  --concept-h: 34px;      /* review-only concept header */
+  --demo-h: 46px;         /* review-only demo controls strip */
+  --host-h: 0px;          /* simulated LMS host bar (0 unless the host toggle is on) */
+  --taskbar-h: 0px;       /* laptop/tablet-landscape one-line task bar */
+  --layout-rail: 84px;    /* step rail is wider than a tool rail: number + label */
+  --layout-dock: 360px;   /* task card */
+  --cta-h: 56px;          /* the one primary action: 56 px, pen/thumb friendly */
+}
+@media (min-width: 3200px) { :root { --layout-rail: 96px; --layout-dock: 400px; --cta-h: 64px; } }
+html { height: auto; }
+body { min-height: 100dvh; display: flex; flex-direction: column; }
+body.host-on { --host-h: 40px; }
+
+/* Coarse-pointer tokens can be forced from the demo strip (tablet/phone review on a desktop browser) */
+html[data-coarse="1"] { --target: var(--target-touch); --font-size-body: 15px; --font-size-strip: var(--text-md); --icon-size: 24px; --layout-bottombar: 72px; }
+html[data-coarse="1"] .tool__key { display: none; }
+/* Reduced motion can be forced from the demo strip as well as by the OS */
+html[data-rm="1"] { --motion-fast: 0ms; --motion-base: 0ms; --motion-panel: 0ms; --motion-toast: 0ms; --hud-label-fade-delay: 0ms; }
+html[data-rm="1"] .skeleton::after, html[data-rm="1"] .progress-bar--indeterminate span, html[data-rm="1"] .rec-dot { animation: none !important; }
+
+/* --- Review chrome (not product) ------------------------------------------- */
+.concept { flex: 0 0 var(--concept-h); display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-5); background: #1c1724; color: #d9d0e3; font-size: var(--text-sm); border-bottom: 1px dashed #5b4a6b; white-space: nowrap; overflow: hidden; }
+.concept b { color: #fff; font-weight: 600; }
+.concept .sep { opacity: .4; }
+.concept .grow { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.concept .segmented { --target: 24px; }
+.concept .segmented__item { color: #c9bfd6; font-size: var(--text-xs); min-height: 22px; }
+.concept .segmented__item[aria-checked="true"] { color: #fff; background: #3a2f47; box-shadow: inset 0 -2px 0 #e879f9; }
+.demo { flex: 0 0 var(--demo-h); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); background: #1c1724; color: #d9d0e3; border-top: 1px dashed #5b4a6b; font-size: var(--text-xs); overflow-x: auto; overflow-y: hidden; white-space: nowrap; scrollbar-width: thin; }
+.demo label { display: inline-flex; align-items: center; gap: 4px; color: #b9aec8; }
+.demo select { height: 26px; padding: 0 20px 0 6px; font-size: var(--text-xs); background: #2a2234; color: #fff; border: 1px solid #5b4a6b; border-radius: 3px; -webkit-appearance: none; appearance: none; }
+.demo .select { display: inline-block; }
+.demo .select::after { right: 7px; border-color: #c9bfd6; width: 6px; height: 6px; top: calc(50% - 4px); }
+.demo .tgl { height: 26px; padding: 0 8px; border: 1px solid #5b4a6b; border-radius: 3px; color: #c9bfd6; font-size: var(--text-xs); white-space: nowrap; }
+.demo .tgl[aria-pressed="true"] { background: #e879f9; color: #1a0b1f; border-color: #e879f9; font-weight: 600; }
+.demo .demo__title { color: #fff; font-weight: 600; margin-right: var(--space-2); }
+.demo .sep { width: 1px; height: 18px; background: #5b4a6b; flex: 0 0 auto; }
+
+/* --- Simulated LMS host (Canvas iframe); host chrome, not ours ---------------- */
+.host { display: none; flex: 0 0 var(--host-h); align-items: center; gap: var(--space-4); padding: 0 var(--space-5); background: #f5f5f5; color: #2d3b45; font-size: 13px; border-bottom: 1px solid #c7cdd1; }
+body.host-on .host { display: flex; }
+.host__brand { font-weight: 700; letter-spacing: .02em; }
+.host__crumb { color: #6b7780; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.host__note { margin-left: auto; font-size: 11px; color: #6b7780; white-space: nowrap; }
+
+/* --- App frame height ---------------------------------------------------------- */
+.app { height: calc(100dvh - var(--concept-h) - var(--demo-h) - var(--host-h)); min-height: 520px; flex: 0 0 auto; }
+body.host-on .app { border: 1px solid #c7cdd1; border-top: 0; }
+
+/* --- Top bar additions ----------------------------------------------------------- */
+.topbar__identity .title { font-weight: var(--weight-medium); }
+.topbar .stepper { flex: 0 0 auto; }
+.topbar .stepper__dots { margin-left: var(--space-2); }
+.topbar__slot-mode .btn--icon { color: var(--color-text-secondary); }
+.identity-clin { display: none; align-items: baseline; gap: var(--space-4); min-width: 0; }
+html[data-product="clinical"] .identity-clin, html[data-product="dx"] .identity-clin { display: flex; }
+html[data-product="clinical"] .identity-learn, html[data-product="dx"] .identity-learn { display: none; }
+.badge-string--ruo, .badge-string--learn, .badge-string--clinical, .badge-string--dx { display: none; }
+html[data-product="learn"] .badge-string--learn, html[data-product="ruo"] .badge-string--ruo, html[data-product="clinical"] .badge-string--clinical, html[data-product="dx"] .badge-string--dx { display: inline; }
+@media (max-width: 1023px) { .topbar__label .badge-string { display: none !important; } }
+.badge--learn, .badge--ruo, .badge--clinical, .badge--dx { display: none; }
+html[data-product="learn"] .badge--learn, html[data-product="ruo"] .badge--ruo, html[data-product="clinical"] .badge--clinical, html[data-product="dx"] .badge--dx { display: inline-flex; }
+.mode { display: none; }
+html[data-product="clinical"] .mode, html[data-product="dx"] .mode { display: inline-flex; }
+.chip--purpose { display: none; }
+html[data-product="clinical"] .chip--purpose, html[data-product="dx"] .chip--purpose { display: inline-flex; }
+
+/* --- Step rail (region C re-purposed) ---------------------------------------------- */
+.flowrail { padding: var(--space-3) 0; gap: 0; align-items: stretch; }
+.flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0 var(--space-2); }
+.phase { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 60px; padding: var(--space-3) 2px; border-radius: var(--radius-2); color: var(--color-text-secondary); text-align: center; }
+.phase:hover { background: var(--color-row-hover); color: var(--color-text); }
+.phase__num { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center; font: 700 11px/1 var(--font-mono); flex: 0 0 auto; }
+.phase__label { font-size: var(--text-2xs); line-height: 1.1; font-weight: var(--weight-medium); }
+.phase__sub { font-size: 9px; line-height: 1; color: var(--color-text-secondary); opacity: .85; }
+.phase.is-done .phase__num { background: var(--color-text-secondary); border-color: transparent; color: var(--color-surface-0); }
+.phase.is-done .phase__num::before { content: "\2713"; }
+.phase.is-done .phase__num span { display: none; }
+.phase.is-current { background: var(--color-control-selected); color: var(--color-text); }
+.phase.is-current::before { content: ""; position: absolute; left: -4px; top: 18%; height: 64%; width: 2px; border-radius: 1px; background: var(--color-control-selected-indicator); }
+.phase.is-current .phase__num { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
+.phase.is-locked { opacity: .55; }
+.flow__link { width: 1px; height: 8px; background: var(--color-border-strong); margin: 0 auto; }
+.rail__tools { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); padding: var(--space-2) 0; }
+.rail__tools .tool { width: var(--target); height: var(--target); }
+.tool--contextual { display: none; }
+html[data-phase="screen"] .tool--screen, html[data-phase="examine"] .tool--examine, html[data-phase="decide"] .tool--decide, html[data-phase="complete"] .tool--complete, html[data-phase="open"] .tool--open { display: inline-flex; }
+html[data-alltools="1"] .tool--contextual { display: inline-flex; }
+.rail__phase-tools-h { font-size: 9px; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); text-align: center; padding: var(--space-2) 0 2px; }
+
+/* --- Bottom flow bar (tablet portrait, phone) ----------------------------------------- */
+.flowbar { justify-content: flex-start; gap: var(--space-2); padding: 0 var(--space-3); overflow-x: auto; scrollbar-width: none; }
+.flowbar .phase { flex: 0 0 auto; min-width: 96px; min-height: calc(var(--layout-bottombar) - 12px); flex-direction: row; gap: var(--space-3); padding: 0 var(--space-4); text-align: left; }
+.flowbar .phase.is-current::before { left: 50%; top: auto; bottom: -6px; height: 2px; width: 60%; transform: translateX(-50%); }
+.flowbar .phase__text { display: flex; flex-direction: column; gap: 1px; }
+.flowbar .phase__label { font-size: var(--text-xs); }
+.flowbar__divider { width: 1px; height: 32px; background: var(--color-border); margin: 0 var(--space-2); flex: 0 0 auto; }
+.flowbar .tool { width: var(--target); height: var(--target); flex: 0 0 auto; }
+.flowbar__end { margin-left: auto; display: flex; gap: var(--space-2); align-items: center; flex: 0 0 auto; }
+
+/* --- Task dock ---------------------------------------------------------------------- */
+.taskdock { position: relative; }
+.task { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.task[hidden] { display: none; }
+.task__head { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4) var(--space-5) var(--space-3); border-bottom: 1px solid var(--color-border); }
+.task__meta { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+.task__title { font-size: var(--text-2xl); font-weight: var(--weight-semibold); line-height: var(--leading-tight); }
+.task__head .btn--icon { margin-left: auto; flex: 0 0 auto; }
+.task__body { flex: 1 1 auto; min-height: 0; overflow: auto; padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+.task__cta { flex: 0 0 auto; padding: var(--space-4) var(--space-5); border-top: 1px solid var(--color-border); display: flex; flex-direction: column; gap: var(--space-3); background: var(--color-surface-0); }
+.btn--cta { width: 100%; min-height: var(--cta-h); font-size: var(--text-xl); }
+.btn--cta .key { margin-left: var(--space-3); }
+.task__secondary { display: flex; gap: var(--space-3); justify-content: space-between; flex-wrap: wrap; }
+.task__secondary .btn { flex: 1 1 auto; }
+
+/* Step player: every step is narrated; the player is the same on every step */
+.player { display: grid; grid-template-columns: auto auto 1fr auto auto; grid-template-rows: auto auto; align-items: center; gap: var(--space-2) var(--space-3); padding: var(--space-3) var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+.player__btn { width: var(--target); height: var(--target); display: inline-grid; place-items: center; border-radius: var(--radius-2); color: var(--color-text); position: relative; }
+.player__btn:hover { background: var(--color-control-bg-hover); }
+.player__btn--play { background: var(--color-control-bg); }
+.player__btn .tool__key { right: 1px; bottom: 0; }
+.player__time { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
+.player__track { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--color-border); position: relative; overflow: hidden; }
+.player__track span { position: absolute; left: 0; top: 0; bottom: 0; width: var(--value, 30%); background: var(--color-text); }
+.player__cc[aria-pressed="true"] { background: var(--color-control-selected); box-shadow: inset 0 -2px 0 var(--color-control-selected-indicator); }
+.caption { padding: var(--space-3) var(--space-4); border-left: 2px solid var(--color-border-strong); font-size: var(--font-size-body); line-height: var(--leading-body); }
+.caption__now { color: var(--color-text); }
+.caption__ahead { color: var(--color-text-secondary); }
+.caption__src { display: block; margin-top: var(--space-2); font-size: var(--text-xs); color: var(--color-text-secondary); }
+
+/* Item card tweaks */
+.item-card { background: var(--color-surface-1); }
+.item-card__stem { font-size: var(--text-xl); }
+.gate { display: inline-flex; align-items: center; gap: var(--space-2); }
+.gate .glyph { font-family: var(--font-mono); font-weight: 700; }
+.mark-row { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+.mark-row .swatch { width: 14px; height: 14px; }
+.confidence { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+.confidence .opt { min-height: var(--target); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); display: inline-flex; align-items: center; justify-content: center; font-size: var(--text-sm); padding: 0 var(--space-2); text-align: center; color: var(--color-text); }
+.confidence .opt[aria-checked="true"] { border-color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-text); background: var(--color-control-selected); }
+.feedback { display: flex; gap: var(--space-4); padding: var(--space-4); border-radius: var(--radius-3); border: 1px solid var(--color-border-strong); background: var(--color-surface-1); }
+.feedback__glyph { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-text); display: grid; place-items: center; font: 700 14px/1 var(--font-mono); flex: 0 0 auto; }
+.feedback--partial .feedback__glyph { border-radius: var(--radius-1); }
+.feedback__title { font-weight: var(--weight-semibold); }
+.feedback .score { margin-top: var(--space-2); }
+.compare-row { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
+.vignette { font-size: var(--font-size-body); line-height: var(--leading-body); }
+.vignette dt { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-top: var(--space-3); }
+.vignette dd { margin: 2px 0 0; }
+.ready { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--text-sm); padding: var(--space-3) var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+.ready .dot { margin: 0; }
+.ready .num { color: var(--color-text-secondary); }
+.outline { display: flex; flex-direction: column; gap: 1px; }
+.outline__row { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--space-3); align-items: center; min-height: 32px; padding: 0 var(--space-3); font-size: var(--text-sm); border-radius: var(--radius-2); color: var(--color-text); text-align: left; }
+.outline__row:hover { background: var(--color-row-hover); }
+.outline__row.is-current { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }
+.outline__row .n { font-family: var(--font-mono); color: var(--color-text-secondary); font-size: var(--text-xs); }
+.outline__row .meta { color: var(--color-text-secondary); font-size: var(--text-xs); font-family: var(--font-mono); }
+.hotspots { display: flex; flex-direction: column; gap: var(--space-1); }
+.hotspot { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--space-3); align-items: center; min-height: var(--target); padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-2); text-align: left; color: var(--color-text); }
+.hotspot:hover { background: var(--color-row-hover); }
+.hotspot__n { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 700 11px/1 var(--font-mono); background: var(--ann-1); color: #111; box-shadow: 0 0 0 1px rgba(0,0,0,.7); }
+.hotspot__t { font-size: var(--text-sm); }
+.hotspot__t small { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.queue { display: flex; flex-direction: column; gap: 1px; }
+.queue__row { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; min-height: var(--target); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-divider); font-size: var(--text-sm); }
+.queue__row .due { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.queue__row .why { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.scorecard { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+.scorecard dl { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); font-size: var(--text-sm); margin: 0; }
+.scorecard dt { color: var(--color-text-secondary); } .scorecard dd { font-family: var(--font-mono); text-align: right; }
+.diff { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.diff .chip { min-height: var(--target); font-size: var(--text-sm); padding: 0 var(--space-4); }
+.timer { display: inline-flex; align-items: center; gap: var(--space-3); font-family: var(--font-mono); font-size: var(--text-lg); }
+.more > summary { padding: 0 var(--space-3); }
+.more .section__body { padding: var(--space-2) var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-3); }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: var(--target); font-size: var(--text-sm); }
+.settings-row .hint { color: var(--color-text-secondary); font-size: var(--text-xs); display: block; }
+.gradebook { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+.gradebook--fail .dot { border-radius: 1px; }
+.cme { display: flex; flex-direction: column; gap: var(--space-3); }
+.cme .check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--text-sm); min-height: var(--target); }
+.cme .check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--color-text); flex: 0 0 auto; }
+.disclosure { font-size: var(--text-xs); color: var(--color-text-secondary); padding: var(--space-3) var(--space-4); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-2); }
+.only-audience { display: none; }
+html[data-audience="ms"] .only-ms, html[data-audience="ug"] .only-ug, html[data-audience="res"] .only-res, html[data-audience="cme"] .only-cme { display: block; }
+html[data-audience="ms"] .only-ms.row, html[data-audience="cme"] .only-cme.row, html[data-audience="ug"] .only-ug.row, html[data-audience="res"] .only-res.row { display: flex; }
+.only-ruo { display: none; } html[data-product="ruo"] .only-ruo { display: block; }
+html[data-product="ruo"] .not-ruo { display: none !important; }
+
+/* Laptop / tablet-landscape task bar (drawer closed by default) */
+.taskbar { display: none; grid-area: taskbar; align-items: center; gap: var(--space-4); padding: 0 var(--space-5); background: var(--color-surface-0); border-top: 1px solid var(--color-border); z-index: var(--z-bars); contain: layout paint style; }
+.taskbar__step { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); white-space: nowrap; }
+.taskbar__stem { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-medium); }
+.taskbar .btn { flex: 0 0 auto; }
+
+/* Canvas additions */
+.slide { position: absolute; inset: 0; width: 100%; height: 100%; display: block; background: var(--color-canvas-bg); }
+.slide .glass { fill: #f4f1f2; }
+.lyr { pointer-events: none; }
+.lyr[hidden] { display: none; }
+.hud--tl .chip { color: var(--color-text-on-canvas); }
+.hud .hud__item { font-family: var(--font-mono); }
+.hud__identity { font-family: var(--font-ui); }
+.hud__learnslide { font-family: var(--font-ui); font-weight: var(--weight-semibold); }
+.navigator__pan button { opacity: 1; background: rgba(0,0,0,.45); }   /* SC 2.5.7: visible always on this concept */
+.navigator__pan { pointer-events: none; }
+.navigator__thumb svg { display: block; }
+.navigator__labelimg { display: none; }
+html[data-product="clinical"] .navigator__labelimg, html[data-product="dx"] .navigator__labelimg { display: block; }
+.canvas-area.is-soft .slide-art { filter: blur(1.4px); }
+.canvas-area.is-ihc .slide-art .tissue-he { display: none; }
+.canvas-area:not(.is-ihc) .slide-art .tissue-ihc { display: none; }
+.canvas-area.is-cvd .slide-art { filter: url(#f-deutan); }
+.canvas-area.is-soft.is-cvd .slide-art { filter: url(#f-deutan) blur(1.4px); }
+.tile-err { display: none; }
+.canvas-area.has-tileerr .tile-err { display: block; }
+.sheet-toggle { display: none; }
+
+/* Modal/dialog layer */
+.modal-layer[hidden] { display: none; }
+.modal-layer { align-content: start; }
+.palette-layer { position: absolute; top: var(--layout-topbar); left: 50%; transform: translateX(-50%); z-index: var(--z-palette); padding-top: var(--space-3); }
+.palette-layer[hidden] { display: none; }
+.dialog .candidate { grid-template-columns: auto 1fr auto; }
+.about { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--text-sm); }
+.about .lbl { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.keyfocus-note { font-size: var(--text-xs); color: var(--color-text-secondary); }
+
+/* Author view */
+.rec { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border-strong); border-radius: var(--radius-3); background: var(--color-surface-1); font-size: var(--text-sm); }
+.rec-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-text); animation: rec-blink 1.2s steps(2) infinite; }
+@keyframes rec-blink { to { opacity: .2; } }
+.rec__time { font-family: var(--font-mono); margin-left: auto; }
+.rec__sig { display: flex; gap: var(--space-2); }
+.rec__sig .k { font-family: var(--font-mono); font-size: var(--text-2xs); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; color: var(--color-text-secondary); }
+.rec__sig .k.is-on { color: var(--color-text); border-color: var(--color-text); }
+.steps-edit { display: flex; flex-direction: column; gap: 1px; }
+.step-edit { display: grid; grid-template-columns: 40px 1fr auto; gap: var(--space-3); align-items: center; min-height: 48px; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-divider); font-size: var(--text-sm); }
+.step-edit__thumb { width: 40px; height: 26px; background: var(--grey-22); border: 1px solid var(--color-border-strong); border-radius: 2px; overflow: hidden; }
+.step-edit__thumb svg { width: 100%; height: 100%; }
+.step-edit small { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.cand-edit { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-2) var(--space-3); align-items: start; }
+.cand-edit .input { min-height: 32px; }
+.cand-edit .candidate__letter { margin-top: 4px; }
+.blocker { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-text); border-radius: var(--radius-2); font-size: var(--text-sm); }
+.blocker .glyph { font-family: var(--font-mono); font-weight: 700; }
+.checks { display: flex; flex-direction: column; gap: 1px; }
+.checks__row { display: grid; grid-template-columns: 18px 1fr auto; gap: var(--space-3); align-items: center; min-height: 32px; font-size: var(--text-sm); }
+.checks__row .dot { margin: 0; }
+.checks__row .meta { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+
+/* Director view (a dashboard page, not the viewer shell) */
+.director { display: none; height: calc(100dvh - var(--concept-h) - var(--demo-h) - var(--host-h)); min-height: 520px; grid-template-columns: var(--layout-rail) minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr); grid-template-areas: "topbar topbar" "rail main"; background: var(--color-surface--1); overflow: hidden; }
+html[data-view="director"] .director { display: grid; }
+html[data-view="director"] .app { display: none; }
+.director .rail { grid-area: rail; }
+.director__main { grid-area: main; overflow: auto; padding: var(--space-6); display: grid; grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr); gap: var(--space-6); align-content: start; }
+.director__main h2 { font-size: var(--text-2xl); }
+.director__main .card h3 { font-size: var(--text-lg); margin-bottom: var(--space-3); }
+.heat { position: relative; aspect-ratio: 15 / 8; background: var(--color-canvas-bg); border-radius: var(--radius-2); overflow: hidden; border: 1px solid var(--color-border-strong); }
+.heat svg { width: 100%; height: 100%; display: block; }
+.heat__legend { position: absolute; left: var(--space-3); bottom: var(--space-3); display: flex; gap: var(--space-4); padding: var(--space-2) var(--space-3); background: var(--color-hud-backdrop); border-radius: var(--radius-1); font-size: var(--text-xs); color: var(--color-text-on-canvas); }
+.bars { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--text-sm); }
+.bars .bar { height: 10px; background: var(--color-border); border-radius: 2px; position: relative; overflow: hidden; }
+.bars .bar span { position: absolute; inset: 0 auto 0 0; width: var(--value); background: var(--color-text-secondary); }
+.bars .bar span.exp { background: var(--color-text); }
+.bars .lbl { color: var(--color-text-secondary); white-space: nowrap; }
+.bars .num { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.guard { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); font-size: var(--text-sm); }
+
+/* Rationale (review document under the app) */
+.rationale { padding: var(--space-6) var(--space-6) var(--space-12); background: var(--color-surface--1); color: var(--color-text); max-width: 1200px; }
+.rationale > details > summary { font-size: var(--text-xl); font-weight: var(--weight-semibold); min-height: var(--target); display: flex; align-items: center; gap: var(--space-3); }
+.rationale > details > summary::before { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
+.rationale > details[open] > summary::before { transform: rotate(45deg); }
+.rationale h3 { font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-3); }
+.rationale p, .rationale li { font-size: var(--font-size-body); line-height: var(--leading-body); max-width: 80ch; }
+.rationale ul, .rationale ol { padding-left: 1.4em; }
+.rationale ul li { list-style: disc; } .rationale ol li { list-style: decimal; }
+.rationale li { margin: 4px 0; }
+.rationale .table td, .rationale .table th { vertical-align: top; }
+.rationale .table { max-width: none; }
+.rationale code { font-size: .9em; }
+
+/* ---------------------------------------------------------------------------
+   Responsive: the concept's own collapse rules on top of base.css
+   ------------------------------------------------------------------------- */
+/* 4K */
+@media (min-width: 3200px) {
+  .phase { min-height: 68px; }
+  .task__title { font-size: var(--text-3xl); }
+}
+/* Laptop and tablet landscape (1080–1599): dock → drawer, closed by default; a one-line task bar carries the step */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  :root { --layout-rail: 64px; --layout-dock: 360px; --taskbar-h: 44px; }
+  .app { grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--taskbar-h) var(--layout-strip); grid-template-areas: "topbar topbar topbar" "rail canvas dock" "taskbar taskbar taskbar" "strip strip strip"; }
+  .app.dock-open .dock { bottom: calc(var(--layout-strip) + var(--taskbar-h)); }
+  .taskbar { display: flex; }
+  .phase__label { display: none; }
+  .phase { min-height: 48px; }
+  .phase__sub { display: none; }
+  .rail__phase-tools-h { display: none; }
+}
+/* Tablet portrait (600–1079): step rail → bottom flow bar; task card → bottom sheet (peek / expanded) */
+@media (min-width: 600px) and (max-width: 1079px) {
+  .app.dock-open .dock { max-height: var(--layout-sheet-max); }
+  .app.dock-open.sheet-peek .dock { max-height: 196px; }
+  .app.sheet-peek .task__body { overflow: hidden; }
+  .sheet-toggle { display: inline-flex; }
+  .task__head { padding-top: var(--space-3); }
+  .task__cta { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+  .btn--cta { min-height: 52px; }
+  .hud { max-width: 40%; }
+}
+/* Phone (≤599): flow bar compact; sheet peek; strip hidden (sharp dot joins the HUD) */
+@media (max-width: 599px) {
+  .app.dock-open .dock { max-height: 60vh; }
+  .app.dock-open.sheet-peek .dock { max-height: 176px; }
+  .app.sheet-peek .task__body { overflow: hidden; }
+  .sheet-toggle { display: inline-flex; }
+  .flowbar .phase { min-width: 0; padding: 0 var(--space-3); }
+  .flowbar .phase:not(.is-current) .phase__text { display: none; }
+  .flowbar .phase__sub { display: none; }
+  .flowbar .tool--contextual { display: none !important; }
+  .task__title { font-size: var(--text-xl); }
+  .task__head { padding: var(--space-3) var(--space-4) var(--space-2); }
+  .task__body { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+  .task__cta { padding: var(--space-3) var(--space-4); }
+  .btn--cta { min-height: 52px; font-size: var(--text-lg); }
+  .player { grid-template-columns: auto auto 1fr auto; }
+  .player .player__transcript { display: none; }
+  .concept .concept__angle, .concept .concept__date { display: none; }
+  .concept { font-size: var(--text-xs); padding: 0 var(--space-3); gap: var(--space-2); }
+  .director__main { grid-template-columns: 1fr; padding: var(--space-4); }
+  .confidence { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topbar .stepper__dots { display: none; }
+  .topbar__identity .accession { font-size: var(--text-md); }
+}
+@media (max-width: 1079px) {
+  .director { grid-template-columns: minmax(0, 1fr); grid-template-areas: "topbar" "main"; }
+  .director .rail { display: none; }
+}
+/* Short viewports */
+@media (max-height: 760px) { .phase { min-height: 48px; } .phase__sub { display: none; } }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#canvas">Skip to slide</a>
+<!-- Icon sprite (inline, no network) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5v14l12-7z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14M19 5 8 12l11 7z"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14M5 5l11 7-11 7z"/></symbol>
+  <symbol id="i-cc" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10.5 10.2A2.2 2.2 0 1 0 10.5 13.8M17 10.2A2.2 2.2 0 1 0 17 13.8"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M12 2 9 5M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3"/></symbol>
+  <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+  <symbol id="i-polygon" viewBox="0 0 24 24"><path d="M6 8 14 4l6 6-3 9H7L4 13z"/><circle cx="6" cy="8" r="1.5"/><circle cx="14" cy="4" r="1.5"/><circle cx="20" cy="10" r="1.5"/><circle cx="17" cy="19" r="1.5"/><circle cx="7" cy="19" r="1.5"/><circle cx="4" cy="13" r="1.5"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8a2 2 0 0 0-3-3L5 16zM14 6l3 3"/></symbol>
+  <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17 17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6A3 3 0 0 0 13.4 13.4M9 5.3A10 10 0 0 1 22 12s-1.3 2.3-3.5 4.2M6.5 6.5C3.6 8.5 2 12 2 12s4 7 10 7a9.8 9.8 0 0 0 4.5-1"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5zM2 12l10 5 10-5M2 16l10 5 10-5"/></symbol>
+  <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="8" y="8" width="8" height="8" rx="1"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+  <symbol id="i-snapshot" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></symbol>
+  <symbol id="i-labels" viewBox="0 0 24 24"><path d="M3 5h11l4 4-4 4H3zM3 17h8"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h1M10 10h1M14 10h1M18 10h0M6 14h12"/></symbol>
+  <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h7"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h12l-2 4 2 4H5"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
+
+<!-- Review-only concept header -->
+<header class="concept" aria-label="Concept header (review only)">
+  <span class="grow">Screen: <b>Education module — guided case and assessment (Stoipath Learn)</b> <span class="sep">·</span> <span class="concept__angle">Angle: <b>Task-flow</b> — step rail, one primary action per step, progressive disclosure; pen and touch first, scaling up to desktop</span> <span class="sep">·</span> <span class="concept__date">Concept C · 2026-10-26</span></span>
+  <div class="segmented" role="radiogroup" aria-label="View">
+    <button class="segmented__item" role="radio" aria-checked="true" data-view="learner">Learner</button>
+    <button class="segmented__item" role="radio" aria-checked="false" data-view="author">Author (faculty)</button>
+    <button class="segmented__item" role="radio" aria-checked="false" data-view="director">Director analytics</button>
+  </div>
+</header>
+
+<!-- Simulated LMS host chrome (Canvas, LTI 1.3 iframe placement). Host chrome, not Stoipath. -->
+<div class="host" aria-label="Simulated LMS host frame (review only)">
+  <span class="host__brand">Canvas</span>
+  <span class="host__crumb">PATH 601 · Module 3 · Assignment: Sentinel lymph node case <span data-synthetic>(synthetic course)</span></span>
+  <span class="host__note">LTI 1.3 launch · cookieless via Platform Storage · iframe 100 % × 100 %</span>
+</div>
+
+<!-- ================================================================ APP ===== -->
+<div class="app dock-open sheet-peek" id="app">
+  <!-- A. Top bar -->
+  <header class="topbar region" role="banner">
+    <div class="topbar__slot-badge">
+      <button class="badge badge--learn" data-live="launch:product" data-action="about" aria-label="Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About">LEARN</button>
+      <button class="badge badge--ruo" data-live="launch:product" data-action="about" aria-label="Stoipath Viewer. For Research Use Only. Not for use in diagnostic procedures. Open About">RUO</button>
+      <button class="badge badge--clinical" data-live="launch:product" data-action="about" aria-label="Stoipath Clinical-IH. In-house laboratory-validated tool. Open About">CLINICAL-IH</button>
+      <button class="badge badge--dx" data-live="launch:product" data-action="about" aria-label="Stoipath Dx. Cleared configuration. Open About">DX</button>
+      <span class="topbar__label"><span class="badge-string badge-string--learn" data-live="launch:product"></span><span class="badge-string badge-string--ruo"></span><span class="badge-string badge-string--clinical"></span><span class="badge-string badge-string--dx"></span></span>
+    </div>
+    <div class="topbar__identity">
+      <span class="identity-learn title" id="module-title" data-live="lti">Sentinel lymph node: finding the metastasis</span>
+      <span class="identity-learn stepper topbar__step" data-live="lti:step"><span id="step-label">Step 4 of 9 · Identify the metastasis</span><span class="stepper__dots" id="step-dots" aria-hidden="true"></span></span>
+      <span class="identity-clin"><span class="accession" data-live="launch:accession" data-synthetic>AP-26-04417</span><span class="meta">A1-1 · H&amp;E · <span data-synthetic>DOE, JANE · 1958 · synthetic</span></span><span class="chip chip--worklist" data-live="lis:worklist">In review</span></span>
+    </div>
+    <div class="topbar__slot-mode">
+      <span class="chip chip--purpose" data-live="launch:purposeOfUse">Consultation · preliminary only</span>
+      <span class="chip chip--tier" id="tier-chip" data-live="telemetry:tier" hidden>Tier 2 · 60 Hz</span>
+      <button class="btn btn--icon btn--ghost" data-action="keymap" aria-label="Keyboard map, shortcut ?"><svg class="icon"><use href="#i-keyboard"/></svg></button>
+      <button class="btn btn--icon btn--ghost" data-action="palette" aria-label="Command palette, shortcut Control K"><svg class="icon"><use href="#i-search"/></svg></button>
+      <button class="btn btn--icon btn--ghost" data-action="settings" aria-label="Settings and accessibility"><svg class="icon"><use href="#i-gear"/></svg></button>
+      <span class="mode mode--nav" data-live="state.render_mode">NAV</span>
+    </div>
+  </header>
+
+  <!-- C. Step rail (replaces the tool rail; tools are disclosed per phase) -->
+  <nav class="rail flowrail region" aria-label="Task steps and tools">
+    <ol class="flow" id="flow" data-live="lti:assignment"></ol>
+    <div class="rail__divider"></div>
+    <div class="rail__phase-tools-h" id="tools-h">Tools for this step</div>
+    <div class="rail__tools" id="rail-tools" role="toolbar" aria-label="Tools for this step" aria-orientation="vertical" data-live="commands">
+      <button class="tool tool--contextual tool--open tool--screen tool--examine tool--decide tool--complete" aria-pressed="true" aria-label="Select or pan, shortcut V"><svg class="icon"><use href="#i-pan"/></svg><span class="tool__key">V</span></button>
+      <button class="tool tool--contextual tool--open tool--screen tool--examine tool--complete" aria-label="Fit whole slide, shortcut 0"><svg class="icon"><use href="#i-fit"/></svg><span class="tool__key">0</span></button>
+      <button class="tool tool--contextual tool--screen" id="tool-labels" aria-pressed="false" aria-label="Structure labels layer, shortcut Shift Q"><svg class="icon"><use href="#i-labels"/></svg><span class="tool__key">⇧Q</span></button>
+      <button class="tool tool--contextual tool--examine tool--decide" aria-label="Measure length in micrometres, shortcut M"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__key">M</span></button>
+      <button class="tool tool--contextual tool--decide tool--drawing" aria-label="Point marker, shortcut T"><svg class="icon"><use href="#i-point"/></svg><span class="tool__key">T</span></button>
+      <button class="tool tool--contextual tool--decide tool--drawing" aria-label="Polygon, click to place vertices, shortcut P"><svg class="icon"><use href="#i-polygon"/></svg><span class="tool__key">P</span></button>
+      <button class="tool tool--contextual tool--decide tool--drawing" aria-label="Freehand with pen pressure, shortcut F"><svg class="icon"><use href="#i-pen"/></svg><span class="tool__key">F</span></button>
+      <button class="tool tool--contextual tool--decide" aria-label="Undo, shortcut Control Z"><svg class="icon"><use href="#i-undo"/></svg><span class="tool__key">⌃Z</span></button>
+      <button class="tool tool--contextual tool--decide" data-action="candidates" aria-label="Keyboard and text alternative for region marking, shortcut Shift Enter"><svg class="icon"><use href="#i-text"/></svg><span class="tool__key">⇧↵</span></button>
+      <button class="tool tool--contextual tool--examine tool--decide tool--complete" aria-label="Bookmark this view, shortcut B"><svg class="icon"><use href="#i-bookmark"/></svg><span class="tool__key">B</span></button>
+      <button class="tool tool--contextual tool--examine tool--decide" id="tool-overlays" aria-pressed="true" aria-label="Show or hide overlays, shortcut H"><svg class="icon"><use href="#i-eye"/></svg><span class="tool__key">H</span></button>
+      <button class="tool tool--contextual tool--examine" aria-label="Compare H&amp;E with IHC side by side, shortcut C"><svg class="icon"><use href="#i-compare"/></svg><span class="tool__key">C</span></button>
+      <button class="tool tool--contextual tool--complete" aria-label="Snapshot with scale bar and footer, shortcut Shift S"><svg class="icon"><use href="#i-snapshot"/></svg><span class="tool__key">⇧S</span></button>
+    </div>
+    <div class="rail__spacer"></div>
+    <div class="rail__tools">
+      <button class="tool" id="tool-all" aria-pressed="false" data-action="alltools" aria-label="Show all tools (expert mode)"><svg class="icon"><use href="#i-more"/></svg></button>
+    </div>
+  </nav>
+
+  <!-- B. Canvas -->
+  <main class="canvas-area region" id="canvas" role="application" tabindex="0" aria-roledescription="slide canvas" aria-label="Slide canvas, A1-1 H and E, 20 times, use arrow keys to pan and plus or minus to zoom" aria-describedby="live-polite" data-live="state">
+    <svg class="canvas slide" id="slide" viewBox="0 0 15000 8000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <!-- Tissue patterns in micrometre units. Colours are set from CSS so the IHC slide re-uses the geometry. -->
+        <pattern id="p-cortex" width="26" height="26" patternUnits="userSpaceOnUse"><rect class="p-bg" width="26" height="26"/><circle class="p-nuc" cx="5" cy="6" r="3.3"/><circle class="p-nuc" cx="17" cy="4" r="3.1"/><circle class="p-nuc" cx="12" cy="15" r="3.4"/><circle class="p-nuc" cx="22" cy="18" r="3"/><circle class="p-nuc" cx="4" cy="21" r="3.2"/></pattern>
+        <pattern id="p-follicle" width="22" height="22" patternUnits="userSpaceOnUse"><rect class="p-bg2" width="22" height="22"/><circle class="p-nuc" cx="4" cy="4" r="3"/><circle class="p-nuc" cx="12" cy="3" r="3"/><circle class="p-nuc" cx="19" cy="7" r="3"/><circle class="p-nuc" cx="8" cy="11" r="3.1"/><circle class="p-nuc" cx="16" cy="14" r="3"/><circle class="p-nuc" cx="3" cy="18" r="3"/><circle class="p-nuc" cx="11" cy="19" r="3"/></pattern>
+        <pattern id="p-gc" width="32" height="32" patternUnits="userSpaceOnUse"><rect class="p-bg3" width="32" height="32"/><circle class="p-nuc2" cx="7" cy="8" r="3.8"/><circle class="p-nuc2" cx="22" cy="6" r="3.6"/><circle class="p-nuc2" cx="14" cy="22" r="3.9"/><circle class="p-nuc2" cx="27" cy="25" r="3.5"/><circle class="p-tbm" cx="6" cy="24" r="6"/></pattern>
+        <pattern id="p-medulla" width="36" height="36" patternUnits="userSpaceOnUse"><rect class="p-bg3" width="36" height="36"/><rect class="p-cord" x="0" y="6" width="36" height="9"/><rect class="p-cord" x="0" y="24" width="36" height="7"/><circle class="p-nuc" cx="6" cy="10" r="3.2"/><circle class="p-nuc" cx="20" cy="11" r="3.1"/><circle class="p-nuc" cx="30" cy="27" r="3.2"/><circle class="p-nuc" cx="12" cy="28" r="3"/><circle class="p-hist" cx="27" cy="19" r="4"/></pattern>
+        <pattern id="p-sinus" width="30" height="30" patternUnits="userSpaceOnUse"><rect class="p-bg4" width="30" height="30"/><circle class="p-hist" cx="8" cy="9" r="4.4"/><circle class="p-nuc" cx="22" cy="21" r="3"/></pattern>
+        <pattern id="p-met" width="44" height="44" patternUnits="userSpaceOnUse"><rect class="p-bg5" width="44" height="44"/><circle class="p-cyto" cx="12" cy="12" r="11"/><ellipse class="p-nuc3" cx="12" cy="12" rx="6" ry="5"/><circle class="p-cyto" cx="33" cy="16" r="10"/><ellipse class="p-nuc3" cx="34" cy="15" rx="5.5" ry="6"/><circle class="p-cyto" cx="20" cy="34" r="10.5"/><ellipse class="p-nuc3" cx="19" cy="34" rx="6.5" ry="5"/></pattern>
+        <pattern id="p-fat" width="160" height="160" patternUnits="userSpaceOnUse"><rect class="p-bg6" width="160" height="160"/><circle class="p-adip" cx="40" cy="40" r="36"/><circle class="p-adip" cx="118" cy="50" r="40"/><circle class="p-adip" cx="60" cy="120" r="38"/><circle class="p-adip" cx="135" cy="128" r="30"/></pattern>
+        <!-- Deuteranopia simulation (Machado 2009, severity 1.0) for the author-side CVD check -->
+        <filter id="f-deutan" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.367 0.861 -0.228 0 0  0.280 0.673 0.047 0 0  -0.012 0.043 0.969 0 0  0 0 0 1 0"/></filter>
+        <filter id="f-heat" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="120"/></filter>
+        <!-- The slide artwork, shared by the canvas, the navigator and the director heatmap -->
+        <symbol id="slide-art" viewBox="0 0 15000 8000" overflow="visible">
+          <rect class="glass" x="0" y="0" width="15000" height="8000"/>
+          <g class="slide-art-inner">
+            <path class="fat" d="M900 3000 C500 3600 500 4600 1000 5200 C1300 5600 1900 5500 2200 5200 L2300 4200 L2200 3100 C1800 2800 1200 2700 900 3000Z"/>
+            <path class="fat" d="M10800 7000 C11600 7500 12800 7600 13600 7000 C13900 6700 13700 6400 13300 6400 L11000 6500 C10700 6500 10500 6800 10800 7000Z"/>
+            <path class="cap" d="M1800 4000 C1800 2200 4200 950 7600 950 C11000 950 14150 2300 14150 4000 C14150 5700 11000 7050 7600 7050 C4200 7050 2900 6500 2400 5400 C2700 5000 2700 4800 1800 4000Z"/>
+            <path class="cx" d="M1930 4000 C1930 2330 4300 1080 7600 1080 C10900 1080 14020 2400 14020 4000 C14020 5600 10900 6920 7600 6920 C4300 6920 3000 6420 2520 5380 C2820 5000 2820 4780 1930 4000Z"/>
+            <path class="si" d="M2060 4000 C2060 2470 4400 1210 7600 1210 C10800 1210 13890 2500 13890 4000 C13890 5500 10800 6790 7600 6790 C4400 6790 3100 6330 2650 5350 C2920 4990 2920 4760 2060 4000Z" fill="none"/>
+            <path class="me" d="M2600 4000 C2700 3200 4200 2900 5600 3100 C6400 3300 6200 4800 5600 5200 C4600 5600 3300 5400 2800 4900 C2600 4700 2600 4300 2600 4000Z"/>
+            <g class="si-ch"><path d="M5800 3200 C7000 2800 8600 3200 9200 2600"/><path d="M6000 5000 C7200 5200 8600 4800 9500 5400"/><path d="M9800 2400 C10800 2200 11400 2900 12200 3100"/><path d="M9900 5600 C10900 5900 11800 5300 12800 5000"/></g>
+            <g class="fo"><circle cx="4300" cy="1900" r="430"/><circle cx="6300" cy="1750" r="480"/><circle cx="8600" cy="1800" r="400"/><circle cx="10700" cy="2100" r="470"/><circle cx="12700" cy="3500" r="420"/><circle cx="12500" cy="5000" r="440"/><circle cx="10600" cy="6050" r="470"/><circle cx="8300" cy="6200" r="430"/><circle cx="6100" cy="6150" r="460"/><circle cx="4200" cy="5900" r="380"/><circle cx="7400" cy="3900" r="520"/><circle cx="9600" cy="4300" r="480"/></g>
+            <g class="gc"><circle cx="4300" cy="1900" r="210"/><circle cx="6300" cy="1750" r="240"/><circle cx="8600" cy="1800" r="200"/><circle cx="10700" cy="2100" r="230"/><circle cx="12700" cy="3500" r="200"/><circle cx="12500" cy="5000" r="210"/><circle cx="10600" cy="6050" r="230"/><circle cx="8300" cy="6200" r="210"/><circle cx="6100" cy="6150" r="220"/><circle cx="7400" cy="3900" r="260"/><circle cx="9600" cy="4300" r="240"/></g>
+            <g class="trab"><path d="M7600 1000 L7500 1900"/><path d="M11200 1500 L10700 2500"/><path d="M13900 4800 L13000 4600"/><path d="M9000 6950 L9100 6100"/><path d="M4200 6900 L4800 6200"/></g>
+            <g class="vessel"><circle cx="2050" cy="4300" r="140"/><circle cx="2050" cy="4300" r="80" class="lumen"/><circle cx="2250" cy="3800" r="90"/><circle cx="2250" cy="3800" r="45" class="lumen"/></g>
+            <!-- Metastatic focus: subcapsular sinus, right pole, ~1.2 × 0.9 mm cluster of large cohesive cells -->
+            <path class="mt" d="M12000 2250 C12300 1850 13050 1950 13250 2300 C13500 2700 13300 3050 12900 3100 C12500 3150 12050 3000 11950 2700 C11900 2500 11900 2380 12000 2250Z"/>
+            <circle class="mt" cx="11700" cy="2150" r="110"/><circle class="mt" cx="13450" cy="2650" r="90"/>
+          </g>
+        </symbol>
+      </defs>
+      <g class="slide-art"><use href="#slide-art" x="0" y="0" width="15000" height="8000"/></g>
+
+      <!-- Overlays (GPU layers in the product; SVG here). Strokes are non-scaling so they keep screen width at any zoom. -->
+      <g class="lyr" id="lyr-trace" hidden data-live="telemetry:viewChanged"><path d="M3000 4000 C5000 2200 7400 1500 9400 1600 S12300 2200 12900 2700 S12500 3400 12000 3300" fill="none" stroke="var(--ann-1)" stroke-opacity=".75" stroke-width="3" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"/></g>
+      <g class="lyr" id="lyr-expert" hidden data-live="layers:expertPath">
+        <g filter="url(#f-heat)" opacity=".55"><circle cx="7600" cy="1500" r="700" fill="var(--ann-6)"/><circle cx="10200" cy="1900" r="800" fill="var(--ann-6)"/><circle cx="12600" cy="2600" r="1000" fill="var(--ann-6)"/><circle cx="13700" cy="4000" r="600" fill="var(--ann-6)"/><circle cx="12700" cy="5700" r="600" fill="var(--ann-6)"/><circle cx="7600" cy="6700" r="600" fill="var(--ann-6)"/><circle cx="3100" cy="4100" r="500" fill="var(--ann-6)"/></g>
+        <path d="M3000 4000 C4000 2200 6000 1300 8400 1350 S11200 1700 12600 2500 S13900 3600 13700 4600 S12400 6500 9000 6900 S5000 6600 3200 5000" fill="none" stroke="var(--ann-6)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      </g>
+      <g class="lyr" id="lyr-key" hidden data-live="layers:answerKey">
+        <path d="M12000 2250 C12300 1850 13050 1950 13250 2300 C13500 2700 13300 3050 12900 3100 C12500 3150 12050 3000 11950 2700 C11900 2500 11900 2380 12000 2250Z" fill="var(--ann-3)" fill-opacity=".14" stroke="var(--ann-halo-dark)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+        <path d="M12000 2250 C12300 1850 13050 1950 13250 2300 C13500 2700 13300 3050 12900 3100 C12500 3150 12050 3000 11950 2700 C11900 2500 11900 2380 12000 2250Z" fill="none" stroke="var(--ann-3)" stroke-width="2" stroke-dasharray="7 4" vector-effect="non-scaling-stroke"/>
+      </g>
+      <g class="lyr" id="lyr-mark" data-live="annotations">
+        <path d="M12250 2150 L12900 2050 L13500 2300 L13550 2800 L13100 3150 L12450 3100 L12200 2700Z" fill="var(--ann-5)" fill-opacity=".18" stroke="var(--ann-halo-light)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+        <path d="M12250 2150 L12900 2050 L13500 2300 L13550 2800 L13100 3150 L12450 3100 L12200 2700Z" fill="none" stroke="var(--ann-5)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      </g>
+      <g class="lyr" id="lyr-measure" hidden data-live="annotations:measurement">
+        <path d="M11950 2700 L13450 2250" stroke="var(--ann-halo-dark)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+        <path d="M11950 2700 L13450 2250" stroke="var(--ann-8)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+        <g class="ss" data-x="12700" data-y="2420"><rect x="-34" y="-22" width="68" height="18" rx="2" fill="rgba(20,20,20,.75)"/><text x="0" y="-9" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#f7f7f7">2.3 mm</text></g>
+      </g>
+      <g class="lyr" id="lyr-hotspots" hidden data-live="annotations:tour">
+        <g class="ss" data-x="7400" data-y="3900"><circle r="12" fill="var(--ann-1)" stroke="rgba(0,0,0,.7)"/><text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#111" font-family="system-ui, sans-serif">1</text></g>
+        <g class="ss" data-x="7600" data-y="1210"><circle r="12" fill="var(--ann-1)" stroke="rgba(0,0,0,.7)"/><text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#111" font-family="system-ui, sans-serif">2</text></g>
+        <g class="ss" data-x="4200" data-y="4200"><circle r="12" fill="var(--ann-1)" stroke="rgba(0,0,0,.7)"/><text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#111" font-family="system-ui, sans-serif">3</text></g>
+        <g class="ss" data-x="7600" data-y="1000"><circle r="12" fill="var(--ann-1)" stroke="rgba(0,0,0,.7)"/><text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#111" font-family="system-ui, sans-serif">4</text></g>
+      </g>
+      <g class="lyr" id="lyr-labels" hidden data-live="layers:labels">
+        <g class="ss" data-x="7400" data-y="3300"><rect x="-44" y="-10" width="88" height="20" rx="2" fill="rgba(20,20,20,.75)"/><text y="4" text-anchor="middle" font-size="11" fill="#f7f7f7" font-family="system-ui, sans-serif">Follicle</text></g>
+        <g class="ss" data-x="4100" data-y="4200"><rect x="-44" y="-10" width="88" height="20" rx="2" fill="rgba(20,20,20,.75)"/><text y="4" text-anchor="middle" font-size="11" fill="#f7f7f7" font-family="system-ui, sans-serif">Medulla</text></g>
+        <g class="ss" data-x="7600" data-y="1330"><rect x="-70" y="-10" width="140" height="20" rx="2" fill="rgba(20,20,20,.75)"/><text y="4" text-anchor="middle" font-size="11" fill="#f7f7f7" font-family="system-ui, sans-serif">Subcapsular sinus</text></g>
+        <g class="ss" data-x="7600" data-y="880"><rect x="-40" y="-10" width="80" height="20" rx="2" fill="rgba(20,20,20,.75)"/><text y="4" text-anchor="middle" font-size="11" fill="#f7f7f7" font-family="system-ui, sans-serif">Capsule</text></g>
+      </g>
+      <g class="lyr tile-err" aria-hidden="true"><rect x="12300" y="1900" width="256" height="256" fill="rgba(58,58,58,.35)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="12556" y="1900" width="256" height="256" fill="rgba(58,58,58,.35)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="12300" y="2156" width="256" height="256" fill="rgba(58,58,58,.35)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g>
+    </svg>
+
+    <!-- HUD: lightweight text in the corners, outside the central 50 % -->
+    <div class="hud hud--tl">
+      <span class="hud__item hud__learnslide" id="hud-slide" data-live="state.slides">A1-1 · H&amp;E <span class="hud__secondary" id="hud-licence">· CAMELYON16 · CC0</span></span>
+      <span class="hud__item hud__sharp indicator indicator--sharp" id="hud-sharp" data-live="events:tileSettled" aria-label="Sharp"><span class="indicator__glyph"></span></span>
+    </div>
+    <div class="hud hud--bl">
+      <span class="hud__item scalebar" data-live="state.views[0].scale_um_per_px"><span class="scalebar__bar" id="scalebar-bar" style="--scalebar-length:120px"></span><span class="scalebar__label" id="scalebar-label">200 µm</span></span>
+      <span class="hud__item hud__item--quiet hud__position" id="hud-pos" data-live="state.views[0].center_um">x 12.60 mm · y 2.60 mm</span>
+    </div>
+    <div class="hud hud--br">
+      <button class="hud__item magnification" id="hud-mag" data-live="state.views[0].scale_um_per_px" aria-label="Magnification 20 times, derived from micrometres per pixel. Press Enter to type a zoom"><span class="magnification__value" id="mag-value">20×</span><span class="magnification__line2" id="mag-line2">0.50 µm/px · derived</span></button>
+    </div>
+
+    <!-- F. Navigator: never auto-fades; pan buttons are the SC 2.5.7 alternative -->
+    <aside class="navigator" id="navigator" aria-label="Slide overview" data-live="state">
+      <div class="navigator__thumb">
+        <svg viewBox="0 0 15000 8000" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect width="15000" height="8000" fill="#353535"/><use href="#slide-art"/><rect id="nav-rect" class="navigator__viewport" x="0" y="0" width="1" height="1" fill="none" stroke="var(--color-canvas-viewport)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+        <div class="navigator__pan">
+          <button class="up" data-pan="0,-1" aria-label="Pan up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button>
+          <button class="left" data-pan="-1,0" aria-label="Pan left"><svg class="icon icon--sm"><use href="#i-left"/></svg></button>
+          <button class="right" data-pan="1,0" aria-label="Pan right"><svg class="icon icon--sm"><use href="#i-right"/></svg></button>
+          <button class="down" data-pan="0,1" aria-label="Pan down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button>
+        </div>
+      </div>
+      <div class="navigator__label"><span id="nav-label">A1-1 · overview · <kbd class="key">O</kbd> hides</span><span class="navigator__labelimg" data-live="launch:slideLabelText" data-synthetic aria-label="Slide label image (Tier 2)">AP-26-04417<br>A1-1 H&amp;E<br>▮▯▮▮▯▮▯</span></div>
+    </aside>
+
+    <!-- Banner slot (under the top bar) -->
+    <div class="banner-slot" id="banner-slot"></div>
+
+    <!-- Plates: never a blank canvas; these replace content only for named states -->
+    <div class="plate" id="plate-lti" hidden>
+      <div class="plate__card plate__card--blocking" role="alert">
+        <div class="plate__glyph">!</div>
+        <div class="plate__title">Your course could not start this assignment</div>
+        <p class="plate__text">Cookies are blocked and platform storage is unavailable. Your progress is safe in the course.</p>
+        <div class="plate__actions"><button class="btn btn--primary">Open in a new window</button><button class="btn btn--secondary" data-action="plate-off">Retry here</button></div>
+      </div>
+    </div>
+  </main>

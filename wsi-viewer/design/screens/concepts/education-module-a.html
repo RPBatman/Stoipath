@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Concept A · Canvas-maximal · Education module (Stoipath Learn)</title>
+<meta name="description" content="Competing design concept A (canvas-maximal) for the Stoipath Learn education module screen: guided case, assessment, authoring and cohort analytics. Interactive wireframe, synthetic content, 2026-10-26.">
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/base.css">
+<style>
+/* =============================================================================
+   Concept A · Canvas-maximal · page-scoped CSS (tokens and base.css do the rest)
+   Idea: the slide is the UI. Regions C (rail) and D (dock) are folded into
+   edge handles; everything the learner reads lives in ONE summoned surface
+   (the step card, bottom centre, like a caption track); tools are a transient
+   radial at the pointer; the course shell is a summoned right-edge drawer.
+   Top bar (A) and status strip (E) stay fixed: P4 and P9 are not negotiable.
+   ========================================================================== */
+:root { --concept-h: 28px; --demo-h: 36px; --drawer-w: 360px; --card-w: 760px; }
+html, body { height: auto; min-height: 100%; }
+body { overflow-x: hidden; }
+
+/* Concept header (review-only chrome above the app) */
+.concept-head { height: var(--concept-h); display: flex; align-items: center; gap: var(--space-5); padding: 0 var(--space-5); background: var(--color-surface--1); border-bottom: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
+.concept-head b { color: var(--color-text); font-weight: var(--weight-semibold); }
+.concept-head .tag { border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 5px; font-family: var(--font-mono); }
+.concept-head .spacer { flex: 1; }
+
+/* App frame: no rail, no dock. The canvas is the only grid column. */
+.app { --layout-rail: 0px; --layout-dock: 0px; height: calc(100dvh - var(--concept-h) - var(--demo-h)); }
+.app .topbar { gap: var(--space-5); }
+.topbar__identity .title { font-size: var(--font-size-body); }
+.step-compact { display: none; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-text-secondary); white-space: nowrap; }
+.topbar__slot-mode .chip--ctx { font-family: var(--font-ui); }
+.topbar .tool .icon { width: 18px; height: 18px; }
+
+/* Canvas: HUD offsets leave room for the step rail along the top edge */
+.canvas-area { --rail-h: 24px; }
+.hud--tl, .hud--tr, .navigator { top: calc(var(--rail-h) + var(--layout-hud-inset)); }
+#slide { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#slide .lvl { display: none; }
+#slide .lvl.is-on { display: block; }
+.canvas-area.is-soft #slide { filter: blur(1.4px); }           /* mock: magnified best-resident ancestor (S5) */
+.canvas-area.is-cached #slide { filter: blur(0.8px) saturate(.96); }
+.tile-miss { position: absolute; width: 128px; height: 128px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); outline: 1px dashed rgba(255,255,255,.35); outline-offset: -1px; pointer-events: none; display: none; }
+.canvas-area.has-tile-errors .tile-miss { display: block; }
+.canvas-area.hide-overlays .pin, .canvas-area.hide-overlays .ann, .canvas-area.hide-overlays .measure-label { display: none !important; }
+
+/* Tissue colour variables (synthetic H&E, swapped for the IHC slide) */
+.app, .rationale { --t-glass: #f4f0f0; --t-bg: #efd0dd; --t-cyto: #e9c2d3; --t-nuc: #4b3a8e; --t-nuc2: #5c4a9c; --t-caps: #e3aec3; --t-fib: #cf8fae; --t-sinus: #f6e7ee; --t-hist: #ead3df; --t-gc: #f0d9e3; --t-gcnuc: #8f7cc0; --t-mantle: #3f2f7a; --t-tcyto: #efcbd8; --t-tstroke: #d79fb8; --t-tnuc: #3a2b78; --t-tnucl: #1f1545; --t-vessel: #f8e6ec; --t-rbc: #e49aa9; --t-cortex: #d9a3c2; --t-med: #e8c2d5; --t-foll: #7a5fb0; --t-folgc: #c4aee0; --t-capsule: #c98bae; --t-fat: #f7f2f4; --t-focus: #f1d7e3; --t-focus-s: #e4a7c2; }
+#slide.is-ihc, .thumb--ihc { --t-bg: #e9ebf1; --t-cyto: #dfe3ec; --t-nuc: #8e9bc0; --t-nuc2: #9aa6c8; --t-caps: #d6d9e3; --t-fib: #c3c8d6; --t-sinus: #f1f2f6; --t-hist: #e4e7ef; --t-gc: #eceef4; --t-gcnuc: #b5bed6; --t-mantle: #8e9bc0; --t-tcyto: #8b4a1c; --t-tstroke: #5b3614; --t-tnuc: #4a2c10; --t-tnucl: #2b1807; --t-vessel: #f3f4f7; --t-rbc: #d9c7bf; --t-cortex: #cfd4e0; --t-med: #e3e6ee; --t-foll: #aeb8d6; --t-folgc: #d7dcea; --t-capsule: #b6bdd0; --t-focus: #8b4a1c; --t-focus-s: #5b3614; }
+
+/* Annotation marks drawn "by the engine" (SVG here): constant screen-space strokes + halo */
+.ann { vector-effect: non-scaling-stroke; }
+.ann--halo-dark { stroke: var(--ann-halo-dark); stroke-width: 4px; fill: none; }
+.ann--halo-light { stroke: var(--ann-halo-light); stroke-width: 4.5px; fill: none; }
+.ann--learner { stroke: var(--ann-3); stroke-width: 2px; fill: rgba(240,228,66,.14); }
+.ann--key { stroke: var(--ann-4); stroke-width: 2.5px; fill: none; stroke-dasharray: 8 5; }
+.ann--measure { stroke: var(--ann-8); stroke-width: 2px; fill: none; }
+.ann--expert-path { stroke: var(--ann-6); stroke-width: 3px; fill: none; }
+.ann--cohort-path { stroke: var(--ann-5); stroke-width: 2.5px; fill: none; stroke-dasharray: 10 6; }
+.heat circle { fill: url(#heatg); }
+
+/* HTML overlays positioned by the mock from slide coordinates (GPU layers in the product) */
+.pin { position: absolute; transform: translate(-50%, -50%); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 700 12px/1 var(--font-mono); color: var(--grey-6); background: var(--ann-1); box-shadow: 0 0 0 2px rgba(0,0,0,.85), 0 1px 3px rgba(0,0,0,.5); pointer-events: auto; z-index: var(--z-hud); }
+.pin--letter { background: var(--ann-3); }
+.pin--path { width: 20px; height: 20px; background: var(--ann-6); font-size: 10px; }
+.pin.is-focus-ring, .pin:focus-visible { box-shadow: 0 0 0 2px var(--grey-6), 0 0 0 4px var(--grey-95); }
+.measure-label { position: absolute; transform: translate(-50%, -140%); padding: 1px 6px; font: 600 12px/1.3 var(--font-mono); color: var(--grey-6); background: var(--ann-8); border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.8); pointer-events: none; z-index: var(--z-hud); white-space: nowrap; }
+
+/* Step rail: the stepper folded into a 4 px bar along the canvas top edge (24 px targets) */
+.steprail { position: absolute; top: 0; left: 0; right: 0; height: var(--rail-h); display: flex; gap: 2px; padding: 0 var(--layout-hud-inset); z-index: var(--z-hud); pointer-events: none; }
+.steprail__tick { pointer-events: auto; position: relative; flex: 1 1 0; min-width: 24px; height: 24px; background: transparent; border-radius: 0; }
+.steprail__tick::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--grey-39); border-radius: 0 0 2px 2px; }
+.steprail__tick.is-done::before { background: var(--grey-72); }
+.steprail__tick[aria-current="step"]::before { background: var(--grey-95); height: 6px; }
+.steprail__tick.is-item::after { content: ""; position: absolute; left: 50%; top: 9px; width: 6px; height: 6px; border: 1.5px solid var(--grey-83); background: var(--color-canvas-bg); transform: translateX(-50%) rotate(45deg); }
+.steprail__tick:hover::before, .steprail__tick:focus-visible::before { background: var(--grey-95); }
+.steprail__tick .tt { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 2px 6px; border-radius: 2px; background: var(--color-surface-inverse); color: var(--color-text-inverse); font-size: var(--text-xs); white-space: nowrap; display: none; }
+.steprail__tick:hover .tt, .steprail__tick:focus-visible .tt { display: block; }
+.steprail__tick:focus-visible { box-shadow: none; }
+.steprail__tick:focus-visible::before { box-shadow: 0 0 0 1px var(--grey-6), 0 0 0 3px var(--grey-95); }
+
+/* Step card: the ONE summoned reading surface (caption track + item engine), bottom centre */
+.stepcard { position: absolute; left: 50%; bottom: var(--layout-hud-inset); transform: translateX(-50%); width: min(var(--card-w), calc(100% - 400px)); background: var(--color-surface-0); border: 1px solid var(--color-border-strong); border-radius: var(--radius-4); box-shadow: var(--shadow-3); z-index: var(--z-drawer); display: flex; flex-direction: column; user-select: text; -webkit-user-select: text; touch-action: auto; }
+.stepcard__head { display: flex; align-items: center; gap: var(--space-2); min-height: 36px; padding: 0 var(--space-3) 0 var(--space-5); border-bottom: 1px solid var(--color-border); }
+.stepcard__title { flex: 1 1 auto; min-width: 0; font-size: var(--text-sm); font-weight: var(--weight-semibold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stepcard__title .kind { color: var(--color-text-secondary); font-weight: var(--weight-regular); }
+.stepcard__ctrls { display: flex; align-items: center; gap: 1px; flex: 0 0 auto; }
+.stepcard__ctrls .tool { width: 28px; height: 28px; }
+.stepcard__ctrls .tool .icon { width: 16px; height: 16px; }
+.stepcard__body { padding: var(--space-4) var(--space-5) var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); max-height: 42vh; overflow: auto; }
+.caption { font-size: var(--text-lg); line-height: var(--leading-body); }
+.caption b { font-weight: var(--weight-semibold); }
+.caption--vignette { font-style: italic; }
+.narration { display: flex; align-items: center; gap: var(--space-4); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.narration .progress-bar { flex: 1; }
+.hotspots { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.hotspots .legend__item { border: 1px solid var(--color-border); font-size: var(--text-sm); }
+.hotspots .legend__item .n { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 700 10px/1 var(--font-mono); color: var(--grey-6); background: var(--ann-1); }
+.stepcard .item-card { padding: 0; border: 0; background: transparent; gap: var(--space-3); }
+.stepcard .item-card__stem { font-size: var(--text-xl); }
+.conf { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; font-size: var(--text-sm); color: var(--color-text-secondary); }
+.stepcard__foot { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.stepcard__foot .hint { font-size: var(--text-xs); color: var(--color-text-secondary); margin-right: auto; display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.stepcard[hidden] { display: none; }
+.card-handle { position: absolute; left: 50%; bottom: var(--layout-hud-inset); transform: translateX(-50%); min-height: var(--target-min); padding: 0 var(--space-5); display: inline-flex; align-items: center; gap: var(--space-3); background: var(--color-surface-0); border: 1px solid var(--color-border-strong); border-radius: var(--radius-full); font-size: var(--text-sm); color: var(--color-text); z-index: var(--z-drawer); }
+.card-handle[hidden] { display: none; }
+.dx-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.timer { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.unknown-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; }
+
+/* Edge handles: the folded chrome (always visible, 24 px wide, labelled with their key) */
+.handles { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: var(--space-3); z-index: var(--z-navigator); }
+.handle { writing-mode: vertical-rl; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); min-width: 28px; min-height: 104px; padding: var(--space-4) 4px; background: var(--color-surface-0); color: var(--color-text-secondary); border: 1px solid var(--color-border-strong); border-right: 0; border-radius: var(--radius-3) 0 0 var(--radius-3); font-size: var(--text-xs); white-space: nowrap; }
+.handle:hover { color: var(--color-text); background: var(--color-control-bg-hover); }
+.handle .key { writing-mode: horizontal-tb; }
+.app.drawer-open .handles { display: none; }
+
+/* Right-edge drawer: the course shell (module list, queue, credit, settings) or author / director panels */
+.drawer { position: absolute; top: 0; right: 0; bottom: 0; width: var(--drawer-w); display: flex; flex-direction: column; background: var(--color-surface-0); border-left: 1px solid var(--color-border-strong); box-shadow: var(--shadow-3); z-index: var(--z-drawer); user-select: text; -webkit-user-select: text; touch-action: auto; }
+.drawer[hidden] { display: none; }
+.drawer__head { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; padding: 0 var(--space-3) 0 var(--space-5); border-bottom: 1px solid var(--color-border); }
+.drawer__title { flex: 1; font-weight: var(--weight-semibold); font-size: var(--text-lg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drawer__body { flex: 1 1 auto; overflow: auto; min-height: 0; }
+.drawer__view { display: none; }
+.drawer__view.is-on { display: block; }
+.app.drawer-open .navigator { right: calc(var(--drawer-w) + var(--layout-hud-inset)); }
+.app.drawer-open .stepcard { left: calc((100% - var(--drawer-w)) / 2); }
+.app.drawer-open .hud--br { right: calc(var(--drawer-w) + var(--layout-hud-inset)); }
+.steplist .list__item { align-items: flex-start; gap: var(--space-3); min-height: 36px; padding: var(--space-2) var(--space-5); }
+.steplist .list__item .n { font-family: var(--font-mono); color: var(--color-text-secondary); width: 2ch; flex: 0 0 auto; }
+.steplist .list__item .lbl { flex: 1; min-width: 0; }
+.steplist .list__item .lbl small { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.steplist .list__item .st { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); flex: 0 0 auto; }
+.queue .list__item { align-items: flex-start; }
+.stat { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-4); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-2); background: var(--color-surface-1); font-size: var(--text-sm); }
+.stat .v { font-family: var(--font-mono); font-size: var(--text-xl); font-weight: var(--weight-semibold); grid-row: 1 / span 2; align-self: center; }
+.stat .k { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); padding: 0 var(--space-5); }
+.author-step { display: grid; grid-template-columns: 56px 1fr auto; gap: var(--space-3); align-items: start; padding: var(--space-3) var(--space-5); border-bottom: 1px solid var(--color-divider); }
+.author-step .thumb { width: 56px; height: 32px; background: var(--grey-22); border: 1px solid var(--color-border-strong); border-radius: 2px; overflow: hidden; }
+.author-step .thumb svg { width: 100%; height: 100%; }
+.author-step textarea.input { min-height: 44px; font-size: var(--text-sm); padding: var(--space-2) var(--space-3); }
+.author-step .meta { font-size: var(--text-xs); color: var(--color-text-secondary); font-family: var(--font-mono); }
+.cand-edit { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-2) var(--space-3); align-items: center; }
+.cand-edit .input { min-height: 28px; font-size: var(--text-sm); }
+.pub-check { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); }
+.pub-check .glyph { font-family: var(--font-mono); font-weight: 700; }
+
+/* Radial tool wheel (transient; pointer-anchored; a GPU layer in the product) */
+.radial { position: absolute; width: 0; height: 0; z-index: var(--z-sheet); }
+.radial[hidden] { display: none; }
+.radial__center { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); width: 84px; height: 84px; border-radius: 50%; background: var(--color-surface-2); border: 1px solid var(--color-border-strong); box-shadow: var(--shadow-3); display: grid; place-items: center; text-align: center; font-size: var(--text-xs); color: var(--color-text-secondary); padding: 6px; }
+.radial__center b { display: block; color: var(--color-text); font-size: var(--text-sm); }
+.radial__item { position: absolute; transform: translate(-50%, -50%); width: var(--target); height: var(--target); min-width: 40px; min-height: 40px; border-radius: 50%; background: var(--color-surface-2); border: 1px solid var(--color-border-strong); color: var(--color-text); display: grid; place-items: center; box-shadow: var(--shadow-2); }
+.radial__item:hover, .radial__item:focus-visible, .radial__item.is-hover { background: var(--color-control-bg-hover); }
+.radial__item .icon { width: 20px; height: 20px; }
+.radial__item .k { position: absolute; right: -2px; bottom: -4px; font: 700 9px/1 var(--font-mono); padding: 1px 3px; border-radius: 2px; background: var(--color-surface-inverse); color: var(--color-text-inverse); }
+
+/* Author recording bar */
+.recbar { position: absolute; left: 50%; bottom: var(--layout-hud-inset); transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-4); min-height: 44px; padding: 0 var(--space-5); background: var(--color-surface-0); border: 1px solid var(--color-border-strong); border-radius: var(--radius-full); box-shadow: var(--shadow-3); z-index: var(--z-drawer); font-size: var(--text-sm); white-space: nowrap; }
+.recbar[hidden] { display: none; }
+.recbar .rec { width: 10px; height: 10px; border-radius: 50%; background: var(--grey-95); box-shadow: 0 0 0 2px var(--grey-6); }
+.recbar .wave { display: inline-flex; align-items: center; gap: 2px; height: 20px; }
+.recbar .wave span { width: 3px; background: var(--color-text-secondary); border-radius: 1px; }
+.app.drawer-open .recbar { left: calc((100% - var(--drawer-w)) / 2); }
+
+/* Palette layer anchored to the top bar */
+.palette-layer { position: absolute; top: calc(var(--layout-topbar) + var(--space-4)); left: 50%; transform: translateX(-50%); z-index: var(--z-palette); }
+.palette-layer[hidden] { display: none; }
+.palette__item[aria-disabled="true"] { opacity: .55; }
+.modal-layer[hidden] { display: none; }
+.modal-layer .dialog { max-height: calc(100% - 48px); }
+.keymap-dialog { width: min(1040px, calc(100vw - 32px)); }
+.scrim { position: absolute; inset: 0; background: var(--color-backdrop); z-index: calc(var(--z-modal) - 1); }
+.scrim[hidden] { display: none; }
+
+/* Status strip: notice area reserves space; chips are neutral */
+.strip .indicator { padding-left: 0; }
+.strip .chip { min-height: 20px; }
+.strip__learn { display: inline-flex; align-items: center; gap: var(--space-3); }
+
+/* Bottom bar (tablet portrait / phone) */
+.bottombar .tool { flex: 1 1 0; height: 100%; max-width: 120px; }
+.bottombar .tool__label { font-size: var(--text-2xs); }
+
+/* Plates sit over the canvas, never over the badge/label (P4) */
+.plate .plate__card { max-width: 560px; }
+
+/* Demo controls strip (review-only; deliberately outside the product palette, like the live marker) */
+.demo { position: fixed; left: 0; right: 0; bottom: 0; height: var(--demo-h); display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-4); background: #1a0b1f; color: #f5d0fe; border-top: 1px solid #e879f9; font: 500 11px/1 var(--font-mono); overflow-x: auto; overflow-y: hidden; white-space: nowrap; z-index: 300; scrollbar-width: thin; }
+.demo .lbl { color: #e879f9; font-weight: 700; letter-spacing: .04em; }
+.demo label { display: inline-flex; align-items: center; gap: 4px; }
+.demo select, .demo button { background: #2a1233; color: #f5d0fe; border: 1px solid #a855f7; border-radius: 3px; font: inherit; height: 24px; padding: 0 6px; cursor: pointer; }
+.demo button[aria-pressed="true"] { background: #e879f9; color: #1a0b1f; }
+.demo .sep { width: 1px; height: 18px; background: #6b2a7a; flex: 0 0 auto; }
+
+/* Design rationale (below the app; collapsed by default) */
+.rationale { background: var(--color-surface--1); border-top: 1px solid var(--color-border); padding-bottom: calc(var(--demo-h) + var(--space-6)); }
+.rationale > summary { padding: var(--space-5) var(--space-6); font-weight: var(--weight-semibold); font-size: var(--text-lg); display: flex; align-items: center; gap: var(--space-4); }
+.rationale > summary::before { content: ""; width: 7px; height: 7px; border-right: 1.75px solid currentColor; border-bottom: 1.75px solid currentColor; transform: rotate(-45deg); }
+.rationale[open] > summary::before { transform: rotate(45deg); }
+.rationale__body { padding: 0 var(--space-6) var(--space-6); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6); max-width: 1400px; font-size: var(--text-md); line-height: var(--leading-body); }
+.rationale__body h3 { font-size: var(--text-xl); margin-bottom: var(--space-3); }
+.rationale__body ul, .rationale__body ol { padding-left: 1.2em; list-style: disc; display: flex; flex-direction: column; gap: var(--space-2); }
+.rationale__body ol { list-style: decimal; }
+.rationale__body .table th, .rationale__body .table td { padding: var(--space-2) var(--space-3); }
+.rationale__body .full { grid-column: 1 / -1; }
+.rationale__body a { color: var(--color-accent-text); }
+
+/* Focus demo helper: the first action in the card shows the ring in static shots */
+.is-focus { box-shadow: var(--focus-shadow); }
+
+/* -----------------------------------------------------------------------------
+   Breakpoints (principles §7 collapse order; this concept starts collapsed)
+   -------------------------------------------------------------------------- */
+@media (min-width: 3200px) {
+  :root { --drawer-w: 400px; --card-w: 960px; --concept-h: 32px; }
+  .caption { font-size: var(--text-xl); }
+  .stepcard__title { font-size: var(--text-md); }
+  .pin { width: 30px; height: 30px; font-size: 14px; }
+}
+@media (max-width: 1279px) {
+  .step-compact { display: inline; }
+}
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .stepcard { width: min(var(--card-w), calc(100% - 360px)); }
+}
+/* Tablet portrait: step card and drawer become sheets above the bottom bar; handles fold into the bar */
+@media (min-width: 600px) and (max-width: 1079px) {
+  .handles { display: none; }
+  .stepcard { left: 0; right: 0; bottom: 0; transform: none; width: auto; border-radius: var(--radius-5) var(--radius-5) 0 0; border-left: 0; border-right: 0; border-bottom: 0; max-height: var(--layout-sheet-max); }
+  .stepcard__body { max-height: calc(var(--layout-sheet-max) - 44px); }
+  .card-handle { bottom: var(--space-4); }
+  .drawer { top: auto; left: 0; right: 0; width: auto; max-height: 60%; border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; }
+  .app.drawer-open .navigator, .app.drawer-open .hud--br { right: var(--layout-hud-inset); }
+  .app.drawer-open .stepcard, .app.drawer-open .recbar { left: 0; }
+  .recbar { bottom: var(--space-4); }
+  .topbar__identity .title { display: inline; }
+  .topbar__slot-mode .chip--ctx { display: none; }
+  .hud--bl { bottom: calc(var(--layout-hud-inset) + 4px); }
+  .app.card-open .hud--bl, .app.card-open .hud--br { bottom: calc(var(--card-h, 220px) + var(--layout-hud-inset)); }
+}
+/* Phone */
+@media (max-width: 599px) {
+  :root { --concept-h: 22px; }
+  .concept-head { font-size: 10px; gap: var(--space-3); padding: 0 var(--space-3); }
+  .concept-head .hide-phone { display: none; }
+  .handles, .steprail .tt { display: none; }
+  .steprail { padding: 0 var(--layout-hud-inset); }
+  .steprail__tick { min-width: 12px; }
+  .stepcard { left: 0; right: 0; bottom: 0; transform: none; width: auto; border-radius: var(--radius-5) var(--radius-5) 0 0; border-left: 0; border-right: 0; border-bottom: 0; max-height: 52%; }
+  .stepcard__body { max-height: calc(52dvh - 44px); padding: var(--space-3) var(--space-4) var(--space-4); }
+  .stepcard .item-card__stem { font-size: var(--text-lg); }
+  .caption { font-size: var(--text-md); }
+  .card-handle { bottom: var(--space-3); }
+  .drawer { top: auto; left: 0; right: 0; width: auto; max-height: 70%; border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; }
+  .app.drawer-open .navigator, .app.drawer-open .hud--br { right: var(--layout-hud-inset); }
+  .app.drawer-open .stepcard, .app.drawer-open .recbar { left: 0; }
+  .recbar { bottom: var(--space-3); font-size: var(--text-xs); gap: var(--space-3); padding: 0 var(--space-4); }
+  .step-compact { display: inline; }
+  .topbar__slot-mode .chip--ctx { display: none; }
+  .topbar .tool--help { display: none; }
+  .hud--tl .hud__item { font-size: var(--text-xs); }
+  #hud-nophi { display: none; }
+  .item-card__meta { font-size: 10px; }
+  .app.card-open .hud--bl, .app.card-open .hud--br { bottom: calc(var(--card-h, 240px) + var(--layout-hud-inset)); }
+  .stats { grid-template-columns: 1fr; }
+  .keymap-dialog { width: calc(100vw - 16px); }
+  .palette-layer { width: calc(100vw - 16px); }
+  .palette { width: 100%; }
+  .demo { gap: var(--space-3); }
+}
+@media (max-height: 760px) {
+  .stepcard__body { max-height: 36vh; }
+}
+@media (pointer: coarse) {
+  .stepcard__ctrls .tool { width: 40px; height: 40px; }
+  .steprail__tick { height: 28px; }
+  .canvas-area { --rail-h: 28px; }
+  .radial__item { min-width: 48px; min-height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .narration .progress-bar span { transition: none; }
+}
+body.motion-reduced * { transition-duration: 0ms !important; animation: none !important; }
+</style>
+</head>
+<body data-view="learner" data-audience="medstudent">
+<a class="skip-link" href="#canvas">Skip to slide</a>
+
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+    <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+    <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10 10a3 3 0 004 4M2 12s4-7 10-7c2 0 4 .6 5.5 1.5M22 12s-4 7-10 7c-2 0-4-.6-5.5-1.5"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17v.5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><rect x="12" y="11" width="6" height="5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+    <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8v6M8 11h6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16zM13 7l3 3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h12l-2 4 2 4H5"/></symbol>
+    <symbol id="i-cc" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M10 10a2.5 2.5 0 00-4 2 2.5 2.5 0 004 2M18 10a2.5 2.5 0 00-4 2 2.5 2.5 0 004 2"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="13" width="18" height="8" rx="2"/><path d="M7 17h6M3 8h18M3 4h12"/></symbol>
+    <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+  </defs>
+</svg>
+
+<header class="concept-head" role="note" aria-label="Concept header">
+  <b>Concept A · Canvas-maximal</b>
+  <span class="hide-phone">Screen: Education module — guided case and assessment (Stoipath Learn)</span>
+  <span class="tag">2026-10-26</span>
+  <span class="hide-phone">draft for the UX/UI review Thu 2026-10-29 · interactive wireframe · synthetic content</span>
+  <span class="spacer"></span>
+  <span class="hide-phone">Judges: press <kbd class="key">?</kbd> for keys, <kbd class="key">Ctrl</kbd><kbd class="key">K</kbd> for commands, right-click the slide for the radial</span>
+</header>
+
+<div class="app card-open" id="app">
+
+  <!-- A. Top bar: fixed; product badge + full Learn string are outside every dismissible layer (P4) -->
+  <header class="topbar region" aria-label="Top bar">
+    <div class="topbar__slot-badge">
+      <button class="badge badge--learn" id="btn-about" data-live="launch:product" aria-label="Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About" title="About Stoipath Learn">LEARN</button>
+      <span class="badge-string badge-string--learn topbar__label" data-live="launch:product" aria-hidden="true"></span>
+    </div>
+    <div class="topbar__identity">
+      <span class="title" id="module-title" data-live="lti">Sentinel lymph node: finding the metastasis</span>
+      <span class="meta stepper" id="module-step" data-live="lti:step">Step 4 of 9 · Identify the metastasis</span>
+      <span class="step-compact" id="module-step-compact" data-live="lti:step" aria-hidden="true">4 / 9</span>
+    </div>
+    <div class="topbar__slot-mode">
+      <span class="chip chip--ctx" id="ctx-chip" data-live="launch:context">Medical student · Canvas (LTI 1.3) · PATH-612</span>
+      <button class="tool tool--help" id="btn-keys" aria-label="Keyboard map, question mark" title="Keyboard map (?)"><svg class="icon"><use href="#i-keyboard"/></svg></button>
+      <button class="tool" id="btn-palette" aria-label="Command palette, Control K" title="Command palette (Ctrl+K)"><svg class="icon"><use href="#i-search"/></svg></button>
+      <button class="tool" id="btn-more" aria-label="More: about, settings, help" title="More"><svg class="icon"><use href="#i-more"/></svg></button>
+    </div>
+  </header>
+
+  <!-- B. Canvas: dominant; receives focus; everything else is folded to its edges -->
+  <main class="canvas-area region" id="canvas" role="application" tabindex="0" aria-label="Slide canvas, LN-043 H and E, 20 times. Arrow keys pan, plus and minus zoom, N next step, K step card, Shift K module drawer." aria-describedby="lr-polite">
+    <svg id="slide" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" data-live="state.views[0]" aria-hidden="true">
+      <defs id="slide-defs">
+        <radialGradient id="heatg"><stop offset="0" stop-color="#ffffff" stop-opacity=".55"/><stop offset=".55" stop-color="#ffffff" stop-opacity=".22"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g id="lvl-lo" class="lvl"></g>
+      <g id="lvl-hi" class="lvl is-on"></g>
+    </svg>
+    <div class="tile-miss" style="left:18%;top:14%"></div><div class="tile-miss" style="left:calc(18% + 128px);top:14%"></div><div class="tile-miss" style="left:18%;top:calc(14% + 128px)"></div>
+    <div id="pins" aria-hidden="true"></div>
+
+    <!-- Stepper folded into the canvas top edge: 9 ticks, 24 px targets, click or N / Shift+N -->
+    <nav class="steprail" id="steprail" aria-label="Module steps" data-live="lti:step"></nav>
+
+    <!-- HUD corners: text only -->
+    <div class="hud hud--tl">
+      <div class="hud__item" data-live="state.slides"><span id="hud-slide">LN-043 · H&amp;E · slide 1 of 2</span><span class="hud__secondary">] next</span></div>
+      <div class="hud__item" id="hud-nophi"><span class="hud__secondary">No PHI · teaching set · CC0 (CAMELYON16)</span></div>
+      <div class="hud__item is-hidden" id="hud-pack" data-live="offline:pack"><span class="text-xs">Offline pack · week 43</span></div>
+    </div>
+    <div class="hud hud--bl">
+      <div class="hud__item scalebar" data-live="state.views[0].scale"><span class="scalebar__bar" id="scalebar-bar" style="--scalebar-length:100px"></span><span class="scalebar__label" id="scalebar-label">50 µm</span></div>
+      <div class="hud__item hud__position" id="hud-pos" data-live="state.views[0].center_um">x 12.43 mm · y 6.08 mm</div>
+    </div>
+    <div class="hud hud--br">
+      <button class="hud__item magnification" id="hud-mag" data-live="state.views[0].scale" aria-label="Magnification 20 times, 0.50 micrometres per pixel. Press Enter to type a zoom"><span class="magnification__value" id="mag-value">20×</span><span class="magnification__line2" id="mag-line2">0.50 µm/px</span></button>
+      <div class="hud__item hud__adjust is-hidden" id="hud-motion">Reduced motion · fly-to jumps</div>
+      <div class="hud__item hud__sharp" id="hud-sharp" data-live="events:tileSettled"><span class="indicator indicator--sharp" style="min-height:0;padding:0"><span class="indicator__glyph"></span></span><span class="hud__secondary" id="hud-sharp-label">Sharp</span></div>
+    </div>
+
+    <!-- F. Navigator: top-right, never auto-fading; collapsible with O -->
+    <aside class="navigator" id="navigator" aria-label="Navigator" data-live="state">
+      <div class="navigator__thumb" style="aspect-ratio:16/9">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true"><use href="#ov-sym" id="nav-use"/></svg>
+        <div class="navigator__viewport" id="nav-rect" style="left:78%;top:40%;width:6.3%;height:6.3%"></div>
+        <div class="navigator__pan" aria-label="Pan"><button class="up" aria-label="Pan up">↑</button><button class="left" aria-label="Pan left">←</button><button class="right" aria-label="Pan right">→</button><button class="down" aria-label="Pan down">↓</button></div>
+      </div>
+      <div class="navigator__label"><span id="nav-label">LN-043 · H&amp;E</span><span class="text-xs" style="color:var(--grey-75)">O hides</span></div>
+    </aside>
+
+    <!-- Folded chrome: edge handles (always visible, labelled with their key) -->
+    <div class="handles" id="handles">
+      <button class="handle" id="h-module" aria-label="Open module drawer, Shift K"><span>Module</span><kbd class="key">⇧K</kbd></button>
+      <button class="handle" id="h-card" aria-label="Show step card, K"><span>Step</span><kbd class="key">K</kbd></button>
+    </div>
+
+    <!-- The one summoned reading surface: step card (caption track + item engine) -->
+    <section class="stepcard" id="stepcard" aria-labelledby="sc-title" data-live="lti:item">
+      <div class="stepcard__head">
+        <span class="stepcard__title" id="sc-title">Step 4 of 9 · Identify the metastasis <span class="kind">· Region marking · 1 point</span></span>
+        <div class="stepcard__ctrls" role="toolbar" aria-label="Tour controls">
+          <button class="tool" id="sc-prev" aria-label="Previous step, Shift N" title="Previous (⇧N)"><svg class="icon"><use href="#i-prev"/></svg></button>
+          <button class="tool" id="sc-play" aria-label="Play narration, Space" aria-pressed="false" title="Play / pause (Space)"><svg class="icon"><use href="#i-play"/></svg></button>
+          <button class="tool" id="sc-next" aria-label="Next step, N" title="Next (N)"><svg class="icon"><use href="#i-next"/></svg></button>
+          <button class="tool" id="sc-cc" aria-label="Captions on" aria-pressed="true" title="Captions"><svg class="icon"><use href="#i-cc"/></svg></button>
+          <button class="tool" id="sc-audio" aria-label="Audio narration on" aria-pressed="true" title="Audio narration"><svg class="icon"><use href="#i-volume"/></svg></button>
+          <button class="tool" id="sc-close" aria-label="Hide step card, K" title="Hide (K)"><svg class="icon"><use href="#i-close"/></svg></button>
+        </div>
+      </div>
+      <div class="stepcard__body" id="sc-body"></div>
+    </section>
+    <button class="card-handle" id="card-handle" hidden data-live="lti:step"><span id="card-handle-text">Step 4 · Identify the metastasis</span><kbd class="key">K</kbd></button>
+
+    <!-- Summoned right-edge drawer: course shell (learner), studio (author), cohort (director) -->
+    <aside class="drawer" id="drawer" hidden aria-labelledby="dr-title">
+      <div class="drawer__head">
+        <span class="drawer__title" id="dr-title">Module</span>
+        <button class="tool" id="dr-close" aria-label="Close drawer, Shift K"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="drawer__body" id="dr-body"></div>
+    </aside>
+
+    <!-- Radial tool wheel at the pointer (right-click, long-press, Pencil squeeze); every item has its key -->
+    <div class="radial" id="radial" hidden role="menu" aria-label="Tools at the pointer">
+      <div class="radial__center" id="radial-center"><span><b>Tools</b>Esc closes</span></div>
+    </div>
+
+    <!-- Author recording bar -->
+    <div class="recbar" id="recbar" hidden data-live="commands:record">
+      <span class="rec" aria-hidden="true"></span><b>Recording tour</b><span class="timer" id="rec-time">00:42</span><span>step 5 · speaking…</span>
+      <span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:14px"></span><span style="height:9px"></span><span style="height:18px"></span><span style="height:11px"></span><span style="height:7px"></span><span style="height:15px"></span></span>
+      <button class="btn btn--sm btn--secondary">Pause</button>
+      <button class="btn btn--sm btn--secondary">Add step here <kbd class="key">B</kbd></button>
+      <button class="btn btn--sm btn--primary">Stop</button>
+    </div>
+
+    <!-- Plates (S15, launch refused, LTI failed); the badge and label string stay visible above -->
+    <div class="plate" id="plate" hidden role="alert"></div>
+    <div class="banner-slot" id="banner-slot"></div>
+  </main>
+
+  <!-- C (touch): bottom bar replaces the rail on tablet portrait and phone -->
+  <nav class="bottombar region" aria-label="Tools (touch)">
+    <button class="tool tool--labelled" aria-pressed="true" data-tool="select"><svg class="icon"><use href="#i-hand"/></svg><span class="tool__label">Pan</span></button>
+    <button class="tool tool--labelled" data-tool="point" aria-label="Point mark, T"><svg class="icon"><use href="#i-point"/></svg><span class="tool__label">Mark</span></button>
+    <button class="tool tool--labelled" data-tool="measure" aria-label="Measure, M"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__label">Measure</span></button>
+    <button class="tool tool--labelled" id="bb-card" aria-label="Step card, K"><svg class="icon"><use href="#i-card"/></svg><span class="tool__label">Step</span></button>
+    <button class="tool tool--labelled" id="bb-module" aria-label="Module, Shift K"><svg class="icon"><use href="#i-list"/></svg><span class="tool__label">Module</span></button>
+  </nav>
+
+  <!-- E. Status strip: the live region's visual twin -->
+  <footer class="strip region" aria-label="Status">
+    <button class="indicator indicator--sharp" id="ind" data-live="events:tileSettled" aria-label="Sharpness: Sharp. Opens the quality sheet"><span class="indicator__glyph"></span><span class="indicator__label" id="ind-label">Sharp</span></button>
+    <span class="strip__group" id="strip-chips"></span>
+    <span class="strip__notice" id="strip-notice" role="status"></span>
+    <span class="strip__group strip__group--end">
+      <span class="strip__learn" id="strip-grade" data-live="lti:ags"></span>
+      <span class="text-xs" id="strip-captions">Captions on</span>
+      <span class="text-xs"><kbd class="key">?</kbd> keys · <kbd class="key">Ctrl</kbd><kbd class="key">K</kbd> commands</span>
+    </span>
+  </footer>
+
+  <!-- Dialog layer (inset from the top bar and strip so badge/label/mode slots stay visible) -->
+  <div class="scrim" id="scrim" hidden></div>
+  <div class="modal-layer" id="modal-keymap" hidden></div>
+  <div class="modal-layer" id="modal-cand" hidden></div>
+  <div class="modal-layer" id="modal-text" hidden></div>
+  <div class="modal-layer" id="modal-cme" hidden></div>
+  <div class="modal-layer" id="modal-about" hidden></div>
+  <div class="palette-layer" id="palette-layer" hidden></div>
+
+  <div class="live-region" aria-live="polite" id="lr-polite">Sharp. 20 times. LN-043 H and E.</div>
+  <div class="live-region" aria-live="assertive" id="lr-assert"></div>
+</div>
+
+<!-- Design rationale (collapsed by default) -->
+<details class="rationale" id="rationale">
+  <summary>Design rationale · Concept A · Canvas-maximal (what the judges should look at, trade-offs, engine-contract map)</summary>
+  <div class="rationale__body">
+    <section>
+      <h3>The idea in one line</h3>
+      <p>The slide is the UI. Regions C (tool rail) and D (context dock) do not exist at rest: they are folded into two labelled 28 px edge handles, and everything the learner must <em>read</em> lives in exactly one summoned surface, the <b>step card</b> at the bottom centre, which behaves like a caption track (tour text, narration progress, the item engine, feedback). Tools are a transient radial at the pointer; the course shell (module list, review queue, credit, settings) is a summoned right-edge drawer; the stepper is a 4 px rail along the canvas top edge. Only the top bar (badge, Learn string, module and step) and the status strip (sharpness, network, tier, gradebook) stay fixed, because P4 and P9 are not negotiable.</p>
+      <p>Canvas share at rest: ≈ 93 % at 1920 × 1080 and ≈ 96 % at 3840 × 2160 (top bar 48 + strip 32 are the only fixed chrome); with the step card open the central 50 % × 50 % stays clear on every viewport (toggle the guide in the demo strip to check).</p>
+    </section>
+    <section>
+      <h3>Key choices</h3>
+      <ul>
+        <li><b>One reading surface, fixed place.</b> Tour text, item stem, feedback and the reveal all appear in the same card at the same position, so the learner never searches for "where did the question go". The card is also the visual twin of the polite live region: captions and screen-reader text are the same string.</li>
+        <li><b>Chrome collapses before the canvas does, by default.</b> The dock becomes a drawer summoned by <kbd class="key">⇧K</kbd> (or the Module handle / bottom-bar button); the card hides with <kbd class="key">K</kbd> leaving a one-line handle. Panels change only between gestures (<code>.is-gesturing</code> zeroes transitions).</li>
+        <li><b>Radial at the pointer instead of a rail.</b> Right-click, long-press (450 ms) or Pencil squeeze opens eight tools around the cursor, each labelled with its key; the keyboard path is the key itself or <kbd class="key">Ctrl</kbd><kbd class="key">K</kbd>. It is a transient, user-invoked layer (the same class as the pen-tip palette in principles §4.4), so it is exempt from the central-zone rule while open.</li>
+        <li><b>Expert-first, learner-safe.</b> The 4K pathologist gets a 96 % canvas and never leaves the keyboard; the undergraduate still sees two visible handles with their keys, a stepper rail with tooltips, the strip hint "? keys · Ctrl+K commands", and a card that re-summons itself whenever a step with content begins.</li>
+        <li><b>Degraded states live in the strip and on the pixels, never as plates over tissue.</b> Cold 4G shows the best resident ancestor (softened in this mock) with <code>Soft — slow link</code>; the offline pack is a chip; tile errors keep ancestors and say <code>3 tiles could not be loaded — retrying</code>; a launch for the wrong product is the only blocking plate, and the LEARN badge stays above it.</li>
+        <li><b>Author and director reuse the same canvas.</b> Recording a tour is a floating bar over the slide; the item editor and collection live in the same drawer; cohort analytics are a layer over the slide (dwell as luminance, expert path in amber, cohort path in dashed teal) with aggregate-only stats in the drawer.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Trade-offs (honest)</h3>
+      <ul>
+        <li><b>Discoverability is the risk.</b> A first-time learner has to notice two edge handles and a 4 px rail. Mitigations: handles are always visible and show their key, every step with content auto-summons the card, the strip names the two meta-keys, and the keymap sheet opens with <kbd class="key">?</kbd>. Needs a formative test with undergraduates before adoption.</li>
+        <li><b>Hidden hierarchy.</b> The module list and review queue are one key away rather than always visible; a course director who wants to see progress at a glance will prefer a dock-forward concept.</li>
+        <li><b>Bottom card vs HUD corners.</b> On laptops the card is width-limited (viewport − 360 px) so it never touches the scale bar or the magnification readout; on tablets it becomes a sheet (≤ 40 % height) and the HUD rises above it. This costs vertical canvas on portrait tablets whenever the card is open.</li>
+        <li><b>Right-click is taken.</b> The radial consumes the context menu over the canvas (the plan already forbids the browser menu there); annotation context actions move into the same radial.</li>
+        <li><b>Two new keys.</b> <kbd class="key">K</kbd> (step card) and <kbd class="key">⇧K</kbd> (module drawer) are additions to the Learn map (Design note, below).</li>
+      </ul>
+    </section>
+    <section>
+      <h3>What to look at</h3>
+      <ol>
+        <li>Default state (desktop): item 4 awaiting at 20× with the learner's mark; zoom-gate chip; the stepper rail; two handles; strip. Toggle "Guides" and confirm the central zone is empty.</li>
+        <li>Item states in the demo strip: awaiting at 10× (gate not met) → committed (S25) → revealed (S26, answer-key layer visible, IoU 62 %) → posted / post failed (S27).</li>
+        <li><kbd class="key">⇧↵</kbd> keyboard alternative: candidates A–F with <i>Fly there</i>; "Answer in text instead" → the rubric form. Score path identical (NFR-A5).</li>
+        <li>Right-click the slide: the radial. <kbd class="key">?</kbd>: the keymap sheet with the Learn and concept additions. <kbd class="key">Ctrl</kbd><kbd class="key">K</kbd>: palette; type "dx" to see that Dx mode is not part of this build.</li>
+        <li>Degraded: cold 4G, offline pack, tile errors, classroom busy, Tier 2 · 60 Hz, launch asks for Dx / Clinical-IH, LTI failed.</li>
+        <li>Views: Author (recording bar, step transcript editor, region-item editor with publish check and CVD simulation, collection with licence and determination), Director (heatmap vs expert path, aggregate-only guard).</li>
+        <li>Phone (390 × 844): resident unknown-slide variant, "Record your diagnosis before the reveal", differential chips, optional timer, sharpness dot in the HUD, offline pack chip in the HUD.</li>
+        <li>Reduced motion: HUD chip "Reduced motion · fly-to jumps"; the narration progress bar is static.</li>
+      </ol>
+    </section>
+    <section class="full">
+      <h3>Elements that map to an engine contract (plan 12 §1.1, plan 04 §8)</h3>
+      <div class="table-wrap"><table class="table table--dense">
+        <thead><tr><th>Element in this concept</th><th>Contract</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Canvas pixels, magnification readout, scale bar, position, navigator rectangle, slide chip, <i>Fly there</i>, step jumps, radial "Fit"/"20×"</td><td>State document</td><td><code>views[0].center_um</code>, <code>scale_um_per_px</code>, <code>slides[]</code>; <code>flyTo(state, transition)</code> for every step and candidate (instant under reduced motion)</td></tr>
+          <tr><td>Learner mark, hotspot pins, measurement, answer-key region, dwell heat, expert and cohort paths</td><td>Layer API + Annotation API</td><td>Answer key is a layer with ACL <code>revealOn(itemAnswered)</code>; expert overlays <code>authorOnly</code> until reveal; marks are op-based annotations with stable ids; heat and paths are layers with provenance (<code>producer: learn-analytics</code>)</td></tr>
+          <tr><td>IoU 62 %, zoom-gate chip, "reached 20× before answering", 2.3 mm</td><td>Geometry services + telemetry</td><td><code>iou</code>, <code>pointInPolygon</code>, distance in µm computed in Rust; zoom gate from <code>viewChanged</code> samples</td></tr>
+          <tr><td>Sharpness indicator and HUD dot, tile-error notice, gradebook status, reveal, "Posted to gradebook"</td><td>Event bus</td><td><code>tileSettled</code> → indicator; <code>error</code> → strip; <code>itemAnswered</code> → xAPI + AGS; <code>viewChanged</code> (≥ 20 Hz) → learner trace; proposed shell events <code>tourStepShown</code>, <code>revealShown</code>, <code>commandInvoked</code>, <code>panelToggled</code></td></tr>
+          <tr><td>Every key, the radial, the palette, bottom-bar tools, tour controls, "Record a tour"</td><td>Command bus</td><td>Serialisable commands; source recorded (<code>keyboard</code> / <code>pointer</code> / <code>pen</code> / <code>palette</code>); recording a tour replays camera commands as steps</td></tr>
+          <tr><td>LEARN badge, Learn string, module title, LTI context chip, launch-refused plate, LTI-failed plate</td><td>Launch-context contract</td><td><code>product: learn</code> must equal the build; signed LTI state blob; <code>role</code> picks learner / author / director views</td></tr>
+          <tr><td>Tier 2 · 60 Hz chip, Slow link, Server slow, Shared Wi-Fi busy</td><td>Telemetry / quality record</td><td>NTF %, deficit, upload age, link estimate; <code>tierShown</code> proposed</td></tr>
+          <tr><td>Offline pack chip, "Available offline · saved 2026-10-20", classroom edge</td><td>Offline pack / PWA cache</td><td>FR-S6 bundle (pixels + annotations + items + media); installed Home-Screen PWA on iPad</td></tr>
+          <tr><td>CVD remap toggle, author-side deuteranopia / protanopia simulation</td><td>Colour (shader LUT)</td><td>Per-user CVD LUT (FR-V8); simulation applied to the author's view only</td></tr>
+          <tr><td>"Dx mode — not part of this build" (palette), Shift+D notice</td><td>Dx mode / build matrix</td><td>Learn has no <code>render_mode</code>; FR-R0 build-flag matrix asserts it</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section class="full">
+      <h3>Design notes (flagged for the plan owner)</h3>
+      <ul>
+        <li><b>DN-A1 · Two Learn-only bindings.</b> <kbd class="key">K</kbd> step card, <kbd class="key">⇧K</kbd> module drawer; both free in the default map; filed against the command registry.</li>
+        <li><b>DN-A2 · Shift+R.</b> Principles §4.5 binds <kbd class="key">⇧R</kbd> to both "rotate anticlockwise" (map A) and "reveal" (Learn additions). Here <kbd class="key">⇧R</kbd> reveals only while an item is committed and awaiting reveal; otherwise it rotates. The conflict should be resolved in the principles document.</li>
+        <li><b>DN-A3 · Adapted microcopy.</b> The wrong-product plate and the Shift+D notice reuse the §5.4/§5.6 Viewer strings with "Stoipath Learn, for educational use" substituted; counsel's final strings replace them in one place (the i18n bundle).</li>
+        <li><b>DN-A4 · Tier chip in Learn.</b> Principles §2.4 shows Tier 2 only when it limits a mode. Learn has no Dx, so the iPad chip here states the limit it does impose (60 Hz cadence); confirm whether Learn should show it at all.</li>
+        <li><b>DN-A5 · Radial over the canvas.</b> Treated as the same transient class as the pen-tip palette (§4.4). If the owner wants the central-zone rule absolute, the radial can be constrained to open at the nearest edge-safe position.</li>
+        <li><b>DN-A6 · Mock liberties.</b> Tissue is a synthetic SVG; "soft" is a CSS blur standing in for a magnified ancestor; pins and labels are HTML here but GPU layers in the product; the scale bar is DOM here (Design note D11 stands).</li>
+      </ul>
+    </section>
+  </div>
+</details>
+
+<!-- Demo controls (review-only) -->
+<footer class="demo" id="demo" aria-label="Demo controls">
+  <span class="lbl">DEMO</span>
+  <label>View <select id="d-view"><option value="learner">Learner</option><option value="author">Author studio</option><option value="director">Director analytics</option></select></label>
+  <label>Audience <select id="d-aud"><option value="undergrad">Undergraduate histology lab</option><option value="medstudent" selected>Medical student case</option><option value="resident">Resident unknown</option><option value="cme">CME module</option></select></label>
+  <label>Item <select id="d-item"><option value="awaiting10">Awaiting · 10× (gate not met)</option><option value="awaiting" selected>Awaiting · 20× · mark placed</option><option value="committed">Committed (S25)</option><option value="revealed">Revealed (S26)</option><option value="posted">Posted to gradebook (S27)</option><option value="postfail">Post failed (S27)</option></select></label>
+  <span class="sep"></span>
+  <label>Network <select id="d-net"><option value="ok">OK</option><option value="4g">Cold 4G</option><option value="pack">Offline pack</option><option value="offline">Offline, no pack</option><option value="classroom">Classroom Wi-Fi busy</option><option value="tileerr">Tile errors</option><option value="slow">Translator slow</option></select></label>
+  <label>Tier <select id="d-tier"><option value="1">Tier 1</option><option value="2">Tier 2 · 60 Hz</option><option value="3">Tier 3</option></select></label>
+  <label>Launch <select id="d-launch"><option value="learn">product: learn</option><option value="clinical-ih">asks Clinical-IH → refused</option><option value="dx">asks Dx → refused</option><option value="lti-fail">LTI failed</option></select></label>
+  <label>Motion <select id="d-motion"><option value="normal">normal</option><option value="reduced">reduced</option></select></label>
+  <label>Theme <select id="d-theme"><option value="dark">dark</option><option value="light">light</option></select></label>
+  <span class="sep"></span>
+  <button id="d-live" aria-pressed="false">Live markers</button>
+  <button id="d-guides" aria-pressed="false">Guides</button>
+  <button id="d-radial" aria-pressed="false">Radial</button>
+  <button id="d-card" aria-pressed="true">Card</button>
+  <button id="d-drawer" aria-pressed="false">Drawer</button>
+  <button id="d-cand">⇧↵ dialog</button>
+  <button id="d-keys">? keys</button>
+  <button id="d-pal">Ctrl+K</button>
+  <span class="sep"></span>
+  <button id="d-rat">Rationale ▾</button>
+</footer>
+
+<script>
+/* =============================================================================
+   Concept A · mock behaviour. Plain JS, no dependencies. Everything that would
+   be the engine's (pixels, flyTo, geometry) is simulated and marked data-live.
+   ========================================================================== */
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const canvas = $('canvas'), app = $('app'), slide = $('slide');
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* ---------------------------------------------------------------- PRNG + tissue */
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const rnd = mulberry32(43);
+  const f1 = (n) => n.toFixed(1);
+
+  function lymphPattern(id, size, n, r0, r1, pale) {
+    let s = `<pattern id="${id}" width="${size}" height="${size}" patternUnits="userSpaceOnUse">`;
+    for (let i = 0; i < n; i++) {
+      const x = rnd() * size, y = rnd() * size, r = r0 + rnd() * (r1 - r0);
+      s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r + 1.8)}" style="fill:var(--t-cyto)"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" style="fill:var(${pale ? '--t-gcnuc' : (i % 3 ? '--t-nuc' : '--t-nuc2')})"/>`;
+    }
+    return s + '</pattern>';
+  }
+  function buildHi() {
+    let d = lymphPattern('p-lymph', 48, 9, 2.8, 4.2, false) + lymphPattern('p-lymph2', 71, 11, 2.6, 4.0, false) + lymphPattern('p-sparse', 90, 3, 2.8, 4.0, false) + lymphPattern('p-gc', 97, 15, 3.8, 5.6, true);
+    $('slide-defs').insertAdjacentHTML('beforeend', d);
+    let g = `<rect x="-1600" y="-900" width="4800" height="2700" style="fill:var(--t-glass)"/><rect x="-1600" y="0" width="4800" height="1800" style="fill:var(--t-bg)"/><rect x="-1600" y="0" width="4800" height="1800" fill="url(#p-lymph)"/><rect x="-1600" y="0" width="4800" height="1800" fill="url(#p-lymph2)" opacity=".85"/>`;
+    for (let i = 0; i < 40; i++) g += `<circle cx="${f1(-1600 + rnd() * 4800)}" cy="${f1(-860 + rnd() * 760)}" r="${f1(30 + rnd() * 50)}" style="fill:var(--t-fat)" stroke="#e9d8de" stroke-width="3"/>`;
+    // medullary sinus streaks (lower half)
+    for (let i = 0; i < 12; i++) { const y = 560 + i * 95; g += `<path d="M-1600 ${y} C -1000 ${y - 40}, -400 ${y + 50}, 200 ${y - 10} S 1400 ${y + 40}, 2000 ${y} S 2800 ${y - 30}, 3200 ${y}" style="stroke:var(--t-sinus)" stroke-width="${22 + i * 6}" fill="none" opacity=".75"/>`; }
+    // germinal centre with mantle
+    g += `<circle cx="330" cy="560" r="150" style="fill:var(--t-cyto)" opacity=".55"/><circle cx="330" cy="560" r="150" fill="none" style="stroke:var(--t-mantle)" stroke-width="22" opacity=".35"/><circle cx="330" cy="560" r="118" style="fill:var(--t-gc)"/><circle cx="330" cy="560" r="118" fill="url(#p-gc)"/>`;
+    // second follicle + vessel further out (visible at 10x)
+    g += `<circle cx="2450" cy="700" r="150" style="fill:var(--t-cyto)" opacity=".55"/><circle cx="2450" cy="700" r="150" fill="none" style="stroke:var(--t-mantle)" stroke-width="22" opacity=".35"/><circle cx="2450" cy="700" r="118" style="fill:var(--t-gc)"/><circle cx="2450" cy="700" r="118" fill="url(#p-gc)"/><ellipse cx="-600" cy="1300" rx="90" ry="34" style="fill:var(--t-vessel);stroke:var(--t-tstroke)" stroke-width="3"/>`;
+    // vessel with RBCs
+    g += `<ellipse cx="760" cy="760" rx="70" ry="28" style="fill:var(--t-vessel);stroke:var(--t-tstroke)" stroke-width="3"/>`;
+    for (let i = 0; i < 9; i++) g += `<circle cx="${f1(705 + rnd() * 110)}" cy="${f1(745 + rnd() * 30)}" r="4.5" style="fill:var(--t-rbc)"/>`;
+    // capsule + subcapsular sinus along the top
+    g += `<rect x="-1600" width="4800" height="62" style="fill:var(--t-caps)"/>`;
+    for (let i = 0; i < 5; i++) { const y = 8 + i * 11; g += `<path d="M-1600 ${y} q 60 ${-4 - (i % 2) * 3} 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0" style="stroke:var(--t-fib)" stroke-width="1.6" fill="none" opacity=".8"/>`; }
+    g += `<rect x="-1600" y="62" width="4800" height="84" style="fill:var(--t-sinus)"/><rect x="-1600" y="62" width="4800" height="84" fill="url(#p-sparse)"/>`;
+    for (let i = 0; i < 40; i++) g += `<circle cx="${f1(-1600 + rnd() * 4800)}" cy="${f1(80 + rnd() * 50)}" r="8" style="fill:var(--t-hist)"/><circle cx="${f1(-1600 + rnd() * 4800)}" cy="${f1(80 + rnd() * 50)}" r="3.4" style="fill:var(--t-nuc2)" opacity=".7"/>`;
+    // metastatic focus: cohesive cluster bulging from the sinus into the cortex
+    g += `<ellipse cx="1120" cy="200" rx="156" ry="98" style="fill:var(--t-sinus)" opacity=".9"/>`;
+    const cells = [];
+    for (let i = 0; i < 44; i++) { const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()); cells.push([1120 + Math.cos(a) * r * 138, 200 + Math.sin(a) * r * 84]); }
+    cells.forEach(([x, y]) => { g += `<circle cx="${f1(x)}" cy="${f1(y)}" r="13" style="fill:var(--t-tcyto);stroke:var(--t-tstroke)" stroke-width="1.2"/><circle cx="${f1(x - 1.5)}" cy="${f1(y - 1)}" r="6.2" style="fill:var(--t-tnuc)"/><circle cx="${f1(x + 0.5)}" cy="${f1(y - 2)}" r="1.7" style="fill:var(--t-tnucl)"/>`; });
+    // annotations (engine layers in the product)
+    g += `<g id="ann-hi" data-live="annotations">
+      <g id="ann-learner" class="is-hidden"><polygon class="ann ann--halo-dark" points="1000,170 1060,118 1150,110 1240,150 1270,210 1230,275 1150,300 1060,282 1005,232"/><polygon class="ann ann--learner" points="1000,170 1060,118 1150,110 1240,150 1270,210 1230,275 1150,300 1060,282 1005,232"/></g>
+      <g id="ann-key" class="is-hidden" data-live="layers:answer-key"><ellipse class="ann ann--halo-light" cx="1120" cy="200" rx="162" ry="104"/><ellipse class="ann ann--key" cx="1120" cy="200" rx="162" ry="104"/></g>
+    </g>`;
+    $('lvl-hi').innerHTML = g;
+  }
+  function buildLo() {
+    let s = `<symbol id="ov-sym" viewBox="0 0 1600 900"><rect width="1600" height="900" style="fill:var(--t-glass)"/>`;
+    for (let i = 0; i < 26; i++) s += `<circle cx="${f1(60 + rnd() * 520)}" cy="${f1(560 + rnd() * 320)}" r="${f1(16 + rnd() * 22)}" style="fill:var(--t-fat)" stroke="#e9d8de" stroke-width="2"/>`;
+    s += `<ellipse cx="800" cy="450" rx="640" ry="310" style="fill:var(--t-capsule)"/><ellipse cx="800" cy="450" rx="626" ry="296" style="fill:var(--t-cortex)"/><ellipse cx="760" cy="470" rx="420" ry="168" style="fill:var(--t-med)"/>`;
+    for (let i = 0; i < 5; i++) s += `<path d="M${380 + i * 20} ${420 + i * 30} q 180 ${-30 + i * 12} 360 0 t 360 0" style="stroke:var(--t-glass)" stroke-width="10" fill="none" opacity=".55"/>`;
+    const foll = [[300, 330], [430, 250], [590, 210], [770, 190], [950, 205], [1120, 250], [1240, 330], [320, 560], [480, 650], [700, 690], [920, 690], [1130, 640], [1260, 540]];
+    foll.forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="52" style="fill:var(--t-foll)"/><circle cx="${x - 4}" cy="${y - 3}" r="26" style="fill:var(--t-folgc)"/>`; });
+    s += `<path d="M180 470 q 60 -20 120 0" style="stroke:var(--t-glass)" stroke-width="16" fill="none"/>`; // hilum
+    s += `<ellipse cx="1330" cy="400" rx="36" ry="22" style="fill:var(--t-focus);stroke:var(--t-focus-s)" stroke-width="3"/>`; // metastasis at the right pole
+    s += `</symbol>`;
+    $('slide-defs').insertAdjacentHTML('beforeend', s);
+    $('lvl-lo').innerHTML = `<use href="#ov-sym" width="1600" height="900"/>
+      <g id="ann-lo" data-live="layers">
+        <g id="heat" class="heat is-hidden" data-live="layers:dwell-heat"><circle cx="1330" cy="400" r="150"/><circle cx="430" cy="250" r="120"/><circle cx="800" cy="450" r="220"/><circle cx="1120" cy="250" r="110"/><circle cx="480" cy="650" r="100"/></g>
+        <g id="expert-path" class="is-hidden" data-live="layers:expert-path"><polyline class="ann ann--halo-dark" points="800,450 1240,330 1330,400 1340,420 1130,640"/><polyline class="ann ann--expert-path" points="800,450 1240,330 1330,400 1340,420 1130,640"/></g>
+        <g id="cohort-path" class="is-hidden" data-live="layers:cohort-path"><polyline class="ann ann--halo-light" points="800,450 430,250 320,560 700,690 1130,640 1260,540 1330,400"/><polyline class="ann ann--cohort-path" points="800,450 430,250 320,560 700,690 1130,640 1260,540 1330,400"/></g>
+        <g id="ann-measure" class="is-hidden" data-live="annotations:measurement"><line class="ann ann--halo-dark" x1="1296" y1="386" x2="1364" y2="414"/><line class="ann ann--measure" x1="1296" y1="386" x2="1364" y2="414"/><line class="ann ann--measure" x1="1292" y1="396" x2="1300" y2="376"/><line class="ann ann--measure" x1="1360" y1="424" x2="1368" y2="404"/></g>
+        <g id="ann-key-lo" class="is-hidden" data-live="layers:answer-key"><ellipse class="ann ann--halo-light" cx="1330" cy="400" rx="42" ry="28"/><ellipse class="ann ann--key" cx="1330" cy="400" rx="42" ry="28"/></g>
+      </g>`;
+  }
+  buildHi(); buildLo();
+
+  /* ---------------------------------------------------------------- content model */
+  const AUD = {
+    undergrad: { title: 'Lymph node: normal histology (Lab 6)', ctx: 'Undergraduate histology · Canvas (LTI 1.3) · BIO-311', collection: 'Histology lab 6 · lymphoid organs', due: 'Lab due Thu 29 Oct', current: 3,
+      steps: [
+        { t: 'Orientation', kind: 'tour', mag: 1.25, text: 'This is a lymph node at scanning power. Labels are on (toggle with <kbd class="key">L</kbd>). Find the capsule, the darker cortex, and the paler medulla before you zoom.', pins: [[1, 800, 150, 'Capsule'], [2, 430, 250, 'Cortex with follicles'], [3, 760, 470, 'Medulla'], [4, 190, 470, 'Hilum']] },
+        { t: 'Capsule and trabeculae', kind: 'tour', mag: 2.5, text: 'Dense connective tissue surrounds the node; trabeculae extend inwards and carry vessels. Afferent lymphatics pierce the capsule and open into the subcapsular sinus.' },
+        { t: 'Cortex: follicles', kind: 'tour', mag: 5, text: 'Secondary follicles have a pale germinal centre and a dark mantle zone of small lymphocytes. Count how many you can see at 5×.' },
+        { t: 'Which region is a germinal centre?', kind: 'mcq-region', mag: 1.25, stem: 'Which lettered region is a germinal centre?', pins: [['A', 1330, 400], ['B', 430, 250], ['C', 760, 470], ['D', 800, 150]], options: [['A', 'Region A — right pole, pale ovoid'], ['B', 'Region B — pale centre inside a dark ring'], ['C', 'Region C — central pale area with streaks'], ['D', 'Region D — fibrous rim']], correct: 'B', why: 'B is a secondary follicle: a pale germinal centre inside a dark mantle. A is the metastatic focus used in the clinical module; C is medulla; D is capsule.' },
+        { t: 'Paracortex', kind: 'tour', mag: 10, text: 'Between follicles and medulla the paracortex is T-cell territory; high endothelial venules are the entry point for circulating lymphocytes.' },
+        { t: 'Medulla', kind: 'tour', mag: 10, text: 'Medullary cords (plasma cells, macrophages) alternate with medullary sinuses that drain to the efferent lymphatic at the hilum.' },
+        { t: 'Check: name the structure', kind: 'summary', mag: 1.25, text: 'Lab 6 complete · 6 of 7 items correct · your review queue has one item (secondary vs primary follicle).' }
+      ] },
+    medstudent: { title: 'Sentinel lymph node: finding the metastasis', ctx: 'Medical student · Canvas (LTI 1.3) · PATH-612', collection: 'PATH-612 · Case 7 of 12', due: 'Assignment due Fri 30 Oct', current: 3,
+      steps: [
+        { t: 'Vignette', kind: 'vignette', mag: 1.25, text: 'A 58-year-old woman <span data-synthetic>(synthetic case)</span> with a 1.8 cm invasive ductal carcinoma, grade 2, of the left breast. Sentinel lymph node biopsy: one node, bisected, entirely submitted. H&amp;E and CK AE1/AE3.' },
+        { t: 'Overview', kind: 'tour', mag: 1.25, text: 'Orient first: capsule, cortex with secondary follicles, medullary cords and sinuses, hilar vessels. Metastases arrive through afferent lymphatics, so the <b>subcapsular sinus</b> is where to look first.', pins: [[1, 800, 150, 'Capsule'], [2, 430, 250, 'Cortex · follicles'], [3, 760, 470, 'Medulla'], [4, 190, 470, 'Hilum']] },
+        { t: 'Subcapsular sinus', kind: 'tour', mag: 5, text: 'Follow the subcapsular sinus around the node at 5×. Cohesive clusters of large cells with abundant cytoplasm in the sinus are suspicious; single large cells are more often sinus histiocytes.', pins: [[1, 1330, 400, 'Right-pole sinus'], [2, 1250, 300, 'Afferent lymphatic']] },
+        { t: 'Identify the metastasis', kind: 'region', mag: 20, stem: 'Mark the metastatic focus.', gate: 20, points: 1 },
+        { t: 'Confirm with IHC', kind: 'tour', mag: 10, slide: 'ihc', text: 'Switch to the cytokeratin AE1/AE3 slide (<kbd class="key">]</kbd> next slide). Epithelial cells stain brown; lymphocytes and histiocytes do not. Compare the same field (<kbd class="key">C</kbd> side by side, <kbd class="key">/</kbd> curtain).' },
+        { t: 'Which immunostain?', kind: 'mcq', mag: 10, stem: 'Which immunostain confirms epithelial origin of the focus?', options: [['A', 'CD45 (LCA)'], ['B', 'CK AE1/AE3'], ['C', 'CD3'], ['D', 'S100']], correct: 'B', why: 'Cytokeratins are epithelial; CD45 and CD3 mark hematopoietic and T cells; S100 would suggest melanoma or dendritic cells.' },
+        { t: 'Measure the focus', kind: 'measure', mag: 5, stem: 'Measure the largest dimension of the focus (<kbd class="key">M</kbd>, two clicks), then classify it.', options: [['A', 'Isolated tumour cells (≤ 0.2 mm)'], ['B', 'Micrometastasis (> 0.2 mm to 2 mm)'], ['C', 'Macrometastasis (> 2 mm)']], correct: 'C', why: 'Your measurement: 2.3 mm. AJCC thresholds: ITC ≤ 0.2 mm or < 200 cells; micrometastasis > 0.2–2 mm; macrometastasis > 2 mm.' },
+        { t: 'Compare to the attending', kind: 'compare', mag: 1.25, text: 'Your viewing trace (dwell as brightness) against the attending\'s path (amber, numbered). You reached 20× after <b>9.4 s</b>; the attending went straight to the right-pole sinus after 4.5 s. Your data is visible to you; the director sees cohorts only.' },
+        { t: 'Summary', kind: 'summary', mag: 1.25, text: 'Macrometastasis (2.3 mm), CK AE1/AE3 positive. Score <b>4 / 5</b> · Confidence: one confidently-wrong item added to your review queue (ITC vs micrometastasis).' }
+      ] },
+    resident: { title: 'Unknown-slide conference · week 43', ctx: 'Resident · Learn portal (SSO) · PGY-2', collection: 'Lymph node unknowns, week 43', due: 'Conference Thu 29 Oct 07:30', current: 2, unknowns: true,
+      steps: [
+        { t: 'Unknown 1 · skin', kind: 'unknown', mag: 1.25 }, { t: 'Unknown 2 · colon', kind: 'unknown', mag: 1.25 },
+        { t: 'Unknown 3 · lymph node', kind: 'unknown', mag: 20, stem: 'Record your diagnosis before the reveal.', attending: 'Metastatic carcinoma, macrometastasis 2.3 mm; CK AE1/AE3 positive.' },
+        { t: 'Unknown 4 · breast', kind: 'unknown', mag: 1.25 }, { t: 'Unknown 5 · lung', kind: 'unknown', mag: 1.25 }, { t: 'Unknown 6 · thyroid', kind: 'unknown', mag: 1.25 }, { t: 'Unknown 7 · bone marrow', kind: 'unknown', mag: 1.25 }, { t: 'Unknown 8 · liver', kind: 'unknown', mag: 1.25 }
+      ] },
+    cme: { title: 'Sentinel node evaluation: pitfalls (CME enduring material)', ctx: 'CME · Learn portal (SSO) · Activity 2026-LN-043', collection: 'UT CME · enduring materials', due: 'Credit available until 2029-10-01', current: 3, cme: true, steps: null }
+  };
+  AUD.cme.steps = AUD.medstudent.steps.slice(0, 9).concat([{ t: 'Evaluation and credit claim', kind: 'cme', mag: 1.25, text: 'Complete the evaluation (ACCME Criterion 11), attest your participation and download the certificate. 1.0 <i>AMA PRA Category 1 Credit</i>™ · Enduring material · records kept 6 years by the joint provider.' }]);
+
+  const MAGS = [1.25, 2.5, 5, 10, 20, 40];
+  const state = { view: 'learner', aud: 'medstudent', step: 3, item: 'awaiting', net: 'ok', tier: '1', launch: 'learn', motion: 'normal', theme: 'dark', mag: 20, slide: 'he', card: true, drawer: false, nav: true, overlays: true, play: false, tool: 'select', conf: null, mcq: null, dx: '', dxList: [], captions: true, audio: true, cvd: false, labels: true };
+  const steps = () => AUD[state.aud].steps;
+  const cur = () => steps()[state.step];
+  const w = window.innerWidth;
+  if (w <= 1079) state.tier = '2';
+  if (w <= 599) { state.aud = 'resident'; state.step = 2; state.net = 'pack'; }
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) state.motion = 'reduced';
+
+  /* ---------------------------------------------------------------- camera (simulated) */
+  // hi level (20× base) covers lo (1.25× base) coordinates: 1600 hi units = 100 lo units around lo (1300, 400)
+  const HI_C = [1000, 450], LO_FOCUS = [1300, 400], LO_C = [800, 450];
+  let vb = { x: 0, y: 0, w: 1600, h: 900, space: 'hi' };
+  function setZoom(m, keepCentre) {
+    state.mag = m;
+    const hi = m >= 10;
+    $('lvl-hi').classList.toggle('is-on', hi); $('lvl-lo').classList.toggle('is-on', !hi);
+    let cx, cy, wdt;
+    if (hi) { wdt = 1600 * 20 / m; [cx, cy] = HI_C; vb.space = 'hi'; }
+    else { wdt = 1600 * 1.25 / m; [cx, cy] = m <= 1.25 ? LO_C : LO_FOCUS; vb.space = 'lo'; }
+    vb.w = wdt; vb.h = wdt * 9 / 16; vb.x = cx - wdt / 2; vb.y = cy - vb.h / 2;
+    slide.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+    vb.fit = m <= 1.25; slide.setAttribute('preserveAspectRatio', vb.fit ? 'xMidYMid meet' : 'xMidYMid slice');
+    const umpx = 10 / m; // 0.50 µm/px at 20× on this display
+    $('mag-value').textContent = (m % 1 ? m.toFixed(2) : m) + '×';
+    $('mag-line2').textContent = umpx.toFixed(2) + ' µm/px';
+    $('hud-mag').setAttribute('aria-label', `Magnification ${m} times, ${umpx.toFixed(2)} micrometres per pixel. Press Enter to type a zoom`);
+    // scale bar snaps to 1/2/5 × 10^n µm, 80–200 px
+    const cands = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
+    let best = cands.find(c => c / umpx >= 80 && c / umpx <= 200) || cands[0];
+    $('scalebar-bar').style.setProperty('--scalebar-length', (best / umpx) + 'px');
+    $('scalebar-label').textContent = best >= 1000 ? (best / 1000) + ' mm' : best + ' µm';
+    // navigator rectangle in lo coordinates
+    let lx, ly, lw, lh;
+    if (hi) { lw = vb.w / 16; lh = vb.h / 16; lx = LO_FOCUS[0] + (vb.x - HI_C[0]) / 16; ly = LO_FOCUS[1] + (vb.y - HI_C[1]) / 16; }
+    else { lx = vb.x; ly = vb.y; lw = vb.w; lh = vb.h; }
+    const r = $('nav-rect').style; r.left = (lx / 16) + '%'; r.top = (ly / 9) + '%'; r.width = (lw / 16) + '%'; r.height = (lh / 9) + '%';
+    announce(`${m} times.`);
+    layoutPins();
+  }
+  function toScreen(x, y, space) {
+    const W = canvas.clientWidth, H = canvas.clientHeight;
+    // convert lo→hi if needed
+    if (space === 'lo' && vb.space === 'hi') { x = HI_C[0] + (x - LO_FOCUS[0]) * 16; y = HI_C[1] + (y - LO_FOCUS[1]) * 16; }
+    if (space === 'hi' && vb.space === 'lo') { x = LO_FOCUS[0] + (x - HI_C[0]) / 16; y = LO_FOCUS[1] + (y - HI_C[1]) / 16; }
+    const s = vb.fit ? Math.min(W / vb.w, H / vb.h) : Math.max(W / vb.w, H / vb.h); // meet at fit, slice otherwise
+    const vx = vb.x + vb.w / 2 - (W / s) / 2, vy = vb.y + vb.h / 2 - (H / s) / 2;
+    return [(x - vx) * s, (y - vy) * s];
+  }
+  function layoutPins() {
+    const host = $('pins'); host.innerHTML = '';
+    const st = cur(); if (!st) return;
+    const add = (cls, label, x, y, space, title) => {
+      const [sx, sy] = toScreen(x, y, space);
+      if (sx < -20 || sy < -20 || sx > canvas.clientWidth + 20 || sy > canvas.clientHeight + 20) return;
+      const el = document.createElement('button'); el.className = 'pin ' + cls; el.style.left = sx + 'px'; el.style.top = sy + 'px'; el.textContent = label; el.setAttribute('aria-label', title || ('Hotspot ' + label)); el.setAttribute('data-live', 'layers:hotspot'); el.tabIndex = -1; host.appendChild(el);
+    };
+    if (state.view === 'director' || st.kind === 'compare') { [[1, 800, 450], [2, 1240, 330], [3, 1330, 400], [4, 1130, 640]].forEach(([n, x, y]) => add('pin--path', n, x, y, 'lo', 'Expert path stop ' + n)); }
+    else if (st.pins && state.overlays) st.pins.forEach(([n, x, y, title]) => add(typeof n === 'string' ? 'pin--letter' : '', n, x, y, 'lo', title ? `Hotspot ${n}: ${title}` : `Region ${n}`));
+    if (st.kind === 'measure' && state.overlays) { const [sx, sy] = toScreen(1330, 400, 'lo'); const l = document.createElement('span'); l.className = 'measure-label'; l.style.left = sx + 'px'; l.style.top = (sy - 10) + 'px'; l.textContent = '2.3 mm'; l.setAttribute('data-live', 'annotations:measurement'); host.appendChild(l); }
+  }
+  function announce(s, assertive) { const el = $(assertive ? 'lr-assert' : 'lr-polite'); el.textContent = s; }
+
+  /* ---------------------------------------------------------------- top bar + step rail */
+  function renderTop() {
+    const a = AUD[state.aud], n = steps().length, st = cur();
+    const label = a.unknowns ? `Unknown ${state.step + 1} of ${n}` : `Step ${state.step + 1} of ${n}`;
+    $('module-title').textContent = state.view === 'author' ? `Author studio · ${a.title} (draft)` : state.view === 'director' ? `Director analytics · ${a.title}` : a.title;
+    $('module-step').textContent = state.view === 'learner' ? `${label} · ${st.t}` : (state.view === 'author' ? 'Recording · step 5' : 'Cohort PATH-612 · n = 42');
+    $('module-step-compact').textContent = `${state.step + 1} / ${n}`;
+    $('ctx-chip').textContent = state.view === 'author' ? 'Faculty author · Learn portal (SSO)' : state.view === 'director' ? 'Course director · Learn portal (SSO) · aggregate only' : a.ctx;
+    $('card-handle-text').textContent = `${label} · ${st.t}`;
+    const rail = $('steprail'); rail.innerHTML = '';
+    steps().forEach((s, i) => {
+      const b = document.createElement('button'); b.className = 'steprail__tick' + (i < state.step ? ' is-done' : '') + (/region|mcq|measure|unknown/.test(s.kind) ? ' is-item' : '');
+      if (i === state.step) b.setAttribute('aria-current', 'step');
+      b.setAttribute('aria-label', `${a.unknowns ? 'Unknown' : 'Step'} ${i + 1} of ${n}: ${s.t}${i < state.step ? ', done' : ''}`);
+      b.innerHTML = `<span class="tt">${i + 1} · ${esc(s.t)}</span>`;
+      b.addEventListener('click', () => goStep(i)); rail.appendChild(b);
+    });
+    canvas.setAttribute('aria-label', `Slide canvas, LN-043 ${state.slide === 'ihc' ? 'CK AE1 AE3' : 'H and E'}, ${state.mag} times. Arrow keys pan, plus and minus zoom, N next step, K step card, Shift K module drawer.`);
+  }
+  function goStep(i) {
+    const n = steps().length; state.step = Math.max(0, Math.min(n - 1, i));
+    const st = cur();
+    if (/region|mcq|mcq-region|measure|unknown/.test(st.kind) && !/awaiting/.test(state.item)) state.item = 'awaiting';
+    state.slide = st.slide === 'ihc' ? 'ihc' : 'he';
+    if (!state.card) { state.card = true; }
+    setZoom(st.kind === 'region' && state.item === 'awaiting10' ? 10 : st.mag);
+    renderAll();
+    announce(`${AUD[state.aud].unknowns ? 'Unknown' : 'Step'} ${state.step + 1} of ${n}. ${st.t}.`);
+  }
+
+  /* ---------------------------------------------------------------- step card */
+  const confCtl = (id) => `<div class="conf" role="radiogroup" aria-label="Confidence"><span>Confidence</span><div class="segmented">${['Guess', 'Fairly sure', 'Certain'].map((c, i) => `<button class="segmented__item" role="radio" aria-checked="${state.conf === i}" data-conf="${i}">${c}</button>`).join('')}</div><span class="text-xs">recorded with the answer · drives your review queue</span></div>`;
+  const gradeLine = () => {
+    if (state.item === 'posted') return `<span class="score"><span class="dot dot--ok"></span>Posted to gradebook</span>`;
+    if (state.item === 'postfail' || (state.item === 'revealed' && /pack|offline/.test(state.net))) return `<div class="alert alert--warning" role="alert" data-live="lti:ags"><span class="alert__glyph">!</span><div><div class="alert__title">Could not post to gradebook</div>Your answer is saved; we will retry.</div></div>`;
+    return `<span class="score"><span class="dot dot--pending"></span>Score pending · posts to the gradebook on reveal</span>`;
+  };
+  const narration = (secs, total) => state.audio ? `<div class="narration" data-live="lti:media"><button class="tool" style="width:24px;height:24px" aria-label="${state.play ? 'Pause' : 'Play'} narration, Space" id="nar-play"><svg class="icon" style="width:14px;height:14px"><use href="#${state.play ? 'i-pause' : 'i-play'}"/></svg></button><span class="timer">${secs} / ${total}</span><div class="progress-bar" role="progressbar" aria-label="Narration progress" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="--value:40%"><span></span></div><span>${state.captions ? 'CC on' : 'CC off'} · transcript ⇩</span></div>` : `<div class="narration">Narration off · text only</div>`;
+
+  function renderCard() {
+    const st = cur(), a = AUD[state.aud], n = steps().length, body = $('sc-body');
+    const label = a.unknowns ? `Unknown ${state.step + 1} of ${n}` : `Step ${state.step + 1} of ${n}`;
+    let kind = { tour: 'Tour', vignette: 'Vignette', region: 'Region marking · 1 point', mcq: 'Multiple choice · 1 point', 'mcq-region': 'Multiple choice · image regions · 1 point', measure: 'Measure and classify · 1 point', compare: 'Your trace vs the attending', summary: 'Summary', cme: 'Credit', unknown: 'Diagnosis before reveal' }[st.kind] || '';
+    $('sc-title').innerHTML = `${esc(label)} · ${esc(st.t)} <span class="kind">· ${kind}</span>`;
+    $('sc-play').setAttribute('aria-pressed', String(state.play)); $('sc-play').querySelector('use').setAttribute('href', state.play ? '#i-pause' : '#i-play');
+    $('sc-cc').setAttribute('aria-pressed', String(state.captions)); $('sc-audio').setAttribute('aria-pressed', String(state.audio));
+    let h = '';
+    const nextBtn = `<button class="btn btn--secondary btn--sm" data-cmd="next">Next <kbd class="key">N</kbd></button>`;
+    const item = state.item;
+    const foot = (hint, actions) => `<div class="stepcard__foot"><span class="hint">${hint}</span>${actions}</div>`;
+    if (st.kind === 'tour' || st.kind === 'vignette') {
+      h += `<p class="caption ${st.kind === 'vignette' ? 'caption--vignette' : ''}" id="caption" data-live="lti:step">${st.text}</p>`;
+      if (st.pins) h += `<div class="hotspots" role="list" aria-label="Hotspots">${st.pins.map(p => `<button class="legend__item" role="listitem" data-pin="${p[0]}"><span class="n">${p[0]}</span>${esc(p[3])}<span class="pattern">Space flies</span></button>`).join('')}</div>`;
+      h += narration('0:28', '1:10');
+      h += foot(`<kbd class="key">N</kbd> next · <kbd class="key">⇧N</kbd> back · <kbd class="key">Space</kbd> ${state.play ? 'pause' : 'play'} · <kbd class="key">H</kbd> hide hotspots`, state.step === 0 ? `<button class="btn btn--primary btn--sm" data-cmd="play">Start the tour <kbd class="key">Space</kbd></button>` : nextBtn);
+    } else if (st.kind === 'region') {
+      const gateOk = state.mag >= (st.gate || 20);
+      h += `<div class="item-card"><div class="item-card__meta"><span>Item 4 of 5 · Region marking</span><span>1 point</span></div><p class="item-card__stem">${st.stem}</p>`;
+      if (item === 'awaiting' || item === 'awaiting10') {
+        h += `<div class="item-card__hint"><span>Zoom to at least <b>${st.gate}×</b> to earn full credit.</span><span class="chip ${gateOk ? 'chip--solid' : ''}" data-live="state.views[0].scale">${gateOk ? '✓ at ' + state.mag + '×' : 'now ' + state.mag + '× — press 5 for 20×'}</span>${item === 'awaiting' ? '<span class="chip chip--solid" data-live="annotations">1 mark placed</span>' : '<span class="chip">no mark yet · T point · P polygon</span>'}</div>`;
+        h += confCtl('conf');
+        h += `</div>` + foot(`Text alternative <kbd class="key">⇧↵</kbd> · Point tool <kbd class="key">T</kbd> · Polygon <kbd class="key">P</kbd> · Commit <kbd class="key">↵</kbd>`, `<button class="btn btn--secondary btn--sm" data-cmd="cand">Choose a region instead <kbd class="key">⇧↵</kbd></button><button class="btn btn--primary btn--sm is-focus" data-cmd="commit" ${item === 'awaiting' ? '' : 'aria-disabled="true"'}>Commit answer <kbd class="key">↵</kbd></button>`);
+      } else if (item === 'committed') {
+        h += `<div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><div class="alert__title">Answer saved.</div>Press <kbd class="key">⇧R</kbd> to reveal. Confidence: ${['Guess', 'Fairly sure', 'Certain'][state.conf ?? 1]}.</div></div></div>` + foot(`<kbd class="key">⇧R</kbd> reveal · <kbd class="key">Ctrl</kbd><kbd class="key">Z</kbd> undo mark`, `<button class="btn btn--primary btn--sm is-focus" data-cmd="reveal">Reveal <kbd class="key">⇧R</kbd></button>`);
+      } else {
+        h += `<div class="alert alert--success" role="status" data-live="events:itemAnswered"><span class="alert__glyph">✓</span><div><div class="alert__title">Revealed · your mark overlapped the lesion by 62 % (IoU) · 1 / 1</div>Answer-key layer is now visible (dashed). Expert's view: <button class="btn btn--sm btn--secondary" data-cmd="flyexpert" style="min-height:22px">Fly there <kbd class="key">Space</kbd></button> · Why: cohesive large cells with abundant cytoplasm in the subcapsular sinus; compare the small lymphocytes around them.</div></div>${gradeLine()}</div>` + foot(`<kbd class="key">N</kbd> next · <kbd class="key">,</kbd> <kbd class="key">.</kbd> key opacity · <kbd class="key">H</kbd> hide overlays`, nextBtn);
+      }
+    } else if (st.kind === 'mcq' || st.kind === 'mcq-region') {
+      h += `<div class="item-card"><div class="item-card__meta"><span>${st.kind === 'mcq-region' ? 'Item · regions on the slide' : 'Item 5 of 5 · Multiple choice'}</span><span>1 point</span></div><p class="item-card__stem" id="mcq-stem">${st.stem}</p>`;
+      if (item.startsWith('awaiting') || item === 'committed') {
+        h += `<fieldset class="stack stack--tight" role="radiogroup" aria-labelledby="mcq-stem">${st.options.map(([k, t]) => `<label class="option ${state.mcq === k ? 'is-selected' : ''}"><input type="radio" name="mcq" value="${k}" ${state.mcq === k ? 'checked' : ''} ${item === 'committed' ? 'disabled' : ''}><span class="option__key">${k}</span><span>${esc(t)}</span></label>`).join('')}</fieldset>`;
+        if (item === 'committed') h += `<div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div>Answer saved. Press <kbd class="key">⇧R</kbd> to reveal.</div></div>`;
+        else h += confCtl('conf');
+        h += `</div>` + foot(`Keys <kbd class="key">A</kbd>–<kbd class="key">D</kbd> select · <kbd class="key">↵</kbd> commits${st.kind === 'mcq-region' ? ' · <kbd class="key">Space</kbd> flies to the focused letter' : ''}`, item === 'committed' ? `<button class="btn btn--primary btn--sm is-focus" data-cmd="reveal">Reveal <kbd class="key">⇧R</kbd></button>` : `<button class="btn btn--primary btn--sm is-focus" data-cmd="commit" ${state.mcq ? '' : 'aria-disabled="true"'}>Commit answer <kbd class="key">↵</kbd></button>`);
+      } else {
+        const mine = state.mcq || st.correct;
+        h += `<div class="stack stack--tight">${st.options.map(([k, t]) => `<div class="option ${k === st.correct ? 'is-correct' : (k === mine ? 'is-incorrect' : '')}"><span class="option__key">${k}</span><span>${esc(t)}</span>${k === st.correct ? `<span class="option__feedback">✓ correct${mine === k ? ' · yours' : ''}</span>` : (k === mine ? '<span class="option__feedback">✕ yours</span>' : '')}</div>`).join('')}</div><p class="text-sm">${st.why}</p>${gradeLine()}</div>` + foot(`<kbd class="key">N</kbd> next item`, nextBtn);
+      }
+    } else if (st.kind === 'measure') {
+      h += `<div class="item-card"><div class="item-card__meta"><span>Item · Measure and classify</span><span>1 point</span></div><p class="item-card__stem">${st.stem}</p>`;
+      h += `<div class="item-card__hint"><span class="chip chip--solid" data-live="annotations:measurement">Measured: 2.3 mm</span><span class="chip" data-live="state.views[0].scale">at ${state.mag}×</span></div>`;
+      if (item.startsWith('awaiting') || item === 'committed') {
+        h += `<fieldset class="stack stack--tight" role="radiogroup" aria-label="Classification">${st.options.map(([k, t]) => `<label class="option ${state.mcq === k ? 'is-selected' : ''}"><input type="radio" name="mcq" value="${k}" ${state.mcq === k ? 'checked' : ''}><span class="option__key">${k}</span><span>${esc(t)}</span></label>`).join('')}</fieldset>${confCtl('conf')}</div>` + foot(`<kbd class="key">M</kbd> measure · <kbd class="key">↵</kbd> commit`, `<button class="btn btn--primary btn--sm is-focus" data-cmd="${item === 'committed' ? 'reveal' : 'commit'}">${item === 'committed' ? 'Reveal <kbd class="key">⇧R</kbd>' : 'Commit answer <kbd class="key">↵</kbd>'}</button>`);
+      } else {
+        h += `<div class="alert alert--success" role="status"><span class="alert__glyph">✓</span><div><div class="alert__title">Macrometastasis · 1 / 1</div>${st.why}</div></div>${gradeLine()}</div>` + foot(`<kbd class="key">N</kbd> next`, nextBtn);
+      }
+    } else if (st.kind === 'compare') {
+      h += `<p class="caption">${st.text}</p><div class="legend" data-live="layers"><span class="legend__item"><span class="swatch" style="--swatch:#fff;opacity:.8"></span>Your dwell (brightness)</span><span class="legend__item"><span class="swatch" style="--swatch:var(--ann-6)"></span>Attending's path · numbered</span><span class="legend__item"><span class="swatch swatch--dash" style="--swatch:var(--ann-5)"></span>Cohort median path</span></div><div class="row"><span class="stat" style="padding:4px 8px"><span class="v">9.4 s</span><span>time to first 20×</span><span class="k">attending 4.5 s</span></span><span class="stat" style="padding:4px 8px"><span class="v">41 %</span><span>dwell on the focus</span><span class="k">attending 61 %</span></span></div>` + foot(`<kbd class="key">,</kbd> <kbd class="key">.</kbd> heat opacity · <kbd class="key">N</kbd> next`, nextBtn);
+    } else if (st.kind === 'summary') {
+      h += `<p class="caption">${st.text}</p><div class="row"><button class="btn btn--secondary btn--sm" data-cmd="drawer">Open review queue <kbd class="key">⇧K</kbd></button><button class="btn btn--secondary btn--sm">Download my trace (xAPI)</button></div>${gradeLine()}`;
+      h += foot(`Module complete · 4 of 5 items · grade posts on completion`, `<button class="btn btn--primary btn--sm">Return to Canvas</button>`);
+    } else if (st.kind === 'cme') {
+      h += `<p class="caption">${st.text}</p><ol class="stack stack--tight" style="list-style:decimal;padding-left:1.4em;font-size:var(--text-sm)"><li>Module complete ✓ (score 4 / 5, 38 min on task)</li><li>Evaluation form (3 questions, Criterion 11) — open</li><li>Attestation of participation — open</li></ol>` + foot(`Faculty disclosure shown at start · Activity 2026-LN-043`, `<button class="btn btn--primary btn--sm" data-cmd="cme">Evaluate and claim credit</button>`);
+    } else if (st.kind === 'unknown') {
+      const dxDone = item !== 'awaiting' && item !== 'awaiting10';
+      h += `<div class="item-card"><div class="item-card__meta"><span>Unknown ${state.step + 1} of ${n} · diagnosis hidden until reveal (layer ACL)</span><span class="timer" data-live="lti:timer">Timer off</span></div><p class="item-card__stem">${st.stem || 'Record your diagnosis before the reveal.'}</p>`;
+      if (!dxDone) {
+        h += `<div class="unknown-grid"><input class="input" id="dx-input" placeholder="Your diagnosis…" value="${esc(state.dx)}" aria-label="Your diagnosis"><button class="btn btn--sm btn--secondary" data-cmd="adddx">Add to differential</button></div>`;
+        h += `<div class="dx-chips" role="list" aria-label="Differential">${(state.dxList.length ? state.dxList : ['Reactive follicular hyperplasia', 'Metastatic carcinoma', 'Sinus histiocytosis']).map(d => `<span class="chip chip--solid" role="listitem">${esc(d)}</span>`).join('')}</div>${confCtl('conf')}</div>`;
+        h += foot(`Reveal is locked until a diagnosis is recorded · <kbd class="key">↵</kbd> record`, `<button class="btn btn--secondary btn--sm" data-cmd="timer">Start timer</button><button class="btn btn--primary btn--sm is-focus" data-cmd="commit">Record diagnosis <kbd class="key">↵</kbd></button>`);
+      } else if (item === 'committed') {
+        h += `<div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><div class="alert__title">Diagnosis recorded: ${esc(state.dx || 'Metastatic carcinoma')}</div>Press <kbd class="key">⇧R</kbd> to reveal the attending's diagnosis.</div></div></div>` + foot(``, `<button class="btn btn--primary btn--sm is-focus" data-cmd="reveal">Reveal <kbd class="key">⇧R</kbd></button>`);
+      } else {
+        h += `<div class="alert alert--success" role="status" data-live="layers:reveal"><span class="alert__glyph">✓</span><div><div class="alert__title">Attending: ${esc(st.attending || '')}</div>Yours: ${esc(state.dx || 'Metastatic carcinoma')} · concordant. Your trace vs the attending's path is in the next view (<kbd class="key">N</kbd>).</div></div>${gradeLine()}</div>` + foot(`<kbd class="key">N</kbd> next unknown`, nextBtn);
+      }
+    }
+    body.innerHTML = h;
+    // card visibility
+    const show = state.card && state.view === 'learner' && state.launch === 'learn';
+    $('stepcard').hidden = !show; $('card-handle').hidden = show || state.view !== 'learner' || state.launch !== 'learn';
+    app.classList.toggle('card-open', show);
+    requestAnimationFrame(() => { if (show) app.style.setProperty('--card-h', $('stepcard').offsetHeight + 'px'); });
+  }
+
+  /* ---------------------------------------------------------------- drawer */
+  function renderDrawer() {
+    const a = AUD[state.aud], n = steps().length, b = $('dr-body');
+    $('drawer').hidden = !state.drawer; app.classList.toggle('drawer-open', state.drawer);
+    if (!state.drawer) return;
+    const sec = (title, open, inner, count) => `<details class="section" ${open ? 'open' : ''}><summary>${title}${count ? `<span class="count">${count}</span>` : ''}</summary><div class="section__body">${inner}</div></details>`;
+    if (state.view === 'learner') {
+      $('dr-title').textContent = 'Module';
+      const pct = Math.round((state.step / n) * 100);
+      let h = `<div class="panel__body row row--between" style="align-items:center"><div class="progress-ring" style="--value:${pct}" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Module progress"><svg viewBox="0 0 36 36"><circle class="track" cx="18" cy="18" r="15.915"/><circle class="value" cx="18" cy="18" r="15.915"/></svg><span class="progress-ring__label">${state.step}/${n}</span></div><div class="stack stack--tight" style="flex:1"><b>${esc(a.title)}</b><span class="text-xs text-secondary">${esc(a.collection)} · ${esc(a.due)}</span><span class="text-xs text-secondary" data-live="offline:pack">Available offline · pack saved 2026-10-20</span></div></div>`;
+      h += sec(a.unknowns ? 'Unknowns' : 'Steps', true, `<ol class="list steplist" aria-label="Steps">${steps().map((s, i) => `<li><button class="list__item" ${i === state.step ? 'aria-current="step"' : ''} data-step="${i}"><span class="n">${i + 1}</span><span class="lbl">${esc(s.t)}<small>${{ tour: 'tour', vignette: 'vignette', region: 'region item · 1 pt', mcq: 'MCQ · 1 pt', 'mcq-region': 'MCQ · regions · 1 pt', measure: 'measure · 1 pt', compare: 'trace vs expert', summary: 'summary', cme: 'evaluation + credit', unknown: 'diagnosis before reveal' }[s.kind]}</small></span><span class="st">${i < state.step ? '✓' : (i === state.step ? 'now' : '')}</span></button></li>`).join('')}</ol>`, `${state.step}/${n}`);
+      h += sec('Review queue', false, `<ul class="list queue" data-live="lti:scheduler"><li class="list__item"><span class="lbl"><b>Mitotic figures at 40×</b> · Case 3<br><small class="text-secondary">due today · confidently wrong last time · prioritised</small></span></li><li class="list__item"><span class="lbl"><b>ITC vs micrometastasis thresholds</b><br><small class="text-secondary">due today</small></span></li><li class="list__item"><span class="lbl"><b>Germinal centre vs metastasis</b><br><small class="text-secondary">due Thu 29 Oct</small></span></li></ul><div class="panel__body"><button class="btn btn--secondary btn--block">Start review · about 12 min</button><p class="text-xs text-secondary mt-2">Spaced retrieval (FSRS class); confidently-wrong items first. Export to Anki.</p></div>`, '3 due');
+      if (a.cme) h += sec('Credit', true, `<div class="panel__body stack stack--tight" data-live="lti:cme"><span><b>1.0 <i>AMA PRA Category 1 Credit</i>™</b> · Enduring material</span><span class="text-xs text-secondary">Activity 2026-LN-043 · joint provider: UT CME office · topic tags: none (not ethics/opioid)</span><ul class="text-sm" style="padding-left:1.2em;list-style:disc"><li>Complete the module ✓</li><li>Evaluation (Criterion 11) — open</li><li>Attestation — open</li></ul><button class="btn btn--primary btn--sm" data-cmd="cme">Evaluate and claim credit</button><span class="text-xs text-secondary">Faculty disclosure: no relevant financial relationships <span data-synthetic>(synthetic)</span>.</span></div>`);
+      h += sec('Settings', true, `<div class="panel__body stack">
+        <button class="toggle" role="switch" aria-checked="${state.cvd}" data-cmd="cvd" data-live="colour:cvd-lut"><span class="toggle__track"></span><span class="toggle__text">CVD remap<span class="toggle__hint">Deuteranopia-friendly stain transform (shader LUT)</span></span></button>
+        <button class="toggle" role="switch" aria-checked="${state.motion === 'reduced'}" data-cmd="motion"><span class="toggle__track"></span><span class="toggle__text">Reduced motion<span class="toggle__hint">Follows your system setting; fly-to becomes an instant jump</span></span></button>
+        <button class="toggle" role="switch" aria-checked="${state.captions}" data-cmd="cc"><span class="toggle__track"></span><span class="toggle__text">Captions<span class="toggle__hint">Narration text in the step card; same text as the live region</span></span></button>
+        <button class="toggle" role="switch" aria-checked="${state.audio}" data-cmd="audio"><span class="toggle__track"></span><span class="toggle__text">Audio narration</span></button>
+        <div class="field"><span class="field__label">Chrome theme</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="${state.theme === 'dark'}" data-theme="dark">Dark</button><button class="segmented__item" role="radio" aria-checked="${state.theme === 'light'}" data-theme="light">Light</button><button class="segmented__item" role="radio" aria-checked="false">Auto</button></div><span class="field__hint">The canvas backdrop stays neutral grey in every theme.</span></div>
+        <div class="field"><label class="field__label" for="sel-keys">Keymap preset</label><div class="select"><select id="sel-keys" data-live="commands:preset"><option>Default</option><option>Left-hand cluster</option><option>Right-hand cluster</option></select></div></div>
+        <p class="text-xs text-secondary">This module records where you look (viewport trace) for your own comparison and for aggregate cohort views. No names leave the LMS. <a href="#">What is recorded</a></p></div>`);
+      h += sec('Slide', false, `<div class="panel__body stack stack--tight text-sm" data-live="state.slides"><span><b>LN-043</b> · teaching set · derived from CAMELYON16 tumor_014 · <span class="chip chip--licence">CC0</span></span><span class="text-xs text-secondary">No PHI (teaching-set stage) · determination logged 2026-09-02 · year-only dates</span><div class="tray"><button class="tray__slide ${state.slide === 'he' ? 'is-selected' : ''} is-viewed" data-slide="he"><span class="tray__thumb"><svg viewBox="0 0 1600 900" preserveAspectRatio="none"><use href="#ov-sym"/></svg><span class="tray__viewed"></span></span><span class="tray__label"><span class="id">LN-043-HE</span><span class="text">H&amp;E · 0.25 µm/px</span></span><span class="chip chip--stain">H&amp;E</span></button><button class="tray__slide ${state.slide === 'ihc' ? 'is-selected' : ''}" data-slide="ihc"><span class="tray__thumb" style="filter:grayscale(.6) sepia(.4)"><svg viewBox="0 0 1600 900" preserveAspectRatio="none"><use href="#ov-sym"/></svg></span><span class="tray__label"><span class="id">LN-043-CK</span><span class="text">CK AE1/AE3 · IHC</span></span><span class="chip chip--stain">IHC</span></button></div></div>`);
+      b.innerHTML = h;
+    } else if (state.view === 'author') {
+      $('dr-title').textContent = 'Author studio';
+      let h = `<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true">Steps <span class="count">5</span></button><button class="tab" role="tab" aria-selected="false">Items <span class="count">3</span></button><button class="tab" role="tab" aria-selected="false">Collection</button></div>`;
+      h += `<div class="panel__body text-xs text-secondary">Recording captures navigation (state document), annotations and speech → one step per pause. Speech is transcribed into captions you edit before publishing. Target: ≤ 10 min for a 10-step tour.</div>`;
+      const stepsA = [['Vignette', '0:00–0:22', 'A 58-year-old woman (synthetic) with a 1.8 cm invasive ductal carcinoma…'], ['Overview · 1.25×', '0:22–0:51', 'Orient first: capsule, cortex with secondary follicles…'], ['Subcapsular sinus · 5×', '0:51–1:24', 'Follow the subcapsular sinus around the node…'], ['Item: mark the focus · 20×', '—', 'Region item · answer key drawn · 6 candidates'], ['Confirm with IHC · 10×', '1:24– (recording)', '[transcribing…] switch to the cytokeratin slide…']];
+      h += stepsA.map(([t, d, tx], i) => `<div class="author-step" data-live="commands:record"><span class="thumb"><svg viewBox="0 0 1600 900" preserveAspectRatio="none"><use href="#ov-sym"/></svg></span><div class="stack stack--tight"><b class="text-sm">${i + 1}. ${t}</b><textarea class="input" aria-label="Transcript step ${i + 1}">${tx}</textarea><span class="meta">${d}${i === 4 ? ' · ● live' : ''}</span></div><div class="stack stack--tight"><button class="btn btn--sm btn--ghost" aria-label="Re-record step ${i + 1}"><svg class="icon icon--sm"><use href="#i-mic"/></svg></button><button class="btn btn--sm btn--ghost" aria-label="Insert item after step ${i + 1}">+</button></div></div>`).join('');
+      h += sec('Item editor · Item 4 · Region marking', true, `<div class="panel__body stack" data-live="lti:item:editor">
+        <div class="field"><label class="field__label" for="ie-stem">Stem</label><input class="input" id="ie-stem" value="Mark the metastatic focus."></div>
+        <div class="row"><span class="chip chip--solid">Answer key drawn ✓ · 0.42 mm²</span><span class="chip">Scoring: IoU ≥ 0.5 full · point-in-polygon ½</span></div>
+        <div class="field"><label class="field__label" for="ie-gate">Zoom gate</label><div class="select"><select id="ie-gate"><option>None</option><option>10×</option><option selected>20× (full credit)</option><option>40×</option></select></div></div>
+        <div class="field"><span class="field__label">Non-pointer alternatives (at least one is required to publish)</span>
+          <div class="cand-edit">${['Subcapsular sinus, upper pole — thin rim of small lymphocytes', 'Germinal centre, left cortex — tingible-body macrophages', 'Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells ★ key', 'Medullary cords — plasma cells', 'Hilum — vessels and adipose tissue', 'Capsule, inferior — fibrous tissue only'].map((d, i) => `<span class="candidate__letter">${'ABCDEF'[i]}</span><input class="input" value="${d}" aria-label="Candidate ${'ABCDEF'[i]} description">`).join('')}</div>
+          <label class="field__label" for="ie-rubric">Text rubric</label><textarea class="input" id="ie-rubric">Location: subcapsular sinus, right pole (required). Size ≈ 1–3 mm. Feature: cohesive large cells with abundant cytoplasm.</textarea></div>
+        <div class="pub-check"><span class="glyph">✓</span><span><b>Publishable.</b> Keyboard path: 6 candidates with <i>Fly there</i>; text path: rubric present. CI will score the keyboard path and assert equality with pointer marking (NFR-A5).</span></div>
+        <div class="field"><span class="field__label">Simulate colour vision (author only)</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="true">None</button><button class="segmented__item" role="radio" aria-checked="false" data-live="colour:cvd-sim">Deuteranopia</button><button class="segmented__item" role="radio" aria-checked="false" data-live="colour:cvd-sim">Protanopia</button></div><span class="field__hint">Answer key: Deep blue (ROI class) · learner mark: Yellow · pairwise ΔE00 ≥ 20 under both simulations.</span></div></div>`);
+      h += sec('Collection · Lymph node unknowns, week 43', false, `<div class="panel__body stack stack--tight text-sm" data-live="lti:collection"><div class="table-wrap"><table class="table table--dense"><thead><tr><th>Slide</th><th>Stain</th><th>Licence</th><th>Determination</th></tr></thead><tbody><tr><td class="mono">LN-043</td><td>H&amp;E</td><td><span class="chip chip--licence">CC0</span></td><td>✓ logged 2026-09-02</td></tr><tr><td class="mono">LN-043-CK</td><td>IHC</td><td><span class="chip chip--licence">CC0</span></td><td>✓ logged</td></tr><tr><td class="mono">LN-044</td><td>H&amp;E</td><td><span class="chip chip--licence">Institutional</span></td><td>pending review (rare case narrative)</td></tr></tbody></table></div><div class="row"><button class="btn btn--sm btn--secondary">Add from a sign-out set…</button><button class="btn btn--sm btn--secondary">Withdraw slide</button></div><span class="text-xs text-secondary">Adding from sign-out runs the teaching-set stage: Tier 2 stripped, dates to year, narrative reviewed, determination logged, withdrawal hook kept.</span><div class="field"><label class="field__label" for="disc">Faculty disclosure</label><input class="input" id="disc" value="No relevant financial relationships (synthetic)"></div><button class="btn btn--primary btn--sm">Publish to Canvas (Deep Linking)</button></div>`);
+      b.innerHTML = h;
+    } else {
+      $('dr-title').textContent = 'Cohort analytics';
+      let h = `<div class="panel__body"><div class="alert alert--neutral" role="status"><span class="alert__glyph">i</span><div><div class="alert__title">PATH-612 · 42 learners · aggregate only</div>Individual traces are never shown here; each learner sees their own in Step 8.</div></div></div>`;
+      h += `<div class="stats" data-live="telemetry:learner-trace"><div class="stat"><span class="v">7.1 s</span><span>Time to first 20× (median)</span><span class="k">expert 4.5 s</span></div><div class="stat"><span class="v">38 %</span><span>Dwell on the critical ROI</span><span class="k">expert 61 %</span></div><div class="stat"><span class="v">71 %</span><span>Reached 20× before answering</span><span class="k">12 learners did not</span></div><div class="stat"><span class="v">0.58</span><span>Median IoU · item 4</span><span class="k">p = 0.71 · discrimination 0.34</span></div></div>`;
+      h += sec('Layers', true, `<div class="panel__body stack stack--tight" data-live="layers"><div class="legend"><span class="legend__item"><span class="swatch" style="--swatch:#fff;opacity:.8"></span>Dwell heat (luminance)</span><span class="legend__item"><span class="swatch" style="--swatch:var(--ann-6)"></span>Expert path</span><span class="legend__item"><span class="swatch swatch--dash" style="--swatch:var(--ann-5)"></span>Cohort median path</span></div><div class="slider"><div class="slider__label"><label for="heat-op">Heat opacity</label></div><input id="heat-op" type="range" min="0" max="100" value="60"><output class="slider__value">60 %</output></div><button class="toggle is-on" role="switch" aria-checked="true"><span class="toggle__track"></span><span class="toggle__text">Expert path</span></button><button class="toggle is-on" role="switch" aria-checked="true"><span class="toggle__track"></span><span class="toggle__text">Cohort path</span></button></div>`);
+      h += sec('Items', false, `<div class="table-wrap" style="margin:0 12px"><table class="table table--dense"><thead><tr><th>Item</th><th class="num">p</th><th class="num">Disc.</th><th class="num">n</th></tr></thead><tbody><tr><td>4 · Mark the focus</td><td class="num">0.71</td><td class="num">0.34</td><td class="num">42</td></tr><tr><td>6 · Immunostain</td><td class="num">0.93</td><td class="num">0.12</td><td class="num">42</td></tr><tr><td>7 · Measure &amp; classify</td><td class="num">0.64</td><td class="num">0.41</td><td class="num">41</td></tr></tbody></table></div>`);
+      h += sec('Export', false, `<div class="panel__body row"><button class="btn btn--sm btn--secondary"><svg class="icon icon--sm"><use href="#i-download"/></svg>CSV (aggregate)</button><button class="btn btn--sm btn--secondary"><svg class="icon icon--sm"><use href="#i-download"/></svg>Anonymised xAPI</button></div>`);
+      b.innerHTML = h;
+    }
+  }
+
+  /* ---------------------------------------------------------------- strip, network, tier, launch, layers */
+  const chip = (t, live) => `<span class="chip" ${live ? `data-live="${live}"` : ''}>${t}</span>`;
+  function renderStrip() {
+    const ind = $('ind'), lab = $('ind-label');
+    const set = (cls, text) => { ind.className = 'indicator indicator--' + cls; lab.textContent = text; ind.setAttribute('aria-label', 'Sharpness: ' + text + '. Opens the quality sheet'); $('hud-sharp-label').textContent = text; $('hud-sharp').querySelector('.indicator').className = 'indicator indicator--' + cls; };
+    let chips = '', notice = '';
+    canvas.classList.remove('is-soft', 'is-cached', 'has-tile-errors');
+    switch (state.net) {
+      case '4g': set('soft', 'Soft — slow link'); chips += chip('Slow link (6 Mbps) — reduced detail while moving', 'telemetry:link'); canvas.classList.add('is-soft'); break;
+      case 'pack': set('sharp', 'Sharp'); chips += chip('Offline pack · Lymph node unknowns, week 43 · saved 2026-10-20', 'offline:pack'); break;
+      case 'offline': set('offline', 'Offline — cached tiles only'); chips += chip('Offline — showing cached tiles only', 'offline'); canvas.classList.add('is-cached'); break;
+      case 'classroom': set('sharpening', 'Sharpening…'); chips += chip('Shared Wi-Fi busy — following the instructor may lag', 'telemetry:link'); break;
+      case 'tileerr': set('sharp', 'Sharp'); notice = '3 tiles could not be loaded — retrying'; canvas.classList.add('has-tile-errors'); break;
+      case 'slow': set('sharp', 'Sharp'); chips += chip('Server slow (p95 1.2 s) — prefetch paused', 'telemetry:server-timing'); break;
+      default: set('sharp', 'Sharp');
+    }
+    if (state.tier === '2') chips += chip('Tier 2 · 60 Hz', 'telemetry:tier');
+    if (state.tier === '3') chips += chip('Tier 3 · best effort', 'telemetry:tier');
+    $('strip-chips').innerHTML = chips;
+    $('hud-pack').classList.toggle('is-hidden', state.net !== 'pack');
+    $('hud-motion').classList.toggle('is-hidden', state.motion !== 'reduced');
+    if (state.dxNotice) notice = state.dxNotice;
+    $('strip-notice').textContent = notice;
+    const g = $('strip-grade');
+    if (state.view !== 'learner') g.innerHTML = '';
+    else if (state.item === 'posted') g.innerHTML = '<span class="dot dot--ok"></span>Posted to gradebook';
+    else if (state.item === 'postfail' || (state.item === 'revealed' && /pack|offline/.test(state.net))) g.innerHTML = '<span class="dot dot--fail"></span>Could not post to gradebook — your answer is saved; we will retry.';
+    else if (state.item === 'revealed') g.innerHTML = '<span class="dot dot--pending"></span>Posting to gradebook…';
+    else g.innerHTML = '';
+    $('strip-captions').textContent = state.captions ? 'Captions on' : 'Captions off';
+    document.body.classList.toggle('motion-reduced', state.motion === 'reduced');
+    document.documentElement.setAttribute('data-theme', state.theme);
+    slide.classList.toggle('is-ihc', state.slide === 'ihc');
+    $('hud-slide').innerHTML = state.slide === 'ihc' ? 'LN-043-CK · CK AE1/AE3 · slide 2 of 2' : 'LN-043 · H&amp;E · slide 1 of 2';
+    $('nav-label').innerHTML = state.slide === 'ihc' ? 'LN-043-CK · IHC' : 'LN-043 · H&amp;E';
+    $('navigator').hidden = !state.nav; app.classList.toggle('nav-open', state.nav);
+    canvas.classList.toggle('hide-overlays', !state.overlays);
+    slide.style.filter = state.cvd ? 'hue-rotate(-18deg) saturate(.85)' : '';   // mock of the CVD remap LUT
+  }
+  function renderLayers() {
+    const st = cur(), revealed = state.item === 'revealed' || state.item === 'posted' || state.item === 'postfail';
+    const isRegion = st.kind === 'region' && state.view === 'learner';
+    $('ann-learner').classList.toggle('is-hidden', !(isRegion && state.item !== 'awaiting10'));
+    $('ann-key').classList.toggle('is-hidden', !(isRegion && revealed));
+    $('ann-key-lo').classList.toggle('is-hidden', !(state.view === 'learner' && revealed && (st.kind === 'region' || st.kind === 'measure' || st.kind === 'unknown')));
+    const heat = state.view === 'director' || st.kind === 'compare';
+    $('heat').classList.toggle('is-hidden', !heat); $('expert-path').classList.toggle('is-hidden', !heat); $('cohort-path').classList.toggle('is-hidden', !(heat && state.view === 'director'));
+    $('ann-measure').classList.toggle('is-hidden', !(st.kind === 'measure' && state.view === 'learner'));
+  }
+  function renderLaunch() {
+    const p = $('plate'); p.hidden = true; p.innerHTML = '';
+    if (state.launch === 'clinical-ih' || state.launch === 'dx') {
+      const want = state.launch === 'dx' ? 'Stoipath Dx' : 'Stoipath Clinical-IH';
+      p.hidden = false; p.innerHTML = `<div class="plate__card plate__card--blocking" data-live="launch:product"><span class="plate__glyph">!</span><div class="plate__title">Launch refused</div><p class="plate__text">This launch asked for <b>${want}</b> but this is <b>Stoipath Learn</b> (for educational use). Nothing was opened.</p><p class="plate__text text-sm">The product identifier in the launch context must match the running build (FR-R0). Dx mode and clinical write-back are not part of this build.</p><div class="plate__actions"><button class="btn btn--primary">Back to the course</button><button class="btn btn--secondary">Report a problem</button></div></div>`;
+      announce(`Launch refused. This launch asked for ${want} but this is Stoipath Learn.`, true);
+    } else if (state.launch === 'lti-fail') {
+      p.hidden = false; p.innerHTML = `<div class="plate__card" data-live="lti:launch"><span class="plate__glyph">!</span><div class="plate__title">Your course could not start this assignment</div><p class="plate__text">Cookies are blocked and platform storage is unavailable. <b>Open in a new window.</b></p><div class="plate__actions"><button class="btn btn--primary">Open in a new window</button><button class="btn btn--secondary">Retry</button></div><p class="plate__text text-xs">LTI 1.3 · Platform Storage (postMessage) fallback · no third-party cookies are ever required.</p></div>`;
+    }
+    $('recbar').hidden = state.view !== 'author' || state.launch !== 'learn';
+  }
+  function renderAll() { renderTop(); renderStrip(); renderLayers(); renderCard(); renderDrawer(); renderLaunch(); layoutPins(); syncDemo(); }
+
+  /* ---------------------------------------------------------------- dialogs */
+  let lastFocus = null;
+  function openModal(id, html) { lastFocus = document.activeElement; const m = $(id); m.innerHTML = html; m.hidden = false; $('scrim').hidden = false; const f = m.querySelector('[autofocus], button, input, [tabindex="0"]'); if (f) f.focus(); }
+  function closeModals() { ['modal-keymap', 'modal-cand', 'modal-text', 'modal-cme', 'modal-about'].forEach(id => { $(id).hidden = true; }); $('scrim').hidden = true; $('palette-layer').hidden = true; $('radial').hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); ['d-radial'].forEach(id => $(id).setAttribute('aria-pressed', 'false')); }
+  const anyOpen = () => ['modal-keymap', 'modal-cand', 'modal-text', 'modal-cme', 'modal-about', 'palette-layer', 'radial'].some(id => !$(id).hidden);
+  const dlgHead = (t, id) => `<div class="dialog__header"><h4 class="dialog__title" id="${id}">${t}</h4><button class="btn btn--icon btn--ghost" data-close aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>`;
+  const row = (keys, txt, reserved) => `<div class="keymap__row ${reserved ? 'is-reserved' : ''}"><span class="keymap__keys">${keys.map(k => `<kbd class="key ${reserved ? 'key--reserved' : ''}">${k}</kbd>`).join('')}</span>${txt}</div>`;
+  function openKeymap() {
+    openModal('modal-keymap', `<div class="dialog keymap-dialog" role="dialog" aria-modal="true" aria-labelledby="km-t">${dlgHead('Keyboard map · preset: Default · Stoipath Learn', 'km-t')}<div class="dialog__body">
+      <div class="keymap__preset"><span class="text-sm text-secondary">Preset</span><div class="segmented"><button class="segmented__item" aria-pressed="true">Default</button><button class="segmented__item">Left-hand cluster</button><button class="segmented__item">Right-hand cluster</button></div><span class="text-xs text-secondary">Unmodified and Shift keys only inside the canvas; no F-keys, no Alt, no Ctrl except Ctrl+Z/Y/C/V/A and Ctrl+K.</span></div>
+      <div class="keymap">
+        <div class="keymap__group"><h4>This concept (Learn)</h4>${row(['K'], 'Show / hide the step card (Design note DN-A1)')}${row(['⇧K'], 'Module drawer: steps, review queue, credit, settings')}${row(['N', '⇧N'], 'Next / previous step or item')}${row(['Space'], 'Play / pause narration · fly to the focused hotspot or candidate')}${row(['⇧↵'], 'Region item: choose a candidate region or answer in text')}${row(['↵'], 'Commit the answer · record the diagnosis')}${row(['⇧R'], 'Reveal (while an answer is committed; otherwise rotates ⟲, DN-A2)')}${row(['Esc'], 'Fold the top-most panel; then the card')}${row(['right-click', 'long-press'], 'Radial tools at the pointer (Pencil squeeze on iPad)')}</div>
+        <div class="keymap__group"><h4>Navigate</h4>${row(['←↑↓→', 'WASD'], 'Pan 10 % (held = continuous)')}${row(['⇧←↑↓→'], 'Pan one full viewport')}${row(['+', '−'], 'Zoom in / out 2×')}${row(['⇧+', '⇧−'], 'Fine zoom 1.2×')}${row(['0', 'Home'], 'Fit the whole slide')}${row(['1', '2', '3', '4', '5', '6'], '1.25× · 2.5× · 5× · 10× · 20× · 40× (derived)')}${row(['Z'], 'Toggle the last two magnifications')}${row([']', '['], 'Next / previous slide (H&E ↔ CK AE1/AE3)')}${row(['O'], 'Navigator')}${row(['H'], 'Hide / show overlays (hotspots, marks, key)')}${row([',', '.'], 'Overlay opacity')}${row(['C', '/'], 'Side by side · curtain')}${row(['L'], 'Labels layer (undergraduate lab)')}</div>
+        <div class="keymap__group"><h4>Tools and system</h4>${row(['T'], 'Point marker')}${row(['P'], 'Polygon (↵ closes)')}${row(['M'], 'Measure length (two clicks)')}${row(['B'], 'Bookmark this view')}${row(['⇧S'], 'Snapshot with scale bar and Learn footer')}${row(['Ctrl', 'Z'], 'Undo')}${row(['Ctrl', 'K'], 'Command palette')}${row(['?'], 'This sheet')}${row(['Tab'], 'Moves focus: top bar → canvas → handles → card → strip → navigator')}${row(['⇧D'], 'Dx mode — not part of this build (shows the reason)')}${row(['F1–F12', 'Alt'], 'Never bound (browser and LMS hosts)', true)}</div>
+      </div></div><div class="dialog__footer"><button class="btn btn--ghost">Rebind…</button><button class="btn btn--accent" data-close>Done</button></div></div>`);
+  }
+  function openCandidates() {
+    const C = [['A', 'Subcapsular sinus, upper pole — thin rim of small lymphocytes'], ['B', 'Germinal centre, left cortex — tingible-body macrophages'], ['C', 'Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm'], ['D', 'Medullary cords — plasma cells'], ['E', 'Hilum — vessels and adipose tissue'], ['F', 'Capsule, inferior — fibrous tissue only']];
+    openModal('modal-cand', `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="cd-t" data-live="lti:item:keyboard">${dlgHead('Mark the metastatic focus — choose a region', 'cd-t')}<div class="dialog__body"><p class="text-sm text-secondary">Choose the candidate region that contains the focus. <i>Fly there</i> moves the view to 20× so you can look before you answer (instant under reduced motion). Scoring uses the same geometry as pointer marking and is never discounted for modality.</p><div role="radiogroup" aria-label="Candidate regions" class="stack stack--tight" id="cand-list">${C.map(([k, d], i) => `<div class="candidate ${k === 'C' ? 'is-selected' : ''}" role="radio" aria-checked="${k === 'C'}" tabindex="${i === 0 ? 0 : -1}" data-k="${k}"><span class="candidate__letter">${k}</span><span class="candidate__desc">${d}</span><button class="btn btn--sm btn--secondary" data-fly="${k}" data-live="commands:flyTo">Fly there</button></div>`).join('')}</div></div><div class="dialog__footer"><button class="btn btn--ghost" data-close>Cancel</button><button class="btn btn--secondary" id="to-text">Answer in text instead</button><button class="btn btn--accent" id="cand-commit">Commit C <kbd class="key">↵</kbd></button></div></div>`);
+  }
+  function openText() {
+    openModal('modal-text', `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="tx-t" style="width:min(420px,calc(100vw - 32px))" data-live="lti:item:text">${dlgHead('Describe the focus', 'tx-t')}<div class="dialog__body"><div class="field"><label class="field__label" for="ta-loc">Location (compartment, pole)</label><input class="input" id="ta-loc" value="Subcapsular sinus, right pole" autofocus></div><div class="field"><label class="field__label" for="ta-size">Approximate size</label><input class="input" id="ta-size" placeholder="e.g. 1 mm"></div><div class="field"><label class="field__label" for="ta-feat">Key feature</label><textarea class="input" id="ta-feat" placeholder="Cohesive large cells, abundant cytoplasm…"></textarea></div><span class="field__hint">Scored against the author's rubric; recorded with modality: text; never discounted.</span></div><div class="dialog__footer"><button class="btn btn--ghost" id="to-cand">Back</button><button class="btn btn--accent" id="text-commit">Commit answer</button></div></div>`);
+  }
+  function openCme() {
+    openModal('modal-cme', `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="cme-t" data-live="lti:cme">${dlgHead('Evaluation and credit claim · Activity 2026-LN-043', 'cme-t')}<div class="dialog__body"><div class="field"><span class="field__label">1. Will this activity change your practice? (Criterion 11)</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="true">Yes</button><button class="segmented__item" role="radio" aria-checked="false">Partly</button><button class="segmented__item" role="radio" aria-checked="false">No</button></div></div><div class="field"><label class="field__label" for="cme-q2">2. One thing you will do differently</label><textarea class="input" id="cme-q2" placeholder="Free text, kept in the provider's record"></textarea></div><div class="field"><span class="field__label">3. Was the content free of commercial bias?</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="true">Yes</button><button class="segmented__item" role="radio" aria-checked="false">No</button></div></div><label class="option"><input type="checkbox" checked><span>I attest that I completed this enduring material (38 min on task) and claim <b>1.0 <i>AMA PRA Category 1 Credit</i>™</b>.</span></label><div class="alert alert--info"><span class="alert__glyph">i</span><div>Stoipath Learn produces the record; the UT CME office is the accredited joint provider. Records are kept 6 years and exported as CSV/xAPI (PARS-compatible).</div></div></div><div class="dialog__footer"><button class="btn btn--ghost" data-close>Later</button><button class="btn btn--accent"><svg class="icon icon--sm"><use href="#i-download"/></svg>Submit and download certificate (PDF)</button></div></div>`);
+  }
+  function openAbout() {
+    openModal('modal-about', `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="ab-t">${dlgHead('About Stoipath Learn', 'ab-t')}<div class="dialog__body"><p><span class="badge badge--learn">LEARN</span> &nbsp;<b>Stoipath Learn</b> · version 0.7.0-concept · build 3f9c2e1</p><p class="badge-string badge-string--learn" style="white-space:normal"></p><p class="text-sm text-secondary">For educational use. Not a medical device. Contains no protected health information. (English regulatory text, shown in every locale.) No Dx mode, no clinical write-back, no label images exist in this build (FR-R0, FR-R3).</p><div class="field"><span class="field__label">Telemetry</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="true">On</button><button class="segmented__item" role="radio" aria-checked="false">Off</button><button class="segmented__item" role="radio" aria-checked="false">Air-gap</button></div><span class="field__hint">Learner traces are learner-visible; cohort views are aggregate only; no names or free text leave the LMS.</span></div><p class="text-xs text-secondary">Complaint and accessibility feedback: Help → Report a problem. VPAT: pending third-party audit (v0.9).</p></div><div class="dialog__footer"><button class="btn btn--accent" data-close>Close</button></div></div>`);
+  }
+
+  /* ---------------------------------------------------------------- palette */
+  const CMDS = [
+    ['Module', 'Go to step 1 · Vignette', 'step:0', ['N']], ['Module', 'Go to step 4 · Identify the metastasis', 'step:3', ['N']], ['Module', 'Go to step 8 · Compare to the attending', 'step:7', ['N']], ['Module', 'Open module drawer', 'drawer', ['⇧K']], ['Module', 'Show / hide step card', 'card', ['K']],
+    ['Learn', 'Commit answer', 'commit', ['↵']], ['Learn', 'Reveal', 'reveal', ['⇧R']], ['Learn', 'Choose a candidate region (keyboard alternative)', 'cand', ['⇧↵']], ['Learn', 'Answer in text instead', 'text', ['⇧↵']], ['Learn', 'Play / pause narration', 'play', ['Space']], ['Learn', 'Captions on / off', 'cc', []], ['Learn', 'Start review queue (3 due)', 'drawer', []],
+    ['Navigate', 'Fit whole slide', 'mag:1.25', ['0']], ['Navigate', 'Zoom to 20× (0.50 µm/px)', 'mag:20', ['5']], ['Navigate', 'Zoom to 40×', 'mag:40', ['6']], ['Navigate', 'Next slide · CK AE1/AE3', 'slide', [']']], ['Navigate', 'Toggle navigator', 'nav', ['O']], ['Navigate', 'Hide / show overlays', 'overlays', ['H']],
+    ['Tools', 'Point marker', 'tool:point', ['T']], ['Tools', 'Measure length (µm)', 'tool:measure', ['M']], ['Tools', 'Bookmark this view', 'noop', ['B']], ['Tools', 'Snapshot with scale bar', 'noop', ['⇧S']],
+    ['Settings', 'CVD remap (deuteranopia-friendly)', 'cvd', []], ['Settings', 'Reduced motion', 'motion', []], ['Settings', 'Theme: dark / light', 'theme', []], ['Settings', 'Keyboard map', 'keys', ['?']], ['Settings', 'About Stoipath Learn · label string · telemetry', 'about', []],
+    ['Not in this build', 'Dx mode — not part of Stoipath Learn (educational use)', 'dxinfo', ['⇧D'], true], ['Not in this build', 'Request sign-out — Clinical-IH / Dx only', 'disabled', [], true], ['Not in this build', 'Label image — no PHI in Learn', 'disabled', [], true]
+  ];
+  function openPalette() {
+    lastFocus = document.activeElement;
+    const L = $('palette-layer'); L.hidden = false;
+    L.innerHTML = `<div class="palette" role="combobox" aria-expanded="true" aria-haspopup="listbox" aria-owns="pal-list"><div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input id="pal-in" placeholder="Type a command, step, slide or setting…" aria-label="Command palette" autocomplete="off"><kbd class="key">Esc</kbd></div><div class="palette__list" id="pal-list" role="listbox"></div><div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span>Every command here is on the command bus; keys shown come from the registry</span></div></div>`;
+    const inp = $('pal-in'); let sel = 0;
+    const list = () => {
+      const q = inp.value.trim().toLowerCase(); const items = CMDS.filter(c => !q || (c[1] + ' ' + c[0]).toLowerCase().includes(q)); let h = '', grp = ''; sel = Math.min(sel, Math.max(0, items.length - 1));
+      items.forEach((c, i) => { if (c[0] !== grp) { grp = c[0]; h += `<div class="palette__group">${grp}</div>`; } const t = q ? c[1].replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'i'), '<mark>$1</mark>') : c[1]; h += `<div class="palette__item" role="option" aria-selected="${i === sel}" ${c[4] ? 'aria-disabled="true"' : ''} data-i="${CMDS.indexOf(c)}">${t}${c[4] ? '<span class="meta">build matrix (FR-R0)</span>' : ''}<span class="keys">${c[3].map(k => `<kbd class="key">${k}</kbd>`).join('')}</span></div>`; });
+      if (!items.length) h = `<div class="empty"><span class="empty__title">No command matches "${esc(inp.value)}"</span></div>`;
+      $('pal-list').innerHTML = h; return items;
+    };
+    let items = list(); inp.focus();
+    inp.addEventListener('input', () => { sel = 0; items = list(); });
+    inp.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { sel = Math.min(items.length - 1, sel + 1); list(); e.preventDefault(); } else if (e.key === 'ArrowUp') { sel = Math.max(0, sel - 1); list(); e.preventDefault(); } else if (e.key === 'Enter') { if (items[sel]) run(items[sel][2]); closeModals(); e.preventDefault(); } });
+    $('pal-list').addEventListener('click', (e) => { const it = e.target.closest('.palette__item'); if (it) { run(CMDS[+it.dataset.i][2]); closeModals(); } });
+  }
+
+  /* ---------------------------------------------------------------- radial */
+  const RADIAL = [['i-point', 'Point mark', 'T', 'tool:point'], ['i-measure', 'Measure', 'M', 'tool:measure'], ['i-bookmark', 'Bookmark', 'B', 'noop'], ['i-flag', 'Reveal', '⇧R', 'reveal'], ['i-keyboard', 'Choose region', '⇧↵', 'cand'], ['i-card', 'Step card', 'K', 'card'], ['i-fit', 'Fit slide', '0', 'mag:1.25'], ['i-eye-off', 'Hide overlays', 'H', 'overlays']];
+  function openRadial(x, y) {
+    const r = $('radial'); r.hidden = false; r.style.left = x + 'px'; r.style.top = y + 'px';
+    r.innerHTML = `<div class="radial__center" id="radial-center"><span><b>Tools</b>Esc closes</span></div>` + RADIAL.map((it, i) => { const a = -Math.PI / 2 + i * Math.PI / 4; return `<button class="radial__item" role="menuitem" style="left:${(Math.cos(a) * 92).toFixed(1)}px;top:${(Math.sin(a) * 92).toFixed(1)}px" data-cmd="${it[3]}" data-name="${it[1]}" aria-label="${it[1]}, ${it[2]}"><svg class="icon"><use href="#${it[0]}"/></svg><span class="k">${it[2]}</span></button>`; }).join('');
+    r.querySelectorAll('.radial__item').forEach(b => { b.addEventListener('mouseenter', () => { $('radial-center').innerHTML = `<span><b>${b.dataset.name}</b>${b.getAttribute('aria-label').split(', ')[1]}</span>`; }); b.addEventListener('focus', () => { $('radial-center').innerHTML = `<span><b>${b.dataset.name}</b>${b.getAttribute('aria-label').split(', ')[1]}</span>`; }); b.addEventListener('click', () => { run(b.dataset.cmd); closeModals(); }); });
+    r.querySelector('.radial__item').focus();
+    $('d-radial').setAttribute('aria-pressed', 'true');
+  }
+
+  /* ---------------------------------------------------------------- commands (the mock's command bus) */
+  function run(cmd) {
+    const st = cur();
+    if (cmd.startsWith('step:')) return goStep(+cmd.slice(5));
+    if (cmd.startsWith('mag:')) { setZoom(+cmd.slice(4)); if (st.kind === 'region' && state.item === 'awaiting10' && state.mag >= 20) state.item = 'awaiting'; return renderAll(); }
+    if (cmd.startsWith('tool:')) { state.tool = cmd.slice(5); document.querySelectorAll('.bottombar [data-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === state.tool))); announce(`${state.tool} tool.`); return; }
+    switch (cmd) {
+      case 'next': return goStep(state.step + 1);
+      case 'prev': return goStep(state.step - 1);
+      case 'card': state.card = !state.card; break;
+      case 'drawer': state.drawer = !state.drawer; break;
+      case 'nav': state.nav = !state.nav; break;
+      case 'overlays': state.overlays = !state.overlays; break;
+      case 'play': state.play = !state.play; announce(state.play ? 'Narration playing.' : 'Narration paused.'); break;
+      case 'cc': state.captions = !state.captions; break;
+      case 'audio': state.audio = !state.audio; break;
+      case 'cvd': state.cvd = !state.cvd; break;
+      case 'motion': state.motion = state.motion === 'reduced' ? 'normal' : 'reduced'; break;
+      case 'theme': state.theme = state.theme === 'dark' ? 'light' : 'dark'; break;
+      case 'slide': state.slide = state.slide === 'he' ? 'ihc' : 'he'; break;
+      case 'commit': if (/region|mcq|measure|unknown/.test(st.kind) && state.item.startsWith('awaiting')) { if (st.kind === 'region' && state.item === 'awaiting10') { announce('Zoom to at least 20 times for full credit. Press 5.'); return; } if (st.kind === 'unknown') { const i = $('dx-input'); state.dx = (i && i.value.trim()) || 'Metastatic carcinoma'; } state.item = 'committed'; announce('Answer saved. Press Shift R to reveal.'); } break;
+      case 'reveal': if (state.item === 'committed') { state.item = 'revealed'; if (st.kind === 'region') announce('Revealed. Your mark overlapped the lesion by 62 percent. 1 of 1.'); setTimeout(() => { if (state.item === 'revealed' && !/pack|offline/.test(state.net)) { state.item = 'posted'; renderAll(); announce('Posted to gradebook.'); } }, 1600); } else if (state.view === 'learner') { announce('Rotated 90 degrees anticlockwise.'); return; } break;
+      case 'cand': openCandidates(); return;
+      case 'text': openText(); return;
+      case 'cme': openCme(); return;
+      case 'keys': openKeymap(); return;
+      case 'about': openAbout(); return;
+      case 'palette': openPalette(); return;
+      case 'flyexpert': setZoom(20); announce('Flew to the expert region.'); return;
+      case 'adddx': { const i = $('dx-input'); if (i && i.value.trim()) { state.dxList.push(i.value.trim()); state.dx = i.value.trim(); } break; }
+      case 'timer': announce('Timer started. Optional; off by default.'); return;
+      case 'dxinfo': state.dxNotice = 'This is Stoipath Learn, for educational use. Diagnostic mode is not part of this build.'; announce(state.dxNotice, true); setTimeout(() => { state.dxNotice = ''; renderStrip(); }, 6000); break;
+      default: return;
+    }
+    renderAll();
+  }
+
+  /* ---------------------------------------------------------------- events */
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-cmd], [data-close], [data-step], [data-slide], [data-conf], [data-pin], [data-fly], [data-theme], .option input, #to-text, #to-cand, #cand-commit, #text-commit, .candidate');
+    if (!t) return;
+    if (t.hasAttribute('data-close')) return closeModals();
+    if (t.dataset.cmd) { if (t.getAttribute('aria-disabled') === 'true') return; return run(t.dataset.cmd); }
+    if (t.dataset.step !== undefined) { state.drawer = window.innerWidth > 1079; goStep(+t.dataset.step); return; }
+    if (t.dataset.slide) { state.slide = t.dataset.slide; return renderAll(); }
+    if (t.dataset.conf !== undefined) { state.conf = +t.dataset.conf; return renderCard(); }
+    if (t.dataset.pin) { announce(`Flew to hotspot ${t.dataset.pin}.`); return; }
+    if (t.dataset.fly) { announce(`Flew to region ${t.dataset.fly} at 20 times.`); e.stopPropagation(); return; }
+    if (t.dataset.theme && t.closest('.segmented')) { state.theme = t.dataset.theme; return renderAll(); }
+    if (t.matches('.option input')) { state.mcq = t.value; return renderCard(); }
+    if (t.id === 'to-text') { closeModals(); return openText(); }
+    if (t.id === 'to-cand') { closeModals(); return openCandidates(); }
+    if (t.id === 'cand-commit' || t.id === 'text-commit') { closeModals(); if (state.item.startsWith('awaiting')) { state.item = 'committed'; renderAll(); announce('Answer saved. Press Shift R to reveal.'); } return; }
+    if (t.classList.contains('candidate')) { t.parentElement.querySelectorAll('.candidate').forEach(c => { c.classList.remove('is-selected'); c.setAttribute('aria-checked', 'false'); c.tabIndex = -1; }); t.classList.add('is-selected'); t.setAttribute('aria-checked', 'true'); t.tabIndex = 0; const b = $('cand-commit'); if (b) b.innerHTML = `Commit ${t.dataset.k} <kbd class="key">↵</kbd>`; }
+  });
+  document.addEventListener('change', (e) => { if (e.target.matches('.option input[name="mcq"]')) { state.mcq = e.target.value; renderCard(); } });
+  $('scrim').addEventListener('click', closeModals);
+  [['btn-about', 'about'], ['btn-keys', 'keys'], ['btn-palette', 'palette'], ['btn-more', 'about'], ['h-module', 'drawer'], ['h-card', 'card'], ['bb-card', 'card'], ['bb-module', 'drawer'], ['dr-close', 'drawer'], ['sc-close', 'card'], ['sc-prev', 'prev'], ['sc-next', 'next'], ['sc-play', 'play'], ['sc-cc', 'cc'], ['sc-audio', 'audio'], ['card-handle', 'card'], ['hud-mag', 'mag:20']].forEach(([id, c]) => $(id).addEventListener('click', () => run(c)));
+  document.querySelectorAll('.bottombar [data-tool]').forEach(b => b.addEventListener('click', () => run('tool:' + b.dataset.tool)));
+  canvas.addEventListener('contextmenu', (e) => { if (e.target.closest('.stepcard, .drawer, .navigator, .hud, .plate')) return; e.preventDefault(); const r = canvas.getBoundingClientRect(); openRadial(e.clientX - r.left, e.clientY - r.top); });
+  let lp = null;
+  canvas.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'touch' || e.target.closest('.stepcard, .drawer, .navigator, .hud, .plate, .bottombar')) return; const r = canvas.getBoundingClientRect(); lp = setTimeout(() => openRadial(e.clientX - r.left, e.clientY - r.top), 450); });
+  ['pointerup', 'pointermove', 'pointercancel'].forEach(ev => canvas.addEventListener(ev, () => { if (lp) { clearTimeout(lp); lp = null; } }));
+  // gesture guard: while a pointer drags on the canvas no chrome transition may run (P2)
+  canvas.addEventListener('pointerdown', () => app.classList.add('is-gesturing')); document.addEventListener('pointerup', () => app.classList.remove('is-gesturing'));
+
+  document.addEventListener('keydown', (e) => {
+    const tag = (e.target.tagName || '').toLowerCase(); const typing = tag === 'input' || tag === 'textarea' || tag === 'select';
+    if (e.key === 'Escape') { if (anyOpen()) { closeModals(); } else if (state.drawer) { state.drawer = false; renderAll(); } else if (state.card) { state.card = false; renderAll(); } return; }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); return anyOpen() ? closeModals() : openPalette(); }
+    if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === '?') { e.preventDefault(); return openKeymap(); }
+    if (anyOpen()) return;
+    const k = e.key;
+    const map = { n: 'next', N: 'prev', k: 'card', K: 'drawer', o: 'nav', h: 'overlays', ']': 'slide', '[': 'slide', t: 'tool:point', m: 'tool:measure', v: 'tool:select', D: 'dxinfo', R: 'reveal', '0': 'mag:1.25', Home: 'mag:1.25', '1': 'mag:1.25', '2': 'mag:2.5', '3': 'mag:5', '4': 'mag:10', '5': 'mag:20', '6': 'mag:40' };
+    if (k === ' ') { e.preventDefault(); return run('play'); }
+    if (k === 'Enter') { if (e.shiftKey) { e.preventDefault(); return run('cand'); } if (e.target === canvas || e.target.closest('.stepcard')) { if (!e.target.closest('button, a')) { e.preventDefault(); return run('commit'); } } return; }
+    if (k === '+' || k === '=') { e.preventDefault(); const i = MAGS.indexOf(state.mag); return run('mag:' + MAGS[Math.min(5, i + 1)]); }
+    if (k === '-') { e.preventDefault(); const i = MAGS.indexOf(state.mag); return run('mag:' + MAGS[Math.max(0, i - 1)]); }
+    if (/^[a-dA-D]$/.test(k) && /mcq|measure/.test(cur().kind) && state.item.startsWith('awaiting') && !e.shiftKey && k !== 'a' && k !== 'd' && k !== 'b' && k !== 'c') { /* letters A–D select an option only when uppercase to avoid WASD/B/C conflicts */ }
+    if (/^[A-D]$/.test(k) && /mcq|measure/.test(cur().kind) && state.item.startsWith('awaiting')) { state.mcq = k; renderCard(); return; }
+    if (map[k] !== undefined && !(k === 'R' && !e.shiftKey)) { e.preventDefault(); run(map[k]); }
+  });
+  window.addEventListener('resize', () => { layoutPins(); if (state.card) app.style.setProperty('--card-h', $('stepcard').offsetHeight + 'px'); });
+
+  /* ---------------------------------------------------------------- demo controls */
+  function syncDemo() {
+    $('d-view').value = state.view; $('d-aud').value = state.aud; $('d-item').value = state.item; $('d-net').value = state.net; $('d-tier').value = state.tier; $('d-launch').value = state.launch; $('d-motion').value = state.motion; $('d-theme').value = state.theme;
+    $('d-card').setAttribute('aria-pressed', String(state.card)); $('d-drawer').setAttribute('aria-pressed', String(state.drawer));
+  }
+  $('d-view').addEventListener('change', (e) => { state.view = e.target.value; if (state.view !== 'learner') { state.drawer = true; setZoom(state.view === 'director' ? 1.25 : 10); } else { state.drawer = false; setZoom(cur().mag); } renderAll(); });
+  $('d-aud').addEventListener('change', (e) => { state.aud = e.target.value; state.step = AUD[state.aud].current; state.item = 'awaiting'; state.mcq = null; state.conf = null; state.dx = ''; state.dxList = []; state.slide = 'he'; setZoom(cur().mag); renderAll(); });
+  $('d-item').addEventListener('change', (e) => { state.item = e.target.value; const st = cur(); if (!/region|mcq|measure|unknown/.test(st.kind)) { state.step = AUD[state.aud].current; } if (state.item === 'awaiting10') setZoom(10); else if (cur().kind === 'region') setZoom(20); if (/mcq|measure/.test(cur().kind) && state.item !== 'awaiting' && state.item !== 'awaiting10') state.mcq = state.mcq || cur().correct; if (cur().kind === 'unknown' && state.item !== 'awaiting') state.dx = state.dx || 'Metastatic carcinoma'; if (state.item !== 'awaiting' && state.conf === null) state.conf = 1; renderAll(); });
+  $('d-net').addEventListener('change', (e) => { state.net = e.target.value; renderAll(); });
+  $('d-tier').addEventListener('change', (e) => { state.tier = e.target.value; renderAll(); });
+  $('d-launch').addEventListener('change', (e) => { state.launch = e.target.value; renderAll(); });
+  $('d-motion').addEventListener('change', (e) => { state.motion = e.target.value; renderAll(); });
+  $('d-theme').addEventListener('change', (e) => { state.theme = e.target.value; renderAll(); });
+  $('d-live').addEventListener('click', (e) => { const on = e.target.getAttribute('aria-pressed') !== 'true'; e.target.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('show-live', on); });
+  $('d-guides').addEventListener('click', (e) => { const on = e.target.getAttribute('aria-pressed') !== 'true'; e.target.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('show-guides', on); });
+  $('d-radial').addEventListener('click', (e) => { if ($('radial').hidden) openRadial(canvas.clientWidth * 0.68, canvas.clientHeight * 0.62); else closeModals(); });
+  $('d-card').addEventListener('click', () => run('card')); $('d-drawer').addEventListener('click', () => run('drawer'));
+  $('d-cand').addEventListener('click', () => openCandidates()); $('d-keys').addEventListener('click', () => openKeymap()); $('d-pal').addEventListener('click', () => openPalette());
+  $('d-rat').addEventListener('click', () => { const r = $('rationale'); r.open = true; r.scrollIntoView({ behavior: state.motion === 'reduced' ? 'auto' : 'smooth' }); });
+  // URL hash presets for the screenshot script and for judges: #view=author&aud=cme&item=revealed&net=4g&tier=2&launch=dx&motion=reduced&theme=light&card=0&drawer=1&radial=1&cand=1&keys=1&pal=1&live=1&guides=1&step=7
+  function applyHash() {
+    const q = new URLSearchParams(location.hash.slice(1)); if (![...q.keys()].length) return;
+    ['view', 'aud', 'item', 'net', 'tier', 'launch', 'motion', 'theme'].forEach(k => { if (q.has(k)) state[k] = q.get(k); });
+    if (q.has('aud')) state.step = AUD[state.aud].current;
+    if (q.has('step')) state.step = +q.get('step');
+    state.slide = cur().slide === 'ihc' ? 'ihc' : 'he';
+    if (q.has('card')) state.card = q.get('card') !== '0'; if (q.has('drawer')) state.drawer = q.get('drawer') === '1';
+    if (q.has('mcq')) state.mcq = q.get('mcq'); if (q.has('conf')) state.conf = +q.get('conf'); if (q.has('dx')) state.dx = q.get('dx');
+    if (/mcq|measure/.test(cur().kind) && !state.item.startsWith('awaiting')) state.mcq = state.mcq || cur().correct;
+    if (q.get('live') === '1') { document.body.classList.add('show-live'); $('d-live').setAttribute('aria-pressed', 'true'); }
+    if (q.get('guides') === '1') { document.body.classList.add('show-guides'); $('d-guides').setAttribute('aria-pressed', 'true'); }
+    setZoom(state.item === 'awaiting10' && cur().kind === 'region' ? 10 : (q.has('mag') ? +q.get('mag') : (state.view === 'director' ? 1.25 : cur().mag)));
+    renderAll();
+    if (q.get('radial') === '1') openRadial(canvas.clientWidth * 0.68, canvas.clientHeight * 0.62);
+    if (q.get('cand') === '1') openCandidates(); if (q.get('text') === '1') openText(); if (q.get('keys') === '1') openKeymap(); if (q.get('pal') === '1') openPalette(); if (q.get('cme') === '1') openCme();
+  }
+  setZoom(cur().mag); renderAll(); applyHash();
+  window.addEventListener('hashchange', () => location.reload());
+})();
+</script>
+</body>
+</html>
