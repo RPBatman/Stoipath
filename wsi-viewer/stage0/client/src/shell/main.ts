@@ -7,6 +7,11 @@
  * measurement overlay canvas are written; no layout reads in the frame hook (sizes come from ResizeObservers);
  * class / aria / chip / dock writes happen at gesture start, at settle, or on user commands.
  *
+ * Phase A (TOOLS.md §12.3), Wave 0: this file provides what core's createShell() will take from the integrator
+ * (contracts §12 ShellHostDeps): the ShellEnv, the NoticeSink, the LiveRegions, the CommandRegistry (palette.ts) and
+ * the PanelHost (panels.ts), plus the window key router on the registry (TOOLS.md §5.5). Modules are installed from
+ * Wave 2 on; until then the shell runs exactly as before, with the Phase A skeleton hidden (shell.html).
+ *
  * URL parameters pass through to the engine (manifest, dpr, layers, workers, label, network, cache, path);
  * ?engine=1 (or ?overlay=1) opens the Engine section of the Context panel.
  */
@@ -15,19 +20,24 @@ import '../../../../design/design-system/base.css';
 import './shell.css';
 import type { DeviceInfo, Metrics } from '../metrics';
 import type { OverlayLive } from '../overlay';
-import { startViewer, type FrameSnapshot, type Viewer, type ViewerButtonHandlers, type ViewerUi } from '../viewer';
+import { detectDeviceClass, startViewer, type FrameSnapshot, type Viewer, type ViewerButtonHandlers, type ViewerUi } from '../viewer';
+import type { CommandSource, KeyBinding, LiveRegions, NoticeSink, PanelId, ShellCommand, ShellEnv } from './contracts';
 import { $, $$, AttrSlot, TextSlot, h, isTextInput, keycaps, prefersReducedMotion } from './dom';
 import { deriveIdentity, slideFacts, spokenStain, type Identity } from './facts';
 import { PRESETS, formatLengthUm, formatMagnification, logZoomForUmPerPx, parseTypedZoom, spokenLength, spokenMagnification } from './format';
 import { HudView } from './hud';
 import { MeasureTool } from './measure';
 import { NavigatorView } from './navigator';
-import { Palette, type Command } from './palette';
-import { DialogLayer, Dock, roving, type DockTab } from './panels';
+import { Palette, Registry, type Command } from './palette';
+import { DialogLayer, Dock, Panels, roving } from './panels';
 import { SharpnessMachine } from './sharpness';
+
+/** Injected by vite.config.ts `define`: UTC time of the build. */
+declare const __BUILD_ID__: string;
 
 const DX_REFUSAL = 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.';
 const SHELL_LAYERS_HINT_KEY = 'stage0.shell.layersHint';
+const OWNER = 'shell';
 
 interface ConnectionLike extends EventTarget {
   effectiveType?: string;
@@ -40,16 +50,47 @@ const params = new URLSearchParams(location.search);
 const app = $('app');
 const canvas = $('view') as HTMLCanvasElement;
 const canvasArea = $('canvasArea');
+const classMenu = $('classMenu');
 const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
 const MOD = isMac ? '⌘' : 'Ctrl';
 for (const k of $$('[data-mod]')) k.textContent = MOD;
 
+// ------------------------------------------------------------------ ShellEnv (contracts §11; cached media queries)
 const wideMq = matchMedia('(min-width: 1600px)');
+const narrowMq = matchMedia('(max-width: 1079px)');
 const phoneMq = matchMedia('(max-width: 599px)');
 const coarseMq = matchMedia('(pointer: coarse)');
+const railMq = matchMedia('(max-width: 1366px)');
+const motionMq = matchMedia('(prefers-reduced-motion: reduce)');
 /** Cached (read on 'change' only): the frame hook never evaluates a media query. */
 let isPhone = phoneMq.matches;
 let isCoarse = coarseMq.matches;
+let isNarrow = narrowMq.matches;
+let isWide = wideMq.matches;
+let reducedMq = motionMq.matches;
+const navx = navigator as Navigator & { deviceMemory?: number };
+const env: ShellEnv = {
+  mod: isMac ? '⌘' : 'Ctrl',
+  deviceClass: detectDeviceClass(navigator.userAgent, navigator.maxTouchPoints),
+  deviceMemoryGiB: typeof navx.deviceMemory === 'number' ? navx.deviceMemory : null,
+  params,
+  build: __BUILD_ID__,
+  isPhone: () => isPhone,
+  isCoarse: () => isCoarse,
+  isWide: () => isWide,
+  // The media query is cached; the data-motion attribute (design system demos, tests) is a DOM read, never per frame.
+  reducedMotion: () => reducedMq || document.documentElement.dataset['motion'] === 'reduce',
+};
+motionMq.addEventListener('change', () => {
+  reducedMq = motionMq.matches;
+});
+
+/** Host events the bus will carry once core is wired (Wave 2); kept here for tests (window.__shell.host().events). */
+const hostEvents: { name: 'panelToggled' | 'commandInvoked'; detail: string; source: CommandSource }[] = [];
+function noteHostEvent(name: 'panelToggled' | 'commandInvoked', detail: string, source: CommandSource): void {
+  hostEvents.push({ name, detail, source });
+  if (hostEvents.length > 40) hostEvents.shift();
+}
 
 // ------------------------------------------------------------------ polite live region (principles §8.4)
 /**
@@ -99,20 +140,34 @@ class PoliteRegion {
   }
   private write(now: number, text: string): void {
     // aria-atomic region: the same sentence twice in a row is made distinct so it is announced again.
-    const t = text === this.written ? `${text}\u00a0` : text;
+    const t = text === this.written ? `${text} ` : text;
     this.el.textContent = t;
     this.written = t;
     this.lastWriteAt = now;
   }
 }
 const polite = new PoliteRegion();
+const assertiveEl = $('liveAssertive');
+/** LiveRegions (contracts §11): polite = the settle-time region above; assertive = now (refusals that must interrupt). */
+const live: LiveRegions = {
+  polite: (text) => polite.say(text),
+  assertive: (text) => {
+    assertiveEl.textContent = assertiveEl.textContent === text ? `${text} ` : text;
+  },
+};
 
 // ------------------------------------------------------------------ status strip notices (one at a time; handoff §6.3)
-class Notices {
+/** Persistent notice priority (lower first): the engine status outranks module states, which outrank view notices. */
+const PERSISTENT_RANK: Record<string, number> = { engine: 0, view: 100 };
+/**
+ * NoticeSink (contracts §11): one notice at a time in the strip (and on phones, which have no strip, on the HUD tool
+ * line while a tool is active). A transient command result outranks every persistent notice; persistent notices are
+ * owned by a key (`engine`, `view`, a module's own) and ranked engine → modules (in first-use order) → view.
+ */
+class Notices implements NoticeSink {
   private transientText = '';
   private transientUntil = 0;
-  private engineText = '';
-  private viewText = '';
+  private readonly persistents = new Map<string, string>();
   private readonly slot = new TextSlot($('stripNotice'));
   /** The HUD tool line (shown while measuring): the tool's hint, or on phones (no strip) the latest result. */
   private readonly toolLine = new TextSlot($('toolLineText'));
@@ -126,12 +181,17 @@ class Notices {
     this.render();
     if (speak) polite.say(text);
   }
-  engine(text: string): void {
-    this.engineText = text;
-    this.render();
+  /** Refusal: spoken once, politely at settle, or assertively now. */
+  refuse(text: string, assertive = false): void {
+    this.transient(text, 6000, !assertive);
+    if (assertive) live.assertive(text);
   }
-  view(text: string): void {
-    this.viewText = text;
+  persistent(key: string, text: string | null): void {
+    if (text === null || text === '') this.persistents.delete(key);
+    else {
+      if (!(key in PERSISTENT_RANK)) PERSISTENT_RANK[key] = 50 + Object.keys(PERSISTENT_RANK).length / 1000;
+      this.persistents.set(key, text);
+    }
     this.render();
   }
   /** Frame hook: expire the transient notice, but never write the strip while a gesture runs. */
@@ -142,7 +202,17 @@ class Notices {
     }
   }
   get text(): string {
-    return this.transientText || this.engineText || this.viewText;
+    if (this.transientText !== '') return this.transientText;
+    let best = '';
+    let rank = Infinity;
+    for (const [k, t] of this.persistents) {
+      const r = PERSISTENT_RANK[k] ?? 50;
+      if (r < rank) {
+        rank = r;
+        best = t;
+      }
+    }
+    return best;
   }
   render(): void {
     this.slot.set(this.text);
@@ -151,7 +221,6 @@ class Notices {
   }
 }
 const notices = new Notices();
-const assertive = $('liveAssertive');
 
 // ------------------------------------------------------------------ engine UI adapter (what Overlay is on index.html)
 const engStatus = new TextSlot($('engStatus'));
@@ -183,11 +252,11 @@ class ShellUi implements ViewerUi {
   private apply(text: string): void {
     engStatus.set(text === '' ? '—' : text);
     const cap = text.charAt(0).toUpperCase() + text.slice(1);
-    if (text.startsWith('loading') || text.startsWith('starting')) notices.engine('Opening the slide…');
-    else if (text === '' || text.startsWith('ready')) notices.engine('');
+    if (text.startsWith('loading') || text.startsWith('starting')) notices.persistent('engine', 'Opening the slide…');
+    else if (text === '' || text.startsWith('ready')) notices.persistent('engine', null);
     else if (text.startsWith('WebGL context lost')) {
-      notices.engine(cap); // persistent until the restore
-      assertive.textContent = cap;
+      notices.persistent('engine', cap); // persistent until the restore
+      live.assertive(cap);
     } else if (
       // One-off results. The restore is one too: the engine never says "ready" again after it (baseLoadedAt is set),
       // so as a persistent notice it would outrank every view notice for the rest of the session.
@@ -197,10 +266,10 @@ class ShellUi implements ViewerUi {
       text === 'copy failed' ||
       text.startsWith('evicted')
     ) {
-      notices.engine('');
+      notices.persistent('engine', null);
       notices.transient(cap, 8000, !text.startsWith('WebGL context'));
-      if (text.startsWith('WebGL context')) assertive.textContent = cap;
-    } else notices.engine(cap);
+      if (text.startsWith('WebGL context')) live.assertive(cap);
+    } else notices.persistent('engine', cap);
   }
   setDevice(d: DeviceInfo, extra: string): void {
     const conn = d.connection === null ? 'n/a' : `${d.connection.effectiveType ?? d.connection.type ?? '?'} ${d.connection.downlinkMbps ?? '?'} Mbps rtt ${d.connection.rttMs ?? '?'} ms`;
@@ -219,7 +288,7 @@ class ShellUi implements ViewerUi {
     this.handlers = handlers;
   }
   setVisible(v: boolean): void {
-    if (v) dock.show('engine', false);
+    if (v) panels.show('engine', false, 'surface');
   }
   toggle(): void {
     /* O is the navigator in the shell (principles §4.5) */
@@ -227,21 +296,68 @@ class ShellUi implements ViewerUi {
 }
 const ui = new ShellUi();
 
-// ------------------------------------------------------------------ dock, dialogs, palette
-const dock = new Dock(app, $('dock'), $('dockTabs'));
-dock.setOpen(wideMq.matches || params.get('engine') === '1' || params.get('overlay') === '1');
-if (params.get('engine') === '1' || params.get('overlay') === '1') dock.select('engine', false);
-wideMq.addEventListener('change', () => dock.setOpen(wideMq.matches));
-$('dockClose').addEventListener('click', () => {
-  dock.setOpen(false);
-  canvas.focus({ preventScroll: true });
+// ------------------------------------------------------------------ docks (PanelHost), dialogs, palette
+const dockEl = $('dock');
+const ctxDock = new Dock(app, dockEl, $('dockTabs'), 'dock-open', '[data-cmd="dock"]', 'slide');
+const libDock = new Dock(app, $('lib'), $('libTabs'), 'lib-open', null, 'slides');
+const panels = new Panels(app, libDock, ctxDock, () => isNarrow);
+panels.onToggled = (panel, open, source) => noteHostEvent('panelToggled', `${panel}:${open ? 'open' : 'closed'}`, source);
+const engineParam = params.get('engine') === '1' || params.get('overlay') === '1';
+ctxDock.setOpen(isWide || engineParam);
+if (engineParam) ctxDock.select('engine', false);
+wideMq.addEventListener('change', () => {
+  isWide = wideMq.matches;
+  ctxDock.setOpen(isWide);
+  refreshToolbars();
 });
+narrowMq.addEventListener('change', () => {
+  isNarrow = narrowMq.matches;
+  // One in-flow sheet ≤ 1079 px: keep the Context dock if both docks were open as drawers.
+  if (isNarrow && libDock.isOpen && ctxDock.isOpen) libDock.setOpen(false);
+  refreshToolbars();
+});
+$('dockClose').addEventListener('click', () => {
+  panels.close('ctx', 'pointer');
+  focusCanvas();
+});
+for (const b of $$<HTMLElement>('[data-close-dock="lib"]')) {
+  b.addEventListener('click', () => {
+    panels.close('lib', 'pointer');
+    focusCanvas();
+  });
+}
+/** Dock head meta lines and the rail's Context button name, from the tabs present (claims add tabs). */
+function syncDockLabels(): void {
+  const names = (d: Dock): string[] => d.visibleTabs().map((t) => t.dataset['label'] ?? '');
+  $('dockMeta').textContent = names(ctxDock).join(' · ');
+  $('libMeta').textContent = names(libDock).join(' · ');
+  for (const b of $$<HTMLElement>('.rail [data-cmd="dock"]')) b.setAttribute('aria-label', `Context panel: ${names(ctxDock).join(', ')} (K)`);
+}
+panels.onClaim = () => {
+  syncDockLabels();
+  syncCommandControls();
+};
+
 const dialogs = new DialogLayer($('modalLayer'), () => focusCanvas());
 // .dialog-open: the HUD and navigator step left of the dock-column dialog (1080–1599 px; shell.css), and ≤ 1079 px the
 // dialog takes the in-flow sheet row instead of the dock sheet.
-dialogs.onToggle = (open) => app.classList.toggle('dialog-open', open);
+dialogs.onToggle = (open) => {
+  app.classList.toggle('dialog-open', open);
+  syncCovered();
+};
 const keymapDlg = $('keymapDlg');
 const aboutDlg = $('aboutDlg');
+
+/**
+ * SC 2.4.11: the palette and the dock-column dialogs (keymap, About) open in the dock column, over the open Context
+ * dock (docked ≥ 1600 px, drawer 1080–1599). While one is open the covered dock is inert, so none of its controls is a
+ * Tab stop hidden under the layer (≤ 1079 px the dock sheet is not rendered while they are open). Written on open /
+ * close only; the layers' close handlers lift it before focus returns to an opener inside the dock.
+ */
+function syncCovered(): void {
+  const covered = palette.isOpen || dialogs.current !== null;
+  if (dockEl.inert !== covered) dockEl.inert = covered;
+}
 
 let viewer: Viewer | null = null;
 let hud: HudView | null = null;
@@ -254,12 +370,15 @@ let prevLogZoom: number | null = null;
 function focusCanvas(): void {
   canvas.focus({ preventScroll: true });
 }
-const reduced = (): boolean => prefersReducedMotion();
+const reduced = (): boolean => env.reducedMotion();
+/** A click handler sets this so the opener of a palette or dialog is the clicked control (Safari does not focus buttons). */
+let clickOpener: HTMLElement | null = null;
 /**
  * Where focus returns when a palette or dialog opened from the keyboard closes: the focused control, or the canvas when
  * the keys were pressed on the slide (handoff §4.6: nothing makes a keyboard user re-find the slide).
  */
 function keyOpener(): HTMLElement {
+  if (clickOpener !== null) return clickOpener;
   const a = document.activeElement;
   return a instanceof HTMLElement && a !== document.body && a !== document.documentElement ? a : canvas;
 }
@@ -289,8 +408,7 @@ function setTool(next: 'select' | 'measure', announce = true): void {
   tool = next;
   app.dataset['tool'] = next;
   measure?.setActive(next === 'measure');
-  for (const b of $$<HTMLElement>('[data-cmd="tool:select"]')) b.setAttribute('aria-pressed', String(next === 'select'));
-  for (const b of $$<HTMLElement>('[data-cmd="tool:measure"]')) b.setAttribute('aria-pressed', String(next === 'measure'));
+  for (const b of $$<HTMLElement>('[data-cmd^="tool:"][aria-pressed]')) b.setAttribute('aria-pressed', String(b.dataset['cmd'] === `tool:${next}`));
   $('toolLine').hidden = next !== 'measure';
   if (announce) notices.transient(next === 'measure' ? measureIntro() : 'Select / pan');
   else notices.render();
@@ -298,6 +416,7 @@ function setTool(next: 'select' | 'measure', announce = true): void {
 coarseMq.addEventListener('change', () => {
   isCoarse = coarseMq.matches;
   notices.render();
+  refreshToolbars();
 });
 /** A tool command (rail, bottom bar, palette, key): the next input goes to the slide, so focus goes there too. */
 function chooseTool(next: 'select' | 'measure'): void {
@@ -323,6 +442,7 @@ phoneMq.addEventListener('change', () => {
   notices.render();
   syncNavPressed();
   nav?.markDirty();
+  refreshToolbars();
 });
 syncNavPressed();
 
@@ -339,52 +459,121 @@ function openPalette(opener: HTMLElement): void {
 }
 function openKeymap(opener: HTMLElement): void {
   palette.close(false);
+  if (dialogs.current !== keymapDlg) renderKeymap(($('keymapFilter') as HTMLInputElement).value);
   dialogs.toggle(keymapDlg, opener, $('keymapFilter'));
 }
 function openAbout(opener: HTMLElement): void {
   palette.close(false);
   dialogs.toggle(aboutDlg, opener);
 }
-function showPanel(tab: DockTab): void {
-  dock.show(tab, true);
+function showContextTab(tab: 'meas' | 'slide' | 'engine'): void {
+  if (tab === 'meas') ctxDock.show('meas', true);
+  else panels.show(tab, true, registry.source);
+}
+function toggleContext(): void {
+  if (ctxDock.isOpen) panels.close('ctx', registry.source);
+  else ctxDock.setOpen(true);
 }
 function refuse(text: string, assertively = false): void {
-  notices.transient(text, 6000, !assertively); // spoken once: politely at settle, or assertively now
-  if (assertively) assertive.textContent = text;
+  notices.refuse(text, assertively);
 }
 
-const notInBuild = (what: string): (() => void) => () => refuse(`${what} is not part of this Stage-0 build; Measure (M) is the only annotation tool.`);
+/**
+ * Esc cascade (TOOLS.md §8, top first): palette or dialog → class menu → the active tool's in-progress shape → a
+ * non-Select tool (back to Select) → the Library drawer → the Context drawer or sheet (< 1600 px). Compare is closed
+ * with C only. (The palette and the dialogs handle their own Esc when focus is inside them.)
+ */
+function escape(): boolean {
+  if (palette.isOpen) {
+    palette.close(true);
+    return true;
+  }
+  if (dialogs.close(true)) return true;
+  // The class picker (annotations) toggles with its own command; Esc closes it from anywhere.
+  if (!classMenu.hidden && registry.get('class:pick') !== undefined) {
+    registry.run('class:pick', 'keyboard');
+    return true;
+  }
+  if (measure?.cancel() === true) {
+    notices.transient('Measurement cancelled');
+    return true;
+  }
+  if (tool === 'measure') {
+    setTool('select');
+    return true;
+  }
+  if (libDock.isOpen) {
+    panels.close('lib', 'keyboard');
+    focusCanvas();
+    return true;
+  }
+  if (ctxDock.isOpen && !isWide) {
+    panels.close('ctx', 'keyboard');
+    focusCanvas();
+    return true;
+  }
+  return false;
+}
 
-const commands: Command[] = [
+/** Binding shorthands (TOOLS.md §5.5): `w(…)` anywhere but text fields, `sl(…)` only on the slide. */
+const w = (key: string, extra: Partial<KeyBinding> = {}): KeyBinding => ({ key, scope: 'window', ...extra });
+const sl = (key: string, extra: Partial<KeyBinding> = {}): KeyBinding => ({ key, scope: 'slide', ...extra });
+
+const registry = new Registry({
+  refuse: (t) => notices.refuse(t),
+  onInvoked: (id, source) => noteHostEvent('commandInvoked', id, source),
+  strict: import.meta.env.DEV,
+});
+
+/** The shell's own rows (owner `shell`). Modules register theirs at install (TOOLS.md §5.1). */
+const shellCommands: ShellCommand[] = [
   // Navigate (principles §4.5 map A)
-  { id: 'pan', group: 'Navigate', label: 'Pan 10 % of the viewport', keys: [['←', '↑', '↓', '→'], ['W', 'A', 'S', 'D']], keymapOnly: true },
-  { id: 'pan.viewport', group: 'Navigate', label: 'Pan one full viewport (systematic coverage)', keys: [['⇧', '←↑↓→']], keymapOnly: true },
-  { id: 'zoomin', group: 'Navigate', label: 'Zoom in 2×', keys: [['+'], ['=']], run: () => viewer?.commands.zoomBy(1) },
-  { id: 'zoomout', group: 'Navigate', label: 'Zoom out 2×', keys: [['−']], run: () => viewer?.commands.zoomBy(-1) },
+  { id: 'pan', owner: OWNER, group: 'Navigate', label: 'Pan 10 % of the viewport', keys: [['←', '↑', '↓', '→'], ['W', 'A', 'S', 'D']], keymapOnly: true },
+  { id: 'pan.viewport', owner: OWNER, group: 'Navigate', label: 'Pan one full viewport (systematic coverage)', keys: [['⇧', '←↑↓→']], keymapOnly: true },
+  ...(
+    [
+      ['left', -1, 0, 'ArrowLeft', 'a'],
+      ['right', 1, 0, 'ArrowRight', 'd'],
+      ['up', 0, -1, 'ArrowUp', 'w'],
+      ['down', 0, 1, 'ArrowDown', 's'],
+    ] as const
+  ).flatMap(([dir, dx, dy, arrow, letter]): ShellCommand[] => [
+    // Machine rows of the two display rows above (no `keys`: the keymap shows the display rows; keymapOnly: not in the palette).
+    { id: `pan:${dir}`, owner: OWNER, group: 'Navigate', label: `Pan ${dir}`, keymapOnly: true, bindings: [w(arrow), w(letter)], run: () => panView(dx, dy, 0.1) },
+    { id: `pan.viewport:${dir}`, owner: OWNER, group: 'Navigate', label: `Pan one viewport ${dir}`, keymapOnly: true, bindings: [w(arrow, { shift: true })], run: () => panView(dx, dy, 1) },
+  ]),
+  { id: 'zoomin', owner: OWNER, group: 'Navigate', label: 'Zoom in 2×', keys: [['+'], ['=']], bindings: [w('+'), w('=')], run: () => viewer?.commands.zoomBy(1) },
+  { id: 'zoomout', owner: OWNER, group: 'Navigate', label: 'Zoom out 2×', keys: [['−']], bindings: [w('-')], run: () => viewer?.commands.zoomBy(-1) },
   {
     id: 'fit',
+    owner: OWNER,
     group: 'Navigate',
     label: 'Fit whole slide',
     keys: [['0'], ['Home']],
+    bindings: [w('0'), sl('Home')],
     run: () => {
       if (viewer !== null) prevLogZoom = viewer.snapshot.logZoom;
       viewer?.commands.fit(reduced());
     },
   },
   ...PRESETS.map(
-    (p): Command => ({
+    (p): ShellCommand => ({
       id: `mag:${p.mag}`,
+      owner: OWNER,
       group: 'Navigate',
       label: `Jump to ${formatMagnification(p.mag)} (${p.um.toFixed(2)} µm/px, derived)`,
       keys: [[p.key]],
+      bindings: [w(p.key)],
       run: () => zoomToUmPerPx(p.um, `~${formatMagnification(p.mag)}`),
     }),
   ),
   {
     id: 'togglemag',
+    owner: OWNER,
     group: 'Navigate',
     label: 'Toggle the last two magnifications',
     keys: [['Z']],
+    bindings: [w('z')],
     run: () => {
       const v = viewer;
       if (v === null) return;
@@ -397,48 +586,44 @@ const commands: Command[] = [
       v.commands.flyTo(v.snapshot.cx, v.snapshot.cy, target, 'preset', reduced());
     },
   },
-  { id: 'zoom:type', group: 'Navigate', label: 'Type a zoom (× or µm/px)', meta: 'Enter on the magnification readout', keys: [['↵']], run: () => openTypedZoom() },
-  { id: 'nav', group: 'Navigate', label: 'Navigator on / off', keys: [['O']], run: toggleNav },
-  // Measure (map B, Stage-0 subset)
-  { id: 'tool:select', group: 'Measure', label: 'Select / pan', keys: [['V']], run: () => chooseTool('select') },
-  { id: 'tool:measure', group: 'Measure', label: 'Measure length (two clicks, a drag, or Enter twice)', keys: [['M']], run: () => chooseTool('measure') },
+  { id: 'zoom:type', owner: OWNER, group: 'Navigate', label: 'Type a zoom (× or µm/px)', meta: 'Enter on the magnification readout', keys: [['↵']], run: () => openTypedZoom() },
+  { id: 'nav', owner: OWNER, group: 'Navigate', label: 'Navigator on / off', keys: [['O']], bindings: [w('o')], run: toggleNav },
+  // Annotate: the Esc cascade is the shell's; the Stage-0 measure rows are registered after the modules (legacyMeasureRows)
+  { id: 'cancel', owner: OWNER, group: 'Annotate', label: 'Cancel the shape in progress · leave the tool · close the top-most panel', keys: [['Esc']], keymapOnly: true, bindings: [w('Escape')], run: () => void escape() },
+  // Panels and help
+  { id: 'dock', owner: OWNER, group: 'Panels and help', label: 'Show / hide the Context panel', keys: [['K']], bindings: [w('k')], run: toggleContext },
+  { id: 'panel:slide', owner: OWNER, group: 'Panels and help', label: 'Slide facts', meta: 'size, levels, MPP, tiles, source, licence', run: () => showContextTab('slide') },
+  { id: 'panel:meas', owner: OWNER, group: 'Panels and help', label: 'Measurements list', meta: 'fly to, delete', run: () => showContextTab('meas') },
+  { id: 'panel:engine', owner: OWNER, group: 'Panels and help', label: 'Engine: frame time, sharpness, resident tiles', meta: 'and the measurement-protocol controls', run: () => showContextTab('engine') },
+  { id: 'palette', owner: OWNER, group: 'Panels and help', label: 'Command palette', keys: [[MOD, 'K']], bindings: [w('k', { mod: true })], run: () => openPalette(keyOpener()) },
+  { id: 'keymap', owner: OWNER, group: 'Panels and help', label: 'Keyboard shortcuts', keys: [['?'], [MOD, '/']], bindings: [w('?'), w('/', { mod: true })], run: () => openKeymap(keyOpener()) },
+  { id: 'about', owner: OWNER, group: 'Panels and help', label: 'About this build · product label', run: () => openAbout(keyOpener()) },
+  { id: 'tab', owner: OWNER, group: 'Panels and help', label: 'Move focus between regions', keys: [['Tab'], ['⇧', 'Tab']], keymapOnly: true },
+  // Engine (Stage-0 measurement protocol)
+  { id: 'engine:path', owner: OWNER, group: 'Engine (Stage-0)', label: 'Run scripted path', meta: 'MEASUREMENT_PROTOCOL §5 · hands off while it runs', run: () => ui.handlers?.path() },
+  { id: 'engine:export', owner: OWNER, group: 'Engine (Stage-0)', label: 'Export JSON', meta: 'the measurement page’s export format', run: () => ui.handlers?.export() },
+  { id: 'engine:copy', owner: OWNER, group: 'Engine (Stage-0)', label: 'Copy summary', run: () => ui.handlers?.copy() },
+  { id: 'engine:evict', owner: OWNER, group: 'Engine (Stage-0)', label: 'Evict GPU tiles (GPU-cold rerun)', meta: 'the HTTP cache stays warm', run: () => ui.handlers?.evict() },
+  { id: 'engine:page', owner: OWNER, group: 'Engine (Stage-0)', label: 'Open the measurement page', meta: 'index.html?overlay=1 · TSP-grade runs', run: () => location.assign(measPageHref()) },
+  // Not in this build (struck through in the keymap) that no module will provide
+  { id: 'dx', owner: OWNER, group: 'Not in this build', label: 'Dx mode', meta: 'Stoipath Viewer is research use only', keys: [['⇧', 'D']], bindings: [w('d', { shift: true })], notInBuild: true, run: () => refuse(DX_REFUSAL, true) },
   {
-    id: 'measure:place',
-    group: 'Measure',
-    label: 'Place a measurement point at the viewport centre',
-    meta: 'measure tool; arrow keys pan between the points',
-    keys: [['↵']],
+    id: 'signout',
+    owner: OWNER,
+    group: 'Not in this build',
+    label: 'Request sign-out',
+    meta: 'Clinical-IH / Dx only',
+    keys: [['⇧', '↵']],
+    bindings: [sl('Enter', { shift: true })],
+    notInBuild: true,
+    // Ignored while a shape is in progress (principles map A), so a slipped Shift never interrupts a measurement.
     run: () => {
-      if (tool !== 'measure') setTool('measure');
-      focusCanvas();
-      measure?.placeAtCentre();
+      if (measure?.pending == null) refuse('No sign-out in this build');
     },
   },
-  { id: 'measure:pan', group: 'Measure', label: 'Pan with the pointer while measuring (hold)', keys: [['Space']], keymapOnly: true },
-  { id: 'deleteSelected', group: 'Measure', label: 'Delete the selected measurement', keys: [['⌫'], ['Del']], run: () => measure?.deleteSelected() },
-  { id: 'undo', group: 'Measure', label: 'Undo', keys: [[MOD, 'Z']], run: () => measure?.undo() },
-  { id: 'redo', group: 'Measure', label: 'Redo', keys: [[MOD, 'Y'], [MOD, '⇧', 'Z']], run: () => measure?.redo() },
-  { id: 'cancel', group: 'Measure', label: 'Cancel the measurement · leave the tool · close the top-most panel', keys: [['Esc']], keymapOnly: true },
-  // Panels and help
-  { id: 'dock', group: 'Panels and help', label: 'Show / hide the Context panel', keys: [['K']], run: () => dock.toggle() },
-  { id: 'panel:slide', group: 'Panels and help', label: 'Slide facts', meta: 'size, levels, MPP, tiles, source, licence', run: () => showPanel('slide') },
-  { id: 'panel:meas', group: 'Panels and help', label: 'Measurements list', meta: 'fly to, delete', run: () => showPanel('meas') },
-  { id: 'panel:engine', group: 'Panels and help', label: 'Engine: frame time, sharpness, resident tiles', meta: 'and the measurement-protocol controls', run: () => showPanel('engine') },
-  { id: 'palette', group: 'Panels and help', label: 'Command palette', keys: [[MOD, 'K']], run: () => openPalette(keyOpener()) },
-  { id: 'keymap', group: 'Panels and help', label: 'Keyboard shortcuts', keys: [['?'], [MOD, '/']], run: () => openKeymap(keyOpener()) },
-  { id: 'about', group: 'Panels and help', label: 'About this build · product label', run: () => openAbout(keyOpener()) },
-  { id: 'tab', group: 'Panels and help', label: 'Move focus between regions', keys: [['Tab'], ['⇧', 'Tab']], keymapOnly: true },
-  // Engine (Stage-0 measurement protocol)
-  { id: 'engine:path', group: 'Engine (Stage-0)', label: 'Run scripted path', meta: 'MEASUREMENT_PROTOCOL §5 · hands off while it runs', run: () => ui.handlers?.path() },
-  { id: 'engine:export', group: 'Engine (Stage-0)', label: 'Export JSON', meta: 'the measurement page’s export format', run: () => ui.handlers?.export() },
-  { id: 'engine:copy', group: 'Engine (Stage-0)', label: 'Copy summary', run: () => ui.handlers?.copy() },
-  { id: 'engine:evict', group: 'Engine (Stage-0)', label: 'Evict GPU tiles (GPU-cold rerun)', meta: 'the HTTP cache stays warm', run: () => ui.handlers?.evict() },
-  { id: 'engine:page', group: 'Engine (Stage-0)', label: 'Open the measurement page', meta: 'index.html?overlay=1 · TSP-grade runs', run: () => location.assign(measPageHref()) },
-  // Not in this build (struck through in the keymap)
-  { id: 'dx', group: 'Not in this build', label: 'Dx mode', meta: 'Stoipath Viewer is research use only', keys: [['⇧', 'D']], notInBuild: true, run: () => refuse(DX_REFUSAL, true) },
-  { id: 'signout', group: 'Not in this build', label: 'Request sign-out', meta: 'Clinical-IH / Dx only', keys: [['⇧', '↵']], notInBuild: true, run: () => refuse('No sign-out in this build') },
   {
     id: 'zoom.fine',
+    owner: OWNER,
     group: 'Not in this build',
     label: 'Zoom 1.2× fine',
     meta: 'on US keyboards + is already ⇧= and must stay the 2× zoom; waits for rebindable keys',
@@ -446,21 +631,82 @@ const commands: Command[] = [
     notInBuild: true,
     keymapOnly: true,
   },
-  {
-    id: 'tool:area',
-    group: 'Not in this build',
-    label: 'Measure area',
-    meta: 'M measures length',
-    keys: [['⇧', 'M']],
-    notInBuild: true,
-    run: () => refuse('Area measurement is not part of this Stage-0 build; M measures length'),
-  },
-  { id: 'rotate', group: 'Not in this build', label: 'Rotate 90°', meta: 'not in the Stage-0 engine', keys: [['R'], ['⇧', 'R']], notInBuild: true, run: () => refuse('Rotation is not part of the Stage-0 engine') },
-  { id: 'tool:polygon', group: 'Not in this build', label: 'Polygon, freehand, rectangle, ellipse, point', meta: 'measure only in Stage-0', keys: [['P'], ['F'], ['X'], ['E'], ['T']], notInBuild: true, run: notInBuild('Polygon and freehand drawing') },
-  { id: 'reserved', group: 'Not in this build', label: 'Never bound: F-keys, Alt, Ctrl+Space, numeric keypad', meta: 'browser, Hyperdrive, Epic search, Dragon push-to-talk', keys: [['F1–F12'], ['Alt'], ['Ctrl', 'Space'], ['Num 0–9']], notInBuild: true, keymapOnly: true },
+  { id: 'rotate', owner: OWNER, group: 'Not in this build', label: 'Rotate 90°', meta: 'not in the Stage-0 engine', keys: [['R'], ['⇧', 'R']], bindings: [w('r'), w('r', { shift: true })], notInBuild: true, run: () => refuse('Rotation is not part of the Stage-0 engine') },
+  { id: 'reserved', owner: OWNER, group: 'Not in this build', label: 'Never bound: F-keys, Alt, Ctrl+Space, numeric keypad', meta: 'browser, Hyperdrive, Epic search, Dragon push-to-talk', keys: [['F1–F12'], ['Alt'], ['Ctrl', 'Space'], ['Num 0–9']], notInBuild: true, keymapOnly: true },
 ];
-const byId = new Map(commands.map((c) => [c.id, c]));
-const run = (id: string): void => byId.get(id)?.run?.();
+for (const c of shellCommands) registry.register(c);
+
+/**
+ * The Stage-0 measure tool's rows (map B subset). draw-tools (`tool:select`, `tool:measure`) and annotations (`undo`,
+ * `redo`, `deleteSelected`) provide these ids from Waves 2–3 (TOOLS.md D7, §6.5, §6.6), so they are registered after
+ * the modules' install, like the fallbacks below: an installed module's command wins and nothing conflicts. Until
+ * Wave 4 deletes measure.ts they drive the legacy tool.
+ */
+const legacyMeasureRows: ShellCommand[] = [
+  { id: 'tool:select', owner: OWNER, group: 'Annotate', label: 'Select / pan', keys: [['V']], bindings: [w('v')], run: () => chooseTool('select') },
+  { id: 'tool:measure', owner: OWNER, group: 'Annotate', label: 'Measure length (two clicks, a drag, or Enter twice)', keys: [['M']], bindings: [w('m')], run: () => chooseTool('measure') },
+  {
+    id: 'measure:place',
+    owner: OWNER,
+    group: 'Annotate',
+    label: 'Place a measurement point at the viewport centre',
+    meta: 'measure tool; arrow keys pan between the points',
+    // Enter on the slide reaches the active tool first (toolKey below); this row is the palette's and the keymap's.
+    keys: [['↵']],
+    run: () => {
+      if (tool !== 'measure') setTool('measure');
+      focusCanvas();
+      measure?.placeAtCentre();
+    },
+  },
+  { id: 'measure:pan', owner: OWNER, group: 'Annotate', label: 'Pan with the pointer while measuring (hold)', keys: [['Space']], keymapOnly: true },
+  { id: 'deleteSelected', owner: OWNER, group: 'Annotate', label: 'Delete the selected measurement', keys: [['⌫'], ['Del']], bindings: [sl('Backspace'), sl('Delete')], run: () => measure?.deleteSelected() },
+  { id: 'undo', owner: OWNER, group: 'Annotate', label: 'Undo', keys: [[MOD, 'Z']], bindings: [w('z', { mod: true })], run: () => measure?.undo() },
+  { id: 'redo', owner: OWNER, group: 'Annotate', label: 'Redo', keys: [[MOD, 'Y'], [MOD, '⇧', 'Z']], bindings: [w('y', { mod: true }), w('z', { mod: true, shift: true })], run: () => measure?.redo() },
+];
+
+/**
+ * "Not in this build" rows for keys a Phase A module provides once installed (TOOLS.md §8). Registered AFTER the
+ * modules' install (Wave 2 on), each with only the bindings still free, and skipped when a module registered its id:
+ * an installed module always wins and nothing conflicts.
+ */
+function registerFallbacks(): void {
+  const fallback = (cmd: ShellCommand): void => {
+    if (registry.get(cmd.id) !== undefined) return;
+    const all = cmd.bindings ?? [];
+    const free = all.filter((b) => !registry.isBound(b));
+    if (all.length > 0 && free.length === 0) return;
+    // Display keys: the row's own when every binding is free, else the free ones only.
+    const keys = free.length === all.length ? cmd.keys : free.map((b) => [...(b.mod === true ? [MOD] : []), ...(b.shift === true ? ['⇧'] : []), b.key.length === 1 ? b.key.toUpperCase() : b.key]);
+    registry.register({ ...cmd, bindings: free, ...(keys !== undefined ? { keys } : {}) });
+  };
+  for (const c of legacyMeasureRows) fallback(c);
+  // A palette row for every claimed panel whose module registered none (library registers panel:cohort / panel:slides).
+  const panelLabel: Partial<Record<PanelId, string>> = { cohort: 'Cohort (Library)', slides: 'Slides in this set (Library)', layers: 'Layers (Library)', inspector: 'Inspector', annotations: 'Annotations list' };
+  for (const [id, label] of Object.entries(panelLabel) as [PanelId, string][]) {
+    if (panels.isClaimed(id)) fallback({ id: `panel:${id}`, owner: OWNER, group: 'Panels and help', label, run: () => panels.show(id, true, registry.source) });
+  }
+  const nib = (what: string): string => `${what} is not part of this Stage-0 build; Measure (M) is the only annotation tool.`;
+  fallback({ id: 'tool:draw', owner: OWNER, group: 'Not in this build', label: 'Point, rectangle, ellipse, polygon, brush', meta: 'measure only in this build', keys: [['T'], ['X'], ['E'], ['P'], ['F']], bindings: ['t', 'x', 'e', 'p', 'f'].map((k) => w(k)), notInBuild: true, run: () => refuse(nib('Drawing')) });
+  fallback({ id: 'tool:area', owner: OWNER, group: 'Not in this build', label: 'Measure area', meta: 'M measures length', keys: [['⇧', 'M']], bindings: [w('m', { shift: true })], notInBuild: true, run: () => refuse('Area measurement is not part of this Stage-0 build; M measures length') });
+  const copyLink = (): string => (registry.get('copylink') !== undefined ? '; Copy view link shares this view' : '');
+  const demo = (): string => (registry.get('heat') !== undefined ? ': the demo heatmap is not a model' : '');
+  const rows: [string, string, KeyBinding[], () => string][] = [
+    ['nib:polyline', 'Polyline', [w('y')], () => 'Polyline is not part of this build'],
+    ['nib:count', 'Count tool', [w('t', { shift: true })], () => 'The count tool is not part of this build'],
+    ['nib:legend', 'Class legend on the slide', [w('q', { shift: true })], () => 'The class legend HUD is not part of this build'],
+    ['nib:curtain', 'Curtain compare', [w('/')], () => 'Curtain compare is not part of this build'],
+    ['nib:grid', 'HPF grid', [w('g')], () => 'The HPF grid is not part of this build'],
+    ['nib:bookmark', 'Bookmarks', [w('b'), w('b', { shift: true })], () => `Bookmarks are not part of this build${copyLink()}`],
+    ['nib:ai', 'Accept / reject AI output', [w('a', { shift: true }), w('x', { shift: true })], () => `No model output in this build${demo()}`],
+    ['nib:focus', 'Focus mode', [w('\\')], () => 'Focus mode is not part of this build'],
+    ['nib:complete', 'Mark slide complete', [w('n')], () => 'Mark complete is not part of this build'],
+    ['nib:bcg', 'Brightness, contrast, gamma', [w('j'), w('j', { shift: true })], () => 'Brightness, contrast and gamma are not part of this build'],
+  ];
+  const caps = (b: KeyBinding): string[] => [...(b.shift === true ? ['⇧'] : []), b.key.length === 1 ? b.key.toUpperCase() : b.key];
+  for (const [id, label, bindings, text] of rows) fallback({ id, owner: OWNER, group: 'Not in this build', label, keys: bindings.map(caps), bindings, notInBuild: true, run: () => refuse(text()) });
+  fallback({ id: 'nib:clipboard', owner: OWNER, group: 'Not in this build', label: 'Copy and paste annotations', keys: [[MOD, 'C'], [MOD, 'V']], notInBuild: true, keymapOnly: true });
+}
 
 function measPageHref(): string {
   const q = new URLSearchParams();
@@ -479,7 +725,7 @@ const palette = new Palette(
   $('palInput') as HTMLInputElement,
   $('palList'),
   $('palCount'),
-  () => commands,
+  () => registry.list(),
   (q) => {
     const s = parseTypedZoom(q);
     if (s === null) return [];
@@ -488,6 +734,11 @@ const palette = new Palette(
   focusCanvas,
   (open) => {
     $('paletteBtn').setAttribute('aria-expanded', String(open));
+    syncCovered();
+  },
+  (c) => {
+    if (registry.get(c.id) === c) registry.run(c.id, 'palette');
+    else c.run?.();
   },
 );
 
@@ -497,7 +748,7 @@ function renderKeymap(filter: string): void {
   list.replaceChildren();
   const q = filter.trim().toLowerCase();
   const groups = new Map<string, Command[]>();
-  for (const c of commands) {
+  for (const c of registry.list()) {
     if (c.keys === undefined) continue;
     const hay = `${c.label} ${c.meta ?? ''} ${c.keys.map((k) => k.join(' ')).join(' ')}`.toLowerCase();
     if (q !== '' && !q.split(/\s+/).every((t) => hay.includes(t))) continue;
@@ -520,32 +771,71 @@ function renderKeymap(filter: string): void {
   }
   if (groups.size === 0) list.append(h('p', { class: 'note', text: 'No key matches the filter.' }));
 }
-renderKeymap('');
 $('keymapFilter').addEventListener('input', (e) => renderKeymap((e.target as HTMLInputElement).value));
 $('keymapNote').textContent =
-  `Generated from the command registry. Inside the slide only unmodified keys and Shift combinations are bound; ${MOD} only for ${MOD}+K, ${MOD}+/ and ${MOD}+Z / Y; no Alt, no F-keys. ` +
+  `Generated from the command registry, which also dispatches every key listed here. Inside the slide only unmodified keys and Shift combinations are bound; ${MOD} only for ${MOD}+K, ${MOD}+/ and ${MOD}+Z / Y; no Alt, no F-keys. ` +
   'Keys work whenever the viewer window has focus. Reserved here: none (research build; no dictation). ' +
   'The measurement page (index.html) keeps its own keys: +/− zoom, arrows pan, O overlay, R reset view, P scripted path.';
+
+// ------------------------------------------------------------------ [data-cmd] controls, toolbars (from the registry)
+const toolbarRefreshers: (() => void)[] = [];
+for (const g of $$<HTMLElement>('.rail [role="toolbar"]')) toolbarRefreshers.push(roving(g, 'vertical'));
+/** Re-pick each toolbar's Tab stop (a control appeared or a media query hid one). Never per frame. */
+function refreshToolbars(): void {
+  for (const r of toolbarRefreshers) r();
+}
+railMq.addEventListener('change', refreshToolbars);
+/**
+ * A [data-cmd] control is shown iff its command is registered and in this build: module tools, compare, snapshot and
+ * the class picker appear when their module registers them (TOOLS.md §13 Wave 0). Rail sets with nothing shown, and
+ * the divider before them, are hidden too. Runs on registry changes and claims, never per frame.
+ */
+function syncCommandControls(): void {
+  for (const b of $$<HTMLElement>('[data-cmd]')) {
+    const c = registry.get(b.dataset['cmd'] ?? '');
+    const off = c === undefined || c.notInBuild === true;
+    if (b.hidden !== off) b.hidden = off;
+  }
+  for (const set of $$<HTMLElement>('.rail .rail__set')) {
+    const empty = set.querySelector('button:not([hidden])') === null;
+    set.hidden = empty;
+    const prev = set.previousElementSibling;
+    if (prev instanceof HTMLElement && prev.classList.contains('rail__divider')) prev.hidden = empty;
+  }
+  const libShown = $$<HTMLElement>('.rail [data-lib]').some((b) => !b.hidden);
+  for (const el of $$<HTMLElement>('.rail .lib-switch')) el.hidden = !libShown;
+  refreshToolbars();
+}
+registry.onChange(() => {
+  syncCommandControls();
+  if (palette.isOpen) palette.render();
+  if (dialogs.current === keymapDlg) renderKeymap(($('keymapFilter') as HTMLInputElement).value);
+});
 
 // ------------------------------------------------------------------ top bar and rail wiring
 $('badge').addEventListener('click', (e) => openAbout(e.currentTarget as HTMLElement));
 $('aboutBtn').addEventListener('click', (e) => openAbout(e.currentTarget as HTMLElement));
 $('keymapBtn').addEventListener('click', (e) => openKeymap(e.currentTarget as HTMLElement));
 $('paletteBtn').addEventListener('click', (e) => openPalette(e.currentTarget as HTMLElement));
-$('engineBtn').addEventListener('click', () => showPanel('engine'));
-$('stripSharp').addEventListener('click', () => showPanel('engine'));
-for (const b of $$<HTMLElement>('[data-cmd]')) {
-  b.addEventListener('click', (e) => {
-    const id = b.dataset['cmd'] ?? '';
-    if (id === 'palette') openPalette(b);
-    else if (id === 'keymap') openKeymap(b);
-    else run(id);
-    if (id.startsWith('tool:') || id.startsWith('zoom') || id === 'fit' || id.startsWith('mag:')) {
-      // pointer users keep working on the slide; keyboard users keep their place in the toolbar
-      if ((e as MouseEvent).detail > 0) focusCanvas();
-    }
-  });
-}
+$('engineBtn').addEventListener('click', () => showContextTab('engine'));
+$('stripSharp').addEventListener('click', () => showContextTab('engine'));
+// One delegated handler for every [data-cmd] control, including ones a module renders later inside its own content.
+app.addEventListener('click', (e) => {
+  const b = e.target instanceof Element ? e.target.closest<HTMLElement>('[data-cmd]') : null;
+  if (b === null || !app.contains(b) || (b instanceof HTMLButtonElement && b.disabled)) return;
+  const id = b.dataset['cmd'] ?? '';
+  const pointer = (e as MouseEvent).detail > 0;
+  clickOpener = b;
+  try {
+    registry.run(id, pointer ? 'pointer' : 'keyboard');
+  } finally {
+    clickOpener = null;
+  }
+  if (id.startsWith('tool:') || id.startsWith('zoom') || id === 'fit' || id.startsWith('mag:')) {
+    // pointer users keep working on the slide; keyboard users keep their place in the toolbar
+    if (pointer) focusCanvas();
+  }
+});
 // Magnification presets in the rail (keys 1–6; the pressed state is written at settle, never mid-flight)
 const presetGroup = $('presetGroup');
 for (const p of PRESETS) {
@@ -558,14 +848,7 @@ for (const p of PRESETS) {
   );
 }
 const presetPressed: { um: number; slot: AttrSlot }[] = [];
-for (const b of $$<HTMLElement>('[data-cmd^="mag:"]', presetGroup)) {
-  b.addEventListener('click', (e) => {
-    run(b.dataset['cmd'] ?? '');
-    if (e.detail > 0) focusCanvas();
-  });
-  presetPressed.push({ um: Number(b.dataset['um']), slot: new AttrSlot(b, 'aria-pressed') });
-}
-for (const g of $$<HTMLElement>('.rail [role="toolbar"]')) roving(g, 'vertical');
+for (const b of $$<HTMLElement>('[data-cmd^="mag:"]', presetGroup)) presetPressed.push({ um: Number(b.dataset['um']), slot: new AttrSlot(b, 'aria-pressed') });
 // Navigator pan buttons: half a viewport per press (the SC 2.5.7 alternative to dragging the rectangle)
 for (const b of $$<HTMLElement>('.navigator__pan button')) {
   b.addEventListener('click', () => {
@@ -613,7 +896,7 @@ zoomInput.addEventListener('keydown', (e) => {
       zoomInput.setAttribute('aria-invalid', 'true');
       zoomInput.select();
       notices.transient(ZOOM_ERROR, 6000, false);
-      assertive.textContent = assertive.textContent === ZOOM_ERROR ? `${ZOOM_ERROR}\u00a0` : ZOOM_ERROR;
+      live.assertive(ZOOM_ERROR);
       return;
     }
     closeTypedZoom(true);
@@ -628,164 +911,54 @@ zoomInput.addEventListener('blur', () => {
   if (!zoomInput.hidden) closeTypedZoom(false);
 });
 
-// ------------------------------------------------------------------ keyboard (principles §4.5; SHELL.md "Keymap")
-function escape(): boolean {
-  if (palette.isOpen) {
-    palette.close(true);
-    return true;
-  }
-  if (dialogs.close(true)) return true;
-  if (measure?.cancel() === true) {
-    notices.transient('Measurement cancelled');
-    return true;
-  }
-  if (tool === 'measure') {
-    setTool('select');
-    return true;
-  }
-  if (dock.isOpen && !wideMq.matches) {
-    dock.setOpen(false);
-    focusCanvas();
+// ------------------------------------------------------------------ keyboard router (principles §4.5; TOOLS.md §5.5; SHELL.md "Keymap")
+/** Composite widgets, docks, dialogs and scrollable text regions own the navigation keys (arrows, Home, End, Page keys). */
+const WIDGET_SELECTOR = '[role="toolbar"], [role="tablist"], [role="listbox"], [role="radiogroup"], [role="menu"], [role="tabpanel"], [role="region"], [role="slider"], .dialog, .dock, pre.snippet';
+/** A slide canvas (any pane's engine canvas) or the page body: `scope: 'slide'` keys act on the slide. */
+function onSlideTarget(t: EventTarget | null): boolean {
+  if (t === null || t === document.body || t === document.documentElement) return true;
+  return t instanceof HTMLCanvasElement && t.parentElement?.classList.contains('pane') === true && !t.classList.contains('overlay-layer');
+}
+/**
+ * The active tool's own keys on the slide, before any binding (contracts ToolController.onKey): Enter places a
+ * measurement point. Esc is the cascade's (the palette and dialogs come before the tool); ⌫ / Del fall through to
+ * deleteSelected.
+ */
+function toolKey(e: KeyboardEvent): boolean {
+  if (e.key === 'Enter' && !e.shiftKey && tool === 'measure' && measure !== null) {
+    measure.placeAtCentre();
     return true;
   }
   return false;
 }
-
 window.addEventListener('keydown', (e) => {
   if (e.defaultPrevented) return;
   const t = e.target;
-  const key = e.key;
   const mod = e.ctrlKey || e.metaKey;
-  if (mod && !e.altKey && (key === 'k' || key === 'K')) {
+  // The palette input handles its own keys; only Ctrl/⌘ K (toggle) passes through.
+  if (t instanceof Node && $('paletteLayer').contains(t) && !(mod && !e.altKey && e.key.toLowerCase() === 'k')) return;
+  const onSlide = onSlideTarget(t);
+  if (onSlide && !mod && !e.altKey && toolKey(e)) {
     e.preventDefault();
-    openPalette(keyOpener());
     return;
   }
-  if (t instanceof Node && $('paletteLayer').contains(t)) return; // the palette input handles its own keys
-  if (mod && !e.altKey && key === '/') {
-    e.preventDefault();
-    openKeymap(keyOpener());
+  // Space held: temporary pan with the measure tool (a state, not a command).
+  if (e.key === ' ' && !mod && !e.altKey) {
+    if (onSlide && tool === 'measure' && measure !== null) {
+      measure.spaceHeld = true;
+      e.preventDefault();
+    }
     return;
   }
-  if (isTextInput(t)) return;
-  if (mod && !e.altKey && (key === 'z' || key === 'Z' || key === 'y' || key === 'Y')) {
-    e.preventDefault();
-    run(key === 'y' || key === 'Y' || e.shiftKey ? 'redo' : 'undo');
-    return;
-  }
-  // Never bind other Ctrl/Cmd/Alt combinations (browser zoom etc.), F-keys or the numeric keypad (Dragon push-to-talk).
-  if (mod || e.altKey || /^F\d{1,2}$/.test(key) || e.code.startsWith('Numpad')) return;
-  const onSlide = t === canvas || t === document.body || t === document.documentElement || t === null;
-  // Arrow keys move focus inside composite widgets and scroll the dock, its panels, dialogs and text regions; they pan
-  // the slide everywhere else (the canvas, the rail's neighbours, the strip, the navigator pads).
-  const inWidget = t instanceof Element && t.closest('[role="toolbar"], [role="tablist"], [role="listbox"], [role="tabpanel"], [role="region"], .dialog, .dock, pre.snippet') !== null;
-  let handled = true;
-  switch (key) {
-    case 'Escape':
-      handled = escape();
-      break;
-    case '?':
-      openKeymap(keyOpener());
-      break;
-    case 'ArrowLeft':
-    case 'ArrowRight':
-    case 'ArrowUp':
-    case 'ArrowDown':
-      if (inWidget) {
-        handled = false;
-        break;
-      }
-      panView(key === 'ArrowLeft' ? -1 : key === 'ArrowRight' ? 1 : 0, key === 'ArrowUp' ? -1 : key === 'ArrowDown' ? 1 : 0, e.shiftKey ? 1 : 0.1);
-      break;
-    case 'w':
-    case 'a':
-    case 's':
-    case 'd':
-      panView(key === 'a' ? -1 : key === 'd' ? 1 : 0, key === 'w' ? -1 : key === 's' ? 1 : 0, 0.1);
-      break;
-    case 'D':
-      run('dx');
-      break;
-    case '+':
-    case '=':
-      run('zoomin');
-      break;
-    case '-':
-      run('zoomout');
-      break;
-    case '0':
-    case 'Home':
-      if (key === 'Home' && !onSlide) {
-        handled = false;
-        break;
-      }
-      run('fit');
-      break;
-    case 'z':
-      run('togglemag');
-      break;
-    case 'o':
-    case 'O':
-      run('nav');
-      break;
-    case 'k':
-    case 'K':
-      run('dock');
-      break;
-    case 'v':
-    case 'V':
-      run('tool:select');
-      break;
-    case 'm':
-      run('tool:measure');
-      break;
-    case 'M':
-      run('tool:area');
-      break;
-    case 'r':
-    case 'R':
-      run('rotate');
-      break;
-    case 'p':
-    case 'P':
-    case 'f':
-    case 'F':
-    case 'x':
-    case 'X':
-    case 'e':
-    case 'E':
-    case 't':
-    case 'T':
-      run('tool:polygon');
-      break;
-    case 'Enter':
-      if (!onSlide) {
-        handled = false;
-        break;
-      }
-      if (e.shiftKey) run('signout');
-      else if (tool === 'measure') measure?.placeAtCentre();
-      else handled = false;
-      break;
-    case 'Backspace':
-    case 'Delete':
-      if (!onSlide) {
-        handled = false;
-        break;
-      }
-      run('deleteSelected');
-      break;
-    case ' ':
-      if (onSlide && tool === 'measure' && measure !== null) measure.spaceHeld = true;
-      else handled = false;
-      break;
-    default:
-      if (/^[1-6]$/.test(key) && e.code.startsWith('Digit')) {
-        const p = PRESETS[Number(key) - 1];
-        if (p !== undefined) run(`mag:${p.mag}`);
-      } else handled = false;
-  }
-  if (handled) e.preventDefault();
+  const cmd = registry.match(e, {
+    onSlide,
+    inText: isTextInput(t),
+    inWidget: t instanceof Element && t.closest(WIDGET_SELECTOR) !== null,
+    prefix: classMenu.hidden ? null : 'q',
+  });
+  if (cmd === undefined) return;
+  e.preventDefault();
+  registry.run(cmd.id, 'keyboard');
 });
 window.addEventListener('keyup', (e) => {
   if (e.key === ' ' && measure !== null) measure.spaceHeld = false;
@@ -829,7 +1002,7 @@ function netDetail(): string {
 
 // ------------------------------------------------------------------ start the engine
 async function start(): Promise<void> {
-  notices.engine('Opening the slide…');
+  notices.persistent('engine', 'Opening the slide…');
   const v = await startViewer({
     canvas,
     ui,
@@ -894,7 +1067,7 @@ async function start(): Promise<void> {
     v.commands.flyTo(wx, wy, v.snapshot.logZoom, 'nav', reduced());
   });
   if (p.mpp !== null) {
-    measure = new MeasureTool($('measLayer') as HTMLCanvasElement, canvas, canvasArea, v, p.mpp, { coarse: () => isCoarse, mod: MOD });
+    measure = new MeasureTool($('overlayA') as HTMLCanvasElement, canvas, canvasArea, v, p.mpp, { coarse: () => isCoarse, mod: MOD });
     measure.onNotice = (t) => notices.transient(t);
     measure.onChange = renderMeasurements;
     measure.resize(v.snapshot);
@@ -1067,8 +1240,8 @@ function onFrame(s: FrameSnapshot): void {
     // upsampled 1.94× in device pixels; that device-pixel detail stays in the Engine section's "Level drawn" row.
     const mpp = v.pyramid.mpp;
     const beyond = mpp !== null && Number.isFinite(hud.s) && Number(hud.s.toFixed(2)) < Number(mpp.toFixed(2));
-    notices.view(beyond && mpp !== null ? `Beyond the scan’s resolution — ${hud.s.toFixed(2)} µm/px shown, scan is ${mpp.toFixed(2)} µm/px` : '');
-    if (dock.isOpen && dock.tab === 'engine') {
+    notices.persistent('view', beyond && mpp !== null ? `Beyond the scan’s resolution — ${hud.s.toFixed(2)} µm/px shown, scan is ${mpp.toFixed(2)} µm/px` : null);
+    if (ctxDock.isOpen && ctxDock.tab === 'engine') {
       eq.state.set(sharp.label);
       eq.ntf.set(`${st.sharpFraction.toFixed(3)} · NTF ${((1 - st.sharpFraction) * 100).toFixed(1)} % (${st.deficitCells} of ${st.cells} cells from a coarser level)`);
       eq.deficit.set(`${st.blurArea.toFixed(2)} octave (≤ 0.15)`);
@@ -1092,6 +1265,8 @@ function onFrame(s: FrameSnapshot): void {
 }
 
 // ------------------------------------------------------------------ test / automation hook (read-only views of the shell state)
+/** Debug views modules publish (TOOLS.md §11.3 `window.__shell.tools.*`; core's DebugRegistry fills it from Wave 2). */
+const debugViews: Record<string, () => unknown> = {};
 const shellApi = {
   hud: () => (hud === null ? null : { s: hud.s, mag: hud.mag, magText: hud.magText, bar: hud.bar, position: hud.positionText }),
   nav: () => (nav === null ? null : { rect: { ...nav.rect }, thumbW: nav.thumbW, thumbH: nav.thumbH, visible: navVisible() }),
@@ -1101,6 +1276,28 @@ const shellApi = {
   tool: () => tool,
   setTool: (t: 'select' | 'measure') => setTool(t),
   notice: () => notices.text,
+  tools: debugViews,
+  /**
+   * The integrator's host services, read-only (tools-check: registry conflicts, panels, notices, env). `panels.claim`
+   * is a test hook that claims an empty module panel so the skeleton's layout can be checked before its module lands.
+   */
+  host: () => ({
+    commands: registry.list().map((c) => ({ id: c.id, owner: c.owner, group: c.group, notInBuild: c.notInBuild === true, bindings: (c.bindings ?? []).map((b) => ({ ...b })) })),
+    conflicts: [...registry.conflicts()],
+    panels: (['cohort', 'slides', 'layers', 'inspector', 'annotations', 'slide', 'engine'] as PanelId[]).map((id) => ({ id, claimed: panels.isClaimed(id), shown: panels.isShown(id) })),
+    library: { open: libDock.isOpen, tab: libDock.tab },
+    context: { open: ctxDock.isOpen, tab: ctxDock.tab, inert: dockEl.inert },
+    notice: notices.text,
+    env: { mod: env.mod, deviceClass: env.deviceClass, deviceMemoryGiB: env.deviceMemoryGiB, build: env.build, phone: env.isPhone(), coarse: env.isCoarse(), wide: env.isWide(), reducedMotion: env.reducedMotion() },
+    events: hostEvents.map((x) => ({ ...x })),
+  }),
+  panels: {
+    claim: (id: PanelId): void => {
+      panels.body(id);
+    },
+    show: (id: PanelId): void => panels.show(id, false, 'test'),
+  },
+  run: (id: string): boolean => registry.run(id, 'test'),
 };
 declare global {
   interface Window {
@@ -1108,13 +1305,17 @@ declare global {
   }
 }
 
+// ------------------------------------------------------------------ boot
+registerFallbacks(); // Wave 2: after the module installs (TOOLS.md §5.1), so an installed module always wins
+syncDockLabels();
+syncCommandControls();
 $('plateRetry').addEventListener('click', () => location.reload());
 start().catch((err: unknown) => {
   const msg = err instanceof Error ? err.message : String(err);
   console.error(err);
   $('plateText').textContent = `${msg}. Check the manifest URL (?manifest=) and that the tile server is reachable, then retry.`;
   $('plate').hidden = false;
-  notices.engine(`This slide could not be opened (${msg})`);
-  assertive.textContent = `This slide could not be opened. ${msg}`;
+  notices.persistent('engine', `This slide could not be opened (${msg})`);
+  live.assertive(`This slide could not be opened. ${msg}`);
 });
 setTool('select', false);

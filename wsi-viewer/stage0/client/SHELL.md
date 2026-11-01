@@ -21,13 +21,14 @@ Everything the engine reads passes through unchanged: `?manifest=URL`, `?dpr=N` 
 | Region | Contents | Engine source |
 |---|---|---|
 | A Top bar | `RUO` badge (opens About; name `Stoipath Viewer, for research use only. Open the product label and About`, ux-copy `label.badge.aria.ruo`), **the label string as real text** (`role="note"`, visible ≥ 1024 px, behind the badge below), slide identity from `manifest.source` (`tumor_014` · `CAMELYON16` · `H&E` · `CC0` · sentence-case tissue · mpp to two decimals · region), search button (Ctrl/⌘ K; label `Search commands, panels…`, `Search…` at the 220 px step), keyboard-map button (?), About button | `Viewer.manifest`, `Viewer.pyramid` |
-| B Canvas | the engine's WebGL canvas filling the grid cell (not `position: fixed`; the engine's ResizeObserver resizes it with the cell); one 2D overlay canvas for measurements; HUD: identity top-left, tool line while measuring, scale bar + position bottom-left, magnification readout bottom-right (typed zoom on Enter/click); on phones the sharpness dot **and label** join the HUD. HUD items are not hit targets (`pointer-events: none`, as on the measurement page) except the readout button and its field | `FrameSnapshot` (per frame) |
-| C Rail | one vertical toolbar (roving tabindex): Select/pan V, Measure M, Zoom in +, Zoom out −, Fit 0, Navigator O, presets 1.25×–40× (keys 1–6), Context panel K, Keyboard map ? (dropped on short touch screens, ≤ 760 px tall; the top bar has it); printed key hints (hidden under a coarse pointer). Bottom bar with labelled 44 px tools ≤ 1079 px: eight on tablets, six on phones ≤ 599 px (Zoom in / out go; pinch, double tap and Search → Zoom remain), so it fits 320 px | `ViewerCommands` |
-| D Context dock | docked ≥ 1600 px (open by default), drawer 1080–1599, in-flow sheet ≤ 1079 (closed by default). Tabs: **Slide** (manifest facts: size in px and mm, region, levels with tiles/MB/pinned, MPP, tile format and quality, scanner, privacy note, source URL, licence link), **Measurements** (list with length, Fly to, Delete; Ctrl+Z / Ctrl+Y), **Engine** (state, sharp fraction / NTF, deficit, level drawn vs wanted, frame time EMA, resident / in flight / decoding, bytes, last gesture TTS; Run scripted path, Export JSON, Copy summary, Evict GPU tiles; link to `index.html?overlay=1` with the TSP note; device and build) | `Stage0Api`, `Metrics.lastGesture`, `ViewerUi` |
+| B Canvas | `.panes` with one `.pane` per view (pane B only in compare, `.app.compare-on`, Phase A); pane A holds the engine's WebGL canvas `#view` filling the pane (not `position: fixed`; the engine's ResizeObserver resizes it with the pane), one 2D overlay canvas `#overlayA` (measurements now, every Phase A overlay later; was `#measLayer`) and its HUD: identity top-left, tool line while measuring, scale bar + position bottom-left, magnification readout bottom-right (typed zoom on Enter/click); on phones the sharpness dot **and label** join the HUD. HUD items are not hit targets (`pointer-events: none`, as on the measurement page) except the readout button and its field | `FrameSnapshot` (per frame) |
+| C Rail | Library switchers (Cohort, Slides, Layers; Phase A, hidden until their module claims the panel), then one vertical toolbar (roving tabindex): Select/pan V, [Point T, Rectangle X, Ellipse E, Polygon P, Brush F], Measure M, [Class Q], Zoom in +, Zoom out −, Fit 0, Navigator O, presets 1.25×–40× (keys 1–6), [Compare C, Snapshot ⇧S], Context panel K, Keyboard map ? (dropped on short touch screens, ≤ 760 px tall; the top bar has it); bracketed tools appear when their module registers the command. At ≤ 1366 px the zoom buttons and presets leave the rail (keys, palette and typed zoom remain; owner decision Q10). Printed key hints (hidden under a coarse pointer). Bottom bar with labelled 44 px tools ≤ 1079 px: eight on tablets, six on phones ≤ 599 px (Zoom in / out go; pinch, double tap and Search → Zoom remain), so it fits 320 px | `ViewerCommands` |
+| D-left Library | Phase A (TOOLS.md D10): Cohort · Slides · Layers, a drawer over the canvas's left edge at ≥ 1080 px (300 px; 272–336 px at 1080–1599) that moves pane A's left HUD right of it, and the in-flow sheet ≤ 1079 px, sharing it with the Context dock through a Library \| Context switch. Closed by default; empty until a module claims a panel, so Wave 0 shows none of it | — |
+| D Context dock | docked ≥ 1600 px (open by default), drawer 1080–1599, in-flow sheet ≤ 1079 (closed by default). Tabs (Phase A order, module tabs hidden until claimed): [Inspector], [Annotations], **Measurements**, **Slide**, **Engine**. **Slide** (manifest facts: size in px and mm, region, levels with tiles/MB/pinned, MPP, tile format and quality, scanner, privacy note, source URL, licence link), **Measurements** (list with length, Fly to, Delete; Ctrl+Z / Ctrl+Y), **Engine** (state, sharp fraction / NTF, deficit, level drawn vs wanted, frame time EMA, resident / in flight / decoding, bytes, last gesture TTS; Run scripted path, Export JSON, Copy summary, Evict GPU tiles; link to `index.html?overlay=1` with the TSP note; device and build) | `Stage0Api`, `Metrics.lastGesture`, `ViewerUi` |
 | E Strip | sharpness indicator (button → Engine), one notice at a time, tiles chip (`Tiles resident/layers`), network chip (ux-copy §6.2 strings only, shown only when offline, < 8 Mbps, or `Link OK` at 8–20 Mbps during a cold fill; silent otherwise), Engine button | `PlanStats`, snapshot |
 | F Navigator | the pyramid's top level (`tiles/5/0_0.jpg`) as `<img>`, viewport rectangle from four edges positioned by `transform` only, click/tap to recentre, four always-visible pan buttons (SC 2.5.7), `O` toggles it (hidden at rest on phones). In the DOM after the strip (Tab order canvas → rail → dock → strip → navigator, handoff §4.6) inside `.nav-host`, a grid item sharing the canvas cell. Steps left of an open drawer, palette or dock-column dialog, with its height capped so it stays out of the central zone | snapshot `cx cy k viewW viewH` |
-| Palette | `.palette-layer` (over the dock column ≥ 1080 px, the in-flow sheet row below; no scrim; a pointer-down outside closes it); the registry's commands plus a typed-zoom row (`20`, `20×`, `0.5 µm`) | registry |
-| Keymap, About | `.modal-layer--dock` dialogs (the dock column, never over the slide centre; ≤ 1079 px the grid's in-flow sheet row, like the palette, so the canvas and its bottom HUD yield height), `aria-modal="false"`, Esc closes, focus returns to the opener (the slide when opened by key from the slide, or when the opener is no longer rendered); the keymap is generated from the registry and opens on its filter | registry |
+| Palette | `.palette-layer` (over the dock column ≥ 1080 px, the in-flow sheet row below; no scrim; a pointer-down outside closes it); the registry's commands plus a typed-zoom row (`20`, `20×`, `0.5 µm`). While it is open the Context dock it covers is `inert` (SC 2.4.11) | registry |
+| Keymap, About | `.modal-layer--dock` dialogs (the dock column, never over the slide centre; ≤ 1079 px the grid's in-flow sheet row, like the palette, so the canvas and its bottom HUD yield height), `aria-modal="false"`, Esc closes, focus returns to the opener (the slide when opened by key from the slide, or when the opener is no longer rendered); the keymap is generated from the registry and opens on its filter. While one is open the Context dock it covers is `inert`, so no Tab stop hides under it (SC 2.4.11); the inert state is lifted before focus returns | registry |
 
 ## Engine contract mapping (UI element → engine field / command)
 
@@ -49,6 +50,7 @@ The engine side is `src/viewer.ts` (`startViewer({ canvas, ui, params, keys, tra
 | Canvas / gesture state | `settled` → `.app.is-gesturing` (base.css zeroes every chrome transition) | — |
 | Inertia | — | `ViewerOptions.inertia: () => !prefersReducedMotion()` (input.ts `DomInputOptions.inertia`; the measurement page omits it) |
 | Texture-layer hint after a context loss | — | `ViewerOptions.layersHintKey: 'stage0.shell.layersHint'` (the measurement page keeps `stage0.layersHint`) |
+| Slide switch and compare (Phase A, TOOLS.md §12.1) | one `if (disposed) return` per frame, nothing else on the measurement page's path | `Viewer.dispose()` (rAF, listeners, hooks, workers via `DecodePool.terminate()`, `loseContext()`, `window.__stage0`), `commands.requestDraw()` (snapshot readback), `ViewerOptions.exposeGlobal` (false for compare's view B) |
 
 ## Magnification and scale bar: the derivation
 
@@ -63,7 +65,7 @@ logZoom for a target s   = log2(mpp × d / s)   (presets and typed zoom)
 
 A web page cannot know the display pitch (mm per CSS px), so this is an **objective-equivalent** magnification, not a physical one: the value always carries `~` and its second line says `· derived` (handoff §5.3: tilde when the pitch is not attested; FR-V9, FR-R10). Using CSS px rather than device px keeps the number independent of DPR: the same slide area per CSS px reads the same on a DPR-1 and a DPR-2 screen. The readout format is the handoff's: ≥ 10 → integer, 2.5–10 → one decimal, < 2.5 → two decimals, trailing zeros trimmed. Worked values at the reference widths: fit at 1440 × 900 (canvas 1384 × 820 CSS px, d = 1): `k = 820 / 15360`, `s = 4.55 µm/px`, `~2.2×`; level 0 at d = 1: `s = 0.243`, `~41×` (the scan's own 41×, shown in the Slide tab as "scan ≈ 41× (derived)").
 
-Scale bar (handoff §5.2): candidates `L ∈ {1, 2, 5} × 10ⁿ µm`; the largest `L` whose on-screen length `L / s` lies in [80, 200] CSS px (with 1-2-5 steps the widest ratio between neighbours is 2.5 = 200 / 80, so one always fits; the closest-to-200 fallback only guards rounding). Labels `20 µm … 500 µm`, `1 mm`, `2 mm`, `5 mm`, `1 cm`. Drawing: a fixed 200 px track whose fill is `scaleX(L / s / 200)` and whose right tick is `translateX(L / s − 2)`, so a zoom writes two transforms and one label, never a width. Position: `x = cx × mpp / 1000 mm` from the region's top-left (the region is the 15,360 px window of the source scan named in the Slide tab).
+Scale bar (handoff §5.2): candidates `L ∈ {1, 2, 5} × 10ⁿ µm`; the largest `L` whose on-screen length `L / s` lies in [80, 200] CSS px (with 1-2-5 steps the widest ratio between neighbours is 2.5 = 200 / 80, so one always fits; the closest-to-200 fallback only guards rounding). Labels `10 µm`, `20 µm`, `50 µm` … `500 µm`, `1 mm`, `2 mm`, `5 mm`, `1 cm`: `10 µm` is reached at maximum zoom on a DPR-1 screen (level 0 + 1.5 levels: s = 0.243 / 2^1.5 = 0.086 µm per CSS px, so L ∈ [6.9, 17.2] µm), `20 µm` at level 0 or at maximum zoom on DPR 2, `1 cm` only near fit on a large slide in a small window. Drawing: a fixed 200 px track whose fill is `scaleX(L / s / 200)` and whose right tick is `translateX(L / s − 2)`, so a zoom writes two transforms and one label, never a width. Position: `x = cx × mpp / 1000 mm` from the region's top-left (the region is the 15,360 px window of the source scan named in the Slide tab).
 
 Measurement length: `hypot(Δx, Δy)` in level-0 px × `mpp` (µm), independent of zoom, DPR and display; shown as µm below 1 mm and mm above.
 
@@ -83,7 +85,16 @@ Soft stays Soft until Sharp or a view change (no flapping). `Offline — cached 
 
 ## Keymap (shell)
 
-The command registry (`commands` in `src/shell/main.ts`) drives the palette and the keymap dialog, so those two cannot drift from each other. The window key handler is a hand-written `switch` that maps each key to a registry id by hand (`run(id)`), except for the registry's keymap-only rows (pan, Esc, Space, Enter in the measure tool), which it implements itself; keeping its key list in step with the registry is a review item, not a guarantee (the third review found `⇧M` bound outside the registry; it is now the registry row `tool:area`). Letters are matched case-insensitively, so Shift + a letter runs the letter's command, unless the registry gives the Shift chord its own row (`⇧D`, `⇧M`); `⇧Z` is unbound. Principles §4.5 map A + the Stage-0 subset of map B:
+The command registry (`Registry` in `src/shell/palette.ts`, contracts `CommandRegistry`) drives the palette, the keymap dialog **and the window key handler**: every command carries machine bindings (`KeyBinding`: key, Shift, Ctrl/⌘, scope `slide` or `window`, optional `when: 'prefix:q'`) beside its display keycaps, and the handler in `src/shell/main.ts` asks the registry which command a keydown runs. So the keys that work are the keys listed. The handler keeps three behaviours of its own, all of them states, not commands: on the slide, Enter goes to the active tool first (the measure tool places a point); Space held pans with the measure tool; in the palette input only Ctrl/⌘ K reaches it. Matching rules:
+
+- **Letters** match `e.key` lower-cased **plus `e.shiftKey`**. Shift + a letter therefore runs only a row bound with Shift (`⇧D` Dx refusal, `⇧M` area refusal, `⇧R` rotate refusal, `⇧T`, `⇧Q`, `⇧A`, `⇧X`, `⇧B`, `⇧J` refusals). For any other letter it does nothing: `⇧V`, `⇧O`, `⇧K`, `⇧Z` and `⇧P` are unbound. Caps Lock without Shift sends the upper-case key with `shiftKey` false and runs the plain letter, so Caps-Lock `D` pans right (it used to give the Dx refusal).
+- **Digits and symbols** ignore Shift, because `e.key` already carries it: `?` is ⇧/ on US layouts, `+` is ⇧=, and AZERTY digits need ⇧.
+- **Named keys** match Shift exactly: ⇧ + arrows pans one viewport, and ⇧Enter is the sign-out refusal (ignored while a measurement is in progress).
+- **Never bound:** Alt (and AltGr), F-keys and the numeric keypad. Ctrl/⌘ is bound only with Z, Y, K and /. Ctrl/⌘ K and Ctrl/⌘ / also work inside text fields; every other key does nothing there.
+- **Scope.** `slide` keys (Home, ⌫ / Del, ⇧Enter) act only with focus on a slide canvas or the page body. `window` keys act anywhere except text fields. The navigation keys (arrows, Home, End, Page Up / Down) yield to composite widgets, the docks, dialogs and scrollable text regions.
+- **Conflicts** (two commands on one chord, a refused binding) throw in `vite dev`. In a build they are listed in `conflicts()`, which shell-check and tools-check assert is empty. Rows a Phase A module will provide (the Stage-0 measure rows and the "not in this build" refusals for P F X E T, ⇧M and the TOOLS.md §8 list) are registered after any modules, with only the keys no module took.
+
+Principles §4.5 map A + the Stage-0 subset of map B:
 
 | Keys | Command |
 |---|---|
@@ -102,9 +113,9 @@ The command registry (`commands` in `src/shell/main.ts`) drives the palette and 
 | `K` | Context panel on / off |
 | Ctrl/⌘ K | command palette |
 | `?` / Ctrl/⌘ `/` | keyboard map |
-| Esc | close the palette or dialog (focus returns to where it was: the slide when opened from it) → else cancel the open measurement → else leave the measure tool → else close the drawer / sheet |
+| Esc | close the palette or dialog (focus returns to where it was: the slide when opened from it) → else the class picker (Phase A) → else cancel the open measurement → else leave the measure tool → else close the Library → else close the Context drawer / sheet (< 1600 px) |
 | Arrow keys | pan, except inside toolbars, tab lists, list boxes, dialogs, the dock and its panels, and scrollable text regions (there they move focus or scroll) |
-| Not in this build (struck through) | `⇧D` Dx mode (refused with the RUO string), `⇧↵` sign-out, `⇧M` measure area (refused: `M` measures length), `⇧+` / `⇧−` zoom 1.2× fine (on US keyboards `+` is already `⇧=` and must stay the 2× zoom; waits for rebindable presets), `R`/`⇧R` rotate (no rotation in the Stage-0 engine), `P F X E T` drawing tools, F-keys, Alt, Ctrl+Space, numeric keypad |
+| Not in this build (struck through) | `⇧D` Dx mode (refused with the RUO string, assertively), `⇧↵` sign-out, `⇧M` measure area (refused: `M` measures length), `⇧+` / `⇧−` zoom 1.2× fine (on US keyboards `+` is already `⇧=` and must stay the 2× zoom; waits for rebindable presets), `R`/`⇧R` rotate (no rotation in the Stage-0 engine), `T X E P F` drawing tools, and from TOOLS.md §8: `Y` polyline, `⇧T` count, `⇧Q` class legend, `/` curtain, `G` HPF grid, `B` / `⇧B` bookmarks, `⇧A` / `⇧X` accept / reject AI, `\` focus mode, `N` mark complete, `J` / `⇧J` B/C/γ, Ctrl/⌘ C / V (listed only); F-keys, Alt, Ctrl+Space, numeric keypad. Each pressed key says its refusal sentence; a Phase A module that provides one of these keys replaces its row |
 
 **Conflicts with the engine keys, resolved.** The measurement page binds O (debug overlay), R (reset view) and P (scripted path). The shell starts the engine with `keys: 'none'` and binds its own map: `O` is the navigator (principles §4.5), reset view is `0`/Home (Fit), the scripted path is the Engine section's button (or the palette's "Run scripted path"); `R` is struck through because the design reserves it for rotation, and `P` because it is the polygon tool. Ctrl/⌘ `+`/`−` stay browser zoom (the engine follows DPR changes). Arrow keys inside the toolbar, tabs and lists move focus instead of panning.
 
@@ -137,7 +148,7 @@ The command registry (`commands` in `src/shell/main.ts`) drives the palette and 
 ## Tests
 
 - `node harness/run.mjs` + `node harness/check-metrics.mjs`: the measurement page regression (unchanged scripts).
-- `node harness/shell-check.mjs [--only desktop|desktop-dsf2|desktop-rm|phone] [--out FILE]`: four contexts, 1440 × 900 DSF 1, 1280 × 800 DSF 2, 1440 × 900 reduced motion and 390 × 844 coarse (CDP pointer emulation). Checks:
+- `node harness/shell-check.mjs [--only desktop|desktop-dsf2|desktop-rm|phone|desktop-wide] [--out FILE] [--dist DIR]`: five contexts, 1440 × 900 DSF 1, 1280 × 800 DSF 2, 1440 × 900 reduced motion, 390 × 844 coarse (CDP pointer emulation) and 1920 × 1080 (Context dock docked open). `--dist` tests a private build served as `/client/dist/` (Phase A builders). The instrumentation, mutation recorder, frame-cost window and inputs live in `harness/tools/helpers.mjs`, shared with tools-check. Checks:
   - HUD (magnification, µm/px line, scale bar label and drawn length, position) recomputed from `__stage0.state()` and the manifest's mpp at fit and at levels 0–3, with the render DPR expected as min(2, DSF) and the page's own ratio checked against it; settled `Sharp`;
   - no "beyond the resolution" notice at 40× on DPR 2, and the notice past level 0;
   - navigator rectangle inside the thumbnail and equal to the state's viewport;
@@ -146,8 +157,12 @@ The command registry (`commands` in `src/shell/main.ts`) drives the palette and 
   - focus: Enter on the rail's Measure moves focus to the slide, `?` / Ctrl+K from the slide return to it on Esc, nothing focusable under the open keymap or palette, the navigator after the strip in Tab order, Shift+Tab from the rail reaches the slide in ≤ 2; the typed-zoom error keeps the field open, `aria-invalid`, assertive; the network chip silent at rest;
   - frame cost during a 1 s drag and a wheel burst: zero layout-reading DOM calls, zero redundant DOM writes (attribute / character-data old values), while moving only text and `style.transform` in the HUD / navigator rectangle plus the gesture and indicator classes, CDP LayoutCount ≤ frames + 2 and RecalcStyleCount ≤ 2 × frames + 4, beside the same input on index.html; the same rules over a whole scripted path with the Engine section open (desktop), ending with the path's final status in the Engine section;
   - the Measurements list (desktop): Enter on Fly to keeps focus on that button, Enter on Delete moves it to the next row's Delete, Ctrl+Z in the list keeps it there, and the arrow keys in the list do not pan;
-  - the phone's bottom bar at 360 and 320 px; no console or page errors.
-  `window.__shell` exposes read-only views (`hud()`, `nav()`, `sharpness()` with the machine's last input, `measurements()`, `tool()`, `notice()`, `polite()`) for it.
+  - the phone's bottom bar at 360 and 320 px; no console or page errors;
+  - the command registry: no binding conflict; Caps-Lock `D` (key `D` without Shift) pans like `d` and ⇧D gives the Dx refusal assertively; redo by Ctrl+Y, Ctrl+Shift+Z and the palette's Redo writes `Deleted M1 · Ctrl+Z to undo` to the strip and the polite region, and the undo after it `Restored M1`;
+  - at 1920 × 1080 with the Context dock docked open: with the keymap, About or the palette open in the dock column the dock is inert and none of the page's Tab stops sits under the layer; Esc returns focus to the opener and lifts the inert state.
+  `window.__shell` exposes read-only views (`hud()`, `nav()`, `sharpness()` with the machine's last input, `measurements()`, `tool()`, `notice()`, `polite()`, `host()` for the registry, panels, notices and env, `tools` for module debug views) for it, plus test hooks `panels.claim(id)` / `panels.show(id)` and `run(id)`.
+- `node harness/tools-check.mjs [--only <module>|integrator] [--dist DIR] [--axe PATH] [--out FILE]` (Phase A, TOOLS.md §11): the integrator gate (I-1 the measurement page's built chunks and `src/main.ts`'s module graph reach nothing under `src/shell/`; I-2 the shell opens with no error and no registry conflict), then every `harness/tools/<module>.check.mjs`. Results go to `harness/results/tools-check-<time>.json`.
+- `node harness/unit.mjs [--only <module>]` (Phase A): Node unit tests `harness/unit/<module>.test.mjs`; `t.load('src/…/index.ts')` bundles TypeScript with the esbuild Vite already installed.
 - design-system `layout-check.mjs` (T1, Z1, S1, A1, A2, A3) and axe-core WCAG 2.2 AA, served over http (see Results).
 
 ## Results
@@ -269,7 +284,58 @@ Re-run after these fixes (final build):
 - axe-core 4.10.3 WCAG 2.2 AA at the same four viewports in six states (rest, palette, keymap, Engine, About, measure tool with a measurement): 0 violations in 24 runs; the incomplete items are the same two kinds as above.
 - Screenshots: only `shell-1920x1080-keymap.jpg` shows something these fixes change (the `⇧M` row in "Not in this build"); it was re-taken with the same sequence and reviewed. The focus fix has no screenshot in the set; a scratch capture after keyboard Fly to shows the focus ring on M1's Fly to and the strip notice `Flew to M1 · 497.0 µm`.
 
-Not changed: Shift + a drawing-tool letter (`⇧P`, `⇧T` …) still gives the drawing-tool refusal, although the design reserves `⇧T` for the count tool; it refuses either way and the registry's keycaps list the unshifted letters.
+Not changed: Shift + a drawing-tool letter (`⇧P`, `⇧T` …) still gives the drawing-tool refusal, although the design reserves `⇧T` for the count tool; it refuses either way and the registry's keycaps list the unshifted letters. (Superseded by Phase A Wave 0: the key handler is the registry's matcher, so `⇧P` is unbound and `⇧T` has its own count-tool refusal; see "Keymap (shell)".)
+
+## Phase A · Wave 0 (integrator, 2026-11-01)
+
+TOOLS.md §12.1, §12.2 and the Wave 0 row of §13. Nothing a user sees changes: every Phase A surface is hidden until its module registers or claims it (TOOLS.md §15.1 J1).
+
+- **Engine (additive).** `Viewer.dispose()`, `commands.requestDraw()`, `ViewerOptions.exposeGlobal` and `DecodePool.terminate()`. The measurement page's frame path gains one `if (disposed) return`; it never calls them.
+- **Markup and CSS.** The panes (`#paneA` with `#view` + `#overlayA` + its HUD, and `#paneB` with `#overlayB`, its scale bar, readout and `.panelabel`, shown by `.app.compare-on`), `#compareBar`, `#hudMarker`, the Library drawer `#lib` (Cohort, Slides and Layers tabs, rail switchers, the Library \| Context sheet switch), the Context tabs Inspector (`#inspSelection`, `#shareActions`) and Annotations, `#classMenu` and `#classBtn`, rail tools in TOOLS.md §6.6 order plus Compare and Snapshot, the bottom bar in the research order, and the icon sprite. Zoom buttons and presets leave the rail at ≤ 1366 px.
+- **Host services** (contracts §11, §12, what core's `createShell()` will take): the `Registry` (palette.ts), `Panels` (PanelHost) over two `Dock`s (panels.ts), and in main.ts the `Notices` (NoticeSink, with persistent keys ranked engine → modules → view), `live` (LiveRegions), `env` (ShellEnv, cached media queries) and the registry-driven key router.
+- **Build and harness.** `build.manifest: true`; the `data/samples/<slide>` → `data/samples/pyramids/<slide>` alias and `.geojson` in serve.mjs and the Vite dev middleware; `--dist DIR` in serve.mjs, shell-check, tools-check and helpers; new `harness/tools-check.mjs`, `harness/tools/helpers.mjs` and `harness/unit.mjs`.
+
+Fixes to the shell's final-verification findings:
+
+| # | Issue (severity) | Fix | Evidence after |
+|---|---|---|---|
+| 1 | At ≥ 1600 px with the Context dock open, the keymap, About and the palette open in the dock column over the dock, while the dock's controls stayed in the Tab order (WCAG 2.4.11) (medium) | While the palette or a dock-column dialog is open, the Context dock is `inert` (the 1080–1599 drawer too). The layers' close handlers lift it before focus returns, so an opener inside the dock still gets focus back | shell-check `desktop-wide`: with each of the three layers open, the dock is inert and 0 of 14 Tab stops sit under the layer; Esc returns focus to `#view` / `#aboutBtn` and lifts it. The same probe with `inert` lifted finds 4 covered stops: the dock's close button, the Slide tab, its tabpanel and the licence link |
+| 2 | Redo (Ctrl+Y, Ctrl+Shift+Z, palette Redo) changed the measurement set with no strip notice or polite sentence, and could leave the previous undo notice standing (low) | `MeasureTool.redo()` writes a notice like undo: `Restored M1` when the redo brings a measurement back, the delete's own sentence (`Deleted M1 · Ctrl+Z to undo`; coarse `· Undo is in Search`) when it removes one again; it also clears the selection of a removed measurement. TOOLS.md §6.5 and ANN-2 carry the rule to the annotation store | shell-check: Ctrl+Y, Ctrl+Shift+Z and the palette's Redo each give `Deleted M1 · Ctrl+Z to undo` in the strip and the polite region; the following Ctrl+Z gives `Restored M1` |
+| 3 | The "Keymap (shell)" paragraph misstated Shift + letter handling (low) | The key handler is now the registry's matcher; the paragraph above states its rules (Shift + a letter runs only a Shift-bound row, Caps Lock runs the plain letter, Shift is ignored for digits and symbols) | shell-check: Caps-Lock `D` pans 10 %, ⇧D refuses |
+| 4 | The scale-bar label list omitted `10 µm`, reachable at maximum zoom on DPR 1 (low) | Corrected in "Magnification and scale bar", with the arithmetic | — |
+
+Gates on the final Wave 0 build (`npm run build`, build `2026-11-01T20:00:33Z`):
+- `npx tsc --noEmit -p tsconfig.json`: clean. A scratch typecheck also confirms that `startViewer` is assignable to `ShellHostDeps.startEngine` without a cast, `Registry` implements `CommandRegistry` and `Panels` implements `PanelHost`.
+- `node harness/run.mjs --label wave0-integrator-final` (`harness/results/2026-11-01T20-01-02-384Z-wave0-integrator-final.json`) beside the newest earlier export, `…T18-50-01-412Z-shell-reviewfix3.json`, both read from the export's summary:
+
+| | review-fix 3 | Wave 0 final |
+|---|---|---|
+| frames | 761 | 795 |
+| frame ms p50 / p95 / max | 16.7 / 66.6 / 66.7 | 16.7 / 50 / 83.3 |
+| frame ms during gestures p50 / p95 | 50 / 66.7 | 33.4 / 50.1 |
+| dropped frames % | 43.66 | 44.97 |
+| upload ms/frame p95 | 4.4 | 3.3 |
+| gestures (n / completed / timed out) | 11 / 11 / 0 | 11 / 11 / 0 |
+| zoom-in TTS p50 / max ms | 263 / 313 | 163 / 283 |
+| zoom-in sharp-after-settle p95 ms | 0 | 0 |
+| zoom-in max blur max ms | 366.7 | 266.6 |
+| blank frames after base | 0 | 0 |
+| tiles received / errors | 249 / 0 | 255 / 0 |
+| texture layers | 160 (viewport) | 160 (viewport) |
+
+  The differences are run-to-run noise: the single 83 ms frame is a SwiftShader stall of the kind in the baseline (83.4 ms). Two earlier Wave 0 builds gave TTS 230 / 317 and 230 / 333 ms and frame p95 50. `node harness/check-metrics.mjs`: 20 `ok`, 0 `FAIL`, "all metric checks passed".
+- `node harness/shell-check.mjs`: 190 `ok`, 0 `FAIL`, "all shell checks passed" (171 before Wave 0; the 19 new checks are the `desktop-wide` context, the registry checks and the redo checks above). Frame cost is unchanged at 1440 × 900: drag LayoutCount 25 / RecalcStyleCount 63, wheel 35 / 36 (the same as before Wave 0).
+- `node harness/tools-check.mjs`: 0 module check files; the integrator gate gives 4 `ok`, 0 `FAIL`: the built chunks of index.html and the 16-module graph of `src/main.ts` reach nothing under `src/shell/`; 61 commands, 43 with key bindings, no conflict; no console error. `node harness/unit.mjs`: 0 test files, exit 0. A throwaway self-test, removed afterwards, exercised `t.load` on `format.ts` and `palette.ts` and the registry's matching rules: 10 ok.
+- axe-core 4.10.3, WCAG 2.2 AA: 0 violations in 28 runs. The runs covered 1920 × 1080, 1440 × 900, 1024 × 1366 coarse (iPad UA) and 390 × 844 coarse (phone UA), each in seven states: rest, palette, keymap, Engine, measure, and the skeleton with every module panel claimed and the Library open, then the Inspector shown.
+- design-system `layout-check.mjs` (the http copy): all pass at 3840 × 2160, 1920 × 1080, 1600 × 900, 1440 × 900, 1366 × 768, 1366 × 1024 coarse, 1280 × 800, 1024 × 1366 coarse and 390 × 844 coarse. At ≤ 1366 px the rail has 18 targets instead of 26 (presets and zoom buttons gone).
+- Screenshots, all reviewed, in the scratch directory, not in `design/screens/` (the deployed shell looks as before):
+  - the rest state at 1920 and 1366 × 768;
+  - the claimed skeleton with the Library drawer at 1920, and both drawers at 1440;
+  - the simulated compare panes at 1920;
+  - the Library sheet with its switch at 1024 coarse and 390 coarse;
+  - the keymap over the docked dock.
+
+  Fixed after review: five Context tabs clipped "Engine" in a 320 px dock (now 4 px tab padding when five tabs show, and the strip scrolls rather than clip); pane B's empty position item drew an empty strip (empty pane HUD items are hidden); the bottom bar's Library button had no pressed look while open.
 
 ## Known limitations
 
@@ -279,3 +345,4 @@ Not changed: Shift + a drawing-tool letter (`⇧P`, `⇧T` …) still gives the 
 - Measurements live in memory (no persistence, no export format); the Stage-0 engine has no annotation store.
 - Magnification is objective-equivalent on an unknown display pitch (`~`, `derived`); no physical-size claim is made anywhere.
 - The keymap has no rebinding or presets yet (principles §4.5 rule 7/8); the registry is the place they would hang.
+- The rail's fit on a 1133 × 744 coarse iPad mini once every Phase A tool is registered is open: 44 px tools need about 690 px there, and the rail then scrolls. Rectangle and Ellipse already leave the coarse rail; the Wave 4 layout-check decides what else does.

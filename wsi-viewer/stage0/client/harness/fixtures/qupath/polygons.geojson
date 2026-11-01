@@ -1,0 +1,94 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "3f9c2a61-5b7e-4d10-9c44-1a2b3c4d5e6f",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2048.256, 1536.5], [3048.256, 1536.5], [3048.256, 2136.5], [2048.256, 2136.5], [2048.256, 1536.5]]]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "name": "Metastatic focus",
+        "classification": {"name": "Tumor", "color": [200, 0, 0]},
+        "isLocked": false,
+        "measurements": {"Area µm^2": 35457.8, "Perimeter µm": 777.8}
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "8d1e4b72-0c3a-4f95-b6d7-2e8f9a0b1c2d",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[6000, 6000], [7000, 6000], [7000, 7000], [6000, 7000], [6000, 6000]],
+          [[6250.004, 6250.004], [6250.004, 6750.996], [6750.996, 6750.996], [6750.996, 6250.004], [6250.004, 6250.004]]
+        ]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "classification": {"name": "Stroma", "color": [150, 200, 150]},
+        "isLocked": true
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "c47a9e10-6f2b-4b8c-8a31-5d6e7f8091a2",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [[[100, 100], [400, 100], [250, 380.1234], [100, 100]]],
+          [[[500, 500], [900, 500], [900, 900], [500, 900], [500, 500]]]
+        ]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "classification": {"name": "Necrosis", "color": [50, 50, 50]},
+        "color": [255, 0, 255],
+        "isLocked": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0b6f3d84-9a2c-4e71-a5b0-7c8d9e0f1a2b",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[12000, 12000], [12800, 12100], [12650, 12900], [11900, 12700], [12000, 12000]]]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "isLocked": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "5e2a7c93-1d4b-4a6f-9e80-3b4c5d6e7f80",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[8000, 9000], [8600, 9000], [8600, 9400], [8000, 9400], [8000, 9000]]]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "name": "Capsule segment",
+        "classification": {"name": "Lymph node capsule", "color": [30, 120, 210]},
+        "isLocked": false,
+        "metadata": {"script": "capsule_v2.groovy", "tags": ["capsule", "review"], "score": 0.875},
+        "parentId": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[10000, 3000], [10400, 3000], [10400, 3300], [10000, 3300]]]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "classification": {"names": ["Tumor", "Positive"], "color": [200, 50, 50]},
+        "isLocked": false
+      }
+    }
+  ]
+}

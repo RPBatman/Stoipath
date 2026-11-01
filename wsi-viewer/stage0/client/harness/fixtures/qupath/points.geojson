@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "f0e1d2c3-b4a5-4697-8879-6a5b4c3d2e1f",
+      "geometry": {"type": "Point", "coordinates": [7680.125, 7680.875]},
+      "properties": {
+        "objectType": "annotation",
+        "name": "Follicle margin",
+        "classification": {"name": "Other", "color": [255, 200, 0]},
+        "isLocked": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "1a2b3c4d-5e6f-4a8b-9c0d-1e2f3a4b5c6d",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [[4000, 4000], [4012.5, 4031.25], [4100.333, 3990.667], [3950, 4075]]
+      },
+      "properties": {
+        "objectType": "annotation",
+        "classification": {"name": "Lymphocytes", "color": [160, 90, 160]},
+        "isLocked": false,
+        "measurements": {"Num points": 4}
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2b3c4d5e-6f7a-4b9c-8d1e-2f3a4b5c6d7e",
+      "geometry": {"type": "Point", "coordinates": [15000, 120]},
+      "properties": {
+        "objectType": "annotation",
+        "name": "Histiocyte cluster",
+        "isLocked": false
+      }
+    }
+  ]
+}

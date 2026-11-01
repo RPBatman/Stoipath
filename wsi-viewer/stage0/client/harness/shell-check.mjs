@@ -28,21 +28,30 @@
 //      slide, `?` / Ctrl+K from the slide return focus to it on Esc, nothing focusable sits under the open keymap or
 //      palette, and Tab reaches the navigator after the strip; the typed-zoom error keeps the field open;
 //   9. phone: a two-finger pinch zooms with the measure tool active and measures nothing; the bottom bar fits at 320
-//      and 360 CSS px.
-// Usage: node harness/shell-check.mjs [--only desktop|desktop-dsf2|desktop-rm|phone] [--headed] [--out FILE].
+//      and 360 CSS px;
+//  10. the command registry (TOOLS.md §5.5): no binding conflicts; Caps-Lock `D` (key "D" without Shift) pans like `d`,
+//      ⇧D gives the Dx refusal; redo (Ctrl+Y, Ctrl+Shift+Z, palette Redo) says what it changed, as undo does;
+//  11. desktop-wide 1920x1080 (Context dock docked open): with the keymap, About or the palette open in the dock column
+//      the covered dock is inert and no Tab stop sits under the layer (SC 2.4.11); Esc returns focus and lifts it.
+// Usage: node harness/shell-check.mjs [--only desktop|desktop-dsf2|desktop-rm|phone] [--headed] [--out FILE] [--dist DIR].
+//   --dist DIR  test a private build (served as /client/dist/; TOOLS.md §13) instead of client/dist.
+// The instrumentation, the mutation recorder, the frame-cost window and the inputs live in harness/tools/helpers.mjs
+// (shared with tools-check.mjs and the module checks).
 // Exit 1 on any failure.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launchChromium, parseArgs } from './browser.mjs';
 import { startServer } from './serve.mjs';
+import { INSTRUMENT, distDir, drag, frameCost, frameCostChecks as frameCostChecksWith, perfDelta as delta, perfMetrics, pinch, wheelBurst } from './tools/helpers.mjs';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const clientDir = resolve(here, '..');
 const stage0Dir = resolve(clientDir, '..');
 const args = parseArgs(process.argv.slice(2));
-if (!existsSync(resolve(clientDir, 'dist', 'shell.html'))) {
-  console.error('dist/shell.html missing: run `npm run build` first');
+const dist = distDir(args);
+if (!existsSync(resolve(dist, 'shell.html'))) {
+  console.error(`${dist}/shell.html missing: run \`npm run build\` first (or pass --dist DIR)`);
   process.exit(2);
 }
 const manifest = JSON.parse(readFileSync(resolve(stage0Dir, 'data', 'manifest.json'), 'utf8'));
@@ -73,180 +82,17 @@ function bar(s) {
   return { L, px: L / s, label };
 }
 
-// Init script: layout-read counters, and a per-frame sampler of the sharpness indicator against PlanStats.
-const INSTRUMENT = () => {
-  const R = (window.__layoutReads = { on: false, n: 0, by: {} });
-  const note = (name) => {
-    if (!R.on) return;
-    R.n++;
-    R.by[name] = (R.by[name] ?? 0) + 1;
-  };
-  const wrapGetter = (proto, name) => {
-    const d = Object.getOwnPropertyDescriptor(proto, name);
-    if (!d || !d.get) return;
-    Object.defineProperty(proto, name, { ...d, get() { note(name); return d.get.call(this); } });
-  };
-  const wrapMethod = (obj, name) => {
-    const f = obj[name];
-    if (typeof f !== 'function') return;
-    obj[name] = function (...a) { note(name); return f.apply(this, a); };
-  };
-  for (const n of ['offsetWidth', 'offsetHeight', 'offsetTop', 'offsetLeft', 'offsetParent', 'innerText']) wrapGetter(HTMLElement.prototype, n);
-  for (const n of ['clientWidth', 'clientHeight', 'clientTop', 'clientLeft', 'scrollWidth', 'scrollHeight', 'scrollTop', 'scrollLeft']) wrapGetter(Element.prototype, n);
-  wrapMethod(Element.prototype, 'getBoundingClientRect');
-  wrapMethod(Element.prototype, 'getClientRects');
-  wrapMethod(window, 'getComputedStyle');
-  // Sharpness sampler (test-only rAF loop; reads the engine's live PlanStats and the shell's state each frame).
-  const S = (window.__sharpLog = { frames: 0, trace: [], viol: [], lost: false, lostAt: -1 });
-  document.addEventListener('webglcontextlost', () => { S.lost = true; S.lostAt = S.frames; }, true);
-  document.addEventListener('webglcontextrestored', () => { S.lost = false; }, true);
-  const tick = () => {
-    if (window.__stage0 && window.__shell) {
-      S.frames++;
-      const s = window.__stage0.state();
-      const sh = window.__shell.sharpness();
-      const last = S.trace[S.trace.length - 1];
-      if (!last || last.label !== sh.label) {
-        S.trace.push({ t: Math.round(performance.now()), label: sh.label, def: s.deficitCells, blank: s.blankCells });
-        if (S.trace.length > 4000) S.trace.splice(0, 1000);
-      }
-      // The context flag is set by an event between frames; allow the shell one frame to see it.
-      const lostSeen = S.lost && S.frames - S.lostAt >= 2;
-      if (sh.state === 'sharp' && (s.deficitCells > 0 || s.blankCells > 0 || lostSeen)) {
-        S.viol.push({ t: Math.round(performance.now()), def: s.deficitCells, blank: s.blankCells, lost: S.lost });
-        if (S.viol.length > 50) S.viol.shift();
-      }
-    }
-    requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-};
-
-// Mutation recorder for the frame-cost windows (see header item 6).
-const MUTATION_RECORDER = () => {
-  const L = (window.__mut = { total: 0, moving: 0, outside: [], redundant: [], kinds: {} });
-  const name = (n) => (n.nodeType === 1 ? `${n.tagName.toLowerCase()}#${n.id || ''}.${String(n.className || '').split(' ')[0]}` : `#text in ${n.parentElement ? n.parentElement.id || n.parentElement.className : '?'}`);
-  const stripTransform = (v) => (v ?? '').replace(/transform:[^;]*;?/g, '').trim();
-  const inHud = (el) => el !== null && el.closest('.hud, .navigator__viewport, #stripSharp') !== null;
-  window.__mo = new MutationObserver((list) => {
-    const moving = document.getElementById('app').classList.contains('is-gesturing');
-    for (let i = 0; i < list.length; i++) {
-      const m = list[i];
-      L.total++;
-      const el = m.target.nodeType === 1 ? m.target : m.target.parentElement;
-      let redundant = false;
-      let next = null;
-      if (m.type === 'attributes' || m.type === 'characterData') {
-        let found = false;
-        for (let j = i + 1; j < list.length; j++) {
-          const n = list[j];
-          if (n.type === m.type && n.target === m.target && n.attributeName === m.attributeName) { next = n.oldValue; found = true; break; }
-        }
-        if (!found) next = m.type === 'attributes' ? m.target.getAttribute(m.attributeName) : m.target.data;
-        redundant = next === m.oldValue;
-      } else if (m.removedNodes.length > 0 && m.addedNodes.length > 0) {
-        const was = [...m.removedNodes].map((n) => n.textContent).join('');
-        const now = [...m.addedNodes].map((n) => n.textContent).join('');
-        redundant = was === now;
-      }
-      const kind = `${m.type}${m.attributeName ? '@' + m.attributeName : ''} ${name(m.target)}`;
-      if (redundant) L.redundant.push(kind);
-      if (!moving) continue;
-      L.moving++;
-      L.kinds[kind] = (L.kinds[kind] ?? 0) + 1;
-      let ok = false;
-      if (m.type === 'childList' || m.type === 'characterData') ok = inHud(el);
-      else if (m.attributeName === 'style') ok = inHud(el) && el.closest('.hud, .navigator__viewport') !== null && stripTransform(m.oldValue) === stripTransform(next);
-      else if (m.attributeName === 'class') ok = el.id === 'app' || el.id === 'stripSharp' || el.id === 'hudSharp';
-      if (!ok) L.outside.push(kind);
-    }
-  });
-  window.__mo.observe(document.body, { subtree: true, attributes: true, attributeOldValue: true, childList: true, characterData: true, characterDataOldValue: true });
-};
-
-async function perfMetrics(cdp) {
-  const { metrics } = await cdp.send('Performance.getMetrics');
-  const o = {};
-  for (const m of metrics) o[m.name] = m.value;
-  return o;
-}
-const delta = (a, b) => ({
-  LayoutCount: b.LayoutCount - a.LayoutCount,
-  RecalcStyleCount: b.RecalcStyleCount - a.RecalcStyleCount,
-  LayoutDurationMs: +((b.LayoutDuration - a.LayoutDuration) * 1000).toFixed(2),
-  RecalcStyleDurationMs: +((b.RecalcStyleDuration - a.RecalcStyleDuration) * 1000).toFixed(2),
-  ScriptDurationMs: +((b.ScriptDuration - a.ScriptDuration) * 1000).toFixed(1),
-});
-
-async function drag(page, box) {
-  const x0 = box.x + box.width / 2;
-  const y0 = box.y + box.height / 2;
-  await page.mouse.move(x0, y0);
-  await page.mouse.down();
-  for (let i = 1; i <= 60; i++) {
-    await page.mouse.move(x0 - i * 3, y0 - i * 1.5);
-    await page.waitForTimeout(16);
-  }
-  await page.mouse.up();
-}
-/** Six notches in, six out, 30 ms apart, at the canvas centre: the readout, µm/px line and scale bar change every frame. */
-async function wheelBurst(page, box) {
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  for (let i = 0; i < 12; i++) {
-    await page.mouse.wheel(0, i < 6 ? -120 : 120);
-    await page.waitForTimeout(30);
-  }
-}
-/** A two-finger spread through CDP touch events (Playwright has no pinch helper). */
-async function pinch(cdp, cx, cy) {
-  const t = (pts) => pts.map(([x, y], i) => ({ x, y, id: i + 1, radiusX: 2, radiusY: 2, force: 1 }));
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: t([[cx - 30, cy]]) });
-  await new Promise((r) => setTimeout(r, 60));
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: t([[cx - 30, cy], [cx + 30, cy]]) });
-  for (let i = 1; i <= 12; i++) {
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: t([[cx - 30 - i * 8, cy], [cx + 30 + i * 8, cy]]) });
-    await new Promise((r) => setTimeout(r, 30));
-  }
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-}
-
-const { server, port } = await startServer({ root: stage0Dir, port: 0, host: '127.0.0.1', quiet: true });
+const { server, port } = await startServer({ root: stage0Dir, port: 0, host: '127.0.0.1', quiet: true, dist });
 const browser = await launchChromium({ headed: args.headed === 'true' });
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900, coarse: false, dsf: 1, full: true },
   { name: 'desktop-dsf2', width: 1280, height: 800, coarse: false, dsf: 2, full: false },
   { name: 'desktop-rm', width: 1440, height: 900, coarse: false, dsf: 1, full: false, reduced: true },
   { name: 'phone', width: 390, height: 844, coarse: true, dsf: 1, full: true },
+  { name: 'desktop-wide', width: 1920, height: 1080, coarse: false, dsf: 1, full: false, wide: true },
 ].filter((v) => args.only === undefined || args.only === v.name);
 
-/** Frame-cost window: start the recorder and counters, run `input`, stop 50 ms after it, return the record. */
-async function frameCost(page, cdp, input) {
-  await page.evaluate(MUTATION_RECORDER);
-  await page.evaluate(() => {
-    window.__layoutReads.n = 0;
-    window.__layoutReads.by = {};
-    window.__layoutReads.on = true;
-  });
-  const p0 = await perfMetrics(cdp);
-  const f0 = await page.evaluate(() => window.__stage0.summary().frames);
-  await input();
-  await page.waitForTimeout(50);
-  const p1 = await perfMetrics(cdp);
-  const f1 = await page.evaluate(() => window.__stage0.summary().frames);
-  const r = await page.evaluate(() => {
-    window.__layoutReads.on = false;
-    window.__mo.disconnect();
-    const M = window.__mut;
-    return { layoutReads: window.__layoutReads.n, by: window.__layoutReads.by, mutations: M.total, whileMoving: M.moving, kinds: M.kinds, outside: [...new Set(M.outside)].slice(0, 8), outsideN: M.outside.length, redundant: [...new Set(M.redundant)].slice(0, 8), redundantN: M.redundant.length };
-  });
-  return { frames: f1 - f0, ...r, cdp: delta(p0, p1) };
-}
-function frameCostChecks(tag, what, r) {
-  check(tag, r.layoutReads === 0, `${what}: no layout-reading DOM call (${r.layoutReads}${r.layoutReads ? ' ' + JSON.stringify(r.by) : ''})`);
-  check(tag, r.redundantN === 0, `${what}: no redundant DOM write (${r.redundantN}${r.redundantN ? ': ' + r.redundant.join('; ') : ''})`);
-  check(tag, r.whileMoving > 0 && r.outsideN === 0, `${what}: ${r.whileMoving} of ${r.mutations} mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (${r.outsideN} other${r.outsideN ? ': ' + r.outside.join('; ') : ''})`);
-  check(tag, r.cdp.LayoutCount <= r.frames + 2 && r.cdp.RecalcStyleCount <= 2 * r.frames + 4, `${what}: CDP LayoutCount ${r.cdp.LayoutCount} ≤ ${r.frames} frames + 2 and RecalcStyleCount ${r.cdp.RecalcStyleCount} ≤ 2 × frames + 4`);
-}
+const frameCostChecks = (tag, what, r) => frameCostChecksWith(check, tag, what, r);
 
 for (const vp of VIEWPORTS) {
   const tag = `${vp.name} ${vp.width}x${vp.height}${vp.coarse ? ' coarse' : ''}${vp.dsf !== 1 ? ` DSF ${vp.dsf}` : ''}${vp.reduced ? ' reduced-motion' : ''}`;
@@ -284,7 +130,7 @@ for (const vp of VIEWPORTS) {
   const traceSince = (i) => page.evaluate((i) => window.__sharpLog.trace.slice(i).map((x) => x.label), i);
 
   // ---- 1 + 2: HUD at fit and at levels 0..3 ----
-  if (!vp.reduced) {
+  if (!vp.reduced && !vp.wide) {
     const fitLz = await page.evaluate(() => window.__stage0.fitLogZoom());
     const targets = [{ name: 'fit', lz: fitLz }, ...[0, 1, 2, 3].map((L) => ({ name: `L${L}`, lz: -L }))];
     for (const t of targets) {
@@ -502,6 +348,31 @@ for (const vp of VIEWPORTS) {
       const fUndo = await where();
       const nUndo = await page.evaluate(() => window.__shell.measurements().map((m) => m.id).join(','));
       check(tag, fUndo === 'button[del] M2' && nUndo === '1,2', `Ctrl+Z in the list restores M1 and focus stays on M2's Delete (${fUndo}; ids ${nUndo})`);
+      // ---- 10: redo says what it changed (strip notice and polite region), mirroring undo ----
+      const redoBy = async (how) => {
+        await page.evaluate(() => document.getElementById('livePolite').replaceChildren());
+        await how();
+        await page.waitForTimeout(150);
+        const r = await page.evaluate(() => ({ ids: window.__shell.measurements().map((m) => m.id).join(','), notice: window.__shell.notice() }));
+        await page.waitForFunction((n) => document.getElementById('livePolite').textContent.trim() === n, r.notice, { timeout: 5000, polling: 50 }).catch(() => {});
+        return { ...r, spoken: (await page.evaluate(() => document.getElementById('livePolite').textContent)).trim() };
+      };
+      const rY = await redoBy(() => page.keyboard.press('Control+y'));
+      check(tag, rY.ids === '2' && rY.notice === 'Deleted M1 · Ctrl+Z to undo' && rY.spoken === rY.notice, `Ctrl+Y redoes the delete of M1: notice and polite region "${rY.notice}" / "${rY.spoken}" (ids ${rY.ids})`);
+      const rZ = await redoBy(() => page.keyboard.press('Control+z'));
+      check(tag, rZ.ids === '1,2' && rZ.notice === 'Restored M1' && rZ.spoken === 'Restored M1', `Ctrl+Z after it restores M1 ("${rZ.notice}" / "${rZ.spoken}")`);
+      const rSZ = await redoBy(() => page.keyboard.press('Control+Shift+z'));
+      check(tag, rSZ.ids === '2' && rSZ.notice === 'Deleted M1 · Ctrl+Z to undo', `Ctrl+Shift+Z is redo too ("${rSZ.notice}")`);
+      await redoBy(() => page.keyboard.press('Control+z'));
+      const rP = await redoBy(async () => {
+        await page.keyboard.press('Control+k');
+        await page.keyboard.type('redo');
+        await page.keyboard.press('Enter');
+      });
+      check(tag, rP.ids === '2' && rP.notice === 'Deleted M1 · Ctrl+Z to undo' && rP.spoken === rP.notice, `palette Redo: "${rP.notice}" / "${rP.spoken}"`);
+      await page.focus('#view');
+      const rU = await redoBy(() => page.keyboard.press('Control+z'));
+      check(tag, rU.ids === '1,2' && rU.notice === 'Restored M1', `back to two measurements ("${rU.notice}")`);
     }
     if (vp.coarse) {
       // touch tap-tap (a finger is never withheld from the camera; a tap places a point)
@@ -581,6 +452,58 @@ for (const vp of VIEWPORTS) {
     await page.keyboard.press('Escape');
     const chip = await page.evaluate(() => ({ hidden: document.getElementById('chipNet').hidden, text: document.getElementById('chipNet').textContent }));
     check(tag, chip.hidden, `network chip silent at rest on a working link (hidden ${chip.hidden}, "${chip.text}")`);
+    // ---- 10: the key router on the registry ----
+    const host = await page.evaluate(() => window.__shell.host());
+    check(tag, host.conflicts.length === 0, `command registry: ${host.commands.length} commands, no binding conflict (${host.conflicts.join('; ') || 'none'})`);
+    await page.evaluate(() => window.__stage0.jumpTo(7680, 7680, -2));
+    await settle();
+    await page.focus('#view');
+    const d0 = await page.evaluate(() => window.__stage0.state());
+    await page.keyboard.press('D'); // key "D" without Shift: what Caps Lock sends
+    const dTarget = d0.cx + (0.1 * d0.viewW) / 2 ** d0.logZoom;
+    const dOk = await page.waitForFunction((tx) => Math.abs(window.__stage0.state().cx - tx) < 0.01, dTarget, { timeout: 10_000, polling: 16 }).then(() => true, () => false);
+    const dNotice = await page.evaluate(() => window.__shell.notice());
+    check(tag, dOk && !/Diagnostic mode/.test(dNotice), `Caps-Lock D pans right 10 % like d (centre reached: ${dOk}; notice "${dNotice}")`);
+    await settle();
+    await page.keyboard.press('Shift+D');
+    await page.waitForTimeout(150);
+    const dx = await page.evaluate(() => ({ notice: window.__shell.notice(), assertive: document.getElementById('liveAssertive').textContent }));
+    check(tag, /Diagnostic mode is not part of this build/.test(dx.notice) && /Diagnostic mode/.test(dx.assertive), `⇧D gives the Dx refusal, assertively ("${dx.assertive.trim()}")`);
+  }
+
+  // ---- 11: ≥ 1600 px with the Context dock docked open: layers in the dock column never hide a Tab stop ----
+  if (vp.wide) {
+    const ctx0 = await page.evaluate(() => window.__shell.host().context);
+    check(tag, ctx0.open && !ctx0.inert, `Context dock docked open at rest and not inert (open ${ctx0.open}, inert ${ctx0.inert})`);
+    const layers = [
+      ['keymap (?)', async () => { await page.focus('#view'); await page.keyboard.press('Shift+Slash'); }, 'view'],
+      ['About', async () => { await page.click('#aboutBtn'); }, 'aboutBtn'],
+      ['palette (Ctrl+K)', async () => { await page.focus('#view'); await page.keyboard.press('Control+k'); }, 'view'],
+    ];
+    for (const [label, open, back] of layers) {
+      await open();
+      await page.waitForTimeout(250);
+      const r = await page.evaluate(() => {
+        const layer = document.querySelector('#modalLayer:not([hidden]) .dialog:not([hidden])') ?? document.querySelector('#paletteLayer:not([hidden]) .palette');
+        if (layer === null) return { layer: false, covered: [], inert: document.getElementById('dock').inert, stops: 0 };
+        const lr = layer.getBoundingClientRect();
+        const stops = [...document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]')].filter((el) => el.tabIndex >= 0 && !el.disabled && el.closest('[inert]') === null && el.getClientRects().length > 0 && !layer.contains(el));
+        const covered = stops.filter((el) => {
+          const b = el.getBoundingClientRect();
+          const cx = b.left + b.width / 2;
+          const cy = b.top + b.height / 2;
+          if (cx < lr.left || cx > lr.right || cy < lr.top || cy > lr.bottom) return false;
+          const hit = document.elementFromPoint(cx, cy);
+          return hit !== null && hit !== el && !el.contains(hit);
+        });
+        return { layer: true, covered: covered.map((el) => el.id || el.getAttribute('aria-label') || el.textContent.trim().slice(0, 24)), inert: document.getElementById('dock').inert, stops: stops.length };
+      });
+      check(tag, r.layer && r.inert && r.covered.length === 0, `${label} open over the docked Context panel: the dock is inert, no Tab stop under the layer (${r.covered.join(', ') || 'none'} of ${r.stops} stops)`);
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(150);
+      const after = await page.evaluate(() => ({ focus: document.activeElement?.id, inert: document.getElementById('dock').inert }));
+      check(tag, after.focus === back && !after.inert, `${label}, then Esc: focus returns to #${back} (#${after.focus}) and the dock is no longer inert`);
+    }
   }
 
   // ---- 6: frame cost during a 1 s drag and a wheel burst ----

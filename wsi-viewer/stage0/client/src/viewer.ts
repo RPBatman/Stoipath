@@ -218,6 +218,11 @@ export interface ViewerCommands {
   flyTo(wx: number, wy: number, logZoom: number, kind?: string, instant?: boolean): void;
   /** Camera jump without noting an input (test hook, as window.__stage0.jumpTo). */
   jumpTo(wx: number, wy: number, logZoom: number): void;
+  /**
+   * Mark the frame dirty so the next frame is planned and drawn (`snapshot.drawn` is then true inside the frame hook):
+   * the RUO shell's snapshot reads the WebGL canvas back in that frame (TOOLS.md D14). Additive; unused on index.html.
+   */
+  requestDraw(): void;
   runPath(): void;
   exportJson(): string;
   /** Download the export bundle as the measurement page's Export button does. */
@@ -244,6 +249,13 @@ export interface Viewer {
   onFrame(cb: (s: FrameSnapshot) => void): () => void;
   /** Subscribe to viewport resizes (called from the engine's resize handling, never per frame). */
   onResize(cb: (s: FrameSnapshot) => void): () => void;
+  /**
+   * Stop this engine for good (TOOLS.md D1, §12.1; the RUO shell's in-place slide switch and compare close): cancels
+   * the rAF loop, removes the window / document / ResizeObserver / resolution-query listeners, clears the frame and
+   * resize hooks, terminates the decode workers, loses the WebGL context (the texture array is freed now, not at GC)
+   * and deletes window.__stage0 if it is this engine's. Idempotent. The measurement page never calls it.
+   */
+  dispose(): void;
 }
 
 export interface ViewerOptions {
@@ -270,6 +282,11 @@ export interface ViewerOptions {
    * shrinks the tile array of a measurement run opened from it in the same tab.
    */
   layersHintKey?: string;
+  /**
+   * Write window.__stage0 and window.__stage0Summary (default true, the measurement page's behaviour). The RUO shell
+   * starts compare's second engine with false so window.__stage0 stays view A's (TOOLS.md D8, §12.1).
+   */
+  exposeGlobal?: boolean;
 }
 
 function paramNum(p: URLSearchParams, name: string): number | null {
@@ -358,6 +375,9 @@ export async function copyText(text: string): Promise<boolean> {
 export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   const { canvas, ui: overlay, params } = opts;
   const layersHintKey = opts.layersHintKey ?? LAYERS_HINT_STORAGE_KEY;
+  const exposeGlobal = opts.exposeGlobal !== false;
+  /** Set by dispose(); the loop, the listeners and the context-loss handlers return early once it is true. */
+  let disposed = false;
   const label = params.get('label') ?? 'manual';
   const metrics = new Metrics(label, __BUILD_ID__, params.get('network'), params.get('cache'));
 
@@ -515,17 +535,22 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   resize();
   cam.fit();
   window.addEventListener('resize', resize);
-  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(canvas);
+  const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resize) : null;
+  resizeObserver?.observe(canvas);
   // devicePixelRatio changes (browser zoom, monitor move) do not always fire `resize`; watch the resolution media query.
+  /** The live resolution query and its handler, kept so dispose() can remove them. */
+  let dprWatch: { mq: MediaQueryList; onChange: () => void } | null = null;
   const watchDpr = (): void => {
     if (typeof matchMedia !== 'function') return;
     const mq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
     const onChange = (): void => {
       mq.removeEventListener('change', onChange);
+      dprWatch = null;
       resize();
       watchDpr();
     };
     mq.addEventListener('change', onChange);
+    dprWatch = { mq, onChange };
   };
   watchDpr();
 
@@ -631,11 +656,11 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     }),
     pathDone: false,
   };
-  window.__stage0 = api;
+  if (exposeGlobal) window.__stage0 = api;
   path.onDone = () => {
     metrics.run.pathRuns++;
     const s = finishSummary();
-    window.__stage0Summary = s;
+    if (exposeGlobal) window.__stage0Summary = s;
     api.pathDone = true;
     // p95 over fewer than 20 bursts is the max (nearest rank): say so instead of letting it be quoted (REVIEW L8).
     const caveat = s.zoomInBursts.n < 20 ? `zoom-in bursts n = ${s.zoomInBursts.n} (< 20): quote p50 and max, not p95\n` : '';
@@ -678,19 +703,22 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   if (params.get('overlay') === '1') overlay.setVisible(true);
 
   // A hidden tab stops rAF; the delta on return is not a frame time and any open gesture is void (REVIEW M10).
-  document.addEventListener('visibilitychange', () => {
+  const onVisibility = (): void => {
     if (document.hidden) metrics.notePause();
-  });
+  };
+  document.addEventListener('visibilitychange', onVisibility);
 
   // Context loss (REVIEW H5): mobile drivers commit texture memory lazily, so an oversize array fails seconds later as
   // a context loss. Recover with half the layers, remember the count for the next load in this tab, keep the metrics.
   canvas.addEventListener('webglcontextlost', (e) => {
+    if (disposed) return; // dispose() lost the context on purpose: no recovery, no status
     e.preventDefault();
     renderer.lost = true;
     metrics.noteContextLoss();
     overlay.setStatus('WebGL context lost — recovering with a smaller tile array…');
   });
   canvas.addEventListener('webglcontextrestored', () => {
+    if (disposed) return;
     const previousLayers = renderer.layerCount;
     const layers = Math.max(pyramid.basePinTileCount + TEXTURE_LAYERS_RESERVE, previousLayers >> 1);
     renderer.restore(layers);
@@ -731,7 +759,10 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   let autoPathStarted = false;
   let warmNoted = false;
 
+  /** The pending rAF request (dispose() cancels it). */
+  let rafId = 0;
   const loop = (rafTs: number): void => {
+    if (disposed) return;
     const dt = metrics.beginFrame(rafTs);
     const now = rafTs;
     cam.step(now);
@@ -859,9 +890,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     }
     path.tick(now);
     frame++;
-    requestAnimationFrame(loop);
+    rafId = requestAnimationFrame(loop);
   };
-  requestAnimationFrame(loop);
+  rafId = requestAnimationFrame(loop);
 
   const commands: ViewerCommands = {
     zoomBy: (levels, kind = 'key') => {
@@ -878,6 +909,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
       if (instant) cam.jumpTo(wx, wy, logZoom);
     },
     jumpTo: (wx, wy, logZoom) => cam.jumpTo(wx, wy, logZoom),
+    requestDraw: () => {
+      dirty = true;
+    },
     runPath: () => api.runPath(),
     exportJson,
     downloadExport,
@@ -885,6 +919,26 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     evictGpuTiles,
   };
   fillCameraSnapshot();
+
+  const dispose = (): void => {
+    if (disposed) return;
+    disposed = true;
+    cancelAnimationFrame(rafId);
+    window.removeEventListener('resize', resize);
+    resizeObserver?.disconnect();
+    if (dprWatch !== null) {
+      dprWatch.mq.removeEventListener('change', dprWatch.onChange);
+      dprWatch = null;
+    }
+    document.removeEventListener('visibilitychange', onVisibility);
+    frameHooks.length = 0;
+    resizeHooks.length = 0;
+    path.onDone = null;
+    pool.terminate();
+    // Free the texture array now rather than at GC (REVIEW H5: a phone must never hold two arrays during a switch).
+    canvas.getContext('webgl2')?.getExtension('WEBGL_lose_context')?.loseContext();
+    if (window.__stage0 === api) delete window.__stage0;
+  };
 
   return {
     api,
@@ -912,5 +966,6 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
         if (i >= 0) resizeHooks.splice(i, 1);
       };
     },
+    dispose,
   };
 }

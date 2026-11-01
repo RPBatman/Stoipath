@@ -1,0 +1,280 @@
+{
+  "collections": [
+    {
+      "id": "stage0-public",
+      "slides": [
+        "camelyon16.tumor_014.r36864_66560",
+        "openslide.CMU-1-Small-Region",
+        "openslide.CMU-1",
+        "openslide.Hamamatsu-2",
+        "openslide.JP2K-33003-1"
+      ],
+      "title": "Stage-0 public slides"
+    }
+  ],
+  "generated": "2026-11-01T17:41:52Z",
+  "generator": "stage0/tools/build_catalogue.py 1",
+  "schema": "stoipath.catalogue/1",
+  "slides": [
+    {
+      "bytes": 97785492,
+      "dataset": "CAMELYON16",
+      "datasetLong": "CAMELYON16 (Computational Pathology Group, Radboud University Medical Center, Nijmegen; AWS Open Data mirror)",
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections; only WSI pixel data is used, the embedded macro photograph is never read.",
+      "fingerprint": "15360x15360@0.243094@36864,66560@",
+      "height": 15360,
+      "id": "camelyon16.tumor_014.r36864_66560",
+      "levels": 6,
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/license.txt"
+      },
+      "manifest": "manifest.json",
+      "mpp": 0.243094,
+      "name": "tumor_014",
+      "overlays": [],
+      "region": {
+        "fullSlide": false,
+        "height": 15360,
+        "sourceHeight": 214016,
+        "sourceWidth": 97792,
+        "width": 15360,
+        "x": 36864,
+        "y": 66560
+      },
+      "scanner": "3DHistech Pannoramic 250 Flash II (DICOM_MANUFACTURER in the Philips TIFF header), exported as Philips-style BigTIFF by ASAP",
+      "source": {
+        "format": "BigTIFF · JPEG",
+        "sha256": "82ae0b301533315dbf449536e2a9b881f945520947727f2757f2e2c726e06f9f",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/images/tumor_014.tif"
+      },
+      "stain": "H&E",
+      "stainLong": "H&E, sentinel lymph node with breast-carcinoma macrometastasis (CAMELYON16 'Tumor' annotation group)",
+      "thumbnail": {
+        "height": 480,
+        "url": "tiles/5/0_0.jpg",
+        "width": 480
+      },
+      "tileSize": 512,
+      "tiles": 1210,
+      "tissue": "sentinel lymph node",
+      "tissue_mask": {
+        "bits": "/////+/////////////9////////////////////////////f///+////////////////////v//////v/////////+///z//////7//////////7//////+//+//////////////////////////+f//7//////9/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7////////////////////////////////////////////////////////////8=",
+        "cellPx": 240,
+        "cols": 64,
+        "rows": 64
+      },
+      "title": "Sentinel lymph node with breast-carcinoma macrometastasis · 15,360 px region",
+      "width": 15360
+    },
+    {
+      "bytes": 1307708,
+      "dataset": "OpenSlide test data",
+      "datasetLong": "OpenSlide test data (Aperio)",
+      "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied.",
+      "fingerprint": "2220x2967@0.499@0,0@ed92d5a9f2e8",
+      "height": 2967,
+      "id": "openslide.CMU-1-Small-Region",
+      "levels": 4,
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "manifest": "samples/CMU-1-Small-Region/manifest.json",
+      "mpp": 0.499,
+      "name": "CMU-1-Small-Region",
+      "overlays": [],
+      "region": {
+        "fullSlide": true,
+        "height": 2967,
+        "sourceHeight": 2967,
+        "sourceWidth": 2220,
+        "width": 2220,
+        "x": 0,
+        "y": 0
+      },
+      "scanner": "Aperio ScanScope (Aperio Image Library v11.2.1 in the ImageDescription; AppMag 20)",
+      "source": {
+        "format": "Aperio SVS · JPEG",
+        "sha256": "ed92d5a9f2e86df67640d6f92ce3e231419ce127131697fbbce42ad5e002c8a7",
+        "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-Small-Region.svs"
+      },
+      "stain": "H&E",
+      "stainLong": "H&E",
+      "thumbnail": {
+        "height": 371,
+        "url": "samples/CMU-1-Small-Region/tiles/3/0_0.jpg",
+        "width": 278
+      },
+      "tileSize": 512,
+      "tiles": 44,
+      "tissue": null,
+      "tissue_mask": {
+        "bits": "AAAAAAAAAQAAAAAAAQDAAQAAAAD2AwAAAAD+HwAAAAD4HwAAAAD4HwAAAAD4fwAAAADweQAAAADw4QAAAAD8wQEAAADgwQMAAADwxQMQAADw3wMQAADw3wMAAADw3wcAAAD4/wcAAAD4/wcAAAD4/wcAAAD4/wcAAAD8/x8AAB78/x8AgP/8/38A8I////8ALAD8/38AAAD4/3sAAAD8//MAAAD8/+MBAAD8//EDAAD8//kCAAD8/38AAAD89z8AAAD89w8AAAD89wcAAAD8/wcAAAD8/wMAAAD+/wMAAAD+/wEAAAD+/wMAAAD+//YAAAD///cAAAD//38AAAD//38AAAD//38AAAD//38AAAD//38AAID///8AAID///8AAID///8AAID///8AAID///8AAMD///8AAMD///8AAOD//z8AAPD//z8AAPD//z8AAPj//x8AAPj//x8AAPj//x8AAPz//x8AAPj//x8AAPj//x8AAPj//x8AAPj//x8A",
+        "cellPx": 47,
+        "cols": 48,
+        "rows": 64
+      },
+      "title": "Exported region from CMU-1.svs · brightfield · whole slide",
+      "width": 2220
+    },
+    {
+      "bytes": 141166204,
+      "dataset": "OpenSlide test data",
+      "datasetLong": "OpenSlide test data (Aperio)",
+      "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied.",
+      "fingerprint": "46000x32914@0.499@0,0@00a3d54482cd",
+      "height": 32914,
+      "id": "openslide.CMU-1",
+      "levels": 8,
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "manifest": "samples/CMU-1/manifest.json",
+      "mpp": 0.499,
+      "name": "CMU-1",
+      "overlays": [],
+      "region": {
+        "fullSlide": true,
+        "height": 32914,
+        "sourceHeight": 32914,
+        "sourceWidth": 46000,
+        "width": 46000,
+        "x": 0,
+        "y": 0
+      },
+      "scanner": "Aperio ScanScope (Aperio Image Library v10.0.51 in the ImageDescription; AppMag 20)",
+      "source": {
+        "format": "Aperio SVS · JPEG",
+        "sha256": "00a3d54482cd707abf254fe69dccc8d06b8ff757a1663f1290c23418c480eb30",
+        "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1.svs"
+      },
+      "stain": "H&E",
+      "stainLong": "H&E",
+      "thumbnail": {
+        "height": 258,
+        "url": "samples/CMU-1/tiles/7/0_0.jpg",
+        "width": 360
+      },
+      "tileSize": 512,
+      "tiles": 7878,
+      "tissue": null,
+      "tissue_mask": {
+        "bits": "AAAAAAAAAAAAAAAAAAIAAAAAAAAABwgAAAAAAIAPPAAAAAAAwA98AAAAAADAD/4AAAAAAMAf/gEAAAAAwB/+BwAAAADAH/gzAAAAAOA/+DMAAAAA4D/4NwAAAADgf/g3AAAAAMB/8D8AAAAAwP/wPwAAAADA/+A/AAAAAID/wR8AAAAAgP+BHwAAAACA/wMEAAAAAAD/BwAAwA8AAP8HAADwHwAA/g8AAPwfAAD+DwAA/h8AAPgHAAD/DwAA8AcAgP8HAAAAAADA/wMAAAAAAOD/AQAAAAAA4P8AAAAAAADwf4AfAAAAAPB/4D8AAAAA+D/gHwAAAAD4P/AfAAAAAPgf+A8AAAAA+A/8DwAAAAD4B/wHAAAAAPgH/gcAAAAA8Af+AwAAAADgA/4BAAAAAOAB/gEAAAAAAAD+AQAAAAAAAP4AAAAAAAAA/gAAAAAAAAA+AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "cellPx": 719,
+        "cols": 64,
+        "rows": 46
+      },
+      "title": "Brightfield · whole slide",
+      "width": 46000
+    },
+    {
+      "bytes": 139713746,
+      "dataset": "OpenSlide test data",
+      "datasetLong": "OpenSlide test data (DICOM)",
+      "deidentified": "Public OpenSlide test data. Only the VOLUME instances' pixels are read (through OpenSlide); the LABEL and OVERVIEW instances (label, macro) are skipped and never published, and no patient, specimen or container identifiers, UIDs, dates or file names are copied.",
+      "fingerprint": "30720x39168@0.22865@0,0@4e5eb3976220",
+      "height": 39168,
+      "id": "openslide.Hamamatsu-2",
+      "levels": 8,
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "manifest": "samples/Hamamatsu-2/manifest.json",
+      "mpp": 0.22865,
+      "name": "Hamamatsu-2",
+      "overlays": [],
+      "region": {
+        "fullSlide": true,
+        "height": 39168,
+        "sourceHeight": 39168,
+        "sourceWidth": 30720,
+        "width": 30720,
+        "x": 0,
+        "y": 0
+      },
+      "scanner": "Hamamatsu Photonics K.K. C16300-21MDEU (DICOM Manufacturer / ManufacturerModelName)",
+      "source": {
+        "format": "DICOM WSI · JPEG baseline",
+        "sha256": "4e5eb397622044167b83b33bd047ded1ea7e35f08146893948d4b1a79dced470",
+        "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Hamamatsu-2.zip"
+      },
+      "stain": "H&E",
+      "stainLong": "H&E",
+      "thumbnail": {
+        "height": 306,
+        "url": "samples/Hamamatsu-2/tiles/7/0_0.jpg",
+        "width": 240
+      },
+      "tileSize": 512,
+      "tiles": 6199,
+      "tissue": null,
+      "tissue_mask": {
+        "bits": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/AEAAAAA4B8AAAAAgP8AAAAAAPwHAAAAAMD/AAAAAAD+DwAAAAD8fwAAAADw/wEAAADA/x8AAAAA/v8DAAAA+P9/AAAAwP//AwAAAP7/PwAAAPD//wEAAMD//w8AAAD//z8AAAD4//8DAADA//8fAAAA////AAAA/P//BwAA4P//PwAAgP///wEAAP7//w8AAPD//38AAMD///8BAAD+//8PAADw//8/AACA////AAAA/v//AwAA/P//HwAA8P//PwAAAP7//wEAAPj//wMAAODf/w8AAAD//j8AAAD4//8AAADAz/8DAAAAPvwPAAAA8OB/AAAAgMf/AQAAAD7+BwAAAPDxHwAAAICP/wAAAAB8/AMAAADg8w8AAAAAn38AAAAA+PwBAAAAwOcPAAAAAAQzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "cellPx": 612,
+        "cols": 51,
+        "rows": 64
+      },
+      "title": "H&E stain · brightfield · whole slide",
+      "width": 30720
+    },
+    {
+      "bytes": 88139750,
+      "dataset": "OpenSlide test data",
+      "datasetLong": "OpenSlide test data (Aperio)",
+      "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied.",
+      "fingerprint": "15374x17497@0.2498@0,0@6205ccf75a8f",
+      "height": 17497,
+      "id": "openslide.JP2K-33003-1",
+      "levels": 7,
+      "licence": {
+        "id": "distributable",
+        "text": "distributable (licence field of the OpenSlide test data entry, as recorded in samples-manifest.json)",
+        "url": null
+      },
+      "manifest": "samples/JP2K-33003-1/manifest.json",
+      "mpp": 0.2498,
+      "name": "JP2K-33003-1",
+      "overlays": [],
+      "region": {
+        "fullSlide": true,
+        "height": 17497,
+        "sourceHeight": 17497,
+        "sourceWidth": 15374,
+        "width": 15374,
+        "x": 0,
+        "y": 0
+      },
+      "scanner": "Aperio ScanScope (Aperio Image Library v10.0.50 in the ImageDescription; AppMag 40)",
+      "source": {
+        "format": "Aperio SVS · JPEG 2000 (YCbCr)",
+        "sha256": "6205ccf75a8fa6c32df7c5c04b7377398971a490fb6b320d50d91f7ba6a0e6fd",
+        "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1.svs"
+      },
+      "stain": "H&E",
+      "stainLong": "H&E, aorta",
+      "thumbnail": {
+        "height": 274,
+        "url": "samples/JP2K-33003-1/tiles/6/0_0.jpg",
+        "width": 241
+      },
+      "tileSize": 512,
+      "tiles": 1474,
+      "tissue": "aorta",
+      "tissue_mask": {
+        "bits": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAPD/AQAAAAD8/w8AAACA//9/gAEAwP///wEBAOD/D/4PAADw/wDgPwAA8H8AgH8YAP4/AAD+AQD2HwAA8AcA/A9AAOAPAPgHAACAPwDoBwAEAH4AwAcICAD8AMAPABAA+AGADwAgAOADAB8AAADADwA+AAAAgA8AfAAAAAE/APgAAAAAPgDwAQYABHwA4AMAAAD4AMAHAAAA+AGADwAAAPADAD8AAADgBwB8AAAA4AcA+gAAAMAPAPADAACAHwDgBwAAgB8AgB8AAIA/AAA+AACAPwAAfAAAgH8AAPABAIB/AADgBwCAfwAAgB8AgH8AAAD/AMB/AAAA/L///wAAAPD///8BAADA//9/AAAAAP7/fwAAAADw/38AAAAAAP8fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "cellPx": 274,
+        "cols": 57,
+        "rows": 64
+      },
+      "title": "Aorta tissue · brightfield · whole slide",
+      "width": 15374
+    }
+  ]
+}

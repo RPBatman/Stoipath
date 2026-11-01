@@ -1,0 +1,13 @@
+{
+  "type": "Feature",
+  "id": "6f7a8b9c-0d1e-4f3a-8b5c-6d7e8f9a0b12",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[[7000, 7000], [7300, 7000], [7300, 7200], [7000, 7200], [7000, 7000]]]
+  },
+  "properties": {
+    "objectType": "annotation",
+    "classification": {"name": "Tumor", "color": [200, 0, 0]},
+    "isLocked": false
+  }
+}

@@ -343,7 +343,7 @@ export interface SyncState {
 }
 
 /**
- * Compact URL form (fragment, URLSearchParams grammar; TOOLS.md §7.4): `#st=1&s=<catalogue id>&x=<µm>&y=<µm>&u=<µm/px>`
+ * Compact URL form (fragment, URLSearchParams grammar; TOOLS.md §7.5): `#st=1&s=<catalogue id>&x=<µm>&y=<µm>&u=<µm/px>`
  * plus optional `m=` (manifest URL when uncatalogued), `l=` (overlays `id~v|h~opacity%~o|h~threshold`, comma
  * separated), `sel=`, and for compare `b=`, `bm=`, `bx=`, `by=`, `bu=`, `sy=lock|none`, `so=dx,dy,ratio`.
  */
@@ -930,7 +930,7 @@ export interface OverlayStats {
   /** Renders of any kind since install. */
   draws: number;
   exactDraws: number;
-  /** Gesture frames drawn by an affine blit of the last exact frame (TOOLS.md D5). */
+  /** Gesture frames drawn by an affine blit of the last exact frame (TOOLS.md D3). */
   blits: number;
   lastMs: number;
   emaMs: number;
@@ -1326,7 +1326,11 @@ export interface ShellModule {
 /** startViewer options plus the additive `exposeGlobal` (false for view B: window.__stage0 stays view A's). */
 export type EngineStartOptions = ViewerOptions & { exposeGlobal?: boolean };
 
-/** startViewer's result plus the additive lifecycle API (TOOLS.md §12.1). */
+/**
+ * startViewer's result plus the additive lifecycle API (TOOLS.md §12.1). Since Wave 0 viewer.ts's `Viewer` carries
+ * `dispose()` and `commands.requestDraw()` itself, so `startViewer(o)` is assignable to `Promise<EngineInstance>` without
+ * a cast, and `ViewerOptions.exposeGlobal` exists (EngineStartOptions below stays as the contract's name for it).
+ */
 export interface EngineInstance extends Viewer {
   /** Stop the rAF loop, remove listeners, terminate workers, lose the WebGL context. Idempotent. */
   dispose(): void;

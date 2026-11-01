@@ -62,4 +62,20 @@ export class DecodePool {
     const msg: WorkerRequest = { type: 'cancel', key };
     this.workers[idx]?.postMessage(msg);
   }
+
+  /**
+   * Terminate every worker and forget every request (Viewer.dispose(), the RUO shell's in-place slide switch; TOOLS.md
+   * §12.1). Idempotent. Later request() / cancel() calls are no-ops: the worker list is empty. The measurement page
+   * never calls it.
+   */
+  terminate(): void {
+    for (const w of this.workers) {
+      w.onmessage = null;
+      w.onerror = null;
+      w.terminate();
+    }
+    this.workers.length = 0;
+    this.owner.clear();
+    this.load.fill(0);
+  }
 }

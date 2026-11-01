@@ -8,14 +8,24 @@
    bar and navigator rectangle). No transitions on anything over the canvas (P2).
    ========================================================================== */
 
-/* ---- B. Canvas: the engine's WebGL canvas fills the grid cell (not position: fixed) ---- */
-.shell .canvas-area > .canvas { touch-action: none; -webkit-user-select: none; user-select: none; }
-.shell #view { cursor: grab; outline: none; }
-.shell #view:active { cursor: grabbing; }
-.shell[data-tool="measure"] #view { cursor: crosshair; }
+/* ---- B. Canvas: one pane per view (TOOLS.md §12.2). Each engine's WebGL canvas fills its pane (not position: fixed;
+   the engine's ResizeObserver follows the pane), with the pane's one 2D overlay canvas above it (D2). ---- */
+.shell .panes { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.shell .pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+/* Compare (TOOLS.md §6.9): .app.compare-on (set by compare) gives two columns and a 2 px gutter; otherwise pane B,
+   the gutter and the compare bar take no room. Pane A's ResizeObserver resizes its engine on the toggle. */
+.app.shell:not(.compare-on) #paneB, .app.shell:not(.compare-on) #gutter, .app.shell:not(.compare-on) #compareBar { display: none; }
+.app.shell.compare-on .panes { grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr); }
+.shell .gutter { background: var(--color-border-strong); }
+.app.shell.compare-on .pane > .hud { max-width: 50%; }
+.shell .pane .hud__item:empty { display: none; }
+.shell .pane > .canvas { touch-action: none; -webkit-user-select: none; user-select: none; }
+.shell .pane > canvas:not(.overlay-layer) { cursor: grab; outline: none; }
+.shell .pane > canvas:not(.overlay-layer):active { cursor: grabbing; }
+.shell:not([data-tool="select"]) .pane > canvas:not(.overlay-layer) { cursor: crosshair; }
 /* Focus ring on the canvas itself: an outline drawn inside the cell (a canvas paints over inset box-shadows). */
-.shell #view:focus-visible { box-shadow: none; outline: 2px solid var(--grey-95); outline-offset: -3px; border-radius: 0; z-index: 1; }
-.meas-layer { pointer-events: none; z-index: 2; }
+.shell .pane > canvas:not(.overlay-layer):focus-visible { box-shadow: none; outline: 2px solid var(--grey-95); outline-offset: -3px; border-radius: 0; z-index: 1; }
+.overlay-layer { pointer-events: none; z-index: 2; }
 
 /* ---- HUD: reserved widths so textContent updates never shift layout (research final's engineering graft) ---- */
 .shell .hud { z-index: var(--z-hud); }
@@ -91,8 +101,22 @@
 }
 @container topbar (max-width: 1063px) { .topbar__search { display: none; } }   /* ≤ 1079 px the bottom bar carries Search */
 
-/* ---- C. Rail: magnification presets as text tools ---- */
+/* ---- C. Rail: tool sets (display: contents, so the buttons stay flex items of the toolbar), Library switchers,
+   magnification presets as text tools ---- */
 .rail { scrollbar-width: none; }
+.rail__set { display: contents; }
+/* Library switchers (research final lines 186–188): the open panel's switcher is marked like a pressed tool; the
+   count badge sits in the corner. */
+.shell .rail .tool[aria-expanded="true"] { background: var(--color-control-selected); color: var(--color-text); }
+.shell .rail .tool[aria-expanded="true"]::before { content: ""; position: absolute; left: -2px; top: 20%; height: 60%; width: 2px; border-radius: 1px; background: var(--color-control-selected-indicator); }
+.shell .rail .tool .badge-n { position: absolute; top: 1px; right: 1px; font: 600 8px/10px var(--font-mono); padding: 0 3px; border-radius: 5px; background: var(--color-control-bg); color: var(--color-text); }
+.shell .tool .swatch--lg { width: 18px; height: 18px; }
+.shell .bottombar .tool[aria-expanded="true"] { background: var(--color-control-selected); color: var(--color-text); }
+/* The rail fits 1366 × 768 (TOOLS.md §12.2, owner decision Q10): at ≤ 1366 px the zoom buttons and the presets leave it;
+   + − 0, the keys 1–6, the palette and typed zoom remain. */
+@media (max-width: 1366px) {
+  .shell .rail .rail__set--zoom, .shell .rail .presets, .shell .rail .rail__divider--presets { display: none; }
+}
 .tool.tool--text { width: calc(var(--layout-rail) - 12px); height: var(--target); font: 600 10px/1 var(--font-mono); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .rail__group.presets { gap: 2px; }
 
@@ -100,7 +124,12 @@
 .dock__head { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-2); min-height: 32px; padding: 0 var(--space-3) 0 var(--space-5); border-bottom: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); white-space: nowrap; }
 .dock__head .title { flex: 0 0 auto; }
 .dock__head .meta { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
-.dock .tabs .tab { padding: 0 var(--space-3); font-size: var(--text-xs); gap: 3px; flex: 1 1 0; justify-content: center; }
+.dock .tabs .tab { padding: 0 var(--space-3); font-size: var(--text-xs); gap: 3px; flex: 1 1 0; justify-content: center; min-width: max-content; }
+/* Every tab stays reachable: equal widths while they fit, a scrolling strip when they do not (five tabs at 320 px in
+   Waves 2–3, while the Measurements tab sits beside Annotations). */
+.dock .tabs { overflow-x: auto; scrollbar-width: none; }
+/* Five visible tabs (Inspector · Annotations · Measurements · Slide · Engine, Waves 2–3) fit a 320 px dock at 4 px padding. */
+.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab { padding: 0 var(--space-2); }
 .dock .tabs .tab .count { font-size: 9px; padding: 0 4px; }
 .dock__body { display: flex; flex-direction: column; }
 .tabpanel { display: none; padding: 0 0 var(--space-6); }
@@ -155,9 +184,45 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 .strip .chip .icon { width: 14px; height: 14px; }
 .strip .chip.num { font-variant-numeric: tabular-nums; min-width: 11ch; justify-content: center; }
 
-/* ---- Dock open / closed (panels.ts toggles only .dock-open) ---- */
-.app.shell:not(.dock-open) .dock { display: none; }
+/* ---- Dock open / closed (panels.ts toggles only .dock-open on the Context dock #dock, .lib-open on the Library #lib) ---- */
+.app.shell:not(.dock-open) #dock { display: none; }
 @media (min-width: 1600px) { .app.shell:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; } }
+/* The Library | Context switch of the in-flow sheet (≤ 1079 px, once a Library panel exists). */
+.shell .dock__switch { display: none; flex: 0 0 auto; }
+.shell .dock__head .btn--icon { flex: 0 0 auto; }
+
+/* ---- D-left. Library (TOOLS.md D10): a drawer over the left edge of the canvas at ≥ 1080 px (no grid column, so the
+   WebGL canvas never resizes on a toggle, H13), the in-flow sheet ≤ 1079 px. #lib rules carry an id so base.css's
+   .app.dock-open .dock drawer / sheet rules (meant for the Context dock) never move it. ---- */
+.app.shell { --lib-w: 300px; }
+.app.shell #lib { display: none; grid-area: auto; border-left: 0; border-right: 1px solid var(--color-border-strong); }
+.app.shell.lib-open #lib { display: flex; }
+@media (min-width: 1080px) {
+  .app.shell.lib-open #lib {
+    position: absolute; left: var(--layout-rail); right: auto; top: var(--layout-topbar); bottom: var(--layout-strip);
+    width: var(--lib-w); height: auto; z-index: var(--z-drawer); box-shadow: var(--shadow-3);
+  }
+  /* Pane A's identity, marker, tool line and scale bar move right of the open drawer (research final). */
+  .app.shell.lib-open #paneA > .hud--tl, .app.shell.lib-open #paneA > .hud--bl { left: calc(var(--lib-w) + var(--layout-hud-inset)); }
+}
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell { --lib-w: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
+}
+@media (min-width: 3200px) { .app.shell { --lib-w: 340px; } }
+
+/* ---- Class picker popover (annotations; TOOLS.md §6.5): beside the rail, right of an open Library, never central ---- */
+.shell .class-menu {
+  position: absolute; left: calc(var(--layout-rail) + var(--space-4)); top: calc(var(--layout-topbar) + var(--space-4));
+  z-index: var(--z-modal); min-width: 208px; max-width: calc(100vw - 2 * var(--space-4));
+  max-height: calc(100% - var(--layout-topbar) - var(--layout-strip) - 2 * var(--space-4)); overflow: auto;
+}
+.app.shell.lib-open .class-menu { left: calc(var(--layout-rail) + var(--lib-w) + var(--space-4)); }
+
+/* ---- Inspector: the View section shows only once share fills #shareActions ---- */
+.shell #shareActions:empty, .shell .insp-view:has(+ #shareActions:empty) { display: none; }
+
+/* ---- Bottom bar: the navigation buttons leave once the drawing tools are registered (research bottom bar) ---- */
+.shell .bottombar:has([data-cmd="tool:point"]:not([hidden])) .tool--nav { display: none; }
 
 /* =============================================================================
    Responsive (base.css breakpoints; principles §7 collapse order)
@@ -173,11 +238,14 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .app.shell { --layout-dock: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
   /* An absolutely positioned grid item that keeps grid-area: dock resolves base.css's top: topbar / bottom: strip
      against its grid area (row 2), which put the drawer 48 px low; without an area it resolves against the app. */
-  .app.shell.dock-open .dock { grid-area: auto; }
+  .app.shell.dock-open #dock { grid-area: auto; }
   /* The drawer, the palette and the dock-column dialogs (keymap, About) all cover the right column: the navigator and
-     the bottom-right readout step left of it, so no focusable control sits under an open layer (SC 2.4.11). */
+     the bottom-right readout of the right-hand pane step left of it, so no focusable control sits under an open layer
+     (SC 2.4.11). The covered dock itself is made inert while a palette or dialog lies over it (main.ts). */
   .app.shell:is(.dock-open, .palette-open, .dialog-open) .navigator,
-  .app.shell:is(.dock-open, .palette-open, .dialog-open) .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.shell:not(.compare-on):is(.dock-open, .palette-open, .dialog-open) #paneA > .hud--br,
+  .app.shell.compare-on:is(.dock-open, .palette-open, .dialog-open) #paneB > .hud--br,
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) #compareBar { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   /* Stepped left, the navigator is no longer at the canvas edge, so its bottom must stay above the central zone
      (P1): thumbnail height ≤ 25 % of the canvas − inset − label row (canvas = 100dvh − top bar − strip), width
      from the slide's aspect (--nav-ar, set once from the manifest); 180 px at most (research final's drawer step). */
@@ -188,7 +256,9 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 /* Docked width with the dock closed: the palette and dialogs use the empty dock column over the canvas edge. */
 @media (min-width: 1600px) {
   .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .navigator,
-  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.shell:not(.dock-open):not(.compare-on):is(.palette-open, .dialog-open) #paneA > .hud--br,
+  .app.shell:not(.dock-open).compare-on:is(.palette-open, .dialog-open) #paneB > .hud--br,
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) #compareBar { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   .app.shell:not(.dock-open):is(.palette-open, .dialog-open) {
     --layout-navigator: min(240px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 36px) * var(--nav-ar, 1)));
   }
@@ -201,23 +271,30 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 /* Tablet portrait and phone: rail → bottom bar; the dock becomes the grid's in-flow sheet row (the canvas yields
    height instead of being covered; base.css already reserves the auto "sheet" row for the palette). */
 @media (max-width: 1079px) {
-  .app.shell.dock-open .dock {
+  .app.shell.dock-open #dock, .app.shell.lib-open #lib {
     display: flex; grid-area: sheet; position: relative; left: auto; right: auto; bottom: auto; top: auto;
     width: auto; height: var(--layout-sheet-max); max-height: var(--layout-sheet-max);
     border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0;
     box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail);
   }
-  .app.shell.palette-open .dock { display: none; }
+  .app.shell.palette-open #dock, .app.shell.palette-open #lib { display: none; }
+  .app.shell.lib-open #lib { border-right: 0; }
+  .app.shell.has-library .dock__switch { display: inline-flex; }
+  /* The class menu sits above the bottom bar, and above the sheet when one is open. */
+  .shell .class-menu { left: var(--space-4); top: auto; bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
+  .app.shell:is(.lib-open, .dock-open) .class-menu { left: var(--space-4); bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--layout-sheet-max) + var(--space-4)); }
   /* Keymap and About take the same in-flow sheet row as the palette (base.css .palette-layer), so the canvas and its
      bottom HUD yield height instead of being covered (handoff §5.1 "the bottom HUD lifts above an open sheet"); the
      dock sheet steps aside while one is open, as it does for the palette. */
   .app.shell .modal-layer { position: static; grid-area: sheet; inset: auto; display: flex; flex-direction: column; padding: 0; z-index: auto; pointer-events: auto; min-height: 0; max-height: var(--layout-sheet-max); }
   .app.shell .modal-layer[hidden] { display: none; }
   .app.shell .modal-layer .dialog { width: 100%; max-height: var(--layout-sheet-max); border-left: 0; border-right: 0; border-bottom: 0; border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); }
-  .app.shell.dialog-open .dock { display: none; }
+  .app.shell.dialog-open #dock, .app.shell.dialog-open #lib { display: none; }
 }
 @media (max-width: 599px) {
   .app.shell .hud { max-width: 48%; }
+  .shell .class-menu { bottom: calc(var(--layout-bottombar) + var(--space-4)); }
+  .app.shell:is(.lib-open, .dock-open) .class-menu { bottom: calc(var(--layout-bottombar) + var(--layout-sheet-max) + var(--space-4)); }
   /* Six labelled targets fit a 320 px phone (SC 1.4.10): Zoom in / out go (pinch, double tap, Search → Zoom). */
   .shell .bottombar .tool--secondary { display: none; }
   .shell .magnification__line2, .shell .hud__position { display: none; }
@@ -227,6 +304,7 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .shell .keymap__keys { flex-basis: 104px; }
 }
 @media (pointer: coarse) {
+  .shell .rail .tool--secondary { display: none; }   /* 44 px tools: Rectangle and Ellipse stay in the palette and keys */
   .shell .navigator__label .nav-hint { display: none; }   /* "O hide" is a keyboard hint; Nav in the bottom bar toggles it */
   .tool.tool--text { height: var(--target); }
   .meas-list .meas-row { min-height: var(--target); }
@@ -242,7 +320,7 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .rail [data-cmd="keymap"] { display: none; }
 }
 @media print {
-  .meas-layer { display: none; }
+  .overlay-layer { display: none; }
 }
 
 /* Palette input: shrink inside the 320 px column and drop the native clear button so the Esc hint stays visible;

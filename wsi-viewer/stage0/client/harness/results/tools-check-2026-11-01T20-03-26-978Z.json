@@ -1,0 +1,29 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "seconds": 1,
+ "modules": [],
+ "moduleCounts": {},
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-1 index.html's built chunks (index.html, _viewer-CSMiTCla.js) include nothing under src/shell/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-1 src/main.ts's module graph (16 modules) reaches nothing under src/shell/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-2 command registry: 61 commands, 43 with key bindings, no conflict (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-2 shell.html opens with no console or page error (0)"
+  }
+ ]
+}

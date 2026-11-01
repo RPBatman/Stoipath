@@ -335,16 +335,24 @@ export class MeasureTool {
     this.onChange();
   }
 
+  /**
+   * Redo says what changed, as undo does (strip notice and the polite region, replacing any earlier notice): a redone
+   * measurement is back ("Restored M1"), a redone delete is gone again (the delete's own sentence with its undo hint).
+   */
   redo(): void {
     const op = this.redoStack.pop();
     if (op === undefined) {
       this.onNotice('Nothing to redo');
       return;
     }
-    if (op.kind === 'add') this.items.push(op.m);
-    else {
+    if (op.kind === 'add') {
+      this.items.push(op.m);
+      this.onNotice(`Restored M${op.m.id}`);
+    } else {
       const i = this.items.indexOf(op.m);
       if (i >= 0) this.items.splice(i, 1);
+      if (this.selected === op.m.id) this.selected = null;
+      this.onNotice(this.strings.coarse() ? `Deleted M${op.m.id} · Undo is in Search` : `Deleted M${op.m.id} · ${this.strings.mod}+Z to undo`);
     }
     this.undoStack.push(op);
     this.dirty = true;

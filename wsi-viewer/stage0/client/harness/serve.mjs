@@ -1,5 +1,9 @@
 // Minimal static file server for the Stage-0 site + data (no dependencies; HTTP/1.1 like most static hosts).
-// Usage: node harness/serve.mjs [--root DIR] [--port N] [--host 0.0.0.0] [--latency MS] [--kbps N]
+// Usage: node harness/serve.mjs [--root DIR] [--port N] [--host 0.0.0.0] [--latency MS] [--kbps N] [--dist DIR]
+//   --dist DIR  serve /client/dist/* from DIR instead of <root>/client/dist (a builder's private build, TOOLS.md §13:
+//               `npx vite build --outDir <scratch>/dist --emptyOutDir`; only the integrator builds into client/dist).
+// Samples alias (TOOLS.md D12, §7.4): /data/samples/<slide>/X is served from /data/samples/pyramids/<slide>/X when the
+// former does not exist (the catalogue uses the deployed layout), so only requests that would 404 change.
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve, sep } from 'node:path';
@@ -12,6 +16,7 @@ const TYPES = {
   '.mjs': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json',
+  '.geojson': 'application/geo+json',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
@@ -26,15 +31,27 @@ const TYPES = {
  * Start the server. `options.latencyMs` delays every tile response (crude RTT emulation);
  * `options.kbps` throttles tile bodies (crude bandwidth emulation). Both are 0 by default.
  */
-export function startServer({ root, port = 8000, host = '0.0.0.0', latencyMs = 0, kbps = 0, quiet = false }) {
+export function startServer({ root, port = 8000, host = '0.0.0.0', latencyMs = 0, kbps = 0, quiet = false, dist = null }) {
   const rootAbs = resolve(root);
+  const distAbs = dist ? resolve(dist) : null;
+  const isFile = (f) => existsSync(f) && statSync(f).isFile();
   const server = createServer((req, res) => {
     const urlPath = decodeURIComponent((req.url ?? '/').split('?')[0]);
-    let file = normalize(join(rootAbs, urlPath));
-    if (!file.startsWith(rootAbs + sep) && file !== rootAbs) {
+    // A private build (--dist) replaces <root>/client/dist; everything else (data, design) still comes from the root.
+    const inDist = distAbs !== null && (urlPath === '/client/dist' || urlPath.startsWith('/client/dist/'));
+    const base = inDist ? distAbs : rootAbs;
+    let file = normalize(inDist ? join(distAbs, urlPath.slice('/client/dist'.length)) : join(rootAbs, urlPath));
+    if (!file.startsWith(base + sep) && file !== base) {
       res.writeHead(403);
       res.end('forbidden');
       return;
+    }
+    if (!inDist && !isFile(file)) {
+      const m = /^\/data\/samples\/([^/]+)\/(.+)$/.exec(urlPath);
+      if (m && m[1] !== 'pyramids') {
+        const alias = normalize(join(rootAbs, 'data', 'samples', 'pyramids', m[1], m[2]));
+        if (alias.startsWith(rootAbs + sep) && isFile(alias)) file = alias;
+      }
     }
     if (existsSync(file) && statSync(file).isDirectory()) file = join(file, 'index.html');
     if (!existsSync(file) || !statSync(file).isFile()) {
@@ -78,7 +95,7 @@ export function startServer({ root, port = 8000, host = '0.0.0.0', latencyMs = 0
       const addr = server.address();
       const actualPort = typeof addr === 'object' && addr !== null ? addr.port : port;
       if (!quiet) {
-        console.log(`serving ${rootAbs} on http://${host}:${actualPort}/ (HTTP/1.1${latencyMs ? `, +${latencyMs} ms tile latency` : ''}${kbps ? `, ${kbps} kbps tiles` : ''})`);
+        console.log(`serving ${rootAbs} on http://${host}:${actualPort}/ (HTTP/1.1${latencyMs ? `, +${latencyMs} ms tile latency` : ''}${kbps ? `, ${kbps} kbps tiles` : ''}${distAbs ? `; /client/dist/ from ${distAbs}` : ''})`);
         for (const [name, infos] of Object.entries(networkInterfaces())) {
           for (const i of infos ?? []) if (i.family === 'IPv4' && !i.internal) console.log(`  LAN: http://${i.address}:${actualPort}/client/dist/?overlay=1   (${name})`);
         }
@@ -109,5 +126,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     host: args.host ?? '0.0.0.0',
     latencyMs: Number(args.latency ?? 0),
     kbps: Number(args.kbps ?? 0),
+    dist: args.dist ?? null,
   });
 }
