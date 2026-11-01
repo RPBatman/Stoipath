@@ -20,14 +20,14 @@ Everything the engine reads passes through unchanged: `?manifest=URL`, `?dpr=N` 
 
 | Region | Contents | Engine source |
 |---|---|---|
-| A Top bar | `RUO` badge (opens About; its name carries the full label string), **the label string as real text** (`role="note"`, visible ≥ 1024 px, behind the badge below), slide identity from `manifest.source` (`tumor_014` · `CAMELYON16` · `H&E` · `CC0` · tissue · mpp · region), search button (Ctrl/⌘ K), keyboard-map button (?), About button | `Viewer.manifest`, `Viewer.pyramid` |
-| B Canvas | the engine's WebGL canvas filling the grid cell (not `position: fixed`; the engine's ResizeObserver resizes it with the cell); one 2D overlay canvas for measurements; HUD: identity top-left, tool line while measuring, scale bar + position bottom-left, magnification readout bottom-right (typed zoom on Enter/click); on phones the sharpness dot **and label** join the HUD | `FrameSnapshot` (per frame) |
-| C Rail | one vertical toolbar (roving tabindex): Select/pan V, Measure M, Zoom in +, Zoom out −, Fit 0, Navigator O, presets 1.25×–40× (keys 1–6), Context panel K, Keyboard map ?; printed key hints (hidden under a coarse pointer). Bottom bar with labelled 44 px tools ≤ 1079 px | `ViewerCommands` |
+| A Top bar | `RUO` badge (opens About; name `Stoipath Viewer, for research use only. Open the product label and About`, ux-copy `label.badge.aria.ruo`), **the label string as real text** (`role="note"`, visible ≥ 1024 px, behind the badge below), slide identity from `manifest.source` (`tumor_014` · `CAMELYON16` · `H&E` · `CC0` · sentence-case tissue · mpp to two decimals · region), search button (Ctrl/⌘ K; label `Search commands, panels…`, `Search…` at the 220 px step), keyboard-map button (?), About button | `Viewer.manifest`, `Viewer.pyramid` |
+| B Canvas | the engine's WebGL canvas filling the grid cell (not `position: fixed`; the engine's ResizeObserver resizes it with the cell); one 2D overlay canvas for measurements; HUD: identity top-left, tool line while measuring, scale bar + position bottom-left, magnification readout bottom-right (typed zoom on Enter/click); on phones the sharpness dot **and label** join the HUD. HUD items are not hit targets (`pointer-events: none`, as on the measurement page) except the readout button and its field | `FrameSnapshot` (per frame) |
+| C Rail | one vertical toolbar (roving tabindex): Select/pan V, Measure M, Zoom in +, Zoom out −, Fit 0, Navigator O, presets 1.25×–40× (keys 1–6), Context panel K, Keyboard map ? (dropped on short touch screens, ≤ 760 px tall; the top bar has it); printed key hints (hidden under a coarse pointer). Bottom bar with labelled 44 px tools ≤ 1079 px: eight on tablets, six on phones ≤ 599 px (Zoom in / out go; pinch, double tap and Search → Zoom remain), so it fits 320 px | `ViewerCommands` |
 | D Context dock | docked ≥ 1600 px (open by default), drawer 1080–1599, in-flow sheet ≤ 1079 (closed by default). Tabs: **Slide** (manifest facts: size in px and mm, region, levels with tiles/MB/pinned, MPP, tile format and quality, scanner, privacy note, source URL, licence link), **Measurements** (list with length, Fly to, Delete; Ctrl+Z / Ctrl+Y), **Engine** (state, sharp fraction / NTF, deficit, level drawn vs wanted, frame time EMA, resident / in flight / decoding, bytes, last gesture TTS; Run scripted path, Export JSON, Copy summary, Evict GPU tiles; link to `index.html?overlay=1` with the TSP note; device and build) | `Stage0Api`, `Metrics.lastGesture`, `ViewerUi` |
-| E Strip | sharpness indicator (button → Engine), one notice at a time, tiles chip (`Tiles resident/layers`), network chip (Network Information API), Engine button | `PlanStats`, snapshot |
-| F Navigator | the pyramid's top level (`tiles/5/0_0.jpg`) as `<img>`, viewport rectangle from four edges positioned by `transform` only, click/tap to recentre, four always-visible pan buttons (SC 2.5.7), `O` toggles it (hidden at rest on phones) | snapshot `cx cy k viewW viewH` |
+| E Strip | sharpness indicator (button → Engine), one notice at a time, tiles chip (`Tiles resident/layers`), network chip (ux-copy §6.2 strings only, shown only when offline, < 8 Mbps, or `Link OK` at 8–20 Mbps during a cold fill; silent otherwise), Engine button | `PlanStats`, snapshot |
+| F Navigator | the pyramid's top level (`tiles/5/0_0.jpg`) as `<img>`, viewport rectangle from four edges positioned by `transform` only, click/tap to recentre, four always-visible pan buttons (SC 2.5.7), `O` toggles it (hidden at rest on phones). In the DOM after the strip (Tab order canvas → rail → dock → strip → navigator, handoff §4.6) inside `.nav-host`, a grid item sharing the canvas cell. Steps left of an open drawer, palette or dock-column dialog, with its height capped so it stays out of the central zone | snapshot `cx cy k viewW viewH` |
 | Palette | `.palette-layer` (over the dock column ≥ 1080 px, the in-flow sheet row below; no scrim; a pointer-down outside closes it); the registry's commands plus a typed-zoom row (`20`, `20×`, `0.5 µm`) | registry |
-| Keymap, About | `.modal-layer--dock` dialogs (the dock column, never over the slide centre), `aria-modal="false"`, Esc closes, focus returns to the opener; the keymap is generated from the registry and opens on its filter | registry |
+| Keymap, About | `.modal-layer--dock` dialogs (the dock column, never over the slide centre; ≤ 1079 px the grid's in-flow sheet row, like the palette, so the canvas and its bottom HUD yield height), `aria-modal="false"`, Esc closes, focus returns to the opener (the slide when opened by key from the slide, or when the opener is no longer rendered); the keymap is generated from the registry and opens on its filter | registry |
 
 ## Engine contract mapping (UI element → engine field / command)
 
@@ -39,14 +39,16 @@ The engine side is `src/viewer.ts` (`startViewer({ canvas, ui, params, keys, tra
 | Scale bar + label | `k`, `renderDpr`, `mpp` (re-derived only when `k` or DPR changed) | — |
 | Position `x · y mm` | `cx`, `cy`, `mpp` (only when the centre changed) | — |
 | Navigator rectangle | `cx cy k viewW viewH` when `moved`; thumbnail size from a ResizeObserver | click → `commands.flyTo(wx, wy, logZoom)`; pan pads → `commands.panBy` (half a viewport) |
-| Sharpness indicator | `settled`, `baseLoaded`, `stats.deficitCells`, `stats.blankCells`, `stats.blurArea`, `inflight`, `navigator.onLine`, Network Information `downlink` | button → Engine section |
-| Strip notice "Beyond the scan's resolution" | `stats.magnified`, `stats.scaleAtLstar` | — |
+| Sharpness indicator | `settled`, `moved`, `baseLoaded`, `lost`, `stats.deficitCells`, `stats.blankCells`, `stats.blurArea`, `inflight`, `decodeOutstanding`, `uploadQueue`, `oldestUrgentMs`, `received`, `resident`, `bytes`, `navigator.onLine`, Network Information `downlink` / `rtt` | button → Engine section |
+| Strip notice "Beyond the scan's resolution" | the readout's own `s` (µm per CSS px, two decimals) finer than `mpp` (two decimals); `stats.scaleAtLstar` stays in the Engine section's "Level drawn" | — |
 | Tiles chip, Engine section | `resident`, `layers`, `inflight`, `decodeOutstanding`, `bytes`, `stats.*`, `lstar`, `frameMs`, `Metrics.lastGesture`, `Metrics.displayIntervalMs` | — |
 | Engine buttons | `ViewerUi.bindButtons` handlers (the measurement page's exact functions) | `path`, `export`, `copy`, `evict` (= `window.__stage0.runPath / exportJson / evictGpuTiles`) |
 | Engine status | `ViewerUi.setStatus` (loading, ready, path running/done, evicted, context loss) | — |
-| Measurement overlay | `cx cy k viewW viewH renderDpr`, `Viewer.origin` (canvas top-left, cached at resize) | pointer filter `acceptPointer` (the tool owns its pointers; the camera does not drag) |
+| Measurement overlay | `cx cy k viewW viewH renderDpr`, `Viewer.origin` (canvas top-left, cached at resize) | pointer filter `acceptPointer`: the tool owns mouse and pen pointers (the camera does not drag them); touch pointers always reach the camera (pan, pinch, double tap) and a tap places a point |
 | Zoom ± / Fit / arrows / WASD | — | `commands.zoomBy(±1)` (= the measurement page's key zoom), `commands.fit()`, `commands.panBy(10 % / 100 % of the viewport)` |
 | Canvas / gesture state | `settled` → `.app.is-gesturing` (base.css zeroes every chrome transition) | — |
+| Inertia | — | `ViewerOptions.inertia: () => !prefersReducedMotion()` (input.ts `DomInputOptions.inertia`; the measurement page omits it) |
+| Texture-layer hint after a context loss | — | `ViewerOptions.layersHintKey: 'stage0.shell.layersHint'` (the measurement page keeps `stage0.layersHint`) |
 
 ## Magnification and scale bar: the derivation
 
@@ -67,7 +69,17 @@ Measurement length: `hypot(Δx, Δy)` in level-0 px × `mpp` (µm), independent 
 
 ## Sharpness indicator (handoff §5.5, ux-copy §6.1)
 
-`src/shell/sharpness.ts`. Sharp ⇔ settled ∧ NTF = 0 ∧ deficit ≤ 0.15 octave, with the Stage-0 mapping NTF = 0 ⇔ `deficitCells = 0 ∧ blankCells = 0` and deficit = `stats.blurArea` (Σ levels coarser × viewport fraction, fading cells weighted by 1 − α). Sharpening while moving or until the base is resident; Soft after 400 ms settled with deficit > 0.15 — `Soft — slow link` when tiles are still in flight or the link estimate is < 8 Mbps, `Soft — low memory` otherwise (the texture array could not hold the level); `Offline — cached tiles only` when `navigator.onLine` is false. The label dims to 70 % after 800 ms (base.css `.is-quiet`), never to a bare dot. The polite live region gets one sentence per settle, debounced 500 ms (`Sharp. About 2.2 times, 4.55 micrometres per pixel. tumor_014, H and E.`); nothing is announced during a gesture.
+`src/shell/sharpness.ts`. Sharp ⇔ settled ∧ drawn ∧ NTF = 0 ∧ deficit ≤ 0.15 octave, with the Stage-0 mapping NTF = 0 ⇔ `deficitCells = 0 ∧ blankCells = 0`, deficit = `stats.blurArea` (Σ levels coarser × viewport fraction, fading cells weighted by 1 − α) and drawn = base resident ∧ WebGL context not lost (a lost context draws nothing, so it is never Sharp). Sharpening while moving, until the base is resident and while the context is lost.
+
+The 400 ms Soft timer runs from the last **view change**, not from the last camera motion: it restarts at settle, on a settled frame that `moved` (presets, navigator click, typed zoom, fit and fly-to under reduced motion are instant jumps) and when a Sharp view loses detail without moving (Evict GPU tiles, context restore), so every such change shows `Sharpening…` first; an instant jump to an already-resident view stays Sharp. After 400 ms with deficit > 0.15:
+
+- `Soft — slow link` when the link estimate is < 8 Mbps or the oldest in-flight base / visible request is older than the BDP rule (NFR-P17: first byte within RTT + 1 BDP ≈ 2 RTT, plus the tile body at the link estimate; floored at 1 s because the engine's in-flight age includes the worker's decode);
+- `Sharpening…` while fetches, decodes or uploads are making progress (a tile received, uploaded or evicted within the same bound);
+- `Soft — low memory` when that work is idle or stalled (a texture array too small for the view: `?layers=30` at 1920 × 1080 DPR 2 leaves 33 decoded tiles queued with no room).
+
+Soft stays Soft until Sharp or a view change (no flapping). `Offline — cached tiles only` when `navigator.onLine` is false. Measured: on loopback, reduced-motion presets, navigator clicks and Evict go Sharp → Sharpening… → Sharp (they went straight to `Soft — slow link` before); at 1920 × 1080 DPR 2 with 0 and 150 ms tile latency, 6 cold level-0 jumps produce no Soft; a 400 kbps link gives `Soft — slow link` once the oldest visible request passes 1 s; `?layers=30` gives `Soft — low memory`. The label dims to 70 % after 800 ms (base.css `.is-quiet`), never to a bare dot; its `aria-label` is written at settle.
+
+**Polite live region** (principles §8.4, ux-copy §14), spoken at settle only and at most once per 500 ms: command results first (`Measured M1 · 103.3 µm`, `Point 1 placed…`, `Deleted M1…`, `Restored M1`, `Nothing selected`, `Navigator hidden…`, refusals, export and engine results; commands are not gestures), then the strip's spoken twin when it changed (`Sharp. About 2.2 times, 4.55 micrometres per pixel. tumor_014, H and E. Tool: Select.`). A newer result replaces an unspoken older one; zoom notices are not spoken twice (the twin says the new magnification). The Dx refusal, context loss and the typed-zoom error go to the assertive region.
 
 ## Keymap (shell)
 
@@ -76,13 +88,13 @@ Generated from the command registry (`src/shell/main.ts`), so the palette, the k
 | Keys | Command |
 |---|---|
 | ← ↑ ↓ → / W A S D | pan 10 % of the viewport (`⇧` + arrows: one viewport) |
-| `+` `=` / `−` | zoom in / out 2× (the engine's key zoom) |
+| `+` `=` / `−` | zoom in / out 2× (the engine's key zoom); `_` (⇧−) is unbound, see "Not in this build" |
 | `0` / Home | fit the whole slide |
 | `1`–`6` | 1.25× · 2.5× · 5× · 10× · 20× · 40× (derived; fly to 8 / 4 / 2 / 1 / 0.5 / 0.25 µm/px) |
 | `Z` | toggle the last two magnifications |
 | Enter on the readout | typed zoom (`20`, `20×`, `0.5`, `0.5 µm/px`) |
 | `O` | navigator on / off |
-| `V` / `M` | select-pan / measure |
+| `V` / `M` | select-pan / measure (from the rail, bottom bar, palette or a key, a tool command moves focus to the slide, where its next input goes) |
 | Enter (measure tool, slide focused) | place a point at the centre crosshair (arrows pan between the two points) |
 | Space (held, measure tool) | pan with the pointer |
 | ⌫ / Del | delete the selected measurement |
@@ -90,8 +102,9 @@ Generated from the command registry (`src/shell/main.ts`), so the palette, the k
 | `K` | Context panel on / off |
 | Ctrl/⌘ K | command palette |
 | `?` / Ctrl/⌘ `/` | keyboard map |
-| Esc | close the palette or dialog → else cancel the open measurement → else leave the measure tool → else close the drawer / sheet |
-| Not in this build (struck through) | `⇧D` Dx mode (refused with the RUO string), `⇧↵` sign-out, `R`/`⇧R` rotate (no rotation in the Stage-0 engine), `P F X E T` drawing tools, F-keys, Alt, Ctrl+Space, numeric keypad |
+| Esc | close the palette or dialog (focus returns to where it was: the slide when opened from it) → else cancel the open measurement → else leave the measure tool → else close the drawer / sheet |
+| Arrow keys | pan, except inside toolbars, tab lists, list boxes, dialogs, the dock and its panels, and scrollable text regions (there they move focus or scroll) |
+| Not in this build (struck through) | `⇧D` Dx mode (refused with the RUO string), `⇧↵` sign-out, `⇧+` / `⇧−` zoom 1.2× fine (on US keyboards `+` is already `⇧=` and must stay the 2× zoom; waits for rebindable presets), `R`/`⇧R` rotate (no rotation in the Stage-0 engine), `P F X E T` drawing tools, F-keys, Alt, Ctrl+Space, numeric keypad |
 
 **Conflicts with the engine keys, resolved.** The measurement page binds O (debug overlay), R (reset view) and P (scripted path). The shell starts the engine with `keys: 'none'` and binds its own map: `O` is the navigator (principles §4.5), reset view is `0`/Home (Fit), the scripted path is the Engine section's button (or the palette's "Run scripted path"); `R` is struck through because the design reserves it for rotation, and `P` because it is the polygon tool. Ctrl/⌘ `+`/`−` stay browser zoom (the engine follows DPR changes). Arrow keys inside the toolbar, tabs and lists move focus instead of panning.
 
@@ -100,7 +113,7 @@ Generated from the command registry (`src/shell/main.ts`), so the palette, the k
 - **One rAF loop**, the engine's. The shell subscribes to `viewer.onFrame(snapshot)`; the snapshot is one object mutated in place.
 - **Per frame** only: HUD text through write-on-change slots (`TextSlot`; tabular figures, reserved widths), two scale-bar transforms, four navigator-edge transforms (only when the camera moved), and the measurement overlay canvas (only when the camera moved or the set changed). The sharpness classes change only on a state transition (gesture start, settle).
 - **No layout reads in the frame hook**: canvas size and origin come from the engine's resize handling, the thumbnail size from a ResizeObserver; media queries are cached on `change`.
-- **At rest only** (4 Hz while settled): aria-labels, preset `aria-pressed`, the tiles chip, the strip notice, the Engine section.
+- **At rest only** (4 Hz while settled): aria-labels (canvas, readout, sharpness indicator), preset `aria-pressed`, the tiles and network chips, the strip notice, the Engine section; the polite live region at settle (≤ 1 per 500 ms).
 - `.app.is-gesturing` is set at gesture start and cleared at settle (base.css zeroes chrome transitions while it is set).
 
 ## Deviations from the design and the plan
@@ -117,11 +130,23 @@ Generated from the command registry (`src/shell/main.ts`), so the palette, the k
 | Position is relative to the 15,360 px region, not the full scan | the manifest's region origin is shown in the Slide tab; the engine only knows the region |
 | The sharpness "Soft — level not yet available" reason never applies | the Stage-0 pyramid is complete; `magnified` (beyond level 0) is reported as a strip notice, not as Soft |
 | The measurement page now loads the shared `viewer` chunk as a second script (Vite splits the common engine code) | two pages, one engine module; the regression below shows no change in the protocol numbers |
+| `⇧+` / `⇧−` fine zoom is listed under "Not in this build" | on US layouts `+` is typed as `⇧=`, so "⇧+" cannot be told from the 2× `+` (the research final's own handler turns every US `+` into a fine zoom); it belongs with the rebindable presets |
+| Touch measures by tap only (no one-finger drag-measure) | one finger pans and two pinch, as with Select (handoff §4.2); a tap-tap is the measurement (the SC 2.5.7 path); mouse and pen keep drag and click-click |
+| The tier-0 queueing age is read from the scheduler's private in-flight records by `viewer.ts` (a typed read-only view) | scheduler.ts stays byte-identical for the measurement protocol; only the shell's hook reads it (`frameHooks` is empty on index.html) |
 
 ## Tests
 
 - `node harness/run.mjs` + `node harness/check-metrics.mjs`: the measurement page regression (unchanged scripts).
-- `node harness/shell-check.mjs [--only desktop|phone] [--out FILE]`: the shell at 1440 × 900 and 390 × 844 coarse (CDP pointer emulation): magnification, µm/px line, scale bar label and drawn length, position, recomputed from `__stage0.state()` and the manifest's mpp at fit and at levels 0–3; settled `Sharp`; navigator rectangle inside the thumbnail and equal to the state's viewport; click-click and keyboard measurements within 1 %; no console/page errors; a scripted 1 s drag with zero layout-reading DOM calls, mutations only in the HUD / navigator rectangle / strip indicator / gesture class, and CDP Layout/RecalcStyle counts recorded beside the same drag on index.html. `window.__shell` exposes read-only views (`hud()`, `nav()`, `sharpness()`, `measurements()`, `tool()`, `notice()`) for it.
+- `node harness/shell-check.mjs [--only desktop|desktop-dsf2|desktop-rm|phone] [--out FILE]`: four contexts, 1440 × 900 DSF 1, 1280 × 800 DSF 2, 1440 × 900 reduced motion and 390 × 844 coarse (CDP pointer emulation). Checks:
+  - HUD (magnification, µm/px line, scale bar label and drawn length, position) recomputed from `__stage0.state()` and the manifest's mpp at fit and at levels 0–3, with the render DPR expected as min(2, DSF) and the page's own ratio checked against it; settled `Sharp`;
+  - no "beyond the resolution" notice at 40× on DPR 2, and the notice past level 0;
+  - navigator rectangle inside the thumbnail and equal to the state's viewport;
+  - click-click, keyboard and (phone) touch tap-tap measurements within 1 %, the result spoken in the polite region, the HUD tool line not a hit target; a two-finger pinch with the measure tool zooms and measures nothing;
+  - a per-frame sampler: never `Sharp` while `deficitCells > 0`, `blankCells > 0` or the context is lost; under reduced motion a cold preset jump and Evict pass through `Sharpening…` and never Soft; WEBGL_lose_context: not Sharp while lost, the restore notice clears, the measurement page's layer hint is not written; no inertia under reduced motion;
+  - focus: Enter on the rail's Measure moves focus to the slide, `?` / Ctrl+K from the slide return to it on Esc, nothing focusable under the open keymap or palette, the navigator after the strip in Tab order, Shift+Tab from the rail reaches the slide in ≤ 2; the typed-zoom error keeps the field open, `aria-invalid`, assertive; the network chip silent at rest;
+  - frame cost during a 1 s drag and a wheel burst: zero layout-reading DOM calls, zero redundant DOM writes (attribute / character-data old values), while moving only text and `style.transform` in the HUD / navigator rectangle plus the gesture and indicator classes, CDP LayoutCount ≤ frames + 2 and RecalcStyleCount ≤ 2 × frames + 4, beside the same input on index.html;
+  - the phone's bottom bar at 360 and 320 px; no console or page errors.
+  `window.__shell` exposes read-only views (`hud()`, `nav()`, `sharpness()` with the machine's last input, `measurements()`, `tool()`, `notice()`, `polite()`) for it.
 - design-system `layout-check.mjs` (T1, Z1, S1, A1, A2, A3) and axe-core WCAG 2.2 AA, served over http (see Results).
 
 ## Results
@@ -156,44 +181,82 @@ Run-to-run spread on SwiftShader is larger than any refactor effect: one refacto
 
 The difference is run-to-run noise (cold-start timing: base at 3.7 s in the baseline, 0.6 s here). Constants, scheduling, LOD, upload budgets and the draw path are unchanged; the engine source differs from the baseline only by the module split.
 
-**3. `node harness/shell-check.mjs`**: 86 `ok`, 0 `FAIL`, "all shell checks passed".
-- **HUD.** At fit and at L0–L3, on both viewports, the magnification, µm/px line, scale-bar label, drawn bar length (± 1 px) and position all match values recomputed from `state()` and mpp. Examples at 390 × 844: fit `~1.04×` / `9.57 µm/px` / `1 mm` = 104.4 px; L0 `~41×` / `0.24 µm/px` / `20 µm` = 82.3 px; L2 `~10×` / `100 µm` = 102.8 px.
-- **Sharpness.** Settled `Sharp` everywhere: in the strip on desktop, in the HUD on the phone.
-- **Navigator.** The rectangle lies inside the thumbnail and equals the state's viewport within 1 px (238 px thumbnail at 1440; 138 px on the phone).
-- **Measurement.** Click-click 294.29 µm vs 294.29 µm expected, with the camera unmoved. The keyboard path (Enter, →, Enter) is within 1 % of 10 % of the viewport.
-- **Errors.** 0 console or page errors.
-- **1 s scripted drag at 1440 × 900.**
-  - 0 layout-reading DOM calls.
-  - Mutations only in the HUD, navigator rectangle, strip indicator and gesture class.
-  - CDP deltas: LayoutCount 25 and RecalcStyleCount 63 (layout 6.6 ms, style 29 ms) over 206 frames.
-  - The same drag on index.html with no chrome: LayoutCount 0 and RecalcStyleCount 1 over 203 frames.
-  - The extra cost is the HUD position text (once per frame while the centre moves) and the navigator transforms. It is non-forced, batched by the browser, and about 0.15 ms per frame.
-- **The same drag at 390 × 844 coarse:** LayoutCount 2, RecalcStyleCount 63 over 173 frames.
+After the review fixes (`viewer.ts`: snapshot fields `lost`, `received`, `oldestUrgentMs` filled only inside the host-hook block, plus the `inertia` and `layersHintKey` options; `input.ts`: the `inertia` option; both default to the old behaviour on index.html), two runs on the final build (`harness/results/2026-11-01T18-02-43-743Z-shell-reviewfix.json`, `…T18-13-35-949Z-shell-reviewfix-final.json`):
 
-**4. design-system `layout-check.mjs`** (T1 top-bar slots and label string, Z1 central-zone intrusions, S1 sheets, A1 targets 24/44 px, A2 invisible controls, A3 the settled `Sharp` label). All pass at 3840 × 2160, 1920 × 1080, 1600 × 900, 1440 × 900, 1366 × 1024 coarse, 1280 × 800, 1024 × 1366 coarse and 390 × 844 coarse: 0 intrusions, 0 undersized targets, label opacity 0.70. The label string is 346 px and never truncated at ≥ 1024 px. The one spacing-exception note is the inline licence link in the Slide tab, an exempt inline text link. The check ran over http through a scratch copy whose only change is that it accepts an http URL and waits for the engine's base before measuring; the page logic is unmodified. It cannot run over `file://`, because there the module script and the tile fetches cannot load.
+| | review-fix run 1 | review-fix final |
+|---|---|---|
+| frames | 760 | 801 |
+| frame ms p50 / p95 / max | 16.7 / 50.1 / 83.3 | 16.7 / 50 / 133.3 |
+| frame ms during gestures p50 / p95 | 50 / 66.7 | 33.4 / 50.1 |
+| gestures (n / completed / timed out) | 11 / 11 / 0 | 11 / 11 / 0 |
+| zoom-in TTS p50 / max ms | 213 / 367 | 197 / 283 |
+| zoom-in sharp-after-settle p95 ms | 0 | 0 |
+| blank frames after base | 0 | 0 |
+| tiles received / errors | 258 / 0 | 265 / 0 |
+| texture layers | 160 (viewport) | 160 (viewport) |
+| check-metrics | 20 ok, all passed | 20 ok, all passed |
 
-**5. axe-core 4.10.3, WCAG 2.2 AA** (tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa): **0 violations** in 20 runs, i.e. 1920 × 1080, 1440 × 900, 1024 × 1366 coarse and 390 × 844 coarse, each in five states (rest, palette open, keymap open, Engine section, measure tool with a measurement). axe's "incomplete" items need manual review:
+The single 133 ms frame is a SwiftShader stall of the kind seen in the A/B runs above.
+
+**3. `node harness/shell-check.mjs`**: 162 `ok`, 0 `FAIL`, "all shell checks passed" (final build; 86 before the review, when it covered less).
+- **HUD.** At fit and at L0–L3, at 1440 × 900 DSF 1, 1280 × 800 DSF 2 and 390 × 844, the magnification, µm/px line, scale-bar label, drawn bar length (± 1 px) and position all match values recomputed from `state()` and mpp with render DPR = min(2, DSF). Examples at 390 × 844: fit `~1.04×` / `9.57 µm/px` / `1 mm` = 104.4 px; L0 `~41×` / `0.24 µm/px` / `20 µm` = 82.3 px. At DPR 2, 40× shows no "beyond the resolution" notice; past level 0 it reads `Beyond the scan’s resolution — 0.21 µm/px shown, scan is 0.24 µm/px`.
+- **Sharpness.** The per-frame sampler saw 0 frames claiming Sharp over a deficit, a blank cell or a lost context, in every context (497–1066 frames each). Under reduced motion: Evict, Sharp → Sharpening… → Sharp; preset 6 to a cold area (an instant jump, logZoom −2.00 → −0.04), Sharp → Sharpening… → Sharp; no Soft on loopback. Context loss: `sharpening` with the loss notice; after the restore (86 layers) the notice clears, the magnified notice returns, and `stage0.layersHint` is not written.
+- **Measurement.** Click-click 294.29 µm vs 294.29 µm expected, with the camera unmoved; keyboard within 1 % of 10 % of the viewport; phone touch tap-tap 196.65 µm vs 196.65 µm; a pinch with the measure tool zooms logZoom −3.000 → −0.930 and adds no measurement. The result is spoken (`Measured M1 · 294.3 µm`).
+- **Focus and input** (1440 × 900). Enter on the rail's Measure moves focus to `#view`. Esc after `?` or Ctrl+K from the slide returns to `#view`. Nothing focusable sits under the open keymap or palette. The navigator follows the strip in Tab order, and Shift+Tab from the rail reaches the slide in 2. Typing `abc` in the zoom field keeps it open with `aria-invalid="true"` and the error said assertively. The network chip is hidden at rest. A reduced-motion flick coasts 0.0 px. On the phone the bottom bar holds 6 targets at 360 and 320 px, with nothing off-screen or under 44 px.
+- **Frame cost at 1440 × 900.** Drag: 219 frames, 0 layout reads, 0 redundant writes, all 272 of 281 mutations while moving were permitted, CDP LayoutCount 25 / RecalcStyleCount 63. The same drag on index.html: 0 / 1. Wheel burst: 38 frames, 0 layout reads, 0 redundant writes, LayoutCount 35 / RecalcStyleCount 36 (index.html: 0 / 0 over 36 frames). The extra layouts are one per frame from the readout, µm/px line and position text; none is forced. Phone drag: LayoutCount 2 / RecalcStyleCount 63 over 165 frames.
+
+**4. design-system `layout-check.mjs`** (T1 top-bar slots and label string, Z1 central-zone intrusions, S1 sheets, A1 targets 24/44 px, A2 invisible controls, A3 the settled `Sharp` label). All pass at rest at 3840 × 2160, 1920 × 1080, 1600 × 900, 1440 × 900, 1366 × 1024 coarse, 1280 × 800, 1024 × 1366 coarse and 390 × 844 coarse. They also pass, at the same 8 viewports, with each layer open: Engine (dock, drawer or sheet), palette, keymap and About (32 runs). That means 0 intrusions, 0 undersized targets and label opacity 0.70. Before the fixes, the drawer-state navigator entered the central zone at 1440 and 1280, the keymap and About sheets covered the canvas at 1024 and 390, and the coarse palette field was 32 px tall. The label string is 346 px and never truncated at ≥ 1024 px. The check ran over http through a scratch copy whose only change is that it accepts an http URL and waits for the engine's base before measuring; the page logic is unmodified. The states ran through a copy that evaluates one opening click before measuring. Neither can run over `file://`, because there the module script and the tile fetches cannot load.
+
+**5. axe-core 4.10.3, WCAG 2.2 AA** (tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa): **0 violations** in 20 runs on the final build, i.e. 1920 × 1080, 1440 × 900, 1024 × 1366 coarse and 390 × 844 coarse, each in five states (rest, palette open, keymap open, Engine section, measure tool with a measurement). axe's "incomplete" items need manual review:
 - `color-contrast` on text over the WebGL canvas and the HUD backdrop, which axe cannot sample. contrast-check.py covers the HUD backdrop over H&E.
 - `aria-valid-attr-value` for `aria-controls` pointing at the hidden palette, dialogs and tab panel.
 
-**6. Screenshots of the real slide** in `design/screens/integrated/shots/` (JPEG q90, 4:4:4), each one reviewed:
-- `shell-3840x2160`, `shell-1920x1080`, `shell-1440x900`, `shell-1024x1366-coarse`, `shell-390x844-coarse`;
-- `shell-1920x1080-measure` (two measurements, Measurements tab), `-palette` (typed zoom "20"), `-keymap`, `-engine`;
-- `shell-1440x900-engine-drawer` (`?engine=1`, drawer);
-- `shell-390x844-coarse-measure-nav`, `-sheet` (in-flow Context sheet), `-palette` (in-flow sheet row).
+**6. Screenshots of the real slide** in `design/screens/integrated/shots/` (JPEG q90, 4:4:4), re-taken after the review fixes and each one reviewed:
+- `shell-3840x2160`, `shell-1920x1080`, `shell-1440x900`, `shell-1024x1366-coarse`, `shell-390x844-coarse`, `shell-360x740-coarse` (six-target bottom bar);
+- `shell-1920x1080-measure` (two measurements, Measurements tab, one-line tool line), `-palette` (typed zoom "20"), `-keymap` (the "Not in this build" rows), `-engine` (with the link-estimate row);
+- `shell-1440x900-engine-drawer` (`?engine=1`; the navigator and readout step left, navigator capped above the central zone), `shell-1440x900-keymap` (the same with the keymap);
+- `shell-1024x1366-coarse-keymap` (keymap in the in-flow sheet row; the scale bar and readout sit above it);
+- `shell-390x844-coarse-measure-nav` (touch tap-tap measurement), `-sheet` (in-flow Context sheet), `-palette` (in-flow sheet row).
 
-Fixes made after reviewing them:
+Fixes made after reviewing them (first round):
 - the palette input overflowed the column and pushed the `Esc` hint out;
 - the phone navigator was 89 px, with its pads covering the thumbnail; it now takes the research final's 140 px phone step;
 - the laptop drawer sat 48 px low (an absolutely positioned grid item resolved `top` against its grid area);
 - the identity title carried a parenthetical;
 - "1 tiles".
 
+Second round, after the review: the palette placeholder and the top-bar search label were cut mid-word at some widths (now `Command or zoom…`, and `Search commands, panels…` / `Search…`, both measured to fit from 1080 to 3840 px). The drawer-state navigator's `O hide` hint wrapped onto a second row at 136 px, which made the navigator 16 px taller.
+
+## Review fixes (2026-11-01, second review: engine lens + UX/a11y lens)
+
+| # | Issue (severity) | Fix | Evidence after |
+|---|---|---|---|
+| 1 | Soft timer ran from camera stop, so instant view changes went Sharp → `Soft — slow link`; "slow link" fired on any in-flight fetch (medium) | `SharpnessMachine` takes `moved`, `lost`, `decodeOutstanding`, `uploadQueue`, `oldestUrgentMs`, `received`, `resident`: timer restarts on a settled move or a Sharp view losing detail; slow link only for < 8 Mbps or a base/visible request older than the BDP bound (2 RTT + tile body, ≥ 1 s); Sharpening while the fill progresses; low memory when it is idle or stalled | reduced-motion presets, navigator click, Evict: Sharp → Sharpening… → Sharp; DPR-2 cold jumps at 0 / 150 ms latency: no Soft; 400 kbps: `Soft — slow link`; `?layers=30`: `Soft — low memory` |
+| 2 | `Sharp` over a blank canvas after a context loss (medium) | `FrameSnapshot.lost` (= `renderer.lost`, filled in the hook block only); drawn = base ∧ ¬lost | during loss: `Sharpening…`; sampler: 0 Sharp frames while lost |
+| 3, 8 | Pinch with the measure tool panned instead of zooming; the claimed first finger never reached the engine (medium, high) | Touch pointers are never claimed: one finger pans, two pinch, a tap (< 10 px, no second finger) places a point; the engine's double tap is mirrored so a zoom tap places nothing and undoes the point its first tap placed; mouse and pen keep claim-and-drag; a finger landing during a pen measurement pans (FR-V11). `input.ts`'s pointer path is unchanged | 390 × 844 and 1024 × 1366: pinch with Measure logZoom +2.07 / +2.59, camera centre unmoved, 0 measurements; tap-tap 1.12 mm within 1 % |
+| 4 | `WebGL context restored…` notice never cleared and hid the magnified notice (low) | handled as an 8 s transient (assertive too) | notice clears; magnified notice returns |
+| 5 | A shell context loss wrote the halved layer hint that index.html reads (low) | `ViewerOptions.layersHintKey`; the shell uses `stage0.shell.layersHint` | measurement page after a shell loss: 160 layers, "viewport" |
+| 6 | HUD text captured pointer input over the slide (low) | `.shell .hud__item { pointer-events: none }`, readout button and field `auto` | `elementFromPoint` on the tool line → `#view` at 1920 and 1440 |
+| 7 | shell-check tested less than it claimed (low) | DSF-2 context with expected DPR; wheel-burst frame cost; zero redundant writes; per-frame mutation allow-list; sharpness sampler vs PlanStats; reduced-motion, evict, context-loss, touch-pinch steps; `stripSharp` aria-label moved to the settled tick; `settle()` now waits for 3 engine frames (a jumpTo was not yet applied when it returned) | 162 ok |
+| 9 | Command results were visual only (SC 4.1.3) (medium) | one polite region carries results at settle (≤ 1 / 500 ms) and the twin with `Tool: …`; zoom notices are not doubled; typed-zoom error assertive, field stays open, `aria-invalid` (SC 3.3.1) | `Measured M1 · 103.3 µm`, `Navigator hidden · O shows it`, `Select / pan`, `…Tool: Measure.` spoken |
+| 10 | Open layers covered focusable controls (SC 2.4.11) (medium) | navigator and bottom-right readout step left for drawer, palette and dock-column dialogs (1080–1599, and ≥ 1600 with the dock closed); ≤ 1079 the keymap and About take the in-flow sheet row | 0 covered focus stops (was 10 / 8 / 1); layout-check states 32/32 pass |
+| 11 | Keyboard measure path broke depending on focus; `?` / Ctrl+K returned focus to the top bar or to a hidden button; Tab order had the navigator before the rail (medium) | tool commands focus the slide; openers from the slide are the slide; hidden openers fall back to the slide; navigator moved after the strip in a `.nav-host` sharing the canvas cell | rail Enter → focus `#view`, next Enter places point 1; Esc after `?` / Ctrl+K → `#view` (also at 1024 coarse); Shift+Tab rail → slide: 2 (was 6) |
+| 12 | `Beyond the scan’s resolution` at 40× on every DPR-2 screen (medium) | based on the readout's own µm/px vs mpp (two decimals), worded `… — 0.21 µm/px shown, scan is 0.24 µm/px` | DPR 2, 40×: no notice; past level 0: notice |
+| 13 | Phone bottom bar overflowed under 375 px (SC 1.4.10) (medium) | ≤ 599 px drops Zoom in / out (`.tool--secondary`) | 6 targets fit at 360 and 320 px |
+| 14 | Drawer-state navigator entered the central zone (low) | height cap `min(180px, (25dvh − ¼(top bar + strip) − inset − 36px) × aspect)`; one-row label | Z1 0 intrusions in every state |
+| 15 | Arrow keys in a dock panel panned the slide (low) | arrow keys exempt in tab panels, regions, dialogs, the dock and `pre.snippet` | 5 × ArrowDown scrolls 85 / 200 px, camera unmoved |
+| 16 | Reduced motion did not disable inertia (low) | `DomInputOptions.inertia` (default on); the shell passes `!prefersReducedMotion()` | coast 0.0 px (reduced) vs 23–30 px (no preference) |
+| 17 | Network chip showed non-ux-copy strings (`4g · 10 Mbps`, `Network n/a`) (low) | ux-copy strings only, hidden otherwise; raw estimate in the Engine section | chip hidden at rest |
+| 18 | Names and strings (low) | bottom-bar `Zoom in` / `Zoom out` (name = label); badge name per ux-copy; touch wording under coarse (`Measure: tap two points · Select cancels`); placeholder fits; identity title sentence case, two decimals | screenshots |
+| 19 | `⇧−` ran the 2× zoom-out, contradicting the design map (low) | `_` unbound; `⇧+ / ⇧−` fine zoom listed under "Not in this build" with the US-layout reason | keymap screenshot |
+| 20 | Rail cut off on a 1133 × 744 coarse iPad mini (low) | the rail's keymap button is dropped at ≤ 760 px tall under coarse; roving tabindex skips unrendered buttons | 1133 × 744 c: 664 / 664 px, nothing cut |
+| 21 | `design/index.html` gained a "Shell on the real slide" link (low) | **not changed here**: it is not this builder's edit. The builder's activity log ends at 16:50:08 with no `design/index.html` entry. The file's mtime (16:52:10) matches the deploy worktree's `design/` update (16:52:15), and the link's title says "published site only". For the orchestrator to confirm or revert | — |
+
 ## Known limitations
 
 - Shell numbers are not protocol numbers: the Engine section's export includes the shell's DOM work; TSP-grade runs use `index.html`.
 - SwiftShader (headless) frame times are CPU-rendered; the drag numbers above are relative (shell vs index.html on the same machine), not device numbers.
-- Network chip: the Network Information API is Chromium-only; Safari and Firefox show `Network n/a`.
+- Network chip: the Network Information API is Chromium-only (and caps `downlink` at 10 Mbps); Safari and Firefox have no link estimate, so the chip shows only `Offline — showing cached tiles only` there, and the slow-link reason relies on the request-age rule alone.
 - Measurements live in memory (no persistence, no export format); the Stage-0 engine has no annotation store.
 - Magnification is objective-equivalent on an unknown display pitch (`~`, `derived`); no physical-size claim is made anywhere.
 - The keymap has no rebinding or presets yet (principles §4.5 rule 7/8); the registry is the place they would hang.

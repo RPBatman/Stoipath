@@ -265,7 +265,11 @@ for (const vp of VIEWPORTS) {
   const dpr = Math.min(DPR_CAP, vp.dsf);
   const pageDpr = await page.evaluate(() => window.__stage0.state().viewW / document.getElementById('view').clientWidth);
   check(tag, Math.abs(pageDpr - dpr) < 1e-3, `render DPR ${pageDpr} (viewW / clientWidth) == min(${DPR_CAP}, DSF ${vp.dsf}) = ${dpr}`);
+  // Settled: at least three engine frames after the call (a jumpTo is applied by the next frame; before it, state()
+  // still describes the previous, sharp view), then camera still, pipeline idle and the indicator Sharp.
   const settle = async () => {
+    const f0 = await page.evaluate(() => window.__sharpLog.frames);
+    await page.waitForFunction((f0) => window.__sharpLog.frames >= f0 + 3, f0, { timeout: 10_000, polling: 16 });
     await page.waitForFunction(() => {
       const s = window.__stage0.state();
       return !s.cameraAnimating && !s.gestureActive && s.inflight === 0 && s.decodeOutstanding === 0 && s.uploadQueue === 0 && window.__shell.sharpness().state === 'sharp';
@@ -318,10 +322,14 @@ for (const vp of VIEWPORTS) {
     await page.focus('#view');
     await page.keyboard.press('6');
     await settle();
+    // The preset's own transient notice ("~40× · 0.25 µm/px (derived)", 4 s) outranks view notices; wait it out.
+    await page.waitForFunction(() => !document.getElementById('stripNotice').textContent.startsWith('~'), null, { timeout: 10_000, polling: 100 });
+    await page.waitForTimeout(400);
     const n = await page.evaluate(() => ({ hud: window.__shell.hud(), notice: document.getElementById('stripNotice').textContent, magnified: window.__stage0.state().magnified }));
     check(tag, n.hud.magText === '40×' && !/Beyond the scan/.test(n.notice), `40× preset (${n.hud.s.toFixed(3)} µm/CSS px, engine magnified ${n.magnified}): no "Beyond the scan’s resolution" notice ("${n.notice}")`);
     await page.evaluate(() => window.__stage0.jumpTo(7680, 7680, 1.2));
     await settle();
+    await page.waitForTimeout(400); // the view notice is written by the settled 4 Hz tick
     const n2 = await page.evaluate(() => ({ s: window.__shell.hud().s, notice: document.getElementById('stripNotice').textContent }));
     check(tag, /^Beyond the scan’s resolution — \d\.\d\d µm\/px shown, scan is 0\.24 µm\/px$/.test(n2.notice), `past level 0 (${n2.s.toFixed(3)} µm/CSS px): "${n2.notice}"`);
   }

@@ -61,6 +61,8 @@
 .nav-edge--v { width: 2px; height: 1px; box-shadow: 1px 0 0 rgba(0,0,0,.7), -1px 0 0 rgba(0,0,0,.7); }
 .app.shell.nav-hidden .navigator { display: none; }
 .shell .navigator__label .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/* One label row at every navigator width (a wrapped "O hide" made the 136 px drawer-state navigator 16 px taller). */
+.shell .navigator__label .nav-hint { flex: 0 0 auto; white-space: nowrap; }
 
 /* ---- A. Top bar: search button and its collapse ladder (research final's page rules, design-system thresholds) ---- */
 .topbar__identity .cohort { font-family: var(--font-mono); }
@@ -75,7 +77,14 @@
 .topbar__search .keys { display: inline-flex; gap: 2px; }
 .topbar__slot-mode { margin-left: 0; }
 .topbar__slot-mode .btn--icon { width: var(--target-control); height: var(--target-control); }
-@container topbar (max-width: 1599px) { .topbar__search { flex-basis: 220px; } }
+/* The label is a prefix of the button's name (SC 2.5.3) and never cut mid-word: the long form at the 300 px step, "Search…"
+   at the 220 px step (≈ 118 px of text). */
+.topbar__search .ph-short { display: none; }
+@container topbar (max-width: 1599px) {
+  .topbar__search { flex-basis: 220px; }
+  .topbar__search .ph-long { display: none; }
+  .topbar__search .ph-short { display: inline; }
+}
 @container topbar (max-width: 1263px) {
   .topbar__search { flex: 0 0 auto; width: var(--target-control); min-height: var(--target-control); padding: 0; justify-content: center; }
   .topbar__search .ph, .topbar__search .keys { display: none; }
@@ -104,6 +113,8 @@
 .kv dt { color: var(--color-text-secondary); }
 .kv dd { font-family: var(--font-mono); min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums lining-nums; }
 .kv dd a { color: var(--color-text); }
+/* Facts links (licence, source) stand alone in their row, not inside a sentence: full target height (24 / 44 px). */
+.shell .kv dd a { display: inline-flex; align-items: center; min-height: var(--target); }
 .note { padding: var(--space-3) var(--space-5); font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5; }
 .note .key { vertical-align: baseline; }
 .dock-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-5); }
@@ -171,7 +182,7 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
      (P1): thumbnail height ≤ 25 % of the canvas − inset − label row (canvas = 100dvh − top bar − strip), width
      from the slide's aspect (--nav-ar, set once from the manifest); 180 px at most (research final's drawer step). */
   .app.shell:is(.dock-open, .palette-open, .dialog-open) {
-    --layout-navigator: min(180px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 32px) * var(--nav-ar, 1)));
+    --layout-navigator: min(180px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 36px) * var(--nav-ar, 1)));
   }
 }
 /* Docked width with the dock closed: the palette and dialogs use the empty dock column over the canvas edge. */
@@ -179,7 +190,7 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .navigator,
   .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   .app.shell:not(.dock-open):is(.palette-open, .dialog-open) {
-    --layout-navigator: min(240px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 32px) * var(--nav-ar, 1)));
+    --layout-navigator: min(240px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 36px) * var(--nav-ar, 1)));
   }
 }
 @media (min-width: 3200px) {
@@ -234,8 +245,9 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .meas-layer { display: none; }
 }
 
-/* Palette input: shrink inside the 320 px column and drop the native clear button so the Esc hint stays visible. */
-.palette__input input { min-width: 0; }
+/* Palette input: shrink inside the 320 px column and drop the native clear button so the Esc hint stays visible;
+   a 44 px field under a coarse pointer (the drawer-width palette at 1080–1599 px measured 32). */
+.palette__input input { min-width: 0; min-height: max(var(--target-min), var(--target)); }
 .palette__input input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
 
 /* Phone navigator (research final, decisions §4d): base.css's 25 % cap leaves ~89 px on a 390 px phone, too narrow for

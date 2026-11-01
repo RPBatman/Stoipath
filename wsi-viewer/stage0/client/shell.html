@@ -58,7 +58,7 @@
         </div>
         <button class="topbar__search" id="paletteBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="paletteLayer"
                 aria-label="Search commands, panels and zoom levels (Ctrl K)">
-          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-search"/></svg><span class="ph">Search commands, panels, zoom…</span><span class="keys" aria-hidden="true"><kbd class="key" data-mod>Ctrl</kbd><kbd class="key">K</kbd></span>
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-search"/></svg><span class="ph"><span class="ph-long">Search commands, panels…</span><span class="ph-short">Search…</span></span><span class="keys" aria-hidden="true"><kbd class="key" data-mod>Ctrl</kbd><kbd class="key">K</kbd></span>
         </button>
         <div class="topbar__slot-mode">
           <button class="btn btn--icon btn--ghost" id="keymapBtn" type="button" aria-haspopup="dialog" aria-controls="keymapDlg" aria-label="Keyboard shortcuts (?)" title="Keyboard shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg></button>
@@ -219,7 +219,7 @@
       <!-- Command palette: one placement rule (.palette-layer: over the dock column ≥ 1080 px, the in-flow sheet row below); no scrim -->
       <div class="palette-layer" id="paletteLayer" hidden>
         <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
-          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Type a command, panel or zoom…" aria-label="Search commands, panels and zoom levels" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
+          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Command or zoom…" aria-label="Search commands, panels and zoom levels" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
           <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
           <div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span class="pal-count" id="palCount"></span></div>
         </div>
