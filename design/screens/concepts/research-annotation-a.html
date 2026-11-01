@@ -1,0 +1,1701 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research annotation · Concept A · Canvas-maximal</title>
+<meta name="description" content="Stoipath Viewer (RUO) research annotation and overlay workspace, concept A: canvas-maximal. Self-contained wireframe, no network.">
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/base.css">
+<style>
+/* =============================================================================
+   Concept A · Canvas-maximal · page-specific CSS
+   Everything here is scoped to this wireframe. Component classes come from
+   base.css; this file only adds the concept's layout (no persistent rail or
+   dock; one edge drawer; HUD-resident tool line and class legend; radial tool
+   wheel; compare bar; channel grid) and the review-only scaffolding (concept
+   header, demo controls strip, rationale).
+   ========================================================================== */
+
+/* ---- Page scaffold ------------------------------------------------------ */
+html, body { height: auto; }
+body { display: flex; flex-direction: column; min-height: 100dvh; }
+.stage { display: flex; flex-direction: column; height: 100dvh; min-height: 480px; }
+.stage .app.cm { flex: 1 1 auto; height: auto; min-height: 0; }
+
+/* Concept header (review-only, outside the product chrome) */
+.concept-header {
+  flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-4);
+  height: 30px; padding: 0 var(--space-5);
+  background: var(--grey-9); color: var(--grey-83); border-bottom: 1px solid var(--grey-27);
+  font-size: var(--text-sm); white-space: nowrap; overflow: hidden;
+}
+.concept-header b { color: var(--grey-95); font-weight: var(--weight-semibold); }
+.concept-header .tag { font-family: var(--font-mono); font-size: var(--text-2xs); padding: 1px 6px; border: 1px solid var(--grey-39); border-radius: var(--radius-1); color: var(--grey-83); flex: 0 0 auto; }
+.concept-header .tag--a { background: var(--grey-83); color: var(--grey-6); border-color: var(--grey-83); font-weight: 700; }
+.concept-header .spacer { flex: 1; }
+.concept-header a { color: var(--grey-91); }
+.concept-header .thesis { overflow: hidden; text-overflow: ellipsis; }
+
+/* Demo controls strip (review-only; magenta family = the design system's
+   review-only colour, DS-9, so it can never be mistaken for product chrome) */
+.demo-strip {
+  flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3);
+  min-height: 40px; padding: var(--space-2) var(--space-5);
+  background: #23102a; color: #f3dff8; border-top: 1px solid #6b3a78;
+  font-size: var(--text-xs); white-space: nowrap; overflow-x: auto; scrollbar-width: thin; flex-wrap: wrap; row-gap: 4px;
+}
+@media (max-width: 1079px) { .demo-strip { flex-wrap: nowrap; } }
+.demo-strip .lbl { color: #d9a6e6; font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); margin-right: 2px; }
+.demo-strip select, .demo-strip button { font: inherit; color: #f3dff8; background: #3a1d44; border: 1px solid #7a4a89; border-radius: var(--radius-1); min-height: 24px; padding: 0 6px; cursor: pointer; }
+.demo-strip select:hover, .demo-strip button:hover { background: #4a2757; }
+.demo-strip button[aria-pressed="true"] { background: #e879f9; color: #1a0b1f; border-color: #e879f9; font-weight: 600; }
+.demo-strip .sep { width: 1px; height: 18px; background: #6b3a78; margin: 0 2px; flex: 0 0 auto; }
+.demo-strip .fx { font-family: var(--font-mono); color: #d9a6e6; }
+.demo-strip output { font-family: var(--font-mono); color: #f3dff8; }
+.demo-strip .grp { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+
+/* ---- The app: canvas-maximal layout ------------------------------------- */
+.stage .app.cm {
+  --layout-dock: 360px;                          /* one edge drawer, research panels need the width */
+  grid-template-columns: 0 minmax(0, 1fr) 0;     /* no persistent rail, no persistent dock */
+  grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-strip);
+  grid-template-areas: "topbar topbar topbar" "rail canvas dock" "strip strip strip";
+}
+@media (min-width: 3200px) { .stage .app.cm { --layout-dock: 440px; } }
+.stage .app.cm .rail { display: none; }
+.stage .app.cm .dock { display: none; }
+/* The dock element is the drawer: summoned by key, over the canvas edge, never the centre */
+.stage .app.cm.drawer-open .dock {
+  display: flex; position: absolute; top: var(--layout-topbar); right: 0; bottom: var(--layout-strip);
+  width: var(--layout-dock); height: auto; z-index: var(--z-drawer);
+  border-left: 1px solid var(--color-border-strong); box-shadow: var(--shadow-3);
+}
+/* Escape hatch for discoverability: ` pins the classic rail + dock */
+.stage .app.cm.chrome-pinned { grid-template-columns: var(--layout-rail) minmax(0, 1fr) var(--layout-dock); }
+.stage .app.cm.chrome-pinned .rail { display: flex; }
+.stage .app.cm.chrome-pinned .dock, .stage .app.cm.chrome-pinned.drawer-open .dock { display: flex; position: static; width: auto; height: auto; box-shadow: none; border-left: 1px solid var(--color-border); }
+
+/* Top bar: research identity slot */
+.topbar__identity .cohort { font-family: var(--font-mono); font-weight: var(--weight-semibold); white-space: nowrap; flex: 0 0 auto; }
+.topbar__identity .cohort .slide { color: var(--color-text); }
+.topbar__identity .cohort .coh { color: var(--color-text-secondary); font-weight: var(--weight-regular); }
+.topbar__pin { flex: 0 0 auto; }
+.topbar .chip--licence { flex: 0 0 auto; }
+
+/* Canvas panes (compare, curtain, channel grid) */
+.panes { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; gap: 0; }
+.pane { position: relative; overflow: hidden; background: var(--color-canvas-bg); min-width: 0; min-height: 0; }
+.pane svg.canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.app.cm.compare .panes { grid-template-columns: 1fr 1fr; gap: 2px; background: var(--grey-57); }
+.app.cm.compare.curtain .panes { grid-template-columns: 1fr; }
+.pane.is-active { box-shadow: inset 0 0 0 2px var(--grey-95), inset 0 0 0 3px var(--grey-6); } /* QuPath convention: active pane outlined (luminance) */
+.pane__id { position: absolute; top: var(--layout-hud-inset); left: var(--layout-hud-inset); z-index: var(--z-hud); }
+.pane .curtain-layer { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--curtain, 56%)); }
+.curtain-handle {
+  position: absolute; top: 0; bottom: 0; left: var(--curtain, 56%); width: 2px; margin-left: -1px; background: var(--grey-95);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.7); z-index: var(--z-hud); cursor: col-resize;
+}
+.curtain-handle__grip {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: var(--target); height: var(--target); min-width: 24px; min-height: 24px; border-radius: var(--radius-2);
+  background: var(--color-hud-backdrop); color: var(--grey-95); border: 1px solid var(--grey-95);
+  display: grid; place-items: center; font: 700 11px/1 var(--font-mono); cursor: col-resize;
+}
+.app.cm.mx-grid .panes { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 2px; background: var(--grey-39); }
+.app.cm.mx-grid .pane--main { display: none; }
+.pane--ch { display: none; }
+.app.cm.mx-grid .pane--ch { display: block; }
+.app.cm.mx-grid .hud, .app.cm.mx-grid .tr-stack, .app.cm.mx-grid .compare-bar { display: none; }
+.app.cm:not(.compare) .pane--b, .app.cm:not(.compare) .curtain-handle, .app.cm:not(.compare) .curtain-layer { display: none; }
+.app.cm.compare:not(.curtain) .curtain-handle, .app.cm.compare:not(.curtain) .curtain-layer { display: none; }
+.app.cm.compare.curtain .pane--b { display: none; }
+.app.cm.compare .pane__id { display: block; }
+.app.cm.compare #pane-a .pane__id { display: none; }   /* the compare bar names the left slide; the tool line owns that corner */
+.app.cm:not(.compare) .pane__id { display: none; }
+
+/* Scenes: colours per stain via custom properties (inherit into <use> shadow trees) */
+.scene--he  { --sc-glass:#f4f0f1; --sc-capsule:#d9a3bd; --sc-node:#e8bdd0; --sc-sinus:#f1d6e1; --sc-medulla:#e3b1c8; --sc-cord:#d697b8; --sc-foll:#8a6fb8; --sc-germ:#b9a3d6; --sc-nuc:#6f559f; --sc-met-cyto:#f3dde6; --sc-met-nuc:#5c4493; --sc-met-edge:#b58cc7; --sc-vessel:#efc9d6; --sc-trab:#d4a0ba; }
+.scene--ihc { --sc-glass:#f5f4f2; --sc-capsule:#c9cfdc; --sc-node:#dde1ea; --sc-sinus:#ecf0f5; --sc-medulla:#d6dbe6; --sc-cord:#c3cad9; --sc-foll:#aeb8d6; --sc-germ:#cfd6e8; --sc-nuc:#9aa6c9; --sc-met-cyto:#a85a22; --sc-met-nuc:#5a2e10; --sc-met-edge:#7a3f14; --sc-vessel:#e4e8ef; --sc-trab:#c3cad9; }
+.scene--mx  { --col-dapi:#cfd4e6; --col-cd3:#7cc3f0; --col-cd8:#1a8893; --col-panck:#be7b00; --col-ki67:#f0e442; --col-cd68:#4f7ddb; --col-pdl1:#c2673a; --col-sma:#9aa0a6;
+              --vis-dapi:1; --vis-cd3:1; --vis-cd8:1; --vis-panck:1; --vis-ki67:1; --vis-cd68:1; --vis-pdl1:0; --vis-sma:0; }
+svg.canvas .world { transform-box: view-box; transform-origin: 800px 450px; }
+svg.canvas .ovl--halo { stroke: var(--ann-halo-dark); fill: none; }
+svg.canvas .ovl--halo-light { stroke: var(--ann-halo-light); fill: none; }
+svg.canvas .ann-fill { fill-opacity: 0; }
+.app.cm.fill-on svg.canvas .ann-fill { fill-opacity: var(--ann-fill-alpha); }
+svg.canvas .ai-heat { display: none; }
+.app.cm.present-heat svg.canvas .ai-heat { display: block; }
+.app.cm.present-heat svg.canvas .ai-outline { display: none; }
+.app.cm.overlays-off svg.canvas #overlays, .app.cm.overlays-off svg.canvas #detections { display: none; }
+.app.cm.ai-off svg.canvas .ai-layer { display: none; }
+.app.cm.det-off svg.canvas #detections { display: none; }
+.app.cm.deutan svg.canvas #overlays, .app.cm.deutan svg.canvas #detections { filter: url(#f-deutan); }
+svg.canvas #detections circle { stroke: rgba(0,0,0,.65); stroke-width: .7; }
+.app.cm.lod-poly svg.canvas #detections circle { fill-opacity: .15; stroke-width: 1.1; }
+svg.canvas .pen-demo { display: none; }
+.touch-demo { display: none; position: absolute; left: 10%; bottom: 14%; z-index: var(--z-hud); align-items: center; gap: 8px; pointer-events: none; }
+.touch-demo__ring { width: 44px; height: 44px; border-radius: 50%; border: 2px dashed #e879f9; box-shadow: 0 0 0 1px rgba(0,0,0,.6); }
+.touch-demo__label { font: 600 11px/1 var(--font-mono); color: #1a0b1f; background: #e879f9; padding: 3px 6px; border-radius: 2px; }
+svg.canvas .met-cells { fill: var(--sc-met-cyto); stroke: var(--sc-met-edge); stroke-width: 1.2; }
+svg.canvas .met-nuc { fill: var(--sc-met-nuc); }
+/* Degraded pixels: honest softness (never blank) */
+.app.cm.net-cold4g svg.canvas .pixels { filter: url(#f-soft); }
+.app.cm.sharp-sharpening svg.canvas .pixels { filter: url(#f-soft-1); }
+.app.cm.sharp-soft svg.canvas .pixels { filter: url(#f-soft); }
+.app.cm.net-tileerr svg.canvas .tile-fail { display: block; }
+svg.canvas .tile-fail { display: none; }
+/* Multiplex channel groups */
+svg.canvas [data-ch] { mix-blend-mode: screen; }
+svg.canvas [data-ch="dapi"]  { fill: var(--col-dapi);  opacity: var(--vis-dapi); }
+svg.canvas [data-ch="cd3"]   { fill: var(--col-cd3);   opacity: var(--vis-cd3); }
+svg.canvas [data-ch="cd8"]   { fill: var(--col-cd8);   opacity: var(--vis-cd8); }
+svg.canvas [data-ch="panck"] { fill: var(--col-panck); opacity: var(--vis-panck); }
+svg.canvas [data-ch="ki67"]  { fill: var(--col-ki67);  opacity: var(--vis-ki67); }
+svg.canvas [data-ch="cd68"]  { fill: var(--col-cd68);  opacity: var(--vis-cd68); }
+svg.canvas [data-ch="pdl1"]  { fill: var(--col-pdl1);  opacity: var(--vis-pdl1); }
+svg.canvas [data-ch="sma"]   { fill: none; stroke: var(--col-sma); opacity: var(--vis-sma); }
+.pane--ch { --vis-dapi:0; --vis-cd3:0; --vis-cd8:0; --vis-panck:0; --vis-ki67:0; --vis-cd68:0; --vis-pdl1:0; --vis-sma:0; }
+.pane--ch[data-only="dapi"]  { --vis-dapi:1; }  .pane--ch[data-only="cd3"]  { --vis-cd3:1; }  .pane--ch[data-only="cd8"] { --vis-cd8:1; }
+.pane--ch[data-only="panck"] { --vis-panck:1; } .pane--ch[data-only="ki67"] { --vis-ki67:1; } .pane--ch[data-only="cd68"] { --vis-cd68:1; }
+.app.cm.mx-grid .pane--ch .pane__id { display: block; }
+
+/* HUD additions: tool line (top-left), class legend (top-right under the navigator) */
+.hud__tool { font-family: var(--font-ui); display: inline-flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-3) 0 0; min-height: var(--target-min); }
+.hud__tool button { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target-min); min-width: var(--target-min); padding: 0 var(--space-3); border-radius: var(--radius-1); color: var(--color-text-on-canvas); }
+.hud__tool button:hover { background: rgba(255,255,255,.12); }
+.hud__tool .icon { width: 16px; height: 16px; }
+.hud__tool .sep { width: 1px; height: 14px; background: rgba(255,255,255,.3); }
+.hud__tool .dim { color: var(--grey-75); font-size: var(--text-xs); }
+.hud__hint { font-family: var(--font-ui); font-size: var(--text-xs); color: var(--grey-83); }
+.hud__hint .key { background: rgba(0,0,0,.4); border-color: rgba(255,255,255,.35); color: var(--grey-91); height: 16px; min-width: 16px; }
+.tr-stack { position: absolute; top: var(--layout-hud-inset); right: var(--layout-hud-inset); z-index: var(--z-navigator); display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-3); pointer-events: none; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
+.tr-stack > * { pointer-events: auto; }
+.tr-stack .navigator { position: static; }
+.app.cm.nav-hidden .tr-stack .navigator { display: none; }
+.app.cm.drawer-open:not(.chrome-pinned) .tr-stack, .app.cm.drawer-open:not(.chrome-pinned) .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+.app.cm.drawer-open .legend-hud, .app.cm.chrome-pinned .legend-hud { display: none; }
+.legend-hud {
+  width: max(var(--layout-navigator), 236px); background: var(--color-hud-backdrop); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2);
+  color: var(--color-text-on-canvas); font-size: var(--text-xs); padding: var(--space-2) var(--space-3) var(--space-3);
+}
+.app.cm:not(.legend-on) .legend-hud { display: none; }
+.legend-hud__title { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--grey-75); min-height: 20px; margin-top: var(--space-2); }
+.legend-hud__title .key { height: 16px; min-width: 16px; background: rgba(0,0,0,.4); border-color: rgba(255,255,255,.35); color: var(--grey-91); }
+.legend-hud .legend { gap: 0; display: grid; grid-template-columns: 1fr; }
+.legend-hud .legend__item { color: var(--color-text-on-canvas); font-size: var(--text-xs); padding: 0 var(--space-2); min-height: 22px; width: 100%; justify-content: flex-start; text-align: left; white-space: nowrap; }
+.legend-hud .legend__item:hover { background: rgba(255,255,255,.12); }
+.legend-hud .legend__item .count { margin-left: auto; color: var(--grey-83); }
+.legend-hud .legend__item .swatch { width: 10px; height: 10px; }
+.legend-hud .legend__item.is-zero { opacity: .7; }
+
+/* Compare bar: top edge of the canvas, outside the central 50 % */
+.compare-bar {
+  position: absolute; top: calc(var(--layout-hud-inset) + 36px); left: var(--layout-hud-inset); z-index: var(--z-navigator);
+  display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3);
+  background: var(--color-hud-backdrop); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); color: var(--color-text-on-canvas);
+  font-size: var(--text-xs); white-space: nowrap; max-width: calc(100% - var(--layout-navigator) - 48px);
+}
+.app.cm.compare #hud-hint, .app.cm.compare #hud-lod { display: none; }
+.app.cm:not(.compare) .compare-bar { display: none; }
+.compare-bar .pair { font-family: var(--font-mono); display: inline-flex; gap: var(--space-2); align-items: center; }
+.compare-bar .segmented { background: rgba(0,0,0,.35); border-color: rgba(255,255,255,.3); }
+.compare-bar .segmented__item { color: var(--grey-83); min-height: 20px; font-size: var(--text-xs); padding: 0 var(--space-3); }
+.compare-bar .segmented__item[aria-checked="true"] { color: var(--grey-6); background: var(--grey-91); box-shadow: none; }
+.compare-bar .btn { min-height: var(--target-min); color: var(--color-text-on-canvas); background: transparent; border-color: rgba(255,255,255,.3); font-size: var(--text-xs); padding: 0 var(--space-3); }
+.compare-bar .btn[aria-pressed="true"] { background: var(--grey-91); color: var(--grey-6); }
+.compare-bar .key { background: rgba(0,0,0,.4); border-color: rgba(255,255,255,.35); color: var(--grey-91); height: 16px; min-width: 16px; }
+
+/* Radial tool wheel: transient, user-invoked, GPU layer in the product */
+.radial { position: absolute; width: 236px; height: 236px; z-index: var(--z-sheet); transform: translate(-50%, -50%); pointer-events: none; }
+.radial[hidden] { display: none; }
+.radial__ring { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, transparent 0 52px, rgba(20,20,20,.72) 53px 118px, transparent 119px); border: 1px solid rgba(255,255,255,.25); pointer-events: auto; }
+.radial__item { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; color: var(--grey-91); pointer-events: auto; background: transparent; }
+.radial__item .icon { width: 18px; height: 18px; }
+.radial__item .k { font: 600 9px/1 var(--font-mono); color: var(--grey-75); }
+.radial__item:hover, .radial__item.is-hover, .radial__item:focus-visible { background: rgba(255,255,255,.16); }
+.radial__item[aria-checked="true"] { background: var(--grey-91); color: var(--grey-6); }
+.radial__item[aria-checked="true"] .k { color: var(--grey-27); }
+.radial__centre { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%; background: rgba(20,20,20,.86); border: 1px solid rgba(255,255,255,.35); color: var(--grey-91); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; pointer-events: auto; font-size: var(--text-xs); }
+.radial__centre .swatch { width: 16px; height: 16px; }
+.radial__centre .k { font: 600 9px/1 var(--font-mono); color: var(--grey-75); }
+.radial__label { position: absolute; left: 50%; top: calc(100% + 4px); transform: translateX(-50%); white-space: nowrap; font-size: var(--text-xs); color: var(--grey-91); background: rgba(20,20,20,.8); padding: 2px 8px; border-radius: var(--radius-1); pointer-events: none; }
+
+/* Bottom bar (tablet portrait, phone): five targets; drawing is the wheel */
+.app.cm .bottombar .tool { --target: 48px; width: 56px; height: 48px; }
+.app.cm .bottombar .tool .tool__label { display: block; }
+
+/* Drawer internals */
+.dock__tabs { flex-wrap: wrap; }
+.dock__tabs .tab { padding: 0 var(--space-4); flex: 1 1 auto; justify-content: center; }
+.dock__tabs .tab .key { margin-left: 2px; height: 16px; min-width: 16px; }
+.dock__body { position: relative; }
+.dock__pane { display: none; }
+.dock__pane.is-active { display: block; }
+.dock .panel__header { position: sticky; top: 0; background: var(--color-surface-0); z-index: 1; }
+.dock .filters { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-5); }
+.dock .filters .chip { min-height: var(--target-min); }
+.dock .search { padding: 0 var(--space-5) var(--space-3); }
+.slide-row { display: grid; grid-template-columns: 56px 1fr auto; gap: var(--space-4); align-items: center; min-height: 52px; padding: var(--space-2) var(--space-5); text-align: left; width: 100%; color: var(--color-text); }
+.slide-row:hover { background: var(--color-row-hover); }
+.slide-row[aria-selected="true"] { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }
+.slide-row__thumb { width: 56px; height: 34px; background: var(--grey-22); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); overflow: hidden; }
+.slide-row__thumb svg { width: 100%; height: 100%; }
+.slide-row__name { font-family: var(--font-mono); font-weight: var(--weight-semibold); }
+.slide-row__meta { font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.slide-row__tags { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.run { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-2) var(--space-4); align-items: center; padding: var(--space-3) var(--space-5); border-bottom: 1px solid var(--color-divider); font-size: var(--text-sm); }
+.run__state { font-family: var(--font-mono); font-size: var(--text-xs); }
+.run__name { font-weight: var(--weight-medium); }
+.run__meta { grid-column: 2 / span 2; font-size: var(--text-xs); color: var(--color-text-secondary); font-family: var(--font-mono); display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.run .progress-bar { grid-column: 2 / span 2; }
+.run__actions { display: flex; gap: 2px; }
+.channel-row { display: grid; grid-template-columns: var(--target-min) 14px 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-divider); }
+.channel-row__name { font-weight: var(--weight-medium); font-size: var(--text-sm); display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.channel-row__name .kind { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; }
+.channel-row__win { grid-column: 3 / span 2; display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
+.channel-row__win .range-dual { height: 20px; }
+.channel-row__win .histogram { height: 18px; padding: 0; position: absolute; left: 0; right: 0; top: -10px; opacity: .55; }
+.channel-row__win .range-dual input[type="range"] { height: 20px; }
+.channel-row__win .num { font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
+.channel-row.is-off .channel-row__name, .channel-row.is-off .channel-row__win { opacity: .5; }
+.channel-row__reason { grid-column: 3 / span 2; font-size: var(--text-xs); color: var(--color-text-secondary); }
+.app.cm:not(.slide-mx) .mx-only { display: none !important; }
+.app.cm.slide-mx .he-only { display: none !important; }
+.dropzone { margin: var(--space-4) var(--space-5); padding: var(--space-4); border: 1.5px dashed var(--color-border-strong); border-radius: var(--radius-3); font-size: var(--text-xs); color: var(--color-text-secondary); text-align: center; }
+.dropzone .key { margin: 0 2px; }
+.hint-line { font-size: var(--text-xs); color: var(--color-text-secondary); padding: var(--space-2) var(--space-5); }
+.pin-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5); border-top: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); }
+
+/* Dialog layer */
+.modal-layer[hidden] { display: none; }
+.modal-layer { align-items: start; }
+.palette-layer { position: absolute; left: 0; right: 0; top: var(--layout-topbar); display: flex; justify-content: center; padding-top: var(--space-5); z-index: var(--z-palette); pointer-events: none; }
+.palette-layer[hidden] { display: none; }
+.palette-layer .palette { pointer-events: auto; }
+.keymap__row .tag-new { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--color-text-secondary); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; }
+
+/* Jupyter widget surface */
+.notebook { display: none; flex: 1 1 auto; min-height: 0; overflow: auto; background: #ffffff; color: #1a1a1a; padding: 16px 24px; font-family: var(--font-ui); }
+.stage.surface-widget .notebook { display: block; }
+.stage.surface-widget > .app.cm { display: none; }
+.nb-cell { display: grid; grid-template-columns: 72px 1fr; gap: 8px; align-items: start; margin-bottom: 8px; }
+.nb-prompt { font-family: var(--font-mono); font-size: 12px; color: #303f9f; text-align: right; padding-top: 6px; }
+.nb-prompt--out { color: #d84315; }
+.nb-code { margin: 0; background: #f7f7f7; border: 1px solid #cfcfcf; border-radius: 2px; padding: 6px 10px; font: 13px/1.5 var(--font-mono); color: #1a1a1a; white-space: pre; overflow-x: auto; }
+.nb-code .kw { color: #008000; font-weight: 700; } .nb-code .str { color: #ba2121; } .nb-code .cm { color: #408080; font-style: italic; }
+.nb-widget { width: 1200px; height: 640px; border: 1px solid #cfcfcf; border-radius: 4px; overflow: hidden; position: relative; transform-origin: top left; }
+.nb-widget .app.cm { height: 100%; width: 100%; color: var(--color-text); }
+.nb-widget .app.cm.app--widget { --layout-topbar: 36px; --layout-strip: 24px; --layout-dock: 320px; --layout-navigator: 180px; }
+.nb-widget .app.cm.app--widget .topbar__identity .coh { display: none; }
+.nb-widget .app.cm.app--widget .strip { font-size: var(--text-xs); }
+.nb-widget .app.cm.app--widget .topbar .btn { --target: 28px; }
+.nb-widget .app.cm.app--widget .hud__hint { display: none; }
+.nb-note { font-size: 12px; color: #555; margin: 8px 0 0 80px; }
+
+/* Reduced motion already zeroes --motion-*; the radial and panes have no animation by design. */
+
+/* ---- Rationale (below the fold) ----------------------------------------- */
+.rationale { padding: var(--space-6) var(--space-8) var(--space-12); max-width: 1180px; }
+.rationale > summary { font-size: var(--text-lg); font-weight: var(--weight-semibold); min-height: var(--target); display: flex; align-items: center; gap: var(--space-3); }
+.rationale h3 { font-size: var(--text-xl); margin: var(--space-8) 0 var(--space-4); }
+.rationale p, .rationale li { font-size: var(--text-md); line-height: var(--leading-body); color: var(--color-text); }
+.rationale ul, .rationale ol { padding-left: 1.4em; display: flex; flex-direction: column; gap: var(--space-2); }
+.rationale ul li { list-style: disc; } .rationale ol li { list-style: decimal; }
+.rationale .table { font-size: var(--text-sm); }
+.rationale code { font-size: .92em; background: var(--color-surface-1); padding: 0 4px; border-radius: 2px; }
+.rationale .note { color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+/* ---- Breakpoints (principles §7 collapse order; this concept starts collapsed) */
+/* Laptop / tablet landscape (1080–1599): identical to desktop; drawer already over the edge */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .stage .app.cm:not(.chrome-pinned) { grid-template-columns: 0 minmax(0, 1fr) 0; }
+  .stage .app.cm.chrome-pinned { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
+  .stage .app.cm.chrome-pinned .dock { position: absolute; top: var(--layout-topbar); right: 0; bottom: var(--layout-strip); width: var(--layout-dock); z-index: var(--z-drawer); box-shadow: var(--shadow-3); }
+}
+/* Tablet portrait (600–1079): bottom bar; drawer → bottom sheet ≤ 40 % */
+@media (min-width: 600px) and (max-width: 1079px) {
+  .stage .app.cm, .stage .app.cm.chrome-pinned {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar) var(--layout-strip);
+    grid-template-areas: "topbar" "canvas" "bottombar" "strip";
+  }
+  .stage .app.cm .rail, .stage .app.cm.chrome-pinned .rail { display: none; }
+  .stage .app.cm .bottombar { display: flex; }
+  .stage .app.cm .dock, .stage .app.cm.chrome-pinned .dock { display: none; }
+  .stage .app.cm.drawer-open .dock, .stage .app.cm.chrome-pinned.drawer-open .dock {
+    display: flex; position: absolute; left: 0; right: 0; top: auto; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); width: auto; max-height: var(--layout-sheet-max);
+    border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet);
+  }
+  .stage .app.cm .topbar__pin { display: none; }
+  .compare-bar .pair { display: none; }
+  svg.canvas .pen-demo { display: block; }
+  .touch-demo { display: flex; }
+}
+/* Phone (≤ 599): top bar 44, bottom bar 56, strip hidden, navigator behind O, point + measure only */
+@media (max-width: 599px) {
+  .stage .app.cm, .stage .app.cm.chrome-pinned {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar);
+    grid-template-areas: "topbar" "canvas" "bottombar";
+  }
+  .stage .app.cm .rail, .stage .app.cm .strip, .stage .app.cm.chrome-pinned .rail { display: none; }
+  .stage .app.cm .bottombar { display: flex; }
+  .stage .app.cm .dock, .stage .app.cm.chrome-pinned .dock { display: none; }
+  .stage .app.cm.drawer-open .dock, .stage .app.cm.chrome-pinned.drawer-open .dock {
+    display: flex; position: absolute; left: 0; right: 0; top: auto; bottom: var(--layout-bottombar); width: auto; max-height: 60vh;
+    border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet);
+  }
+  .stage .app.cm .topbar__pin, .stage .app.cm .topbar .chip--licence { display: none; }
+  .topbar__identity .cohort .coh { display: none; }
+  .tr-stack .navigator { display: none; }
+  .app.cm.nav-open .tr-stack .navigator { display: block; }
+  .app.cm .legend-hud { display: none; }
+  .hud__tool .dim, .hud__hint { display: none; }
+  .hud .hud__sharp { display: inline-flex; }
+  .compare-bar { max-width: calc(100% - 24px); }
+  .compare-bar .pair, .compare-bar .cb-swap { display: none; }
+  .radial { width: 220px; height: 220px; }
+  .concept-header .thesis, .concept-header .tag--date { display: none; }
+  .palette-layer { padding: var(--space-3); }
+  .palette { width: calc(100vw - 16px); }
+}
+/* Principles §2.5: the full label string is visible at ≥ 1024 px. base.css's @container query measures the top bar's
+   content box (viewport − 16 px padding), so it hides the string at exactly 1024; override here (Design note D-A7). */
+@media (min-width: 1024px) { .stage .app.cm .topbar__label.badge-string { display: inline; } }
+/* Short viewports: keep HUD position line hidden (base.css); nothing else collapses */
+</style>
+</head>
+<body>
+<a class="skip-link" href="#canvas">Skip to slide</a>
+
+<!-- ====== Inline SVG defs: icons (design-system set), filters, synthetic scenes. No network. ====== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+    <symbol id="i-polygon" viewBox="0 0 24 24"><path d="M6 4l12 3 2 10-8 4-7-6z"/></symbol>
+    <symbol id="i-freehand" viewBox="0 0 24 24"><path d="M4 16c3-8 6 2 9-4s4 6 7 0"/></symbol>
+    <symbol id="i-polyline" viewBox="0 0 24 24"><path d="M3 17l6-9 5 6 7-10"/></symbol>
+    <symbol id="i-rect" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14"/></symbol>
+    <symbol id="i-ellipse" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6"/></symbol>
+    <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+    <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+    <symbol id="i-brush" viewBox="0 0 24 24"><path d="M14 4l6 6-8 8-6-6zM6 12l-2 2a3 3 0 004 4l2-2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="14"/></symbol>
+    <symbol id="i-curtain" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10 10a3 3 0 004 4M2 12s4-7 10-7c2 0 4 .6 5.5 1.5M22 12s-4 7-10 7c-2 0-4-.6-5.5-1.5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.7M20 4v5h-5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1114 6M4 12V7M4 12h5"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 19h16"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16zM13 7l3 3"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><rect x="12" y="11" width="6" height="5"/></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113-6l3 3M20 12a8 8 0 01-13 6l-3-3M17 4v5h-5M7 20v-5h5"/></symbol>
+    <symbol id="i-model" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3h6l-1 7 3 3v2H7v-2l3-3zM12 15v6"/></symbol>
+    <symbol id="i-channels" viewBox="0 0 24 24"><circle cx="9" cy="10" r="5"/><circle cx="15" cy="10" r="5"/><circle cx="12" cy="15" r="5"/></symbol>
+    <symbol id="i-touch" viewBox="0 0 24 24"><path d="M9 11V5a2 2 0 014 0v6M13 9a2 2 0 014 0v3M17 11a2 2 0 014 0v4a7 7 0 01-7 7h-2a6 6 0 01-5-3l-4-6a2 2 0 013-2l3 3V5"/></symbol>
+
+    <!-- Deuteranopia simulation (Machado 2009, severity 1.0): applied to the overlay group only -->
+    <filter id="f-deutan" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.367322 0.860646 -0.227968 0 0  0.280085 0.672501 0.047413 0 0  -0.011820 0.042940 0.968881 0 0  0 0 0 1 0"/></filter>
+    <!-- Honest softness: the best resident ancestor, magnified -->
+    <filter id="f-soft" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="f-soft-1" x="-2%" y="-2%" width="104%" height="104%"><feGaussianBlur stdDeviation="0.8"/></filter>
+    <filter id="f-soft-tile" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="3"/></filter>
+    <radialGradient id="g-heat-1"><stop offset="0" stop-color="#8e3a15" stop-opacity=".95"/><stop offset=".55" stop-color="#be7b00" stop-opacity=".7"/><stop offset="1" stop-color="#f0e442" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g-heat-2"><stop offset="0" stop-color="#be7b00" stop-opacity=".8"/><stop offset="1" stop-color="#f0e442" stop-opacity="0"/></radialGradient>
+    <clipPath id="c-tiles"><rect x="420" y="140" width="130" height="130"/><rect x="550" y="140" width="130" height="130"/><rect x="420" y="270" width="130" height="130"/></clipPath>
+
+    <!-- Synthetic sentinel lymph node (CAMELYON-style, NOT a real slide). Colours via --sc-* on the host. -->
+    <symbol id="node-scene" viewBox="0 0 1600 900" overflow="visible">
+      <rect x="-1000" y="-1000" width="3600" height="2900" fill="var(--sc-glass)"/>
+      <ellipse cx="800" cy="470" rx="762" ry="402" fill="var(--sc-capsule)"/>
+      <ellipse cx="800" cy="470" rx="740" ry="382" fill="var(--sc-node)"/>
+      <ellipse cx="800" cy="470" rx="705" ry="352" fill="none" stroke="var(--sc-sinus)" stroke-width="22"/>
+      <ellipse cx="780" cy="520" rx="420" ry="190" fill="var(--sc-medulla)"/>
+      <g fill="none" stroke="var(--sc-cord)" stroke-width="12" stroke-linecap="round">
+        <path d="M430 560q70-60 150 0t150 0t150 0t150 0t110 0"/>
+        <path d="M470 620q60-50 130 0t130 0t130 0t130 0"/>
+        <path d="M520 470q60-40 120 0t120 0t120 0t120 0"/>
+      </g>
+      <g fill="none" stroke="var(--sc-trab)" stroke-width="7" opacity=".8">
+        <path d="M120 400q120 60 260 40"/><path d="M1480 520q-120-50-240-30"/><path d="M700 110q40 90 20 180"/><path d="M980 810q-20-80 10-160"/>
+      </g>
+      <g fill="var(--sc-vessel)" stroke="var(--sc-trab)" stroke-width="3">
+        <ellipse cx="470" cy="500" rx="42" ry="26"/><ellipse cx="690" cy="530" rx="22" ry="14"/>
+      </g>
+      <g id="follicles">
+        <g><circle cx="230" cy="420" r="58" fill="var(--sc-foll)"/><circle cx="230" cy="420" r="29" fill="var(--sc-germ)"/></g>
+        <g><circle cx="300" cy="300" r="50" fill="var(--sc-foll)"/><circle cx="300" cy="300" r="24" fill="var(--sc-germ)"/></g>
+        <g><circle cx="420" cy="215" r="55" fill="var(--sc-foll)"/><circle cx="420" cy="215" r="27" fill="var(--sc-germ)"/></g>
+        <g><circle cx="560" cy="165" r="48" fill="var(--sc-foll)"/><circle cx="560" cy="165" r="23" fill="var(--sc-germ)"/></g>
+        <g><circle cx="720" cy="140" r="52" fill="var(--sc-foll)"/><circle cx="720" cy="140" r="26" fill="var(--sc-germ)"/></g>
+        <g><circle cx="890" cy="150" r="50" fill="var(--sc-foll)"/><circle cx="890" cy="150" r="24" fill="var(--sc-germ)"/></g>
+        <g><circle cx="1005" cy="172" r="40" fill="var(--sc-foll)"/><circle cx="1005" cy="172" r="19" fill="var(--sc-germ)"/></g>
+        <g><circle cx="1330" cy="330" r="50" fill="var(--sc-foll)"/><circle cx="1330" cy="330" r="24" fill="var(--sc-germ)"/></g>
+        <g><circle cx="1380" cy="470" r="54" fill="var(--sc-foll)"/><circle cx="1380" cy="470" r="27" fill="var(--sc-germ)"/></g>
+        <g><circle cx="1300" cy="615" r="50" fill="var(--sc-foll)"/><circle cx="1300" cy="615" r="25" fill="var(--sc-germ)"/></g>
+        <g><circle cx="1130" cy="725" r="52" fill="var(--sc-foll)"/><circle cx="1130" cy="725" r="26" fill="var(--sc-germ)"/></g>
+        <g><circle cx="950" cy="775" r="48" fill="var(--sc-foll)"/><circle cx="950" cy="775" r="23" fill="var(--sc-germ)"/></g>
+        <g><circle cx="760" cy="785" r="50" fill="var(--sc-foll)"/><circle cx="760" cy="785" r="25" fill="var(--sc-germ)"/></g>
+        <g><circle cx="560" cy="745" r="52" fill="var(--sc-foll)"/><circle cx="560" cy="745" r="26" fill="var(--sc-germ)"/></g>
+        <g><circle cx="380" cy="665" r="48" fill="var(--sc-foll)"/><circle cx="380" cy="665" r="24" fill="var(--sc-germ)"/></g>
+        <g><circle cx="255" cy="545" r="50" fill="var(--sc-foll)"/><circle cx="255" cy="545" r="25" fill="var(--sc-germ)"/></g>
+      </g>
+      <g id="nuclei" fill="var(--sc-nuc)"></g>
+      <!-- Metastatic focus: cluster of large epithelial cells in the subcapsular sinus, upper right -->
+      <g id="met-focus">
+        <ellipse cx="1180" cy="262" rx="108" ry="70" fill="var(--sc-met-cyto)" stroke="var(--sc-met-edge)" stroke-width="1.5" opacity=".9"/>
+        <g class="met-cells" fill="var(--sc-met-cyto)" stroke="var(--sc-met-edge)" stroke-width="1.2">
+          <circle cx="1105" cy="262" r="15"/><circle cx="1132" cy="236" r="16"/><circle cx="1160" cy="214" r="15"/><circle cx="1192" cy="206" r="17"/><circle cx="1226" cy="214" r="15"/><circle cx="1254" cy="238" r="16"/><circle cx="1268" cy="268" r="15"/><circle cx="1252" cy="298" r="16"/>
+          <circle cx="1222" cy="316" r="15"/><circle cx="1188" cy="322" r="16"/><circle cx="1152" cy="314" r="15"/><circle cx="1122" cy="294" r="16"/><circle cx="1140" cy="268" r="15"/><circle cx="1170" cy="248" r="16"/><circle cx="1204" cy="242" r="15"/><circle cx="1232" cy="266" r="16"/>
+          <circle cx="1208" cy="290" r="15"/><circle cx="1174" cy="292" r="16"/><circle cx="1150" cy="240" r="13"/><circle cx="1240" cy="290" r="13"/><circle cx="1196" cy="268" r="13"/>
+        </g>
+        <g class="met-nuc" fill="var(--sc-met-nuc)">
+          <circle cx="1105" cy="262" r="7"/><circle cx="1132" cy="236" r="7.5"/><circle cx="1160" cy="214" r="7"/><circle cx="1192" cy="206" r="8"/><circle cx="1226" cy="214" r="7"/><circle cx="1254" cy="238" r="7.5"/><circle cx="1268" cy="268" r="7"/><circle cx="1252" cy="298" r="7.5"/>
+          <circle cx="1222" cy="316" r="7"/><circle cx="1188" cy="322" r="7.5"/><circle cx="1152" cy="314" r="7"/><circle cx="1122" cy="294" r="7.5"/><circle cx="1140" cy="268" r="7"/><circle cx="1170" cy="248" r="7.5"/><circle cx="1204" cy="242" r="7"/><circle cx="1232" cy="266" r="7.5"/>
+          <circle cx="1208" cy="290" r="7"/><circle cx="1174" cy="292" r="7.5"/><circle cx="1150" cy="240" r="6"/><circle cx="1240" cy="290" r="6"/><circle cx="1196" cy="268" r="6"/>
+        </g>
+      </g>
+    </symbol>
+
+    <!-- Synthetic 8-plex CyCIF field (NOT real data). Channel groups carry data-ch; colour + visibility via --col-*/--vis-* -->
+    <symbol id="mx-scene" viewBox="0 0 1600 900" overflow="visible">
+      <rect x="-1000" y="-1000" width="3600" height="2900" fill="#06060a"/>
+      <ellipse cx="800" cy="470" rx="740" ry="382" fill="#0d0d14"/>
+      <g data-ch="sma" stroke-width="10" fill="none" stroke="var(--col-sma)" style="opacity:var(--vis-sma);mix-blend-mode:screen"><ellipse cx="800" cy="470" rx="745" ry="386"/><ellipse cx="470" cy="500" rx="46" ry="30" stroke-width="6"/><ellipse cx="690" cy="530" rx="26" ry="17" stroke-width="5"/></g>
+      <g data-ch="dapi" id="mx-dapi" fill="var(--col-dapi)" style="opacity:var(--vis-dapi);mix-blend-mode:screen"></g>
+      <g data-ch="cd3" id="mx-cd3" fill="var(--col-cd3)" style="opacity:var(--vis-cd3);mix-blend-mode:screen"></g>
+      <g data-ch="cd8" id="mx-cd8" fill="var(--col-cd8)" style="opacity:var(--vis-cd8);mix-blend-mode:screen"></g>
+      <g data-ch="panck" id="mx-panck" fill="var(--col-panck)" style="opacity:var(--vis-panck);mix-blend-mode:screen"></g>
+      <g data-ch="ki67" id="mx-ki67" fill="var(--col-ki67)" style="opacity:var(--vis-ki67);mix-blend-mode:screen"></g>
+      <g data-ch="cd68" id="mx-cd68" fill="var(--col-cd68)" style="opacity:var(--vis-cd68);mix-blend-mode:screen"></g>
+      <g data-ch="pdl1" id="mx-pdl1" fill="var(--col-pdl1)" style="opacity:var(--vis-pdl1);mix-blend-mode:screen"></g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="stage" id="stage">
+  <!-- ====== Concept header (review-only) ====== -->
+  <header class="concept-header" aria-label="Concept header">
+    <span class="tag tag--a">Concept A</span>
+    <b>Research annotation and overlay workspace</b>
+    <span class="tag">Stoipath Viewer · RUO</span>
+    <span class="tag">Angle: Canvas-maximal</span>
+    <span class="tag tag--date">2026-10-26 · draft for the UX/UI review Thu 2026-10-29</span>
+    <span class="thesis">Chrome collapses to the edges; every panel is keyboard-summoned and transient; the slide is the UI. Optimised for the expert daily user on a 4K display.</span>
+    <span class="spacer"></span>
+    <a href="#rationale">Rationale and contract map ↓</a>
+  </header>
+
+  <!-- ====== The product: Stoipath Viewer workspace ====== -->
+  <div class="app cm legend-on" id="app" data-build="viewer-ruo" data-product="viewer-ruo">
+
+    <!-- A. Top bar: the only persistent chrome besides the status strip -->
+    <header class="topbar region" aria-label="Top bar">
+      <div class="topbar__slot-badge">
+        <button class="badge badge--ruo" id="badge" data-live="launch:product" aria-label="Stoipath Viewer, for research use only. Open About" aria-haspopup="dialog">RUO</button>
+        <span class="chip chip--purpose" id="purpose-chip" data-live="launch:purposeOfUse" hidden>Research session</span>
+      </div>
+      <span class="topbar__label badge-string badge-string--ruo" id="label-string" aria-label="Product label" data-live="launch:product"></span>
+      <div class="topbar__identity" data-live="state.slides">
+        <span class="cohort" id="cohort-name"><span class="coh">CAMELYON16 · </span><span class="slide">tumor_014</span></span>
+        <span class="chip chip--licence" data-live="state.slides[0].licence">CC0</span>
+        <span class="meta" id="slide-meta">H&amp;E · 0.25 µm/px scan · Philips TIFF</span>
+        <span class="title" id="slide-title">Sentinel lymph node, metastasis present (CAMELYON16 reference annotation)</span>
+      </div>
+      <div class="topbar__slot-mode">
+        <span class="chip chip--tier" id="tier-chip" data-live="telemetry:tier" hidden>Tier 2 · 60 Hz</span>
+        <span class="mode mode--nav" id="mode-chip" data-live="state.render_mode" hidden>NAV</span>
+        <button class="btn btn--sm btn--ghost topbar__pin" id="btn-pin" aria-pressed="false" aria-label="Pin the tool rail and dock (backtick)" data-live="commands:chrome.pin"><svg class="icon icon--sm"><use href="#i-pin"/></svg>Pin chrome <kbd class="key">`</kbd></button>
+        <button class="btn btn--icon btn--ghost" id="btn-more" aria-label="More: About, settings, help" aria-haspopup="menu"><svg class="icon"><use href="#i-more"/></svg></button>
+      </div>
+    </header>
+
+    <!-- C. Tool rail: hidden by default in this concept; shown only when chrome is pinned (`) -->
+    <nav class="rail region" aria-label="Tools (pinned chrome)" data-live="commands">
+      <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="Navigate">
+        <button class="tool" data-cmd="tool:select" aria-label="Select / pan (V)"><svg class="icon"><use href="#i-select"/></svg><span class="tool__key">V</span></button>
+        <button class="tool" data-cmd="view:fit" aria-label="Fit slide (0)"><svg class="icon"><use href="#i-fit"/></svg><span class="tool__key">0</span></button>
+      </div>
+      <div class="rail__divider"></div>
+      <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="Annotate">
+        <button class="tool tool--drawing" data-cmd="tool:polygon" aria-label="Polygon (P)"><svg class="icon"><use href="#i-polygon"/></svg><span class="tool__key">P</span></button>
+        <button class="tool tool--drawing" data-cmd="tool:brush" aria-label="Brush / freehand (F)"><svg class="icon"><use href="#i-brush"/></svg><span class="tool__key">F</span></button>
+        <button class="tool tool--drawing" data-cmd="tool:rect" aria-label="Rectangle (X)"><svg class="icon"><use href="#i-rect"/></svg><span class="tool__key">X</span></button>
+        <button class="tool" data-cmd="tool:point" aria-label="Point marker (T)"><svg class="icon"><use href="#i-point"/></svg><span class="tool__key">T</span></button>
+        <button class="tool" data-cmd="tool:measure" aria-label="Measure (M)"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__key">M</span></button>
+        <button class="tool" data-cmd="class:pick" aria-label="Class picker (Q)"><span class="swatch swatch--lg" id="rail-swatch" style="--swatch:var(--ann-2)"></span><span class="tool__key">Q</span></button>
+      </div>
+      <div class="rail__divider"></div>
+      <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="Panels">
+        <button class="tool" data-cmd="panel:cohort" aria-label="Cohort and slide (I)"><svg class="icon"><use href="#i-folder"/></svg><span class="tool__key">I</span></button>
+        <button class="tool" data-cmd="panel:layers" aria-label="Layers (K)"><svg class="icon"><use href="#i-layers"/></svg><span class="tool__key">K</span></button>
+        <button class="tool" data-cmd="panel:annotations" aria-label="Annotations (Shift+K)"><svg class="icon"><use href="#i-list"/></svg><span class="tool__key">⇧K</span></button>
+        <button class="tool" data-cmd="panel:model" aria-label="Model (U)"><svg class="icon"><use href="#i-model"/></svg><span class="tool__key">U</span></button>
+        <button class="tool" data-cmd="panel:export" aria-label="Export (Shift+E)"><svg class="icon"><use href="#i-download"/></svg><span class="tool__key">⇧E</span></button>
+        <button class="tool" data-cmd="compare:toggle" aria-label="Compare (C)"><svg class="icon"><use href="#i-compare"/></svg><span class="tool__key">C</span></button>
+      </div>
+      <div class="rail__spacer"></div>
+      <button class="tool" data-cmd="help:keys" aria-label="Shortcuts (?)"><svg class="icon"><use href="#i-keyboard"/></svg><span class="tool__key">?</span></button>
+    </nav>
+
+    <!-- B. Canvas -->
+    <div class="canvas-area" id="canvas" role="application" tabindex="0"
+         aria-label="Slide canvas, tumor_014 H&amp;E, 5 times, use arrow keys to pan and plus or minus to zoom; press question mark for shortcuts"
+         aria-describedby="lr-polite" data-live="state.views[0]">
+      <div class="panes" id="panes">
+        <!-- Pane A: H&E (or multiplex) -->
+        <div class="pane pane--main is-active" id="pane-a" data-slide="he">
+          <svg class="canvas scene--he he-only" id="svg-he" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+            <g class="world" id="world-he">
+              <g class="pixels"><use href="#node-scene"/></g>
+              <!-- Failed tiles keep the ancestor (never blank): soft copies clipped to three tile rects -->
+              <g class="tile-fail" clip-path="url(#c-tiles)"><use href="#node-scene" filter="url(#f-soft-tile)"/></g>
+              <!-- Dense detection layer: centroid LOD at low power (engine: vector tiles cut by the local tiler) -->
+              <g id="detections" class="det-layer"></g>
+              <!-- Overlays: engine GPU layers in the product; SVG here for review -->
+              <g id="overlays">
+                <!-- AI result layer (raster probability map): outline presentation by default, heatmap on demand -->
+                <g class="ai-layer">
+                  <g class="ai-heat" opacity=".55"><ellipse cx="1180" cy="262" rx="150" ry="105" fill="url(#g-heat-1)"/><circle cx="1005" cy="172" r="70" fill="url(#g-heat-2)"/><circle cx="1330" cy="470" r="52" fill="url(#g-heat-2)"/></g>
+                  <g class="ai-outline" fill="none">
+                    <path class="ovl--halo" stroke-width="3.5" d="M1090 230 1140 195 1200 190 1255 210 1280 260 1265 310 1215 330 1150 325 1100 295 1082 262Z"/>
+                    <path d="M1090 230 1140 195 1200 190 1255 210 1280 260 1265 310 1215 330 1150 325 1100 295 1082 262Z" stroke="#8e3a15" stroke-width="1.6"/>
+                    <circle class="ovl--halo" stroke-width="3.5" cx="1005" cy="172" r="47"/><circle cx="1005" cy="172" r="47" stroke="#be7b00" stroke-width="1.6" stroke-dasharray="7 5"/>
+                    <circle class="ovl--halo" stroke-width="3.5" cx="1330" cy="470" r="34"/><circle cx="1330" cy="470" r="34" stroke="#be7b00" stroke-width="1.6" stroke-dasharray="7 5"/>
+                  </g>
+                </g>
+                <!-- User annotations (annotation API; constant screen-space stroke with halo) -->
+                <g class="ann-layer" fill="none" stroke-linejoin="round">
+                  <!-- Stroma polygon -->
+                  <path class="ovl--halo" stroke-width="4" d="M180 560 250 600 300 660 260 700 190 660 150 600Z"/><path class="ann-fill" d="M180 560 250 600 300 660 260 700 190 660 150 600Z" stroke="#1a8893" stroke-width="2" fill="#1a8893"/>
+                  <!-- Stroma rectangle -->
+                  <rect class="ovl--halo" stroke-width="4" x="600" y="640" width="140" height="90"/><rect class="ann-fill" x="600" y="640" width="140" height="90" stroke="#1a8893" stroke-width="2" fill="#1a8893"/>
+                  <!-- Other ellipse (hilum vessel) -->
+                  <ellipse class="ovl--halo" stroke-width="4" cx="470" cy="500" rx="52" ry="34"/><ellipse class="ann-fill" cx="470" cy="500" rx="52" ry="34" stroke="#be7b00" stroke-width="2" fill="#be7b00"/>
+                  <!-- Tumor freehand (small) -->
+                  <path class="ovl--halo" stroke-width="4" d="M1230 345c14-6 30-4 38 8s2 26-10 32-30 6-40-4-6-30 12-36z"/><path class="ann-fill" d="M1230 345c14-6 30-4 38 8s2 26-10 32-30 6-40-4-6-30 12-36z" stroke="#8e3a15" stroke-width="2" fill="#8e3a15"/>
+                  <!-- Lymphocyte points -->
+                  <g stroke="#7cc3f0" stroke-width="1.8"><g class="ovl--halo" stroke-width="4"><path d="M520 318v24M508 330h24M690 408v24M678 420h24M870 588v24M858 600h24"/></g><path d="M520 318v24M508 330h24M690 408v24M678 420h24M870 588v24M858 600h24"/></g>
+                  <!-- Tumor polygon (selected): thicker stroke + vertex handles -->
+                  <path class="ovl--halo" stroke-width="5" d="M1075 215 1120 185 1185 178 1250 195 1292 240 1288 300 1245 335 1175 345 1110 325 1070 275Z"/>
+                  <path class="ann-fill" id="ann-selected" d="M1075 215 1120 185 1185 178 1250 195 1292 240 1288 300 1245 335 1175 345 1110 325 1070 275Z" stroke="#8e3a15" stroke-width="2.6" fill="#8e3a15"/>
+                  <g fill="#f7f7f7" stroke="#141414" stroke-width="1"><rect x="1071" y="211" width="8" height="8"/><rect x="1116" y="181" width="8" height="8"/><rect x="1181" y="174" width="8" height="8"/><rect x="1246" y="191" width="8" height="8"/><rect x="1288" y="236" width="8" height="8"/><rect x="1284" y="296" width="8" height="8"/><rect x="1241" y="331" width="8" height="8"/><rect x="1171" y="341" width="8" height="8"/><rect x="1106" y="321" width="8" height="8"/><rect x="1066" y="271" width="8" height="8"/></g>
+                  <!-- Measurement: micrometastasis long axis (geometry service, µm) -->
+                  <g stroke="#f7f7f7" stroke-width="1.6"><g class="ovl--halo" stroke-width="4"><path d="M1072 380h216M1072 372v16M1288 372v16"/></g><path d="M1072 380h216M1072 372v16M1288 372v16"/></g>
+                  <text x="1180" y="402" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="15" font-weight="600" fill="#f7f7f7" stroke="#141414" stroke-width="3" paint-order="stroke">0.44 mm</text>
+                  <!-- Pen stroke in progress (tablet demo): pen draws while a finger pans -->
+                  <g class="pen-demo"><path class="ovl--halo" stroke-width="5" d="M700 250c30-20 60-8 80 10s40 40 70 30 40-30 60-10"/><path d="M700 250c30-20 60-8 80 10s40 40 70 30 40-30 60-10" stroke="#8e3a15" stroke-width="2.6" stroke-linecap="round"/><circle cx="910" cy="280" r="6" fill="#f7f7f7" stroke="#141414"/></g>
+                </g>
+              </g>
+            </g>
+          </svg>
+          <!-- Multiplex variant of pane A -->
+          <svg class="canvas scene--mx mx-only" id="svg-mx" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+            <g class="world" id="world-mx"><g class="pixels"><use href="#mx-scene"/></g></g>
+          </svg>
+          <!-- Curtain: IHC pane revealed right of the handle (compare + /) -->
+          <div class="curtain-layer" aria-hidden="true"><svg class="canvas scene--ihc" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><g class="world" id="world-cur"><g class="pixels"><use href="#node-scene"/></g></g></svg></div>
+          <div class="curtain-handle" id="curtain" role="slider" aria-label="Curtain position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="56" aria-valuetext="56 percent, H&amp;E left, CK AE1/AE3 right" tabindex="0" data-live="state.views.sync"><span class="curtain-handle__grip">⇤⇥</span></div>
+          <div class="hud__item pane__id" data-live="state.views[0]"><span class="mono">tumor_014 · H&amp;E</span></div>
+        </div>
+        <!-- Pane B: IHC serial section (compare, side by side) -->
+        <div class="pane pane--b" id="pane-b" tabindex="-1">
+          <svg class="canvas scene--ihc" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g class="world" id="world-ihc"><g class="pixels"><use href="#node-scene"/></g></g></svg>
+          <div class="hud__item pane__id" data-live="state.views[1]"><span class="mono">tumor_014_ihc · CK AE1/AE3</span> <span class="text-xs" style="color:var(--grey-75)">· affine</span></div>
+        </div>
+        <!-- Channel grid (multiplex, Shift+G): one pane per enabled channel -->
+        <div class="pane pane--ch scene--mx" data-only="dapi"><svg class="canvas" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#mx-scene"/></svg><div class="hud__item pane__id"><span class="swatch" style="--swatch:#cfd4e6"></span>DAPI</div></div>
+        <div class="pane pane--ch scene--mx" data-only="cd3"><svg class="canvas" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#mx-scene"/></svg><div class="hud__item pane__id"><span class="swatch" style="--swatch:#7cc3f0"></span>CD3</div></div>
+        <div class="pane pane--ch scene--mx" data-only="cd8"><svg class="canvas" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#mx-scene"/></svg><div class="hud__item pane__id"><span class="swatch" style="--swatch:#1a8893"></span>CD8</div></div>
+        <div class="pane pane--ch scene--mx" data-only="panck"><svg class="canvas" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#mx-scene"/></svg><div class="hud__item pane__id"><span class="swatch" style="--swatch:#be7b00"></span>PanCK</div></div>
+        <div class="pane pane--ch scene--mx" data-only="ki67"><svg class="canvas" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#mx-scene"/></svg><div class="hud__item pane__id"><span class="swatch" style="--swatch:#f0e442"></span>Ki-67</div></div>
+        <div class="pane pane--ch scene--mx" data-only="cd68"><svg class="canvas" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#mx-scene"/></svg><div class="hud__item pane__id"><span class="swatch" style="--swatch:#4f7ddb"></span>CD68</div></div>
+      </div>
+
+      <!-- Review callout (tablet variant only): pen draws while a finger pans (FR-V11) -->
+      <div class="touch-demo" data-demo aria-hidden="true"><span class="touch-demo__ring"></span><span class="touch-demo__label">finger pans · pen draws (demo callout)</span></div>
+      <!-- HUD top-left: the tool line. In this concept it replaces the rail: tool · class · context. -->
+      <div class="hud hud--tl">
+        <div class="hud__item hud__tool" data-live="commands:tool" role="group" aria-label="Active tool and class">
+          <button id="hud-tool-btn" data-cmd="wheel:open" aria-label="Active tool: Select / pan. Activate to open the tool wheel" aria-haspopup="menu"><svg class="icon"><use href="#i-select" id="hud-tool-icon"/></svg><span id="hud-tool-name">Select</span><kbd class="key" id="hud-tool-key">V</kbd></button>
+          <span class="sep"></span>
+          <button id="hud-class-btn" data-cmd="class:pick" aria-label="Active class: Tumor. Activate to pick a class (Q)"><span class="swatch" id="hud-class-swatch" style="--swatch:var(--ann-2)"></span><span id="hud-class-name">Tumor</span><kbd class="key">Q</kbd></button>
+          <span class="sep"></span>
+          <span class="dim" id="hud-context" data-live="annotations">12 annotations · undo ×3</span>
+        </div>
+        <div class="hud__item hud__hint" id="hud-hint" data-live="telemetry:commandInvoked">First time here? <kbd class="key">?</kbd> shortcuts · <kbd class="key">Ctrl</kbd><kbd class="key">K</kbd> commands · right-click the slide for tools · <kbd class="key">`</kbd> (backtick) pins the classic chrome</div>
+        <div class="hud__item hud__hint he-only" id="hud-lod" data-live="layers:lod">Detections · centroid LOD below 10× · 1,240,000 features</div>
+        <div class="hud__item hud__hint mx-only" id="hud-mx" data-live="state.channels">6 of 8 channels · 8-bit preview tier while moving · 16-bit at settle</div>
+      </div>
+
+      <!-- HUD bottom-left: scale bar (GPU layer in product), position, sharpness dot on phones -->
+      <div class="hud hud--bl">
+        <span class="hud__item hud__sharp indicator indicator--sharp" id="hud-sharp" data-live="events:tilesettled" aria-label="Sharp"><span class="indicator__glyph"></span><span class="indicator__label" id="hud-sharp-label"></span></span>
+        <div class="hud__item scalebar" data-live="state.scale" aria-label="Scale bar"><span class="scalebar__bar" id="scalebar" style="--scalebar-length:100px"></span><span class="scalebar__label" id="scalebar-label">200 µm</span></div>
+        <div class="hud__item hud__item--quiet hud__position" id="hud-pos" data-live="state.center_um">x 6.21 mm · y 3.48 mm</div>
+      </div>
+
+      <!-- HUD bottom-right: derived magnification (click or Enter: typed zoom) -->
+      <div class="hud hud--br">
+        <div class="hud__item magnification" id="mag" role="button" tabindex="0" data-live="state.scale" aria-label="Magnification 5 times, 2.00 micrometres per pixel, derived from the scan. Press Enter to type a zoom"><span class="magnification__value" id="mag-value">5×</span><span class="magnification__line2" id="mag-line2">2.00 µm/px · derived</span></div>
+      </div>
+
+      <!-- Top-right stack: navigator (region F, never auto-fades) + class legend HUD (Shift+Q) -->
+      <div class="tr-stack">
+        <aside class="navigator" aria-label="Navigator" data-live="state">
+          <div class="navigator__thumb" style="cursor:crosshair" title="Click to recentre">
+            <svg class="scene--he" viewBox="-800 -450 3200 1800" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/><rect x="1072" y="152" width="220" height="220" fill="none" stroke="#8e3a15" stroke-width="12" opacity=".8"/></svg>
+            <div class="navigator__viewport" id="nav-rect" style="left:25%;top:25%;width:50%;height:50%"></div>
+            <div class="navigator__pan" aria-label="Pan"><button class="up" type="button" aria-label="Pan up">↑</button><button class="left" type="button" aria-label="Pan left">←</button><button class="right" type="button" aria-label="Pan right">→</button><button class="down" type="button" aria-label="Pan down">↓</button></div>
+          </div>
+          <div class="navigator__label"><span class="mono" id="nav-label">tumor_014 · H&amp;E</span><span class="text-xs">Hide <kbd class="key">O</kbd></span></div>
+        </aside>
+        <div class="legend-hud" id="legend" role="region" aria-label="Class legend" data-live="annotations:classes">
+          <div class="legend-hud__title"><span>Annotations · <span id="legend-ann-total">12</span></span><span>legend <kbd class="key">⇧Q</kbd></span></div>
+          <div class="legend" role="list" aria-label="Annotation classes; activate a class to jump to its first object">
+            <button class="legend__item" role="listitem" data-cls="tumor"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <span class="count">5</span></button>
+            <button class="legend__item" role="listitem" data-cls="stroma"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <span class="count">3</span></button>
+            <button class="legend__item" role="listitem" data-cls="lymph"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <span class="count">3</span></button>
+            <button class="legend__item is-zero" role="listitem" data-cls="necrosis"><span class="swatch" style="--swatch:var(--ann-7)"></span>Necrosis <span class="count">0</span></button>
+            <button class="legend__item" role="listitem" data-cls="other"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <span class="count">1</span></button>
+            <button class="legend__item is-zero" role="listitem" data-cls="region"><span class="swatch swatch--dash" style="--swatch:var(--ann-4)"></span>Region* <span class="count">0</span></button>
+          </div>
+          <div class="legend-hud__title he-only"><span>Detections · 1,240,000</span><span id="legend-lod">centroids</span></div>
+          <div class="legend he-only" role="list" aria-label="Detection classes">
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <span class="count">1,102,400</span></button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <span class="count">98,210</span></button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <span class="count">39,390</span></button>
+            <button class="legend__item" role="listitem"><span class="swatch swatch--outline" style="--swatch:var(--ann-2)"></span>AI metastasis <span class="count">1</span></button>
+            <button class="legend__item" role="listitem"><span class="swatch swatch--dash" style="--swatch:var(--ann-6)"></span>AI suspicious <span class="count">2</span></button>
+          </div>
+          <div class="legend-hud__title mx-only"><span>Channels · 6 of 8</span><span>grid <kbd class="key">⇧G</kbd></span></div>
+          <div class="legend mx-only" role="list" aria-label="Channels">
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:#cfd4e6"></span>DAPI</button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:#7cc3f0"></span>CD3</button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:#1a8893"></span>CD8</button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:#be7b00"></span>PanCK</button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:#f0e442"></span>Ki-67</button>
+            <button class="legend__item" role="listitem"><span class="swatch" style="--swatch:#4f7ddb"></span>CD68</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compare bar (C): top edge, outside the central 50 % -->
+      <div class="compare-bar" id="compare-bar" role="toolbar" aria-label="Compare" data-live="state.views.sync">
+        <span class="pair"><span>tumor_014 · H&amp;E</span><span style="color:var(--grey-75)">⟷</span><span data-synthetic>tumor_014_ihc · CK AE1/AE3</span></span>
+        <div class="segmented" role="radiogroup" aria-label="Sync mode">
+          <button class="segmented__item" role="radio" aria-checked="false" data-sync="lock">lock</button>
+          <button class="segmented__item" role="radio" aria-checked="true" data-sync="affine">affine</button>
+          <button class="segmented__item" role="radio" aria-checked="false" data-sync="none">none</button>
+        </div>
+        <button class="btn btn--sm btn--secondary" id="btn-curtain" data-cmd="compare:curtain" aria-pressed="false" aria-label="Curtain compare (/)"><svg class="icon icon--sm"><use href="#i-curtain"/></svg>Curtain <kbd class="key">/</kbd></button>
+        <button class="btn btn--sm btn--secondary cb-swap" aria-label="Swap panes"><svg class="icon icon--sm"><use href="#i-sync"/></svg>Swap</button>
+        <button class="btn btn--sm btn--secondary" data-cmd="compare:toggle" aria-label="Close compare (C)"><svg class="icon icon--sm"><use href="#i-close"/></svg><kbd class="key">C</kbd></button>
+      </div>
+
+      <!-- Radial tool wheel: right-click / long-press / Shift+V. Transient GPU layer in the product. -->
+      <div class="radial" id="radial" role="menu" aria-label="Tool wheel" hidden data-live="commands">
+        <div class="radial__ring"></div>
+        <button class="radial__centre" id="radial-centre" role="menuitem" data-cmd="class:ring" aria-label="Class: Tumor. Activate to choose a class"><span class="swatch" id="radial-swatch" style="--swatch:var(--ann-2)"></span><span id="radial-class">Tumor</span><span class="k">Q · 1–9</span></button>
+        <div class="radial__label" id="radial-label">Right-click opened the wheel · Esc closes</div>
+      </div>
+    </div>
+
+    <!-- E. Status strip: the live region's visual twin -->
+    <footer class="strip region" aria-label="Status">
+      <button class="indicator indicator--sharp" id="sharp" data-live="events:tilesettled" aria-label="Sharpness: Sharp. Opens the quality sheet"><span class="indicator__glyph"></span><span class="indicator__label" id="sharp-label">Sharp</span><span class="indicator__reason" id="sharp-reason"></span></button>
+      <span class="strip__notice" id="notice" data-live="events:error|layers">1,240,000 features — tiling locally so zoom stays smooth</span>
+      <div class="strip__group strip__group--end" id="strip-chips">
+        <button class="chip chip--solid" id="chip-net" data-live="telemetry:network" hidden>Link OK (12 Mbps)</button>
+        <button class="chip chip--solid" id="chip-offline" data-live="offline:pack" hidden>Offline pack · CAMELYON16 · 12 slides · saved 2026-10-20</button>
+        <button class="chip chip--tier" id="chip-tier" data-live="telemetry:tier" hidden>Tier 2 · 60 Hz</button>
+        <button class="btn btn--sm btn--secondary" id="btn-retry" hidden>Retry</button>
+        <span class="chip chip--solid" id="chip-tiler" data-live="python:tiler">Local tiler · ready</span>
+      </div>
+    </footer>
+
+    <!-- D. The one edge drawer (keyboard-summoned; becomes the dock when chrome is pinned) -->
+    <aside class="dock region" id="dock" aria-label="Context drawer" data-live="layers|annotations|state">
+      <div class="dock__tabs tabs" role="tablist" aria-label="Drawer panels">
+        <button class="tab" role="tab" id="tab-cohort" aria-selected="false" aria-controls="pane-cohort" data-tab="cohort">Cohort <kbd class="key">I</kbd></button>
+        <button class="tab" role="tab" id="tab-layers" aria-selected="true" aria-controls="pane-layers" data-tab="layers">Layers <span class="count" id="layers-count">4</span><kbd class="key">K</kbd></button>
+        <button class="tab" role="tab" id="tab-annotations" aria-selected="false" aria-controls="pane-annotations" data-tab="annotations">Annotations <span class="count">12</span><kbd class="key">⇧K</kbd></button>
+        <button class="tab" role="tab" id="tab-model" aria-selected="false" aria-controls="pane-model" data-tab="model">Model <kbd class="key">U</kbd></button>
+        <button class="tab" role="tab" id="tab-export" aria-selected="false" aria-controls="pane-export" data-tab="export">Export <kbd class="key">⇧E</kbd></button>
+        <button class="btn btn--sm btn--icon btn--ghost" id="btn-drawer-close" aria-label="Close drawer (Esc)" style="margin:auto 4px auto auto;flex:0 0 auto"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="dock__body">
+
+        <!-- Cohort & slide (I) -->
+        <section class="dock__pane" id="pane-cohort" role="tabpanel" aria-labelledby="tab-cohort" tabindex="0">
+          <div class="panel__header"><span class="panel__title">Cohort · CAMELYON16</span><span class="chip chip--licence">CC0 1.0</span><div class="panel__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Open another cohort"><svg class="icon icon--sm"><use href="#i-folder"/></svg></button></div></div>
+          <div class="filters" role="group" aria-label="Filters" data-live="state.slides:filter">
+            <button class="chip" aria-pressed="true">All <span class="count">400</span></button>
+            <button class="chip" aria-pressed="false">Tumor <span class="count">111</span></button>
+            <button class="chip" aria-pressed="false">Normal <span class="count">159</span></button>
+            <button class="chip" aria-pressed="false">Test <span class="count">130</span></button>
+            <button class="chip" aria-pressed="false">Annotated</button>
+            <button class="chip" aria-pressed="false">Model output</button>
+            <button class="chip chip--stain" aria-pressed="false">H&amp;E</button>
+          </div>
+          <div class="search"><label class="visually-hidden" for="cohort-search">Filter slides by name or tag</label><input id="cohort-search" class="input" type="search" placeholder="Filter slides by name or tag…"></div>
+          <div role="listbox" aria-label="Slides in CAMELYON16" data-live="state.slides">
+            <button class="slide-row" role="option" aria-selected="false"><span class="slide-row__thumb scene--he"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name">tumor_012</span><span class="slide-row__meta"><span>7 annotations</span><span>1 layer</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">H&amp;E</span></span></button>
+            <button class="slide-row" role="option" aria-selected="false"><span class="slide-row__thumb scene--he"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name">tumor_013</span><span class="slide-row__meta"><span>0 annotations</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">H&amp;E</span></span></button>
+            <button class="slide-row" role="option" aria-selected="true"><span class="slide-row__thumb scene--he"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name">tumor_014</span><span class="slide-row__meta"><span>12 annotations</span><span>4 layers</span><span>metastasis</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">H&amp;E</span><span class="text-xs text-secondary">open</span></span></button>
+            <button class="slide-row" role="option" aria-selected="false"><span class="slide-row__thumb scene--ihc"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name" data-synthetic>tumor_014_ihc</span><span class="slide-row__meta"><span>serial section</span><span>registered · affine</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">IHC</span></span></button>
+            <button class="slide-row" role="option" aria-selected="false"><span class="slide-row__thumb scene--he"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name">tumor_015</span><span class="slide-row__meta"><span>2 annotations</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">H&amp;E</span></span></button>
+            <button class="slide-row" role="option" aria-selected="false"><span class="slide-row__thumb scene--he"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#node-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name">normal_001</span><span class="slide-row__meta"><span>0 annotations</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">H&amp;E</span></span></button>
+            <button class="slide-row mx-row" role="option" aria-selected="false"><span class="slide-row__thumb scene--mx" style="background:#06060a"><svg viewBox="-200 -100 2000 1100" aria-hidden="true"><use href="#mx-scene" x="0" y="0" width="1600" height="900"/></svg></span><span><span class="slide-row__name" data-synthetic>cycif_sln_02</span><span class="slide-row__meta"><span>8 channels · OME-Zarr</span><span>institutional · IRB 2026-114</span></span></span><span class="slide-row__tags"><span class="chip chip--stain">IF</span></span></button>
+          </div>
+          <div class="hint-line">394 more slides · <kbd class="key">]</kbd> <kbd class="key">[</kbd> step · list is virtualised</div>
+          <details class="section" open data-live="state.slides[0]">
+            <summary>Slide <span class="count">manifest</span></summary>
+            <div class="section__body">
+              <dl class="provenance" style="margin:0 16px">
+                <dt>Name</dt><dd>tumor_014 (CAMELYON16)</dd>
+                <dt>Format</dt><dd>Philips TIFF · Tier D decode-once · Manifest v1</dd>
+                <dt>Scan</dt><dd>0.25 µm/px · 97,792 × 221,184 px · 10 levels</dd>
+                <dt>sid</dt><dd>sha256:9b2e41…7a0c</dd>
+                <dt>Licence</dt><dd>CC0 1.0 · public corpus · no PHI</dd>
+                <dt>Source</dt><dd>https://camelyon16… (cached at edge)</dd>
+              </dl>
+            </div>
+          </details>
+          <div class="panel__footer"><button class="btn btn--sm btn--secondary" data-live="annotations:import"><svg class="icon icon--sm"><use href="#i-upload"/></svg>Import GeoJSON</button><button class="btn btn--sm btn--primary" data-cmd="panel:export"><svg class="icon icon--sm"><use href="#i-download"/></svg>Export…</button></div>
+        </section>
+
+        <!-- Layers (K) -->
+        <section class="dock__pane is-active" id="pane-layers" role="tabpanel" aria-labelledby="tab-layers" tabindex="0" data-live="layers">
+          <div class="panel__header"><span class="panel__title">Layers</span><div class="panel__actions"><button class="btn btn--sm btn--secondary" data-cmd="layers:hideall" aria-pressed="false">Hide all <kbd class="key">H</kbd></button></div></div>
+
+          <div class="he-only">
+            <div class="layer-row is-selected" data-layer="ai">
+              <button class="layer-row__vis" aria-pressed="true" data-cmd="layer:ai" aria-label="Metastasis probability, visible"><svg class="icon icon--sm"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Metastasis probability</span><span class="kind">AI · raster</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Accept (Shift+A)" data-live="events:aiResultAccepted"><svg class="icon icon--sm"><use href="#i-check"/></svg></button><button class="btn btn--sm btn--icon btn--ghost" aria-label="Reject (Shift+X)" data-live="events:aiResultRejected"><svg class="icon icon--sm"><use href="#i-close"/></svg></button><button class="btn btn--sm btn--icon btn--ghost" aria-label="Provenance and more"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="55" aria-label="Opacity" id="ai-opacity"><span class="num" id="ai-opacity-v">55 %</span></div>
+              <div class="layer-row__provenance" data-live="layers:provenance"><span>producer: unet</span><span>version 1.3</span><span title="inputHash">inputHash 7f3a…c9e1</span><span>2026-10-24</span><span>regulatoryStatus: research</span></div>
+              <div class="layer-row__legend">
+                <div class="row" style="gap:8px;margin-bottom:6px">
+                  <div class="segmented" role="radiogroup" aria-label="Presentation" style="padding:1px"><button class="segmented__item" role="radio" aria-checked="true" data-present="outline" style="min-height:22px;font-size:11px">Outline</button><button class="segmented__item" role="radio" aria-checked="false" data-present="heat" style="min-height:22px;font-size:11px">Heatmap</button></div>
+                  <label class="text-xs text-secondary" for="ai-thr">threshold</label><input id="ai-thr" type="range" min="50" max="95" value="70" style="width:70px;height:22px" aria-label="Probability threshold"><span class="num text-xs" id="ai-thr-v">p ≥ 0.70</span>
+                </div>
+                <div class="legend" role="list" aria-label="Legend; activate a class to jump to it">
+                  <button class="legend__item" role="listitem"><span class="swatch swatch--outline" style="--swatch:var(--ann-2)"></span>Metastasis <span class="count">1</span></button>
+                  <button class="legend__item" role="listitem"><span class="swatch swatch--outline" style="--swatch:var(--ann-6)"></span>Suspicious <span class="count">2</span><span class="pattern">dashed</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="layer-row is-hidden" data-layer="labels">
+              <button class="layer-row__vis" aria-pressed="false" aria-label="Nuclei labels, hidden"><svg class="icon icon--sm"><use href="#i-eye-off"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Nuclei labels</span><span class="kind">labels · raster</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Provenance and more"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="80" aria-label="Opacity" disabled><span class="num">80 %</span></div>
+              <div class="layer-row__provenance"><span>producer: stardist</span><span>0.9.1</span><span>OME-Zarr labels</span><span>research</span></div>
+            </div>
+            <div class="layer-row" data-layer="det">
+              <button class="layer-row__vis" aria-pressed="true" data-cmd="layer:det" aria-label="Detections, visible"><svg class="icon icon--sm"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Detections (1,240,000)</span><span class="kind">vector</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Provenance and more"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="100" aria-label="Opacity"><span class="num">100 %</span></div>
+              <div class="layer-row__provenance" data-live="python:tiler"><span>detections.parquet</span><span>local tiler · MVT</span><span>centroid LOD &lt; 10×</span><span class="text-secondary">1,240,000 features — tiling locally so zoom stays smooth</span></div>
+              <div class="layer-row__legend"><div class="legend" role="list"><button class="legend__item" role="listitem"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <span class="count">1,102,400</span></button><button class="legend__item" role="listitem"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <span class="count">98,210</span></button><button class="legend__item" role="listitem"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <span class="count">39,390</span></button></div></div>
+            </div>
+            <div class="layer-row" data-layer="ann">
+              <button class="layer-row__vis" aria-pressed="true" aria-label="Annotations, visible"><svg class="icon icon--sm"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Annotations · tumor_014</span><span class="kind">vector · mine</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" data-cmd="panel:annotations" aria-label="Open annotation list (Shift+K)"><svg class="icon icon--sm"><use href="#i-list"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="100" aria-label="Opacity"><span class="num">100 %</span></div>
+              <div class="layer-row__provenance"><span>12 objects</span><span>QuPath classes</span><span>op log · 41 ops · synced</span></div>
+            </div>
+          </div>
+
+          <!-- Multiplex channels (shown for the CyCIF slide) -->
+          <div class="mx-only" id="channels" data-live="state.channels">
+            <div class="panel__header" style="position:static"><span class="panel__title text-md">Channels · <span id="ch-enabled">6</span> of 8</span><div class="panel__actions"><button class="btn btn--sm btn--secondary" data-cmd="mx:grid" aria-pressed="false">Grid <kbd class="key">⇧G</kbd></button></div></div>
+            <div class="hint-line" id="ch-tier-line">8-bit preview tier while moving · 16-bit at settle · 8 channels on this device class</div>
+            <div id="channel-rows"></div>
+            <div class="hint-line">Window/colour changes are one-frame uniform updates (no refetch). Settings round-trip to OME <code>omero</code>.</div>
+          </div>
+
+          <div class="dropzone" data-live="layers:add">No more overlays? Drop a label pyramid, GeoJSON or Parquet file here, or add one from Python: <code>v.layers.add_vector("detections.parquet")</code></div>
+        </section>
+
+        <!-- Annotations (Shift+K): a real list, classes, CVD check -->
+        <section class="dock__pane" id="pane-annotations" role="tabpanel" aria-labelledby="tab-annotations" tabindex="0" data-live="annotations">
+          <div class="panel__header"><span class="panel__title">Annotations · 12</span><div class="panel__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Undo (Ctrl+Z)" data-cmd="edit:undo"><svg class="icon icon--sm"><use href="#i-undo"/></svg></button><button class="btn btn--sm btn--icon btn--ghost" aria-label="Redo (Ctrl+Y)" data-cmd="edit:redo"><svg class="icon icon--sm" style="transform:scaleX(-1)"><use href="#i-undo"/></svg></button></div></div>
+          <div class="filters" role="group" aria-label="Classes (QuPath names; colours remapped to the CVD-safe palette)" data-live="annotations:classes" id="class-chips">
+            <button class="class-chip" aria-pressed="true" data-cls="tumor"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <span class="count">5</span><kbd class="key">1</kbd></button>
+            <button class="class-chip" aria-pressed="false" data-cls="stroma"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <span class="count">3</span><kbd class="key">2</kbd></button>
+            <button class="class-chip" aria-pressed="false" data-cls="lymph"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <span class="count">3</span><kbd class="key">3</kbd></button>
+            <button class="class-chip" aria-pressed="false" data-cls="necrosis"><span class="swatch" style="--swatch:var(--ann-7)"></span>Necrosis <span class="count">0</span><kbd class="key">4</kbd></button>
+            <button class="class-chip" aria-pressed="false" data-cls="other"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <span class="count">1</span><kbd class="key">5</kbd></button>
+            <button class="class-chip" aria-pressed="false" data-cls="region"><span class="swatch swatch--dash" style="--swatch:var(--ann-4)"></span>Region* <kbd class="key">8</kbd></button>
+          </div>
+          <div class="row" style="padding:4px 20px 8px;gap:16px">
+            <button class="toggle" role="switch" aria-checked="false" id="tgl-deutan" data-cmd="cvd:deutan"><span class="toggle__track"></span><span class="toggle__text">Simulate deuteranopia<span class="toggle__hint">Author-side check · overlays only</span></span></button>
+            <button class="toggle" role="switch" aria-checked="false" id="tgl-fill" data-cmd="ann:fill"><span class="toggle__track"></span><span class="toggle__text">Fill polygons <span class="text-xs text-secondary">α 0.18</span></span></button>
+          </div>
+          <div class="list" role="listbox" aria-label="Annotations on tumor_014; Space flies to the focused item" id="ann-list">
+            <div class="list__item" role="option" aria-selected="true" tabindex="0"><span class="swatch" style="--swatch:var(--ann-2)"></span><span>Polygon · Tumor</span><span class="meta">2.31 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-2)"></span><span>Freehand · Tumor</span><span class="meta">0.12 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-2)"></span><span>Polygon · Tumor</span><span class="meta">0.84 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-2)"></span><span>Polygon · Tumor</span><span class="meta">0.31 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-2)"></span><span>Rectangle · Tumor</span><span class="meta">0.09 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-5)"></span><span>Polygon · Stroma</span><span class="meta">1.02 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-5)"></span><span>Rectangle · Stroma</span><span class="meta">0.50 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-5)"></span><span>Polygon · Stroma</span><span class="meta">0.22 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-1)"></span><span>Point · Lymphocytes ×3</span><span class="meta">3 pts</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-6)"></span><span>Ellipse · Other</span><span class="meta">0.14 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch swatch--dash" style="--swatch:var(--ann-8)"></span><span>Measurement · long axis</span><span class="meta">0.44 mm</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="-1"><span class="swatch" style="--swatch:var(--ann-2)"></span><span>Polygon · Tumor (in progress)</span><span class="meta">3 vertices</span></div>
+          </div>
+          <div class="hint-line">QuPath class names kept verbatim; QuPath RGB restored on export (FR-A2). <kbd class="key">Tab</kbd> enters the list, <kbd class="key">Space</kbd> flies to the item, <kbd class="key">⌫</kbd> deletes.</div>
+          <div class="panel__footer"><button class="btn btn--sm btn--secondary" data-live="annotations:import"><svg class="icon icon--sm"><use href="#i-upload"/></svg>Import GeoJSON</button><button class="btn btn--sm btn--primary" data-live="annotations:export"><svg class="icon icon--sm"><use href="#i-download"/></svg>Export GeoJSON (QuPath)</button></div>
+        </section>
+
+        <!-- Model (U): run inference on a region of interest; every output is a layer with provenance -->
+        <section class="dock__pane" id="pane-model" role="tabpanel" aria-labelledby="tab-model" tabindex="0" data-live="layers:provenance|events:aiResultArrived">
+          <div class="panel__header"><span class="panel__title">Model · run on ROI</span></div>
+          <div class="stack" style="padding:12px 20px">
+            <div class="field"><label class="field__label" for="model-sel">Model</label><div class="select"><select id="model-sel"><option>unet-lnmet 1.3 (Example Labs) · metastasis probability</option><option>stardist 0.9.1 · nuclei labels</option><option>hovernet 1.0 · nuclei + class</option><option>Custom endpoint…</option></select></div></div>
+            <div class="field"><span class="field__label" id="roi-lbl">Region of interest</span><div class="segmented" role="radiogroup" aria-labelledby="roi-lbl"><button class="segmented__item" role="radio" aria-checked="true">Viewport</button><button class="segmented__item" role="radio" aria-checked="false">Selected annotation</button><button class="segmented__item" role="radio" aria-checked="false">Whole slide</button></div><span class="field__hint">Output arrives as a layer with <code>{producer, version, inputHash, createdAt, regulatoryStatus: research}</code>; never drawn inside the frame loop.</span></div>
+            <div class="alert alert--neutral" id="model-offline" hidden><span class="alert__glyph">!</span><div><div class="alert__title">Inference unavailable offline</div><div>Runs are queued and start when the link returns.</div></div></div>
+            <div class="row row--end"><button class="btn btn--primary" id="btn-run" data-live="events:aiResultArrived">Run on viewport</button></div>
+          </div>
+          <div class="section__summary" style="min-height:32px">Runs <span class="count" style="margin-left:auto">3</span></div>
+          <div class="run" data-live="events:aiResultArrived"><span class="run__state"><span class="dot dot--pending"></span>running</span><span class="run__name">unet-lnmet 1.3 · viewport</span><span class="run__actions"><button class="btn btn--sm btn--ghost">Cancel</button></span><div class="progress-bar" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" style="--value:62%"><span></span></div><span class="run__meta"><span>1,240 / 2,000 tiles</span><span>ETA 40 s</span><span>inputHash 7f3a…c9e1</span></span></div>
+          <div class="run"><span class="run__state"><span class="dot dot--ok"></span>done</span><span class="run__name">unet-lnmet 1.3 · whole slide</span><span class="run__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Accept result (Shift+A)"><svg class="icon icon--sm"><use href="#i-check"/></svg></button><button class="btn btn--sm btn--icon btn--ghost" aria-label="Reject result (Shift+X)"><svg class="icon icon--sm"><use href="#i-close"/></svg></button></span><span class="run__meta"><span>2026-10-24 06:40</span><span>layer: Metastasis probability</span><span>regulatoryStatus research</span><span>accepted ×0 · rejected ×0</span></span></div>
+          <div class="run"><span class="run__state"><span class="dot dot--ok"></span>done</span><span class="run__name">stardist 0.9.1 · whole slide</span><span class="run__actions"></span><span class="run__meta"><span>2026-10-23 22:10</span><span>layer: Nuclei labels (hidden)</span><span>research</span></span></div>
+          <div class="section__summary" style="min-height:32px">Uncertainty queue <span class="count" style="margin-left:auto">14 tiles</span></div>
+          <div class="hint-line">14 tiles with p ∈ [0.45, 0.55] flagged for review. <button class="btn btn--sm btn--secondary">Review queue</button> · corrections leave as op-based annotation events with the model's provenance (active learning).</div>
+        </section>
+
+        <!-- Export (Shift+E) -->
+        <section class="dock__pane" id="pane-export" role="tabpanel" aria-labelledby="tab-export" tabindex="0" data-live="python:jobs">
+          <div class="panel__header"><span class="panel__title">Export</span></div>
+          <div class="stack" style="padding:12px 20px">
+            <div class="field"><span class="field__label" id="exp-what">What</span><div class="segmented" role="radiogroup" aria-labelledby="exp-what"><button class="segmented__item" role="radio" aria-checked="true">Annotations</button><button class="segmented__item" role="radio" aria-checked="false">Patches</button><button class="segmented__item" role="radio" aria-checked="false">Region</button><button class="segmented__item" role="radio" aria-checked="false">Layers</button></div></div>
+            <div class="field"><label class="field__label" for="exp-fmt">Format</label><div class="select"><select id="exp-fmt"><option>GeoJSON (QuPath dialect, property names verbatim)</option><option>DICOM ANN (Microscopy Bulk Simple Annotations)</option><option>GeoParquet 2.0</option><option>Patches 256 px · level 1 · parquet</option><option>OME-TIFF region</option></select></div></div>
+            <button class="toggle" role="switch" aria-checked="true" disabled><span class="toggle__track"></span><span class="toggle__text">Provenance manifest <span class="toggle__hint">Always included: manifest version, codec, ICC LUT version, software versions, state document</span></span></button>
+            <div class="row row--end"><button class="btn btn--primary">Start export</button></div>
+          </div>
+          <div class="table-wrap" style="margin:0 20px 12px">
+            <table class="table table--dense" aria-label="Export jobs">
+              <thead><tr><th>Job</th><th>Format</th><th>Progress</th><th>Identity</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>Patches 256 px · L1</td><td class="mono">parquet</td><td style="min-width:70px"><div class="progress-bar" role="progressbar" aria-valuenow="62" style="--value:62%"><span></span></div></td><td><span class="text-xs text-secondary">pending</span></td><td><button class="btn btn--sm btn--ghost" disabled aria-label="Download"><svg class="icon icon--sm"><use href="#i-download"/></svg></button></td></tr>
+                <tr><td>Regions · Tumor</td><td class="mono">GeoJSON</td><td><div class="progress-bar" style="--value:100%"><span></span></div></td><td><span class="chip chip--solid" style="min-height:18px;font-size:10px">byte-identical</span></td><td><button class="btn btn--sm btn--ghost" aria-label="Download"><svg class="icon icon--sm"><use href="#i-download"/></svg></button></td></tr>
+                <tr><td>Slide tumor_014</td><td class="mono">OME-TIFF</td><td><div class="progress-bar progress-bar--indeterminate"><span></span></div></td><td><span class="text-xs text-secondary">Tier D: pixel-identical</span></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hint-line">Re-export from a provenance manifest is byte-identical (CI). Exports are Translator jobs, never mirrors.</div>
+        </section>
+      </div>
+      <div class="pin-row"><svg class="icon icon--sm"><use href="#i-pin"/></svg><span>Drawer closes with <kbd class="key">Esc</kbd> or its key. Prefer it always open? <button class="btn btn--sm btn--ghost" data-cmd="chrome:pin">Pin chrome <kbd class="key">`</kbd></button></span></div>
+    </aside>
+
+    <!-- Bottom bar: tablet portrait and phone (rail replacement; drawing is the wheel) -->
+    <nav class="bottombar region" aria-label="Tools (touch)" data-live="commands">
+      <button class="tool tool--labelled" data-cmd="tool:select" aria-pressed="true" aria-label="Select / pan"><svg class="icon"><use href="#i-select"/></svg><span class="tool__label">Select</span></button>
+      <button class="tool tool--labelled tool--drawing" data-cmd="wheel:open" aria-label="Draw: opens the tool wheel"><svg class="icon"><use href="#i-pen"/></svg><span class="tool__label">Draw</span></button>
+      <button class="tool tool--labelled" data-cmd="tool:point" aria-label="Point marker"><svg class="icon"><use href="#i-point"/></svg><span class="tool__label">Point</span></button>
+      <button class="tool tool--labelled" data-cmd="tool:measure" aria-label="Measure"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__label">Measure</span></button>
+      <button class="tool tool--labelled" data-cmd="panel:layers" aria-label="Layers"><svg class="icon"><use href="#i-layers"/></svg><span class="tool__label">Layers</span></button>
+      <button class="tool tool--labelled" data-cmd="menu:more" aria-label="More panels and settings" aria-haspopup="menu"><svg class="icon"><use href="#i-more"/></svg><span class="tool__label">More</span></button>
+    </nav>
+
+    <!-- Command palette (Ctrl+K): anchored under the top bar, never over the canvas centre -->
+    <div class="palette-layer" id="palette-layer" hidden>
+      <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
+        <div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input type="search" id="pal-input" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list" autocomplete="off" placeholder="Search commands, panels, slides, classes, layers…" aria-label="Search commands, panels, slides, classes and layers"><kbd class="key">Esc</kbd></div>
+        <div class="palette__list" id="pal-list" role="listbox"></div>
+        <div class="palette__footer"><span><kbd class="key">↑↓</kbd> navigate</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span style="margin-left:auto">Preset: Default · same registry as voice, gamepad and the test harness</span></div>
+      </div>
+    </div>
+
+    <!-- Modal layer: keymap, About, quality sheet -->
+    <div class="backdrop" id="backdrop" hidden></div>
+    <div class="modal-layer" id="modal-keys" hidden>
+      <div class="dialog dialog--wide" role="dialog" aria-modal="true" aria-labelledby="km-t" style="width:min(980px, calc(100vw - 32px))" data-live="commands:registry">
+        <div class="dialog__header"><h4 class="dialog__title" id="km-t">Keyboard shortcuts</h4>
+          <div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup" aria-label="Keymap preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand</button></div><span class="text-xs text-secondary">Reserved here: none (research build; no dictation)</span></div>
+          <button class="btn btn--icon btn--ghost" data-close aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="dialog__body">
+          <div class="keymap">
+            <div class="keymap__group"><h4>Navigate</h4>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">←↑↓→</kbd><kbd class="key">WASD</kbd></span>Pan 10 % · held = continuous</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">←↑↓→</kbd></span>Pan one viewport</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">+</kbd><kbd class="key">−</kbd></span>Zoom in / out 2×</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">0</kbd><kbd class="key">Home</kbd></span>Fit whole slide</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">1</kbd>…<kbd class="key">6</kbd></span>1.25× 2.5× 5× 10× 20× 40× (derived)</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Z</kbd><kbd class="key">R</kbd></span>Last two magnifications · rotate 90°</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">]</kbd><kbd class="key">[</kbd></span>Next / previous slide in the cohort</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">O</kbd></span>Navigator on / off</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">B</kbd><kbd class="key">⇧S</kbd></span>Bookmark · snapshot (RUO footer burned in)</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Space</kbd></span>Temporary pan while drawing · fly to focused list item</div>
+            </div>
+            <div class="keymap__group"><h4>Panels and layers (this concept)</h4>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">I</kbd></span>Cohort and slide drawer <span class="tag-new">reused</span></div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">K</kbd><kbd class="key">⇧K</kbd></span>Layers drawer · annotation list <span class="tag-new">proposed D-A1</span></div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">U</kbd><kbd class="key">⇧E</kbd></span>Model drawer · export drawer <span class="tag-new">proposed D-A1</span></div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧Q</kbd></span>Class legend HUD</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">H</kbd><kbd class="key">⇧H</kbd></span>Hide all overlays · AI overlay only</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">,</kbd><kbd class="key">.</kbd></span>Overlay opacity down / up</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">C</kbd><kbd class="key">/</kbd></span>Compare (two slides) · curtain</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧G</kbd></span>Channel grid (multiplex) <span class="tag-new">proposed D-A1</span></div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">`</kbd></span>Pin / unpin the classic rail and dock <span class="tag-new">proposed D-A1</span></div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Ctrl</kbd><kbd class="key">K</kbd></span>Command palette</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">?</kbd><kbd class="key">Esc</kbd></span>This sheet · close / cancel</div>
+            </div>
+            <div class="keymap__group"><h4>Annotate</h4>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">V</kbd></span>Select / pan</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">P</kbd><kbd class="key">F</kbd><kbd class="key">Y</kbd></span>Polygon · brush/freehand · polyline</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">X</kbd><kbd class="key">E</kbd><kbd class="key">T</kbd></span>Rectangle · ellipse · point</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">M</kbd><kbd class="key">⇧M</kbd><kbd class="key">⇧T</kbd></span>Measure length · area · count</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Q</kbd> <kbd class="key">1</kbd>…<kbd class="key">9</kbd></span>Class picker then class</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧V</kbd></span>Tool wheel at the pointer / focus <span class="tag-new">proposed D-A1</span></div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">↵</kbd><kbd class="key">⌫</kbd></span>Commit · delete selected</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Ctrl</kbd><kbd class="key">Z</kbd> <kbd class="key">Y</kbd></span>Undo / redo</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧A</kbd><kbd class="key">⇧X</kbd></span>Accept / reject AI result under focus</div>
+              <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧D</kbd></span>Dx mode: refused in this build with the fixed microcopy</div>
+            </div>
+          </div>
+        </div>
+        <div class="dialog__footer"><span class="text-xs text-secondary" style="margin-right:auto">Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for the editing set and Ctrl+K; no Alt, no F-keys (Hyperdrive rule). All bindings rebindable.</span><button class="btn btn--accent" data-close>Done</button></div>
+      </div>
+    </div>
+
+    <div class="modal-layer" id="modal-about" hidden>
+      <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="ab-t" data-live="launch:product|telemetry">
+        <div class="dialog__header"><h4 class="dialog__title" id="ab-t">About · <span id="about-name">Stoipath Viewer</span></h4><button class="btn btn--icon btn--ghost" data-close aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="dialog__body">
+          <div class="alert alert--neutral"><span class="alert__glyph">i</span><div><div class="alert__title" id="about-string">For Research Use Only. Not for use in diagnostic procedures.</div><div class="text-xs text-secondary">Controlled string (Design note D2; wording unverified, 21 CFR 809.10(c)(2)(i)). Also burned into snapshots and present in the SDK README.</div></div></div>
+          <dl class="provenance">
+            <dt>Build</dt><dd id="about-build">viewer-ruo · 0.5.0-dev · build_hash 3c9f…e21a</dd>
+            <dt>Engine</dt><dd>stoi-core 0.5.0 · pathway_hash 91ab…04d7 · WebGL2 · Tier 1 (W+)</dd>
+            <dt>Shell</dt><dd id="about-shell">Web component · standalone workspace</dd>
+            <dt>Display</dt><dd>pitch unknown (browser) · Dx mode not part of this build</dd>
+          </dl>
+          <div class="field"><span class="field__label" id="tel-lbl">Telemetry</span><div class="segmented" role="radiogroup" aria-labelledby="tel-lbl"><button class="segmented__item" role="radio" aria-checked="true">On (PHI-free)</button><button class="segmented__item" role="radio" aria-checked="false">Off</button><button class="segmented__item" role="radio" aria-checked="false">Air-gap</button></div><span class="field__hint">Command telemetry records command names, never keys. The local tiler and export jobs run without network.</span></div>
+          <button class="toggle" role="switch" aria-checked="false" id="tgl-cvd"><span class="toggle__track"></span><span class="toggle__text">Colour-vision-deficiency remap (tissue)<span class="toggle__hint">Per-user shader LUT (Dalton 2026 YCbCr transform, FR-V8); annotation palette is CVD-safe already</span></span></button>
+          <div class="field"><label class="field__label" for="about-keys">Keymap preset</label><div class="select"><select id="about-keys"><option>Default</option><option>Left-hand cluster</option><option>Right-hand cluster</option></select></div></div>
+        </div>
+        <div class="dialog__footer"><button class="btn btn--ghost" data-close>Report a problem</button><button class="btn btn--accent" data-close>Close</button></div>
+      </div>
+    </div>
+
+    <div class="modal-layer" id="modal-quality" hidden>
+      <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="q-t" data-live="telemetry:quality">
+        <div class="dialog__header"><h4 class="dialog__title" id="q-t">Pixel quality (this frame)</h4><button class="btn btn--icon btn--ghost" data-close aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="dialog__body">
+          <dl class="provenance" id="quality-dl"><dt>State</dt><dd id="q-state">Sharp</dd><dt>NTF %</dt><dd id="q-ntf">0.0 %</dd><dt>Resolution deficit</dt><dd id="q-deficit">0.04 octave (≤ 0.15)</dd><dt>Upload age</dt><dd id="q-age">1 frame</dd><dt>Link estimate</dt><dd id="q-link">38 Mbps · RTT 21 ms</dd><dt>Level drawn</dt><dd>L4 at 5× (wanted L4)</dd><dt>Overlay budget</dt><dd>60/25/15 · overlays 4.1 ms of 4.2 ms</dd></dl>
+          <p class="text-xs text-secondary">The indicator reads Sharp only when NTF % = 0 and the deficit is ≤ 0.15 octave on the settled frame (NFR-P16). This sheet is the developer HUD's user-facing twin.</p>
+        </div>
+        <div class="dialog__footer"><button class="btn btn--accent" data-close>Close</button></div>
+      </div>
+    </div>
+
+    <!-- Overflow menu (⋯ and the touch "More") -->
+    <div class="menu" id="menu-more" role="menu" aria-label="More" hidden style="position:absolute;right:8px;top:calc(var(--layout-topbar) + 4px);z-index:var(--z-palette)">
+      <div class="menu__heading">Panels</div>
+      <button class="menu__item" role="menuitem" data-cmd="panel:cohort"><svg class="icon"><use href="#i-folder"/></svg>Cohort and slide<kbd class="key">I</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="panel:annotations"><svg class="icon"><use href="#i-list"/></svg>Annotations<kbd class="key">⇧K</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="panel:model"><svg class="icon"><use href="#i-model"/></svg>Model<kbd class="key">U</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="panel:export"><svg class="icon"><use href="#i-download"/></svg>Export<kbd class="key">⇧E</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="compare:toggle"><svg class="icon"><use href="#i-compare"/></svg>Compare<kbd class="key">C</kbd></button>
+      <div class="menu__divider"></div>
+      <button class="menu__item" role="menuitem" data-cmd="help:keys"><svg class="icon"><use href="#i-keyboard"/></svg>Shortcuts<kbd class="key">?</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="help:palette"><svg class="icon"><use href="#i-search"/></svg>Command palette<kbd class="key">⌃K</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="chrome:pin"><svg class="icon"><use href="#i-pin"/></svg>Pin chrome<kbd class="key">`</kbd></button>
+      <button class="menu__item" role="menuitem" data-cmd="help:about"><svg class="icon"><use href="#i-more"/></svg>About and settings</button>
+    </div>
+
+    <!-- Toast stack (rare; neutral; above the strip, never over the centre) -->
+    <div class="toast-stack" id="toasts" aria-live="off"></div>
+
+    <!-- Live regions: the strip's spoken twin -->
+    <div id="lr-polite" class="live-region" aria-live="polite">Sharp. 5 times. tumor_014, H and E. Tool: select. Class: Tumor.</div>
+    <div id="lr-assertive" class="live-region" aria-live="assertive"></div>
+  </div><!-- /app -->
+
+  <!-- Jupyter widget surface: the same app node is moved into the output cell -->
+  <section class="notebook" id="notebook" aria-label="Jupyter notebook (host mock)">
+    <div class="nb-cell"><div class="nb-prompt">In [3]:</div><pre class="nb-code"><span class="kw">import</span> stoipath <span class="kw">as</span> sp
+slide = sp.open(<span class="str">"camelyon16/tumor_014.tif"</span>)          <span class="cm"># in-process Edge Translator (PyO3 wheel)</span>
+v = sp.Viewer(slide, product=<span class="str">"viewer-ruo"</span>)
+v.layers.add_labels(<span class="str">"preds.ome.zarr/labels/0"</span>, provenance={<span class="str">"producer"</span>: <span class="str">"unet"</span>, <span class="str">"version"</span>: <span class="str">"1.3"</span>, <span class="str">"input_hash"</span>: slide.sid})
+v.layers.add_vector(<span class="str">"detections.parquet"</span>)         <span class="cm"># 1,240,000 features → local tiler, no server job</span>
+v</pre></div>
+    <div class="nb-cell"><div class="nb-prompt nb-prompt--out">Out[3]:</div><div class="nb-widget" id="nb-widget"></div></div>
+    <p class="nb-note">Widget chrome (plan 04 §8 anywidget): compact top bar 36 px with the RUO badge and slide name, drawers still keyboard-summoned, strip 24 px with the <i>Syncing with Python…</i> state while a traitlet round-trip is pending. The cell is 1200 × 640 (scaled to fit this window).</p>
+  </section>
+
+  <!-- ====== Demo controls (review-only fixture; not product chrome) ====== -->
+  <nav class="demo-strip" id="demo" aria-label="Demo controls (review only)">
+    <span class="lbl">demo</span>
+    <span class="grp"><label class="lbl" for="d-build">build</label><select id="d-build" data-state="build"><option value="viewer-ruo">Stoipath Viewer (RUO)</option><option value="clinical-ih">Clinical-IH (research session)</option><option value="dx">Dx (cleared)</option></select></span>
+    <span class="grp"><label class="lbl" for="d-net">network</label><select id="d-net" data-state="net"><option value="lan">LAN</option><option value="cold4g">Cold 4G</option><option value="offline">Offline pack</option><option value="tileerr">Tile errors</option><option value="slow">Translator slow</option></select></span>
+    <span class="grp"><label class="lbl" for="d-sharp">sharpness</label><select id="d-sharp" data-state="sharp"><option value="sharp">Sharp</option><option value="sharpening">Sharpening…</option><option value="soft">Soft — level not yet available</option></select></span>
+    <span class="grp"><label class="lbl" for="d-tier">tier</label><select id="d-tier" data-state="tier"><option value="1">Tier 1</option><option value="w60">Tier 2 · 60 Hz (W60)</option></select></span>
+    <span class="grp"><label class="lbl" for="d-dx">dx</label><select id="d-dx" data-state="dx"><option value="na">—</option><option value="refused">Refused: no attestation</option><option value="active">Active (Dx build only)</option></select></span>
+    <span class="sep"></span>
+    <span class="grp"><label class="lbl" for="d-slide">slide</label><select id="d-slide" data-state="slide"><option value="he">H&amp;E tumor_014</option><option value="compare">Compare H&amp;E ⟷ IHC</option><option value="curtain">Curtain H&amp;E / IHC</option><option value="mx">CyCIF 8-channel</option><option value="mxgrid">CyCIF channel grid</option></select></span>
+    <span class="grp"><label class="lbl" for="d-drawer">drawer</label><select id="d-drawer" data-state="drawer"><option value="">closed</option><option value="cohort">Cohort (I)</option><option value="layers">Layers (K)</option><option value="annotations">Annotations (⇧K)</option><option value="model">Model (U)</option><option value="export">Export (⇧E)</option></select></span>
+    <span class="grp"><label class="lbl" for="d-surface">surface</label><select id="d-surface" data-state="surface"><option value="workspace">Workspace</option><option value="widget">Jupyter widget 1200×640</option></select></span>
+    <span class="sep"></span>
+    <button type="button" data-toggle="radial" aria-pressed="false">Tool wheel</button>
+    <button type="button" data-toggle="pinned" aria-pressed="false">Pin chrome</button>
+    <button type="button" data-toggle="legend" aria-pressed="true">Legend</button>
+    <button type="button" data-toggle="deutan" aria-pressed="false">Deutan sim</button>
+    <button type="button" data-toggle="palette" aria-pressed="false">Palette</button>
+    <button type="button" data-toggle="keys" aria-pressed="false">Keymap</button>
+    <button type="button" data-toggle="live" aria-pressed="false">Live markers</button>
+    <button type="button" data-toggle="guides" aria-pressed="false">Central 50 %</button>
+    <button type="button" id="d-reset">Reset</button>
+    <span class="sep"></span>
+    <span class="fx">command bus →</span> <output id="cmd-log" aria-live="off">—</output>
+  </nav>
+</div><!-- /stage -->
+
+<!-- ====== Design rationale (collapsed by default) ====== -->
+<details class="rationale" id="rationale">
+  <summary>Design rationale · Concept A · Canvas-maximal · what the judges should look at</summary>
+
+  <h3>Thesis</h3>
+  <p>The research pathologist and the ML engineer use this screen for hours a day, on a 4K display, with one hand on the mouse. Every surveyed viewer gives them a ribbon, a rail and a dock that sit there all day even though they are touched a few times an hour. Concept A keeps only what principle P4 and P3 make mandatory (the top bar with the RUO badge and string, the status strip with the honest sharpness indicator) and turns everything else into a transient: an edge drawer that a single key summons (<kbd class="key">I</kbd> cohort, <kbd class="key">K</kbd> layers, <kbd class="key">⇧K</kbd> annotations, <kbd class="key">U</kbd> model, <kbd class="key">⇧E</kbd> export), a tool wheel at the pointer (right-click, long-press, pen squeeze, <kbd class="key">⇧V</kbd>), a class legend that lives in the HUD under the navigator (<kbd class="key">⇧Q</kbd>), and a top-left HUD <i>tool line</i> that says what the next click will do. The canvas share at rest is ≈ 93 % at 1920 × 1080 and ≈ 96 % at 3840 × 2160; with the drawer open it is still ≈ 74 %.</p>
+
+  <h3>Key choices</h3>
+  <ol>
+    <li><b>One drawer, five tabs, one key each.</b> The drawer is the design system's dock element positioned over the canvas edge (never the centre) between gestures; pressing its key again or <kbd class="key">Esc</kbd> closes it. On tablets it is the bottom sheet (≤ 40 % height), on phones a 60 % sheet. Because it is the same element, <kbd class="key">`</kbd> can <i>pin</i> it (plus the rail) and the screen becomes the classic three-column layout: the discoverability escape hatch costs no second implementation.</li>
+    <li><b>The HUD is the toolbar.</b> The top-left line shows the active tool with its key, the active class with its swatch, undo depth and the LOD state of the dense layer. Both the tool and the class are buttons (24 px targets) that open the wheel and the class ring, so a pointer-only user is never stranded, and the line is updated by <code>textContent</code> only (P2).</li>
+    <li><b>Tool wheel instead of a rail.</b> Eight single-letter tools around a centre that shows the class (<kbd class="key">Q</kbd> turns the ring into the class picker, <kbd class="key">1</kbd>–<kbd class="key">9</kbd> choose). It is pointer sugar over the command bus: every sector is also a key, the palette lists every command, so WCAG keyboard operability holds without the wheel. In the product it is a user-invoked GPU layer (exempt from the central-50 % rule like the pen-tip palette).</li>
+    <li><b>Legend as HUD, counts as data.</b> The class legend sits under the navigator, outside the central 50 %, and carries the annotation counts per class plus the detection layer's class totals (1,240,000) and its LOD; clicking a class jumps to its first object (Slim convention). It is the research user's answer to "what is on this slide" without a panel.</li>
+    <li><b>Compare and multiplex are canvas modes, not panels.</b> <kbd class="key">C</kbd> splits the canvas (active pane outlined, QuPath convention) with a compare bar at the top edge for <code>lock / affine / none</code> sync, <kbd class="key">/</kbd> turns it into a curtain with a keyboard-operable handle (SC 2.5.7), and <kbd class="key">⇧G</kbd> fans the multiplex slide into one pane per enabled channel.</li>
+    <li><b>Honesty is in the strip, not the panels.</b> The strip carries the sharpness state (Sharp / Sharpening… / Soft — level not yet available), the local-tiler notice, the network, offline and tier chips and the Dx refusal strings verbatim from principles §5. The canvas is softened, never blanked, in the degraded states; failed tiles keep the ancestor.</li>
+    <li><b>Jupyter is the same chrome, smaller.</b> The widget surface moves the same app node into a notebook output cell: 36 px bar with the RUO badge, drawers still summoned by keys, 24 px strip with <i>Syncing with Python…</i>. Nothing is re-implemented in Python.</li>
+  </ol>
+
+  <h3>Trade-offs and the discoverability risk, honestly</h3>
+  <ul>
+    <li><b>Discoverability is the price.</b> A first-time user sees a slide and a top bar. Mitigations shown here: the HUD hint line (shown until the first command, telemetry <code>commandInvoked</code> decides when it has done its job), the <kbd class="key">?</kbd> sheet, <kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd>, the ⋯ menu listing every panel with its key, the "Pin chrome" button in the top bar and inside every drawer, and the touch bottom bar which always shows five labelled targets. Whether that is enough is exactly what a formative study with 6–8 research users should test before this concept is chosen.</li>
+    <li><b>Five new bindings</b> (<kbd class="key">K</kbd>, <kbd class="key">⇧K</kbd>, <kbd class="key">U</kbd>, <kbd class="key">⇧E</kbd>, <kbd class="key">⇧G</kbd>, <kbd class="key">⇧V</kbd>, <kbd class="key">`</kbd>) are proposed as Design note D-A1 against the command registry; all are unmodified or Shift keys, so the Hyperdrive rule holds, and all are rebindable. <kbd class="key">I</kbd> is reused from the clinical identity panel because the question it answers ("what am I looking at") is the same.</li>
+    <li><b>The drawer covers the right 360 px of tissue</b> while open. The alternative (push the canvas) would re-lay out the canvas, which P2 forbids during a gesture and which costs a frame between gestures; the concept accepts the occlusion because the drawer is transient. Pinning restores the push layout for people who prefer it.</li>
+    <li><b>Hover is not used for anything</b> except pan buttons in the navigator; nothing auto-fades, nothing slides. That is a deliberate loss of "polish" in exchange for P2 and for pen/touch parity.</li>
+  </ul>
+
+  <h3>What to look at (switch states from the demo strip or the URL hash)</h3>
+  <ul>
+    <li>At rest at 1920 × 1080: badge, full RUO string, cohort name with <code>CC0</code>, HUD tool line, class legend, strip notice <i>1,240,000 features — tiling locally so zoom stays smooth</i>, scale bar, derived magnification, navigator. Toggle "Central 50 %" to verify nothing crosses it.</li>
+    <li>Press <kbd class="key">K</kbd>: the layers drawer with the AI raster (opacity, outline/heatmap, threshold, provenance tuple with <code>regulatoryStatus: research</code>), the hidden label raster, the 1.24 M vector layer with the local-tiler note, and the annotation set.</li>
+    <li>Press <kbd class="key">⇧K</kbd>: the annotation list is a real list with counts; the class chips carry QuPath names on the CVD-safe palette; the deuteranopia toggle re-colours the overlays only (Machado 2009 matrix).</li>
+    <li>Right-click the slide (or <kbd class="key">⇧V</kbd>): the tool wheel; <kbd class="key">Q</kbd> inside it shows the class ring.</li>
+    <li>Slide → "Compare" and "Curtain": affine sync, active pane outline, curtain handle operable by arrow keys.</li>
+    <li>Slide → "CyCIF 8-channel": six of eight channels, per-channel colour and window with histogram, the <i>8-bit preview tier while moving · 16-bit at settle</i> line; with tier W60 the fifth and sixth channels explain the cap. "Channel grid" shows <kbd class="key">⇧G</kbd>.</li>
+    <li>Surface → "Jupyter widget": compact chrome in a notebook cell with <i>Syncing with Python…</i>.</li>
+    <li>Network → Cold 4G, Offline pack, Tile errors, Translator slow; sharpness → Soft — level not yet available; build → Clinical-IH with dx → Refused: the exact §5 strings in the strip and the live region.</li>
+    <li>Resize to 1024 × 1366 (bottom bar, sheet, pen stroke with a finger pan) and 390 × 844 (badge only, sharpness dot in the HUD, navigator behind <kbd class="key">O</kbd>, point + measure).</li>
+  </ul>
+
+  <h3>Elements that map to engine contracts (every one carries <code>data-live</code>; toggle "Live markers")</h3>
+  <div class="table-wrap"><table class="table table--dense">
+    <thead><tr><th>Element in this concept</th><th>Contract (plan 12 §1.1 / plan 04 §8)</th><th>Data or event</th></tr></thead>
+    <tbody>
+      <tr><td>RUO badge, label string, About build line, launch refusal string on <kbd class="key">⇧D</kbd></td><td>Launch-context contract</td><td><code>product: viewer-ruo</code> must equal the running build; RUO string CI-asserted</td></tr>
+      <tr><td>Cohort name, slide rows, slide manifest card, <kbd class="key">]</kbd>/<kbd class="key">[</kbd></td><td>State document</td><td><code>slides[]</code> (manifest, sid, licence), <code>slideOpened</code></td></tr>
+      <tr><td>Magnification readout, scale bar, position, navigator rectangle, typed zoom, presets 1–6</td><td>State document · geometry (µm)</td><td><code>views[0].scale_um_per_px</code>, <code>center_um</code>, <code>flyTo</code></td></tr>
+      <tr><td>Compare bar sync control, curtain handle, pane outline</td><td>State document</td><td><code>views[]</code> with <code>sync: {mode: lock | affine | none, transform}</code></td></tr>
+      <tr><td>Layer rows (visibility, opacity, outline/heatmap, threshold), provenance line, legend, accept/reject</td><td>Layer API with provenance tuple and ACL</td><td><code>{producer, version, inputHash, createdAt, regulatoryStatus}</code>, <code>aiResultArrived/Accepted/Rejected</code></td></tr>
+      <tr><td>Detections (1,240,000) row, HUD LOD line, strip notice</td><td>Annotation API · local vector tiler</td><td><code>addVector({url})</code> above the 10⁵ untiled ceiling → MVT on demand; centroid LOD &lt; 10×</td></tr>
+      <tr><td>Tool wheel, HUD tool line, class chips, annotation list, undo/redo, import/export GeoJSON</td><td>Annotation API (op-based) · command bus</td><td>ops with stable ids; GeoJSON-QuPath adapter restores QuPath RGB; <code>annotationCreated/Updated/Selected</code></td></tr>
+      <tr><td>Channel rows (colour, window, visibility), channel grid, cap reasons</td><td>State document <code>channels[]</code> · layer API</td><td>window/colour as uniform updates; device-class caps (≤ 4 on W60, ≤ 3 on phones)</td></tr>
+      <tr><td>Model drawer: run, progress, runs list, uncertainty queue</td><td>Layer API · event bus</td><td><code>aiResultArrived</code> → review → op-based label events</td></tr>
+      <tr><td>Export drawer: jobs table, byte-identity badge, provenance manifest</td><td>Export jobs (Translator) · state document in every export</td><td><code>snapshot()</code>, patch/region jobs; FR-V10</td></tr>
+      <tr><td>Sharpness indicator, quality sheet, network/tier/offline chips, tile-error chip</td><td>Telemetry / quality record · event bus</td><td><code>tileSettled</code> (NTF %, deficit), <code>stoi:error</code>, tier at start-up, offline pack</td></tr>
+      <tr><td>Mode indicator, Dx refusal strings (Clinical-IH / Dx builds only)</td><td>Dx mode / Rendering Complete</td><td><code>render_mode</code>, <code>stoi:dxattestation</code>, <code>stoi:renderingcomplete</code></td></tr>
+      <tr><td>Every button, key, wheel sector, palette row; the command-bus log in the demo strip</td><td>Command bus</td><td>serialisable commands; proposed shell event <code>commandInvoked {id, source}</code> (Design note D4)</td></tr>
+      <tr><td>Widget surface: Syncing with Python…, code cell</td><td>anywidget traitlets over the state document</td><td><code>v.state</code>, <code>v.layers.add_vector</code>, <code>v.observe("viewChanged")</code></td></tr>
+      <tr><td>Live regions (polite, assertive)</td><td>Event bus → accessibility layer</td><td>strip strings verbatim; HUD values at settle, debounced 500 ms</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Design notes (choices the plan leaves open; flagged, not decided)</h3>
+  <ul>
+    <li><b>D-A1 Panel keys.</b> <kbd class="key">K</kbd>, <kbd class="key">⇧K</kbd>, <kbd class="key">U</kbd>, <kbd class="key">⇧E</kbd>, <kbd class="key">⇧G</kbd>, <kbd class="key">⇧V</kbd>, <kbd class="key">`</kbd> are free in principles §4.5 maps A and B and are proposed as registry additions. The component sheet labels the rail's Layers tool <kbd class="key">⇧H</kbd> while map A binds <kbd class="key">⇧H</kbd> to "toggle AI overlay only"; this concept keeps map A and uses <kbd class="key">K</kbd> for the panel. Owner to confirm.</li>
+    <li><b>D-A2 The wheel is not a mode.</b> Right-click on an annotation still opens the design system's context menu; the wheel appears on empty canvas, on long-press and on pen squeeze. Both are transient GPU layers in the product.</li>
+    <li><b>D-A3 Drawer width.</b> 360 px (440 on 4K) rather than the dock's 320: research rows (provenance tuple, window histogram) need the width. Resizable 320–520 by keyboard as the dock is.</li>
+    <li><b>D-A4 Compare bar placement.</b> Top edge of the canvas, horizontally centred, which is outside the central 50 % × 50 % zone but inside the top 25 %. If the owner prefers zero DOM in the top band, the control moves into the strip.</li>
+    <li><b>D-A5 Multichannel pseudo-colours.</b> Six of the eight channel colours are palette tokens; CD68 (<code>#4f7ddb</code>) and PD-L1 (<code>#c2673a</code>) are additional LUT colours because deep blue and sienna vanish on a black background. Pseudo-colours are user-set LUTs, not the annotation palette, but the same ΔE00 warning should apply.</li>
+    <li><b>D-A7 Label string at 1024 px.</b> <code>base.css</code> hides <code>.topbar__label</code> through <code>@container topbar (max-width: 1023px)</code>, which measures the top bar's content box (viewport − 16 px), so the string disappears at exactly 1024 px, against principles §2.5. This page overrides it; the design system should query <code>max-width: 1007px</code> or drop the padding from the container. Flagged for the design-system owner.</li>
+    <li><b>D-A6 First-run hint.</b> A HUD hint line until the first command. It is DOM text over the canvas (top-left corner, allowed), never a modal or a coach-mark tour.</li>
+  </ul>
+
+  <h3>Known weaknesses</h3>
+  <ul>
+    <li>Novices may never find the drawers without the hint; the escape hatch (pin chrome) is itself behind a small button and a key.</li>
+    <li>The drawer occludes the right edge of the slide while open; a reader who keeps the layers panel open all day is better served by the pinned layout, i.e. by the other concepts.</li>
+    <li>Legend and navigator stack on the right edge: on a 1366 × 1024 landscape tablet with the compare bar visible the top band gets crowded (the bar is left-aligned there to compensate).</li>
+    <li>The tool wheel's keyboard twin is "the keys themselves"; a screen-reader user never needs the wheel, but a motor-impaired pointer user who wants a bigger target gets the pinned rail only.</li>
+    <li>On tablet and phone the bottom sheet covers the bottom HUD (scale bar, magnification) while open; the values stay in the live region, but a visual twin above the sheet is still to be designed.</li>
+    <li>Static mock: zoom is a transform of a synthetic SVG; the detection layer is 1,600 drawn centroids standing in for 1.24 M; the 8-bit/16-bit tier switch is text only.</li>
+  </ul>
+  <p class="note">Content is synthetic: CAMELYON16 slide names are real public identifiers (CC0); the IHC serial section, the CyCIF field, model names and hashes are placeholders. No PHI appears in this build by construction.</p>
+</details>
+
+<script>
+(function () {
+'use strict';
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const app = $('#app'), stage = $('#stage'), canvasArea = $('#canvas');
+
+/* ------------------------------------------------------------------ state */
+const DEFAULTS = { build: 'viewer-ruo', net: 'lan', sharp: 'sharp', tier: '1', dx: 'na', view: 'he', drawer: '', surface: 'workspace',
+  radial: false, pinned: false, legend: true, deutan: false, palette: false, keys: false, live: false, guides: false,
+  fill: false, present: 'outline', tool: 'select', cls: 'tumor', mag: 5, lastMag: 20, overlays: true, ai: true, det: true, nav: true, sync: 'affine', hint: true, undo: 3, about: false };
+const BOOLS = ['radial','pinned','legend','deutan','palette','keys','live','guides','fill','overlays','ai','det','nav','hint','about'];
+let state = Object.assign({}, DEFAULTS);
+let classPick = false;      // Q pressed: next digit picks a class
+let radialMode = 'tools';   // or 'classes'
+let radialIndex = 0;
+
+const TOOLS = { select: ['Select', 'V', 'i-select'], polygon: ['Polygon', 'P', 'i-polygon'], brush: ['Brush', 'F', 'i-brush'], polyline: ['Polyline', 'Y', 'i-polyline'], rect: ['Rectangle', 'X', 'i-rect'], ellipse: ['Ellipse', 'E', 'i-ellipse'], point: ['Point', 'T', 'i-point'], measure: ['Measure', 'M', 'i-measure'], count: ['Count', '⇧T', 'i-point'] };
+const CLASSES = { tumor: ['Tumor', 'var(--ann-2)', '1'], stroma: ['Stroma', 'var(--ann-5)', '2'], lymph: ['Lymphocytes', 'var(--ann-1)', '3'], necrosis: ['Necrosis', 'var(--ann-7)', '4'], other: ['Other', 'var(--ann-6)', '5'], positive: ['Positive', 'var(--ann-3)', '6'], negative: ['Negative', 'var(--ann-8)', '7'], region: ['Region*', 'var(--ann-4)', '8'] };
+const CLASS_ORDER = Object.keys(CLASSES);
+const FOLL = [[230,420,58],[300,300,50],[420,215,55],[560,165,48],[720,140,52],[890,150,50],[1005,172,40],[1330,330,50],[1380,470,54],[1300,615,50],[1130,725,52],[950,775,48],[760,785,50],[560,745,52],[380,665,48],[255,545,50]];
+const CHANNELS = [
+  { id: 'dapi', name: 'DAPI', col: '#cfd4e6', win: [120, 2860], on: true, hist: [8,30,70,100,60,30,16,10,7,5,4,3,2,2,1,1] },
+  { id: 'cd3', name: 'CD3', col: '#7cc3f0', win: [200, 3400], on: true, hist: [30,100,60,32,20,14,10,8,6,5,4,3,2,2,1,1] },
+  { id: 'cd8', name: 'CD8', col: '#1a8893', win: [180, 2900], on: true, hist: [40,100,55,28,18,12,9,7,5,4,3,2,2,1,1,1] },
+  { id: 'panck', name: 'PanCK', col: '#be7b00', win: [300, 5100], on: true, hist: [100,40,18,12,10,9,8,8,7,7,6,6,5,4,3,2] },
+  { id: 'ki67', name: 'Ki-67', col: '#f0e442', win: [150, 2200], on: true, hist: [100,35,15,9,6,5,4,4,3,3,2,2,2,1,1,1] },
+  { id: 'cd68', name: 'CD68', col: '#4f7ddb', win: [220, 3000], on: true, hist: [60,100,50,25,15,10,8,6,5,4,3,2,2,1,1,1] },
+  { id: 'pdl1', name: 'PD-L1', col: '#c2673a', win: [250, 4000], on: false, hist: [100,30,12,8,6,5,4,4,3,3,2,2,2,1,1,1] },
+  { id: 'sma', name: 'SMA', col: '#9aa0a6', win: [200, 3600], on: false, hist: [70,100,45,22,14,9,7,6,5,4,3,2,2,1,1,1] }
+];
+
+/* ------------------------------------------------------------- URL hash */
+function parseHash() {
+  const h = location.hash.replace(/^#/, '');
+  if (!h) return;
+  h.split('&').forEach(kv => {
+    const [k, v] = kv.split('=').map(decodeURIComponent);
+    if (!(k in DEFAULTS)) return;
+    if (BOOLS.includes(k)) state[k] = v === '1' || v === 'true';
+    else if (k === 'mag' || k === 'lastMag' || k === 'undo') state[k] = Number(v) || DEFAULTS[k];
+    else state[k] = v;
+  });
+}
+function writeHash() {
+  const parts = [];
+  Object.keys(DEFAULTS).forEach(k => { if (state[k] !== DEFAULTS[k]) parts.push(k + '=' + encodeURIComponent(BOOLS.includes(k) ? (state[k] ? 1 : 0) : state[k])); });
+  history.replaceState(null, '', parts.length ? '#' + parts.join('&') : location.pathname);
+}
+
+/* ------------------------------------------------------- scene generation */
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+function inEllipse(x, y, cx, cy, rx, ry) { const dx = (x - cx) / rx, dy = (y - cy) / ry; return dx * dx + dy * dy < 1; }
+function genNuclei() {
+  const r = rng(7); let out = '', n = 0;
+  while (n < 1100) {
+    const x = 60 + r() * 1480, y = 90 + r() * 760;
+    if (!inEllipse(x, y, 800, 470, 735, 378)) continue;
+    if (inEllipse(x, y, 780, 520, 420, 190) && r() < 0.55) continue;
+    if (inEllipse(x, y, 1180, 262, 112, 74)) continue;
+    out += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (2.1 + r() * 1.3).toFixed(1) + '"/>'; n++;
+  }
+  $('#nuclei').innerHTML = out;
+}
+function genDetections() {
+  const r = rng(11); let out = '';
+  for (let i = 0; i < 1600; i++) {
+    const u = r(); let x, y, c;
+    if (u < 0.75) { do { x = 60 + r() * 1480; y = 90 + r() * 760; } while (!inEllipse(x, y, 800, 470, 735, 378) || inEllipse(x, y, 1180, 262, 115, 78)); c = '#7cc3f0'; }
+    else if (u < 0.90) { do { x = 1180 + (r() * 2 - 1) * 108; y = 262 + (r() * 2 - 1) * 70; } while (!inEllipse(x, y, 1180, 262, 108, 70)); c = '#8e3a15'; }
+    else { if (r() < 0.5) { const a = r() * Math.PI * 2, k = 0.93 + r() * 0.06; x = 800 + Math.cos(a) * 740 * k; y = 470 + Math.sin(a) * 382 * k; } else { do { x = 780 + (r() * 2 - 1) * 420; y = 520 + (r() * 2 - 1) * 190; } while (!inEllipse(x, y, 780, 520, 420, 190)); } c = '#1a8893'; }
+    out += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="2.4" fill="' + c + '"/>';
+  }
+  $('#detections').innerHTML = out;
+}
+function genMx() {
+  const r = rng(23);
+  const inNode = () => { let x, y; do { x = 60 + r() * 1480; y = 90 + r() * 760; } while (!inEllipse(x, y, 800, 470, 735, 378)); return [x, y]; };
+  const inFocus = () => { let x, y; do { x = 1180 + (r() * 2 - 1) * 108; y = 262 + (r() * 2 - 1) * 70; } while (!inEllipse(x, y, 1180, 262, 108, 70)); return [x, y]; };
+  const inMed = () => { let x, y; do { x = 780 + (r() * 2 - 1) * 420; y = 520 + (r() * 2 - 1) * 190; } while (!inEllipse(x, y, 780, 520, 420, 190)); return [x, y]; };
+  const put = (id, n, fn, rad) => { let out = ''; for (let i = 0; i < n; i++) { const p = fn(); if (!p) continue; out += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (rad * (0.8 + r() * 0.5)).toFixed(1) + '"/>'; } $('#' + id).innerHTML = out; };
+  put('mx-dapi', 1500, inNode, 2.6);
+  put('mx-cd3', 520, () => { const p = inNode(); return (inEllipse(p[0], p[1], 780, 520, 420, 190) && r() < 0.6) ? null : p; }, 3);
+  put('mx-cd8', 260, inNode, 3);
+  put('mx-panck', 70, inFocus, 6.5);
+  put('mx-ki67', 140, () => { const f = FOLL[Math.floor(r() * FOLL.length)]; const a = r() * Math.PI * 2, d = r() * f[2] * 0.6; return [f[0] + Math.cos(a) * d, f[1] + Math.sin(a) * d]; }, 2.6);
+  put('mx-cd68', 160, inMed, 3.4);
+  put('mx-pdl1', 90, () => { const p = inFocus(); return [p[0] + (r() * 2 - 1) * 40, p[1] + (r() * 2 - 1) * 30]; }, 4);
+}
+
+/* -------------------------------------------------------- channel panel */
+function channelCap() { return state.tier === 'w60' ? 4 : 8; }
+function enabledChannels() { const cap = channelCap(); let n = 0; return CHANNELS.map(c => { const ok = c.on && n < cap; if (ok) n++; return ok; }); }
+function renderChannels() {
+  const host = $('#channel-rows'); const en = enabledChannels(); const cap = channelCap(); let html = '';
+  CHANNELS.forEach((c, i) => {
+    const on = en[i]; const capped = c.on && !on;
+    const hist = c.hist.map(h => '<span style="height:' + h + '%"></span>').join('');
+    html += '<div class="channel-row' + (on ? '' : ' is-off') + '" data-live="state.channels[' + i + ']">' +
+      '<button class="layer-row__vis" aria-pressed="' + on + '" data-chtoggle="' + c.id + '" ' + (capped ? 'aria-disabled="true"' : '') + ' aria-label="' + c.name + ', ' + (on ? 'visible' : capped ? 'cannot be enabled: ' + cap + ' of ' + cap + ' channels on this device' : 'hidden') + '"><svg class="icon icon--sm"><use href="#' + (on ? 'i-eye' : 'i-eye-off') + '"/></svg></button>' +
+      '<span class="swatch" style="--swatch:' + c.col + '" aria-hidden="true"></span>' +
+      '<div class="channel-row__name"><span class="truncate">' + c.name + '</span><span class="kind">ch ' + (i + 1) + '/8</span></div>' +
+      '<button class="btn btn--sm btn--icon btn--ghost" aria-label="Colour and LUT for ' + c.name + '"><svg class="icon icon--sm"><use href="#i-more"/></svg></button>' +
+      (capped ? '<div class="channel-row__reason">Channel cap reached (' + cap + ' on this device class) — hide another channel to enable</div>' :
+      '<div class="channel-row__win"><div class="range-dual" style="position:relative"><div class="histogram histogram--channel" style="--channel:' + c.col + '" aria-hidden="true">' + hist + '</div><div class="range-dual__track"></div><div class="range-dual__fill" style="--lo:' + Math.round(c.win[0] / 65) + '%;--hi:' + Math.round(c.win[1] / 65) + '%"></div>' +
+      '<input type="range" min="0" max="6500" value="' + c.win[0] + '" aria-label="' + c.name + ' window low"' + (on ? '' : ' disabled') + '><input type="range" min="0" max="6500" value="' + c.win[1] + '" aria-label="' + c.name + ' window high"' + (on ? '' : ' disabled') + '></div><span class="num">' + c.win[0] + ' – ' + c.win[1].toLocaleString('en-US') + '</span></div>') +
+      '</div>';
+  });
+  host.innerHTML = html;
+  const svgs = $$('#svg-mx, .slide-row__thumb.scene--mx');
+  CHANNELS.forEach((c, i) => svgs.forEach(s => s.style.setProperty('--vis-' + c.id, en[i] ? 1 : 0)));
+  const count = en.filter(Boolean).length;
+  $('#ch-enabled').textContent = count;
+  $('#hud-mx').textContent = count + ' of 8 channels · 8-bit preview tier while moving · 16-bit at settle' + (state.tier === 'w60' ? ' · ≤ 4 channels on W60' : '');
+  $('#ch-tier-line').textContent = state.tier === 'w60' ? '8-bit preview tier while moving · 16-bit at settle for the centre tiles · ≤ 4 visible channels on this device class (Tier 2 · 60 Hz)' : '8-bit preview tier while moving · 16-bit at settle · 8 channels on this device class';
+}
+
+/* -------------------------------------------------------------- zoom */
+const PRESETS = [1.25, 2.5, 5, 10, 20, 40];
+function scaleBarFor(mag) { const umPerPx = 10 / mag; const cands = [5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5]; for (const L of cands) { const px = L / umPerPx; if (px <= 200 && px >= 60) return [L, px]; } return [100, 100 / umPerPx]; }
+function renderZoom() {
+  const m = state.mag; const s = m / 5;
+  $$('svg.canvas .world').forEach(w => { w.setAttribute('transform', 'translate(800 450) scale(' + s + ') translate(-800 -450)'); });
+  const umPerPx = 10 / m;
+  $('#mag-value').textContent = (m % 1 ? m.toFixed(2).replace(/0+$/, '') : m) + '×';
+  $('#mag-line2').textContent = umPerPx.toFixed(2) + ' µm/px · derived';
+  $('#mag').setAttribute('aria-label', 'Magnification ' + m + ' times, ' + umPerPx.toFixed(2) + ' micrometres per pixel, derived from the scan. Press Enter to type a zoom');
+  const [L, px] = scaleBarFor(m);
+  $('#scalebar').style.setProperty('--scalebar-length', Math.round(px) + 'px');
+  $('#scalebar-label').textContent = L >= 1000 ? (L / 1000) + ' mm' : L + ' µm';
+  const frac = Math.max(6, Math.min(100, 50 * 5 / m));
+  const rect = $('#nav-rect'); rect.style.width = frac + '%'; rect.style.height = frac + '%'; rect.style.left = (50 - frac / 2) + '%'; rect.style.top = (50 - frac / 2) + '%';
+  app.classList.toggle('lod-poly', m >= 10);
+  $('#legend-lod').textContent = m >= 10 ? 'polygons' : 'centroids';
+  $('#hud-lod').textContent = m >= 10 ? 'Detections · full polygons at ' + m + '× · 1,240,000 features' : 'Detections · centroid LOD below 10× · 1,240,000 features';
+  $('#hud-pos').textContent = 'x ' + (6.21 + (m - 5) * 0.01).toFixed(2) + ' mm · y 3.48 mm';
+}
+function setMag(m) { if (m === state.mag) return; state.lastMag = state.mag; state.mag = m; renderZoom(); writeHash(); announce(); }
+
+/* ----------------------------------------------------- strip and builds */
+const STR = {
+  ruo: 'For Research Use Only. Not for use in diagnostic procedures.',
+  dxRefusedRuo: 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.',
+  dxRefusedAttest: 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.',
+  dxEntered: 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago',
+  tiler: '1,240,000 features — tiling locally so zoom stays smooth',
+  tiles: '3 tiles could not be loaded — retrying',
+  slow: 'Server slow (p95 1.2 s) — prefetch paused',
+  slowLink: 'Slow link (6 Mbps) — reduced detail while moving',
+  linkOk: 'Link OK (12 Mbps)',
+  offline: 'Offline pack · CAMELYON16 · 12 slides · saved 2026-10-20',
+  notValidated: 'Not validated for diagnostic use on this viewer'
+};
+let transientNotice = null;
+function effectiveSharp() { if (state.net === 'cold4g') return 'soft-link'; return state.sharp; }
+function renderStrip() {
+  const ind = $('#sharp'); const dxActive = state.build === 'dx' && state.dx === 'active';
+  ind.className = 'indicator';
+  const es = effectiveSharp(); let label = 'Sharp', reason = '', cls = 'indicator--sharp', aria = 'Sharp';
+  if (dxActive) { cls = 'indicator--complete'; label = 'Rendering Complete'; }
+  else if (state.surface === 'widget' && state.net === 'lan' && es === 'sharp') { cls = 'indicator--syncing'; label = 'Syncing with Python…'; }
+  else if (es === 'sharpening') { cls = 'indicator--sharpening'; label = 'Sharpening…'; }
+  else if (es === 'soft') { cls = 'indicator--soft'; label = 'Soft'; reason = '— level not yet available'; }
+  else if (es === 'soft-link') { cls = 'indicator--soft'; label = 'Soft'; reason = '— slow link'; }
+  ind.classList.add(cls); $('#sharp-label').textContent = label; $('#sharp-reason').textContent = reason;
+  aria = label + (reason ? ' ' + reason : ''); ind.setAttribute('aria-label', 'Sharpness: ' + aria + '. Opens the quality sheet');
+  const hs = $('#hud-sharp'); hs.className = 'hud__item hud__sharp indicator ' + cls; hs.setAttribute('aria-label', aria); $('#hud-sharp-label').textContent = (cls === 'indicator--sharp') ? '' : label;
+  // chips
+  const net = $('#chip-net'); net.hidden = true;
+  if (state.net === 'cold4g') { net.hidden = false; net.textContent = STR.slowLink; }
+  else if (state.net === 'slow') { net.hidden = false; net.textContent = STR.slow; }
+  else if (es === 'sharpening') { net.hidden = false; net.textContent = STR.linkOk; }
+  $('#chip-offline').hidden = state.net !== 'offline';
+  $('#chip-tier').hidden = state.tier !== 'w60'; $('#tier-chip').hidden = state.tier !== 'w60';
+  $('#btn-retry').hidden = state.net !== 'tileerr';
+  $('#chip-tiler').textContent = state.net === 'offline' ? 'Local tiler · ready (offline)' : 'Local tiler · ready';
+  // notice priority: transient > error > dx > tiler
+  let notice = STR.tiler;
+  if (state.build !== 'viewer-ruo') {
+    if (dxActive) notice = STR.dxEntered;
+    else if (state.dx === 'refused') notice = STR.dxRefusedAttest;
+    else notice = 'Nav mode · research session · ' + STR.tiler;
+  }
+  if (state.net === 'tileerr') notice = STR.tiles;
+  if (state.view === 'mx' || state.view === 'mxgrid') notice = (state.build === 'viewer-ruo' ? '' : (dxActive ? STR.dxEntered + ' · ' : '')) + '16-bit zstd channels · settle tier · 8-bit preview while moving' + (state.tier === 'w60' ? ' · ≤ 4 channels (W60)' : '');
+  if (transientNotice) notice = transientNotice;
+  $('#notice').textContent = notice;
+  $('#model-offline').hidden = state.net !== 'offline';
+  $('#btn-run').disabled = state.net === 'offline';
+  $('#btn-run').textContent = state.net === 'offline' ? 'Queue run (offline)' : 'Run on viewport';
+  // quality sheet
+  $('#q-state').textContent = aria; $('#q-ntf').textContent = es === 'sharp' ? '0.0 %' : es === 'sharpening' ? '38 %' : '12 %'; $('#q-deficit').textContent = es === 'sharp' ? '0.04 octave (≤ 0.15)' : es === 'soft' ? '1.0 octave (level not resident)' : '0.6 octave'; $('#q-link').textContent = state.net === 'cold4g' ? '6 Mbps · RTT 140 ms' : state.net === 'offline' ? 'offline · pack' : '38 Mbps · RTT 21 ms';
+}
+function renderBuild() {
+  const b = state.build; app.dataset.build = b; app.dataset.product = b;
+  const badge = $('#badge'), str = $('#label-string');
+  badge.className = 'badge badge--' + (b === 'viewer-ruo' ? 'ruo' : b === 'clinical-ih' ? 'clinical' : 'dx');
+  badge.textContent = b === 'viewer-ruo' ? 'RUO' : b === 'clinical-ih' ? 'Clinical-IH' : 'Dx';
+  badge.setAttribute('aria-label', (b === 'viewer-ruo' ? 'Stoipath Viewer, for research use only' : b === 'clinical-ih' ? 'Stoipath Clinical-IH, in-house laboratory-validated tool' : 'Stoipath Dx, cleared edition') + '. Open About');
+  str.className = 'topbar__label badge-string badge-string--' + (b === 'viewer-ruo' ? 'ruo' : b === 'clinical-ih' ? 'clinical' : 'dx');
+  $('#purpose-chip').hidden = b === 'viewer-ruo'; $('#purpose-chip').textContent = b === 'clinical-ih' ? 'Research session · RUO' : 'Research session';
+  const mode = $('#mode-chip'); mode.hidden = b === 'viewer-ruo';
+  const dxActive = b === 'dx' && state.dx === 'active';
+  mode.className = 'mode ' + (dxActive ? 'mode--dx' : 'mode--nav'); mode.textContent = dxActive ? 'DX' : 'NAV';
+  $('#about-name').textContent = b === 'viewer-ruo' ? 'Stoipath Viewer' : b === 'clinical-ih' ? 'Stoipath Clinical-IH' : 'Stoipath Dx';
+  $('#about-string').textContent = b === 'viewer-ruo' ? STR.ruo : b === 'clinical-ih' ? 'In-house laboratory-validated tool. Not FDA cleared. For use only within ‹laboratory name› under CLIA/CAP validation.' : 'Stoipath Dx · cleared configuration · see About for UDI, version and hashes.';
+  $('#about-build').textContent = b + ' · 0.5.0-dev · build_hash 3c9f…e21a';
+  // not-validated marker on the AI layer appears only in the Dx-capable builds
+  let mk = $('#ai-marker'); if (!mk) { mk = document.createElement('span'); mk.id = 'ai-marker'; mk.className = 'marker-notvalidated'; mk.setAttribute('data-live', 'dx'); mk.textContent = STR.notValidated; $('.layer-row[data-layer="ai"] .layer-row__provenance').appendChild(mk); }
+  mk.hidden = b === 'viewer-ruo';
+}
+
+/* ------------------------------------------------------------ view/slide */
+function renderView() {
+  const v = state.view; const mx = v === 'mx' || v === 'mxgrid';
+  app.classList.toggle('slide-mx', mx);
+  app.classList.toggle('compare', v === 'compare' || v === 'curtain');
+  app.classList.toggle('curtain', v === 'curtain');
+  app.classList.toggle('mx-grid', v === 'mxgrid');
+  $('#btn-curtain').setAttribute('aria-pressed', v === 'curtain');
+  $$('[data-sync]').forEach(b => b.setAttribute('aria-checked', b.dataset.sync === state.sync));
+  $$('[data-cmd="mx:grid"]').forEach(b => b.setAttribute('aria-pressed', v === 'mxgrid'));
+  const name = mx ? 'cycif_sln_02' : 'tumor_014';
+  $('#cohort-name .slide').textContent = name; $('#cohort-name .coh').textContent = mx ? 'Institutional · SLN-IF · ' : 'CAMELYON16 · ';
+  $('.topbar .chip--licence').textContent = mx ? 'IRB 2026-114' : 'CC0';
+  $('#slide-meta').textContent = mx ? 'CyCIF · 8 channels · 0.325 µm/px · OME-Zarr 0.5' : 'H&E · 0.25 µm/px scan · Philips TIFF';
+  $('#slide-title').textContent = mx ? 'Sentinel lymph node, 8-plex immunofluorescence (de-identified, synthetic)' : 'Sentinel lymph node, metastasis present (CAMELYON16 reference annotation)';
+  $('#nav-label').textContent = mx ? 'cycif_sln_02 · 6 ch' : (v === 'compare' || v === 'curtain') ? 'tumor_014 ⟷ ihc' : 'tumor_014 · H&E';
+  $$('.slide-row').forEach(r => r.setAttribute('aria-selected', (r.classList.contains('mx-row') === mx) && (r.querySelector('.slide-row__name').textContent === name)));
+  $('#layers-count').textContent = mx ? '8' : '4';
+  canvasArea.setAttribute('aria-label', 'Slide canvas, ' + (mx ? 'cycif_sln_02, 6 of 8 channels' : 'tumor_014 H and E') + (v === 'compare' ? ', compared with tumor_014_ihc, affine sync' : v === 'curtain' ? ', curtain against tumor_014_ihc' : '') + ', ' + state.mag + ' times, use arrow keys to pan and plus or minus to zoom; press question mark for shortcuts');
+  // mx thumbnails in the cohort list reflect visibility
+  $$('.navigator svg').forEach(s => { s.className.baseVal = mx ? 'scene--mx' : 'scene--he'; });
+  const navUse = $('.navigator svg use'); if (navUse) navUse.setAttribute('href', mx ? '#mx-scene' : '#node-scene');
+  const navMark = $('.navigator svg rect'); if (navMark) navMark.style.display = mx ? 'none' : '';
+  $('.navigator__thumb').style.background = mx ? '#06060a' : '';
+}
+
+/* --------------------------------------------------------------- drawer */
+function renderDrawer() {
+  const open = !!state.drawer || state.pinned;
+  const tab = state.drawer || (state.pinned ? 'layers' : '');
+  app.classList.toggle('drawer-open', !!state.drawer);
+  app.classList.toggle('chrome-pinned', state.pinned);
+  $$('.dock__tabs .tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === tab));
+  $$('.dock__pane').forEach(p => p.classList.toggle('is-active', p.id === 'pane-' + tab));
+  $('#btn-pin').setAttribute('aria-pressed', state.pinned);
+  $('#btn-pin').innerHTML = '<svg class="icon icon--sm"><use href="#i-pin"/></svg>' + (state.pinned ? 'Unpin chrome' : 'Pin chrome') + ' <kbd class="key">`</kbd>';
+  $$('.rail .tool[data-cmd^="panel:"]').forEach(t => t.setAttribute('aria-pressed', t.dataset.cmd === 'panel:' + state.drawer));
+  $('#d-drawer').value = state.drawer;
+  void open;
+}
+
+/* -------------------------------------------------------------- HUD etc */
+function renderHud() {
+  const t = TOOLS[state.tool] || TOOLS.select; const c = CLASSES[state.cls] || CLASSES.tumor;
+  $('#hud-tool-name').textContent = t[0]; $('#hud-tool-key').textContent = t[1]; $('#hud-tool-icon').setAttribute('href', '#' + t[2]);
+  $('#hud-tool-btn').setAttribute('aria-label', 'Active tool: ' + t[0] + ' (' + t[1] + '). Activate to open the tool wheel');
+  $('#hud-class-name').textContent = c[0]; $('#hud-class-swatch').style.setProperty('--swatch', c[1]); $('#hud-class-swatch').classList.toggle('swatch--dash', state.cls === 'region');
+  $('#hud-class-btn').setAttribute('aria-label', 'Active class: ' + c[0] + '. Activate to pick a class (Q)');
+  $('#rail-swatch').style.setProperty('--swatch', c[1]); $('#radial-swatch').style.setProperty('--swatch', c[1]); $('#radial-class').textContent = c[0];
+  $('#hud-context').textContent = (state.tool === 'polygon' ? '3 vertices · Enter closes · ' : state.tool === 'measure' ? 'two clicks · µm · ' : '') + '12 annotations · undo ×' + state.undo;
+  $('#hud-hint').hidden = !state.hint;
+  $$('.tool[data-cmd^="tool:"]').forEach(b => b.setAttribute('aria-pressed', b.dataset.cmd === 'tool:' + state.tool));
+  $$('.class-chip[data-cls]').forEach(b => b.setAttribute('aria-pressed', b.dataset.cls === state.cls));
+  $('#tgl-deutan').setAttribute('aria-checked', state.deutan); $('#tgl-fill').setAttribute('aria-checked', state.fill);
+  $$('[data-present]').forEach(b => b.setAttribute('aria-checked', b.dataset.present === state.present));
+  app.classList.toggle('deutan', state.deutan); app.classList.toggle('fill-on', state.fill); app.classList.toggle('present-heat', state.present === 'heat');
+  app.classList.toggle('legend-on', state.legend); app.classList.toggle('nav-hidden', !state.nav); app.classList.toggle('nav-open', state.nav);
+  app.classList.toggle('overlays-off', !state.overlays); app.classList.toggle('ai-off', !state.ai); app.classList.toggle('det-off', !state.det);
+  $$('[data-cmd="layers:hideall"]').forEach(b => { b.setAttribute('aria-pressed', !state.overlays); b.innerHTML = (state.overlays ? 'Hide all' : 'Show all') + ' <kbd class="key">H</kbd>'; });
+  const aiVis = $('[data-cmd="layer:ai"]'); aiVis.setAttribute('aria-pressed', state.ai); aiVis.innerHTML = '<svg class="icon icon--sm"><use href="#' + (state.ai ? 'i-eye' : 'i-eye-off') + '"/></svg>'; aiVis.closest('.layer-row').classList.toggle('is-hidden', !state.ai);
+  const detVis = $('[data-cmd="layer:det"]'); detVis.setAttribute('aria-pressed', state.det); detVis.innerHTML = '<svg class="icon icon--sm"><use href="#' + (state.det ? 'i-eye' : 'i-eye-off') + '"/></svg>'; detVis.closest('.layer-row').classList.toggle('is-hidden', !state.det);
+  ['net-cold4g', 'net-offline', 'net-tileerr', 'net-slow'].forEach(c => app.classList.remove(c)); app.classList.add('net-' + state.net);
+  ['sharp-sharpening', 'sharp-soft'].forEach(c => app.classList.remove(c)); if (state.net !== 'cold4g' && state.sharp !== 'sharp') app.classList.add('sharp-' + state.sharp);
+  document.body.classList.toggle('show-live', state.live); document.body.classList.toggle('show-guides', state.guides);
+}
+
+/* ------------------------------------------------------------- surface */
+function renderSurface() {
+  const nb = $('#nb-widget');
+  stage.classList.toggle('surface-widget', state.surface === 'widget');
+  if (state.surface === 'widget') {
+    if (app.parentElement !== nb) nb.appendChild(app);
+    app.classList.add('app--widget'); $('#about-shell').textContent = 'anywidget in JupyterLab · cell 1200 × 640';
+    const s = Math.min(1, (stage.clientWidth - 130) / 1200);
+    nb.style.transform = 'scale(' + s + ')'; nb.parentElement.style.height = Math.round(640 * s) + 'px'; nb.parentElement.style.overflow = 'hidden';
+  } else {
+    if (app.parentElement !== stage) stage.insertBefore(app, $('#notebook'));
+    app.classList.remove('app--widget'); $('#about-shell').textContent = 'Web component · standalone workspace';
+  }
+}
+
+/* ------------------------------------------------------------ dialogs */
+function renderDialogs() {
+  $('#palette-layer').hidden = !state.palette;
+  $('#modal-keys').hidden = !state.keys; $('#modal-about').hidden = !state.about;
+  $('#backdrop').hidden = !(state.keys || state.about || !$('#modal-quality').hidden);
+  if (state.palette) { const inp = $('#pal-input'); if (document.activeElement !== inp) { inp.focus(); renderPalette(); } }
+  if (state.keys) { const f = $('#modal-keys [data-close]'); if (f && !$('#modal-keys').contains(document.activeElement)) f.focus(); }
+  if (state.about) { const f = $('#modal-about [data-close]'); if (f && !$('#modal-about').contains(document.activeElement)) f.focus(); }
+}
+
+/* ------------------------------------------------------------- radial */
+const WHEEL = [['tool:select', 'i-select', 'V', 'Select'], ['tool:polygon', 'i-polygon', 'P', 'Polygon'], ['tool:brush', 'i-brush', 'F', 'Brush'], ['tool:rect', 'i-rect', 'X', 'Rectangle'], ['tool:point', 'i-point', 'T', 'Point'], ['tool:measure', 'i-measure', 'M', 'Measure'], ['panel:layers', 'i-layers', 'K', 'Layers'], ['edit:undo', 'i-undo', '⌃Z', 'Undo']];
+function buildRadial() {
+  const r = $('#radial'); $$('.radial__item', r).forEach(n => n.remove());
+  const items = radialMode === 'tools' ? WHEEL : CLASS_ORDER.map(k => ['class:set:' + k, null, CLASSES[k][2], CLASSES[k][0], CLASSES[k][1]]);
+  const n = items.length, R = 84;
+  items.forEach((it, i) => {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2; const x = 118 + Math.cos(a) * R, y = 118 + Math.sin(a) * R;
+    const b = document.createElement('button'); b.className = 'radial__item'; b.setAttribute('role', 'menuitemradio'); b.dataset.cmd = it[0]; b.style.left = x + 'px'; b.style.top = y + 'px';
+    const active = radialMode === 'tools' ? it[0] === 'tool:' + state.tool : it[0] === 'class:set:' + state.cls;
+    b.setAttribute('aria-checked', active); b.setAttribute('aria-label', it[3] + ' (' + it[2] + ')'); b.tabIndex = i === radialIndex ? 0 : -1;
+    b.innerHTML = (it[1] ? '<svg class="icon"><use href="#' + it[1] + '"/></svg>' : '<span class="swatch' + (it[3] === 'Region*' ? ' swatch--dash' : '') + '" style="--swatch:' + it[4] + ';width:16px;height:16px"></span>') + '<span class="k">' + it[2] + '</span>';
+    if (i === radialIndex) b.classList.add('is-hover');
+    r.insertBefore(b, $('#radial-centre'));
+  });
+  $('#radial-label').textContent = radialMode === 'tools' ? 'Tool wheel · letters pick · Q for classes · Esc closes' : 'Class ring · 1–9 pick · Esc back';
+  $('#radial-centre').setAttribute('aria-label', 'Class: ' + CLASSES[state.cls][0] + '. ' + (radialMode === 'tools' ? 'Activate to choose a class' : 'Activate to return to tools'));
+}
+function openRadial(x, y, mode, source) {
+  const r = $('#radial'); const rect = canvasArea.getBoundingClientRect();
+  if (x == null) { x = rect.width / 2; y = rect.height / 2; }
+  x = Math.max(130, Math.min(rect.width - 130, x)); y = Math.max(130, Math.min(rect.height - 130, y));
+  r.style.left = x + 'px'; r.style.top = y + 'px'; r.hidden = false; state.radial = true; radialMode = mode || 'tools'; radialIndex = 0; buildRadial();
+  if (source === 'keyboard') { const f = $('.radial__item', r); if (f) f.focus(); }
+  syncDemo(); writeHash();
+}
+function closeRadial() { $('#radial').hidden = true; state.radial = false; classPick = false; syncDemo(); writeHash(); }
+
+/* -------------------------------------------------------------- palette */
+const COMMANDS = [
+  ['tool:select', 'Select / pan', 'tool', ['V'], 'i-select'], ['tool:polygon', 'Polygon', 'click to place vertices · Enter closes', ['P'], 'i-polygon'], ['tool:brush', 'Brush / freehand', 'pen pressure', ['F'], 'i-brush'], ['tool:polyline', 'Polyline', '', ['Y'], 'i-polyline'], ['tool:rect', 'Rectangle', '', ['X'], 'i-rect'], ['tool:ellipse', 'Ellipse', '', ['E'], 'i-ellipse'], ['tool:point', 'Point marker', '', ['T'], 'i-point'], ['tool:measure', 'Measure length', 'two clicks · µm', ['M'], 'i-measure'], ['tool:count', 'Count tool', 'increments on click', ['⇧', 'T'], 'i-point'],
+  ['class:pick', 'Class picker', 'then 1–9', ['Q'], null], ['legend:toggle', 'Class legend (HUD)', '', ['⇧', 'Q'], null], ['cvd:deutan', 'Simulate deuteranopia', 'overlays only', [], null], ['ann:fill', 'Fill polygons', 'α 0.18', [], null],
+  ['panel:cohort', 'Cohort and slide drawer', 'CAMELYON16 · 400 slides', ['I'], 'i-folder'], ['panel:layers', 'Layers drawer', '4 layers', ['K'], 'i-layers'], ['panel:annotations', 'Annotations drawer', '12 objects', ['⇧', 'K'], 'i-list'], ['panel:model', 'Model drawer', 'run on ROI', ['U'], 'i-model'], ['panel:export', 'Export drawer', 'GeoJSON · DICOM ANN · patches', ['⇧', 'E'], 'i-download'],
+  ['layers:hideall', 'Hide / show all overlays', '', ['H'], 'i-eye-off'], ['layer:ai', 'Toggle AI overlay only', '', ['⇧', 'H'], 'i-eye'], ['present:heat', 'AI result: heatmap', 'on demand', [], null], ['present:outline', 'AI result: outline', 'default', [], null],
+  ['compare:toggle', 'Compare two slides', 'lock · affine · none', ['C'], 'i-compare'], ['compare:curtain', 'Curtain compare', '', ['/'], 'i-curtain'], ['mx:grid', 'Channel grid view', 'multiplex', ['⇧', 'G'], 'i-grid'], ['view:mx', 'Open cycif_sln_02', '8-channel CyCIF', [']'], null], ['view:he', 'Open tumor_014', 'H&E · CC0', ['['], null],
+  ['view:fit', 'Fit whole slide', '', ['0'], 'i-fit'], ['view:zoomin', 'Zoom in 2×', '', ['+'], null], ['view:zoomout', 'Zoom out 2×', '', ['−'], null], ['view:mag:20', 'Jump to 20× (0.50 µm/px)', 'derived', ['5'], null], ['view:mag:40', 'Jump to 40× (0.25 µm/px)', 'derived', ['6'], null], ['view:toggleMag', 'Toggle last two magnifications', '', ['Z'], null], ['nav:toggle', 'Navigator on / off', '', ['O'], 'i-nav'],
+  ['edit:undo', 'Undo', '', ['⌃', 'Z'], 'i-undo'], ['edit:redo', 'Redo', '', ['⌃', 'Y'], 'i-undo'], ['ann:import', 'Import GeoJSON (QuPath dialect)', '', [], 'i-upload'], ['ann:export', 'Export GeoJSON (QuPath dialect)', 'QuPath RGB restored', [], 'i-download'], ['snap', 'Snapshot with scale bar and RUO footer', '', ['⇧', 'S'], 'i-camera'],
+  ['chrome:pin', 'Pin / unpin the rail and dock', '', ['`'], 'i-pin'], ['help:keys', 'Keyboard shortcuts', '', ['?'], 'i-keyboard'], ['help:about', 'About, telemetry, CVD remap', 'RUO string', [], null], ['dx:enter', 'Enter Dx mode', 'refused in this build', ['⇧', 'D'], null]
+];
+let palIndex = 0;
+function fuzzy(q, s) { q = q.toLowerCase(); s = s.toLowerCase(); if (!q) return true; if (s.includes(q)) return true; let i = 0; for (const ch of s) { if (ch === q[i]) i++; if (i === q.length) return true; } return false; }
+function renderPalette() {
+  const q = $('#pal-input').value.trim(); const list = $('#pal-list');
+  const hits = COMMANDS.filter(c => fuzzy(q, c[1] + ' ' + c[2] + ' ' + c[3].join(''))).slice(0, 14);
+  palIndex = Math.min(palIndex, Math.max(0, hits.length - 1));
+  let html = '', group = '';
+  hits.forEach((c, i) => {
+    const g = c[0].split(':')[0]; const gname = { tool: 'Tools', class: 'Classes', legend: 'Classes', cvd: 'Classes', ann: 'Annotations', panel: 'Panels', layers: 'Layers', layer: 'Layers', present: 'Layers', compare: 'Compare', mx: 'Compare', view: 'View', nav: 'View', edit: 'Edit', snap: 'Edit', chrome: 'Chrome', help: 'Help', dx: 'Help' }[g] || 'Commands';
+    if (gname !== group) { group = gname; html += '<div class="palette__group">' + gname + '</div>'; }
+    let label = c[1]; if (q) { const idx = label.toLowerCase().indexOf(q.toLowerCase()); if (idx >= 0) label = label.slice(0, idx) + '<mark>' + label.slice(idx, idx + q.length) + '</mark>' + label.slice(idx + q.length); }
+    html += '<div class="palette__item" role="option" id="pal-' + i + '" aria-selected="' + (i === palIndex) + '" data-cmd="' + c[0] + '">' + (c[4] ? '<svg class="icon icon--sm"><use href="#' + c[4] + '"/></svg>' : '<span style="width:16px"></span>') + '<span>' + label + '</span>' + (c[2] ? '<span class="meta">' + c[2] + '</span>' : '') + '<span class="keys">' + c[3].map(k => '<kbd class="key">' + k + '</kbd>').join('') + '</span></div>';
+  });
+  if (!hits.length) html = '<div class="empty"><span class="empty__title">No command matches “' + q.replace(/</g, '&lt;') + '”</span><span>Try a panel name, a tool or a slide.</span></div>';
+  list.innerHTML = html; $('#pal-input').setAttribute('aria-activedescendant', hits.length ? 'pal-' + palIndex : '');
+}
+
+/* -------------------------------------------------------- announcements */
+let annT = null;
+function announce(assertive) {
+  clearTimeout(annT);
+  annT = setTimeout(() => {
+    const es = effectiveSharp(); const sharp = $('#sharp-label').textContent + ' ' + $('#sharp-reason').textContent;
+    $('#lr-polite').textContent = sharp.trim() + '. ' + state.mag + ' times. ' + $('#cohort-name .slide').textContent + '. Tool: ' + TOOLS[state.tool][0] + '. Class: ' + CLASSES[state.cls][0] + '.' + (state.drawer ? ' Drawer: ' + state.drawer + '.' : '');
+    if (assertive) $('#lr-assertive').textContent = assertive;
+    void es;
+  }, 500);
+}
+function toast(title, body) {
+  const t = document.createElement('div'); t.className = 'toast toast--neutral'; t.setAttribute('role', 'status');
+  t.innerHTML = '<span class="toast__glyph">i</span><div class="toast__body"><div class="toast__title"></div><div></div></div><button class="btn btn--sm btn--icon btn--ghost" aria-label="Dismiss"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>';
+  t.querySelector('.toast__title').textContent = title; t.querySelector('.toast__body div:last-child').textContent = body || '';
+  t.querySelector('button').addEventListener('click', () => t.remove()); $('#toasts').appendChild(t); setTimeout(() => t.remove(), 6000);
+}
+function flashNotice(text, ms) { transientNotice = text; renderStrip(); setTimeout(() => { transientNotice = null; renderStrip(); }, ms || 4000); }
+
+/* ------------------------------------------------------------ commands */
+function log(cmd, source) { $('#cmd-log').textContent = cmd + ' ← ' + (source || 'pointer'); if (state.hint && !/^(help|chrome)/.test(cmd)) { state.hint = false; } }
+function run(cmd, source) {
+  log(cmd, source);
+  const [ns, a, b] = cmd.split(':');
+  switch (ns) {
+    case 'tool': state.tool = a; break;
+    case 'class':
+      if (a === 'pick') { classPick = true; openRadial(null, null, 'classes', source); return; }
+      if (a === 'ring') { radialMode = radialMode === 'tools' ? 'classes' : 'tools'; radialIndex = 0; buildRadial(); return; }
+      if (a === 'set') { state.cls = b; classPick = false; if (state.radial) closeRadial(); }
+      break;
+    case 'panel': state.drawer = state.drawer === a ? '' : a; if (source === 'keyboard' && state.drawer) setTimeout(() => { const p = $('#pane-' + a); if (p) p.focus(); }, 0); if (!state.drawer && source === 'keyboard') canvasArea.focus(); break;
+    case 'legend': state.legend = !state.legend; break;
+    case 'cvd': state.deutan = !state.deutan; break;
+    case 'ann': if (a === 'fill') state.fill = !state.fill; else if (a === 'import') toast('Import GeoJSON', 'QuPath dialect; property names kept verbatim; colours remapped on screen.'); else if (a === 'export') toast('Export queued · GeoJSON (QuPath dialect)', 'Provenance manifest included; QuPath RGB restored.'); break;
+    case 'layers': state.overlays = !state.overlays; break;
+    case 'layer': if (a === 'ai') state.ai = !state.ai; if (a === 'det') state.det = !state.det; break;
+    case 'present': state.present = a; break;
+    case 'compare': if (a === 'toggle') state.view = (state.view === 'compare' || state.view === 'curtain') ? 'he' : 'compare'; if (a === 'curtain') state.view = state.view === 'curtain' ? 'compare' : 'curtain'; break;
+    case 'mx': if (a === 'grid') state.view = state.view === 'mxgrid' ? 'mx' : 'mxgrid'; break;
+    case 'view':
+      if (a === 'fit') setMag(1.25); else if (a === 'zoomin') setMag(Math.min(40, state.mag * 2)); else if (a === 'zoomout') setMag(Math.max(1.25, state.mag / 2));
+      else if (a === 'mag') setMag(Number(b)); else if (a === 'toggleMag') setMag(state.lastMag); else if (a === 'mx') state.view = 'mx'; else if (a === 'he') state.view = 'he'; break;
+    case 'nav': state.nav = !state.nav; break;
+    case 'edit': if (a === 'undo') state.undo = Math.max(0, state.undo - 1); else state.undo += 1; break;
+    case 'chrome': state.pinned = !state.pinned; if (state.pinned && !state.drawer) state.drawer = 'layers'; break;
+    case 'help': if (a === 'keys') state.keys = !state.keys; if (a === 'palette') state.palette = !state.palette; if (a === 'about') state.about = !state.about; break;
+    case 'dx': {
+      const msg = state.build === 'viewer-ruo' ? STR.dxRefusedRuo : (state.build === 'dx' && state.dx === 'active') ? 'Dx mode ended: left by the user. Viewing in Nav mode.' : STR.dxRefusedAttest;
+      if (state.build === 'dx' && state.dx === 'active') state.dx = 'refused'; flashNotice(msg, 6000); announce(msg); break; }
+    case 'wheel': openRadial(null, null, 'tools', source); return;
+    case 'menu': { const m = $('#menu-more'); m.hidden = !m.hidden; if (!m.hidden) { const f = $('.menu__item', m); f && f.focus(); } return; }
+    case 'snap': toast('Snapshot saved', 'PNG with scale bar and the RUO footer burned in (FR-V10).'); break;
+    case 'close': closeAll(); break;
+  }
+  render();
+}
+function closeAll() {
+  if (state.radial) { closeRadial(); return; }
+  if (state.palette) { state.palette = false; canvasArea.focus(); return; }
+  if (state.keys || state.about) { state.keys = false; state.about = false; canvasArea.focus(); return; }
+  if (!$('#modal-quality').hidden) { $('#modal-quality').hidden = true; return; }
+  if (!$('#menu-more').hidden) { $('#menu-more').hidden = true; return; }
+  if (state.drawer && !state.pinned) { state.drawer = ''; canvasArea.focus(); return; }
+  if (state.tool !== 'select') { state.tool = 'select'; return; }
+}
+
+/* --------------------------------------------------------------- render */
+function syncDemo() {
+  $$('#demo select[data-state]').forEach(s => { const k = s.dataset.state; if (k === 'slide') s.value = state.view; else s.value = String(state[k]); });
+  $$('#demo [data-toggle]').forEach(b => b.setAttribute('aria-pressed', !!state[b.dataset.toggle]));
+}
+function render() {
+  renderBuild(); renderView(); renderChannels(); renderStrip(); renderDrawer(); renderHud(); renderZoom(); renderSurface(); renderDialogs(); syncDemo(); writeHash(); announce();
+}
+
+/* --------------------------------------------------------------- events */
+document.addEventListener('click', e => {
+  const close = e.target.closest('[data-close]'); if (close) { state.keys = false; state.about = false; $('#modal-quality').hidden = true; renderDialogs(); canvasArea.focus(); return; }
+  const tab = e.target.closest('.dock__tabs [data-tab]'); if (tab) { state.drawer = tab.dataset.tab; render(); return; }
+  const sync = e.target.closest('[data-sync]'); if (sync) { state.sync = sync.dataset.sync; log('sync:' + state.sync, 'pointer'); render(); return; }
+  const cls = e.target.closest('.class-chip[data-cls]'); if (cls) { run('class:set:' + cls.dataset.cls, 'pointer'); return; }
+  const lg = e.target.closest('.legend__item'); if (lg) { log('flyTo:first ' + lg.textContent.trim().replace(/\s+/g, ' '), 'pointer'); flashNotice('Fly to the first object of ' + lg.textContent.trim().replace(/\s+\d[\d,]*$/, ''), 2500); return; }
+  const ch = e.target.closest('[data-chtoggle]'); if (ch) { const c = CHANNELS.find(x => x.id === ch.dataset.chtoggle); if (c && ch.getAttribute('aria-disabled') !== 'true') { c.on = !c.on; log('channel:' + c.id + ':' + (c.on ? 'on' : 'off'), 'pointer'); render(); } return; }
+  const cmd = e.target.closest('[data-cmd]'); if (cmd) { e.preventDefault(); if (cmd.closest('#menu-more')) $('#menu-more').hidden = true; if (cmd.closest('#pal-list')) { state.palette = false; } run(cmd.dataset.cmd, cmd.closest('#pal-list') ? 'palette' : cmd.closest('.radial') ? 'wheel' : 'pointer'); return; }
+  if (e.target.closest('#badge') || e.target.closest('#btn-more')) { if (e.target.closest('#btn-more')) { run('menu:more', 'pointer'); } else { state.about = true; render(); } return; }
+  if (e.target.closest('#btn-drawer-close')) { state.drawer = ''; render(); canvasArea.focus(); return; }
+  if (e.target.closest('#sharp')) { $('#modal-quality').hidden = false; $('#backdrop').hidden = false; $('#modal-quality [data-close]').focus(); return; }
+  if (e.target.closest('#btn-retry')) { flashNotice('Retrying 3 tiles…', 1500); setTimeout(() => { state.net = 'lan'; render(); }, 1500); return; }
+  if (e.target.closest('#btn-run')) { toast(state.net === 'offline' ? 'Run queued (offline)' : 'Model run started · unet-lnmet 1.3 · viewport', 'Output arrives as a layer with provenance {producer, version, inputHash, createdAt, regulatoryStatus: research}.'); return; }
+  if (e.target.closest('#backdrop')) { closeAll(); render(); return; }
+  if (!e.target.closest('#menu-more') && !$('#menu-more').hidden) $('#menu-more').hidden = true;
+  if (!e.target.closest('.radial') && state.radial) { closeRadial(); }
+  if (e.target.closest('.navigator__pan button')) { log('pan:' + e.target.className, 'pointer'); return; }
+  if (e.target.closest('.navigator__thumb')) { log('recentre', 'pointer'); return; }
+});
+// Right-click on empty canvas: tool wheel (annotations would get the context menu)
+canvasArea.addEventListener('contextmenu', e => {
+  if (e.target.closest('.hud, .tr-stack, .compare-bar, .radial, .curtain-handle')) return;
+  e.preventDefault(); const r = canvasArea.getBoundingClientRect(); log('wheel:open', 'pointer'); openRadial(e.clientX - r.left, e.clientY - r.top, 'tools', 'pointer');
+});
+// Long-press (touch / pen) opens the wheel at the point
+let lp = null;
+canvasArea.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' || e.target.closest('.hud, .tr-stack, .compare-bar, .radial, .curtain-handle')) return; const r = canvasArea.getBoundingClientRect(); const x = e.clientX - r.left, y = e.clientY - r.top; lp = setTimeout(() => { log('wheel:open', 'long-press'); openRadial(x, y, 'tools', 'touch'); }, 450); });
+['pointerup', 'pointermove', 'pointercancel'].forEach(ev => canvasArea.addEventListener(ev, () => { if (lp) { clearTimeout(lp); lp = null; } }));
+// Demo strip
+$$('#demo select[data-state]').forEach(s => s.addEventListener('change', () => { const k = s.dataset.state; if (k === 'slide') state.view = s.value; else state[k] = s.value; if (k === 'build' && s.value === 'dx' && state.dx === 'na') state.dx = 'active'; if (k === 'build' && s.value === 'clinical-ih' && state.dx === 'active') state.dx = 'refused'; if (k === 'build' && s.value === 'viewer-ruo') state.dx = 'na'; render(); }));
+$$('#demo [data-toggle]').forEach(b => b.addEventListener('click', () => { const k = b.dataset.toggle; if (k === 'radial') { if (state.radial) closeRadial(); else openRadial(null, null, 'tools', 'demo'); return; } state[k] = !state[k]; if (k === 'pinned' && state.pinned && !state.drawer) state.drawer = 'layers'; render(); }));
+$('#d-reset').addEventListener('click', () => { state = Object.assign({}, DEFAULTS); CHANNELS.forEach((c, i) => c.on = i < 6); closeRadial(); render(); });
+// Palette input
+$('#pal-input').addEventListener('input', () => { palIndex = 0; renderPalette(); });
+$('#pal-input').addEventListener('keydown', e => {
+  const items = $$('#pal-list .palette__item');
+  if (e.key === 'ArrowDown') { e.preventDefault(); palIndex = Math.min(items.length - 1, palIndex + 1); renderPalette(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); palIndex = Math.max(0, palIndex - 1); renderPalette(); }
+  else if (e.key === 'Enter') { e.preventDefault(); const it = items[palIndex]; if (it) { state.palette = false; run(it.dataset.cmd, 'palette'); canvasArea.focus(); } }
+  else if (e.key === 'Escape') { e.preventDefault(); state.palette = false; render(); canvasArea.focus(); }
+  e.stopPropagation();
+});
+// Sliders in the layers drawer
+$('#ai-opacity').addEventListener('input', e => { $('#ai-opacity-v').textContent = e.target.value + ' %'; $('.ai-layer').style.opacity = e.target.value / 100 + 0.3; });
+$('#ai-thr').addEventListener('input', e => { $('#ai-thr-v').textContent = 'p ≥ ' + (e.target.value / 100).toFixed(2); });
+// Curtain handle: drag or arrow keys (SC 2.5.7)
+(function () {
+  const h = $('#curtain'), pane = $('#pane-a'); let drag = false;
+  function set(pct) { pct = Math.max(5, Math.min(95, pct)); pane.style.setProperty('--curtain', pct + '%'); h.setAttribute('aria-valuenow', Math.round(pct)); h.setAttribute('aria-valuetext', Math.round(pct) + ' percent, H&E left, CK AE1/AE3 right'); }
+  h.addEventListener('pointerdown', e => { drag = true; h.setPointerCapture(e.pointerId); });
+  h.addEventListener('pointermove', e => { if (!drag) return; const r = pane.getBoundingClientRect(); set((e.clientX - r.left) / r.width * 100); });
+  h.addEventListener('pointerup', () => { drag = false; log('curtain:' + h.getAttribute('aria-valuenow'), 'pointer'); });
+  h.addEventListener('keydown', e => { const v = Number(h.getAttribute('aria-valuenow')); if (e.key === 'ArrowLeft') { set(v - 2); e.stopPropagation(); e.preventDefault(); } if (e.key === 'ArrowRight') { set(v + 2); e.stopPropagation(); e.preventDefault(); } if (e.key === 'Home') { set(5); e.stopPropagation(); } if (e.key === 'End') { set(95); e.stopPropagation(); } });
+})();
+// Typed zoom (Enter or click on the readout)
+$('#mag').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !$('#mag input')) { e.preventDefault(); e.stopPropagation(); $('#mag').click(); } });
+$('#mag').addEventListener('click', () => {
+  const btn = $('#mag'); if (btn.querySelector('input')) return;
+  const inp = document.createElement('input'); inp.className = 'num'; inp.value = state.mag + '×'; inp.setAttribute('aria-label', 'Zoom, times or micrometres per pixel');
+  btn.querySelector('.magnification__value').replaceWith(inp); inp.focus(); inp.select();
+  const finish = (apply) => { if (apply) { const t = inp.value.trim().toLowerCase(); let m = state.mag; const n = parseFloat(t); if (!isNaN(n)) { m = (t.includes('µm') || t.includes('um') || t.includes('/px')) ? 10 / n : n; m = Math.max(1.25, Math.min(80, Math.round(m * 100) / 100)); } setMag(m); }
+    const v = document.createElement('span'); v.className = 'magnification__value'; v.id = 'mag-value'; inp.replaceWith(v); renderZoom(); btn.focus(); };
+  inp.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); finish(true); } if (e.key === 'Escape') { e.preventDefault(); finish(false); } });
+  inp.addEventListener('blur', () => finish(false));
+});
+// Radial keyboard: arrows rotate, Enter picks
+$('#radial').addEventListener('keydown', e => {
+  const items = $$('#radial .radial__item'); if (!items.length) return;
+  if (['ArrowRight', 'ArrowDown'].includes(e.key)) { radialIndex = (radialIndex + 1) % items.length; buildRadial(); $$('#radial .radial__item')[radialIndex].focus(); e.preventDefault(); e.stopPropagation(); }
+  else if (['ArrowLeft', 'ArrowUp'].includes(e.key)) { radialIndex = (radialIndex - 1 + items.length) % items.length; buildRadial(); $$('#radial .radial__item')[radialIndex].focus(); e.preventDefault(); e.stopPropagation(); }
+  else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (radialMode === 'classes' && !classPick) { radialMode = 'tools'; buildRadial(); } else { closeRadial(); canvasArea.focus(); } }
+});
+// Global keys (the command bus). Inside the canvas only unmodified keys and Shift combinations; Ctrl only for Ctrl+K and the editing set.
+document.addEventListener('keydown', e => {
+  const t = e.target; const inField = t.matches && t.matches('input, select, textarea') && !t.closest('#radial');
+  if (e.key === 'Escape') { if (inField && !t.closest('#demo')) return; e.preventDefault(); closeAll(); render(); return; }
+  if (inField) return;
+  if (e.ctrlKey || e.metaKey) { const k = e.key.toLowerCase(); if (k === 'k') { e.preventDefault(); state.palette = !state.palette; render(); } else if (k === 'z') { e.preventDefault(); run('edit:undo', 'keyboard'); } else if (k === 'y') { e.preventDefault(); run('edit:redo', 'keyboard'); } return; }
+  if (e.altKey) return;
+  const k = e.key;
+  if (classPick && /^[1-9]$/.test(k)) { e.preventDefault(); const c = CLASS_ORDER[Number(k) - 1]; if (c) run('class:set:' + c, 'keyboard'); return; }
+  if (state.radial && /^[a-z]$/i.test(k) && k !== 'q' && k !== 'Q') { const w = WHEEL.find(w => w[2].toLowerCase() === k.toLowerCase()); if (w) { e.preventDefault(); closeRadial(); run(w[0], 'keyboard'); return; } }
+  const map = { v: 'tool:select', p: 'tool:polygon', f: 'tool:brush', y: 'tool:polyline', x: 'tool:rect', e: 'tool:ellipse', t: 'tool:point', m: 'tool:measure', T: 'tool:count',
+    q: 'class:pick', Q: 'legend:toggle', k: 'panel:layers', K: 'panel:annotations', i: 'panel:cohort', u: 'panel:model', E: 'panel:export',
+    c: 'compare:toggle', '/': 'compare:curtain', G: 'mx:grid', o: 'nav:toggle', h: 'layers:hideall', H: 'layer:ai', '`': 'chrome:pin', V: 'wheel:open', '?': 'help:keys', D: 'dx:enter',
+    '0': 'view:fit', Home: 'view:fit', '+': 'view:zoomin', '=': 'view:zoomin', '-': 'view:zoomout', z: 'view:toggleMag', ']': 'view:mx', '[': 'view:he', S: 'snap' };
+  if (!classPick && /^[1-6]$/.test(k)) { e.preventDefault(); run('view:mag:' + PRESETS[Number(k) - 1], 'keyboard'); return; }
+  if (k === ',' || k === '.') { e.preventDefault(); const r = $('#ai-opacity'); r.value = Math.max(0, Math.min(100, Number(r.value) + (k === '.' ? 5 : -5))); r.dispatchEvent(new Event('input')); log('opacity:' + r.value, 'keyboard'); return; }
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'w', 'a', 's', 'd'].includes(k) && (t === canvasArea || t === document.body)) { e.preventDefault(); log('pan:' + k.replace('Arrow', '').toLowerCase() + (e.shiftKey ? ' (one viewport)' : ' 10 %'), 'keyboard'); return; }
+  if (k in map) { if (k === 'E' && !e.shiftKey) return; e.preventDefault(); run(map[k], 'keyboard'); }
+});
+window.addEventListener('resize', () => { if (state.surface === 'widget') renderSurface(); });
+window.addEventListener('hashchange', () => { state = Object.assign({}, DEFAULTS); parseHash(); render(); });
+
+/* ----------------------------------------------------------------- init */
+genNuclei(); genDetections(); genMx();
+if (window.matchMedia('(max-width: 599px)').matches) DEFAULTS.nav = false;
+state = Object.assign({}, DEFAULTS); parseHash();
+// hash may request the wheel open
+const wantRadial = state.radial; state.radial = false;
+render(); if (wantRadial) openRadial(null, null, 'tools', 'demo');
+})();
+</script>
+</body>
+</html>

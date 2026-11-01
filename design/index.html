@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stoipath viewer · UX/UI design</title>
+<meta name="description" content="Landing page for the Stoipath WSI viewer UX/UI design phase: the three final screens, the nine judged concepts, the design system component sheet and the documents. Static HTML, no network, synthetic content.">
+<link rel="stylesheet" href="design-system/tokens.css">
+<link rel="stylesheet" href="design-system/base.css">
+<style>
+/* Page-specific styles only; everything visual comes from tokens.css and base.css.
+   This is a landing page, not a viewer surface, so the light theme is allowed here. */
+.page { max-width: 1280px; margin: 0 auto; padding: 0 var(--space-6) var(--space-12); }
+.masthead { padding: var(--space-8) 0 var(--space-6); border-bottom: 1px solid var(--color-border); }
+.masthead__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+.eyebrow { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; color: var(--color-text-secondary); font-size: var(--text-sm); }
+.masthead h1 { margin-top: var(--space-4); }
+.lede { margin-top: var(--space-4); max-width: 72ch; font-size: var(--text-lg); color: var(--color-text-secondary); }
+.actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-6); }
+.readout { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-text-secondary); white-space: nowrap; }
+.readout b { color: var(--color-text); font-weight: var(--weight-medium); }
+
+section.block { padding: var(--space-8) 0 0; }
+section.block > h2 { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+section.block > h2 .caps { color: var(--color-text-secondary); }
+.block__intro { margin: var(--space-3) 0 var(--space-5); max-width: 76ch; color: var(--color-text-secondary); }
+
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+.card h3 { font-size: var(--text-xl); margin-top: var(--space-3); }
+.card .who { color: var(--color-text-secondary); font-size: var(--text-sm); margin-top: var(--space-1); }
+.card p { margin-top: var(--space-3); color: var(--color-text-secondary); }
+.card .actions { margin-top: var(--space-5); }
+.card__head { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.card__thumb { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left;
+  border: 1px solid var(--color-border); border-radius: var(--radius-2); background: var(--color-canvas-bg); margin-top: var(--space-4); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.chips .caps { width: 100%; color: var(--color-text-secondary); margin-bottom: var(--space-1); }
+a.chip-link { min-height: 24px; text-decoration: none; color: var(--color-text); }
+a.chip-link:hover { background: var(--color-control-bg-hover); }
+.meta-row { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--text-sm); }
+.meta-row .num { color: var(--color-text); }
+
+.table-wrap { margin-top: var(--space-4); overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+.table td.win, .table th.win { font-weight: var(--weight-semibold); }
+.table td .angle { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.table a { display: inline-flex; align-items: center; min-height: 24px; text-decoration: underline; text-underline-offset: 2px; }
+.table a:hover { text-decoration-thickness: 2px; }   /* links in table cells sit next to plain text: underline, not colour alone (WCAG 1.4.1) */
+.score { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.winner-mark { display: inline-block; min-width: 1.4em; text-align: center; color: var(--color-text-secondary); }
+
+.doclist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-6); margin-top: var(--space-4); }
+.doclist li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+.doclist li a { font-weight: var(--weight-medium); text-decoration: none; min-height: 24px; display: inline-flex; align-items: center; }
+.doclist li a:hover { text-decoration: underline; }
+.doclist li span { color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+.rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-6); margin-top: var(--space-4); }
+.rules li { padding-left: var(--space-5); position: relative; color: var(--color-text-secondary); }
+.rules li::before { content: ""; position: absolute; left: 0; top: .6em; width: 8px; height: 8px; border-radius: 50%; background: var(--color-border-strong); }
+.rules li b { color: var(--color-text); font-weight: var(--weight-medium); }
+
+footer.colophon { margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: var(--text-sm); }
+footer.colophon p + p { margin-top: var(--space-2); }
+
+/* Responsive: the same breakpoints the screens use (599 / 1079 / 1599 / 3199). */
+@media (max-width: 1079px) {
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards > .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 799px) {
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .cards > .card:last-child:nth-child(odd) { grid-column: auto; }
+  .doclist, .rules { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 599px) {
+  .page { padding: 0 16px var(--space-10); }
+  .masthead { padding-top: var(--space-6); }
+  .lede { font-size: var(--text-md); }
+  .readout { white-space: normal; }
+  .card__thumb { aspect-ratio: 16 / 11; }
+}
+@media (min-width: 3200px) {
+  html { font-size: 18px; }
+  .page { max-width: 1920px; }
+}
+@media (pointer: coarse) {
+  a.chip-link { min-height: 44px; min-width: 44px; padding: 0 var(--space-4); }
+  .doclist li a, .table a { min-height: 44px; }
+  .table a { min-width: 44px; }
+  .skip-link { min-height: 44px; display: inline-flex; align-items: center; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#start">Skip to the review start</a>
+
+<div class="page">
+<header class="masthead">
+  <div class="masthead__top">
+    <div class="eyebrow">
+      <span class="badge badge--clinical">CLINICAL-IH</span>
+      <span class="badge badge--ruo">RUO</span>
+      <span class="badge badge--learn">LEARN</span>
+      <span class="badge badge--dx">DX</span>
+      <span>Design review · 2026-11-01 · wireframes · synthetic content · no network</span>
+    </div>
+    <div class="row" style="gap: var(--space-4)">
+      <span class="readout" id="viewport" aria-live="polite">Viewport <b>—</b></span>
+      <div class="segmented" role="radiogroup" aria-label="Page theme (this landing page only; the viewer screens choose their own)">
+        <button type="button" class="segmented__item" role="radio" aria-checked="true" data-set-theme="dark">Dark</button>
+        <button type="button" class="segmented__item" role="radio" aria-checked="false" data-set-theme="light">Light</button>
+      </div>
+    </div>
+  </div>
+  <h1>Stoipath WSI viewer · UX/UI design</h1>
+  <p class="lede">One Rust engine, four product builds, three pillars. These pages are the design phase for the owner's review: the three final screens synthesised from nine judged concepts, the design system they share, and the documents that decided them. The plan under <code>docs/plan/</code> is the source of truth; everything here is static HTML that opens from <code>file://</code> or any static host.</p>
+  <div class="actions">
+    <a class="btn btn--primary" href="REVIEW-GUIDE.md">Start the review guide</a>
+    <a class="btn btn--secondary" href="README.md">Read the folder README</a>
+    <a class="btn btn--secondary" href="screens/judging.md">Judge ranking</a>
+  </div>
+</header>
+
+<main>
+<section class="block" id="start" aria-labelledby="h-start">
+  <h2 id="h-start">Start here <span class="caps">three sessions · 30 min each</span></h2>
+  <p class="block__intro">The review guide has a minute-by-minute script per device, the ten questions to answer with a 1–5 score each, the known limitations of wireframes versus product, and the issues-list format for feedback. Open the first screen of each session from here; the guide takes over from there. Use the browser in full screen so the viewport is the device, and read the magenta review header on each screen for the measured viewport and canvas share.</p>
+  <div class="cards">
+    <article class="card">
+      <div class="card__head"><span class="chip chip--solid">Session A</span><span class="chip">4K diagnostic display or laptop</span></div>
+      <h3>Sign-out at the keyboard</h3>
+      <p class="who">Clinical-IH / Dx · companion window · one hand on the mouse</p>
+      <p>Identity before pixels, the five-step flow, twelve degraded states, the Dx gate and refusals, the hand-off to the LIS, the keymap and palette; then a glance at the research workspace and the Learn author view.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="screens/final/clinical-signout.html">Open clinical sign-out</a>
+        <a class="btn btn--secondary" href="REVIEW-GUIDE.md#1-session-a--4k-diagnostic-display-or-laptop-30-min">Script A</a>
+      </div>
+    </article>
+    <article class="card">
+      <div class="card__head"><span class="chip chip--solid">Session B</span><span class="chip">iPad with Apple Pencil</span></div>
+      <h3>Pen draws, finger pans</h3>
+      <p class="who">Learn · frozen consult on an in-lab iPad · research with a pen</p>
+      <p>The region-marking item with its zoom gate, reveal and keyboard candidates; the resident unknown; the 44 px bottom bar and the sheet that stops at 40 %; the consult variant with <code>Consultation · preliminary only</code> and <code>Pitch unknown</code>.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="screens/final/education-module.html">Open education module</a>
+        <a class="btn btn--secondary" href="REVIEW-GUIDE.md#2-session-b--ipad-with-apple-pencil-30-min">Script B</a>
+      </div>
+    </article>
+    <article class="card">
+      <div class="card__head"><span class="chip chip--solid">Session C</span><span class="chip">Phone</span></div>
+      <h3>One-handed, on 4G</h3>
+      <p class="who">Learn resident unknown · research sheet · clinical stress test</p>
+      <p>The stem visible in the peek, point marking, offline and cold-4G wording, product and mode still unmistakable at 390 px, the component sheet in both themes.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="screens/final/education-module.html#aud=res&amp;dev=phone">Open resident unknown</a>
+        <a class="btn btn--secondary" href="REVIEW-GUIDE.md#3-session-c--phone-30-min">Script C</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="block" id="final" aria-labelledby="h-final">
+  <h2 id="h-final">Final screens <span class="caps">synthesis of the judged concepts · 2026-11-01</span></h2>
+  <p class="block__intro">Each final starts from the weighted winner and grafts the judges' named mechanisms from the other two. The collapsed <em>Design decisions</em> section at the foot of every page records what came from where, the disagreements and how they were decided, the engine-contract map, measured canvas shares and the design notes to file. State presets travel in the URL: hash for the clinical and education pages, query string for the research page.</p>
+  <div class="cards">
+    <article class="card">
+      <div class="card__head"><span class="badge badge--clinical">CLINICAL-IH</span><span class="badge badge--dx">DX</span><span class="mode mode--nav">NAV</span></div>
+      <h3>Clinical sign-out viewer</h3>
+      <p class="who">Base C Task-flow · grafts B Workbench, A Canvas-maximal</p>
+      <a href="screens/final/clinical-signout.html"><img class="card__thumb" src="screens/final/shots/clinical-signout-1440x900.png" alt="Clinical sign-out final at 1440 by 900: dark neutral chrome, slide canvas with the corner cluster, step rail on the left, status strip" loading="lazy" decoding="async" width="1440" height="900"></a>
+      <p>Open → Screen → Examine → Annotate → Sign-out on a 72 px step rail; corner cluster with navigator, label image and slide tray at rest; seven-row Dx gate; live hand-off list that lands on <em>Open A2-1 first</em> when a slide is unviewed; Hyperdrive iframe and iPad consult variants.</p>
+      <div class="meta-row"><span><span class="num">12</span> switchable states</span><span><span class="num">91</span> live markers</span><span><span class="num">20</span> screenshots</span></div>
+      <div class="chips" aria-label="Clinical sign-out presets">
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#step=1">Step 1 Open</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#step=5">Step 5 Sign-out</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#cond=cold4g">Cold 4G</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#cond=dxrefused">Dx refused</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#cond=mismatch">Identity mismatch</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#variant=consult&amp;tier=2">iPad consult · Tier 2</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#variant=embedded">Hyperdrive iframe</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#decisions">Design decisions</a>
+      </div>
+      <div class="actions"><a class="btn btn--primary" href="screens/final/clinical-signout.html">Open</a><a class="btn btn--secondary" href="screens/final/shots/clinical-signout-3840x2160.png">4K screenshot</a></div>
+    </article>
+    <article class="card">
+      <div class="card__head"><span class="badge badge--learn">LEARN</span></div>
+      <h3>Education module</h3>
+      <p class="who">Base C Task-flow · grafts B Workbench, A Canvas-maximal</p>
+      <a href="screens/final/education-module.html"><img class="card__thumb" src="screens/final/shots/education-module-1440x900.png" alt="Education module final at 1440 by 900: LMS host frame, phase rail, slide canvas, task card with the region-marking item" loading="lazy" decoding="async" width="1440" height="900"></a>
+      <p>Open → Screen → Examine → Decide → Complete with one primary action per step; graded/practice/CME header; honest zoom gate with half credit; reveal refused on a stale tile; keyboard candidates A–F with <em>Fly there</em>; resident unknown with a ranked differential; author and director views; the Dx-refused clinical variant proving the shell does not fork.</p>
+      <div class="meta-row"><span><span class="num">4</span> audiences · <span class="num">3</span> views</span><span><span class="num">103</span> live markers</span><span><span class="num">28</span> screenshots</span></div>
+      <div class="chips" aria-label="Education module presets">
+        <a class="chip chip-link" href="screens/final/education-module.html#cand=1">Keyboard candidates</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#item=revealed">Revealed</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#aud=res">Resident unknown</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#view=author">Author</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#view=director">Director analytics</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#net=pack&amp;dev=ipad">Offline pack · iPad</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#launch=dx">Launch refused</a>
+        <a class="chip chip-link" href="screens/final/education-module.html#decisions">Design decisions</a>
+      </div>
+      <div class="actions"><a class="btn btn--primary" href="screens/final/education-module.html">Open</a><a class="btn btn--secondary" href="screens/final/shots/education-module-1024x1366.png">iPad screenshot</a></div>
+    </article>
+    <article class="card">
+      <div class="card__head"><span class="badge badge--ruo">RUO</span></div>
+      <h3>Research annotation workspace</h3>
+      <p class="who">Base B Workbench · grafts C Task-flow, A Canvas-maximal</p>
+      <a href="screens/final/research-annotation.html"><img class="card__thumb" src="screens/final/shots/research-annotation-1440x900.png" alt="Research annotation final at 1440 by 900: RUO badge and string, slide canvas, Library and Context docks, status strip" loading="lazy" decoding="async" width="1440" height="900"></a>
+      <p>Library (Cohort · Slides · Layers) and Context (Inspector · Annotations · Model · Channels · Export) docks around the canvas; always-visible command search; <code>Slide 14 of 48 · 3 done</code> at every width; curtain and side-by-side compare; 8-channel multiplex grid; export jobs with provenance; focus mode and tool wheel; Jupyter widget and Clinical-IH/Dx variants.</p>
+      <div class="meta-row"><span><span class="num">13</span> switchable states</span><span><span class="num">107</span> live markers</span><span><span class="num">32</span> screenshots</span></div>
+      <div class="chips" aria-label="Research workspace presets">
+        <a class="chip chip-link" href="screens/final/research-annotation.html?focus=1">Focus mode</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html?view=curtain&amp;slide=ihc">Curtain compare</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html?view=grid&amp;slide=if">8-channel IF grid</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html?state=cold4g">Cold 4G</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html?cvd=deutan&amp;ctx=ann">Deutan simulation</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html?product=clinical&amp;state=dx-refused">Clinical-IH · Dx refused</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html?state=launch-refused">Launch refused</a>
+        <a class="chip chip-link" href="screens/final/research-annotation.html#decisions">Design decisions</a>
+      </div>
+      <div class="actions"><a class="btn btn--primary" href="screens/final/research-annotation.html">Open</a><a class="btn btn--secondary" href="screens/final/shots/research-annotation-1920x1080-widget.png">Jupyter widget</a></div>
+    </article>
+  </div>
+</section>
+
+<section class="block" id="concepts" aria-labelledby="h-concepts">
+  <h2 id="h-concepts">Concepts and judging <span class="caps">nine wireframes · three judges · six weighted criteria</span></h2>
+  <p class="block__intro">For each screen, three deliberately different angles on the same brief and content: <b>A Canvas-maximal</b> (chrome collapses to the edges, keyboard-summoned drawers, radial at the pointer), <b>B Workbench</b> (persistent, resizable, dockable panels; palette as the universal entry) and <b>C Task-flow</b> (a step rail organises the chrome around the task sequence; pen and touch first). A practising pathologist/educator, a UX and accessibility specialist and a front-end/engine engineer scored each 1–10 on workflow fit (0.30), clarity (0.20), accessibility (0.15), feasibility (0.15), device fit (0.15) and distinctiveness (0.05). The winner became the base of the final; the others donated mechanisms.</p>
+  <div class="table-wrap">
+  <table class="table">
+    <caption class="visually-hidden">Weighted judge scores per concept; the winner of each row is marked and in bold</caption>
+    <thead><tr><th scope="col">Screen</th><th scope="col">A · Canvas-maximal</th><th scope="col">B · Workbench</th><th scope="col">C · Task-flow</th><th scope="col">Final</th></tr></thead>
+    <tbody>
+      <tr>
+        <th scope="row">Clinical sign-out</th>
+        <td><a href="screens/concepts/clinical-signout-a.html">Concept A</a> <span class="score">7.20</span></td>
+        <td><a href="screens/concepts/clinical-signout-b.html">Concept B</a> <span class="score">7.32</span></td>
+        <td class="win"><span class="winner-mark" aria-label="winner">★</span><a href="screens/concepts/clinical-signout-c.html">Concept C</a> <span class="score">8.03</span></td>
+        <td><a href="screens/final/clinical-signout.html">Final</a><span class="angle">C + B policy, gate, hand-off + A cluster, echo</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Education module</th>
+        <td><a href="screens/concepts/education-module-a.html">Concept A</a> <span class="score">6.67</span></td>
+        <td><a href="screens/concepts/education-module-b.html">Concept B</a> <span class="score">6.98</span></td>
+        <td class="win"><span class="winner-mark" aria-label="winner">★</span><a href="screens/concepts/education-module-c.html">Concept C</a> <span class="score">8.03</span></td>
+        <td><a href="screens/final/education-module.html">Final</a><span class="angle">C + B context bar, dialog focus model + A focus mode, radial</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Research annotation</th>
+        <td><a href="screens/concepts/research-annotation-a.html">Concept A</a> <span class="score">6.63</span></td>
+        <td class="win"><span class="winner-mark" aria-label="winner">★</span><a href="screens/concepts/research-annotation-b.html">Concept B</a> <span class="score">7.73</span></td>
+        <td><a href="screens/concepts/research-annotation-c.html">Concept C</a> <span class="score">7.60</span></td>
+        <td><a href="screens/final/research-annotation.html">Final</a><span class="angle">B + C progress chip, sheet, states + A focus mode, legend</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="actions">
+    <a class="btn btn--secondary" href="screens/judging.md">Verdicts and synthesis (judging.md)</a>
+    <a class="btn btn--secondary" href="screens/judging.json">Scores as data (judging.json)</a>
+  </div>
+</section>
+
+<section class="block" id="system" aria-labelledby="h-system">
+  <h2 id="h-system">Design system <span class="caps">tokens · base styles · living component sheet · validators</span></h2>
+  <p class="block__intro">Neutral dark-grey diagnostic chrome with zero chroma within 32 px of the canvas, a light chrome theme for Learn only, an eight-colour annotation palette re-derived from Okabe-Ito to stay distinguishable under deuteranopia and protanopia and legible on H&amp;E through a halo rule, the six-region app frame as a fixed grid, and every component in both themes with states, ARIA notes and the engine contract it consumes. Revised 2026-11-01 after the critique of the three finals.</p>
+  <div class="cards">
+    <article class="card">
+      <h3>Component sheet</h3>
+      <p>Every shell component rendered in the dark and light themes, with default, hover, focus, active and disabled states and the coarse-pointer sizes.</p>
+      <div class="chips" aria-label="Component sheet sections">
+        <a class="chip chip-link" href="design-system/components.html#topbar">Top bar and badges</a>
+        <a class="chip chip-link" href="design-system/components.html#strip">Status strip strings</a>
+        <a class="chip chip-link" href="design-system/components.html#hud">HUD</a>
+        <a class="chip chip-link" href="design-system/components.html#navigator">Navigator</a>
+        <a class="chip chip-link" href="design-system/components.html#palette">Command palette</a>
+        <a class="chip chip-link" href="design-system/components.html#classes">Annotation palette</a>
+        <a class="chip chip-link" href="design-system/components.html#banners">Banners and refusals</a>
+        <a class="chip chip-link" href="design-system/components.html#quiz">Quiz items</a>
+        <a class="chip chip-link" href="design-system/components.html#keymap">Keyboard map</a>
+      </div>
+      <div class="actions"><a class="btn btn--primary" href="design-system/components.html">Open the sheet</a></div>
+    </article>
+    <article class="card">
+      <h3>Tokens and base styles</h3>
+      <p><code>tokens.css</code> carries the themes, neutral ramp, palette, type, space, radii, focus, motion, target sizes, shell geometry and the controlled label strings; <code>base.css</code> the reset, frame, HUD, components, states and breakpoints. Every screen links both by relative path.</p>
+      <div class="chips" aria-label="Design system files">
+        <a class="chip chip-link" href="design-system/tokens.css">tokens.css</a>
+        <a class="chip chip-link" href="design-system/base.css">base.css</a>
+        <a class="chip chip-link" href="design-system/README.md">README (design doc 2)</a>
+      </div>
+      <div class="actions"><a class="btn btn--secondary" href="design-system/README.md">Read the design-system README</a></div>
+    </article>
+    <article class="card">
+      <h3>Validators</h3>
+      <p><code>contrast-check.py</code> checks text and non-text contrast (including HUD text over five H&amp;E reference colours), the P7 chroma rule and the CVD palette. <code>layout-check.mjs</code> loads a page in headless Chromium at eight viewports and asserts the top bar never clips, nothing enters the central 50 % zone at rest, sheets stay ≤ 40 %, and every control is ≥ 24 px (44 px under a coarse pointer).</p>
+      <div class="chips" aria-label="Validator files">
+        <a class="chip chip-link" href="design-system/contrast-check.py">contrast-check.py</a>
+        <a class="chip chip-link" href="design-system/layout-check.mjs">layout-check.mjs</a>
+        <a class="chip chip-link" href="design-system/README.md">Results · README §8</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="block" id="docs" aria-labelledby="h-docs">
+  <h2 id="h-docs">Documents <span class="caps">Markdown · opens as text on a static host, rendered on GitHub</span></h2>
+  <ul class="doclist">
+    <li><a href="REVIEW-GUIDE.md">REVIEW-GUIDE.md</a><span>Owner review: 30-minute script per device, ten questions with 1–5 scores, limitations, issues-list format</span></li>
+    <li><a href="README.md">README.md</a><span>What this folder is, how to open the screens, the concept-to-final story with the judge table, file map</span></li>
+    <li><a href="principles-and-ia.md">principles-and-ia.md</a><span>Design doc 1: ten principles with one-line tests, build and mode model, IA, interaction model, HUD and status microcopy, state inventory S1–S30, responsive strategy, accessibility, telemetry, design notes D1–D15</span></li>
+    <li><a href="design-system/README.md">design-system/README.md</a><span>Design doc 2: colour rationale, do/don't, accessibility checklist, contract map, validation results, DS-1–DS-14, 2026-11-01 changelog</span></li>
+    <li><a href="research/ux-conventions.md">research/ux-conventions.md</a><span>UX conventions of digital-pathology viewers and adjacent expert tools; keep/break lists; open questions for the owner</span></li>
+    <li><a href="screens/judging.md">screens/judging.md</a><span>Judge panel: ranking tables, three verdicts per screen, synthesis notes (data in judging.json)</span></li>
+    <li><a href="../docs/plan/01-vision-goals-metrics.md">plan 01 · vision, personas, goals, non-goals</a><span>Repository path; served here only if <code>wsi-viewer/docs/</code> is deployed beside this folder</span></li>
+    <li><a href="../docs/plan/12-product-pillars-clinical-research-education.md">plan 12 · product pillars and engine contracts</a><span>The four builds, per-pillar workflows, the contracts every live element maps to</span></li>
+    <li><a href="../docs/plan/02-requirements.md">plan 02 · requirements, fidelity tiers, NFR-A</a><span>FR-/NFR- ids quoted on the screens; tiers W+/W60/W−/N</span></li>
+    <li><a href="../docs/plan/06-cross-platform-delivery.md">plan 06 · cross-platform delivery</a><span>Targets, platform matrix, input per shell</span></li>
+  </ul>
+</section>
+
+<section class="block" id="rules" aria-labelledby="h-rules">
+  <h2 id="h-rules">What every screen is held to <span class="caps">hard constraints from the plan</span></h2>
+  <ul class="rules">
+    <li><b>The slide canvas dominates</b>: ≥ 70 % of the viewport at rest on every surface; nothing covers the central 50 % × 50 %, dialogs included; chrome never re-lays out during a gesture.</li>
+    <li><b>Product and mode unmistakable</b>: badge, full label string and NAV/DX indicator fixed in the top bar in every state; four builds, one engine; the RUO build refuses clinical launches.</li>
+    <li><b>Identity before pixels</b>: accession, part, block, label text and the label image before the first tile in the clinical builds; a mismatch blocks.</li>
+    <li><b>Keyboard-first sign-out, pen and touch first on tablets</b>; wheel and pinch anchored at the pointer; every drag has a single-pointer alternative; 24 px targets, 44 px under a coarse pointer.</li>
+    <li><b>Neutral chrome, safe palette</b>: no saturated colour within 32 px of tissue; status by luminance, shape and text; annotation colours pairwise distinguishable under CVD simulation and on H&amp;E.</li>
+    <li><b>Micrometres only</b>: MPP-aware scale bar, derived magnification with the pitch source, <code>~20×</code> and <code>Pitch unknown</code> when not attested.</li>
+    <li><b>Degraded states are designed</b>: cold 4G, offline pack, W60, missing attestation, tile errors, slow translator each have a named state and fixed microcopy; never a blank canvas.</li>
+    <li><b>Launch contexts</b>: AP-LIS launch and EHR iframe (no popups, no top navigation, postMessage), LTI 1.3 cookieless iframe, standalone, Jupyter widget, QuPath GeoJSON in and out.</li>
+  </ul>
+</section>
+</main>
+
+<footer class="colophon">
+  <p>Stoipath WSI viewer · UX/UI design phase · 2026-11-01. Static HTML, CSS and vanilla JavaScript; no build step, no CDN, system font stacks. Content is synthetic: case <code>AP-26-04417</code>, patient <code>DOE, JANE · 1958</code> and the display serial are placeholders; CAMELYON16 slide names are public CC0 identifiers. Elements the engine or an integration would drive are marked <code>data-live</code> on the screens and can be outlined with each page's <em>Live markers</em> switch.</p>
+  <p>Published copy: <a href="https://rpbatman.github.io/Stoipath/design/">rpbatman.github.io/Stoipath/design/</a> (once deployed). Local copy: open this file. Feedback: see <a href="REVIEW-GUIDE.md">REVIEW-GUIDE.md §7</a>.</p>
+</footer>
+</div>
+
+<script>
+(function () {
+  var html = document.documentElement;
+  var KEY = 'stoipath-design-index-theme';
+  function setTheme(t, persist) {
+    html.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    var items = document.querySelectorAll('[data-set-theme]');
+    for (var i = 0; i < items.length; i++) items[i].setAttribute('aria-checked', String(items[i].getAttribute('data-set-theme') === html.getAttribute('data-theme')));
+    if (persist) { try { localStorage.setItem(KEY, html.getAttribute('data-theme')); } catch (e) {} }
+  }
+  var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
+  if (saved === 'light') setTheme('light', false);
+  var group = document.querySelector('[role="radiogroup"]');
+  if (group) {
+    group.addEventListener('click', function (e) { var b = e.target.closest('[data-set-theme]'); if (b) setTheme(b.getAttribute('data-set-theme'), true); });
+    group.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(next, true);
+      var b = group.querySelector('[data-set-theme="' + next + '"]'); if (b) b.focus();
+    });
+  }
+  var out = document.getElementById('viewport');
+  function readout() {
+    if (!out) return;
+    var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    out.innerHTML = 'Viewport <b>' + window.innerWidth + ' × ' + window.innerHeight + '</b> · DPR <b>' + (Math.round((window.devicePixelRatio || 1) * 100) / 100) + '</b> · pointer <b>' + (coarse ? 'coarse' : 'fine') + '</b>';
+  }
+  readout();
+  var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(readout, 150); });
+})();
+</script>
+</body>
+</html>
