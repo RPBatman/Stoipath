@@ -3,7 +3,8 @@
 //   client/dist/shell.html?manifest=../../data/samples/pyramids/<slide>/manifest.json
 // in headless Chromium at 1440x900 DPR 1, wait for window.__stage0.state().baseLoaded, let the fit view settle,
 // then check, against values recomputed here from the manifest (not read from the shell's code):
-//   identity  top bar name / cohort / stain / licence chip / title, HUD identity line, navigator caption, document title
+//   identity  top bar name / cohort / stain / licence chip, HUD identity line, navigator caption, document title, and
+//             that the title line carries the manifest's tissue, mpp (to the precision shown) and width
 //   readout   magnification "~N×" and "s µm/px · derived" at fit (s = mpp × dpr / 2^logZoom; the shell-check rules)
 //   errors    0 console errors, 0 page errors, 0 failed or >= 400 responses
 // and save a JPEG q85 screenshot to design/screens/integrated/shots/samples-<slide>-1440x900.jpg.
@@ -38,8 +39,7 @@ function expectedIdentity(m) {
   const tissue = (src.stain.split(',')[1] ?? '').replace(/\s*\(.*\)\s*$/, '').trim();
   const licLong = src.licence.replace(/\s*\(https?:[^)]*\)\s*/, '').trim();
   const lic = licLong.split(/\s+/)[0];
-  const title = `${tissue} · ${m.mpp} µm/px · ${m.width.toLocaleString('en-US')} px region`.replace(/^ · /, '');
-  return { name, cohort, stain, lic, title, hudId: `${name} · ${stain}`, hudCoh: `${cohort} · ${lic}`, docTitle: `${name} · Stoipath Viewer (RUO)` };
+  return { name, cohort, stain, lic, tissue, hudId: `${name} · ${stain}`, hudCoh: `${cohort} · ${lic}`, docTitle: `${name} · Stoipath Viewer (RUO)` };
 }
 
 let failures = 0;
@@ -104,7 +104,16 @@ for (const slide of slides) {
   check(d.idCohort === e.cohort, `cohort "${d.idCohort}" == "${e.cohort}"`);
   check(d.idStain === e.stain, `stain chip "${d.idStain}" == "${e.stain}"`);
   check(d.idLic === e.lic, `licence chip "${d.idLic}" == "${e.lic}"`);
-  check(d.idTitle === e.title, `title "${d.idTitle}" == "${e.title}"`);
+  // Title: the shell's wording and rounding are still changing (another workflow owns client/), so check what the
+  // manifest supplies rather than one exact string: the tissue (case-insensitive), the mpp to the shown precision
+  // (seen "0.499" and "0.50"), and the level-0 width.
+  const tm = /([0-9]+(?:\.[0-9]+)?) µm\/px/.exec(d.idTitle ?? '');
+  const shownMpp = tm ? tm[1] : null;
+  const dec = shownMpp && shownMpp.includes('.') ? shownMpp.split('.')[1].length : 0;
+  const mppOk = shownMpp !== null && Math.abs(Number(shownMpp) - m.mpp) <= 0.5 * 10 ** -dec + 1e-9;
+  const tissueOk = e.tissue === '' || (d.idTitle ?? '').toLowerCase().startsWith(e.tissue.toLowerCase());
+  const widthOk = (d.idTitle ?? '').includes(m.width.toLocaleString('en-US'));
+  check(mppOk && tissueOk && widthOk, `title "${d.idTitle}" carries tissue "${e.tissue}", mpp ${m.mpp} (shown ${shownMpp}) and width ${m.width.toLocaleString('en-US')}`);
   check(d.hudId === e.hudId && d.navLabel === e.hudId, `HUD identity "${d.hudId}" and navigator caption "${d.navLabel}" == "${e.hudId}"`);
   check(d.hudCoh === e.hudCoh, `HUD cohort line "${d.hudCoh}" == "${e.hudCoh}"`);
   check(d.docTitle === e.docTitle, `document title "${d.docTitle}"`);

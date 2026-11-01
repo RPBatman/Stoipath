@@ -19,6 +19,12 @@
 
 /* ---- HUD: reserved widths so textContent updates never shift layout (research final's engineering graft) ---- */
 .shell .hud { z-index: var(--z-hud); }
+/* HUD items over the canvas are text, not targets (the measurement page's HUD is pointer-events: none too): a drag,
+   wheel zoom or measure click that starts on the identity line, the tool line, the scale bar or the position reaches
+   the canvas. base.css gives every .hud__item pointer-events: auto; only the magnification button and its typed-zoom
+   field are controls here. */
+.shell .hud__item { pointer-events: none; }
+.shell .magnification__value, .shell .magnification .zoom-input { pointer-events: auto; }
 .shell .magnification__value { display: inline-flex; align-items: baseline; justify-content: flex-end; min-width: 5.4ch; min-height: var(--target-control); background: none; color: inherit; border: 0; cursor: text; font-variant-numeric: tabular-nums lining-nums; }
 .shell .magnification__value .tilde { margin-right: 1px; }
 .shell .magnification__line2 { min-width: 20ch; text-align: right; }
@@ -41,6 +47,10 @@
 .shell .scalebar__label { min-width: 7ch; }
 
 /* ---- F. Navigator: real top-level tile(s), rectangle from four transformed edges ---- */
+/* Its host shares the canvas grid cell but comes after the strip in the DOM, so Tab reaches the navigator last
+   (handoff §4.6: canvas → rail → dock → strip → navigator) while it is drawn exactly where it was. */
+.app.shell > .nav-host { grid-area: canvas; position: relative; z-index: var(--z-navigator); pointer-events: none; overflow: hidden; contain: layout paint style; min-width: 0; min-height: 0; }
+.shell .nav-host .navigator { pointer-events: auto; max-width: calc(25% - var(--layout-hud-inset)); }   /* base.css's .canvas-area .navigator cap */
 .shell .navigator { width: var(--layout-navigator); }
 .shell .navigator__thumb { aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; }
 .nav-tiles { position: absolute; inset: 0; }
@@ -150,11 +160,32 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
    navigator and the bottom-right HUD move left of it, and the navigator steps down to 180 px (research final). */
 @media (min-width: 1080px) and (max-width: 1599px) {
   .app.shell { --layout-dock: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
-  .app.shell.dock-open { --layout-navigator: 180px; }
   /* An absolutely positioned grid item that keeps grid-area: dock resolves base.css's top: topbar / bottom: strip
      against its grid area (row 2), which put the drawer 48 px low; without an area it resolves against the app. */
   .app.shell.dock-open .dock { grid-area: auto; }
-  .app.shell.dock-open .navigator, .app.shell.dock-open .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  /* The drawer, the palette and the dock-column dialogs (keymap, About) all cover the right column: the navigator and
+     the bottom-right readout step left of it, so no focusable control sits under an open layer (SC 2.4.11). */
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) .navigator,
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  /* Stepped left, the navigator is no longer at the canvas edge, so its bottom must stay above the central zone
+     (P1): thumbnail height ≤ 25 % of the canvas − inset − label row (canvas = 100dvh − top bar − strip), width
+     from the slide's aspect (--nav-ar, set once from the manifest); 180 px at most (research final's drawer step). */
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) {
+    --layout-navigator: min(180px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 32px) * var(--nav-ar, 1)));
+  }
+}
+/* Docked width with the dock closed: the palette and dialogs use the empty dock column over the canvas edge. */
+@media (min-width: 1600px) {
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .navigator,
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) {
+    --layout-navigator: min(240px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 32px) * var(--nav-ar, 1)));
+  }
+}
+@media (min-width: 3200px) {
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) {
+    --layout-navigator: min(320px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 40px) * var(--nav-ar, 1)));
+  }
 }
 /* Tablet portrait and phone: rail → bottom bar; the dock becomes the grid's in-flow sheet row (the canvas yields
    height instead of being covered; base.css already reserves the auto "sheet" row for the palette). */
@@ -166,9 +197,18 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
     box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail);
   }
   .app.shell.palette-open .dock { display: none; }
+  /* Keymap and About take the same in-flow sheet row as the palette (base.css .palette-layer), so the canvas and its
+     bottom HUD yield height instead of being covered (handoff §5.1 "the bottom HUD lifts above an open sheet"); the
+     dock sheet steps aside while one is open, as it does for the palette. */
+  .app.shell .modal-layer { position: static; grid-area: sheet; inset: auto; display: flex; flex-direction: column; padding: 0; z-index: auto; pointer-events: auto; min-height: 0; max-height: var(--layout-sheet-max); }
+  .app.shell .modal-layer[hidden] { display: none; }
+  .app.shell .modal-layer .dialog { width: 100%; max-height: var(--layout-sheet-max); border-left: 0; border-right: 0; border-bottom: 0; border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); }
+  .app.shell.dialog-open .dock { display: none; }
 }
 @media (max-width: 599px) {
   .app.shell .hud { max-width: 48%; }
+  /* Six labelled targets fit a 320 px phone (SC 1.4.10): Zoom in / out go (pinch, double tap, Search → Zoom). */
+  .shell .bottombar .tool--secondary { display: none; }
   .shell .magnification__line2, .shell .hud__position { display: none; }
   .shell .scalebar { min-width: 0; }
   .topbar__identity .accession { font-size: var(--text-md); }
@@ -185,6 +225,11 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .rail { gap: 0; }
   .rail__group.presets { gap: 0; }
 }
+/* Short touch landscapes (iPad mini 1133 × 744): 44 px targets overflow the rail by one button; the rail's keyboard
+   map button goes (the top bar's ? button is the same command). */
+@media (max-height: 760px) and (min-width: 1080px) and (pointer: coarse) {
+  .rail [data-cmd="keymap"] { display: none; }
+}
 @media print {
   .meas-layer { display: none; }
 }
@@ -197,5 +242,5 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
    three 44 px pads. On phones the navigator is a toggled overlay (behind O, hidden at rest), so it takes the ladder's
    140 px phone step with only the canvas-edge cap; at 140 + 24 px tall it stays above the central zone. */
 @media (max-width: 599px) {
-  .shell .canvas-area .navigator { width: 140px; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
+  .shell .nav-host .navigator { width: 140px; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
 }

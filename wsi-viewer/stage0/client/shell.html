@@ -36,14 +36,15 @@
     <a class="skip-link" href="#view">Skip to slide</a>
 
     <!-- Regions per principles §3.1 (A top bar · B canvas · C rail · D dock · E strip · F navigator). DOM (= Tab)
-         order: top bar → canvas (+ HUD readout, navigator) → rail → dock → strip; grid areas keep visual positions. -->
+         order (handoff §4.6, principles §8.3): top bar → canvas (+ HUD readout) → rail → dock → strip → navigator;
+         grid areas keep visual positions (the navigator's host shares the canvas cell). -->
     <div class="app shell" id="app" data-product="ruo" data-surface="workspace" data-tool="select">
 
       <!-- A. Top bar: badge + the full label string as real text (never dismissible), slide identity, search, help -->
       <header class="topbar region" aria-label="Top bar">
         <div class="topbar__slot-badge">
           <button class="badge badge--ruo" id="badge" type="button" data-testid="badge" aria-haspopup="dialog" aria-controls="aboutDlg"
-                  aria-label="Stoipath Viewer, for research use only. For Research Use Only. Not for use in diagnostic procedures. Open the product label and About">RUO</button>
+                  aria-label="Stoipath Viewer, for research use only. Open the product label and About">RUO</button>
         </div>
         <span class="topbar__label" id="labelString" role="note" data-testid="topbar-label">For Research Use Only. Not for use in diagnostic procedures.</span>
         <div class="topbar__identity" id="identity" role="group" aria-label="Slide identity" data-live="launch:context">
@@ -92,16 +93,6 @@
             <span class="magnification__line2" id="magLine" data-testid="mag-line2">– µm/px · derived</span>
           </div>
         </div>
-
-        <!-- F. Navigator: the pyramid's top level as <img>, viewport rectangle by transform only, pan buttons (SC 2.5.7) -->
-        <aside class="navigator" id="navigator" aria-label="Navigator" data-live="state.views[0]">
-          <div class="navigator__thumb" id="navThumb" title="Click to recentre">
-            <div class="nav-tiles" id="navTiles" aria-hidden="true"></div>
-            <span class="navigator__viewport" aria-hidden="true"><span class="nav-edge nav-edge--h" id="navTop"></span><span class="nav-edge nav-edge--h" id="navBottom"></span><span class="nav-edge nav-edge--v" id="navLeft"></span><span class="nav-edge nav-edge--v" id="navRight"></span></span>
-            <div class="navigator__pan" role="group" aria-label="Pan"><button class="up" type="button" aria-label="Pan up" data-pan="0,-1">↑</button><button class="left" type="button" aria-label="Pan left" data-pan="-1,0">←</button><button class="right" type="button" aria-label="Pan right" data-pan="1,0">→</button><button class="down" type="button" aria-label="Pan down" data-pan="0,1">↓</button></div>
-          </div>
-          <div class="navigator__label"><span class="mono" id="navLabel">slide</span><span class="text-xs nav-hint"><kbd class="key">O</kbd> hide</span></div>
-        </aside>
 
         <!-- S15: the slide could not be opened (manifest, WebGL); never a blank canvas without a sentence -->
         <div class="plate" id="plate" hidden>
@@ -167,6 +158,7 @@
               <dt>Frame time</dt><dd id="eqFrame">–</dd>
               <dt>Tiles</dt><dd id="eqTiles">–</dd>
               <dt>Loaded</dt><dd id="eqBytes">–</dd>
+              <dt>Link estimate</dt><dd id="eqNet">–</dd>
               <dt>Last gesture</dt><dd id="eqGesture">–</dd>
             </dl>
             <p class="note">Updated at rest (4 Hz) while this tab is open; nothing here is written during a gesture. Status: <span id="engStatus">starting…</span></p>
@@ -186,12 +178,13 @@
         </div>
       </aside>
 
-      <!-- Bottom bar (tablet portrait / phone): labelled 44 px targets -->
+      <!-- Bottom bar (tablet portrait / phone): labelled 44 px targets; names = the visible labels (SC 2.5.3). Phones
+           (≤ 599 px) drop the .tool--secondary zoom buttons (pinch, double tap and Search → Zoom in / out remain). -->
       <nav class="bottombar region" aria-label="Tools (touch)" data-live="commands">
         <button class="tool tool--labelled" type="button" data-cmd="tool:select" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg><span class="tool__label">Select</span></button>
         <button class="tool tool--labelled" type="button" data-cmd="tool:measure" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg><span class="tool__label">Measure</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="zoomin" aria-label="Zoom in"><svg class="icon" aria-hidden="true"><use href="#i-zoomin"/></svg><span class="tool__label">Zoom +</span></button>
-        <button class="tool tool--labelled" type="button" data-cmd="zoomout" aria-label="Zoom out"><svg class="icon" aria-hidden="true"><use href="#i-zoomout"/></svg><span class="tool__label">Zoom −</span></button>
+        <button class="tool tool--labelled tool--secondary" type="button" data-cmd="zoomin"><svg class="icon" aria-hidden="true"><use href="#i-zoomin"/></svg><span class="tool__label">Zoom in</span></button>
+        <button class="tool tool--labelled tool--secondary" type="button" data-cmd="zoomout"><svg class="icon" aria-hidden="true"><use href="#i-zoomout"/></svg><span class="tool__label">Zoom out</span></button>
         <button class="tool tool--labelled" type="button" data-cmd="fit"><svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="tool__label">Fit</span></button>
         <button class="tool tool--labelled" type="button" data-cmd="nav" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg><span class="tool__label">Navigator</span></button>
         <button class="tool tool--labelled" type="button" data-cmd="dock" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__label">Panels</span></button>
@@ -204,15 +197,29 @@
         <span class="strip__notice" id="stripNotice" data-testid="strip-notice"></span>
         <div class="strip__group strip__group--end">
           <span class="chip num" id="chipTiles" data-live="telemetry:quality" title="Tiles resident in the GPU tile array / layers">Tiles –</span>
-          <span class="chip" id="chipNet" data-live="telemetry:network" title="Network Information API, where the browser has it">Network –</span>
+          <span class="chip" id="chipNet" data-live="telemetry:network" title="Link estimate (Network Information API); shown only when offline, slow, or during a cold fill" hidden></span>
           <button class="btn btn--sm btn--secondary" type="button" id="engineBtn" aria-controls="tp-engine">Engine</button>
         </div>
       </footer>
 
+      <!-- F. Navigator, after the strip in the DOM (= Tab order, handoff §4.6) and drawn over the canvas cell by its host
+           (grid-area: canvas; shell.css .nav-host). The pyramid's top level as <img>, viewport rectangle by transform
+           only, pan buttons (SC 2.5.7). -->
+      <div class="nav-host" id="navHost">
+        <aside class="navigator" id="navigator" aria-label="Navigator" data-live="state.views[0]">
+          <div class="navigator__thumb" id="navThumb" title="Click to recentre">
+            <div class="nav-tiles" id="navTiles" aria-hidden="true"></div>
+            <span class="navigator__viewport" aria-hidden="true"><span class="nav-edge nav-edge--h" id="navTop"></span><span class="nav-edge nav-edge--h" id="navBottom"></span><span class="nav-edge nav-edge--v" id="navLeft"></span><span class="nav-edge nav-edge--v" id="navRight"></span></span>
+            <div class="navigator__pan" role="group" aria-label="Pan"><button class="up" type="button" aria-label="Pan up" data-pan="0,-1">↑</button><button class="left" type="button" aria-label="Pan left" data-pan="-1,0">←</button><button class="right" type="button" aria-label="Pan right" data-pan="1,0">→</button><button class="down" type="button" aria-label="Pan down" data-pan="0,1">↓</button></div>
+          </div>
+          <div class="navigator__label"><span class="mono" id="navLabel">slide</span><span class="text-xs nav-hint"><kbd class="key">O</kbd> hide</span></div>
+        </aside>
+      </div>
+
       <!-- Command palette: one placement rule (.palette-layer: over the dock column ≥ 1080 px, the in-flow sheet row below); no scrim -->
       <div class="palette-layer" id="paletteLayer" hidden>
         <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
-          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Type a command, panel or zoom such as 20 or 0.5 µm…" aria-label="Search commands, panels and zoom levels" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
+          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Type a command, panel or zoom…" aria-label="Search commands, panels and zoom levels" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
           <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
           <div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span class="pal-count" id="palCount"></span></div>
         </div>

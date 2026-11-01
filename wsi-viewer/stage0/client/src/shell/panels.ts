@@ -126,7 +126,9 @@ export class DialogLayer {
 
 /** Roving tabindex inside a role="toolbar": one Tab stop, arrow keys move (principles §8.3; handoff §2 Tool button). */
 export function roving(group: HTMLElement, orientation: 'vertical' | 'horizontal'): void {
-  const items = (): HTMLElement[] => $$<HTMLElement>('button', group).filter((b) => !b.hidden);
+  // Rendered buttons only (a media query may hide one, e.g. the rail's keymap button on short touch screens); read on
+  // focus and key events, never per frame.
+  const items = (): HTMLElement[] => $$<HTMLElement>('button', group).filter((b) => !b.hidden && b.getClientRects().length > 0);
   const set = (cur: HTMLElement): void => {
     for (const b of items()) b.tabIndex = b === cur ? 0 : -1;
   };

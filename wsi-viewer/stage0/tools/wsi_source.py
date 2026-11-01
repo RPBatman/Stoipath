@@ -1,6 +1,8 @@
 """Read tiled-TIFF whole-slide sources (local file or HTTPS URL) for the Stage-0 pyramid build.
 
-Only the standard library plus tifffile/imagecodecs/numpy are used (no OpenSlide/libvips).
+The default reader uses only the standard library plus tifffile/imagecodecs/numpy (no OpenSlide/libvips);
+OpenSlideSource (reader='openslide', for DICOM WSI) needs openslide-python + openslide-bin and is imported
+only when asked for.
 A remote source is read with HTTP Range requests, so a 16k x 16k region can be pulled out of a
 multi-gigabyte slide without downloading the whole file. Contiguous tiles are coalesced into one
 request because each request through a proxy costs ~0.3-0.7 s of latency.

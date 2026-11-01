@@ -114,7 +114,8 @@ class Notices {
   private engineText = '';
   private viewText = '';
   private readonly slot = new TextSlot($('stripNotice'));
-  private readonly phoneEcho = new TextSlot($('toolLineText'));
+  /** The HUD tool line (shown while measuring): the tool's hint, or on phones (no strip) the latest result. */
+  private readonly toolLine = new TextSlot($('toolLineText'));
   /**
    * Transient command result (highest priority), cleared after `ms` once the view is at rest. `speak` queues it for the
    * polite region (off for zoom notices: the settle sentence already says the new magnification).
@@ -146,7 +147,7 @@ class Notices {
   render(): void {
     this.slot.set(this.text);
     // Phones have no strip (base.css): transient results are echoed on the HUD tool line while the tool is active.
-    if (isPhone && tool === 'measure' && this.transientText !== '') this.phoneEcho.set(this.transientText);
+    if (tool === 'measure') this.toolLine.set(isPhone && this.transientText !== '' ? this.transientText : measureHint());
   }
 }
 const notices = new Notices();
@@ -270,12 +271,12 @@ function setTool(next: 'select' | 'measure', announce = true): void {
   for (const b of $$<HTMLElement>('[data-cmd="tool:select"]')) b.setAttribute('aria-pressed', String(next === 'select'));
   for (const b of $$<HTMLElement>('[data-cmd="tool:measure"]')) b.setAttribute('aria-pressed', String(next === 'measure'));
   $('toolLine').hidden = next !== 'measure';
-  $('toolLineText').textContent = measureHint();
   if (announce) notices.transient(next === 'measure' ? measureIntro() : 'Select / pan');
+  else notices.render();
 }
 coarseMq.addEventListener('change', () => {
   isCoarse = coarseMq.matches;
-  $('toolLineText').textContent = measureHint();
+  notices.render();
 });
 /** A tool command (rail, bottom bar, palette, key): the next input goes to the slide, so focus goes there too. */
 function chooseTool(next: 'select' | 'measure'): void {
@@ -298,6 +299,7 @@ function toggleNav(): void {
 }
 phoneMq.addEventListener('change', () => {
   isPhone = phoneMq.matches;
+  notices.render();
   syncNavPressed();
   nav?.markDirty();
 });

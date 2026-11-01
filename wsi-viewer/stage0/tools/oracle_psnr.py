@@ -16,8 +16,17 @@ Two samples are drawn: 'tissue' (tiles whose tissue fraction, estimated on pyram
 bottom-right edge tile is always added as 'edge' (partial tile: checks the crop convention).
 PSNR = 10 log10(255^2 / MSE) over all RGB samples of the tile.
 
-Needs openslide-python + openslide-bin (OpenSlide 4.x) next to numpy, tifffile and imagecodecs.
-Usage: python3 tools/oracle_psnr.py --data <pyramid dir> --slide <slide file> [--n 5] [--seed S] [--json OUT]
+A pyramid built with --reader openslide (DICOM WSI) is checked with --reader openslide: the build's
+input is then OpenSlide itself, so source_vs_openslide is trivially identical. Pass --dicom-dir (the
+directory of .dcm instances) to add an independent decoder: the level-0 TILED_FULL VOLUME frames are
+read with pydicom and decoded with imagecodecs (frame size must equal the tile size), giving
+  pydicom_vs_openslide  frame decode vs OpenSlide          (decoder and frame-placement agreement)
+  ours_vs_pydicom       our JPEG tile vs that frame decode
+
+Needs openslide-python + openslide-bin (OpenSlide 4.x) next to numpy, tifffile and imagecodecs
+(and pydicom for --dicom-dir).
+Usage: python3 tools/oracle_psnr.py --data <pyramid dir> --slide <slide file> [--reader openslide]
+       [--dicom-dir DIR] [--n 5] [--seed S] [--json OUT]
 """
 from __future__ import annotations
 
@@ -42,6 +51,17 @@ def psnr(a: np.ndarray, b: np.ndarray) -> float:
     return math.inf if mse == 0 else 10 * math.log10(255.0**2 / mse)
 
 
+def finite(o):
+    """JSON-safe copy: an infinite PSNR (MSE 0, bit-identical) becomes null."""
+    if isinstance(o, float) and math.isinf(o):
+        return None
+    if isinstance(o, dict):
+        return {k: finite(v) for k, v in o.items()}
+    if isinstance(o, list):
+        return [finite(v) for v in o]
+    return o
+
+
 def luma(a: np.ndarray) -> np.ndarray:
     f = a.astype(np.float64)
     return 0.299 * f[..., 0] + 0.587 * f[..., 1] + 0.114 * f[..., 2]
@@ -59,6 +79,32 @@ def level_image(data: str, m: dict, index: int) -> np.ndarray:
     return img
 
 
+def dicom_level0_frames(d: str, W: int, H: int):
+    """(get(tx, ty) -> RGB frame, frame size, info) for the TILED_FULL VOLUME instance of level 0 in d."""
+    import pydicom
+    from pydicom.encaps import generate_frames
+
+    path = None
+    for f in sorted(os.listdir(d)):
+        if f.lower().endswith(".dcm"):
+            ds = pydicom.dcmread(os.path.join(d, f), stop_before_pixels=True)
+            if ("VOLUME" in list(ds.get("ImageType", [])) and int(ds.get("TotalPixelMatrixColumns", 0)) == W
+                    and int(ds.get("TotalPixelMatrixRows", 0)) == H):
+                path = os.path.join(d, f)
+    if path is None:
+        raise SystemExit(f"no level-0 VOLUME instance of {W}x{H} in {d}")
+    ds = pydicom.dcmread(path)
+    if ds.get("DimensionOrganizationType") != "TILED_FULL" or int(ds.get("TotalPixelMatrixFocalPlanes", 1)) != 1 \
+            or int(ds.get("NumberOfOpticalPaths", 1)) != 1:
+        raise SystemExit("--dicom-dir supports single focal plane, single optical path TILED_FULL only")
+    fw, fh = int(ds.Columns), int(ds.Rows)
+    cols = -(-W // fw)
+    frames = list(generate_frames(ds.PixelData, number_of_frames=int(ds.NumberOfFrames)))
+    info = {"frame": [fw, fh], "frames": len(frames), "photometric": str(ds.PhotometricInterpretation),
+            "transferSyntax": str(ds.file_meta.TransferSyntaxUID), "pydicom": pydicom.__version__}
+    return (lambda tx, ty: imagecodecs.jpeg_decode(frames[ty * cols + tx])[:, :, :3]), (fw, fh), info
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", required=True, help="pyramid directory (manifest.json + tiles/)")
@@ -66,6 +112,9 @@ def main(argv=None) -> int:
     ap.add_argument("--n", type=int, default=5, help="tiles per sample (default 5)")
     ap.add_argument("--seed", type=int, default=DEFAULT_SEED)
     ap.add_argument("--json", help="write the per-tile results here")
+    ap.add_argument("--reader", choices=["tifffile", "openslide"], default="tifffile",
+                    help="how the build read the source (build_pyramid --reader); default tifffile")
+    ap.add_argument("--dicom-dir", help="DICOM WSI: directory of .dcm instances for the independent pydicom frame decode")
     args = ap.parse_args(argv)
 
     import openslide  # optional dependency of this check only
@@ -79,7 +128,11 @@ def main(argv=None) -> int:
     if tuple(osr.dimensions) != (W, H):
         print(f"FAILED: OpenSlide level 0 is {osr.dimensions}, manifest level 0 is {W}x{H}")
         return 1
-    src = open_slide(args.slide)
+    src = open_slide(args.slide, reader=args.reader)
+    dic = dicom_level0_frames(args.dicom_dir, W, H) if args.dicom_dir else None
+    if dic is not None and dic[1] != (t, t):
+        print(f"FAILED: DICOM frames are {dic[1]}, the pyramid's tiles {t}x{t}; --dicom-dir needs equal sizes")
+        return 1
 
     # Tissue fraction per level-0 tile from pyramid level 3 (8x down: a 512 px tile = 64 px there).
     li = min(3, len(m["levels"]) - 1)
@@ -120,12 +173,18 @@ def main(argv=None) -> int:
                 "maxAbs_ours_vs_openslide": int(np.abs(ours.astype(np.int16) - ref).max()),
                 "maxAbs_source_vs_openslide": int(np.abs(dec.astype(np.int16) - ref).max()),
             }
+            if dic is not None:
+                fr = dic[0](x, y)[:h, :w]
+                r["pydicom_vs_openslide"] = round(psnr(fr, ref), 2)
+                r["ours_vs_pydicom"] = round(psnr(ours, fr), 2)
+                r["maxAbs_pydicom_vs_openslide"] = int(np.abs(fr.astype(np.int16) - ref).max())
             rows.append(r)
             print(f"{kind:8s} {r['tile']:14s} {w}x{h} tissue {r['tissueFraction']:.2f}  PSNR ours-vs-OpenSlide "
                   f"{r['ours_vs_openslide']:6.2f} dB | source-vs-OpenSlide {r['source_vs_openslide']:6.2f} dB "
                   f"(max |d| {r['maxAbs_source_vs_openslide']}) | ours-vs-source {r['ours_vs_source']:6.2f} dB | luma "
                   f"{r['luma_ours_vs_openslide']:6.2f} dB | 4:4:4 {r['alt444_vs_openslide']:6.2f} dB at "
-                  f"{len(alt) / max(1, len(ours_bytes)):.2f}x bytes")
+                  f"{len(alt) / max(1, len(ours_bytes)):.2f}x bytes"
+                  + (f" | pydicom-vs-OpenSlide {r['pydicom_vs_openslide']} dB" if dic is not None else ""))
     osr.close()
     src.close()
     summary = {}
@@ -140,11 +199,15 @@ def main(argv=None) -> int:
             summary[kind] = {"n": len(v), "minPsnr": min(v), "meanPsnr": round(sum(v) / len(v), 2),
                              "meanLumaPsnr": round(sum(lu) / len(lu), 2), "sourceVsOpenSlideMin": min(s),
                              "alt444MeanPsnr": round(sum(a4) / len(a4), 2), "alt444ByteRatio": round(ab / max(1, ob), 2)}
+            if dic is not None:
+                summary[kind]["pydicomVsOpenSlideMin"] = min(r["pydicom_vs_openslide"] for r in rows if r["sample"] == kind)
     print("summary", json.dumps(summary))
     if args.json:
         with open(args.json, "w") as fh:
-            json.dump({"data": args.data, "seed": args.seed, "tissueCandidates": len(tissue), "tiles": len(tiles),
-                       "openslide": openslide.__library_version__, "results": rows, "summary": summary}, fh, indent=2)
+            json.dump(finite({"psnrNull": "a null PSNR means MSE 0 (bit-identical)", "data": args.data, "seed": args.seed, "tissueCandidates": len(tissue), "tiles": len(tiles),
+                       "openslide": openslide.__library_version__, "reader": args.reader,
+                       **({"dicomOracle": dic[2]} if dic is not None else {}),
+                       "results": rows, "summary": summary}), fh, indent=2)
     return 0
 
 

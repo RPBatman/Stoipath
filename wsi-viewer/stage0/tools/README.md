@@ -10,6 +10,8 @@ Provenance of the slide used is in `stage0/data/SOURCE.md`.
 | `wsi_source.py` | Reader: HTTP Range `RangeFile`, tifffile page selection (skips macro/label pages), coalesced tile fetch + decode, pixel-spacing extraction, tissue mask. |
 | `verify_pyramid.py` | Re-reads a built pyramid: tile presence/shape, byte totals vs manifest, optional level-to-level 2×2-mean check, optional per-tile SHA-256 list. |
 | `source_meta.json` | Licence / checksum provenance merged into `manifest.json → source` via `--source-meta`. |
+| `oracle_psnr.py` | Pixel spot check of a built pyramid against OpenSlide (and pydicom for DICOM): PSNR per tile, decoder agreement, luma, 4:4:4 alternative. |
+| `samples_smoke.mjs` | Opens each sample pyramid in the built RUO shell (headless Chromium) and checks identity, fit magnification readout and errors; saves screenshots. |
 
 Runtime: the Python venv at
 `/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-venv`
@@ -41,6 +43,28 @@ $PY tools/verify_pyramid.py --data data --check-downsample --hashes /tmp/hashes.
 Options: `--size N` (auto-select window edge, default 16384), `--margin` (px kept around the
 annotated tumour), `--source-level L` (cut from a coarser source level), `--quality`,
 `--subsampling 444|420`, `--workers`, `--clean`, `--dry-run`.
+
+Full-slide builds (added 2026-11-01 for the samples-v1 format corpus; the defaults above and the
+CAMELYON16 region build are unchanged — a region build of a CMU-1 window is tile-for-tile identical
+before and after the change):
+
+| Option | Effect |
+|---|---|
+| `--full` | whole level-0 extent, no region cut; level 0 is read and tiled in bands, the next level is assembled from the bands' exact 2×2 means (banded output = single-band output, checked tile-for-tile) |
+| `--band-rows N` | rows per band (multiple of 512, default 4096) |
+| `--reader openslide` | read the source through OpenSlide 4.x (openslide-python + openslide-bin) instead of tifffile — used for DICOM WSI; `--full` only |
+| `--input-url URL` | canonical URL recorded as `manifest.source.input` (the release asset); the local file is SHA-256 hashed and must equal `sha256` in `--source-meta` |
+| `--input-archive FILE` | with `--input-url`: the zip the URL serves when `--input` is an unpacked member (DICOM); it is hashed and sized instead |
+
+`wsi_source.read_window` reads any window (not only tile-aligned regions), so 240 px Aperio tiles
+and partial edge tiles work; JPEG 2000 SVS (compression 33003/33005) decodes through
+tifffile/imagecodecs. Edge tiles are cropped, never padded (the client sizes tiles from the
+manifest). Per-slide commands, sizes and checks: `stage0/data/corpus/PYRAMIDS.md`.
+
+Checks for those builds: `oracle_psnr.py` compares random level-0 tiles with OpenSlide
+`read_region` (and, for DICOM, with a pydicom frame decode); `samples_smoke.mjs` opens each
+pyramid in the built shell (`client/dist`), checks identity and the fit readout, and saves a
+screenshot.
 
 ## Policy constants (and where each comes from)
 
