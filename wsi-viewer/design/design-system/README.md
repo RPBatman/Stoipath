@@ -462,6 +462,10 @@ Out of scope here and owned elsewhere: the concept explorations, the three final
 
 ---
 
+## 10. Revisions
+
+- **2026-11-01 — top-bar container-query thresholds.** Container queries measure the content box, which is 16 px narrower than the top bar (2 × `--space-4`). The `topbar` queries therefore fired 16 px early: the label string disappeared at exactly 1024 px and the chips at exactly 1280 px, which two concept pages had to patch locally. The thresholds are now 1263 px and 1007 px (viewport breakpoints minus the padding); verified with headless Chromium at 1279/1280 and 1023/1024 px on `clinical-signout-a` and `-b`. Pages that set their own top-bar padding shift the thresholds again and should not.
+
 ## References
 
 `design/principles-and-ia.md` §1 (P1–P10), §2 (builds, modes, labelling), §3.1 (regions), §4.5 (keymap), §5 (HUD and status language), §6 (state inventory), §7 (responsive), §8 (accessibility), §11 (D1–D15); `design/research/ux-conventions.md` §7, §8, §12, §13, keep/break lists; `docs/plan/02-requirements.md` FR-V4, FR-V8, FR-V9, FR-V12, FR-V14, FR-A1, FR-A2, FR-A4, FR-A5, FR-E3, FR-I1, FR-I9, FR-I10, FR-R0, FR-R3, FR-R7–R11, NFR-A1–A5, NFR-B4, NFR-L2, §5.1 tiers; `docs/plan/04-system-architecture.md` §8–§10; `docs/plan/06-cross-platform-delivery.md` §3–§4; `docs/plan/12-product-pillars-clinical-research-education.md` §1.1, §2, §5.2; `docs/research/11-gap-1` F1, F4, Implications; `11-gap-6` F4, F8; `11-gap-7` F1, F2, §3. External: WCAG 2.2 SC 1.4.3, 1.4.11, 1.4.13, 2.4.7, 2.5.7, 2.5.8; Okabe & Ito 2008 (CVD-safe qualitative palette); Machado, Oliveira & Fernandes 2009 (CVD simulation matrices); Sharma, Wu & Dalal 2005 (CIEDE2000 implementation notes); Björn Ottosson 2020 (OKLab); Dalton, Ellis & Rakha 2026 (H&E information is primarily luminance; CVD transform); Kim et al. 2020 (HPF area varies with display).

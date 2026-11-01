@@ -176,10 +176,15 @@ h4, .h4 { font-size: var(--text-xl);  font-weight: var(--weight-semibold); line-
 .topbar__identity .accession { flex: 0 0 auto; font-family: var(--font-mono); font-weight: var(--weight-semibold); font-size: var(--text-lg); white-space: nowrap; }
 .topbar__identity .title { flex: 1 1 0; width: 0; min-width: 0; font-weight: var(--weight-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .topbar__identity .meta, .topbar__identity .chip { flex: 0 0 auto; }
-@container topbar (max-width: 1279px) {
+/* Container queries measure the CONTENT box, which is 2 x --space-4 (16 px)
+   narrower than the top bar itself; the thresholds below are the viewport
+   breakpoints 1280 / 1024 minus that padding so the label string is still on
+   screen at exactly 1024 px and the chips at exactly 1280 px (revision
+   2026-11-01; a page that changes the top-bar padding shifts them again). */
+@container topbar (max-width: 1263px) {
   .topbar__identity .meta, .topbar__identity .chip, .topbar__slot-mode .chip { display: none; }   /* chips move to the dock */
 }
-@container topbar (max-width: 1023px) {
+@container topbar (max-width: 1007px) {
   .topbar { gap: var(--space-3); }
   .topbar__label, .badge-string, .topbar__identity .title { display: none; }                      /* label string behind the badge tap */
 }
