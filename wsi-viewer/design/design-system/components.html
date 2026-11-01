@@ -142,7 +142,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
 <div class="ds">
 <nav class="ds-nav" aria-label="Component index">
   <h1>Stoipath design system</h1>
-  <div class="sub">Component sheet · draft 2026-10-26 · for the UX/UI review Thu 2026-10-29</div>
+  <div class="sub">Component sheet · draft 2026-10-26 · revised 2026-11-01 (critique fixes and the design-system sweep; README §10)</div>
   <div class="grp">Foundations</div>
   <ol>
     <li><a href="#tokens">Tokens: colour, type, space</a></li>
@@ -206,6 +206,9 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   </div>
   <button class="toggle" role="switch" aria-checked="false" id="toggle-live"><span class="toggle__track"></span><span class="toggle__text">Show <b>live</b> markers</span></button>
   <button class="toggle" role="switch" aria-checked="false" id="toggle-guides"><span class="toggle__track"></span><span class="toggle__text">Show central 50 % guide</span></button>
+  <button class="toggle" role="switch" aria-checked="false" id="toggle-dock-dialog" aria-describedby="h-frame"><span class="toggle__track"></span><span class="toggle__text">Show dock dialog <span class="toggle__hint">.modal-layer--dock in the frame</span></span></button>
+  <button class="toggle" role="switch" aria-checked="false" id="toggle-palette-layer" aria-describedby="h-frame"><span class="toggle__track"></span><span class="toggle__text">Show palette layer <span class="toggle__hint">.palette-layer in the frame</span></span></button>
+  <button class="toggle" role="switch" aria-checked="false" id="toggle-motion"><span class="toggle__track"></span><span class="toggle__text">Reduce motion <span class="toggle__hint">html[data-motion="reduce"]</span></span></button>
   <span class="text-xs text-secondary" style="margin-left:auto">Every element marked <code>data-live</code> is driven by the engine in the product; everything else is static chrome. Case, slide and patient content is synthetic.</span>
 </div>
 
@@ -415,6 +418,29 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <span class="strip__notice">Dx mode · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span>
           <div class="strip__group strip__group--end"><span class="chip chip--solid" data-live="commands:mic"><svg class="icon icon--sm"><use href="#i-mic"/></svg>Mic: dictation</span></div>
         </footer>
+        <!-- Anchored layers (sweep 2026-11-01), hidden at rest; the sheet controls show them. .modal-layer--dock: the dialog takes the dock column, no scrim; .palette-layer: over the dock column at ≥ 1080 px, the in-flow "sheet" row of this grid below 1080 px. -->
+        <div class="modal-layer modal-layer--dock" id="frame-dock-dialog" hidden>
+          <div class="dialog" role="dialog" aria-modal="false" aria-labelledby="dlg-frame-dx-t" data-live="dx:attestation">
+            <div class="dialog__header"><h4 class="dialog__title" id="dlg-frame-dx-t">Enter Dx mode?</h4><button class="btn btn--icon btn--ghost" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+            <div class="dialog__body">
+              <dl class="provenance"><dt>Display</dt><dd data-synthetic>Barco MDPC-8127 · EDID</dd><dt>Display QA</dt><dd>Passed 3 days ago</dd><dt>Self-check</dt><dd>build_hash registered · pathway_hash match</dd><dt>Adjustments</dt><dd>Reset to default (logged)</dd></dl>
+              <p class="text-xs text-secondary">The dialog sits in the dock's place; no scrim, so the slide stays visible beside it and a pointer-down outside closes it. Below 1080 px it is a bottom sheet ≤ 40 %.</p>
+            </div>
+            <div class="dialog__footer"><button class="btn btn--ghost">Cancel <kbd class="key">Esc</kbd></button><button class="btn btn--accent">Enter Dx mode <kbd class="key">⇧D</kbd></button></div>
+          </div>
+        </div>
+        <div class="palette-layer" id="frame-palette" hidden>
+          <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
+            <div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input type="search" value="meas" aria-label="Search commands, slides, bookmarks and classes" role="combobox" aria-expanded="true" aria-controls="frame-pal-list" aria-activedescendant="frame-pal-1" autocomplete="off"><kbd class="key">Esc</kbd></div>
+            <div class="palette__list" id="frame-pal-list" role="listbox">
+              <div class="palette__group">Commands</div>
+              <div class="palette__item" role="option" id="frame-pal-1" aria-selected="true"><svg class="icon icon--sm"><use href="#i-measure"/></svg><span><mark>Meas</mark>ure length</span><span class="meta">two clicks · µm</span><span class="keys"><kbd class="key">M</kbd></span></div>
+              <div class="palette__item" role="option"><svg class="icon icon--sm"><use href="#i-measure"/></svg><span><mark>Meas</mark>ure area</span><span class="meta">polygon · mm²</span><span class="keys"><kbd class="key">⇧</kbd><kbd class="key">M</kbd></span></div>
+              <div class="palette__item" role="option"><svg class="icon icon--sm"><use href="#i-grid"/></svg><span>HPF reticle (<mark>meas</mark>ured area)</span><span class="meta">0.237 mm² on this display</span><span class="keys"><kbd class="key">G</kbd></span></div>
+            </div>
+            <div class="palette__footer"><span><kbd class="key">↑↓</kbd> navigate</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span></div>
+          </div>
+        </div>
         <div id="lr-polite-frame" class="live-region" aria-live="polite">Sharp. 20 times. A1-1.</div>
       </div>
       </div>
@@ -424,7 +450,8 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     <li>Document order equals visual order: skip link → top bar (badge → label → identity → mode → overflow) → canvas (<code>role="application"</code>, <code>tabindex="0"</code>, labelled with slide, magnification and the pan/zoom keys) → rail → dock → strip → navigator. Two live regions sit at the end of the DOM: polite (position, magnification, sharpness; one announcement per 500 ms, at settle) and assertive (identity mismatch, Dx dropped, session expired).</li>
     <li>Inside the focused canvas only unmodified keys and Shift-combinations are bound; <kbd class="key">Tab</kbd> always leaves the canvas; <kbd class="key">Esc</kbd> cancels the tool. Shortcuts work whenever the window has focus; the focus ring says where keys will land (QuPath/OpenSeadragon focus bug avoided).</li>
     <li>Variants: <code>.app--embedded</code> (EHR iframe: 40 px bar, 24 px strip, no rail or dock, hand-off button), <code>.app--widget</code> (Jupyter: 36 px bar). <code>.dock-open</code>, <code>.nav-open</code>, <code>.rail-closed</code> toggle regions between gestures only; <code>.is-gesturing</code> zeroes every transition.</li>
-    <li>The dock resizer is keyboard-operable (<kbd class="key">←</kbd>/<kbd class="key">→</kbd> in 16 px steps, 320–520 px); the navigator's pan buttons are the SC 2.5.7 drag alternative and appear on hover/focus.</li>
+    <li>The dock resizer is keyboard-operable (<kbd class="key">←</kbd>/<kbd class="key">→</kbd> in 16 px steps, 320–520 px); the navigator's pan buttons are the SC 2.5.7 drag alternative and are always visible (revision 2026-11-01).</li>
+    <li>Anchored layers (sweep 2026-11-01; the sheet controls show them): <code>.modal-layer--dock</code> puts a dialog in the dock column exactly (flush, dock-wide, never wider than 25 vw − rail/4, no scrim); <code>.palette-layer</code> drops the command palette over the same column at ≥ 1080 px and, below 1080 px, becomes the in-flow <code>sheet</code> row of this grid above the bottom bar (≤ 40 %), so the canvas yields height instead of being covered. Below 600 px the demo sheet row sits above the 56 px bar.</li>
     <li>The central 50 % × 50 % guide (toggle above) must contain nothing but tissue and the user's own annotations at rest.</li>
   </ul></details>
 </section>
@@ -628,7 +655,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <details class="notes"><summary>ARIA and behaviour notes</summary><ul>
     <li><code>&lt;aside aria-label="Navigator"&gt;</code>; the thumbnail is a button ("Recentre on this point") operable by click/tap; the four pan buttons move 10 % of the viewport and are <b>always visible</b> (24 px; under a coarse pointer a 44 px hit area with a 28 px visible pad), darker on hover and focus-within. They are the SC 2.5.7 alternative to dragging the rectangle and are always in the tab order (revision 2026-11-01: they were hover-only).</li>
     <li>The rectangle is <code>aria-hidden</code>; the live region carries position. The label image has <code>alt</code> text equal to the label text from the launch context, never OCR.</li>
-    <li>Sizes: 320 px on 4K, 240 px desktop/laptop, 180 px tablet portrait, 140 px phone (hidden by default, <kbd class="key">O</kbd> shows it). It never enters the central 50 %.</li>
+    <li>Width ladder (<code>--layout-navigator</code>): 320 px on 4K, 240 px desktop and laptop (1080–3199), 180 px tablet portrait, 140 px phone (hidden by default, <kbd class="key">O</kbd> shows it). A corner cluster (thumbnail + label image + tray while the dock is closed) uses <code>.navigator--wide</code> and <code>--layout-navigator-wide</code>: 400 / 320 / 300 / 220 / 140. Whatever a page sets, <code>.canvas-area .navigator</code> is capped at 25 % of the canvas width minus the inset, so it never enters the central 50 % (sweep 2026-11-01; the clinical final's 300 px cluster reached the zone at 1280 px).</li>
     <li>Presenter mode shows follower cursors as GPU layers in the canvas, not in the navigator.</li>
   </ul></details>
 </section>
@@ -913,11 +940,17 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <button class="toggle is-focus" role="switch" aria-checked="true"><span class="toggle__track"></span><span class="toggle__text">Reduce motion</span></button>
         <button class="toggle" role="switch" aria-checked="true" disabled><span class="toggle__track"></span><span class="toggle__text">Label image<span class="toggle__hint">Cannot be hidden in Dx mode</span></span></button>
       </div>
+      <h4 class="text-sm text-secondary mt-6 mb-4">Coarse pointer (<code>.is-coarse</code>): a 44 × 24 px track inside a 44 px control; a track-only switch is 44 px wide</h4>
+      <div class="is-coarse inline-demo">
+        <button class="toggle" role="switch" aria-checked="false"><span class="toggle__track"></span><span class="toggle__text">Follow presenter</span></button>
+        <button class="toggle" role="switch" aria-checked="true" data-live="dx:cvdremap"><span class="toggle__track"></span><span class="toggle__text">CVD-friendly remap</span></button>
+        <button class="toggle" role="switch" aria-checked="true" aria-label="Label image"><span class="toggle__track"></span></button>
+      </div>
     </div>
   </div>
   <details class="notes"><summary>ARIA notes</summary><ul>
     <li><code>&lt;button role="switch" aria-checked&gt;</code>; <kbd class="key">Space</kbd>/<kbd class="key">Enter</kbd> toggle; the visible label is the accessible name; a hint is linked with <code>aria-describedby</code>. State change is announced by the switch itself, not the live region.</li>
-    <li>Minimum 24 px tall hit area; the whole label is clickable.</li>
+    <li>24 × 24 px minimum in both axes (<code>--target-control</code>), 44 × 44 under a coarse pointer, where the track itself grows to 44 × 24 px (sweep 2026-11-01: a track-only switch measured 36 px wide); the whole label is clickable.</li>
   </ul></details>
 </section>
 
@@ -969,7 +1002,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <h2 id="h-palette">Command palette</h2>
   <p class="comp__desc"><kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd> opens a palette anchored to the top bar, never over the canvas centre: fuzzy search across every registered command, slide (by label text or stain), bookmark, annotation class and module step, each row showing its shortcut. It is the discoverability layer for the keymap and the only home a rarely used command needs, which keeps the rail small.</p>
   <dl class="comp__meta">
-    <dt>Rendering</dt><dd>DOM, <code>--z-palette</code>, inset below the top bar so badge, label and mode stay visible.</dd>
+    <dt>Rendering</dt><dd>DOM, <code>--z-palette</code>, inset below the top bar so badge, label and mode stay visible. Placement is one shared rule, <code>.palette-layer</code> (base.css §6.9, sweep 2026-11-01): over the dock column at ≥ 1080 px (dock-wide, never wider than 25 vw − rail/4, so it stays outside the central 50 % while the dock is a closed drawer), the in-flow <code>sheet</code> row of the app grid above the bottom bar at ≤ 1079 px (≤ 40 %; the canvas yields height). No scrim. The sheet control “Show palette layer” renders it in the app frame (§2).</dd>
     <dt>Engine contract</dt><dd>Command registry (same registry the voice engine, gamepad presets and the test harness drive); <code>slides[]</code>, bookmarks, classes, module steps.</dd>
     <dt>Plan refs</dt><dd>FR-V12 · principles §4.6.</dd>
   </dl>
@@ -979,8 +1012,8 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input type="search" value="meas" aria-label="Search commands, slides, bookmarks and classes" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-activedescendant="pal-1" autocomplete="off"><kbd class="key">Esc</kbd></div>
         <div class="palette__list" id="pal-list" role="listbox">
           <div class="palette__group">Commands</div>
-          <div class="palette__item" role="option" id="pal-1" aria-selected="true"><svg class="icon icon--sm"><use href="#i-measure"/></svg><span><mark>Meas</mark>ure length</span><span class="meta">two clicks · µm</span><span class="keys"><kbd class="key">M</kbd></span></div>
-          <div class="palette__item" role="option"><svg class="icon icon--sm"><use href="#i-measure"/></svg><span><mark>Meas</mark>ure area</span><span class="meta">polygon · mm²</span><span class="keys"><kbd class="key">⇧</kbd><kbd class="key">M</kbd></span></div>
+          <div class="palette__item" role="option" id="pal-1" aria-selected="true"><svg class="icon icon--sm"><use href="#i-measure"/></svg><span><mark>Meas</mark>ure length</span><span class="meta">two clicks · µm (selected row: selection colour + bar)</span><span class="keys"><kbd class="key">M</kbd></span></div>
+          <div class="palette__item is-hover" role="option"><svg class="icon icon--sm"><use href="#i-measure"/></svg><span><mark>Meas</mark>ure area</span><span class="meta">polygon · mm² (hovered row)</span><span class="keys"><kbd class="key">⇧</kbd><kbd class="key">M</kbd></span></div>
           <div class="palette__item" role="option"><svg class="icon icon--sm"><use href="#i-grid"/></svg><span>HPF reticle (<mark>meas</mark>ured area)</span><span class="meta">0.237 mm² on this display</span><span class="keys"><kbd class="key">G</kbd></span></div>
           <div class="palette__group">Annotations</div>
           <div class="palette__item" role="option"><span class="swatch" style="--swatch:var(--ann-8)"></span><span><mark>Meas</mark>urement · 2.3 mm · metastatic focus</span><span class="meta">A1-1</span><span class="keys"><kbd class="key">Space</kbd></span></div>
@@ -995,6 +1028,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     <li>Combobox pattern: the input is <code>role="combobox"</code> with <code>aria-expanded</code>, <code>aria-controls</code> and <code>aria-activedescendant</code>; results are a <code>listbox</code> of <code>option</code>s; <kbd class="key">↑↓</kbd> move, <kbd class="key">Enter</kbd> runs, <kbd class="key">Esc</kbd> closes and returns focus. Focus is trapped while open.</li>
     <li><kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd> is the only Ctrl binding besides the editing set; it is interceptable in Chromium and Firefox and is not claimed by Hyperdrive. The Hyperdrive controller iframe binds no keys at all.</li>
     <li>Rows show the shortcut from the active preset; keys reserved at the site for Dragon Medical One are shown struck through (<code>.key--reserved</code>).</li>
+    <li>The active-descendant row (<code>aria-selected="true"</code>) uses the selection colour plus the 2 px indicator bar, as every list does; a hovered row uses the hover colour and lifts its secondary line to body text. The two states are therefore distinct and both keep ≥ 4.5:1 (sweep 2026-11-01; the selected row used the hover colour, 3.6:1 on the secondary line, research D-F12). The same applies to <code>.menu__item</code>.</li>
   </ul></details>
 </section>
 
@@ -1276,7 +1310,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="banner" role="status" data-live="dx:attestation"><span class="banner__glyph">i</span><span class="banner__text"><b>Dx mode unavailable:</b> this display cannot be attested. Viewing in Nav mode.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary">Why?</button></div></div>
         <div class="banner" role="status"><span class="banner__glyph">i</span><span class="banner__text"><b>Dx mode unavailable</b> inside an embedded window. Open on the diagnostic display to continue.</span><div class="banner__actions"><button class="btn btn--sm btn--primary">Open on diagnostic display</button></div></div>
         <div class="banner" role="status"><span class="banner__glyph">i</span><span class="banner__text"><b>Dx mode unavailable:</b> display QA overdue (last pass 34 days ago). Ask your display administrator.</span></div>
-        <div class="banner banner--danger" role="alert" data-live="dx:attestation"><span class="banner__glyph">!</span><span class="banner__text"><b>Dx mode ended:</b> display attestation lost. Viewing in Nav mode.</span><span class="text-xs">assertive live region · S13</span></div>
+        <div class="banner banner--danger" role="alert" data-live="dx:attestation"><span class="banner__glyph">!</span><span class="banner__text"><b>Dx mode ended:</b> display attestation lost. Viewing in Nav mode.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary">Why? <kbd class="key">?</kbd></button><button class="btn btn--sm btn--ghost" aria-label="Dismiss"><svg class="icon icon--sm"><use href="#i-close"/></svg></button></div><span class="text-xs">assertive live region · S13 · controls inherit the inverse colour</span></div>
         <div class="banner" role="status"><span class="banner__glyph">i</span><span class="banner__text"><b>Metered connection</b> — case download paused.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary">Download anyway</button></div></div>
         <div class="banner" role="status" data-live="dx:attestation"><span class="banner__glyph">✓</span><span class="banner__text"><b>Dx mode</b> · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span><span class="text-xs text-secondary">one-line confirmation on ⇧D, auto-hides after 4 s</span></div>
       </div>
@@ -1320,7 +1354,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
 <!-- =============================================================== MODAL / SHEET -->
 <section class="comp" id="modal" aria-labelledby="h-modal">
   <h2 id="h-modal">Modal dialog and sheet</h2>
-  <p class="comp__desc">Dialogs sit in <code>.modal-layer</code>: anchored to the top-right of the canvas area at dock width (never wider than a quarter of the viewport), so they cover the dock column and never the canvas centre (P1), and inset below the top bar and above the strip so the badge, label string and mode indicator stay visible (P4); <code>.modal-layer--left</code> anchors the command palette to the rail and only a blocking plate is centred. They are the one layer where the accent and semantic colours may appear. Below 1080 px every dialog becomes a bottom sheet (≤ 40 % height; focus-trapped; grabber for touch, header close for keyboard); a sheet is a transient layer, not a rest state for the P1 test. Nothing modal ever appears during a gesture.</p>
+  <p class="comp__desc">Dialogs sit in <code>.modal-layer</code>: anchored to the top-right of the canvas area at dock width (never wider than a quarter of the viewport), so they cover the dock column and never the canvas centre (P1), and inset below the top bar and above the strip so the badge, label string and mode indicator stay visible (P4); <code>.modal-layer--dock</code> (sweep 2026-11-01) drops the inset so the dialog takes the dock column exactly, flush with the top bar and the right edge, which is how the clinical hand-off and Dx-gate dialogs read as a panel in the dock's place; <code>.modal-layer--left</code> anchors a layer to the rail and only a blocking plate (<code>.modal-layer--center</code>) is centred. No scrim: a dialog in an anchored layer never dims tissue (<code>.backdrop</code> renders only as the first child of a centred layer), a pointer-down outside a modal dialog closes it, and a non-modal panel leaves the slide operable. They are the one layer where the accent and semantic colours may appear. Below 1080 px every dialog becomes a bottom sheet (≤ 40 % height; focus-trapped; grabber for touch, header close for keyboard); a sheet is a transient layer, not a rest state for the P1 test. Nothing modal ever appears during a gesture.</p>
   <dl class="comp__meta">
     <dt>Rendering</dt><dd>DOM (<code>&lt;dialog&gt;</code> element where available, with a polyfilled focus trap).</dd>
     <dt>Engine contract</dt><dd><code>signoutRequested</code> (hand-off dialog; Clinical-IH and Dx only), <code>stoi:dxattestation</code> (Dx entry confirmation), measurements/annotations/accepted AI results summarised from the stores, tier record for the Tier-2 sheet.</dd>
@@ -1393,7 +1427,8 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     <li>The hand-off dialog is the only route to <code>signoutRequested</code>; <kbd class="key">⇧↵</kbd> always opens it and is ignored while a drawing tool is in progress. It exists only in Clinical-IH and Dx builds (CI asserts its absence elsewhere).</li>
     <li>Sheets: the grabber is decorative; drag-to-dismiss has the header close button and <kbd class="key">Esc</kbd> as alternatives (SC 2.5.7). Max height 40 % of the viewport (<code>--layout-sheet-max</code>, also for the dock as a sheet on phones) so the canvas remains the majority; because even a 40 % sheet reaches into the central 50 % on a portrait tablet, a sheet counts as transient, not as a rest state (README §1).</li>
     <li>The long-press sheet is a <code>dialog</code> whose body is the <code>menu</code>: a <code>role="menu"</code> may contain only menu items, so the heading sits outside it.</li>
-    <li>The backdrop never covers the top bar or strip (<code>.modal-layer</code> is inset).</li>
+    <li>No-scrim rule (sweep 2026-11-01): <code>.backdrop</code> is hidden everywhere except as the first child of <code>.modal-layer--center</code>, where it sits behind the blocking plate and, because the layer is inset, never covers the top bar or strip. Anchored dialogs and the palette never dim the slide; the page closes a modal dialog on a pointer-down outside it.</li>
+    <li>The sheet control “Show dock dialog” renders a <code>.modal-layer--dock</code> dialog in the app frame (§2): dock-wide at ≥ 1080 px (never wider than 25 vw − rail/4), a ≤ 40 % bottom sheet below.</li>
   </ul></details>
 </section>
 
@@ -1648,15 +1683,16 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-cand-t" data-live="lti:item:keyboard">
           <div class="dialog__header"><h4 class="dialog__title" id="dlg-cand-t">Mark the metastatic focus — choose a region</h4><button class="btn btn--icon btn--ghost" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
           <div class="dialog__body">
-            <p class="text-sm text-secondary">Choose the candidate region that contains the focus. <i>Fly there</i> moves the view to 20× so you can look before you answer. Scoring uses the same geometry as pointer marking.</p>
-            <div role="radiogroup" aria-label="Candidate regions" class="stack stack--tight">
-              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="0"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region A" data-live="commands:flyTo">Fly there</button></div>
-              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, left cortex — tingible-body macrophages</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region B">Fly there</button></div>
-              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="true" tabindex="-1"><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region C">Fly there</button></div>
-              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region D">Fly there</button></div>
-              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region E">Fly there</button></div>
-              <div class="candidate"><button class="candidate__radio" role="radio" aria-checked="false" tabindex="-1"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, inferior — fibrous tissue only</span></button><button class="btn btn--sm btn--secondary" aria-label="Fly to region F">Fly there</button></div>
-            </div>
+            <p class="text-sm text-secondary" id="cand-help-sheet">Choose the candidate region that contains the focus: arrow keys move between the regions and choose, <kbd class="key">↵</kbd> commits. <i>Fly there</i> moves the view to 20× over a region (which also meets the zoom gate) without choosing it. Scoring uses the same geometry as pointer marking.</p>
+            <fieldset class="stack stack--tight" aria-describedby="cand-help-sheet">
+              <legend class="visually-hidden">Candidate regions</legend>
+              <div class="candidate"><label class="candidate__radio"><input type="radio" name="cand-sheet" value="A"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span></label><button class="btn btn--sm btn--secondary" type="button" aria-label="Fly there: region A at 20 times" data-live="commands:flyTo">Fly there</button></div>
+              <div class="candidate"><label class="candidate__radio"><input type="radio" name="cand-sheet" value="B"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, left cortex — tingible-body macrophages</span></label><button class="btn btn--sm btn--secondary" type="button" aria-label="Fly there: region B at 20 times">Fly there</button></div>
+              <div class="candidate"><label class="candidate__radio"><input type="radio" name="cand-sheet" value="C" checked><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span></label><button class="btn btn--sm btn--secondary" type="button" aria-label="Fly there: region C at 20 times">Fly there</button></div>
+              <div class="candidate"><label class="candidate__radio"><input type="radio" name="cand-sheet" value="D"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span></label><button class="btn btn--sm btn--secondary" type="button" aria-label="Fly there: region D at 20 times">Fly there</button></div>
+              <div class="candidate"><label class="candidate__radio"><input type="radio" name="cand-sheet" value="E"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span></label><button class="btn btn--sm btn--secondary" type="button" aria-label="Fly there: region E at 20 times">Fly there</button></div>
+              <div class="candidate"><label class="candidate__radio"><input type="radio" name="cand-sheet" value="F"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, inferior — fibrous tissue only</span></label><button class="btn btn--sm btn--secondary" type="button" aria-label="Fly there: region F at 20 times">Fly there</button></div>
+            </fieldset>
           </div>
           <div class="dialog__footer"><button class="btn btn--ghost">Cancel</button><button class="btn btn--secondary">Answer in text instead</button><button class="btn btn--accent">Commit C <kbd class="key">↵</kbd></button></div>
         </div>
@@ -1675,7 +1711,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   </div>
   <details class="notes"><summary>ARIA and scoring notes</summary><ul>
     <li>MCQ: a <code>&lt;fieldset&gt;</code> radiogroup labelled by the stem; letter keys select; the committed answer is announced. Revealed options carry text feedback ("correct", "incorrect", "yours") read with the option.</li>
-    <li>Region-marking: the item card states the text alternative key in text. Candidates are a radiogroup with roving tabindex; each radio is its own button (letter + description) and <i>Fly there</i> is a labelled sibling, so no control nests inside another (revision 2026-11-01); <i>Fly there</i> dispatches <code>flyTo</code> on the command bus (instant under reduced motion). Choosing a candidate places the mark on that region's hidden geometry; IoU/point-in-polygon scoring is identical to pointer marking, so CI runs the keyboard path and asserts equal scores.</li>
+    <li>Region-marking: the item card states the text alternative key in text. Candidates are native radios (sweep 2026-11-01, the education final's markup): each row is a <code>&lt;label class="candidate__radio"&gt;</code> holding a visually hidden <code>&lt;input type="radio"&gt;</code> that keeps a 24 / 44 px box under the letter, the letter and the description, inside a <code>&lt;fieldset&gt;</code> with a hidden legend; <i>Fly there</i> is a labelled sibling button (“Fly there: region C at 20 times”), so no control nests inside another (axe nested-interactive clear), arrow keys move and choose natively and the Tab order is radio group → Fly there × 6 → footer; <i>Fly there</i> dispatches <code>flyTo</code> on the command bus (instant under reduced motion). Choosing a candidate places the mark on that region's hidden geometry; IoU/point-in-polygon scoring is identical to pointer marking, so CI runs the keyboard path and asserts equal scores.</li>
     <li>Authors cannot publish a region item without at least one alternative (candidates or rubric). The zoom gate is satisfied by keyboard zoom (<kbd class="key">5</kbd> = 20×).</li>
     <li>Gradebook status (S27) uses the dot + text pair; the failure variant is an alert with the retry promise.</li>
   </ul></details>
@@ -1765,6 +1801,31 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   }
   wireSwitch('toggle-live', 'show-live');
   wireSwitch('toggle-guides', 'show-guides');
+  // Sweep 2026-11-01: show the anchored layers in the app frame, and the
+  // class twin of prefers-reduced-motion (tokens.css [data-motion="reduce"]).
+  // The two layers share the dock column, so showing one hides the other.
+  var layerSwitches = [['toggle-dock-dialog', 'frame-dock-dialog'], ['toggle-palette-layer', 'frame-palette']];
+  function setLayer(id, targetId, on) {
+    var el = document.getElementById(id), t = document.getElementById(targetId);
+    if (!el || !t) return;
+    el.setAttribute('aria-checked', String(on));
+    t.hidden = !on;
+  }
+  layerSwitches.forEach(function (pair) {
+    var el = document.getElementById(pair[0]);
+    if (!el) return;
+    el.addEventListener('click', function () {
+      var on = el.getAttribute('aria-checked') !== 'true';
+      layerSwitches.forEach(function (other) { setLayer(other[0], other[1], other === pair ? on : false); });
+      if (on) { var t = document.getElementById(pair[1]); var f = t.querySelector('input, button'); if (f) f.focus({ preventScroll: true }); document.getElementById('frame').scrollIntoView({ block: 'nearest' }); }
+    });
+  });
+  var motionSwitch = document.getElementById('toggle-motion');
+  if (motionSwitch) motionSwitch.addEventListener('click', function () {
+    var on = motionSwitch.getAttribute('aria-checked') !== 'true';
+    motionSwitch.setAttribute('aria-checked', String(on));
+    if (on) document.documentElement.setAttribute('data-motion', 'reduce'); else document.documentElement.removeAttribute('data-motion');
+  });
 
   // 4. Minimal interactivity so reviewers can feel states: switches, tabs,
   //    segmented radios, class chips, tray selection, tool pressed state.

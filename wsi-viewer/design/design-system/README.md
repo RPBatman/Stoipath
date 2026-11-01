@@ -1,6 +1,6 @@
 # Stoipath design system
 
-Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-11-01** after the pathologist and a11y-ux critiques of the three final screens (changelog in §10).
+Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-11-01** after the pathologist and a11y-ux critiques of the three final screens (changelog in §10), and **swept the same day** for the cross-scope items the page revisers deferred to the design system (§10, *Revisions*).
 
 **Inputs.** `design/principles-and-ia.md` (P1–P10, the six regions, HUD and status language §5, state inventory §6, responsive strategy §7, accessibility architecture §8, Design notes D1–D15); `design/research/ux-conventions.md` (§7 palettes, §8 AI labelling, §12 dark chrome, §13 accessibility, keep/break lists); plan sections 01 §3–§5, 02 §2–§3.6 and §5.1, 04 §8–§10, 06 §1–§4, 12 §1.1–§2 and §5; research notes 11-gap-1, 11-gap-6, 11-gap-7. The plan is the source of truth; where this system had to decide something the plan leaves open, the choice is a **Design note** (§9 below).
 
@@ -25,10 +25,10 @@ Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-1
    <link rel="stylesheet" href="../design-system/base.css">
    ```
 2. Pick the theme on `<html>`: nothing or `data-theme="dark"` (diagnostic surfaces, the default), `data-theme="light"` (Learn, non-diagnostic Viewer), or `data-theme="auto"` (follows the OS; only a build that is allowed a light theme sets it). Any element may carry `data-theme` to scope a theme to a subtree; the component sheet does this to render both themes side by side.
-3. Build a screen from the frame: `.app` → `.topbar` / `.canvas-area` (+ `.hud--tl|tr|bl|br`, `.navigator`, `.banner-slot`, `.modal-layer`) / `.rail` / `.dock` / `.strip` / `.bottombar`. Add `.dock-open`, `.nav-open`, `.rail-closed`, `.app--embedded` or `.app--widget` as the surface requires. The grid tracks are `--layout-*` tokens that breakpoints re-set; never size a track from content. In the top bar put the accession first and wrap the title, meta and chips in `.topbar__identity-rest` (§1, top-bar rules); put dialogs in `.modal-layer` (`--left` for the palette) and never centre them.
+3. Build a screen from the frame: `.app` → `.topbar` / `.canvas-area` (+ `.hud--tl|tr|bl|br`, `.navigator`, `.banner-slot`, `.modal-layer`) / `.rail` / `.dock` / `.strip` / `.bottombar`. Add `.dock-open`, `.nav-open`, `.rail-closed`, `.app--embedded` or `.app--widget` as the surface requires. The grid tracks are `--layout-*` tokens that breakpoints re-set; never size a track from content. In the top bar put the accession first and wrap the title, meta and chips in `.topbar__identity-rest` (§1, top-bar rules); put dialogs in `.modal-layer` (`--dock` when the dialog should take the dock column exactly, as the hand-off and Dx-gate dialogs do; `--left` for a layer over the rail; `--center` only for blocking plates) and never centre them; put the command palette in `.palette-layer`, a direct child of `.app` (over the dock column at ≥ 1080 px, the grid's in-flow `sheet` row below 1080 px); a corner cluster that widens the navigator uses `.navigator--wide`. There is no scrim: `.backdrop` renders only as the first child of `.modal-layer--center`.
 4. Use semantic tokens, never raw greys, in components: `--color-surface-0`, `--color-text`, `--color-border-strong`, `--color-control-*`, `--color-row-hover`. The `--grey-*` ramp exists so a new semantic token stays neutral.
 5. Mark everything the engine would drive with `data-live="<contract>"` (`state`, `state.views[0].scale`, `layers`, `annotations`, `commands`, `events:tileSettled`, `launch:product`, `telemetry:tier`, `offline:pack`, `dx:attestation`, `lis:worklist`, `lti:item`, `python`) and placeholder PHI-shaped text with `data-synthetic`. Toggle the markers with `body.show-live`.
-6. Use the controlled strings through the `.badge-string--ruo|learn|clinical|dx` helpers (one token each) so counsel's final text replaces them in one place (Design note D2). Product code reads the same strings from the i18n bundle.
+6. The `.badge-string--ruo|learn|clinical|dx` helpers render the controlled strings as CSS generated content from one token each so that, **on the component sheet and in the wireframes only**, counsel's final text replaces them in one place (Design note D2). They are sheet-only helpers: product code writes the regulatory string as real text (`textContent` from the i18n bundle, which holds the same strings), so it is selectable, translatable, read by assistive technology without an `aria-label` workaround and present in a text-only rendering; generated content is none of those (research D-F13).
 7. Run `python3 -I contrast-check.py` after any colour change and `NODE_PATH="$(npm root -g)" node layout-check.mjs` after any layout or size change (also on the pages that link these files), and paste the output into §8. Use `.layer-row.is-off`, not `.is-hidden`, for a hidden layer: `.is-hidden` is the `display: none` utility.
 
 ### Theme model
@@ -39,19 +39,19 @@ Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-1
 | `light` | light neutral greys (surface 0 = `#f2f2f2`) | `#3a3a3a` unchanged | Learn; Viewer on non-diagnostic surfaces |
 | `auto` | follows `prefers-color-scheme` | unchanged | Learn only; clinical builds never set it (Design note DS-1) |
 
-`prefers-reduced-motion` zeroes every `--motion-*` duration and the HUD label dim delay (the `Sharp` label dims to 70 % at once and stays readable; it is never hidden); `(pointer: coarse)` raises `--target` to 44 px, `--target-min` to 32 px and `--target-control` (chips, badges, mode, `.btn--sm`, menu items, toggles, layer-row controls, legend items, class chips) to 44 px, body text to 15 px, the rail to 64 px and the bottom bar to 72 px — the `.is-coarse` class applies the same sizing on a desktop (the sheet's coarse columns); `prefers-contrast: more` strengthens borders and raises the HUD backdrop to α 0.94; `forced-colors: active` hands the focus ring to the UA.
+`prefers-reduced-motion` zeroes every `--motion-*` duration and the HUD label dim delay (the `Sharp` label dims to 70 % at once and stays readable; it is never hidden), and so does its class twin `[data-motion="reduce"]` on `<html>` or any subtree (the settings dialog's *Reduce motion* switch, the sheet's demo switch; it also stops the skeleton shimmer and the indeterminate bar); `(pointer: coarse)` raises `--target` to 44 px, `--target-min` to 32 px and `--target-control` (chips, badges, mode, `.btn--sm`, menu items, toggles, layer-row controls, legend items, class chips) to 44 px, body text to 15 px, the rail to 64 px and the bottom bar to 72 px — the `.is-coarse` class applies the same sizing on a desktop (the sheet's coarse columns); `prefers-contrast: more` strengthens borders and raises the HUD backdrop to α 0.94; `forced-colors: active` hands the focus ring to the UA.
 
 ### Breakpoints (principles §7 collapse order)
 
 | Width | Surface named in the brief | Layout | Collapsed |
 |---|---|---|---|
-| ≥ 3200 px | 4K sign-out 3840 × 2160, DPR 1 | dock 400, navigator 320, body 14 px | nothing |
-| 1600–3199 | desktop 1920 × 1080 | dock 320 open | nothing |
-| 1080–1599 | laptop 1440 × 900; tablet landscape 1366 × 1024 | dock → drawer over the canvas edge, closed by default (`.dock-open`); navigator 240 | (2) |
-| 600–1079 | tablet portrait 1024 × 1366 | rail → bottom bar 72; dock → bottom sheet ≤ 40 % height; dialogs and the palette → bottom sheets ≤ 40 % (`--layout-sheet-max`); navigator 180; the identity compacts to the accession and the meta, worklist, QA and purpose chips move into the dock and strip, so the badge, the full label string (659 px for the clinical string) and the mode slot fit at 1024 beside a 44 px overflow button with 24 px to spare (measured by `layout-check.mjs`); below 1024 the label string is behind the badge tap. A sheet or drawer is a transient layer, not a rest state for the P1 test | (1 below 1024)(3)(4) |
+| ≥ 3200 px | 4K sign-out 3840 × 2160, DPR 1 | dock 400, navigator 320 (wide cluster 400), body 14 px | nothing |
+| 1600–3199 | desktop 1920 × 1080 | dock 320 open; navigator 240 (wide cluster 320) | nothing |
+| 1080–1599 | laptop 1440 × 900; tablet landscape 1366 × 1024 | dock → drawer over the canvas edge, closed by default (`.dock-open`); navigator 240 (wide cluster 300); dialogs and the palette over the dock column, never wider than 25 vw − rail/4 | (2) |
+| 600–1079 | tablet portrait 1024 × 1366 | rail → bottom bar 72; dock → bottom sheet ≤ 40 % height; dialogs → bottom sheets ≤ 40 % (`--layout-sheet-max`), the palette → the grid's in-flow `sheet` row above the bottom bar (≤ 40 %; the canvas yields height); navigator 180 (wide 220); the identity compacts to the accession and the meta, worklist, QA and purpose chips move into the dock and strip, so the badge, the full label string (659 px for the clinical string) and the mode slot fit at 1024 beside a 44 px overflow button with 24 px to spare (measured by `layout-check.mjs`); below 1024 the label string is behind the badge tap. A sheet or drawer is a transient layer, not a rest state for the P1 test | (1 below 1024)(3)(4) |
 | ≤ 599 | phone 390 × 844 | top bar 44, bottom bar 56, strip hidden (the sharpness dot *and its label* join the HUD), dock sheet ≤ 40 % (was 60 vh), navigator behind `O`, label string behind the badge, drawing tools → point + measure | (1)(5)(6)(7) |
 
-The top bar collapses by its **own** width (a CSS size container, `@container topbar`; each threshold is the viewport width below minus the bar's 16 px padding), in this order: **< 1600 px** the patient meta and the worklist chip → **< 1336** the QA chip and any other mode-slot chip → **< 1280** the remaining identity chips (stain, licence) → the case title truncates continuously (it has `width: 0` and only grows into what is left) → **< 1200** the purpose chip → **< 1024** the label string and the title (the string stays in the badge's `aria-label`). The thresholds are where the non-shrinking items (badge, the 659 px clinical string, accession, mode, a 44 px overflow button, gaps) stop fitting beside the item that collapses next. Structure, revised 2026-11-01: the badge slot and the mode slot never shrink (`flex: 0 0 auto`; the mode slot has `min-width: max-content`, P4); the identity slot grows and shrinks to its min-content, which is the accession alone once the title, meta and chips are wrapped in `.topbar__identity-rest` (P5; without the wrapper the meta and worklist chip still hide below 1600 px, so the minimum is the accession from the laptop breakpoint down); the label string is `flex: 0 1 auto` so that, as a last resort only (a lab name longer than the reference string), it truncates with an ellipsis instead of pushing the mode slot off screen or clipping the accession (Design note DS-11). `layout-check.mjs` asserts that the mode slot and the accession stay inside the bar and that the reference strings are not truncated at 1024–3840 px. A page must not override the title's `width: 0` (the clinical final does, which is why its label string truncates at 1280–1366 px until that override is removed). Height ≤ 700 px hides the HUD position line. `.app--embedded` (EHR iframe: 40 px bar, 24 px strip, no rail/dock) and `.app--widget` (Jupyter: 36 px bar) are surface variants, not breakpoints.
+The top bar collapses by its **own** width (a CSS size container, `@container topbar`; each threshold is the viewport width below minus the bar's 16 px padding), in this order: **< 1600 px** the patient meta and the worklist chip → **< 1336** the QA chip and any other mode-slot chip → **< 1280** the remaining identity chips (stain, licence) → the case title truncates continuously (it has `width: 0` and only grows into what is left) → **< 1200** the purpose chip → **< 1024** the label string and the title (the string stays in the badge's `aria-label`). The thresholds are where the non-shrinking items (badge, the 659 px clinical string, accession, mode, a 44 px overflow button, gaps) stop fitting beside the item that collapses next. Structure, revised 2026-11-01: the badge slot and the mode slot never shrink (`flex: 0 0 auto`; the mode slot has `min-width: max-content`, P4); the identity slot grows and shrinks to its min-content, which is the accession alone once the title, meta and chips are wrapped in `.topbar__identity-rest` (P5; without the wrapper the meta and worklist chip still hide below 1600 px, so the minimum is the accession from the laptop breakpoint down); the label string is `flex: 0 1 auto` so that, as a last resort only (a lab name longer than the reference string), it truncates with an ellipsis instead of pushing the mode slot off screen or clipping the accession (Design note DS-11). `layout-check.mjs` asserts that the mode slot and the accession stay inside the bar and that the reference strings are not truncated at 1024–3840 px. A page must not override the title's `width: 0`; the clinical final removed its override on 2026-11-01, and `layout-check.mjs` now measures on all three finals that **the accession never clips** and **the full label string fits without truncation at every width from 1024 to 3840 px** (§8.3) — two measured facts, not design intent. Any navigator inside `.canvas-area` is capped at 25 % of the canvas width minus the HUD inset, so a widened corner cluster cannot enter the central zone either (measured: the clinical cluster's 1280 px intrusion is gone). Height ≤ 700 px hides the HUD position line. `.app--embedded` (EHR iframe: 40 px bar, 24 px strip, no rail/dock) and `.app--widget` (Jupyter: 36 px bar) are surface variants, not breakpoints.
 
 ---
 
@@ -107,6 +107,10 @@ QuPath class **names** are kept verbatim and QuPath's own RGB is restored on Geo
 | Dim a hidden layer by colour: `.layer-row.is-off` (secondary text, eye-off glyph, `hidden` chip) | Dim by opacity (the name falls to 3.9:1) or reuse `.is-hidden`, which is `display: none` |
 | Keep the settled `Sharp` label at 70 % opacity; keep the navigator pan buttons visible at all times | Fade the label to a bare dot; show the pan buttons only on hover |
 | Size interactive chips, badges, the mode button, `.btn--sm`, menu items and layer-row controls from `--target-control` | Pin a control to 24 px or 22 px so it stays that size on a tablet |
+| Mark the selected or active-descendant row of a palette or menu with `--color-control-selected` plus the 2 px indicator bar; let hover lift secondary text to body text | Reuse the hover colour for selection (3.6:1 on secondary text, and hover and selection become indistinguishable) |
+| Anchor dialogs over the dock column (`.modal-layer`; `--dock` for a column-filling panel) and the palette in `.palette-layer`; close a modal dialog on a pointer-down outside it | Put a scrim over tissue (`.backdrop` renders only behind a blocking plate in `.modal-layer--center`) |
+| Inside an inverted `.banner--danger` let buttons and keys inherit the banner colour (base.css does) | Keep a normal-coloured button on the inverse surface (1.11:1) |
+| Build region-marking candidates as native radios in a `<fieldset>` with *Fly there* as a sibling button | Nest a button inside a `role="radio"` row, or hide the radio by size or opacity (it must keep its 24 / 44 px box) |
 
 ---
 
@@ -118,12 +122,12 @@ QuPath class **names** are kept verbatim and QuPath's own RGB is restored on Geo
 - [ ] **Focus visible** everywhere: 2 px ring + 1 px halo, ≥ 9:1 against every surface; inside `.canvas-area` the ring is forced near-white; nothing steals focus during a gesture.
 - [ ] **Keyboard**: arrows/WASD pan, `+ − 0 Home` zoom, `R` rotate (NFR-A3); every command reachable in ≤ 2 keystrokes without Ctrl/Alt/F; `Tab` always moves focus; `Esc` always cancels; `?` opens the map; roving tabindex in toolbars, tabs, radiogroups, listboxes.
 - [ ] **SC 2.5.7 dragging alternatives**: navigator pan buttons (always visible: 24 px, a 44 px hit area with a 28 px pad on touch; checked by `layout-check.mjs` A2), tap-to-recentre, click-to-place vertices, two-click measurements, hover auto-pan, typeable slider values, sheet close button.
-- [ ] **SC 2.5.8 target size**: `--target-min` 24 px (32 px on coarse pointers), `--target` and `--target-control` 44 px on coarse pointers for every control a thumb or pen must hit; segmented items 24 px (40 px inside a 44 px control on coarse); 20/24 px glyphs; checked by `layout-check.mjs` A1 at eight viewports.
+- [ ] **SC 2.5.8 target size**: `--target-min` 24 px (32 px on coarse pointers), `--target` and `--target-control` 44 px on coarse pointers for every control a thumb or pen must hit; segmented items 24 px (40 px inside a 44 px control on coarse); the skip link and a track-only switch are ≥ 44 px under a coarse pointer (the switch track itself grows to 44 × 24); 20/24 px glyphs; checked by `layout-check.mjs` A1 at eight viewports.
 - [ ] **Canvas is `role="application"`** with a descriptive `aria-label` and `aria-describedby` → polite live region; HUD values mirrored at settle, debounced 500 ms; assertive region for identity mismatch, Dx dropped, session expired, score failure; same strings as the strip.
 - [ ] **Lists are real lists**: annotations, layers, bookmarks as `listbox`/`option` or `<ul>`; the tray is a listbox; items are forms; tabs follow the WAI-ARIA tabs pattern; menus the menu pattern; the palette the combobox pattern.
 - [ ] **Dialogs** are `role="dialog" aria-modal="true"`, labelled, focus-trapped, return focus; sheets likewise.
-- [ ] **Reduced motion**: all `--motion-*` → 0 ms, skeleton shimmer and indeterminate bars static, the `Sharp` label dims to 70 % immediately and is never hidden (checked by `layout-check.mjs --reduced-motion`, A3); the engine disables inertia, flyTo easing and level cross-fades.
-- [ ] **Region-marking item**: keyboard path (candidates A–F, each radio its own button with *Fly there* as a labelled sibling, never nested) and text alternative; identical scoring; CI asserts equal scores through the keyboard path (NFR-A5).
+- [ ] **Reduced motion**: all `--motion-*` → 0 ms under the media query and under `[data-motion="reduce"]`, skeleton shimmer and indeterminate bars static, the `Sharp` label dims to 70 % immediately and is never hidden (checked by `layout-check.mjs --reduced-motion`, A3); the engine disables inertia, flyTo easing and level cross-fades.
+- [ ] **Region-marking item**: keyboard path (candidates A–F as native radios in a `<fieldset>`: each row a `<label>` with a visually hidden `<input type="radio">` that keeps a 24 / 44 px box, *Fly there* a labelled sibling button, never nested) and text alternative; identical scoring; CI asserts equal scores through the keyboard path (NFR-A5).
 - [ ] **Screen-reader labels**: icon buttons carry `aria-label` with the shortcut; badges carry the full product string; label images carry the launch-context label text as `alt`.
 - [ ] **CVD**: palette passes simulated ΔE00 ≥ 20; author-side deuteranopia/protanopia simulation toggle; per-user CVD remap LUT in the shader (FR-V8).
 - [ ] **Forced colours / high contrast**: focus ring hands over to `Highlight`; borders strengthen under `prefers-contrast: more`.
@@ -160,13 +164,15 @@ Rule of thumb from the sheet: if it moves with the slide, it is the engine's; if
 
 Revision 2026-11-01 adds coarse-pointer columns rendered through `.is-coarse` (badge / mode / chip / indicator pieces, the 64 px pen rail, the 180 px navigator with 44 px pads), the hidden layer-row state `.layer-row.is-off` (formerly `.is-hidden`, which the utility class hid), the `.topbar__identity-rest` wrapper in every top-bar demo, `role="radiogroup"`/`radio` on every segmented control, `role="listbox"` on every tray, names on every icon button, 24 px rows in the sheet's own navigation, and real `<button>`s in the target-size illustration.
 
+The sweep of 2026-11-01 (cross-scope items the page revisers deferred) adds: the danger banner with an outline button and key hint; a coarse-pointer toggle column (44 × 24 px track; a track-only switch); a hovered palette row beside the selected one (hover colour vs selection colour + bar); the candidate dialog rebuilt on native radios in a `<fieldset>`; and three sheet controls — *Show dock dialog* (`.modal-layer--dock` in the app frame), *Show palette layer* (`.palette-layer` in the app frame: over the dock column at ≥ 1080 px, the in-flow sheet row below) and *Reduce motion* (`html[data-motion="reduce"]`). The two layers are hidden at rest, so the geometry check measures the frame without them.
+
 ---
 
 ## 7. Validation method
 
 `contrast-check.py` parses `tokens.css`, resolves `var()` chains per theme, composites translucent tokens over their real backgrounds, and computes:
 
-- WCAG 2.x contrast for 50 text pairs (≥ 4.5:1) and 27 non-text pairs (≥ 3:1) per theme, chosen from how `base.css` actually composes components (e.g. the range thumb is checked as its dark ring against the track, which is what identifies it; the focus ring is checked against every surface and against its halo; the dimmed `Sharp` label as 0.7 × text; the hidden layer row as secondary text on surface 0, the hovered row and the selected row).
+- WCAG 2.x contrast for 54 text pairs (≥ 4.5:1) and 29 non-text pairs (≥ 3:1) per theme (the sweep added the palette / menu selected and hovered rows, the danger-banner controls and their outline, and the selected-row indicator bar), chosen from how `base.css` actually composes components (e.g. the range thumb is checked as its dark ring against the track, which is what identifies it; the focus ring is checked against every surface and against its halo; the dimmed `Sharp` label as 0.7 × text; the hidden layer row as secondary text on surface 0, the hovered row and the selected row).
 - HUD text over tissue (added 2026-11-01): the HUD backdrop composited over each of the five H&E reference colours and over the canvas backdrop, then the primary line, the 12 px grey-83 secondary line, the dimmed `Sharp` label and the navigator pan glyph on its pad, each required ≥ 4.5:1 in every cell. The 2026-10-26 run checked the HUD only over the canvas backdrop (`#222222`, 7.98:1), which is why α 0.62 passed while the same text measured 2.8:1 over glass on the finals.
 - OKLCH chroma for every token allowed within the 32 px canvas margin (≤ 0.03) and for the tint composites; the accent and semantic colours are reported but excluded from the margin.
 - Annotation palette: CIE L\*, Machado 2009 simulations, pairwise CIEDE2000 (minimum over 28 pairs) in normal, deutan, protan and tritan vision with the P7 target ≥ 20 for deutan and protan, WCAG contrast of each colour and of the two halos against five H&E reference colours, ΔE00 against eosin and hematoxylin, and the unmodified Okabe-Ito set under the same test.
@@ -186,7 +192,7 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 
 ---
 
-## 8. Validation results (2026-11-01, `python3 -I contrast-check.py` and `node layout-check.mjs`)
+## 8. Validation results (2026-11-01 sweep, `python3 -I contrast-check.py` and `node layout-check.mjs`)
 
 ### 8.1 Colour (`contrast-check.py`)
 ### Dark theme
@@ -243,6 +249,10 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | hidden layer-row name on selected row | `#b0b0b0` on `#404040` | 4.78:1 | 4.5 | pass |
 | settled 'Sharp' label at rest (0.7 × text) on the strip | `#acacac` on `#262626` | 6.70:1 | 4.5 | pass |
 | settled 'Sharp' label at rest (0.7 × text) in the dock / top bar | `#afafaf` on `#303030` | 6.04:1 | 4.5 | pass |
+| palette / menu selected row: meta and key hint on the selection colour (was the hover colour, 3.6:1) | `#b0b0b0` on `#404040` | 4.78:1 | 4.5 | pass |
+| palette / menu hovered row: meta and key hint lifted to body text on the hover colour | `#e6e6e6` on `#525252` | 6.26:1 | 4.5 | pass |
+| danger banner button and key hint (inherit) on the inverse surface (was body text, 1.11:1) | `#141414` on `#f2f2f2` | 16.46:1 | 4.5 | pass |
+| danger banner button label on hover (inverted fill) | `#f2f2f2` on `#141414` | 16.46:1 | 4.5 | pass |
 | control outline on surface 0 | `#8a8a8a` on `#303030` | 3.82:1 | 3.0 | pass |
 | control outline on surface 1 | `#8a8a8a` on `#3a3a3a` | 3.29:1 | 3.0 | pass |
 | control outline on surface 2 | `#8a8a8a` on `#404040` | 3.00:1 | 3.0 | pass |
@@ -258,6 +268,8 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | primary button fill on surface 0 | `#f2f2f2` on `#303030` | 11.79:1 | 3.0 | pass |
 | accent button fill on surface 2 (dialog layer) | `#8ab4e8` on `#404040` | 4.83:1 | 3.0 | pass |
 | navigator viewport rectangle on thumbnail bg | `#f2f2f2` on `#353535` | 10.96:1 | 3.0 | pass |
+| danger banner button outline (currentColor) on the inverse surface | `#141414` on `#f2f2f2` | 16.46:1 | 3.0 | pass |
+| palette / menu selected-row indicator bar on the selection colour | `#f2f2f2` on `#404040` | 9.26:1 | 3.0 | pass |
 | range thumb ring (surface-0) on track (border-strong) | `#303030` on `#8a8a8a` | 3.82:1 | 3.0 | pass |
 | range track on surface 0 | `#8a8a8a` on `#303030` | 3.82:1 | 3.0 | pass |
 | toggle on-track / range thumb fill on surface 0 | `#e6e6e6` on `#303030` | 10.57:1 | 3.0 | pass |
@@ -369,6 +381,10 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | hidden layer-row name on selected row | `#4a4a4a` on `#d0d0d0` | 5.75:1 | 4.5 | pass |
 | settled 'Sharp' label at rest (0.7 × text) on the strip | `#575757` on `#e6e6e6` | 5.77:1 | 4.5 | pass |
 | settled 'Sharp' label at rest (0.7 × text) in the dock / top bar | `#5b5b5b` on `#f2f2f2` | 6.08:1 | 4.5 | pass |
+| palette / menu selected row: meta and key hint on the selection colour (was the hover colour, 3.6:1) | `#4a4a4a` on `#d0d0d0` | 5.75:1 | 4.5 | pass |
+| palette / menu hovered row: meta and key hint lifted to body text on the hover colour | `#1a1a1a` on `#d0d0d0` | 11.28:1 | 4.5 | pass |
+| danger banner button and key hint (inherit) on the inverse surface (was body text, 1.11:1) | `#f2f2f2` on `#202020` | 14.55:1 | 4.5 | pass |
+| danger banner button label on hover (inverted fill) | `#202020` on `#f2f2f2` | 14.55:1 | 4.5 | pass |
 | control outline on surface 0 | `#707070` on `#f2f2f2` | 4.42:1 | 3.0 | pass |
 | control outline on surface 1 | `#707070` on `#ffffff` | 4.95:1 | 3.0 | pass |
 | control outline on surface 2 | `#707070` on `#ffffff` | 4.95:1 | 3.0 | pass |
@@ -384,6 +400,8 @@ It prints a Markdown table per page and viewport and exits 1 on any failure. The
 | primary button fill on surface 0 | `#202020` on `#f2f2f2` | 14.55:1 | 3.0 | pass |
 | accent button fill on surface 2 (dialog layer) | `#2b63a8` on `#ffffff` | 6.08:1 | 3.0 | pass |
 | navigator viewport rectangle on thumbnail bg | `#f2f2f2` on `#353535` | 10.96:1 | 3.0 | pass |
+| danger banner button outline (currentColor) on the inverse surface | `#f2f2f2` on `#202020` | 14.55:1 | 3.0 | pass |
+| palette / menu selected-row indicator bar on the selection colour | `#1a1a1a` on `#d0d0d0` | 11.28:1 | 3.0 | pass |
 | range thumb ring (surface-0) on track (border-strong) | `#f2f2f2` on `#707070` | 4.42:1 | 3.0 | pass |
 | range track on surface 0 | `#707070` on `#f2f2f2` | 4.42:1 | 3.0 | pass |
 | toggle on-track / range thumb fill on surface 0 | `#1a1a1a` on `#f2f2f2` | 15.55:1 | 3.0 | pass |
@@ -526,22 +544,22 @@ Requirement 4.5:1 for every cell. Rows: primary HUD text (`--color-text-on-canva
 | deutan | 11.6 | Orange / Yellow | Orange/Yellow (11.6), Orange/Vermilion (12.5), Sky blue/Reddish purple (15.7), Bluish green/Reddish purple (15.9) |
 | protan | 12.2 | Blue / Reddish purple | Orange/Bluish green (17.9), Orange/Yellow (15.2), Orange/Vermilion (18.2), Sky blue/Reddish purple (14.0), Bluish green/Vermilion (18.2), Blue/Reddish purple (12.2) |
 
-**Result: all required pairs pass** (50 text pairs and 27 non-text pairs × 2 themes, 34 chroma rows × 2 themes, 5 HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).
+**Result: all required pairs pass** (54 text pairs and 29 non-text pairs × 2 themes, 34 chroma rows × 2 themes, 5 HUD-over-H&E rows × 6 backgrounds, deutan and protan palette minima ≥ 20).
 
 ### 8.2 Geometry (`layout-check.mjs`, `components.html`, rest state, 1.4 s after load)
 
 | Viewport | Top bars (T1) | Central zone (Z1) | Sheets (S1) | Targets < 24/44 (A1) | by spacing | Invisible (A2) | Sharp label (A3) | Result |
 |---|---|---|---|---:|---:|---:|---|---|
-| 390×844 coarse | 10/10 ok · mode right 356/356/331/331/331/331/331/331/331/331 of 364/364/340/340/340/340/340/340/340/340 | 0 intrusions (+2 transient: drawer) | none | 0 of 595 | 57 | 0 | n/a | pass |
-| 1024×1366 coarse | 10/10 ok · mode right 990/990/965/965/965/965/965/965/965/965 of 998/998/974/974/974/974/974/974/974/974 | 0 intrusions (+2 transient: drawer) | none | 0 of 625 | 57 | 0 | 0.70/0.70 | pass |
-| 1280×800 | 10/10 ok · mode right 958/958/933/933/933/933/933/933/933/933 of 966/966/942/942/942/942/942/942/942/942 | 0 intrusions (+2 transient: drawer) | none | 0 of 669 | 8 | 0 | 0.70/0.70 | pass |
-| 1366×1024 coarse | 10/10 ok · mode right 1044/1044/1019/1019/1019/1019/1019/1019/1019/1019 of 1052/1052/1028/1028/1028/1028/1028/1028/1028/1028 | 0 intrusions (+2 transient: drawer) | none | 0 of 669 | 57 | 0 | 0.70/0.70 | pass |
-| 1440×900 | 10/10 ok · mode right 1118/1118/1093/1093/1093/1093/1093/1093/1093/1093 of 1126/1126/1102/1102/1102/1102/1102/1102/1102/1102 | 0 intrusions (+2 transient: drawer) | none | 0 of 669 | 8 | 0 | 0.70/0.70 | pass |
-| 1600×900 | 10/10 ok · mode right 1278/1278/1253/1253/1253/1253/1253/1253/1253/1253 of 1286/1286/1262/1262/1262/1262/1262/1262/1262/1262 | 0 intrusions | none | 0 of 669 | 8 | 0 | 0.70/0.70 | pass |
-| 1920×1080 | 10/10 ok · mode right 1598/1598/1573/1573/1573/1573/1573/1573/1573/1573 of 1606/1606/1582/1582/1582/1582/1582/1582/1582/1582 | 0 intrusions | none | 0 of 669 | 8 | 0 | 0.70/0.70 | pass |
-| 3840×2160 | 10/10 ok · mode right 3518/3518/3493/3493/3493/3493/3493/3493/3493/3493 of 3526/3526/3502/3502/3502/3502/3502/3502/3502/3502 | 0 intrusions | none | 0 of 669 | 8 | 0 | 0.70/0.70 | pass |
+| 390×844 coarse | 10/10 ok · mode right 356/356/331/331/331/331/331/331/331/331 of 364/364/340/340/340/340/340/340/340/340 | 0 intrusions (+2 transient: drawer) | none | 0 of 608 | 57 | 0 | n/a | pass |
+| 1024×1366 coarse | 10/10 ok · mode right 990/990/965/965/965/965/965/965/965/965 of 998/998/974/974/974/974/974/974/974/974 | 0 intrusions (+2 transient: drawer) | none | 0 of 638 | 57 | 0 | 0.70/0.70 | pass |
+| 1280×800 | 10/10 ok · mode right 958/958/933/933/933/933/933/933/933/933 of 966/966/942/942/942/942/942/942/942/942 | 0 intrusions (+2 transient: drawer) | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
+| 1366×1024 coarse | 10/10 ok · mode right 1044/1044/1019/1019/1019/1019/1019/1019/1019/1019 of 1052/1052/1028/1028/1028/1028/1028/1028/1028/1028 | 0 intrusions (+2 transient: drawer) | none | 0 of 682 | 57 | 0 | 0.70/0.70 | pass |
+| 1440×900 | 10/10 ok · mode right 1118/1118/1093/1093/1093/1093/1093/1093/1093/1093 of 1126/1126/1102/1102/1102/1102/1102/1102/1102/1102 | 0 intrusions (+2 transient: drawer) | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
+| 1600×900 | 10/10 ok · mode right 1278/1278/1253/1253/1253/1253/1253/1253/1253/1253 of 1286/1286/1262/1262/1262/1262/1262/1262/1262/1262 | 0 intrusions | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
+| 1920×1080 | 10/10 ok · mode right 1598/1598/1573/1573/1573/1573/1573/1573/1573/1573 of 1606/1606/1582/1582/1582/1582/1582/1582/1582/1582 | 0 intrusions | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
+| 3840×2160 | 10/10 ok · mode right 3518/3518/3493/3493/3493/3493/3493/3493/3493/3493 of 3526/3526/3502/3502/3502/3502/3502/3502/3502/3502 | 0 intrusions | none | 0 of 682 | 8 | 0 | 0.70/0.70 | pass |
 
-**Result: all layout checks pass** (the two transient layers at ≤ 1599 px are the frame demo's dock, open as a drawer/sheet to show that state; a `--reduced-motion` run at 1440 × 900 and 1024 × 1366 also passes with the `Sharp` label at 0.70). "By spacing" counts controls under the nominal size that pass only through WCAG's spacing exception: at coarse viewports these are the 40 px segmented items (DS-14), the native 18 px radio/checkbox inputs inside their 44 px option rows, 31–32 px text inputs (typed zoom, palette input) and the deliberately 24 px target illustration, each with ≥ 44 px of clear space around it; at fine viewports the eight are the 22 px display-only chips used as table badges.
+**Result: all layout checks pass** (the two transient layers at ≤ 1599 px are the frame demo's dock, open as a drawer/sheet to show that state; a `--reduced-motion` run at 1440 × 900 and 1024 × 1366 also passes with the `Sharp` label at 0.70). The sweep added 13 operable controls to the sheet (the coarse toggle column, the danger banner's two buttons, the candidate radios); the `.modal-layer--dock` and `.palette-layer` demos are hidden at rest and therefore outside this measurement, by design (they are transient layers). "By spacing" counts controls under the nominal size that pass only through WCAG's spacing exception: at coarse viewports these are the 40 px segmented items (DS-14), the native 18 px radio/checkbox inputs inside their 44 px option rows, 31–32 px text inputs (typed zoom, palette input) and the deliberately 24 px target illustration, each with ≥ 44 px of clear space around it; at fine viewports the eight are the 22 px display-only chips used as table badges.
 
 ### 8.3 Geometry of the three final screens (informational; the pages link these files and carry their own CSS)
 
@@ -549,42 +567,55 @@ Requirement 4.5:1 for every cell. Rows: primary HUD text (`--color-text-on-canva
 
 | Viewport | Top bars (T1) | Central zone (Z1) | Sheets (S1) | Targets < 24/44 (A1) | by spacing | Invisible (A2) | Sharp label (A3) | Result |
 |---|---|---|---|---:|---:|---:|---|---|
-| 390×844 coarse | 1/1 ok · mode right 382 of 390 | 0 intrusions | none | 5 of 32 | 16 | 0 | n/a | **FAIL** |
-| 1024×1366 coarse | 1/1 ok · mode right 1016 of 1024 | 0 intrusions | none | 1 of 50 | 20 | 0 | 1.00 | **FAIL** |
-| 1280×800 | 1/1 ok · mode right 1272 of 1280 | 1 intrusion | none | 0 of 50 | 7 | 0 | n/a | **FAIL** |
-| 1366×1024 coarse | 0/1 ok · mode right 1358 of 1366 | 0 intrusions | none | 1 of 50 | 15 | 0 | 1.00 | **FAIL** |
-| 1440×900 | 1/1 ok · mode right 1432 of 1440 | 0 intrusions | none | 0 of 50 | 7 | 0 | n/a | pass |
-| 1600×900 | 1/1 ok · mode right 1592 of 1600 | 0 intrusions | none | 0 of 70 | 7 | 0 | n/a | pass |
-| 1920×1080 | 1/1 ok · mode right 1912 of 1920 | 0 intrusions | none | 0 of 70 | 7 | 0 | n/a | pass |
-| 3840×2160 | 1/1 ok · mode right 3832 of 3840 | 0 intrusions | none | 0 of 70 | 7 | 0 | n/a | pass |
+| 390×844 coarse | 0/1 ok · mode right 389 of 390 | 0 intrusions | none | 1 of 34 | 15 | 0 | n/a | **FAIL** |
+| 1024×1366 coarse | 1/1 ok · mode right 1016 of 1024 | 0 intrusions | none | 1 of 52 | 15 | 0 | 1.00 | **FAIL** |
+| 1280×800 | 1/1 ok · mode right 1272 of 1280 | 0 intrusions | none | 0 of 52 | 7 | 0 | n/a | pass |
+| 1366×1024 coarse | 1/1 ok · mode right 1358 of 1366 | 0 intrusions | none | 1 of 52 | 15 | 0 | 1.00 | **FAIL** |
+| 1440×900 | 1/1 ok · mode right 1432 of 1440 | 0 intrusions | none | 0 of 52 | 7 | 0 | n/a | pass |
+| 1600×900 | 1/1 ok · mode right 1592 of 1600 | 0 intrusions | none | 0 of 72 | 7 | 0 | n/a | pass |
+| 1920×1080 | 1/1 ok · mode right 1912 of 1920 | 0 intrusions | none | 0 of 72 | 7 | 0 | n/a | pass |
+| 3840×2160 | 1/1 ok · mode right 3832 of 3840 | 0 intrusions | none | 0 of 72 | 7 | 0 | n/a | pass |
+
+Details:
+
+- T1 390: header.topbar.region “Top bar”: mode slot right edge 389 > bar inner width 382
+- A1 390: input#ctlGuided is 14×14
+- A1 1024: input#ctlGuided is 14×14
+- A1 1366: input#ctlGuided is 14×14
 
 **`screens/final/research-annotation.html`**
 
 | Viewport | Top bars (T1) | Central zone (Z1) | Sheets (S1) | Targets < 24/44 (A1) | by spacing | Invisible (A2) | Sharp label (A3) | Result |
 |---|---|---|---|---:|---:|---:|---|---|
-| 390×844 coarse | 1/1 ok · mode right 382 of 390 | 0 intrusions | none | 0 of 41 | 23 | 0 | n/a | pass |
-| 1024×1366 coarse | 1/1 ok · mode right 1016 of 1024 | 0 intrusions | none | 0 of 47 | 24 | 0 | 0.70 | pass |
+| 390×844 coarse | 1/1 ok · mode right 382 of 390 | 0 intrusions | none | 0 of 40 | 21 | 0 | n/a | pass |
+| 1024×1366 coarse | 1/1 ok · mode right 1016 of 1024 | 0 intrusions | none | 0 of 46 | 21 | 0 | 0.70 | pass |
 | 1280×800 | 1/1 ok · mode right 1272 of 1280 | 0 intrusions | none | 0 of 57 | 0 | 0 | 0.70 | pass |
-| 1366×1024 coarse | 1/1 ok · mode right 1358 of 1366 | 0 intrusions | none | 6 of 53 | 22 | 0 | 0.70 | **FAIL** |
+| 1366×1024 coarse | 1/1 ok · mode right 1358 of 1366 | 0 intrusions | none | 0 of 53 | 19 | 0 | 0.70 | pass |
 | 1440×900 | 1/1 ok · mode right 1432 of 1440 | 0 intrusions | none | 0 of 57 | 0 | 0 | 0.70 | pass |
-| 1600×900 | 1/1 ok · mode right 1592 of 1600 | 0 intrusions | none | 0 of 65 | 0 | 0 | 0.70 | pass |
-| 1920×1080 | 1/1 ok · mode right 1912 of 1920 | 0 intrusions | none | 0 of 65 | 0 | 0 | 0.70 | pass |
-| 3840×2160 | 1/1 ok · mode right 3832 of 3840 | 0 intrusions | none | 0 of 75 | 0 | 0 | 0.70 | pass |
+| 1600×900 | 1/1 ok · mode right 1592 of 1600 | 0 intrusions | none | 0 of 66 | 0 | 0 | 0.70 | pass |
+| 1920×1080 | 1/1 ok · mode right 1912 of 1920 | 0 intrusions | none | 0 of 66 | 0 | 0 | 0.70 | pass |
+| 3840×2160 | 1/1 ok · mode right 3832 of 3840 | 0 intrusions | none | 0 of 76 | 0 | 0 | 0.70 | pass |
 
 **`screens/final/education-module.html`**
 
 | Viewport | Top bars (T1) | Central zone (Z1) | Sheets (S1) | Targets < 24/44 (A1) | by spacing | Invisible (A2) | Sharp label (A3) | Result |
 |---|---|---|---|---:|---:|---:|---|---|
-| 390×844 coarse | 1/1 ok · mode right 380 of 388 | 0 intrusions | 1/1 ≤ 40 % | 1 of 36 | 21 | 0 | n/a | **FAIL** |
-| 1024×1366 coarse | 1/1 ok · mode right 1014 of 1022 | 0 intrusions | 1/1 ≤ 40 % | 1 of 48 | 22 | 0 | 0.70 | **FAIL** |
-| 1280×800 | 1/1 ok · mode right 1270 of 1278 | 0 intrusions | none | 0 of 53 | 3 | 0 | 0.70 | pass |
-| 1366×1024 coarse | 1/1 ok · mode right 1356 of 1364 | 0 intrusions | none | 1 of 53 | 28 | 0 | 0.70 | **FAIL** |
-| 1440×900 | 1/1 ok · mode right 1430 of 1438 | 0 intrusions | none | 0 of 52 | 3 | 0 | 0.70 | pass |
-| 1600×900 | 1/1 ok · mode right 1590 of 1598 | 0 intrusions | none | 0 of 58 | 3 | 0 | 0.70 | pass |
-| 1920×1080 | 1/1 ok · mode right 1910 of 1918 | 0 intrusions | none | 0 of 58 | 3 | 0 | 0.70 | pass |
-| 3840×2160 | 1/1 ok · mode right 3830 of 3838 | 0 intrusions | none | 0 of 58 | 3 | 0 | 0.70 | pass |
+| 390×844 coarse | 1/1 ok · mode right 382 of 390 | 0 intrusions | 1/1 ≤ 40 % | 1 of 35 | 21 | 0 | n/a | **FAIL** |
+| 1024×1366 coarse | 1/1 ok · mode right 1016 of 1024 | 0 intrusions | 1/1 ≤ 40 % | 1 of 47 | 21 | 0 | 0.70 | **FAIL** |
+| 1280×800 | 1/1 ok · mode right 1272 of 1280 | 0 intrusions | none | 0 of 52 | 0 | 0 | 0.70 | pass |
+| 1366×1024 coarse | 1/1 ok · mode right 1358 of 1366 | 0 intrusions | none | 1 of 52 | 21 | 0 | 0.70 | **FAIL** |
+| 1440×900 | 1/1 ok · mode right 1432 of 1440 | 0 intrusions | none | 0 of 51 | 0 | 0 | 0.70 | pass |
+| 1600×900 | 1/1 ok · mode right 1592 of 1600 | 0 intrusions | none | 0 of 57 | 0 | 0 | 0.70 | pass |
+| 1920×1080 | 1/1 ok · mode right 1912 of 1920 | 0 intrusions | none | 0 of 57 | 0 | 0 | 0.70 | pass |
+| 3840×2160 | 1/1 ok · mode right 3832 of 3840 | 0 intrusions | none | 0 of 57 | 0 | 0 | 0.70 | pass |
 
-Every top bar now keeps its mode slot inside the bar (1024: 1016 of 1024; 1280: 1272; 1366: 1358; 1440: 1432; 1600: 1592), the pan buttons are visible on all three, and the `Sharp` label rests at 0.70. What remains is page-level (see §10, "Deferred to the pages"): the clinical page's title override makes its label string truncate at 1280–1366 px, its 300 px navigator cluster enters the central zone at 1280 px, and the sub-44 px targets under a coarse pointer are the clinical flow steps (32 px), its bottom-bar tools (44 × 24), its 14 px "guided" checkbox, the research page's 28 px vertical tab strip, and the education page's 28 px launch-context `<select>`.
+Details:
+
+- A1 390: select#d-launch “Product identifier in the launch context” is 28×44
+- A1 1024: select#d-launch “Product identifier in the launch context” is 28×44
+- A1 1366: select#d-launch “Product identifier in the launch context” is 28×44
+
+Measured facts after the sweep: on all three finals the mode slot stays inside the bar at 1024–3840 px, the accession never clips, and the label string is shown untruncated at every width ≥ 1024 px (T1); the clinical page's 1280 px navigator intrusion is gone (the base.css cap, DS-17); the research page passes every check; the pan buttons are visible on all three and the `Sharp` label rests at 0.70. What remains is page-level (§10, "Deferred to the pages"): the clinical page's 14 px `#ctlGuided` checkbox and, at 390 px, a mode slot pushed 7 px past the bar's padding by the short purpose chip; the education page's 28 px-wide launch-context `<select>`.
 
 ---
 
@@ -603,9 +634,12 @@ Every top bar now keeps its mode slot inside the bar (1024: 1016 of 1024; 1280: 
 | DS-9 | "Live" marker colour | Brief: mark every element that would be live | Magenta dashed outline and tag, deliberately outside the product palette so it cannot be mistaken for UI; review-only (`body.show-live`) | — |
 | DS-10 | H&E reference colours | None in the plan | Five design assumptions for a 20× field used by `contrast-check.py` | Replace with sampled scanner values before freezing the palette |
 | DS-11 | Label string as the last item to give way | Principles §2.5 rule 2: the full label string never truncates at ≥ 1024 px | True for the reference strings by construction (collapse order §1, verified by `layout-check.mjs`), but the string is the one top-bar item that may still shrink (`flex: 0 1 auto`, ellipsis) so that a longer lab name can never push the mode slot off screen (P4) or clip the accession (P5). Counsel's final wording must be re-measured; if it exceeds 659 px the purpose-chip and QA-chip thresholds move up | Owner/counsel: final clinical string length |
-| DS-12 | Dialog placement | Principles §2.5 rule 4 (slots outside the dismissible layer); P1 (nothing over the centre) | `.modal-layer` anchors dialogs top-right at dock width and ≤ 25 % of the viewport minus the inset, so a dialog covers the dock column, never the centre; the palette anchors to the rail; only blocking plates are centred; below 1080 px dialogs are ≤ 40 % bottom sheets. A sheet or an open drawer is a transient layer, not a rest state for the P1 test (even a 40 % sheet reaches the central zone on a 1024 × 1366 tablet) | Plan owner: add the "sheet is not a rest state" sentence to principles §3.1 (outside this folder) |
+| DS-12 | Dialog placement | Principles §2.5 rule 4 (slots outside the dismissible layer); P1 (nothing over the centre) | `.modal-layer` anchors dialogs top-right at dock width and ≤ 25 % of the viewport minus the inset, so a dialog covers the dock column, never the centre; the palette anchors to the rail; only blocking plates are centred; below 1080 px dialogs are ≤ 40 % bottom sheets. A sheet or an open drawer is a transient layer, not a rest state for the P1 test (even a 40 % sheet reaches the central zone on a 1024 × 1366 tablet) | Done 2026-11-01 (sweep): `design/principles-and-ia.md` §3.1 carries the paragraph |
 | DS-13 | Purpose and QA chip thresholds | Principles §7 gives the collapse order, not widths | The purpose chip leaves the bar below 1200 px and the QA chip below 1336 px (measured: badge + 659 px string + accession + mode + 44 px overflow button + gaps), so the consult variant on a 1366 × 1024 tablet keeps `Consultation · preliminary only` and the 1024 portrait tablet shows it in the strip instead | — |
-| DS-14 | Touch sizes | Plan: 24 px minimum, 44 px on coarse pointers | Under `(pointer: coarse)` `--target-min` rises to 32 px and `--target-control` to 44 px; segmented items are 40 px inside a 44 px control (the two critiques asked for 36 and 44); the navigator pan button is a 44 px hit area with a 28 px visible pad so four pads do not hide a 180 px thumbnail | — |
+| DS-14 | Touch sizes | Plan: 24 px minimum, 44 px on coarse pointers | Under `(pointer: coarse)` `--target-min` rises to 32 px and `--target-control` to 44 px; segmented items are 40 px inside a 44 px control (the two critiques asked for 36 and 44); the navigator pan button is a 44 px hit area with a 28 px visible pad so four pads do not hide a 180 px thumbnail; the switch track grows to 44 × 24 and the skip link to 44 px (sweep) | — |
+| DS-15 | No scrim (sweep 2026-11-01) | Principles §3.1 / P1: nothing persistent over the centre; the finals each removed their scrim | `.backdrop` is hidden everywhere except as the first child of `.modal-layer--center` (blocking plates). Anchored dialogs and the palette never dim tissue; a pointer-down outside a modal dialog closes it (page script); a non-modal panel leaves the slide operable. `.modal-layer--dock` is the column-filling form of the anchored layer | Owner: confirm that clinical dialogs may be dismissed by a click on the slide |
+| DS-16 | Palette placement (sweep 2026-11-01) | Principles §3.1: the dock is a bottom sheet ≤ 40 % on portrait and phone; P1 | One `.palette-layer` rule: over the dock column at ≥ 1080 px (never wider than 25 vw − rail/4), and at ≤ 1079 px the grid's in-flow `sheet` row above the bottom bar, so the canvas yields height instead of being covered. The app grid gained an `auto` `sheet` row at ≤ 1079 px (0 px while empty) | — |
+| DS-17 | Navigator cap (sweep 2026-11-01) | Principles §3.1 region F: never in the central 50 % | `.canvas-area .navigator { max-width: calc(25% − inset) }` on top of the width ladders (`--layout-navigator`, `--layout-navigator-wide`), so a page's corner cluster cannot reach the zone whatever width it asks for | — |
 
 Out of scope here and owned elsewhere: the concept explorations, the three final screens, the handoff spec and the interaction specifics of the engine (gesture model, prefetch, Dx verifier).
 
@@ -632,12 +666,28 @@ Fixes to the shared files after the pathologist and a11y-ux critiques of `screen
 
 Page notes resolved by these changes (the pages may delete their local copies): clinical **D-F4** (segmented 18 px), research **D-F5** (segmented) and **D-F11** (`.is-hidden` conflict), education **DF-5** (HUD backdrop 0.78, 12 px secondary lines, 44 px pan buttons) and judges' note 4 (`Sharp` label at .7).
 
-**Deferred to the pages** (only `design-system/` was in scope for this revision; each is a one-line change in the named file):
+### Revisions (sweep 2026-11-01)
 
-- `clinical-signout.html`: remove `.app.fin .topbar__identity .title { flex: 0 1 auto; width: auto }` (190) or wrap title/meta/chip in `.topbar__identity-rest`; until then the title's natural width keeps the label string truncated at 1280–1366 px. Replace the 50 vh dialog-sheet height (451) and the `.modal-layer` overrides (422–431) with the system defaults; drop the local segmented/chip/`.btn--sm` sizes (161–163, 333–334, 402–404); the 300 × 318 px navigator cluster enters the central zone at 1280 px (`--layout-navigator` or the cluster width); flow steps 32 px, bottom-bar tools 44 × 24 and the 14 px `#ctlGuided` checkbox are < 44 px under a coarse pointer; add the `Sharp` label span to `#hudSharp`.
-- `research-annotation.html`: `.layer-row.is-off … { opacity: .5 }` (292) and `.ch-row.is-off` (335) still dim by opacity (names 3.87:1) — delete them and use the system's colour dimming (add the `hidden` chip to `.ch-row`); sheet heights 42/52 vh (479, 510) → `var(--layout-sheet-max)`; drop the pan-button, segmented and `--target-min` patches (204, 348, 489, 529–533); the 28 px-wide vertical tab strip (Annotations/Channels/Model/Inspector/Export) is < 44 px under a coarse pointer.
-- `education-module.html`: delete the local `--color-hud-backdrop: .78` (31), the `.hud__position` colour/size (340), the pan-button rules (353–354, 566, 568) and the `.indicator--sharp.is-quiet` override (394); the `.review .segmented__item { min-height: 22px }` (48) is a sheet-chrome exception that should become ≥ 24 px; `#d-launch` (28 px wide) is < 44 px under a coarse pointer.
-- `design/principles-and-ia.md` §3.1 (outside this folder): add "a bottom sheet or an open drawer is a transient layer, not a rest state for the P1 test" (DS-12).
+The critique-stage revisers each fixed only their own file and deferred the items below to the design system (`scratchpad/deferred-notes.md`; the earlier list in this section). All of them are applied; token and class names are unchanged and the additions are additive (`.modal-layer--dock`, `.palette-layer`, `.navigator--wide`, `--layout-navigator-wide`, `[data-motion="reduce"]`, `.app.palette-open`, the grid's `sheet` row). Both checks were re-run (§8).
+
+| # | Deferred by | Item | Change | Files |
+|---|---|---|---|---|
+| 12 | clinical | `.banner--danger .btn` / `.key` kept the normal text colour on the inverse surface (1.11:1) | `.banner--danger .btn, .banner--danger .key { color: inherit; border-color: currentColor; background: transparent }`; hover inverts to a solid control in the banner's text colour (16.46:1 dark, 14.55:1 light); four pairs added to `contrast-check.py`; the sheet's danger banner shows a button and a key | `base.css`, `contrast-check.py`, `components.html` |
+| 13 | clinical | `.modal-layer--dock` variant and the no-scrim rule | `.modal-layer--dock { padding: 0 }` with dialogs `min(--layout-dock, 25vw − rail/4, 100vw − 32px)` wide, flush with the top bar and the right edge (bottom-left radius only; a sheet ≤ 40 % below 1080 px); `.backdrop { display: none }` except as the first child of `.modal-layer--center`, where it sits behind the plate (DS-15); `.modal-layer[hidden]` hides; embedded/widget dialogs and palettes are `min(360px, 100vw − 32px)` because their `--layout-dock` is 0 (the base rule gave 0 px) | `base.css`, `components.html` (sheet control *Show dock dialog*), README §1, §3, DS-15 |
+| 14 | clinical | Navigator width ladder; the 300 × 318 px cluster entered the central zone at 1280 px | Ladder documented and completed: `--layout-navigator` 320 / 240 / 240 / 180 / 140 and the new `--layout-navigator-wide` 400 / 320 / 300 / 220 / 140 for `.navigator--wide` (the clinical page's 400 / 320 / 300 / 220 ladder, lines 283–287, can go); `.canvas-area .navigator { max-width: calc(25% − --layout-hud-inset) }` so no navigator can reach the zone (DS-17). Measured on the clinical final: the 1280 px intrusion is gone (§8.3) | `base.css`, `tokens.css`, `components.html` (navigator notes), README §1 |
+| 15 | research, education | One shared `.palette-layer` rule instead of a copy per final | `.palette-layer` (base.css §6.9): ≥ 1080 px absolute over the dock column, `min(--layout-dock, 25vw − rail/4, 100vw − 32px)` wide, inset below the top bar and above the strip, `--z-palette`, `[hidden]` hides; ≤ 1079 px `position: static; grid-area: sheet` in a new `auto` grid row above the bottom bar (`"topbar" "canvas" "sheet" "bottombar" ["strip"]`), ≤ `--layout-sheet-max`, rounded top, `.app.palette-open .dock { display: none }`; embedded/widget 360 px (DS-16) | `base.css`, `components.html` (sheet control *Show palette layer*), README §1 |
+| 16 | research | `.palette__item[aria-selected]` and `.menu__item[aria-selected]` used the hover colour (secondary line 3.6:1; hover and selection indistinguishable, D-F12) | Selected / active-descendant rows: `--color-control-selected` + `inset 2px 0 0 --color-control-selected-indicator` (4.78:1 dark, 5.75:1 light on the secondary line); hover keeps `--color-control-bg-hover` and lifts `.meta` / `.key` to `--color-text` (6.26:1); pairs added to `contrast-check.py`; the sheet's palette shows both states | `base.css`, `contrast-check.py`, `components.html` |
+| 17 | education | `.toggle` 36 px wide and `.skip-link` 34 px tall under a coarse pointer | `.toggle { min-width: --target-control }`; under `(pointer: coarse)` and `.is-coarse` the track is 44 × 24 px (knob 20, check glyph re-centred); `.skip-link { display: inline-flex; align-items: center; min-height: --target }` → 44 px under coarse (measured 31 px fine, 44 px coarse); a coarse toggle column on the sheet | `base.css`, `components.html` |
+| 18 | education | `components.html` candidate rows nested *Fly there* inside `role="radio"` rows (DF-10) | The candidate dialog uses the education final's markup: a `<fieldset>` with a hidden legend, each row a `<label class="candidate__radio">` with a native `<input type="radio" name="cand-sheet">` (hidden by `clip-path`, keeping a `--target` box: 24 px fine, 44 px coarse, measured), the letter and the description, and *Fly there* a sibling `<button type="button">` named "Fly there: region C at 20 times"; base.css styles `input:checked` (row ring, filled letter) and `input:focus-visible` (ring on the label), keeping the old `role="radio"` pattern styled; the sheet note rewritten | `components.html`, `base.css`, README §3, §4 |
+| 19 | education | No class twin of the `prefers-reduced-motion` block (DF-9) | `[data-motion="reduce"]` in tokens.css zeroes the same five tokens; base.css mirrors the skeleton and indeterminate-bar rules; the sheet's *Reduce motion* control sets it on `<html>` | `tokens.css`, `base.css`, `components.html`, README §1, §4 |
+| 20 | clinical, research | README §1 wording | "The accession never clips" and "the label string fits at 1024" are stated as measured facts (T1 passes on all three finals at 1024–3840 px, §8.3); `.badge-string--*` helpers declared sheet-only, product code writes the regulatory string as text from the i18n bundle (D-F13) | `README.md` |
+| 21 | design-system | principles §3.1 lacked the "sheet is not a rest state" sentence (DS-12) | Paragraph added to `design/principles-and-ia.md` §3.1 after the regions table | `principles-and-ia.md` |
+
+**Deferred to the pages** (page-level, measured on 2026-11-01 after the sweep; each is a one-line change in the named file):
+
+- `clinical-signout.html`: now that base.css carries them, delete the local `.banner--danger` colours (195–196), the `.modal-layer` overrides and width steps (422–431; use `.modal-layer--dock`), the `.backdrop` rule (465) and the navigator ladder (283–287; use `.navigator--wide`). Still failing: the 14 px `#ctlGuided` checkbox under a coarse pointer (390 / 1024 / 1366), and at 390 px the mode slot's right edge is 389 px in a 382 px bar because the short purpose chip stays in the bar on phones (T1).
+- `research-annotation.html`: passes every check. Delete the local `.palette__item` selection colours (401–402) and the `.palette-layer` rules (396–399, 410, 445, 481, 511–514) in favour of base.css.
+- `education-module.html`: delete the local `.palette-layer` rules (391–399) and the `.candidate__radio` rules (406–410), now in base.css; the demo's reduced-motion switch can set `data-motion="reduce"` instead of zeroing the tokens itself. Still failing: `#d-launch` (28 px wide) under a coarse pointer.
 
 ## References
 

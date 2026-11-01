@@ -113,6 +113,7 @@ h4, .h4 { font-size: var(--text-xl);  font-weight: var(--weight-semibold); line-
 
 .skip-link {
   position: absolute; top: var(--space-2); left: var(--space-2); z-index: var(--z-tooltip);
+  display: inline-flex; align-items: center; min-height: var(--target);   /* 24 px; 44 px under a coarse pointer (sweep 2026-11-01: padding alone gave 34 px) */
   padding: var(--space-3) var(--space-5);
   background: var(--color-surface-inverse); color: var(--color-text-inverse);
   border-radius: var(--radius-2); font-weight: var(--weight-semibold);
@@ -293,7 +294,16 @@ body.show-guides .canvas-area::after { display: block; }
 .strip__group { display: flex; align-items: center; gap: var(--space-3); }
 .strip__group--end { margin-left: auto; }
 
-/* F. Navigator (corner overlay; never auto-fades; Design note D12) */
+/* F. Navigator (corner overlay; never auto-fades; Design note D12).
+   Width ladder (sweep 2026-11-01; README §1): --layout-navigator is 320 px
+   at ≥ 3200, 240 at 1080-3199, 180 at 600-1079 and 140 on phones; a page
+   that widens the navigator into a corner cluster (thumbnail + label image
+   + tray) uses .navigator--wide, whose ladder --layout-navigator-wide is
+   400 / 320 (1600-3199) / 300 (1080-1599) / 220 / 140. The breakpoints re-set
+   both tokens. Whatever a page sets, the cap below keeps a right-anchored
+   navigator's left edge at or outside 75 % of the canvas width, so it can
+   never enter the central 50 % at rest (P1; the 300 px cluster of the
+   clinical final reached 6 px into the zone at 1280 px). */
 .navigator {
   position: absolute; top: var(--layout-hud-inset); right: var(--layout-hud-inset);
   width: var(--layout-navigator);
@@ -304,6 +314,8 @@ body.show-guides .canvas-area::after { display: block; }
   color: var(--color-text-on-canvas);
   overflow: hidden;
 }
+.navigator--wide { width: var(--layout-navigator-wide); }
+.canvas-area .navigator { max-width: calc(25% - var(--layout-hud-inset)); }
 .navigator__thumb { position: relative; display: block; width: 100%; aspect-ratio: 2 / 1; background: var(--grey-22); }
 .navigator__thumb svg, .navigator__thumb img { width: 100%; height: 100%; }
 .navigator__viewport {
@@ -616,7 +628,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: not-allowed; }
 /* 6.7 Toggle (switch) -------------------------------------------------------- */
 .toggle {
   display: inline-flex; align-items: center; gap: var(--space-4);
-  min-height: var(--target-control); cursor: pointer; color: var(--color-text);   /* a switch is a control: 24 px, 44 px under coarse */
+  min-height: var(--target-control); min-width: var(--target-control); cursor: pointer; color: var(--color-text);   /* a switch is a control: 24 px, 44 px under coarse, in both axes (a track-only switch measured 36 px wide) */
 }
 .toggle__track {
   position: relative; width: 36px; height: 20px; border-radius: var(--radius-full);
@@ -672,7 +684,13 @@ textarea.input { padding: var(--space-3) var(--space-4); min-height: 72px; resiz
   width: 100%; min-height: var(--target-control); padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-2); color: var(--color-text); font-size: var(--font-size-body); text-align: left;
 }
-.menu__item:hover, .menu__item.is-hover, .menu__item[aria-selected="true"] { background: var(--color-control-bg-hover); }
+.menu__item:hover, .menu__item.is-hover { background: var(--color-control-bg-hover); }
+.menu__item:hover .key, .menu__item.is-hover .key { color: var(--color-text); }   /* the key hint is secondary text (3.6:1 on the hover colour); it lifts with the row */
+/* Selected / active-descendant row: the selection colour plus the 2 px
+   indicator bar, as in every list (sweep 2026-11-01; was the hover colour,
+   which left secondary text at 3.6:1 and made hover and selection
+   indistinguishable, research D-F12). */
+.menu__item[aria-selected="true"], .menu__item.is-selected { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }
 .menu__item:disabled, .menu__item.is-disabled { opacity: 0.4; }
 .menu__item .key { margin-left: auto; }
 .menu__item .icon { width: 16px; height: 16px; }
@@ -691,11 +709,32 @@ textarea.input { padding: var(--space-3) var(--space-4); min-height: 72px; resiz
 .palette__list { max-height: 360px; overflow: auto; padding: var(--space-2); }
 .palette__group { padding: var(--space-3) var(--space-4) var(--space-1); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
 .palette__item { display: flex; align-items: center; gap: var(--space-4); min-height: var(--target); padding: var(--space-2) var(--space-4); border-radius: var(--radius-2); color: var(--color-text); }
-.palette__item[aria-selected="true"], .palette__item.is-selected, .palette__item:hover { background: var(--color-control-bg-hover); }
+.palette__item:hover, .palette__item.is-hover { background: var(--color-control-bg-hover); }
+.palette__item:hover .meta, .palette__item.is-hover .meta, .palette__item:hover .key, .palette__item.is-hover .key { color: var(--color-text); }   /* secondary text lifts with the hovered row (3.6:1 otherwise) */
+.palette__item[aria-selected="true"], .palette__item.is-selected { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }   /* distinct from hover: selection colour + indicator bar (sweep 2026-11-01, D-F12) */
 .palette__item .meta { color: var(--color-text-secondary); font-size: var(--text-sm); }
 .palette__item .keys { margin-left: auto; display: inline-flex; gap: 3px; }
 .palette__footer { display: flex; gap: var(--space-5); padding: var(--space-3) var(--space-5); border-top: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); }
 .palette mark { background: transparent; color: var(--color-text); font-weight: var(--weight-bold); }
+/* Palette layer (sweep 2026-11-01): ONE placement rule for the command
+   palette, shared by the finals (research D-F12, education DF-10). The
+   element is a direct child of .app. At ≥ 1080 px it drops from the top bar
+   over the dock column: right-anchored, dock-wide but never wider than
+   25 vw − rail/4, so its left edge stays outside the central 50 % while the
+   dock is a closed drawer (P1), inset below the top bar and above the strip
+   so the badge, label string and mode slots stay visible (P4). At ≤ 1079 px
+   it is the in-flow "sheet" row of the app grid above the bottom bar,
+   ≤ --layout-sheet-max: the canvas yields height instead of being covered
+   (a bottom-anchored overlay still reaches 190 px into the central zone on a
+   1024 × 1366 tablet). No scrim: the canvas stays hittable and a
+   pointer-down outside the palette closes it (page script). Hide it with the
+   `hidden` attribute; .app.palette-open hides the dock while the palette
+   holds the sheet row. */
+.palette-layer { position: absolute; top: var(--layout-topbar); right: 0; width: min(var(--layout-dock), calc(25vw - var(--layout-rail) / 4), calc(100vw - 32px)); max-height: calc(100% - var(--layout-topbar) - var(--layout-strip)); z-index: var(--z-palette); display: flex; flex-direction: column; }
+.palette-layer[hidden] { display: none; }
+.palette-layer .palette { width: 100%; max-height: 100%; display: flex; flex-direction: column; border-top: 0; border-right: 0; border-radius: 0 0 0 var(--radius-4); }
+.palette-layer .palette__list { flex: 1 1 auto; min-height: 0; max-height: min(420px, 55vh); }
+.app--embedded .palette-layer, .app--widget .palette-layer { width: min(360px, calc(100vw - 32px)); }   /* no dock column in the iframe / widget variants (their --layout-dock is 0) */
 
 /* 6.10 Panel, sections, lists ------------------------------------------------ */
 .panel { display: flex; flex-direction: column; background: var(--color-surface-0); min-width: 0; }
@@ -897,6 +936,13 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
 .banner--warning .banner__glyph, .banner--danger .banner__glyph { border-radius: 2px; }
 .banner--danger { background: var(--color-surface-inverse); color: var(--color-text-inverse); border-bottom-color: var(--color-surface-inverse); }
 .banner--danger a { color: inherit; }
+/* Buttons and key hints inside the inverted banner inherit its colour as
+   outline controls (sweep 2026-11-01; a .btn--secondary kept the normal
+   text colour, 1.11:1 on the inverse surface). Hover inverts to a solid
+   control in the banner's text colour. */
+.banner--danger .btn, .banner--danger .key { color: inherit; border-color: currentColor; background: transparent; }
+.banner--danger .btn:hover, .banner--danger .btn.is-hover, .banner--danger .btn:active, .banner--danger .btn.is-active { background: var(--color-text-inverse); color: var(--color-surface-inverse); }
+.banner--danger .btn .key { color: inherit; }
 .banner--persistent { font-weight: var(--weight-semibold); }
 .banner__text { flex: 1; min-width: 0; }
 .banner__text b { font-weight: var(--weight-semibold); }
@@ -931,11 +977,30 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
    transient layer, not a rest state for the P1 test (README §1). */
 .modal-layer { position: absolute; inset: var(--layout-topbar) 0 var(--layout-strip) 0; display: grid; place-items: start end; align-content: start; padding: var(--space-4) var(--space-4) 0 0; z-index: var(--z-modal); pointer-events: none; }
 .modal-layer > * { pointer-events: auto; }
+.modal-layer[hidden] { display: none; }
 .modal-layer .dialog, .modal-layer .palette { width: min(var(--layout-dock), calc(25vw - 24px), calc(100vw - 32px)); max-height: calc(100% - var(--space-4)); }
 .modal-layer .dialog--wide { width: min(640px, calc(25vw - 24px), calc(100vw - 32px)); }
 .modal-layer--left { place-items: start start; padding: var(--space-4) 0 0 calc(var(--layout-rail) + var(--space-4)); }
 .modal-layer--center { place-items: start center; padding: var(--space-8) 0 0; }
 .app--embedded .modal-layer, .app--widget .modal-layer { inset: var(--layout-topbar) 0 var(--layout-strip) 0; }
+.app--embedded .modal-layer .dialog, .app--embedded .modal-layer .palette, .app--widget .modal-layer .dialog, .app--widget .modal-layer .palette { width: min(360px, calc(100vw - 32px)); }   /* no dock column in the iframe / widget variants (their --layout-dock is 0) */
+/* .modal-layer--dock (sweep 2026-11-01; the clinical final's anchored
+   layer): the dialog takes the dock column exactly — flush with the top bar,
+   the right edge and the strip, dock-wide but never wider than 25 vw − rail/4
+   (its left edge stays outside the central 50 % while the dock is a closed
+   drawer), as tall as its content up to the column — so it reads as a panel
+   in the dock's place, which is what the hand-off and Dx-gate dialogs are.
+   The default layer keeps the 8 px inset and the rounded card. */
+.modal-layer--dock { padding: 0; }
+.modal-layer--dock .dialog, .modal-layer--dock .dialog--wide, .modal-layer--dock .palette { width: min(var(--layout-dock), calc(25vw - var(--layout-rail) / 4), calc(100vw - 32px)); max-height: 100%; border-top: 0; border-right: 0; border-radius: 0 0 0 var(--radius-4); }
+/* No-scrim rule (P1; all three finals adopted it): a dialog or palette in an
+   anchored layer never dims tissue, so .backdrop is hidden everywhere except
+   as the first child of .modal-layer--center (blocking plates), where it
+   sits behind the plate's card. A pointer-down outside a modal dialog closes
+   it (page script); a non-modal panel leaves the slide operable. */
+.backdrop { display: none; }
+.modal-layer--center > .backdrop:first-child { display: block; z-index: 0; }
+.modal-layer--center > .backdrop:first-child ~ * { position: relative; z-index: 1; }
 
 .sheet {
   position: absolute; left: 0; right: 0; bottom: 0; max-height: var(--layout-sheet-max);
@@ -995,6 +1060,7 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
 .skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, var(--color-skeleton-hi), transparent); animation: skeleton-shimmer 1.4s infinite; }
 @keyframes skeleton-shimmer { to { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .skeleton::after { animation: none; } }
+[data-motion="reduce"] .skeleton::after { animation: none; }   /* class twin of the media query (tokens.css §4) */
 .skeleton--text { height: 1em; width: 100%; }
 .skeleton--thumb { width: 64px; height: 40px; }
 .skeleton--row { height: 44px; }
@@ -1003,6 +1069,7 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
 .progress-bar--indeterminate span { width: 30%; animation: progress-slide 1.2s infinite var(--motion-ease); }
 @keyframes progress-slide { from { transform: translateX(-100%); } to { transform: translateX(400%); } }
 @media (prefers-reduced-motion: reduce) { .progress-bar--indeterminate span { animation: none; width: 100%; opacity: .5; } }
+[data-motion="reduce"] .progress-bar--indeterminate span { animation: none; width: 100%; opacity: .5; }
 
 /* 6.17 Empty and error states (inside panels) ------------------------------------ */
 .empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-8) var(--space-6); text-align: center; color: var(--color-text-secondary); font-size: var(--text-sm); }
@@ -1026,16 +1093,24 @@ button.indicator:hover, .indicator.is-hover { background: var(--color-control-bg
 .option.is-correct .option__feedback, .option.is-incorrect .option__feedback { color: var(--color-text); }
 .option.is-correct { border-color: var(--color-text); }
 .option.is-incorrect { border-color: var(--color-border-strong); border-style: dashed; }
-.candidate { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-4); align-items: center; min-height: var(--target); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-2); }
+.candidate { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-4); align-items: center; min-height: var(--target); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-2); }
 .candidate__letter { font-family: var(--font-mono); font-weight: 700; width: 24px; height: 24px; display: grid; place-items: center; border: 1.5px solid var(--color-border-strong); border-radius: var(--radius-1); }
-.candidate[aria-checked="true"], .candidate.is-selected, .candidate:has(.candidate__radio[aria-checked="true"]) { border-color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-text); }
+.candidate[aria-checked="true"], .candidate.is-selected, .candidate:has(.candidate__radio[aria-checked="true"]), .candidate:has(.candidate__radio input:checked) { border-color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-text); }
+.candidate.is-selected .candidate__letter, .candidate:has(.candidate__radio[aria-checked="true"]) .candidate__letter, .candidate:has(.candidate__radio input:checked) .candidate__letter { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
 .candidate__desc { font-size: var(--text-sm); }
-/* Preferred markup (revision 2026-11-01): the radio is its own button
-   (letter + description) and "Fly there" is a sibling, so no control nests
-   inside another (axe nested-interactive). The old pattern (role="radio" on
-   the row) still styles. */
-.candidate__radio { grid-column: 1 / span 2; display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; min-height: var(--target-control); padding: 0; text-align: left; color: inherit; border-radius: var(--radius-1); }
+/* Preferred markup (sweep 2026-11-01, the education final's pattern): the
+   row is a <label class="candidate__radio"> holding a native
+   <input type="radio" name="…"> (visually hidden by clipping, not by size or
+   opacity, so it keeps a --target box under the letter and stays focusable),
+   the letter box and the description, inside a <fieldset> with a hidden
+   legend; "Fly there" is a labelled sibling <button>. Arrow keys move and
+   choose natively, no control nests inside another (axe nested-interactive)
+   and the Tab order is radio group → Fly there × n → footer. The earlier
+   pattern (a <button role="radio"> as the row) still styles. */
+.candidate__radio { grid-column: 1 / span 2; display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; min-height: var(--target-control); padding: 0; text-align: left; color: inherit; border-radius: var(--radius-1); cursor: pointer; }
 .candidate__radio:hover { background: var(--color-row-hover); }
+.candidate__radio input[type="radio"] { position: absolute; left: var(--space-3); top: 50%; width: var(--target); height: var(--target); margin: calc(var(--target) / -2) 0 0; clip-path: inset(50%); pointer-events: none; }
+.candidate:has(.candidate__radio input:focus-visible) .candidate__radio { box-shadow: var(--focus-shadow); }
 .score { display: inline-flex; align-items: center; gap: var(--space-3); font-family: var(--font-mono); font-size: var(--text-sm); }
 .stepper { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); color: var(--color-text-secondary); }
 .stepper__dots { display: inline-flex; gap: 4px; }
@@ -1141,7 +1216,7 @@ body.show-live [data-synthetic] { position: relative; }
 
 /* 4K */
 @media (min-width: 3200px) {
-  :root { --layout-dock: 400px; --layout-navigator: 320px; --font-size-body: var(--text-lg); --font-size-strip: var(--text-md); --font-size-hud: var(--text-md); }
+  :root { --layout-dock: 400px; --layout-navigator: 320px; --layout-navigator-wide: 400px; --font-size-body: var(--text-lg); --font-size-strip: var(--text-md); --font-size-hud: var(--text-md); }
 }
 
 /* Laptop and tablet landscape: dock becomes a drawer over the canvas edge */
@@ -1153,15 +1228,15 @@ body.show-live [data-synthetic] { position: relative; }
   }
   .app:not(.dock-open) .dock { display: none; }
   .app.dock-open { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
-  :root { --layout-navigator: 240px; }
+  :root { --layout-navigator: 240px; --layout-navigator-wide: 300px; }
 }
 
 /* Tablet portrait: rail → bottom bar; dock → bottom sheet */
 @media (min-width: 600px) and (max-width: 1079px) {
   .app {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar) var(--layout-strip);
-    grid-template-areas: "topbar" "canvas" "bottombar" "strip";
+    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-bottombar) var(--layout-strip);   /* the auto row is the in-flow "sheet" (palette layer); 0 px while empty */
+    grid-template-areas: "topbar" "canvas" "sheet" "bottombar" "strip";
   }
   .rail { display: none; }
   .bottombar { display: flex; }
@@ -1170,7 +1245,7 @@ body.show-live [data-synthetic] { position: relative; }
     display: flex; position: absolute; left: 0; right: 0; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); width: auto; max-height: var(--layout-sheet-max);
     border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet);
   }
-  :root { --layout-navigator: 180px; --layout-rail: 0px; }
+  :root { --layout-navigator: 180px; --layout-navigator-wide: 220px; --layout-rail: 0px; }
   /* Keep the badge, the full label string (≥ 1024) and the mode indicator:
      the identity compacts to the accession; meta, QA/worklist chips and the
      purpose chip move into the dock's Display QA and Case sections (the
@@ -1186,7 +1261,14 @@ body.show-live [data-synthetic] { position: relative; }
 @media (max-width: 1079px) {
   .modal-layer, .modal-layer--left, .modal-layer--center { inset: var(--layout-topbar) 0 calc(var(--layout-bottombar) + var(--layout-strip)) 0; place-items: end stretch; align-content: end; padding: 0; }
   .modal-layer .dialog, .modal-layer .dialog--wide, .modal-layer .palette { width: 100%; max-height: var(--layout-sheet-max); border-radius: var(--radius-5) var(--radius-5) 0 0; }
+  .modal-layer--dock .dialog, .modal-layer--dock .dialog--wide, .modal-layer--dock .palette { border-top: 1px solid var(--color-border-strong); }
   .app--embedded .modal-layer, .app--widget .modal-layer { inset: var(--layout-topbar) 0 var(--layout-strip) 0; }
+  /* The palette layer takes the grid's in-flow "sheet" row above the bottom
+     bar (≤ 40 % high; the canvas yields height) instead of floating. */
+  .palette-layer, .app--embedded .palette-layer, .app--widget .palette-layer { position: static; grid-area: sheet; top: auto; right: auto; width: auto; max-height: var(--layout-sheet-max); z-index: auto; }
+  .palette-layer .palette { max-height: var(--layout-sheet-max); border: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); }
+  .palette-layer .palette__list { max-height: none; }
+  .app.palette-open .dock, .app.palette-open.dock-open .dock { display: none; }
 }
 /* Below 1024 px the label string is one tap away (badge → About) */
 @media (max-width: 1023px) {
@@ -1195,11 +1277,11 @@ body.show-live [data-synthetic] { position: relative; }
 
 /* Phone */
 @media (max-width: 599px) {
-  :root { --layout-topbar: 44px; --layout-bottombar: 56px; --layout-navigator: 140px; --layout-hud-inset: 8px; }
+  :root { --layout-topbar: 44px; --layout-bottombar: 56px; --layout-navigator: 140px; --layout-navigator-wide: 140px; --layout-hud-inset: 8px; }
   .app {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar);
-    grid-template-areas: "topbar" "canvas" "bottombar";
+    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-bottombar);   /* auto row: the in-flow "sheet" (palette layer) */
+    grid-template-areas: "topbar" "canvas" "sheet" "bottombar";
   }
   .rail, .dock, .strip { display: none; }
   .bottombar { display: flex; }
@@ -1233,6 +1315,10 @@ body.show-live [data-synthetic] { position: relative; }
   .tool__key { display: none; }       /* no keyboard hints on touch */
   .hud__item { padding: var(--space-2) var(--space-4); }
   .segmented__item { min-height: calc(var(--target) - 4px); min-width: var(--target); }   /* 40 px items inside a 44 px control; no item narrower than 44 */
+  .toggle__track { width: 44px; height: 24px; }                                           /* the switch track itself reaches 44 px (sweep 2026-11-01) */
+  .toggle__track::after { width: 20px; height: 20px; }
+  .toggle[aria-checked="true"] .toggle__track::after, .toggle.is-on .toggle__track::after { transform: translateX(20px); }
+  .toggle[aria-checked="true"] .toggle__track::before, .toggle.is-on .toggle__track::before { left: 7px; line-height: 24px; }
   .navigator__pan { grid-template-columns: auto 1fr auto; grid-template-rows: auto 1fr auto; }   /* 44 px pads hug the thumbnail edges */
   .navigator__pan .up { align-self: start; } .navigator__pan .down { align-self: end; }
   .navigator__pan .left { justify-self: start; } .navigator__pan .right { justify-self: end; }
@@ -1245,6 +1331,10 @@ body.show-live [data-synthetic] { position: relative; }
 .is-coarse .tool__key { display: none; }
 .is-coarse .hud__item { padding: var(--space-2) var(--space-4); }
 .is-coarse .segmented__item { min-height: calc(var(--target) - 4px); min-width: var(--target); }
+.is-coarse .toggle__track { width: 44px; height: 24px; }
+.is-coarse .toggle__track::after { width: 20px; height: 20px; }
+.is-coarse .toggle[aria-checked="true"] .toggle__track::after, .is-coarse .toggle.is-on .toggle__track::after { transform: translateX(20px); }
+.is-coarse .toggle[aria-checked="true"] .toggle__track::before, .is-coarse .toggle.is-on .toggle__track::before { left: 7px; line-height: 24px; }
 .is-coarse .navigator__pan { grid-template-columns: auto 1fr auto; grid-template-rows: auto 1fr auto; }
 .is-coarse .navigator__pan .up { align-self: start; } .is-coarse .navigator__pan .down { align-self: end; }
 .is-coarse .navigator__pan .left { justify-self: start; } .is-coarse .navigator__pan .right { justify-self: end; }

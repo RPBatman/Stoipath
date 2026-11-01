@@ -38,7 +38,8 @@
    - Focus ring is luminance-based (near-white on dark, near-black on light),
      2 px, with a 1 px contrasting halo, so it is visible on neutral chrome and
      is never a saturated colour beside tissue (NFR-A3; principles §8.3).
-   - Motion durations collapse to 0 ms under prefers-reduced-motion (NFR-A4).
+   - Motion durations collapse to 0 ms under prefers-reduced-motion (NFR-A4)
+     and under the class twin [data-motion="reduce"] (html or any subtree).
    - Targets: 24 px minimum (WCAG 2.2 SC 2.5.8); under (pointer: coarse)
      --target is 44 px, --target-min rises to 32 px and --target-control (the
      size of chips, badges, small buttons, menu items, layer-row controls) is
@@ -254,6 +255,7 @@
   --layout-dock-max: 520px;
   --layout-strip:    32px;
   --layout-navigator: 240px;
+  --layout-navigator-wide: 320px;   /* .navigator--wide corner cluster (thumbnail + label image + tray); ladder in base.css */
   --layout-bottombar: 56px;   /* phone/tablet-portrait tool bar (72 on tablet) */
   --layout-sheet-max: 40vh;   /* dock as bottom sheet ≤ 40 % height          */
   --layout-canvas-margin: 32px; /* the P7 neutral margin                      */
@@ -577,6 +579,19 @@
     --motion-toast: 0ms;
     --hud-label-fade-delay: 0ms;
   }
+}
+/* Class twin of the media query (sweep 2026-11-01): a page sets
+   data-motion="reduce" on <html> (the settings dialog's "Reduce motion"
+   switch, the component sheet's demo switch, a kiosk profile) or on a
+   subtree, and the same five values apply without the OS preference. Keep
+   the two blocks identical; base.css mirrors the skeleton and indeterminate
+   bar rules under the same attribute.                                     */
+[data-motion="reduce"] {
+  --motion-fast:  0ms;
+  --motion-base:  0ms;
+  --motion-panel: 0ms;
+  --motion-toast: 0ms;
+  --hud-label-fade-delay: 0ms;
 }
 
 /* High-contrast preference: stronger borders, opaque HUD backdrop. */

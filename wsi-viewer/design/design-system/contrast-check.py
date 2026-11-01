@@ -318,6 +318,11 @@ TEXT_PAIRS = [
     ("--color-text-secondary", ["--color-control-selected"], "hidden layer-row name on selected row"),
     ("--color-text", ["--color-surface--1"], "settled 'Sharp' label at rest (0.7 × text) on the strip", 0.7),
     ("--color-text", ["--color-surface-0"], "settled 'Sharp' label at rest (0.7 × text) in the dock / top bar", 0.7),
+    # sweep 2026-11-01
+    ("--color-text-secondary", ["--color-control-selected"], "palette / menu selected row: meta and key hint on the selection colour (was the hover colour, 3.6:1)"),
+    ("--color-text", ["--color-control-bg-hover"], "palette / menu hovered row: meta and key hint lifted to body text on the hover colour"),
+    ("--color-text-inverse", ["--color-surface-inverse"], "danger banner button and key hint (inherit) on the inverse surface (was body text, 1.11:1)"),
+    ("--color-surface-inverse", ["--color-text-inverse"], "danger banner button label on hover (inverted fill)"),
 ]
 # fg_alpha (5th element, optional) models an opacity applied to the text.
 
@@ -337,6 +342,8 @@ NONTEXT_PAIRS = [
     ("--color-control-strong", ["--color-surface-0"], "primary button fill on surface 0"),
     ("--color-accent", ["--color-surface-2"], "accent button fill on surface 2 (dialog layer)"),
     ("--color-canvas-viewport", ["--grey-22"], "navigator viewport rectangle on thumbnail bg"),
+    ("--color-text-inverse", ["--color-surface-inverse"], "danger banner button outline (currentColor) on the inverse surface"),
+    ("--color-control-selected-indicator", ["--color-control-selected"], "palette / menu selected-row indicator bar on the selection colour"),
     ("--color-surface-0", ["--color-border-strong"], "range thumb ring (surface-0) on track (border-strong)"),
     ("--color-border-strong", ["--color-surface-0"], "range track on surface 0"),
     ("--color-text", ["--color-surface-0"], "toggle on-track / range thumb fill on surface 0"),
