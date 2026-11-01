@@ -78,8 +78,7 @@ After a completed cold run **in the same tab**, **reload** the page with the `wa
 ## 4b. OpenSeadragon comparator (evidence row E3), same device, same session
 
 The page shows the same tiles as ours along the same scripted path and records, per waypoint, the time from the last
-camera command to OSD's "all tiles loaded" event (`stage0/comparator/README.md`; protocol §8). URLs (live once the agents
-publish `comparator/` on Mon 2 Nov; use the same label as your prototype runs of that condition):
+camera command to OSD's "all tiles loaded" event (`stage0/comparator/README.md`; protocol §8). URLs (live since Sun 1 Nov, deploy commit `ec825fc`; use the same label as your prototype runs of that condition):
 
 | Viewer | URL |
 |---|---|
