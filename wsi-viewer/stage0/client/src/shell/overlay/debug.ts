@@ -110,7 +110,7 @@ function styleFor(spec: TestStyleSpec, f: Annotation, selected: boolean): Featur
 }
 
 /** The debug view's body (exported for the unit tests' shape check). */
-export function overlayDebugView(shell: ShellApi, handles: Map<string, TestHandle>, nextId: { n: number }): Record<string, unknown> {
+export function overlayDebugView(shell: ShellApi, handles: Map<string, TestHandle>, nextId: { n: number }, stored: Map<ViewId, ImageData>): Record<string, unknown> {
   const info = (id: ViewId): Record<string, unknown> | null => {
     const s = surfaceOf(shell, id);
     if (s === null) return null;
@@ -216,7 +216,8 @@ export function overlayDebugView(shell: ShellApi, handles: Map<string, TestHandl
     worldToClient: (view: ViewId, x: number, y: number) => need(view).worldToClient(x, y),
     invalidate: (view: ViewId) => need(view).invalidate(),
     /** Time n exact renders (JS time; `flush` adds the raster work). */
-    bench: (view: ViewId, n = 20, flush = false) => need(view).bench(n, flush),
+    bench: (view: ViewId, n = 20, flush = false, screen = false) => need(view).bench(n, flush, screen),
+    recent: (view: ViewId) => need(view).recentDraws(),
     setCrosshair: (view: ViewId, on: boolean) => need(view).setCrosshair(on),
     /** A fixed test preview (null clears). */
     setPreview(view: ViewId, spec: PreviewSpec | null): void {
@@ -233,11 +234,23 @@ export function overlayDebugView(shell: ShellApi, handles: Map<string, TestHandl
         else p.label(spec.a[0], spec.a[1], spec.b[0], spec.b[1], spec.text);
       });
     },
+    /** Keep a copy of the on-screen overlay pixels (OVL-6: the screen before the preview and crosshair go on). */
+    storeScreen(view: ViewId): { width: number; height: number; nonZero: number } {
+      const s = need(view);
+      const sctx = s.canvas.getContext('2d');
+      if (sctx === null) throw new Error('no 2D context');
+      const data = sctx.getImageData(0, 0, s.canvas.width, s.canvas.height);
+      stored.set(view, data);
+      let nz = 0;
+      for (let i = 3; i < data.data.length; i += 4) if (data.data[i]! > 0) nz++;
+      return { width: data.width, height: data.height, nonZero: nz };
+    },
     /**
-     * OVL-6: `renderTo` into a same-size canvas against the on-screen overlay (both read with getImageData here, a
-     * test-side read). Returns the mean absolute difference per channel (0–255) and the count of differing pixels.
+     * OVL-6: `renderTo` into a same-size canvas against the on-screen overlay now (`against: 'screen'`) or the copy
+     * kept by storeScreen (`'stored'`); both read with getImageData here, a test-side read. Returns the mean absolute
+     * difference per channel (0–255), the largest one and the count of differing pixels.
      */
-    renderToDiff(view: ViewId): { width: number; height: number; mad: number; maxDiff: number; differing: number; screenNonZero: number; renderNonZero: number } {
+    renderToDiff(view: ViewId, against: 'screen' | 'stored' = 'screen'): { width: number; height: number; mad: number; maxDiff: number; differing: number; screenNonZero: number; renderNonZero: number } {
       const s = need(view);
       const w = s.canvas.width;
       const h = s.canvas.height;
@@ -248,7 +261,9 @@ export function overlayDebugView(shell: ShellApi, handles: Map<string, TestHandl
       const sctx = s.canvas.getContext('2d');
       if (octx === null || sctx === null) throw new Error('no 2D context');
       s.renderTo(octx);
-      const a = sctx.getImageData(0, 0, w, h).data;
+      const ref = against === 'stored' ? stored.get(view) : sctx.getImageData(0, 0, w, h);
+      if (ref === undefined || ref.width !== w || ref.height !== h) throw new Error('no stored screen of this size (call storeScreen first)');
+      const a = ref.data;
       const b = octx.getImageData(0, 0, w, h).data;
       let sum = 0;
       let max = 0;
@@ -277,5 +292,6 @@ export function overlayDebugView(shell: ShellApi, handles: Map<string, TestHandl
 export function exposeOverlayDebug(shell: ShellApi): Disposer {
   const handles = new Map<string, TestHandle>();
   const nextId = { n: 1 };
-  return shell.debug.expose('overlay', () => overlayDebugView(shell, handles, nextId));
+  const stored = new Map<ViewId, ImageData>();
+  return shell.debug.expose('overlay', () => overlayDebugView(shell, handles, nextId, stored));
 }

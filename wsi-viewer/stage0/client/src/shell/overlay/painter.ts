@@ -5,7 +5,7 @@
  *
  * Drawing rules: each stroke is drawn twice, the halo first (`--ann-halo-dark` or `--ann-halo-light`, the stroke width
  * + 2 CSS px, solid, as the design draws it) and then the colour (`--ann-stroke` 1.5 or `--ann-stroke-selected` 2.5 CSS
- * px × renderDpr; dash 6 / 4 CSS px). Fills use `--ann-fill-alpha`. Points are a 5 CSS px dot with a 1 CSS px halo.
+ * px × renderDpr; dash 6 / 4 CSS px). Fills use `--ann-fill-alpha`. Points are a dot of 5 CSS px radius with a 1 CSS px halo.
  * The label pill keeps the Stage-0 measure tool's geometry (600 12 px mono, 20 px high, 6 px padding, 6 px above the
  * midpoint) in token colours (`--ann-halo-dark` backdrop, `--ann-measure` text), hidden below 24 CSS px.
  *
@@ -18,8 +18,11 @@ import type { ColourToken } from './tokens';
 
 /** Dash pattern in CSS px (TOOLS.md §6.2). */
 export const DASH_CSS: readonly [number, number] = [6, 4];
-/** Point dot radius (a 5 CSS px dot) and the sub-2-px feature dot radius, CSS px. */
-export const POINT_RADIUS_CSS = 2.5;
+/**
+ * Point dot radius and the sub-2-px feature dot radius, CSS px. "A 5 CSS px dot" (TOOLS.md §6.2) is read as the radius
+ * (QuPath's default point radius): a 5 px-diameter dot was a speck over tissue in review (TOOLS.md §15.8 O5).
+ */
+export const POINT_RADIUS_CSS = 5;
 export const TINY_RADIUS_CSS = 1.5;
 /** Extra halo width over the stroke, CSS px (1 px each side). */
 export const HALO_EXTRA_CSS = 2;

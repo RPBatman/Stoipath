@@ -128,9 +128,13 @@
 /* Every tab stays reachable: equal widths while they fit, a scrolling strip when they do not (five tabs at 320 px in
    Waves 2–3, while the Measurements tab sits beside Annotations). */
 .dock .tabs { overflow-x: auto; scrollbar-width: none; }
-/* Five visible tabs (Inspector · Annotations · Measurements · Slide · Engine, Waves 2–3) fit a 320 px dock at 4 px padding. */
-.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab { padding: 0 var(--space-2); }
+/* Five visible tabs (Inspector · Annotations · Measurements · Slide · Engine, Waves 2–3) with their counts fit the 320 px
+   docked column and the 1280 px drawer (305 px): 2 px side padding, a 2 px label–count gap and a narrower count pill
+   (measured: 300 px of tabs; Wave 2 screenshot review, where 4 px padding clipped "Engine" by 7 px at 1920). */
 .dock .tabs .tab .count { font-size: 9px; padding: 0 4px; }
+.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab { padding: 0 var(--space-1); gap: var(--space-1); }
+.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab .count { padding: 0 3px; }
+.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab[aria-selected="true"]::after { left: var(--space-1); right: var(--space-1); }
 .dock__body { display: flex; flex-direction: column; }
 .tabpanel { display: none; padding: 0 0 var(--space-6); }
 .tabpanel.is-active { display: block; }
@@ -189,7 +193,10 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 @media (min-width: 1600px) { .app.shell:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; } }
 /* The Library | Context switch of the in-flow sheet (≤ 1079 px, once a Library panel exists). */
 .shell .dock__switch { display: none; flex: 0 0 auto; }
-.shell .dock__head .btn--icon { flex: 0 0 auto; }
+/* The dock and drawer close buttons: base.css's .btn--sm side padding comes after .btn--icon's padding: 0, which
+   squeezed the 16 px glyph of these 24 px buttons to 6 px (TOOLS-QUESTIONS library L5; a base.css fix is a design-system
+   change outside Phase A). */
+.shell .dock__head .btn--icon { flex: 0 0 auto; padding: 0; }
 
 /* ---- D-left. Library (TOOLS.md D10): a drawer over the left edge of the canvas at ≥ 1080 px (no grid column, so the
    WebGL canvas never resizes on a toggle, H13), the in-flow sheet ≤ 1079 px. #lib rules carry an id so base.css's
@@ -221,8 +228,11 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 /* ---- Inspector: the View section shows only once share fills #shareActions ---- */
 .shell #shareActions:empty, .shell .insp-view:has(+ #shareActions:empty) { display: none; }
 
-/* ---- Bottom bar: the navigation buttons leave once the drawing tools are registered (research bottom bar) ---- */
-.shell .bottombar:has([data-cmd="tool:point"]:not([hidden])) .tool--nav { display: none; }
+/* ---- Bottom bar: the navigation buttons leave once the research bar's annotation set is in it, a drawing tool or the
+   class picker (research bottom bar; TOOLS.md §15.1 J9). With Class shown and the navigation buttons kept, the phone
+   bar had 7 targets and overflowed 320 px by 4 px (Wave 2). Pinch, double tap and Search keep zoom, fit and the
+   navigator. ---- */
+.shell .bottombar:has(:is([data-cmd="tool:point"], [data-cmd="class:pick"]):not([hidden])) .tool--nav { display: none; }
 
 /* =============================================================================
    Responsive (base.css breakpoints; principles §7 collapse order)

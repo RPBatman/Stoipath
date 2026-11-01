@@ -95,15 +95,28 @@ export function shapeOf(a: Annotation): ShapeParams | undefined {
   const k = a.properties.stoipath.kind;
   return k === 'rect' || k === 'ellipse' ? a.properties.stoipath.shape : undefined;
 }
+// Stored annotations are values (an update replaces the object), so a cache keyed by the object never goes stale; the
+// list, the class summary and the overlay labels re-read sizes at every render without re-walking the geometry.
+const AREA = new WeakMap<Annotation, { mpp: number; v: number }>();
+const LENGTH = new WeakMap<Annotation, { mpp: number; v: number }>();
+
 /** µm² of a region (exact from `shape` for rect / ellipse); NaN without an mpp or for a non-region. */
 export function areaOf(a: Annotation, mpp: number | null): number {
   if (mpp === null || !isRegionKind(kindOfAnnotation(a))) return NaN;
-  return area_um2(a.geometry, mpp, shapeOf(a));
+  const c = AREA.get(a);
+  if (c !== undefined && c.mpp === mpp) return c.v;
+  const v = area_um2(a.geometry, mpp, shapeOf(a));
+  AREA.set(a, { mpp, v });
+  return v;
 }
 /** µm of a line (measurement, polyline); NaN without an mpp or for a non-line. */
 export function lengthOf(a: Annotation, mpp: number | null): number {
   if (mpp === null || !isLineKind(kindOfAnnotation(a))) return NaN;
-  return length_um(a.geometry, mpp);
+  const c = LENGTH.get(a);
+  if (c !== undefined && c.mpp === mpp) return c.v;
+  const v = length_um(a.geometry, mpp);
+  LENGTH.set(a, { mpp, v });
+  return v;
 }
 /** "0.42 mm²" for a region, "294.3 µm" for a line, "" for a point. */
 export function sizeText(a: Annotation, mpp: number | null): string {
@@ -525,7 +538,7 @@ export class Store implements AnnotationStore {
     }
     for (const a of existing) {
       let b = a;
-      if (this.byId.has(b.id)) b = { ...b, id: this.uuid() };
+      while (this.byId.has(b.id)) b = { ...b, id: this.uuid() };
       if (this.labels.has(b.properties.stoipath.label)) b = this.withLabel(b, this.nextLabel(kindOfAnnotation(b)));
       this.insert(b, this.feats.length);
     }
@@ -619,7 +632,9 @@ export class Store implements AnnotationStore {
     const cls = this.classification(className ?? null);
     if (cls !== null) props.classification = cls;
     if (typeof draft.name === 'string' && draft.name.trim() !== '') props.name = draft.name.trim();
-    return { type: 'Feature', id: this.uuid(), geometry: normalizeGeometry(draft.geometry), properties: props };
+    let id = this.uuid();
+    while (this.byId.has(id)) id = this.uuid();
+    return { type: 'Feature', id, geometry: normalizeGeometry(draft.geometry), properties: props };
   }
 
   /** An Annotation from a parsed file feature (import) or a stored one (load). */
@@ -628,7 +643,7 @@ export class Store implements AnnotationStore {
     const meta = isObj(p['stoipath']) ? (p['stoipath'] as Obj) : null;
     const kind = item.draft.kind;
     let id = item.id;
-    if (id === null || this.byId.has(id) || used.has(id.toLowerCase())) id = this.uuid();
+    while (id === null || this.byId.has(id) || used.has(id.toLowerCase())) id = this.uuid();
     used.add(id.toLowerCase());
     const t = this.now();
     const str = (k: string): string | null => (meta !== null && typeof meta[k] === 'string' && meta[k] !== '' ? (meta[k] as string) : null);

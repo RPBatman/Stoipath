@@ -1,0 +1,76 @@
+/* library module (TOOLS.md §4.3): page-scoped classes the design system lacks, copied from the research final
+   design/screens/final/research-annotation.html (source lines cited), scoped under the module's roots (#tp-cohort,
+   #tp-slides), tokens only. base.css provides .tray*, .chip*, .input, .field*, .section, .btn, .empty; shell.css .sub,
+   .note. The list widget (listbox.ts) adds .lib-list: the listbox and the row-actions toolbar side by side, rows
+   aligned by subgrid, so no control sits inside an option (TOOLS.md §15.9 LB6). */
+
+/* ---- Cohort tab (#tp-cohort) ------------------------------------------------------------------------------------- */
+/* research-annotation.html 295–297 */
+#tp-cohort .filters { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-5); border-bottom: 1px solid var(--color-divider); }
+#tp-cohort .filters .chip { min-height: var(--target-control); min-width: var(--target-control); justify-content: center; cursor: pointer; }
+#tp-cohort .searchrow { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-5) 0; }
+/* the design's max(28px, var(--target-min)) is 32 px under a coarse pointer; the touch target is 44 (SC 2.5.8, layout-check A1) */
+#tp-cohort .searchrow .input { min-height: max(28px, var(--target)); font-size: var(--text-sm); }
+/* research-annotation.html 298–306 (the row is a div role="option" here, not a button) */
+#tp-cohort .slide-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; width: 100%; min-height: 52px; padding: var(--space-3) var(--space-5); text-align: left; color: var(--color-text); border-bottom: 1px solid var(--color-divider); cursor: pointer; }
+#tp-cohort .slide-row:hover, #lib .slide-row.is-target { background: var(--color-row-hover); }
+#tp-cohort .slide-row[aria-selected="true"] { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }
+#tp-cohort .slide-row .thumb { position: relative; width: 56px; height: 34px; background: var(--grey-22); border: 1px solid var(--color-border-strong); border-radius: 2px; overflow: hidden; }
+#tp-cohort .slide-row__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+#tp-cohort .slide-row .name { font-family: var(--font-mono); font-weight: var(--weight-semibold); font-size: var(--text-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#tp-cohort .slide-row .meta { font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; gap: 0 0.3em; flex-wrap: wrap; }
+/* the meta and the tray label break between values, never inside one ("0.24 / µm/px") */
+#tp-cohort .slide-row .meta > span, #tp-slides .tray__label .text > span { white-space: nowrap; }
+#tp-cohort .slide-row .side { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+#tp-cohort .slide-row .chip { min-height: 18px; font-size: var(--text-2xs); padding: 0 6px; }
+/* With a row-actions column (Compare, desktop) the side column moves under the text: the drawer is 272–336 px wide. */
+#tp-cohort .lib-list:not(.no-actions) .slide-row { grid-template-columns: 56px minmax(0, 1fr); padding-right: var(--space-2); }
+#tp-cohort .lib-list:not(.no-actions) .slide-row .side { grid-column: 2; flex-direction: row; align-items: center; justify-content: flex-start; gap: var(--space-2); }
+/* research-annotation.html 307–309 */
+#tp-cohort .state-tag { font: 600 var(--text-2xs)/18px var(--font-mono); padding: 0 6px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+#tp-cohort .state-tag.is-solid { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
+#tp-cohort .state-tag.is-dashed { border-style: dashed; }
+#tp-cohort .lib-foot { border-top: 1px solid var(--color-border); margin-top: var(--space-3); }
+#tp-cohort .lib-openurl { border-bottom: 0; }
+#tp-cohort .lib-openurl__form { padding: 0 var(--space-5); }
+#tp-cohort .lib-openurl__row { display: flex; gap: var(--space-2); align-items: center; }
+#tp-cohort .lib-openurl__row .input { flex: 1 1 auto; min-width: 0; min-height: max(28px, var(--target)); font-size: var(--text-sm); }
+
+/* ---- Slides tab (#tp-slides): base.css .tray*; the label wraps instead of clipping "viewed {pct} %" ------------------ */
+#tp-slides .tray__slide { grid-template-columns: 64px minmax(0, 1fr); cursor: pointer; border-bottom: 1px solid var(--color-divider); }
+#tp-slides .tray__label .text { white-space: normal; display: flex; flex-wrap: wrap; gap: 0 0.3em; }
+#tp-slides .tray__slide.is-target { background: var(--color-row-hover); }
+
+/* ---- the list widget: listbox + row-actions toolbar on one subgrid ------------------------------------------------ */
+#lib .lib-list { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: repeat(var(--rows, 1), auto); }
+#lib .lib-list > .lib-list__box { grid-column: 1; grid-row: 1 / span var(--rows, 1); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: subgrid; gap: 0; }
+#lib .lib-list.no-actions > .lib-list__box { grid-column: 1 / -1; }
+#lib .lib-list > .lib-list__actions { grid-column: 2; grid-row: 1 / span var(--rows, 1); display: grid; grid-template-rows: subgrid; }
+#lib .lib-list > .lib-list__actions[hidden] { display: none; }
+#lib .lib-list__cell { display: flex; align-items: center; gap: var(--space-1); padding: 0 var(--space-3) 0 var(--space-1); border-bottom: 1px solid var(--color-divider); }
+#lib .lib-list__cell[hidden] { display: none; }
+#lib .lib-list__cell.is-current { background: var(--color-control-selected); }
+/* base.css declares .btn--sm after .btn--icon, so a small icon button keeps .btn--sm's side padding and its 20 px glyph
+   is squeezed to 6 px: the row actions take the icon-button box and a 16 px glyph */
+#lib .lib-list__cell .btn--icon { padding: 0; justify-content: center; }
+#lib .lib-list__cell .btn--icon .icon { width: 16px; height: 16px; }
+#lib .lib-list__box > [role="option"]:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--focus-ring), inset 0 0 0 3px var(--focus-halo); }
+#lib .lib-list__box > [role="option"][aria-selected="true"]:focus-visible { box-shadow: inset 2px 0 0 var(--color-control-selected-indicator), inset 0 0 0 2px var(--focus-ring), inset 0 0 0 3px var(--focus-halo); }
+#lib .lib-list__box img { display: block; width: 100%; height: 100%; object-fit: cover; }
+#lib .lib-empty { padding: var(--space-6) var(--space-5); }
+#lib .lib-keys .key { vertical-align: baseline; }
+
+/* coarse pointers: 44 px rows (research-annotation.html 560); keyboard hints go */
+@media (pointer: coarse) {
+  #tp-cohort .slide-row, #tp-slides .tray__slide { min-height: var(--target); }
+  #lib .lib-keys, #tp-cohort .lib-head .meta { display: none; }
+}
+/* phones: the 44 px chips scroll in one row instead of taking two rows of the 40 % sheet */
+@media (max-width: 599px) {
+  #tp-cohort .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  #tp-cohort .filters .chip { flex: 0 0 auto; }
+}
+/* 4K (research-annotation.html 475) */
+@media (min-width: 3200px) {
+  #tp-cohort .slide-row .name { font-size: var(--text-md); }
+}

@@ -248,27 +248,35 @@ export default async function (t) {
   {
     const b = new B.DrawBudget();
     t.eq(b.decide(false, true), 'exact', 'at rest the mode is exact');
-    b.record(5, true);
-    t.eq(b.decide(false, true), 'exact', 'a slow draw at rest never blits');
-    t.eq(b.decide(true, true), 'blit', 'a gesture with an exact-draw EMA above 3 ms switches to blit');
-    b.record(0.4, false);
+    b.recordRender(5, 0, true);
+    t.eq(b.decide(false, true), 'exact', 'a slow render at rest never blits');
+    t.eq(b.decide(true, true), 'blit', 'a gesture with an exact-render average above 3 ms switches to blit');
+    b.recordFrame(0.4, false);
     t.eq(b.decide(true, true), 'blit', 'and stays blit for the rest of the gesture');
-    t.near(b.emaMs, 5, 1e-9, 'blit draws do not move the EMA');
+    t.near(b.emaMs, 5, 1e-9, 'blit frames do not move the average');
     t.eq(b.decide(false, true), 'exact', 'the first settled frame is exact');
+    b.recordRender(0.5, 0, true);
+    t.near(b.emaMs, 0.5, 1e-9, 'an exact render at rest re-seeds the average (fit → L1 leaves no stale average)');
+    t.eq(b.decide(true, true), 'exact', 'so the next gesture starts exact');
     const c = new B.DrawBudget();
-    for (let i = 0; i < 10; i++) c.record(1, true);
-    t.eq(c.decide(true, true), 'exact', 'an EMA ≤ 3 ms keeps exact during a gesture');
-    c.record(9, true);
-    t.near(c.emaMs, 1 + 0.25 * 8, 1e-9, 'EMA weight 0.25');
-    t.eq(c.decide(true, true), 'exact', 'an EMA of exactly 3 ms is not above the budget');
-    c.record(13, true);
-    t.eq(c.decide(true, false), 'exact', 'without a blit source it stays exact');
+    c.recordRender(1, 0, true);
+    for (let i = 0; i < 4; i++) c.recordRender(1, 0, false);
+    t.eq(c.decide(true, true), 'exact', 'an average ≤ 3 ms keeps exact during a gesture');
+    c.recordRender(9, 0, false);
+    t.near(c.emaMs, 1 + 0.25 * 8, 1e-9, 'during a gesture the average moves with weight 0.25');
+    t.eq(c.decide(true, true), 'exact', 'an average of exactly 3 ms is not above the budget');
+    c.recordRender(13, 0, false);
+    t.eq(c.decide(true, false), 'exact', 'without an off-DOM canvas it stays exact');
     t.eq(c.decide(true, true), 'blit', 'with one it blits');
     t.eq(c.switches, 1, 'switches are counted');
+    const e = new B.DrawBudget();
+    e.recordRender(40, 38, true);
+    t.near(e.emaMs, 2, 1e-9, 'an index rebuild inside a render is kept out of the average (40 ms − 38 ms build)');
     const d = new B.DrawBudget();
-    for (let i = 1; i <= 200; i++) d.record(i, true);
-    t.eq(d.samples, 120, 'the p95 window keeps the last 120 draws');
+    for (let i = 1; i <= 200; i++) d.recordFrame(i, i % 2 === 0);
+    t.eq(d.samples, 120, 'the p95 window keeps the last 120 drawing frames');
     t.eq(d.p95(), 194, 'p95 is the nearest-rank 95th percentile of the window (81…200: rank 114 → 194)');
+    t.eq(d.recent()[0].slice(0, 2), [81, false], 'recent() lists the window oldest first with its kind');
   }
 
   // ------------------------------------------------------------------ raster
@@ -437,18 +445,18 @@ export default async function (t) {
       t.eq(cross, ['rgba(0, 0, 0, 0.85)', '#f7f7f7'], 'the crosshair is drawn last: halo, then --ann-measure');
       s.setCrosshair(false);
       frame({ moved: false, settled: true });
-      // a slow gesture: every exact draw costs 5 ms on the fake clock → the EMA crosses 3 ms → blit
+      // a slow gesture: every clock read advances 5 ms, so an exact render measures 5 ms → the average crosses 3 ms
       const drawSlow = (patch) => {
         const base = now;
-        let calls = 0;
-        performance.now = () => (calls++ === 0 ? base : base + 5);
+        let tick = base;
+        performance.now = () => (tick += 5);
         frame(patch);
         now = base + 16;
         performance.now = () => now;
       };
       let slowFrames = 0;
       while (s.stats.mode !== 'blit' && slowFrames < 12) drawSlow({ moved: true, settled: false, cx: 505 + slowFrames++ });
-      t.ok(s.stats.mode === 'blit' && slowFrames <= 6, `during a gesture, an exact-draw EMA above 3 ms switches the surface to blit (after ${slowFrames} frames of 5 ms, EMA ${s.stats.emaMs.toFixed(2)} ms)`);
+      t.ok(s.stats.mode === 'blit' && slowFrames <= 6, `during a gesture, an exact-render average above 3 ms switches the surface to blit (after ${slowFrames} frames of 5 ms, average ${s.stats.emaMs.toFixed(2)} ms)`);
       t.ok(s.counters.blitSourceRenders === 1, 'the switch frame renders the blit source exactly once');
       const blitsBefore = s.stats.blits;
       drawSlow({ moved: true, settled: false, cx: 515, k: 1.1 });
@@ -456,9 +464,21 @@ export default async function (t) {
       const di = canvas.ctx.calls.filter((c) => c[0] === 'drawImage').pop();
       t.ok(di !== undefined && Math.abs(di[3] - 1000 * 1.1) < 1e-9, `the blit scales the last exact frame by k/k0 (${di?.[3]} px wide)`);
       const exactBefore = s.stats.exactDraws;
-      frame({ moved: false, settled: true });
+      drawSlow({ moved: false, settled: true });
       t.eq([s.stats.mode, s.stats.exactDraws - exactBefore], ['exact', 1], 'the first settled frame redraws exactly and returns to exact mode');
       t.eq(s.counters.lastExactFrame, s.counters.lastSettleFrame, 'the exact redraw is in the settle frame itself');
+      t.eq(s.counters.blitSourceRenders, 1, 'the settle frame renders directly (only direct renders feed the average)');
+      s.setCrosshair(true);
+      drawSlow({ moved: false, settled: true });
+      t.eq(s.counters.blitSourceRenders, 2, 'an overlay-only change on an expensive view renders the sources once into the off-DOM canvas');
+      const lastDi = canvas.ctx.calls.filter((c) => c[0] === 'drawImage').pop();
+      t.eq(lastDi?.length, 3, 'and copies it with one identity drawImage at (0, 0)');
+      s.setCrosshair(false);
+      frame({ moved: false, settled: true });
+      t.eq(s.counters.blitSourceRenders, 2, 'further overlay-only changes recomposite without re-rendering the sources');
+      drawSlow({ moved: true, settled: false, cx: 530 });
+      t.eq([s.stats.mode, s.counters.blitSourceRenders], ['blit', 2], 'the next gesture starts as a pure blit of that render');
+      frame({ moved: false, settled: true });
       const h = s.hitTest({ clientX: 500, clientY: 400, include: 'both' });
       t.eq([h?.featureId, h?.part], ['x', 'body'], 'hitTest goes through the projection (client → world)');
       off();

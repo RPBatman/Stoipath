@@ -1,461 +1,273 @@
 /**
- * Measure tool (design keymap B `M`; handoff §2 annotation list; WCAG 2.5.7 non-drag alternative).
+ * The Stage-0 Select / pan and Measure tools as ToolControllers on core's ToolHost and pointer router (TOOLS.md D7,
+ * D19; integrator file until Wave 4, when draw-tools' seven tools pass DRW-6 and this file is deleted).
  *
- * Ways to measure, all producing the same record:
- *  - mouse or pen drag: press at A, drag, release at B (the tool claims the pointer; the camera does not drag);
- *  - mouse or pen click-click (the non-drag alternative): click A, move freely (the line previews), click B;
- *  - touch tap-tap: touch pointers are never withheld from the engine (handoff §4.2), so one finger pans and two
- *    fingers pinch-zoom exactly as with Select; a tap (one finger, < 10 CSS px of travel, no second finger) places a
- *    point. The engine's double tap (a second down within 300 ms and 30 CSS px) zooms and places nothing, and cancels
- *    the point its first tap placed;
- *  - keyboard: Enter places A at the viewport centre, arrow keys pan the slide under the centre crosshair,
- *    Enter places B. Esc cancels an open measurement; Space held pans with the pointer while the tool is active.
- * A finger that lands while a pen or mouse measurement is being dragged pans the slide (pen annotates while a finger
- * pans, FR-V11); the measurement continues in slide coordinates.
- * Points are stored in level-0 (world) px; length = hypot(Δx, Δy) × mpp (µm), independent of zoom and DPR.
+ * Wave 2 (TOOLS-QUESTIONS 2026-11-01 annotations A1, overlay O-Q2 option (a)): core's router is the one pointer
+ * authority on the pane hosts and the annotation store owns `undo`, `redo` and `deleteSelected`, so the Stage-0 tool
+ * keeps its behaviour but no longer has listeners, a measurement list or a canvas of its own:
+ *  - a measurement is committed into the store as a `measurement` LineString (unclassified), so it shares the one undo
+ *    stack, the Annotations list, persistence and GeoJSON export, and the store says "Measured M1 · 294.3 µm" (the
+ *    shell-check sentence, byte for byte) and the delete / undo / redo sentences;
+ *  - the committed measurements are drawn by the store's `my-measurements` overlay source (z 400) with their length
+ *    pill; the in-progress line is the tool preview (OverlayPainter), and the centre crosshair is core's
+ *    (`setCrosshair` for placement tools, TOOLS.md §15.4 C7). Nothing here touches a CanvasRenderingContext2D (D4).
  *
- * Drawing: one 2D canvas above the WebGL canvas, same backing size (device px), re-projected inside the engine's
- * frame hook only when the camera moved or the set changed. In the product, annotations are GPU layers of the
- * engine; this overlay is the Stage-0 stand-in.
+ * Ways to measure, all producing the same feature: mouse or pen drag (press at A, drag, release at B); click-click (the
+ * SC 2.5.7 alternative: click A, the line follows the pointer, click B); touch tap-tap (touch always pans and pinches;
+ * core delivers taps, and a double tap's first tap is never a point, §15.4 C1); keyboard (Enter places A at the centre
+ * crosshair, the arrow keys pan the slide under it, Enter places B). Esc (the shell's cascade) or ⌫ cancels point 1;
+ * Space held pans with the pointer (core). Points are level-0 px; length = hypot(Δx, Δy) × mpp, independent of zoom.
  */
-import type { FrameSnapshot, Viewer } from '../viewer';
+import type { AnnotationService, InputModality, OverlayPainter, Position, PreviewStyle, ToolContext, ToolController, ToolKey, ToolPointerEvent, ViewHandle } from './contracts';
 import { formatLengthUm } from './format';
 
-export interface Measurement {
-  id: number;
-  ax: number;
-  ay: number;
-  bx: number;
-  by: number;
-  um: number;
-}
-
-type Op = { kind: 'add'; m: Measurement } | { kind: 'delete'; m: Measurement; index: number };
-
+/** Mouse / pen travel (CSS px) that turns a click on point 2 into the end of a drag. */
 const DRAG_SLOP_CSS = 4;
-const TAP_SLOP_CSS = 10;
-/** The engine's double-tap rule (input.ts bindDomInput), mirrored so the tool never places a point on a zoom tap. */
-const DOUBLE_TAP_MS = 300;
-const DOUBLE_TAP_CSS = 30;
+/** The in-progress line: chalk, dashed, at the selected width (the overlay draws its halo). */
+const PREVIEW: PreviewStyle = { stroke: '--ann-8', dash: 'dash', fill: false, width: 'selected' };
 
-interface TouchRec {
-  x: number;
-  y: number;
-  t: number;
-  /** Not a tap: a second finger joined, it travelled past the slop, or it is the second half of a double tap. */
-  noTap: boolean;
-}
-
-export interface MeasureStrings {
-  /** Coarse primary pointer (cached by the shell on media-query change; read only on user input). */
+export interface StageToolDeps {
+  annotations: () => AnnotationService | null;
+  /** Transient notice (strip, polite at settle; on phones the HUD tool line). */
+  notice: (text: string) => void;
+  /** Coarse primary pointer (cached media query; read on input and hint refreshes only). */
   coarse: () => boolean;
-  /** Modifier name for the undo hint ("Ctrl" or "⌘"). */
-  mod: string;
 }
 
-export class MeasureTool {
-  active = false;
-  /** Space held: the pointer pans even while the tool is active. */
-  spaceHeld = false;
-  readonly items: Measurement[] = [];
-  selected: number | null = null;
-  pending: { x: number; y: number } | null = null;
-  pendingByKeyboard = false;
-  onChange: () => void = () => {};
-  onNotice: (text: string) => void = () => {};
-  private nextId = 1;
-  private readonly undoStack: Op[] = [];
-  private readonly redoStack: Op[] = [];
-  private hover: { x: number; y: number } | null = null;
-  private dirty = true;
-  private drawnSomething = false;
-  /** Pointer this tool claimed in the capture phase (the engine ignores it; see accept()). */
-  private claim: number | null = null;
+/**
+ * Select / pan of the Stage-0 shell: it claims no pointer, so every drag pans and a click does nothing. draw-tools'
+ * Select (click-select, edit, carry) replaces it in Wave 3; main.ts registers this one only when no module did.
+ */
+export class StageSelectTool implements ToolController {
+  readonly id = 'select' as const;
+  readonly label = 'Select';
+  readonly key = 'V';
+  readonly drawing = false;
+  readonly busy = false;
+  activate(): void {}
+  deactivate(): void {}
+  wantsPointer(): boolean {
+    return false;
+  }
+  wantsDoubleClick(): boolean {
+    return false;
+  }
+  pointerDown(): void {}
+  pointerMove(): void {}
+  pointerUp(): void {}
+  pointerCancel(): void {}
+  hover(): void {}
+  tap(): void {}
+  onKey(): boolean {
+    return false;
+  }
+  placeAtCentre(): void {}
+  cancel(): boolean {
+    return false;
+  }
+  hint(): string {
+    return 'Select / pan';
+  }
+}
+
+/** The Stage-0 measure tool (design keymap B `M`), committing into the annotation store. */
+export class StageMeasureTool implements ToolController {
+  readonly id = 'measure' as const;
+  /** "{label} cancelled" (core on a tool switch or slide change, the Esc cascade): "Measurement cancelled". */
+  readonly label = 'Measurement';
+  readonly key = 'M';
+  readonly drawing = false;
+  private ctx: ToolContext | null = null;
+  /** The pane the pending measurement belongs to (its preview is drawn there). */
+  private view: ViewHandle | null = null;
+  /** Point 1, level-0 px (null = idle). */
+  private readonly a: Position = [0, 0];
+  private pending = false;
+  /** Point 1 was placed with Enter: point 2 is the viewport centre (the preview follows the crosshair). */
+  private byKeyboard = false;
+  /** Where the line ends while it follows a mouse or pen (reused; no allocation per move). */
+  private readonly end: Position = [0, 0];
+  private readonly seg: [Position, Position] = [this.a, this.end];
   private own: number | null = null;
   private downX = 0;
   private downY = 0;
   private movedPastSlop = false;
   private secondPress = false;
-  private readonly ctx: CanvasRenderingContext2D | null;
-  /** Touch pointers currently down (seen, never claimed). */
-  private readonly touches = new Map<number, TouchRec>();
-  private lastTouchDownT = -1e9;
-  private lastTouchDownX = 0;
-  private lastTouchDownY = 0;
-  /** Down time of the tap that placed `pending` (to cancel it when that tap was the first half of a double tap). */
-  private pendingTapT = -1;
 
-  constructor(
-    private readonly overlay: HTMLCanvasElement,
-    private readonly target: HTMLCanvasElement,
-    captureRoot: HTMLElement,
-    private readonly viewer: Viewer,
-    private readonly mpp: number,
-    private readonly strings: MeasureStrings = { coarse: () => false, mod: 'Ctrl' },
-  ) {
-    this.ctx = overlay.getContext('2d');
-    // Capture phase on the canvas area runs before the engine's and this tool's own listeners on the canvas.
-    captureRoot.addEventListener(
-      'pointerdown',
-      (e) => {
-        if (e.target !== target) return;
-        if (e.pointerType === 'touch') {
-          this.claim = null; // touch is always the camera's (pan, pinch, double tap); a tap is read on pointerup
-          this.touchDown(e);
-          return;
-        }
-        const mine = this.active && !this.spaceHeld && e.button === 0 && this.own === null;
-        this.claim = mine ? e.pointerId : null;
-      },
-      { capture: true },
-    );
-    target.addEventListener('pointerdown', (e) => this.down(e));
-    target.addEventListener('pointermove', (e) => this.move(e));
-    target.addEventListener('pointerup', (e) => (e.pointerType === 'touch' ? this.touchUp(e) : this.up(e)));
-    target.addEventListener('pointercancel', (e) => {
-      this.touches.delete(e.pointerId);
-      if (e.pointerId === this.own) this.abortPointer();
-    });
+  constructor(private readonly deps: StageToolDeps) {}
+
+  get busy(): boolean {
+    return this.pending;
   }
 
-  private touchDown(e: PointerEvent): void {
-    const alone = this.touches.size === 0;
-    const dbl = alone && e.timeStamp - this.lastTouchDownT < DOUBLE_TAP_MS && Math.hypot(e.clientX - this.lastTouchDownX, e.clientY - this.lastTouchDownY) < DOUBLE_TAP_CSS;
-    if (dbl) {
-      // The engine zooms on this down. If the first tap of the pair placed point 1, it was a zoom, not a point.
-      if (this.pending !== null && !this.pendingByKeyboard && this.pendingTapT === this.lastTouchDownT) {
-        this.cancel();
-        this.onNotice(this.hint());
-      }
-      this.lastTouchDownT = -1e9; // the engine resets too: a third tap starts a new pair
-    } else if (alone) {
-      this.lastTouchDownT = e.timeStamp;
-      this.lastTouchDownX = e.clientX;
-      this.lastTouchDownY = e.clientY;
-    }
-    for (const t of this.touches.values()) t.noTap = true; // a second finger: a pinch, not a tap
-    this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY, t: e.timeStamp, noTap: dbl || !alone });
+  activate(ctx: ToolContext): void {
+    this.ctx = ctx;
   }
 
-  private touchUp(e: PointerEvent): void {
-    const t = this.touches.get(e.pointerId);
-    this.touches.delete(e.pointerId);
-    if (t === undefined || t.noTap || !this.active) return;
-    if (Math.hypot(e.clientX - t.x, e.clientY - t.y) > TAP_SLOP_CSS) return;
-    const p = this.world(e.clientX, e.clientY);
-    if (this.pending === null || this.pendingByKeyboard) {
-      this.pending = p;
-      this.pendingByKeyboard = false;
-      this.secondPress = false;
-      this.pendingTapT = t.t;
-      this.hover = p;
-      this.dirty = true;
-      this.onNotice('Point 1 placed · tap the second point (Select cancels)');
-    } else {
-      this.commit(this.pending, p);
-    }
+  deactivate(): void {
+    this.cancel();
+    this.ctx = null;
   }
 
-  /** The tool's one-line instruction for the current pointer (ux-copy hud.measure.status; touch wording on coarse). */
-  hint(): string {
-    return this.strings.coarse() ? 'Measure: tap two points · Select cancels' : 'Measure: click two points · Space pan · Esc cancel';
+  /** The router asks for mouse / pen primary-button pointers only, and never while Space is held: all of them are ours. */
+  wantsPointer(): boolean {
+    return true;
   }
 
-  /** Engine pointer filter (ViewerOptions.acceptPointer): false = this tool owns the event. */
-  readonly accept = (e: PointerEvent | MouseEvent): boolean => {
-    if (e.type === 'dblclick') return !(this.active && !this.spaceHeld);
-    return !(e instanceof PointerEvent && e.pointerId === this.claim);
-  };
-
-  setActive(on: boolean): void {
-    this.active = on;
-    if (!on) this.cancel();
-    this.dirty = true;
+  /** The engine's double-click zoom would move the slide between the two points. */
+  wantsDoubleClick(): boolean {
+    return true;
   }
 
-  resize(snap: FrameSnapshot): void {
-    if (this.overlay.width !== snap.viewW || this.overlay.height !== snap.viewH) {
-      this.overlay.width = snap.viewW;
-      this.overlay.height = snap.viewH;
-    }
-    this.dirty = true;
-  }
-
-  private world(clientX: number, clientY: number): { x: number; y: number } {
-    const s = this.viewer.snapshot;
-    const o = this.viewer.origin;
-    const dx = (clientX - o.x) * s.renderDpr;
-    const dy = (clientY - o.y) * s.renderDpr;
-    return { x: s.cx + (dx - s.viewW / 2) / s.k, y: s.cy + (dy - s.viewH / 2) / s.k };
-  }
-
-  private down(e: PointerEvent): void {
-    if (e.pointerId !== this.claim) return;
-    this.claim = null;
-    this.own = e.pointerId;
-    try {
-      this.target.setPointerCapture(e.pointerId);
-    } catch {
-      /* capture is a convenience */
-    }
-    this.target.focus({ preventScroll: true });
-    const p = this.world(e.clientX, e.clientY);
-    this.downX = e.clientX;
-    this.downY = e.clientY;
+  pointerDown(ev: ToolPointerEvent): void {
+    this.own = ev.e.pointerId;
+    this.downX = ev.e.clientX;
+    this.downY = ev.e.clientY;
     this.movedPastSlop = false;
-    if (this.pending === null || this.pendingByKeyboard) {
-      this.pending = p;
-      this.pendingByKeyboard = false;
+    ev.view.focus();
+    if (!this.pending || this.byKeyboard) {
+      this.start(ev.view, ev.world, false);
       this.secondPress = false;
-    } else {
-      this.secondPress = true;
-    }
-    this.hover = p;
-    this.dirty = true;
+    } else this.secondPress = true;
+    this.follow(ev.world);
   }
 
-  private move(e: PointerEvent): void {
-    if (e.pointerType === 'touch') {
-      const t = this.touches.get(e.pointerId);
-      if (t !== undefined && !t.noTap && Math.hypot(e.clientX - t.x, e.clientY - t.y) > TAP_SLOP_CSS) t.noTap = true;
-      return;
-    }
-    if (!this.active) return;
-    if (this.own !== null && e.pointerId !== this.own) return;
-    if (this.pending === null || this.pendingByKeyboard) return;
-    if (this.own !== null && Math.hypot(e.clientX - this.downX, e.clientY - this.downY) > DRAG_SLOP_CSS) this.movedPastSlop = true;
-    this.hover = this.world(e.clientX, e.clientY);
-    this.dirty = true;
+  pointerMove(ev: ToolPointerEvent): void {
+    if (ev.e.pointerId !== this.own || !this.pending || this.byKeyboard) return;
+    if (Math.hypot(ev.e.clientX - this.downX, ev.e.clientY - this.downY) > DRAG_SLOP_CSS) this.movedPastSlop = true;
+    this.follow(ev.world);
   }
 
-  private up(e: PointerEvent): void {
-    if (e.pointerId !== this.own) return;
+  pointerUp(ev: ToolPointerEvent): void {
+    if (ev.e.pointerId !== this.own) return;
     this.own = null;
-    const p = this.world(e.clientX, e.clientY);
-    const a = this.pending;
-    if (a === null) return;
-    if (this.secondPress || this.movedPastSlop) this.commit(a, p);
-    else this.onNotice(e.pointerType === 'pen' ? 'Point 1 placed · tap the second point (Esc cancels)' : 'Point 1 placed · click the second point (Esc cancels)');
+    if (!this.pending) return;
+    if (this.secondPress || this.movedPastSlop) this.commit(ev.view, ev.world, ev.e.pointerType === 'pen' ? 'pen' : 'mouse');
+    else this.deps.notice(ev.e.pointerType === 'pen' ? 'Point 1 placed · tap the second point (Esc cancels)' : 'Point 1 placed · click the second point (Esc cancels)');
   }
 
-  private abortPointer(): void {
+  pointerCancel(ev: ToolPointerEvent): void {
+    if (ev.e.pointerId !== this.own) return;
     this.own = null;
-    this.claim = null;
-    if (this.pending !== null && !this.pendingByKeyboard && !this.secondPress) this.cancel();
+    if (this.pending && !this.byKeyboard && !this.secondPress) this.cancel();
   }
 
-  /** Keyboard path: Enter places a point at the viewport centre. */
-  placeAtCentre(): void {
-    const s = this.viewer.snapshot;
-    const c = { x: s.cx, y: s.cy };
-    if (this.pending === null) {
-      this.pending = c;
-      this.pendingByKeyboard = true;
-      this.hover = c;
-      this.dirty = true;
-      this.onNotice('Point 1 placed at the centre · arrow keys pan · Enter places point 2 · Esc cancels');
+  /** Unclaimed movement between the two clicks: the line follows the pointer. */
+  hover(ev: ToolPointerEvent): void {
+    if (this.pending && !this.byKeyboard && ev.view === this.view) this.follow(ev.world);
+  }
+
+  /** A touch tap (one finger, no travel, not half of a double tap; core holds an idle tap for the double-tap window). */
+  tap(world: Position, view: ViewHandle, e: PointerEvent): void {
+    if (!this.pending || this.byKeyboard || view !== this.view) {
+      this.start(view, world, false);
+      this.deps.notice('Point 1 placed · tap the second point (Select cancels)');
+    } else this.commit(view, world, e.pointerType === 'pen' ? 'pen' : 'touch');
+  }
+
+  /** Enter places a point at the centre; ⌫ / Del remove point 1 (the in-progress shape before deleteSelected, §8). */
+  onKey(k: ToolKey, view: ViewHandle): boolean {
+    if (k === 'enter') {
+      this.placeAtCentre(view);
+      return true;
+    }
+    if (k === 'backspace' && this.pending) {
+      this.cancel();
+      this.deps.notice(this.hint());
+      return true;
+    }
+    return false;
+  }
+
+  placeAtCentre(view: ViewHandle): void {
+    const v = view.viewer;
+    if (v === null) return;
+    const s = v.snapshot;
+    if (!this.pending || view !== this.view) {
+      this.a[0] = s.cx;
+      this.a[1] = s.cy;
+      this.start(view, this.a, true);
+      this.deps.notice('Point 1 placed at the centre · arrow keys pan · Enter places point 2 · Esc cancels');
     } else {
-      this.commit(this.pending, c);
+      this.end[0] = s.cx;
+      this.end[1] = s.cy;
+      this.commit(view, this.end, 'keyboard');
     }
   }
 
   cancel(): boolean {
-    const had = this.pending !== null;
-    this.pending = null;
-    this.pendingByKeyboard = false;
-    this.hover = null;
+    const had = this.pending;
+    this.pending = false;
+    this.byKeyboard = false;
     this.secondPress = false;
-    this.pendingTapT = -1;
-    this.dirty = true;
+    if (this.view !== null) this.ctx?.preview(this.view, null);
+    this.view = null;
     return had;
   }
 
-  private commit(a: { x: number; y: number }, b: { x: number; y: number }): void {
-    const um = Math.hypot(b.x - a.x, b.y - a.y) * this.mpp;
+  hint(): string {
+    return this.deps.coarse() ? 'Measure: tap two points · Select cancels' : 'Measure: click two points · Space pan · Esc cancel';
+  }
+
+  // ------------------------------------------------------------------ internals
+
+  private start(view: ViewHandle, p: Position, keyboard: boolean): void {
+    if (this.view !== null && this.view !== view) this.ctx?.preview(this.view, null);
+    this.view = view;
+    this.a[0] = p[0];
+    this.a[1] = p[1];
+    this.end[0] = p[0];
+    this.end[1] = p[1];
+    this.pending = true;
+    this.byKeyboard = keyboard;
+    this.ctx?.preview(view, this.draw);
+  }
+
+  /** Move the free end (and ask the surface to recomposite its preview). */
+  private follow(p: Position): void {
+    this.end[0] = p[0];
+    this.end[1] = p[1];
+    if (this.view !== null) this.ctx?.preview(this.view, this.draw);
+  }
+
+  private commit(view: ViewHandle, b: Position, input: InputModality): void {
+    const ax = this.a[0];
+    const ay = this.a[1];
+    const bx = b[0];
+    const by = b[1];
+    const mpp = view.slide?.mpp ?? null;
     this.cancel();
+    const um = mpp === null ? NaN : Math.hypot(bx - ax, by - ay) * mpp;
     if (!(um > 0)) {
-      this.onNotice('Zero-length measurement discarded');
+      this.deps.notice(mpp === null ? 'This slide has no pixel size, so lengths cannot be measured' : 'Zero-length measurement discarded');
       return;
     }
-    const m: Measurement = { id: this.nextId++, ax: a.x, ay: a.y, bx: b.x, by: b.y, um };
-    this.items.push(m);
-    this.undoStack.push({ kind: 'add', m });
-    this.redoStack.length = 0;
-    this.selected = m.id;
-    this.dirty = true;
-    this.onNotice(`Measured M${m.id} · ${formatLengthUm(um)}`);
-    this.onChange();
-  }
-
-  select(id: number | null): void {
-    this.selected = id;
-    this.dirty = true;
-    this.onChange();
-  }
-
-  remove(id: number): boolean {
-    const index = this.items.findIndex((m) => m.id === id);
-    if (index < 0) return false;
-    const [m] = this.items.splice(index, 1);
-    if (m === undefined) return false;
-    this.undoStack.push({ kind: 'delete', m, index });
-    this.redoStack.length = 0;
-    if (this.selected === id) this.selected = null;
-    this.dirty = true;
-    this.onNotice(this.strings.coarse() ? `Deleted M${m.id} · Undo is in Search` : `Deleted M${m.id} · ${this.strings.mod}+Z to undo`);
-    this.onChange();
-    return true;
-  }
-
-  deleteSelected(): boolean {
-    if (this.selected === null) {
-      this.onNotice('Nothing selected');
-      return false;
-    }
-    return this.remove(this.selected);
-  }
-
-  undo(): void {
-    const op = this.undoStack.pop();
-    if (op === undefined) {
-      this.onNotice('Nothing to undo');
+    const store = this.deps.annotations()?.current(view.id) ?? null;
+    if (store === null) {
+      this.deps.notice('Nothing was measured: no annotation store is open for this slide');
       return;
     }
-    if (op.kind === 'add') {
-      const i = this.items.indexOf(op.m);
-      if (i >= 0) this.items.splice(i, 1);
-      if (this.selected === op.m.id) this.selected = null;
-      this.onNotice(`Undid M${op.m.id}`);
-    } else {
-      this.items.splice(Math.min(op.index, this.items.length), 0, op.m);
-      this.onNotice(`Restored M${op.m.id}`);
-    }
-    this.redoStack.push(op);
-    this.dirty = true;
-    this.onChange();
+    // The store announces "Measured M{n} · {length}"; the new measurement is selected so ⌫ deletes it (Stage-0 parity).
+    const f = store.create({ kind: 'measurement', geometry: { type: 'LineString', coordinates: [[ax, ay], [bx, by]] }, className: null, input });
+    store.select([f.id], input);
   }
 
-  /**
-   * Redo says what changed, as undo does (strip notice and the polite region, replacing any earlier notice): a redone
-   * measurement is back ("Restored M1"), a redone delete is gone again (the delete's own sentence with its undo hint).
-   */
-  redo(): void {
-    const op = this.redoStack.pop();
-    if (op === undefined) {
-      this.onNotice('Nothing to redo');
-      return;
+  /** The tool preview, called by the surface on frames it redraws (world coordinates in; no allocation). */
+  private readonly draw = (p: OverlayPainter): void => {
+    if (!this.pending) return;
+    const pr = p.projection;
+    if (this.byKeyboard) {
+      this.end[0] = pr.cx;
+      this.end[1] = pr.cy;
     }
-    if (op.kind === 'add') {
-      this.items.push(op.m);
-      this.onNotice(`Restored M${op.m.id}`);
-    } else {
-      const i = this.items.indexOf(op.m);
-      if (i >= 0) this.items.splice(i, 1);
-      if (this.selected === op.m.id) this.selected = null;
-      this.onNotice(this.strings.coarse() ? `Deleted M${op.m.id} · Undo is in Search` : `Deleted M${op.m.id} · ${this.strings.mod}+Z to undo`);
+    const a = this.a;
+    const b = this.end;
+    p.polyline(this.seg, PREVIEW, false);
+    p.handle(a[0], a[1], 'vertex');
+    p.handle(b[0], b[1], 'active');
+    if (pr.mpp !== null) {
+      const um = Math.hypot(b[0] - a[0], b[1] - a[1]) * pr.mpp;
+      if (um > 0) p.label(a[0], a[1], b[0], b[1], formatLengthUm(um));
     }
-    this.undoStack.push(op);
-    this.dirty = true;
-    this.onChange();
-  }
-
-  /** Frame hook: re-project when the camera moved or the set changed. */
-  draw(snap: FrameSnapshot): void {
-    if (this.pendingByKeyboard && this.pending !== null && snap.moved) {
-      this.hover = { x: snap.cx, y: snap.cy };
-      this.dirty = true;
-    }
-    if (!snap.moved && !this.dirty) return;
-    this.dirty = false;
-    const ctx = this.ctx;
-    if (ctx === null) return;
-    const W = this.overlay.width;
-    const H = this.overlay.height;
-    const need = this.items.length > 0 || this.pending !== null || this.active;
-    if (!need) {
-      if (this.drawnSomething) {
-        ctx.clearRect(0, 0, W, H);
-        this.drawnSomething = false;
-      }
-      return;
-    }
-    ctx.clearRect(0, 0, W, H);
-    this.drawnSomething = true;
-    const d = snap.renderDpr;
-    const sx = (wx: number): number => (wx - snap.cx) * snap.k + snap.viewW / 2;
-    const sy = (wy: number): number => (wy - snap.cy) * snap.k + snap.viewH / 2;
-    ctx.lineCap = 'round';
-    for (const m of this.items) {
-      const sel = m.id === this.selected;
-      this.line(ctx, sx(m.ax), sy(m.ay), sx(m.bx), sy(m.by), d, sel, false);
-      this.label(ctx, sx(m.ax), sy(m.ay), sx(m.bx), sy(m.by), d, `M${m.id} · ${formatLengthUm(m.um)}`);
-    }
-    if (this.pending !== null) {
-      const b = this.hover ?? this.pending;
-      this.line(ctx, sx(this.pending.x), sy(this.pending.y), sx(b.x), sy(b.y), d, true, true);
-      const um = Math.hypot(b.x - this.pending.x, b.y - this.pending.y) * this.mpp;
-      if (um > 0) this.label(ctx, sx(this.pending.x), sy(this.pending.y), sx(b.x), sy(b.y), d, formatLengthUm(um));
-    }
-    if (this.active) {
-      // Centre crosshair: where Enter places the next point (transient, only while the tool is active).
-      const cx = snap.viewW / 2;
-      const cy = snap.viewH / 2;
-      const r = 9 * d;
-      ctx.setLineDash([]);
-      ctx.strokeStyle = 'rgba(0,0,0,0.75)';
-      ctx.lineWidth = 4 * d;
-      ctx.beginPath();
-      ctx.moveTo(cx - r, cy);
-      ctx.lineTo(cx + r, cy);
-      ctx.moveTo(cx, cy - r);
-      ctx.lineTo(cx, cy + r);
-      ctx.stroke();
-      ctx.strokeStyle = '#f2f2f2';
-      ctx.lineWidth = 1.5 * d;
-      ctx.stroke();
-    }
-  }
-
-  private line(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, d: number, strong: boolean, dashed: boolean): void {
-    ctx.setLineDash(dashed ? [8 * d, 5 * d] : []);
-    ctx.strokeStyle = 'rgba(0,0,0,0.75)';
-    ctx.lineWidth = (strong ? 5 : 4) * d;
-    ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.lineTo(x1, y1);
-    ctx.stroke();
-    ctx.strokeStyle = '#f2f2f2';
-    ctx.lineWidth = (strong ? 3 : 2) * d;
-    ctx.stroke();
-    ctx.setLineDash([]);
-    for (const [x, y] of [
-      [x0, y0],
-      [x1, y1],
-    ] as const) {
-      ctx.beginPath();
-      ctx.arc(x, y, 4 * d, 0, Math.PI * 2);
-      ctx.fillStyle = '#f2f2f2';
-      ctx.fill();
-      ctx.lineWidth = 1.5 * d;
-      ctx.strokeStyle = '#262626';
-      ctx.stroke();
-    }
-  }
-
-  /** Screen-space pill at the midpoint; hidden when < 24 CSS px of the line is on screen (ux-copy hud.measure.label). */
-  private label(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, d: number, text: string): void {
-    if (Math.hypot(x1 - x0, y1 - y0) < 24 * d) return;
-    const mx = (x0 + x1) / 2;
-    const my = (y0 + y1) / 2;
-    ctx.font = `600 ${12 * d}px ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`;
-    const w = ctx.measureText(text).width + 12 * d;
-    const h = 20 * d;
-    const x = mx - w / 2;
-    const y = my - h - 6 * d;
-    ctx.fillStyle = 'rgba(20,20,20,0.85)';
-    ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = '#f2f2f2';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x + 6 * d, y + h / 2);
-  }
+  };
 }

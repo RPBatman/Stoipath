@@ -33,7 +33,26 @@
       "manifest": "manifest.json",
       "mpp": 0.243094,
       "name": "tumor_014",
-      "overlays": [],
+      "overlays": [
+        {
+          "bytes": 188397,
+          "defaultVisible": true,
+          "id": "camelyon16-expert",
+          "kind": "vector",
+          "origin": "reference",
+          "title": "CAMELYON16 expert annotation",
+          "url": "overlays/camelyon16.tumor_014.r36864_66560/camelyon16-expert.geojson"
+        },
+        {
+          "bytes": 20434,
+          "defaultVisible": false,
+          "id": "demo-heatmap",
+          "kind": "raster-grid",
+          "origin": "demo",
+          "title": "Demo heatmap",
+          "url": "overlays/camelyon16.tumor_014.r36864_66560/demo-heatmap.json"
+        }
+      ],
       "region": {
         "fullSlide": false,
         "height": 15360,
@@ -85,7 +104,17 @@
       "manifest": "samples/CMU-1-Small-Region/manifest.json",
       "mpp": 0.499,
       "name": "CMU-1-Small-Region",
-      "overlays": [],
+      "overlays": [
+        {
+          "bytes": 1788,
+          "defaultVisible": false,
+          "id": "demo-heatmap",
+          "kind": "raster-grid",
+          "origin": "demo",
+          "title": "Demo heatmap",
+          "url": "overlays/openslide.CMU-1-Small-Region/demo-heatmap.json"
+        }
+      ],
       "region": {
         "fullSlide": true,
         "height": 2967,
@@ -137,7 +166,17 @@
       "manifest": "samples/CMU-1/manifest.json",
       "mpp": 0.499,
       "name": "CMU-1",
-      "overlays": [],
+      "overlays": [
+        {
+          "bytes": 9001,
+          "defaultVisible": false,
+          "id": "demo-heatmap",
+          "kind": "raster-grid",
+          "origin": "demo",
+          "title": "Demo heatmap",
+          "url": "overlays/openslide.CMU-1/demo-heatmap.json"
+        }
+      ],
       "region": {
         "fullSlide": true,
         "height": 32914,
@@ -189,7 +228,17 @@
       "manifest": "samples/Hamamatsu-2/manifest.json",
       "mpp": 0.22865,
       "name": "Hamamatsu-2",
-      "overlays": [],
+      "overlays": [
+        {
+          "bytes": 7369,
+          "defaultVisible": false,
+          "id": "demo-heatmap",
+          "kind": "raster-grid",
+          "origin": "demo",
+          "title": "Demo heatmap",
+          "url": "overlays/openslide.Hamamatsu-2/demo-heatmap.json"
+        }
+      ],
       "region": {
         "fullSlide": true,
         "height": 39168,
@@ -241,7 +290,17 @@
       "manifest": "samples/JP2K-33003-1/manifest.json",
       "mpp": 0.2498,
       "name": "JP2K-33003-1",
-      "overlays": [],
+      "overlays": [
+        {
+          "bytes": 6862,
+          "defaultVisible": false,
+          "id": "demo-heatmap",
+          "kind": "raster-grid",
+          "origin": "demo",
+          "title": "Demo heatmap",
+          "url": "overlays/openslide.JP2K-33003-1/demo-heatmap.json"
+        }
+      ],
       "region": {
         "fullSlide": true,
         "height": 17497,

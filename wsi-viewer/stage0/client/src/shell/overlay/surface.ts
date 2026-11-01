@@ -33,10 +33,17 @@ type Layer = VectorLayer | RasterLayer;
 
 /** Extra counters for the debug view (window.__shell.tools.overlay(); debug.ts). */
 export interface SurfaceCounters {
-  /** Engine frame of the last exact draw, the last blit, and the last first-settled frame after motion. */
+  /**
+   * Engine frame of the last exact draw, the last blit, the last first-settled frame after motion (OVL-4: after a
+   * blit the exact redraw is ≤ 1 frame later) and the last frame in which the camera moved.
+   */
   lastExactFrame: number;
   lastBlitFrame: number;
   lastSettleFrame: number;
+  lastMovedFrame: number;
+  /** The last settle that ended a blit gesture, and the frame of its exact redraw (−1 until drawn). */
+  lastBlitSettleFrame: number;
+  lastBlitSettleExactFrame: number;
   /** Frames seen, frames that drew, exact re-renders of the blit source. */
   frames: number;
   blitSourceRenders: number;
@@ -75,7 +82,7 @@ export class Surface implements OverlaySurface {
   private readonly tally: DrawTally = { features: 0, vertices: 0, culled: 0, drawn: 0, dots: 0 };
   private readonly viewBox: Box = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
   private readonly st: OverlayStats = { draws: 0, exactDraws: 0, blits: 0, lastMs: 0, emaMs: 0, p95Ms: 0, mode: 'exact', vertices: 0, features: 0, culled: 0 };
-  readonly counters: SurfaceCounters = { lastExactFrame: -1, lastBlitFrame: -1, lastSettleFrame: -1, frames: 0, blitSourceRenders: 0, lastTally: { features: 0, vertices: 0, culled: 0, drawn: 0, dots: 0 }, previewErrors: 0, resizes: 0, lastBuildMs: 0, buildMsTotal: 0 };
+  readonly counters: SurfaceCounters = { lastExactFrame: -1, lastBlitFrame: -1, lastSettleFrame: -1, lastMovedFrame: -1, lastBlitSettleFrame: -1, lastBlitSettleExactFrame: -1, frames: 0, blitSourceRenders: 0, lastTally: { features: 0, vertices: 0, culled: 0, drawn: 0, dots: 0 }, previewErrors: 0, resizes: 0, lastBuildMs: 0, buildMsTotal: 0 };
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -102,6 +109,11 @@ export class Surface implements OverlaySurface {
     return s;
   }
 
+  /** Recent draw times with their kind (debug view). */
+  recentDraws(): [number, boolean, number, number][] {
+    return this.budget.recent();
+  }
+
   /** Mode switches exact → blit since creation (debug view). */
   get modeSwitches(): number {
     return this.budget.switches;
@@ -121,6 +133,16 @@ export class Surface implements OverlaySurface {
     this.layers = [...this.layers, layer].sort((a, b) => a.z - b.z || a.order - b.order);
     this.dirtySources = true;
     let gone = false;
+    // Build a visible source's index in a task of its own, not inside the next engine frame (a 10⁴-vertex layer costs
+    // milliseconds once); if a frame comes first it builds there, as for any version change.
+    if (typeof setTimeout === 'function')
+      setTimeout(() => {
+        if (gone || this.disposed) return;
+        if (layer.poll()) this.dirtySources = true;
+        if (layer.visible) layer.prepare();
+        this.counters.buildMsTotal += layer.buildMsPending;
+        layer.buildMsPending = 0;
+      }, 0);
     return () => {
       if (gone) return;
       gone = true;
@@ -210,9 +232,14 @@ export class Surface implements OverlaySurface {
     const settleNow = !moving && this.wasMoving;
     this.wasMoving = moving;
     if (settleNow) c.lastSettleFrame = s.frame;
+    if (s.moved) c.lastMovedFrame = s.frame;
     const ctx = this.ctx;
     if (ctx === null) return;
     const blitPending = settleNow && this.budget.mode === 'blit';
+    if (blitPending) {
+      c.lastBlitSettleFrame = s.frame;
+      c.lastBlitSettleExactFrame = -1;
+    }
     if (!s.moved && !this.dirtySources && !this.dirtyOverlay && !blitPending) return;
 
     const W = this.canvas.width;
@@ -233,50 +260,79 @@ export class Surface implements OverlaySurface {
 
     const t0 = performance.now();
     const mode = this.budget.decide(moving, this.canBlit());
-    let exact = mode === 'exact';
+    let exact = true;
+    let renderMs = -1;
+    // Only the preview or the crosshair changed, at rest (a rubber band following the pointer).
+    const overlayOnly = !moving && !s.moved && !this.dirtySources && !blitPending;
     if (mode === 'blit') {
-      if (!this.blitValid || this.dirtySources) {
-        this.renderBlitSource();
-        exact = true; // this frame paid for an exact render
-      }
+      // D3 blit: the last exact render, moved and scaled with the camera's affine (rendered now if it is stale).
+      if (!this.blitValid || this.dirtySources) this.renderBlitSource();
       blitTransform(this.blitCam, this.proj, this.bt);
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.globalAlpha = 1;
-      ctx.clearRect(0, 0, W, H);
-      const b = this.blitCanvas;
-      if (b !== null) {
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'low';
-        ctx.drawImage(b, this.bt.tx, this.bt.ty, b.width * this.bt.s, b.height * this.bt.s);
-      }
+      this.composite(ctx, W, H, this.bt.s, this.bt.tx, this.bt.ty);
+      exact = false;
       this.st.blits++;
       c.lastBlitFrame = s.frame;
+    } else if (overlayOnly && this.canBlit() && (this.cacheCurrent() || this.budget.overBudget)) {
+      // An expensive view whose sources did not change: the rubber band recomposites the off-DOM render (identity,
+      // pixel-exact) instead of re-rendering every source per pointer move.
+      if (!this.cacheCurrent()) this.renderBlitSource();
+      this.composite(ctx, W, H, 1, 0, 0);
     } else {
+      // Direct exact render. Only these feed the average: a render into the off-DOM canvas can pay a copy of the
+      // canvas the screen still references, which is not the cost of drawing this view.
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.globalAlpha = 1;
       ctx.clearRect(0, 0, W, H);
+      const r0 = performance.now();
       this.renderSources(ctx, true);
+      renderMs = performance.now() - r0;
       this.blitValid = false;
+    }
+    if (exact) {
       this.st.exactDraws++;
       c.lastExactFrame = s.frame;
+      if (c.lastBlitSettleExactFrame < 0 && c.lastBlitSettleFrame >= 0) c.lastBlitSettleExactFrame = s.frame;
     }
     this.drawExtras(ctx);
     this.st.draws++;
     this.drawnSomething = true;
     this.dirtySources = false;
     this.dirtyOverlay = false;
-    const ms = performance.now() - t0;
-    // An index or cache rebuild is a one-off event, not the per-frame cost D3 budgets: it is reported, and kept out of
-    // the EMA that decides blit mode (it still counts in lastMs and the p95 of draw times).
+    // An index or cache rebuild is a one-off event, not the per-frame cost D3 budgets: it is reported and kept out of
+    // the average that decides blit mode (it still counts in lastMs and the p95 of draw times).
     const build = this.takeBuildMs();
     c.lastBuildMs = build;
     if (build > 0) c.buildMsTotal += build;
-    this.budget.record(ms, exact, build);
+    if (renderMs >= 0) this.budget.recordRender(renderMs, build, !moving);
+    this.budget.recordFrame(performance.now() - t0, exact);
+  }
+
+  /** The off-DOM render is valid for the current camera and sources (an identity composite is exact). */
+  private cacheCurrent(): boolean {
+    if (!this.blitValid || this.dirtySources) return false;
+    const p = this.proj;
+    const b = this.blitCam;
+    return b.cx === p.cx && b.cy === p.cy && b.k === p.k && b.viewW === p.viewW && b.viewH === p.viewH;
+  }
+
+  /** Clear the screen and draw the off-DOM render with scale s at (tx, ty) device px. */
+  private composite(ctx: CanvasRenderingContext2D, W: number, H: number, s: number, tx: number, ty: number): void {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, W, H);
+    const b = this.blitCanvas;
+    if (b === null) return;
+    ctx.imageSmoothingEnabled = s !== 1;
+    ctx.imageSmoothingQuality = 'low';
+    if (s === 1 && tx === 0 && ty === 0) ctx.drawImage(b, 0, 0);
+    else ctx.drawImage(b, tx, ty, b.width * s, b.height * s);
   }
 
   private takeBuildMs(): number {
     let ms = 0;
-    for (const l of this.layers) {
+    const layers = this.layers;
+    for (let i = 0; i < layers.length; i++) {
+      const l = layers[i]!;
       ms += l.buildMsPending;
       l.buildMsPending = 0;
     }
@@ -287,8 +343,9 @@ export class Surface implements OverlaySurface {
     return typeof document !== 'undefined';
   }
 
-  /** Exact render of the sources into the off-DOM blit canvas at the current camera (the blit source). */
-  private renderBlitSource(): void {
+  /** Exact render of the sources into the off-DOM canvas at the current camera (the blit source). Returns ms. */
+  private renderBlitSource(): number {
+    const t0 = performance.now();
     const W = this.canvas.width;
     const H = this.canvas.height;
     if (this.blitCanvas === null) {
@@ -299,7 +356,7 @@ export class Surface implements OverlaySurface {
     if (b.width !== W) b.width = W;
     if (b.height !== H) b.height = H;
     const bctx = this.blitCtx;
-    if (bctx === null) return;
+    if (bctx === null) return 0;
     bctx.setTransform(1, 0, 0, 1, 0, 0);
     bctx.globalAlpha = 1;
     bctx.clearRect(0, 0, W, H);
@@ -312,6 +369,7 @@ export class Surface implements OverlaySurface {
     this.blitCam.viewH = p.viewH;
     this.blitValid = true;
     this.counters.blitSourceRenders++;
+    return performance.now() - t0;
   }
 
   /** Every visible source, bottom to top, in the context's current transform. `record` = feed the stats. */
@@ -371,6 +429,8 @@ export class Surface implements OverlaySurface {
   hitTest(q: HitQuery): Hit | null {
     if (this.disposed) return null;
     this.syncCamera(null);
+    // The next frame must still see anything polled here (a source added or changed since the last frame).
+    for (let i = 0; i < this.layers.length; i++) if (this.layers[i]!.poll()) this.dirtySources = true;
     const p = this.proj;
     const world = toWorld(p, q.clientX, q.clientY);
     const coarse = this.env.isCoarse();
@@ -424,10 +484,12 @@ export class Surface implements OverlaySurface {
    * Debug: time `n` exact renders of the sources into an off-DOM canvas of this size (no preview, no crosshair).
    * `flush` forces rasterisation after each render (a 1-pixel getImageData) so the time includes the raster work.
    */
-  bench(n: number, flush: boolean): { js: number[]; flushed: boolean } {
-    const off = document.createElement('canvas');
-    off.width = this.canvas.width;
-    off.height = this.canvas.height;
+  bench(n: number, flush: boolean, screen = false): { js: number[]; flushed: boolean } {
+    const off = screen ? this.canvas : document.createElement('canvas');
+    if (!screen) {
+      off.width = this.canvas.width;
+      off.height = this.canvas.height;
+    }
     const octx = off.getContext('2d');
     const js: number[] = [];
     if (octx === null) return { js, flushed: flush };

@@ -128,6 +128,7 @@ export class AnnotationsPanel {
   private readonly empty: HTMLElement;
   private readonly emptyText: HTMLElement;
   private readonly status: HTMLElement;
+  private readonly hint: HTMLElement;
   private readonly rows = new Map<string, HTMLElement>();
   private readonly groups = new Map<string, GroupEl>();
   private roving: string | null = null;
@@ -179,7 +180,7 @@ export class AnnotationsPanel {
     this.capNote = h('p', { class: 'note ann-cap', hidden: '' });
     this.emptyText = h('span', { text: EMPTY_TEXT });
     this.empty = h('div', { class: 'empty ann-empty' }, h('span', { class: 'empty__glyph', 'aria-hidden': 'true' }), this.emptyText);
-    const hint = h('p', { class: 'note ann-hint' }, 'QuPath class names are kept verbatim; QuPath RGB is restored on export (FR-A2). ', h('kbd', { class: 'key', text: 'Tab' }), ' moves through the list · ', h('kbd', { class: 'key', text: 'Space' }), ' flies to the item · ', h('kbd', { class: 'key', text: '⌫' }), ' deletes.');
+    const hint = (this.hint = h('p', { class: 'note ann-hint', hidden: '' }, 'QuPath class names are kept verbatim; QuPath RGB is restored on export (FR-A2). ', h('kbd', { class: 'key', text: 'Tab' }), ' moves through the list · ', h('kbd', { class: 'key', text: 'Space' }), ' flies to the item · ', h('kbd', { class: 'key', text: '⌫' }), ' deletes.'));
     this.status = h('p', { class: 'note ann-status', id: 'annStatus' });
     io.actionsRow.append(io.coordsGroup);
     root.replaceChildren(this.chips, tools, this.brushRow, this.list, this.capNote, this.empty, hint, io.actionsRow, io.dropzone, io.report, this.status, io.input);
@@ -299,7 +300,8 @@ export class AnnotationsPanel {
     setAttr(this.list, 'aria-label', `Annotations on ${slideName}, ${plural(total, 'object', 'objects')}; Tab moves, Space flies to the item`);
     const showList = total > 0;
     if (this.list.hidden === showList) this.list.hidden = !showList;
-    if (this.empty.hidden === showList) this.empty.hidden = showList;
+    if (this.empty.hidden !== showList) this.empty.hidden = showList;
+    if (this.hint.hidden === showList) this.hint.hidden = !showList;
     setText(this.emptyText, this.emptyText_());
     const seen = new Set<string>();
     const groupEls: HTMLElement[] = [];

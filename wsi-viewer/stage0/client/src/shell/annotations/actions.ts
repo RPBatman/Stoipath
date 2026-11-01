@@ -11,8 +11,7 @@ import type { Annotation, AnnotationDraft, Box, CommandSource, InputModality, Sh
 import { bbox, expandBox, emptyBox, isEmptyBox, translateShape } from '../geometry';
 import { translateGeometry } from '../interop';
 import type { AnnotationsService } from './service';
-import { UNCLASSIFIED } from './classes';
-import { classNameOf, kindOfAnnotation, labelList, type Store } from './store';
+import { classNameOf, kindOfAnnotation, type Store } from './store';
 
 /** TOOLS.md §6.6 / §6.5: a reference-layer feature is selectable, never editable. */
 export const READ_ONLY_TEXT = 'Read-only layer: Copy to my annotations to edit it';
@@ -281,11 +280,5 @@ export class Actions {
     const copy = st.create(draft);
     st.select([copy.id], inputOf(source));
     return copy;
-  }
-
-  /** "{labels} → {class}" preview text for a pick (palette meta, tests). */
-  pickPreview(name: string): string {
-    const sel = this.selected().filter((r) => r.editable);
-    return sel.length === 0 ? `Class: ${name}` : `${labelList(sel.map((r) => r.feature.properties.stoipath.label))} → ${name || UNCLASSIFIED}`;
   }
 }

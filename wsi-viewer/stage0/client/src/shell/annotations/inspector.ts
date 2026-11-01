@@ -13,8 +13,8 @@
  *
  * share owns `#shareActions` in the same tabpanel; this file writes only inside #inspSelection, at rest.
  */
-import type { Annotation, ShellApi } from '../contracts';
-import { $$, h } from '../dom';
+import type { Annotation } from '../contracts';
+import { h } from '../dom';
 import { formatArea, formatLengthUm, perimeter_um, vertexCount } from '../geometry';
 import { exportProperties } from '../interop';
 import { MOVE_STEP_CSS, MOVE_STEP_CSS_SHIFT, type Actions, type Resolved } from './actions';
@@ -33,12 +33,29 @@ export function localTime(iso: string): string {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 
+/** JSON with one-space indentation and number arrays ([r, g, b]) on one line, as the design's snippet. */
+function prettyJson(v: unknown, pad = ''): string {
+  if (Array.isArray(v)) {
+    if (v.every((x) => typeof x === 'number')) return `[${v.join(',')}]`;
+    const inner = `${pad} `;
+    return `[\n${v.map((x) => inner + prettyJson(x, inner)).join(',\n')}\n${pad}]`;
+  }
+  if (typeof v === 'object' && v !== null) {
+    const inner = `${pad} `;
+    const parts = Object.entries(v as Record<string, unknown>)
+      .filter(([, x]) => x !== undefined)
+      .map(([k, x]) => `${inner}${JSON.stringify(k)}: ${prettyJson(x, inner)}`);
+    return parts.length === 0 ? '{}' : `{\n${parts.join(',\n')}\n${pad}}`;
+  }
+  return JSON.stringify(v) ?? 'null';
+}
+
 /** The QuPath-dialect properties shown in the snippet (export order; the shell's own `stoipath` data left out). */
 export function snippetOf(a: Annotation): string {
   const p = exportProperties(a.properties) as unknown as Record<string, unknown>;
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(p)) if (k !== 'stoipath') out[k] = v;
-  return JSON.stringify(out, null, 1);
+  return prettyJson(out);
 }
 
 export class Inspector {
@@ -46,7 +63,6 @@ export class Inspector {
   renders = 0;
 
   constructor(
-    private readonly shell: ShellApi,
     private readonly service: AnnotationsService,
     private readonly actions: Actions,
   ) {
@@ -57,9 +73,13 @@ export class Inspector {
   }
 
   render(): void {
-    this.renders++;
     const st = this.actions.store();
     const sel = this.actions.selected(st);
+    // skip a rebuild that would write the same content (no redundant DOM writes, TOOLS.md §5.4)
+    const sig = this.signature(sel);
+    if (sig === this.lastSig) return;
+    this.lastSig = sig;
+    this.renders++;
     const a = document.activeElement;
     const focusKey = a instanceof HTMLElement && this.el.contains(a) ? (a.dataset['focus'] ?? null) : null;
     if (sel.length === 0) this.el.replaceChildren(h('p', { class: 'note insp-none', text: NOTHING_SELECTED_TEXT }));
@@ -70,6 +90,19 @@ export class Inspector {
       if (t !== null && !(t instanceof HTMLButtonElement && t.disabled)) t.focus({ preventScroll: true });
       else this.el.closest<HTMLElement>('[role="tabpanel"]')?.focus({ preventScroll: true });
     }
+  }
+
+  private lastSig = '';
+
+  /** What the section shows depends on these only (selection, versions, classes, slide, the fill-free styling). */
+  private signature(sel: readonly Resolved[]): string {
+    const slide = this.actions.slide();
+    const parts = [slide?.key ?? '', String(slide?.mpp ?? ''), String(this.service.classes.version)];
+    for (const r of sel) {
+      const m = r.feature.properties.stoipath;
+      parts.push(`${r.feature.id}:${m?.version ?? 0}:${classNameOf(r.feature) ?? ''}:${r.feature.properties.name ?? ''}:${r.editable ? 'e' : 'r'}:${r.layer?.id ?? ''}`);
+    }
+    return parts.join('|');
   }
 
   // ------------------------------------------------------------------ one selected
@@ -84,8 +117,9 @@ export class Inspector {
     const out: HTMLElement[] = [];
     out.push(h('div', { class: 'sub' }, h('span', { class: 'title', text: `Selected · ${KIND_LABEL[kind].toLowerCase()} ${label}`.trim() }), h('span', { class: 'meta', text: `id ${f.id.slice(0, 8)}…`, title: f.id })));
 
+    // a reference feature is drawn in its layer's style, not the class palette: its swatch is neutral
     const sw = h('span', { class: 'swatch swatch--lg', 'aria-hidden': 'true' });
-    swatchFor(sw, def);
+    swatchFor(sw, r.editable ? def : null);
     out.push(h('div', { class: 'inspector-head' }, sw, this.classSelect(cname, !r.editable), this.flyButton()));
 
     if (r.editable) {
@@ -114,8 +148,10 @@ export class Inspector {
     out.push(kv);
 
     const pre = h('pre', { class: 'snippet', tabindex: '0', role: 'region', 'aria-label': 'GeoJSON properties of the selection', 'data-focus': 'snippet', text: snippetOf(f) });
-    const note =
-      def === null
+    const fileRgb = f.properties.classification?.color;
+    const note = !r.editable
+      ? `From the read-only ${r.layer?.title ?? 'reference'} layer, drawn in that layer's style${fileRgb !== undefined ? `; the file's RGB ${fileRgb.join(',')} stays with it` : ''}.`
+      : def === null
         ? 'Unclassified: no QuPath class is written on export.'
         : `On screen ${def.name} is drawn in ${this.service.classes.paletteName(def)}${def.dash ? ' (dashed)' : ''}; QuPath's RGB ${def.qupathRgb.join(',')} is restored on export (FR-A2).`;
     out.push(h('details', { class: 'section', open: '' }, h('summary', {}, 'GeoJSON properties ', h('span', { class: 'count', text: 'QuPath dialect' })), h('div', { class: 'section__body' }, pre, h('p', { class: 'note', text: note }))));
@@ -180,6 +216,8 @@ export class Inspector {
       if (c.name === common) o.selected = true;
       sel.append(o);
     }
+    // a class this registry does not hold (a reference feature's "Exclusion"): shown as it is
+    if (typeof common === 'string' && this.service.classes.get(common) === undefined) sel.append(h('option', { value: common, text: common, selected: '' }));
     const un = h('option', { value: '', text: UNCLASSIFIED });
     if (common === null) un.selected = true;
     sel.append(un);
@@ -226,14 +264,5 @@ export class Inspector {
     } else if (t instanceof HTMLInputElement && t.id === 'inspName') {
       this.actions.rename(t.dataset['id'] ?? '', t.value, 'keyboard');
     }
-  }
-
-  /** Buttons of the section (tests). */
-  buttons(): string[] {
-    return $$<HTMLElement>('button', this.el).map((b) => b.getAttribute('aria-label') ?? b.textContent ?? '');
-  }
-
-  get shown(): boolean {
-    return this.shell.panels.isShown('inspector');
   }
 }

@@ -27,6 +27,8 @@ export type DockTab = 'inspector' | 'ann' | 'meas' | 'slide' | 'engine' | 'cohor
 export class Dock {
   isOpen = false;
   tab: string;
+  /** The design's initial tab (Library: Slides; Context: Slide), selected when it is claimed before any user choice. */
+  readonly initialTab: string;
   private readonly tabs: HTMLElement[];
   private readonly toggleCbs: ((open: boolean) => void)[] = [];
   private readonly tabCbs: ((tab: string) => void)[] = [];
@@ -42,6 +44,7 @@ export class Dock {
     initialTab: string,
   ) {
     this.tab = initialTab;
+    this.initialTab = initialTab;
     this.tabs = $$<HTMLElement>('[role="tab"]', tablist);
     for (const t of this.tabs) t.addEventListener('click', () => this.select(t.dataset['tab'] ?? '', false));
     tablist.addEventListener('keydown', (e) => {
@@ -207,8 +210,10 @@ export class Panels implements PanelHost {
         for (const b of $$<HTMLElement>(`[data-lib="${id}"]`, this.app)) b.hidden = false;
         this.app.classList.add('has-library');
         for (const b of $$<HTMLElement>('[data-lib=""]', this.app)) b.hidden = false;
-        // The Library's first claimed tab is its initial tab (selected, so its panel is the active one).
-        if (this.lib.visibleTabs().length === 1) this.lib.select(home.tab, false);
+        // The Library's first claimed tab is selected (so its panel is the active one), and the design's initial tab
+        // (Slides) takes over when it is claimed later, as long as the drawer has not been opened yet: modules claim at
+        // install in the §5.1 order, which puts layers (Layers) before library (Slides, Cohort). TOOLS-QUESTIONS L4.
+        if (this.lib.visibleTabs().length === 1 || (home.tab === this.lib.initialTab && !this.lib.isOpen)) this.lib.select(home.tab, false);
       }
       this.syncSwitchers();
       this.onClaim(id);

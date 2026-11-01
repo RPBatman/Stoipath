@@ -384,7 +384,9 @@ export class VectorLayer {
     const d = pen.dpr;
     scratch.ensureDots(flat.n);
     const dots = scratch.dots;
-    for (const g of this.groups) {
+    const groups = this.groups;
+    for (let gi = 0; gi < groups.length; gi++) {
+      const g = groups[gi]!;
       const st = g.style;
       let nd = 0;
       let issued = 0;
@@ -433,7 +435,9 @@ export class VectorLayer {
       }
     }
     // selected features: on top, selected style, handles
-    for (const i of this.selList) {
+    const selList = this.selList;
+    for (let si = 0; si < selList.length; si++) {
+      const i = selList[si]!;
       if (this.visStamp[i] !== stamp) continue;
       const st = this.sel[i] ?? this.base[i];
       if (st === undefined) continue;
@@ -465,25 +469,37 @@ export class VectorLayer {
     const ox = p.viewW / 2 - p.cx * k;
     const oy = p.viewH / 2 - p.cy * k;
     const m = HANDLE_HALF_CSS * d * 2;
-    const inView = (x: number, y: number): boolean => x >= -m && y >= -m && x <= p.viewW + m && y <= p.viewH + m;
+    const loX = -m;
+    const loY = -m;
+    const hiX = p.viewW + m;
+    const hiY = p.viewH + m;
     const s = HANDLE_HALF_CSS * d;
     const mr = MIDPOINT_RADIUS_CSS * d;
     const minSeg = MIDPOINT_MIN_SEGMENT_CSS * d;
     ctx.setLineDash(pen.solid);
     ctx.lineWidth = 1.5 * d;
     ctx.strokeStyle = pen.halo('dark');
+    ctx.fillStyle = pen.colour('--ann-8');
     if (mode === 'box') {
       const x0 = flat.minX[i]! * k + ox;
       const x1 = flat.maxX[i]! * k + ox;
       const y0 = flat.minY[i]! * k + oy;
       const y1 = flat.maxY[i]! * k + oy;
+      const xm = (x0 + x1) / 2;
+      const ym = (y0 + y1) / 2;
+      // corners TL, TR, BR, BL as squares; edge midpoints T, R, B, L as circles (the hit test's order)
       ctx.beginPath();
-      for (const [x, y] of [[x0, y0], [x1, y0], [x1, y1], [x0, y1]] as const) ctx.rect(x - s, y - s, 2 * s, 2 * s);
-      ctx.fillStyle = pen.colour('--ann-8');
+      ctx.rect(x0 - s, y0 - s, 2 * s, 2 * s);
+      ctx.rect(x1 - s, y0 - s, 2 * s, 2 * s);
+      ctx.rect(x1 - s, y1 - s, 2 * s, 2 * s);
+      ctx.rect(x0 - s, y1 - s, 2 * s, 2 * s);
       ctx.fill();
       ctx.stroke();
       ctx.beginPath();
-      for (const [x, y] of [[(x0 + x1) / 2, y0], [x1, (y0 + y1) / 2], [(x0 + x1) / 2, y1], [x0, (y0 + y1) / 2]] as const) addCircle(ctx, x, y, mr);
+      addCircle(ctx, xm, y0, mr);
+      addCircle(ctx, x1, ym, mr);
+      addCircle(ctx, xm, y1, mr);
+      addCircle(ctx, x0, ym, mr);
       ctx.fill();
       ctx.stroke();
       return;
@@ -499,14 +515,13 @@ export class VectorLayer {
       for (let j = flat.ptOf[r]!; j < e && budget > 0; j++) {
         const x = flat.xy[2 * j]! * k + ox;
         const y = flat.xy[2 * j + 1]! * k + oy;
-        if (!inView(x, y) || (Math.abs(x - lx) < 2 * s && Math.abs(y - ly) < 2 * s)) continue;
+        if (x < loX || y < loY || x > hiX || y > hiY || (Math.abs(x - lx) < 2 * s && Math.abs(y - ly) < 2 * s)) continue;
         ctx.rect(x - s, y - s, 2 * s, 2 * s);
         lx = x;
         ly = y;
         budget--;
       }
     }
-    ctx.fillStyle = pen.colour('--ann-8');
     ctx.fill();
     ctx.stroke();
     ctx.beginPath();
@@ -524,7 +539,7 @@ export class VectorLayer {
         if (Math.hypot(bx - ax, by - ay) < minSeg) continue;
         const mx = (ax + bx) / 2;
         const my = (ay + by) / 2;
-        if (!inView(mx, my)) continue;
+        if (mx < loX || my < loY || mx > hiX || my > hiY) continue;
         addCircle(ctx, mx, my, mr);
         budget--;
       }

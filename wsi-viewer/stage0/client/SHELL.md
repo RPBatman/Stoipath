@@ -45,7 +45,7 @@ The engine side is `src/viewer.ts` (`startViewer({ canvas, ui, params, keys, tra
 | Tiles chip, Engine section | `resident`, `layers`, `inflight`, `decodeOutstanding`, `bytes`, `stats.*`, `lstar`, `frameMs`, `Metrics.lastGesture`, `Metrics.displayIntervalMs` | — |
 | Engine buttons | `ViewerUi.bindButtons` handlers (the measurement page's exact functions) | `path`, `export`, `copy`, `evict` (= `window.__stage0.runPath / exportJson / evictGpuTiles`) |
 | Engine status | `ViewerUi.setStatus` (loading, ready, path running/done, evicted, context loss) | — |
-| Measurement overlay | `cx cy k viewW viewH renderDpr`, `Viewer.origin` (canvas top-left, cached at resize) | pointer filter `acceptPointer`: the tool owns mouse and pen pointers (the camera does not drag them); touch pointers always reach the camera (pan, pinch, double tap) and a tap places a point |
+| Measurement overlay | `cx cy k viewW viewH renderDpr`, `Viewer.origin` (canvas top-left, cached at resize) | since Phase A Wave 2 the overlay surface of TOOLS.md D2 draws the store's measurements, and core's pointer router is `acceptPointer`: the tool owns mouse and pen pointers (the camera does not drag them); touch pointers always reach the camera (pan, pinch, double tap) and a tap places a point |
 | Zoom ± / Fit / arrows / WASD | — | `commands.zoomBy(±1)` (= the measurement page's key zoom), `commands.fit()`, `commands.panBy(10 % / 100 % of the viewport)` |
 | Canvas / gesture state | `settled` → `.app.is-gesturing` (base.css zeroes every chrome transition) | — |
 | Inertia | — | `ViewerOptions.inertia: () => !prefersReducedMotion()` (input.ts `DomInputOptions.inertia`; the measurement page omits it) |
@@ -108,12 +108,13 @@ Principles §4.5 map A + the Stage-0 subset of map B:
 | `V` / `M` | select-pan / measure (from the rail, bottom bar, palette or a key, a tool command moves focus to the slide, where its next input goes) |
 | Enter (measure tool, slide focused) | place a point at the centre crosshair (arrows pan between the two points) |
 | Space (held, measure tool) | pan with the pointer |
-| ⌫ / Del | delete the selected measurement |
-| Ctrl/⌘ Z, Ctrl/⌘ Y (⇧Z) | undo / redo measurements |
+| ⌫ / Del | remove point 1 of a measurement in progress, else delete the selected annotation or measurement (the annotation store, Phase A Wave 2) |
+| Ctrl/⌘ Z, Ctrl/⌘ Y (⇧Z) | undo / redo annotations and measurements (one undo stack, TOOLS.md D7) |
+| `Q`, then `1`–`8` | class picker (Phase A Wave 2, annotations): the digits pick a class only while the menu is open, otherwise `1`–`6` stay the presets |
 | `K` | Context panel on / off |
 | Ctrl/⌘ K | command palette |
 | `?` / Ctrl/⌘ `/` | keyboard map |
-| Esc | close the palette or dialog (focus returns to where it was: the slide when opened from it) → else the class picker (Phase A) → else cancel the open measurement → else leave the measure tool → else close the Library → else close the Context drawer / sheet (< 1600 px) |
+| Esc | close the palette or dialog (focus returns to where it was: the slide when opened from it) → else the class picker → else cancel the open measurement ("Measurement cancelled") → else clear the selection ("Selection cleared") → else leave the measure tool → else close the Library → else close the Context drawer / sheet (< 1600 px) |
 | Arrow keys | pan, except inside toolbars, tab lists, list boxes, dialogs, the dock and its panels, and scrollable text regions (there they move focus or scroll) |
 | Not in this build (struck through) | `⇧D` Dx mode (refused with the RUO string, assertively), `⇧↵` sign-out, `⇧M` measure area (refused: `M` measures length), `⇧+` / `⇧−` zoom 1.2× fine (on US keyboards `+` is already `⇧=` and must stay the 2× zoom; waits for rebindable presets), `R`/`⇧R` rotate (no rotation in the Stage-0 engine), `T X E P F` drawing tools, and from TOOLS.md §8: `Y` polyline, `⇧T` count, `⇧Q` class legend, `/` curtain, `G` HPF grid, `B` / `⇧B` bookmarks, `⇧A` / `⇧X` accept / reject AI, `\` focus mode, `N` mark complete, `J` / `⇧J` B/C/γ, Ctrl/⌘ C / V (listed only); F-keys, Alt, Ctrl+Space, numeric keypad. Each pressed key says its refusal sentence; a Phase A module that provides one of these keys replaces its row |
 
@@ -337,12 +338,87 @@ Gates on the final Wave 0 build (`npm run build`, build `2026-11-01T20:00:33Z`):
 
   Fixed after review: five Context tabs clipped "Engine" in a 320 px dock (now 4 px tab padding when five tabs show, and the strip scrolls rather than clip); pane B's empty position item drew an empty strip (empty pane HUD items are hidden); the bottom bar's Library button had no pressed look while open.
 
+## Phase A · Wave 2 integration (integrator, 2026-11-01)
+
+TOOLS.md §13 Wave 2. main.ts now runs on core's `createShell()`. It passes the overlay factory (`createOverlaySurface`) and the token resolver, publishes `exposeOverlayDebug`, and installs the modules `import.meta.glob` finds, in the §5.1 order: **geometry, interop, annotations, library**. Judgement calls are in TOOLS.md §15.10 W1–W13; builder answers are in TOOLS-QUESTIONS.md (2026-11-01 Wave 2, integrator).
+
+What a user sees now:
+- **The Library drawer.** The Cohort tab lists the five public slides with filters, search and viewed state. The Slides tab is the working set with coverage bars. `]` and `[` step the collection order.
+- **In-place slide switching (D1).** On every `slideOpened`, main.ts rebuilds the identity, title, HUD, navigator, Slide facts and About.
+- **The Annotations tab.** The eight-class radiogroup, Fill polygons, Undo, Redo and Delete; the list grouped by class, then Measurements, then Unclassified; GeoJSON import and export in the QuPath dialect, with a choice of coordinates; the persistence status.
+- **The Inspector's selection section and the class menu** (`Q`, then `1`–`8`).
+- **One overlay canvas per pane** draws the store's measurements and annotations, the in-progress line and the centre crosshair.
+
+**Measure (D7, early).** The Stage-0 Measure tool is a ToolController on core's pointer router. It commits each measurement into the annotation store and selects it. The store owns `undo` / `redo` / `deleteSelected`, says "Measured M1 · …", persists it in IndexedDB and exports it. The legacy Measurements tab stays until Wave 4 as a view of the store. The Stage-0 Select tool only pans; draw-tools brings click-select and the drawing tools in Wave 3.
+
+**Shared-file changes.**
+- `measure.ts` became `StageSelectTool` + `StageMeasureTool`.
+- `panels.ts`: the Library's initial tab is Slides whatever claims first.
+- `shell.css`:
+  - the dock close buttons lose `.btn--sm` padding;
+  - five Context tabs fit 320 px;
+  - the bottom bar's navigation buttons leave once the class picker or a drawing tool is in the bar.
+- `shell-check.mjs`: the Tab-order check starts at the rail's first Tab stop (the Library switchers).
+- contracts.ts, all additive:
+  - `ViewHandle.close()`;
+  - `CommandRegistry.source`;
+  - an optional `RasterGridFile.origin`;
+  - comments on `compareChanged`.
+
+Gates on the final Wave 2 build (`npm run build`, build `2026-11-01T23:01:34Z`):
+- `npx tsc --noEmit -p tsconfig.json`: clean.
+- `node harness/run.mjs --label wave2-integrator` (`harness/results/2026-11-01T23-02-00-068Z-wave2-integrator.json`) beside the Wave 0 final run. The measurement page is byte-identical: `index.html`, `src/main.ts`, `src/viewer.ts` and the harness runners are unchanged since Wave 0.
+
+| | Wave 0 final | Wave 2 |
+|---|---|---|
+| frames | 795 | 788 |
+| frame ms p50 / p95 / max | 16.7 / 50 / 83.3 | 16.7 / 50.1 / 83.3 |
+| frame ms during gestures p50 / p95 | 33.4 / 50.1 | 49.9 / 66.6 |
+| dropped frames % | 44.97 | 44.97 |
+| upload ms/frame p95 | 3.3 | 3.9 |
+| gestures (n / completed / timed out) | 11 / 11 / 0 | 11 / 11 / 0 |
+| zoom-in TTS p50 / max ms | 163 / 283 | 213 / 283 |
+| zoom-in sharp-after-settle p95 ms | 0 | 0 |
+| zoom-in max blur max ms | 266.6 | 266.6 |
+| blank frames after base | 0 | 0 |
+| tiles received / errors | 255 / 0 | 255 / 0 |
+| texture layers | 160 (viewport) | 160 (viewport) |
+
+  The differences are run-to-run noise on SwiftShader. The gesture p50 / p95 of 49.9 / 66.6 equals the review-fix-3 run's 50 / 66.7, and TTS 213 lies inside the Wave 0 builds' 163–230 range. `node harness/check-metrics.mjs`: 20 `ok`, 0 `FAIL`, "all metric checks passed".
+- `node harness/shell-check.mjs`: 190 `ok`, 0 `FAIL`, "all shell checks passed". Every measurement check passes on the new routing and the store, including the redo sentences, the list focus and the phone tap-tap and pinch. Frame cost is unchanged at 1440 × 900: drag LayoutCount 25 / RecalcStyleCount 63, wheel 35 / 35. Two failures in the first run were fixed:
+  - the Tab-order check's start (W12);
+  - the phone bar at 320 px, where 7 targets overflowed by 4 px; it now has 5 (W13).
+- `node harness/tools-check.mjs`: 274 `ok`, 2 `FAIL`. The integrator gate gives 4 `ok`: I-1 isolation (index.html's chunks and the 16-module graph of `src/main.ts`), I-2 84 commands with no conflict and no console error. Module checks: core 47 `ok`, overlay 59 `ok` + 1 `FAIL`, annotations 72 `ok`, library 92 `ok` + 1 `FAIL`. axe-core gave 0 violations in all 39 module-check axe runs. The two failures are check assumptions that the integrated build invalidates, filed for their owners in TOOLS-QUESTIONS.md; the behaviour each one tests holds:
+  - **OVL-3** expects exactly 4 visible layers, but annotations' two store sources are always registered. `stats.draws` stayed 4 → 4 over 2 s at rest, which is what OVL-3 tests.
+  - **LIB-2** reads the polite region after `settle()`, by which time the strip's spoken twin has followed the result. A write recorder shows "CMU-1 opened. OpenSlide test data, H and E." spoken first, at 693 ms after the click.
+
+  core's desktop router probe is skipped once a real `measure` tool is registered. A scratch probe on the final routing covers it, 13 `ok`:
+  - a Space-held drag pans and measures nothing;
+  - a claimed drag measures and leaves the camera still;
+  - a dblclick is withheld from the engine;
+  - Esc and ⌫ cancel point 1, and ⌫ then deletes through the store;
+  - a slide switch cancels point 1, and switching back restores the measurement;
+  - on the phone, a double tap places nothing.
+- `node harness/unit.mjs`: 781 `ok`, 0 `FAIL` in 6 files (core, geometry, interop, annotations, library, overlay). `python3 -m unittest discover stage0/tools/tests`: 49 tests OK. `build_catalogue.py --check`: up to date (5 slides, 6 overlays).
+- axe-core 4.10.3, WCAG 2.2 AA, on the integrated shell: 0 violations in 40 runs. The runs covered 1920 × 1080, 1440 × 900, 1024 × 1366 coarse (iPad UA) and 390 × 844 coarse (phone UA), each in ten states: rest, palette, keymap, a measurement, Library Slides, Library Cohort, Annotations, the Inspector with a selection, Measurements, and the class menu. There were 0 console errors.
+- design-system `layout-check.mjs` (the http copy that opens a panel from `?libpanel=`): 35 of 36 runs pass (rest, Slides, Cohort and Annotations at the 9 SHELL.md viewports). The one failure is A1 at 1366 × 1024 coarse with the Annotations tab open: the export-coordinates segmented buttons are 40 px and the drop zone 35 px, under the 44 px coarse target. They are annotations-owned (TOOLS-QUESTIONS, filed with the fix).
+- Screenshots, all reviewed, are in the scratch directory, not in `design/screens/`; Wave 4 takes the final set:
+  - rest, the Library (Slides, Cohort) and Annotations at 1920;
+  - a measurement in progress and the Measurements list at 1920;
+  - the Inspector and the class menu at 1440;
+  - the 1366 × 768 rail;
+  - the Cohort sheet at 1024 coarse;
+  - rest and the Annotations sheet at 390 coarse;
+  - an in-place switch to CMU-1 at 1440.
+
+  Fixed after review: with counts on two tabs, the fifth Context tab ("Engine") was clipped by 7 px at 1920 (W10).
+
 ## Known limitations
 
 - Shell numbers are not protocol numbers: the Engine section's export includes the shell's DOM work; TSP-grade runs use `index.html`.
 - SwiftShader (headless) frame times are CPU-rendered; the drag numbers above are relative (shell vs index.html on the same machine), not device numbers.
 - Network chip: the Network Information API is Chromium-only (and caps `downlink` at 10 Mbps); Safari and Firefox have no link estimate, so the chip shows only `Offline — showing cached tiles only` there, and the slow-link reason relies on the request-age rule alone.
-- Measurements live in memory (no persistence, no export format); the Stage-0 engine has no annotation store.
+- Since Phase A Wave 2, measurements are annotations: they live in the per-slide annotation store, are saved in this browser's IndexedDB (lost if the browser clears site data; Export GeoJSON keeps a copy) and export with the rest in the QuPath dialect. Until Wave 3 the Stage-0 Select tool only pans: annotations are selected from the lists, not by clicking on the slide.
 - Magnification is objective-equivalent on an unknown display pitch (`~`, `derived`); no physical-size claim is made anywhere.
 - The keymap has no rebinding or presets yet (principles §4.5 rule 7/8); the registry is the place they would hang.
 - The rail's fit on a 1133 × 744 coarse iPad mini once every Phase A tool is registered is open: 44 px tools need about 690 px there, and the rail then scrolls. Rectangle and Ellipse already leave the coarse rail; the Wave 4 layout-check decides what else does.

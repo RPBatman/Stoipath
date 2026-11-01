@@ -435,13 +435,19 @@ for (const vp of VIEWPORTS) {
       return (strip.compareDocumentPosition(pad) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
     });
     check(tag, order, 'the navigator follows the strip in the DOM (Tab order canvas → rail → dock → strip → navigator)');
-    await page.focus('.rail [data-cmd="tool:select"]');
+    // The rail's FIRST Tab stop: the Library switchers once a Library panel is claimed (research final: they head the
+    // rail), else the tools toolbar. Each toolbar is one Tab stop (roving tabindex).
+    const firstStop = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('.rail button')].find((x) => x.tabIndex === 0 && x.getClientRects().length > 0);
+      b?.focus();
+      return b ? b.getAttribute('aria-label') ?? b.dataset.cmd ?? b.id : null;
+    });
     let n = 0;
     while (n++ < 8) {
       await page.keyboard.press('Shift+Tab');
       if (await page.evaluate(() => document.activeElement?.id === 'view')) break;
     }
-    check(tag, n <= 2, `Shift+Tab from the rail reaches the slide in ${n} presses (≤ 2: the readout, then the canvas)`);
+    check(tag, firstStop !== null && n <= 2, `Shift+Tab from the rail's first Tab stop (${firstStop}) reaches the slide in ${n} presses (≤ 2: the readout, then the canvas)`);
     await page.focus('#magBtn');
     await page.keyboard.press('Enter');
     await page.keyboard.press('Control+a');

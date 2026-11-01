@@ -135,3 +135,200 @@ Against that scratch catalogue, test_catalogue.py passes 20 of 21 and both of la
 - `threshold` (0.5) is on the 0..1 value scale, while the grid holds ⌊v·254 + 0.5⌋. A consumer therefore compares codes with `threshold × 254` (127). geometry's `isolines` at 127 gives 104 outer rings on tumor_014 (the legend's `{n} regions`), and 3, 59, 6 and 13 on the four OpenSlide slides.
 - Vertex counts follow geometry's `vertexCount`, which does not count a closed ring's repeated first position: the layer has 11,367 vertices in 11,377 positions.
 - `stage0/tools/README.md` is not a layers file and does not list the two generators yet. Their docstrings give the usage and the five heatmap commands.
+
+---
+
+## 2026-11-01 · Wave 2 (annotations builder): one routing decision for D7, two small contract points, notes for Waves 2–3
+
+annotations is in `src/shell/annotations/` (`index.ts`, `store.ts`, `persist.ts`, `service.ts`, `classes.ts`, `actions.ts`, `list.ts`, `inspector.ts`, `class-menu.ts`, `io-ui.ts`, `annotations.css`). It provides `annotations` synchronously, claims the Annotations and Inspector panels, registers `class:pick`, `class:<name>` × 8, `undo`, `redo`, `deleteSelected`, `import:geojson`, `export:geojson`, and exposes `window.__shell.tools.annotations()` through core's DebugRegistry. The judgement calls are TOOLS.md §15.7 AN1–AN14. Nothing below widens a type.
+
+**A1 · Decision needed for Wave 2: the legacy measure rows lose to annotations (J2, D7).** From the moment annotations is installed, `undo`, `redo` and `deleteSelected` are its commands (J2 registers the Stage-0 rows only when the ids are free), so Ctrl+Z / Ctrl+Y / ⌫ act on the annotation store, not on the legacy MeasureTool, and shell-check's measurement undo / redo section would find "Nothing to undo". Proposal (D7 done early, by main.ts): the legacy MeasureTool commits into the store, `ann.current('A')?.create({ kind: 'measurement', geometry: { type: 'LineString', coordinates: [[ax, ay], [bx, by]] }, input })`, and deletes through it; `window.__shell.measurements()` returns `ann.measurementsCompat()`. The store already says shell-check's strings byte for byte (unit-tested: "Measured M1 · 243.1 µm", "Deleted M1 · Ctrl+Z to undo", the coarse "· Undo is in Search", "Restored M1", "Undid M1", "Nothing selected", "Nothing to undo", "Nothing to redo"), and the overlay draws measurements with their length pill (source `my-measurements`, z 400), so the legacy tool would keep only its in-progress preview. The other way out, not installing annotations' three commands until Wave 4, would break ANN-2. Shell-check's `#measList [data-id]` count then becomes the §11.3 edit (`#annList [data-kind="measurement"]`).
+
+**A2 · `ShellCommand.run()` has no source (contracts §11).** The module needs it for the input modality an op records (`stoipath.input`) and for the class menu. It reads the integrator Registry's public `source` field when present (`(shell.commands as { source? }).source`), else `keyboard`. Please bless `readonly source: CommandSource` on CommandRegistry, or pass the source to `run`.
+
+**A3 · For layers (Wave 3): the "My annotations" row id is `my-annotations`.** The store's two overlay sources read `layers.get('my-annotations', slideKey)?.visible` and `.opacity` every frame they draw (default visible, opacity 1) and redraw on `layerChanged` / `layerAdded` with that layerId. Please add the §6.7 row 1 as an `AnnotationLayer` with id `my-annotations` per slide; its legend can come from `annotations.current(view).summary()` (classes, counts, area) and "Edit →" is `panels.show('annotations', true, …)`.
+
+**A4 · For draw-tools (Wave 3): how the store expects to be driven.** `shell.service('annotations').current(view.id)` is the store of a view (null while it has no slide). `create(draft)` / `update(id, patch, input)` / `remove(ids, input)` / `transaction(fn)` (one undo step; a throw rolls it back) / `select(ids, input)`. The store announces every result (strip + polite, at rest), so tools need not. A whole-feature move may pass the translated `shape`, or leave it out (the store translates the exact shape when the new geometry is a pure translation); any other edit of a rect or ellipse should pass `shape: null` (the store also demotes it to `polygon` itself when the bbox no longer matches). Hits on the sources `my-annotations` and `my-measurements` carry store ids. The selection may hold reference-layer ids (TOOLS.md §15.7 AN13): treat ids the store does not hold as read-only. The brush radius is prefs `brush.radius` (integer CSS px, 4–64, default 12), written by the Annotations tab's slider.
+
+**A5 · For main.ts (Wave 2 wiring).** annotations.check.mjs uses only contract-level hooks: `window.__shell.tools.annotations()` (publish core's `debug.views` as `__shell.tools`, core Q3), `window.__shell.tools.core().test.storage` / `.sample()`, `__shell.panels.show(id)`, `__shell.run(id)`, `__shell.openSlide`, `__shell.notice()`, `__shell.polite()`, and the key router with `prefix: 'q'` and Enter / ⌫ to the active tool first. Until `tools.annotations` exists the file reports "not wired" and claims nothing. Two cascade / label items are main.ts's: the Esc cascade's selection step (§8) can be `shell.service('annotations')?.current(shell.focusedView().id)?.select([], 'keyboard')` plus "Selection cleared" when the selection was not empty, and the canvas name's count (§9) is `current('A')?.all().length`. The module flushes its stores on `pagehide` itself.
+
+**A6 · Test file ownership.** The store, the persistence and the class registry are pure, so their unit tests are in `harness/unit/annotations.test.mjs` (70 assertions), following §11.1's `harness/unit/<module>.test.mjs` pattern. §4's annotations row does not list that file: please add it (or say where it should live).
+
+**Verification (private rig, scratch).** Like core in Wave 1, the checks ran on a private rig: a copy of shell.html with a small entry that wires `createShell` the way main.ts will, with the real Wave 2 overlay surface and token resolver, the real Registry / Panels / HudView, geometry, interop and annotations installed in the §5.1 order, a catalogue service over `data/catalogue.json`, and a key router, `[data-cmd]` handler and Esc cascade reduced from main.ts. On that build `tools-check --only annotations` passes 72 of 72 (ANN-1…7, axe-core 4.10.3 with 0 violations in the 11 states it opens, a frame-cost drag with annotations drawn), and `--only core` passes 50 of 50 with annotations installed, CORE-5's "a point annotation can be created" included.
+
+---
+
+## 2026-11-01 · Wave 2 (overlay builder): wiring, one canvas conflict, two small contract points
+
+overlay is in `src/shell/overlay/` (`surface.ts`, `projection.ts`, `spatial.ts`, `vector.ts`, `raster.ts`, `painter.ts`, `tokens.ts`, `budget.ts`, plus a new `debug.ts`; no `index.ts`: it is a foundation module, so main.ts's `./*/index.ts` glob never installs it). The judgement calls are TOOLS.md §15.8 O1–O11. Nothing below widens a type.
+
+**O-Q1 · Wiring main.ts (Wave 2).** Three calls:
+- `import { createOverlaySurface } from './overlay/surface'` → `overlayFactory: createOverlaySurface`;
+- `import { createTokenResolver } from './overlay/tokens'` → `tokens: createTokenResolver()`, called after tokens.css is imported (main.ts's import order already guarantees it; the resolver reads the tokens once and falls back to the tokens.css values if a property resolves empty);
+- `import { exposeOverlayDebug } from './overlay/debug'` → `exposeOverlayDebug(core.shell)` once after createShell. It publishes `window.__shell.tools.overlay()` through core's DebugRegistry (core Q3: `__shell.tools` must be core's live `debug.views`). `overlay.check.mjs` needs it, and until it exists the file says "not wired" and claims nothing. The layers and draw-tools checks can use its `test` hooks too (TOOLS.md §15.8 O1).
+
+**O-Q2 · Decision needed: the legacy MeasureTool must stop drawing into `#overlayA` once the surface is wired (rule 3, D2).** `measure.ts` takes `#overlayA`'s 2D context and clears and redraws it in its own frame hook whenever it is active or holds measurements. The surface clears and redraws the same canvas, so each would erase the other's pixels on alternate draws. Until Wave 4 deletes measure.ts, either:
+- (a) commit its measurements into the annotation store (annotations A1; the store's `my-measurements` source draws them with their pill); draw its in-progress line through `shell.primary.overlay.setPreview((p) => { p.polyline([a, b], { stroke: '--ann-8', dash: 'dash', fill: false, width: 'normal' }, false); p.label(a[0], a[1], b[0], b[1], text); })`, cleared with `setPreview(null)`; and leave the crosshair to core's `setCrosshair`, never calling `measure.draw()`; or
+- (b) keep `measure.draw()` off and accept that legacy measurements are not drawn until Wave 4.
+
+(a) is what D7 asks for and keeps shell-check's measurement section visual.
+
+**O-Q3 · Test ownership (as annotations A6).** `src/shell/overlay/debug.ts` is not in §4's overlay row. Please add it, or say where the debug view should live.
+
+**O-Q4 · Contract note, no change asked: `OverlaySurface.stats` and `.projection` are live objects** updated in place (no allocation per frame); callers copy what they keep. `stats.features` counts the features of visible sources in the last exact render, culled ones included, so hiding a layer always lowers it (LAY-3; TOOLS.md §15.8 O8).
+
+**O-Q5 · For draw-tools and annotations (Wave 3): hit results** (TOOLS.md §15.8 O6).
+- Handles of selected features are tested first, at 12 CSS px (22 coarse). Then the top source with any hit decides: the nearest edge or point within 8 CSS px (16 coarse) wins; otherwise the smallest polygon whose body contains the point.
+- `Hit.world` is the vertex, the midpoint, the nearest point on the edge, or the click point.
+- `box` handles report `vertex` 0–3 = corners TL, TR, BR, BL and `midpoint` 0–3 = edges T, R, B, L.
+- Midpoint handles exist only on segments of at least 20 CSS px on screen.
+- `hitTest` polls the sources first, so a source added or selected since the last frame is already hit-testable.
+
+**O-Q6 · Observation for the harness and frame budget (no action).** The checks run on SwiftShader, where 2D-canvas rasterisation is not visible to JS timing, and in this sandbox other builders share the 4 cores (load average ~5).
+- The D3 average therefore measures the JS side: 0.2–0.5 ms per exact render at L1, and 2–6 ms at fit with the CAMELYON16 layer plus 200 64-gons (24,167 vertices), where blit mode engages.
+- rAF frame intervals over three 1 s drags per configuration had p50 16.7 ms with and without those sources, at fit and at L1. p95 was 33–50 ms in both cases across two runs (noisy under the shared load), and the maximum rose from 33–83 ms to 66–100 ms with the sources (the blit switch frame).
+
+**Verification (private rig, scratch).** Like core in Wave 1, the checks ran on a private rig: a copy of shell.html with an entry that wires `createShell` the way main.ts will, with the real surface, token resolver and `exposeOverlayDebug`, and a catalogue stand-in. On that build `tools-check --only overlay` passes 60 of 60: OVL-1…6, plus axe-core 4.10.3 with 0 violations and 0 console errors in the 9 pages it opens. On my private build of the real client, I-1 and I-2 pass and overlay.check reports "not wired".
+
+---
+
+## 2026-11-01 · Wave 2 (library builder): files, the catalogue rebuild, main.ts wiring, two shared-code findings
+
+library is in `src/shell/library/` (`index.ts`, `catalogue.ts`, `cohort.ts`, `tray.ts`, `coverage.ts`, `open-url.ts`, `commands.ts`, `library.css`, plus a new `listbox.ts`). It provides `catalogue` synchronously, claims the Slides and Cohort panels, registers `nextSlide` `]`, `prevSlide` `[` (scope slide), `open:<id>` × 5 (after the catalogue loads), `openurl`, `panel:cohort` and `panel:slides` (group `Library`), and exposes `window.__shell.tools.library()` through core's DebugRegistry. The judgement calls are TOOLS.md §15.9 LB1–LB12. Nothing below widens a type.
+
+**L1 · Files beyond §4's library row (as annotations A6 and overlay O-Q3).** `src/shell/library/listbox.ts` (the list widget both tabs share) and `harness/unit/library.test.mjs` (109 assertions on the pure parts). Please add both to §4.
+
+**L2 · The catalogue is rebuilt (answers library Wave 1 and layers Q1).** `python3 stage0/tools/build_catalogue.py` now lists the six overlay files (tumor_014: `camelyon16-expert` reference, `defaultVisible` true, and `demo-heatmap`; each OpenSlide slide: `demo-heatmap`). `--check` reports it up to date; `test_catalogue` passes 21 of 21 and `test_overlay_tools` 28 of 28.
+
+**L3 · main.ts wiring that LIB-2 relies on (Wave 2).** On `slideOpened` for view A, main.ts rebuilds what it builds once today: `#idName`, `#idCohort`, `#idStain`, `#idLic`, `#idTitle`, `#hudId`, `#hudCoh`, `#navLabel`, `document.title`, `#slideFacts` (replaceChildren), and the navigator (`#navTiles` cleared, a new `NavigatorView` for the new pyramid, its `update(s)` in `onEngineFrame`). LIB-2 checks the identity, the title, that `#idTitle` changes, that `#navTiles img` points at the new slide and that `#slideFacts` names it. My rig does exactly this (scratch `phase-a/library/rig/rig-main.ts`). The drawer's close button `[data-close-dock="lib"]` needs its click handler (`panels.close('lib', …)`, focus to the canvas), and the §8 Esc cascade closes the Library drawer before the Context drawer.
+
+**L4 · Initial Library tab.** library claims Slides first, then Cohort, so Slides is the drawer's initial tab as in the design. layers installs before library (§5.1); if it claims Layers at install, Layers becomes the initial tab (panels.ts selects the first claimed Library tab). Please decide (for example select `slides` once it is claimed).
+
+**L5 · base.css: `.btn--sm.btn--icon` keeps `.btn--sm`'s side padding.** `.btn--sm` is declared after `.btn--icon`, so a 24 px icon button has 8 px padding each side and the reset's `max-width: 100%` squeezes its 20 px glyph to **6 × 20 px**. Measured in the rig on the integrator's `[data-close-dock="lib"]` and `#dockClose` (the drawer and dock close "×" are nearly invisible at ≥ 1080 px). library fixes its own row actions in library.css (`padding: 0`, 16 px glyph). Suggested: `.btn--sm.btn--icon { padding: 0; }` in base.css (a design-system change) or a shell.css rule for the two close buttons.
+
+**L6 · core RestQueue flushes inside the caller's event.** `shell.atRest(cb)` while every view is settled and the queue is non-empty pushes `cb` and runs `tick()` at once. Called from a `viewSettled` (or `slideOpened`) listener, it runs callbacks queued earlier **before that event's later listeners**, against §2's order "viewSettled, then the atRest queue". CORE-4 failed on the library rig for this reason ("an atRest() queued from the first moving frame ran … viewSettled seen 0"). library now defers its render request through a microtask (LB11) and CORE-4 passes again (core 50 of 50 on the rig). Suggested for core: when the queue is non-empty, `atRest` only pushes, and the frame's own `rest.tick()` (after viewSettled) flushes; when called outside a frame with a non-empty queue, flush on a microtask.
+
+**L7 · For compare (Wave 3).** The Compare row actions (Cohort and Slides) appear only when `shell.service('compare')` exists and `env.deviceClass === 'desktop'`, and call `compare.open(ref, 'compare')` with a catalogue ref, or a manifest ref for an uncatalogued tray entry; the refusal text is compare's. library re-renders the rows on `compareChanged`. `]` / `[` step the focused view, so in compare they step view B when B has the focus.
+
+**L8 · For core, share and compare: what `catalogue` guarantees.** `ready` resolves after at most one successful fetch (one per candidate until one answers), never rejects, and resolves null when there is no catalogue. `matchManifest` compares absolute URLs without the fragment. `step` follows `collections[0]`. The implementation's extra methods (`entries()`, `order()`, `title()`) serve the library's own panels; other modules should use the contract (`catalogue.collections[0].slides` for the order).
+
+**L9 · Small contract points.** The persistent notice key is `library` (set only when a `?catalogue=` link is refused or unreadable). Like annotations A2, the command source is read from the integrator Registry's public `source` (else `keyboard`); please bless it.
+
+**Verification (private rig, scratch).** As annotations and overlay did, the checks ran on a private rig: a copy of shell.html with an entry that wires `createShell` the way main.ts will, with the real overlay surface, Registry, Panels, HudView and NavigatorView, geometry, interop, annotations and library installed in the §5.1 order (the real catalogue service, no stand-in), and an opt-in stand-in compare service (`?fakecompare=1`) used only to see and drive the Compare row actions. On that build `tools-check --only library` passes 93 of 93 (LIB-1…5, axe-core 4.10.3 with 0 violations in every state opened at 1440, 1920, 390 coarse, 1024 coarse and 1366 × 1024 coarse, a frame-cost drag with the Slides tab open), `--only core` 50 of 50 and `--only annotations` 72 of 72 with library installed. The design-system layout-check (http copy, Library drawer open) passes T1, Z1, S1, A1, A2 at 390c, 1024c, 1280, 1366, 1366c, 1440, 1600, 1920 and 3840 for both tabs. On my private build of the real client, I-1 and I-2 pass and library.check reports "not wired".
+
+---
+
+## 2026-11-01 · Wave 2 (integrator): answers to Waves 1–2, and what main.ts now does
+
+**Wired.** main.ts builds the host services, then calls `createShell()` with `overlayFactory: createOverlaySurface`, `tokens: createTokenResolver()` (after tokens.css is imported) and `exposeOverlayDebug(shell)`. It installs the modules that `import.meta.glob('./*/index.ts')` finds, in the §5.1 order: **geometry, interop, annotations, library** (layers, draw-tools, compare and share are not in the tree yet and are skipped). Then it registers the Stage-0 Select and Measure tools when no module registered those tool ids, then the J2 fallback rows, then calls `core.start()`. The judgement calls are TOOLS.md §15.10 W1–W12.
+
+**What changed for builders.** Since Wave 2 the shell runs on core:
+- every engine is started by core;
+- `slideOpened` rebuilds main.ts's per-slide chrome: identity, title, HUD, navigator, Slide facts, About and the canvas-name slot;
+- core's router is the only pointer authority;
+- `window.__shell.tools` is core's live DebugRegistry record, with `core()`, `overlay()`, `annotations()` and `library()`.
+
+### core (Wave 1)
+
+**Q1 · Closing a view: both.** `ViewHandle.close(): Promise<void>` is in contracts §11 now (`CoreView.close()` already satisfies it). The `compareChanged` comment blesses core's close on `off`. For compare (Wave 3): `await shell.view('B')?.close()`, then emit `compareChanged` with `off`. Either one alone also works, and a second close of an empty view does nothing.
+
+**Q2 · The tool line: done as you asked, no contract change.** `Notices.render()` writes `#toolLineText` from `shell.tools.get(shell.tools.active).hint()`. It shows `#toolLine` while the active tool is not `select`. On phones it shows the latest transient notice while that lasts. `persistent('tool', null)` and `toolChanged` both re-render it.
+
+**Q3 · Done.**
+- `window.__shell.tools` is `(shell.debug as CoreDebugRegistry).views` (the live record, not a copy).
+- `window.__shell.openSlide(ref, opts)` is `shell.openSlide`.
+- `window.__shell.state()` is `shell.state.current()`.
+- `window.__shell.setTool(id)` activates on core's ToolHost.
+- `__shell.host()` adds `modules` (installed names) and `tools.active`.
+
+**Q4 · Done, with one difference.** The legacy MeasureTool no longer has its own listeners, so nothing is chained into `startEngine` (`startEngine: (o) => startViewer(o)`). `src/shell/measure.ts` now holds `StageSelectTool` and `StageMeasureTool`, two ToolControllers registered on core's ToolHost after the installs, and only when no module registered `select` / `measure`. Core's router is therefore the only router on the panes (W1).
+- `canvasAttrs` include an `aria-label` (A: `id="view"`, B: `id="viewB"`). main.ts rebuilds its canvas-name slot and the engine resize hook on `slideOpened`.
+- The plate shows on `slideOpenFailed` (view A) or on a rejected `start()`.
+- Enter and ⌫ / Del go to `tool.onKey` first; the Esc cascade calls the tool's `cancel()`.
+- `toolChanged` mirrors `aria-pressed` and `data-tool`.
+
+**Q5 · Answered by library** (same rule, no change). **Q6 · Noted** for the engine backlog: phone prefetch churn keeps `settle()` from returning; no Phase A action. **Q7 · Accepted** as written (TOOLS.md §15.4).
+
+### layers (Wave 1)
+
+**Q1 · Done by library** (Wave 2 L2: the catalogue is rebuilt and `--check` is clean).
+
+**Q2 · `origin?: LayerOrigin` is now on `RasterGridFile`.** It is optional so the committed grids stay valid. In Wave 3, layers may write `"origin": "demo"` from `build_demo_heatmap.py`; rebuild the catalogue afterwards, because the bytes change. Consumers use `origin` when it is present, else §15.5 L6's note rule.
+
+**Q3 · Not needed in Phase A.** No change.
+
+### annotations (Wave 2)
+
+**A1 · Accepted (D7 done early for the Stage-0 tool).**
+- `StageMeasureTool` commits `{ kind: 'measurement', geometry: LineString, className: null, input }` into `shell.service('annotations').current(view)` and selects it (Stage-0 parity: ⌫ deletes the measurement just made; W2).
+- `__shell.measurements()` is `measurementsCompat()`.
+- Until Wave 4 the legacy Measurements tab (`#measList`) is a view of the store's measurements, re-rendered at rest on store changes:
+  - rows have `data-id` = the label number;
+  - Fly to selects the measurement and flies to it;
+  - Delete removes it through the store;
+  - focus is kept across re-renders.
+
+  shell-check's measurement section therefore passes unchanged, and the §11.3 list edit stays a Wave 4 task.
+- The Stage-0 `undo` / `redo` / `deleteSelected` rows are gone: yours are the only ones (W4).
+
+**A2 · Blessed.** `readonly source: CommandSource` is on `CommandRegistry` (contracts §11). It holds the source of the run in progress, and after it the source of the last run.
+
+**A3 · Noted for layers (Wave 3):** row 1's id is `my-annotations`. **A4 · Noted for draw-tools (Wave 3).** draw-tools' `select` and `measure` tools replace the Stage-0 ones automatically, because main.ts registers those only when the ids are free.
+
+**A5 · Done.** The Esc cascade's selection step comes after the tool's `cancel()` and before "leave the tool". It says "Selection cleared". The canvas name adds "{n} annotations" at settle, and "{m} overlays shown" once layers provides `layers`.
+
+**A6 · Added to TOOLS.md §4**, with `actions.ts`.
+
+### overlay (Wave 2)
+
+**O-Q1 · Done as written.**
+
+**O-Q2 · Option (a).** No code outside `overlay/` touches `#overlayA`'s context.
+- Committed measurements are the store's `my-measurements` source.
+- The in-progress line is the Measure tool's preview, drawn through `ToolContext.preview`: a dashed chalk line, a vertex handle, an active handle and the length pill, with no allocation per redraw.
+- The crosshair is core's `setCrosshair`.
+
+**O-Q3 · `overlay/debug.ts` added to TOOLS.md §4.** **O-Q4–O-Q6 · Noted.**
+
+### library (Wave 2)
+
+**L1 · `listbox.ts` and `harness/unit/library.test.mjs` added to TOOLS.md §4.** **L2 · Noted** (thank you for the rebuild).
+
+**L3 · Done.** On `slideOpened` for view A, main.ts rebuilds:
+- `#idName`, `#idCohort`, `#idStain`, `#idLic` (and its title), `#idTitle`, `#hudId`, `#hudCoh` and `#navLabel`;
+- `document.title`;
+- `#slideFacts`, `#slideNote` and `#aboutFacts`;
+- `--nav-ar`, `HudView`, `NavigatorView` (with `#navTiles` cleared) and the canvas-name slot.
+
+The drawer's close button and the cascade's Library step were already wired in Wave 0.
+
+**L4 · Decided: Slides is the Library's initial tab whatever claims first.** In `panels.ts`, the Dock's `initialTab` (Slides) is selected when it is claimed before the drawer is first opened. The first claimed tab is still selected when it is the only one.
+
+**L5 · Fixed in shell.css** (`.shell .dock__head .btn--icon { padding: 0; }`, scoped to the two close buttons). The base.css fix is left to the design system.
+
+**L6 · core's RestQueue, left to the core owner (core files are core's).** `atRest()` called while every view is settled and the queue is non-empty flushes at once. Called from inside a `viewSettled` or `slideOpened` listener, it therefore runs earlier callbacks before that event's later listeners.
+
+Integrated build, all four modules installed: CORE-4 passes (core.check, recorded in the Wave 2 integrator report). Until core changes, modules defer a render requested from inside an event through a microtask, as library LB11 does, and must not rely on atRest ordering within one event. Suggested core change for Wave 3: when the queue is non-empty, push only, and let the frame's own `rest.tick()` after `viewSettled` flush.
+
+**L7, L8 · Noted** for compare and share. **L9 · Blessed** (as A2).
+
+### Integrated-build findings for check owners (Wave 2 integrator, 2026-11-01)
+
+The integrated build installs geometry, interop, annotations and library together. Two module checks fail there on an assumption their private rigs made. The behaviour each one tests holds, and the checks need the owner to change them (module-owned files; the integrator does not edit them).
+
+**overlay · OVL-3 counts every visible layer.** `overlay.check.mjs` asserts `visible === 4` over `tools.overlay().A.layers`. With annotations installed, the store's two sources (`my-annotations` z 300 and `my-measurements` z 400, §15.7 AN6) are always registered, so 6 layers are visible. The property OVL-3 tests holds on the integrated build: `stats.draws` 4 → 4 over 2 s while the surface saw 120 engine frames. Suggested fix: count only the check's own layers, `a.layers.filter((l) => l.visible && ['heat', 'cam', 'syn', 'meas'].includes(l.id)).length === 4`. Alternatively, assert `visible >= 4` and name the extra ids in the message.
+
+**library · LIB-2 reads the polite region after `settle()`.** In the real shell the polite region also speaks the strip's spoken twin when it changes (SHELL.md "Polite live region"), at most one write per 500 ms and results first. The rig's region spoke results only. A probe that recorded every write to `#livePolite` from the Cohort click (scratch `probe-polite.mjs`) shows:
+- the click;
+- `document.title` → CMU-1 at 345 ms;
+- "CMU-1 opened. OpenSlide test data, H and E." written at 693 ms;
+- the twin "Sharp. About 0.5 times, 20.03 micrometres per pixel. CMU-1, H and E. Tool: Select." at 1,244 ms;
+- `settle()` returning at 1,632 ms.
+
+So the sentence is spoken, first, but by the time the check reads the region the twin has replaced it. Suggested fix: install a MutationObserver on `#livePolite` before the click (as the probe does) and assert the sentence is among the writes. Alternatively, start `waitPolite` right after the click, before `settle()`.
+
+**annotations · A1 target size under a coarse pointer in the 1366 px drawer (layout-check).** The design-system `layout-check.mjs` (the http copy, Annotations tab open) fails A1 at 1366 × 1024 coarse:
+- the footer's export-coordinates segmented buttons "This pyramid" (90 × 40) and "Source slide" (87 × 40);
+- the drop zone (301 × 35).
+
+The coarse minimum is 44 px. At 1024 × 1366 coarse the same controls pass only through the spacing exception. Every other page and viewport passes (35 of 36 runs: rest, Slides, Cohort and Annotations at the 9 SHELL.md viewports). This is the case library met with its fields (§15.9 LB12). Suggested fix in `annotations.css`: under `@media (pointer: coarse)`, give `#tp-ann .segmented__item` and `#tp-ann .dropzone` `min-height: var(--target)`.

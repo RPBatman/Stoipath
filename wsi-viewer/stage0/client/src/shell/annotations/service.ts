@@ -272,7 +272,8 @@ export class AnnotationsService implements AnnotationService {
       classes: this.classes,
       layers: () => shell.service('layers'),
       fill: () => this.fillOn,
-      editing: () => shell.tools.active === 'select',
+      // edit handles only when a Select tool exists to use them (draw-tools, Wave 3) and is the active tool
+      editing: () => shell.tools.active === 'select' && shell.tools.get('select') !== undefined,
     };
     const sources: [StoreSource, StoreSource] = [new StoreSource('my-annotations', Z_ANNOTATIONS, store, false, ctx), new StoreSource('my-measurements', Z_MEASUREMENTS, store, true, ctx)];
     const ready = persister.load().then(

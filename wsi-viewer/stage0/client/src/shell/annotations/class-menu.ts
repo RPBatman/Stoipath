@@ -24,15 +24,18 @@ export function restoreFocus(opener: HTMLElement | null, fallback: () => void): 
   else fallback();
 }
 
+/** A class swatch (`--swatch` by token, dashed for a dashed class); null = no class: an outline in secondary text. */
 export function swatchFor(el: HTMLElement, c: ClassDef | null): void {
-  const v = c === null ? 'var(--ann-8)' : `var(${c.token})`;
+  const v = c === null ? 'var(--color-text-secondary)' : `var(${c.token})`;
   if (el.style.getPropertyValue('--swatch') !== v) el.style.setProperty('--swatch', v);
   el.classList.toggle('swatch--dash', c?.dash === true);
+  el.classList.toggle('swatch--outline', c === null);
 }
 
 export class ClassMenu {
   readonly el: HTMLElement;
   private opener: HTMLElement | null = null;
+  private lastSig = '';
   private readonly onOutside = (e: PointerEvent): void => {
     const t = e.target;
     if (!(t instanceof Node) || this.el.contains(t)) return;
@@ -103,6 +106,9 @@ export class ClassMenu {
       if (n !== null) counts.set(n, (counts.get(n) ?? 0) + 1);
     }
     const active = classes.active.name;
+    const sig = `${active}|${classes.version}|${classes.list().map((c) => `${c.name}:${counts.get(c.name) ?? 0}`).join(',')}`;
+    if (sig === this.lastSig && this.el.childElementCount > 0) return;
+    this.lastSig = sig;
     const focusedName = this.el.contains(document.activeElement) ? ((document.activeElement as HTMLElement).dataset['class'] ?? null) : null;
     const items: HTMLElement[] = [];
     for (const c of classes.list()) {

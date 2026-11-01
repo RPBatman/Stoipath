@@ -40,7 +40,7 @@ export function install(shell: ShellApi): void {
   shell.panels.body('inspector');
   const io = new ImportExport(actions, shell.prefs);
   const panel = new AnnotationsPanel(shell, service, actions, io, annRoot);
-  const inspector = new Inspector(shell, service, actions);
+  const inspector = new Inspector(service, actions);
   const menu = new ClassMenu(service, actions, () => shell.focusCanvas());
 
   // ---- rendering: one pending render at rest; hidden panels render when shown
@@ -48,9 +48,11 @@ export function install(shell: ShellApi): void {
   let listStale = true;
   let inspStale = true;
   let lastCount: number | null = -1;
+  let lastStore: unknown = null;
   const render = (): void => {
     queued = false;
     const st = actions.store();
+    lastStore = st;
     const total = st === null ? null : st.all().length;
     if (total !== lastCount) {
       lastCount = total;
@@ -86,7 +88,6 @@ export function install(shell: ShellApi): void {
     });
   });
   // the focused view can change between renders (compare); the panels follow it at the next settle
-  let lastStore: unknown = null;
   shell.bus.on('viewSettled', () => {
     const st = actions.store();
     if (st !== lastStore) {

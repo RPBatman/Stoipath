@@ -89,9 +89,15 @@ export class RasterLayer {
   threshold = 0.5;
   private grid: RasterGrid | null = null;
   private bitmap: HTMLCanvasElement | null = null;
-  private bitmapKey = '';
+  /** What the cached bitmap was built for (no string keys: compared field by field, allocation-free per frame). */
+  private bmVersion = NaN;
+  private bmThreshold = NaN;
+  private bmPresentation: RasterPresentation | '' = '';
+  private bmLo = '';
+  private bmHi = '';
   private outline: FeatureIndex | null = null;
-  private outlineKey = '';
+  private olVersion = NaN;
+  private olThreshold = NaN;
   private readonly cells = new Int32Array(4);
   /** Cache rebuild time not yet reported to the surface (outline isolines, bitmap), ms. */
   buildMsPending = 0;
@@ -118,8 +124,8 @@ export class RasterLayer {
     if (v !== this.version) {
       this.version = v;
       this.grid = null;
-      this.bitmapKey = '';
-      this.outlineKey = '';
+      this.bmVersion = NaN;
+      this.olVersion = NaN;
       changed = true;
     }
     const vis = s.visible();
@@ -159,19 +165,23 @@ export class RasterLayer {
   }
 
   private ensureBitmap(grid: RasterGrid): HTMLCanvasElement | null {
-    const key = `${this.version}|${this.presentation}|${this.threshold}|${this.src.ramp[0]}|${this.src.ramp[1]}`;
-    if (key === this.bitmapKey && this.bitmap !== null) return this.bitmap;
+    const ramp = this.src.ramp;
+    if (this.bitmap !== null && this.bmVersion === this.version && this.bmThreshold === this.threshold && this.bmPresentation === this.presentation && this.bmLo === ramp[0] && this.bmHi === ramp[1]) return this.bitmap;
     const t0 = performance.now();
     try {
-      return this.buildBitmap(grid, key);
+      this.bmVersion = this.version;
+      this.bmThreshold = this.threshold;
+      this.bmPresentation = this.presentation;
+      this.bmLo = ramp[0];
+      this.bmHi = ramp[1];
+      return this.buildBitmap(grid);
     } finally {
       this.lastBuildMs = performance.now() - t0;
       this.buildMsPending += this.lastBuildMs;
     }
   }
 
-  private buildBitmap(grid: RasterGrid, key: string): HTMLCanvasElement | null {
-    this.bitmapKey = key;
+  private buildBitmap(grid: RasterGrid): HTMLCanvasElement | null {
     if (typeof document === 'undefined') return null;
     this.lo = parseCssColour(this.pen.colour(this.src.ramp[0])) ?? this.lo;
     this.hi = parseCssColour(this.pen.colour(this.src.ramp[1])) ?? this.hi;
@@ -187,10 +197,10 @@ export class RasterLayer {
   }
 
   private ensureOutline(grid: RasterGrid): FeatureIndex {
-    const key = `${this.version}|${this.threshold}`;
-    if (key === this.outlineKey && this.outline !== null) return this.outline;
+    if (this.outline !== null && this.olVersion === this.version && this.olThreshold === this.threshold) return this.outline;
     const t0 = performance.now();
-    this.outlineKey = key;
+    this.olVersion = this.version;
+    this.olThreshold = this.threshold;
     const rings = outlineRings(grid, this.threshold);
     this.outline = new FeatureIndex(flattenGeometries(rings.map((r) => ({ type: 'Polygon' as const, coordinates: [r] }))));
     this.lastBuildMs = performance.now() - t0;

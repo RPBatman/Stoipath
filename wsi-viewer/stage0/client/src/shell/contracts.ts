@@ -96,6 +96,11 @@ export interface ShellEvents {
   /** proposed. */
   toolChanged: { tool: ToolId; previous: ToolId };
   classChanged: { className: string };
+  /**
+   * compare's state. `off` also closes view B in core (engine, workers and GL context disposed, pane B's canvas removed,
+   * `view('B')` null again; TOOLS-QUESTIONS 2026-11-01 core Q1): compare may call `ViewHandle.close()` first and then
+   * emit `off`, or emit `off` alone; a second close of an empty view does nothing.
+   */
   compareChanged: { state: CompareState; sync: SyncState | null };
   /** plan 12 `shareCreated` (Tier 0: no label image, no PHI in this build). */
   shareCreated: { kind: 'link' | 'snapshot'; bytes: number };
@@ -773,6 +778,12 @@ export interface RasterGridFile {
   schema: 'stoipath.rastergrid/1';
   id: string;
   title: string;
+  /**
+   * What the grid is (D15: the demo heatmap is `demo`; FR-R11 depends on it). Optional for files written before
+   * 2026-11-01 (TOOLS-QUESTIONS layers Q2): without it the catalogue types a grid `demo` only when its note starts
+   * "Demo overlay" (TOOLS.md §15.5 L6), and a consumer must do the same.
+   */
+  origin?: LayerOrigin;
   /** "Demo overlay — not a model output". */
   note: string;
   /** Plain-language statement of what the value is. */
@@ -1220,6 +1231,12 @@ export interface CommandRegistry {
   list(): readonly ShellCommand[];
   /** Human-readable binding conflicts (tests assert none). */
   conflicts(): readonly string[];
+  /**
+   * Where the command being run came from (the `source` of the current run(); after it, of the last one). A run()
+   * handler reads it for the input modality it records (annotation `stoipath.input`) and for events with a source
+   * (TOOLS-QUESTIONS 2026-11-01 annotations A2, library L9).
+   */
+  readonly source: CommandSource;
 }
 
 export type StoreName = 'annotations' | 'coverage' | 'views' | 'session';
@@ -1263,6 +1280,12 @@ export interface ViewHandle {
   /** Eased (or instant) move in State Document units, clamped to the engine's zoom range. */
   flyTo(center_um: [number, number], scale_um_per_px: number, instant: boolean): void;
   focus(): void;
+  /**
+   * Dispose this view's engine and leave the pane empty (compare close, TOOLS.md §6.9): the annotation store is flushed
+   * (≤ 1 s), `slideClosing` fires, the engine is disposed and pane B's canvas removed. Resolves when the pane is empty
+   * (or when a newer openSlide took the pane over). Pane A keeps its canvas; closing view A is not part of Phase A.
+   */
+  close(): Promise<void>;
 }
 
 /** Services modules provide to each other (provide() once, at install). */
