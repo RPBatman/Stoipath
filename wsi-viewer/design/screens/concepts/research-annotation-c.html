@@ -144,6 +144,8 @@ body { overflow-x: hidden; }
 .dock__foot { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-top: 1px solid var(--color-border); background: var(--color-surface-0); }
 .dock__foot .grow { flex: 1 1 auto; min-width: 0; font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dock__foot .btn--primary { min-height: 32px; }
+.dock__foot .btn { flex: 0 0 auto; }            /* buttons never shrink; the status text truncates instead */
+.layer-row__name { flex-wrap: wrap; }           /* the fixed not-validated marker wraps under the name */
 
 .steppanel { display: none; }
 .app[data-step="open"]     .steppanel[data-step="open"],
@@ -163,7 +165,8 @@ body { overflow-x: hidden; }
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-4); font-size: var(--text-xs); }
 .kv dt { color: var(--color-text-secondary); }
 .kv dd { font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hint { font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; line-height: 1.5; }
+.hint { font-size: var(--text-xs); color: var(--color-text-secondary); display: block; line-height: 1.6; }
+.hint .key { vertical-align: middle; }
 .btnrow { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .toolgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
 .toolgrid .tool { width: 100%; height: auto; min-height: 52px; padding: var(--space-3) var(--space-2); border: 1px solid var(--color-border); gap: var(--space-2); }
@@ -223,13 +226,13 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 .palette-layer .palette__list { max-height: 330px; }
 
 /* ---- Canvas, HUD, overlays (placeholder for engine-drawn GPU layers) ------ */
-.canvas-area .world { transform-origin: 800px 500px; }
+.canvas-area .world { transform-origin: 0 0; }   /* the SVG transform attribute honours CSS transform-origin in Chromium */
 .panes { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; }
 .pane { position: relative; overflow: hidden; min-width: 0; min-height: 0; }
-.pane + .pane { display: none; }
+.panes > .pane + .pane { display: none; }
 .canvas-area.is-side .panes { grid-template-columns: 1fr 1fr; gap: 2px; background: var(--color-surface--1); }
-.canvas-area.is-side .pane + .pane { display: block; }
-.canvas-area.is-curtain .pane + .pane { display: block; position: absolute; inset: 0; clip-path: inset(0 0 0 var(--curtain, 50%)); }
+.canvas-area.is-side .panes > .pane + .pane { display: block; }
+.canvas-area.is-curtain .panes > .pane + .pane { display: block; position: absolute; inset: 0; clip-path: inset(0 0 0 var(--curtain, 50%)); }
 .curtain-line { position: absolute; top: 0; bottom: 0; left: var(--curtain, 50%); width: 2px; margin-left: -1px; background: var(--grey-95); box-shadow: 0 0 0 1px rgba(0,0,0,.6); display: none; z-index: 2; pointer-events: none; }
 .canvas-area.is-curtain .curtain-line { display: block; }
 .panelabel { position: absolute; top: var(--layout-hud-inset); left: var(--layout-hud-inset); z-index: var(--z-hud); }
@@ -240,7 +243,8 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 .grid6 { position: absolute; inset: 0; display: none; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 2px; background: var(--color-surface--1); z-index: 1; }
 .canvas-area.is-grid .grid6 { display: grid; }
 .grid6 .pane { background: #050608; }
-.grid6 .pane .panelabel { display: inline-flex !important; left: var(--layout-hud-inset) !important; right: auto !important; }
+.grid6 .pane .panelabel { display: inline-flex !important; left: auto !important; right: var(--layout-hud-inset) !important; }
+.canvas-area.is-side .hud--tl > .hud__item:first-child, .canvas-area.is-curtain .hud--tl > .hud__item:first-child, .canvas-area.is-grid .hud--tl > .hud__item:first-child { display: none; }
 .canvas-area.is-grid .navigator { display: none; }
 .hud--tl .hud__item b { font-weight: var(--weight-semibold); }
 .hud .hud__sharp .indicator__glyph { width: 9px; height: 9px; }
@@ -270,6 +274,7 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 /* Notebook (Jupyter widget variant) ------------------------------------------ */
 .nb { display: none; padding: var(--space-6); background: #f7f7f7; color: #1a1a1a; min-height: calc(100dvh - var(--review-h) - var(--demo-h)); }
 .nb.is-on { display: block; }
+.nb .app { color: var(--color-text); }   /* the widget keeps the viewer's own text colour inside a light notebook */
 .nb__page { max-width: 1260px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-4); }
 .nb__bar { display: flex; gap: var(--space-5); align-items: center; font-size: var(--text-sm); color: #4a4a4a; border-bottom: 1px solid #d0d0d0; padding-bottom: var(--space-3); }
 .nb__bar b { color: #1a1a1a; }
@@ -289,7 +294,7 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 .wsteps button[aria-current="step"] { background: var(--color-control-selected); color: var(--color-text); box-shadow: inset 0 -2px 0 var(--color-text); }
 .app--widget .rail { gap: 2px; padding: var(--space-2) 0; }
 .app--widget .rail .tool { width: 32px; height: 32px; }
-@container topbar (max-width: 1023px) { .wsteps .lbl { display: none; } }
+@container topbar (max-width: 1279px) { .wsteps .lbl { display: none; } }
 
 /* ---- Responsive ------------------------------------------------------------- */
 /* 4K: larger rail and panel; the canvas still dominates (≈ 86 %) */
@@ -304,6 +309,10 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 /* Laptop and tablet landscape: the step panel is a drawer that never reaches the central 50 % */
 @media (min-width: 1080px) and (max-width: 1599px) {
   .app.flow { --layout-dock: clamp(280px, calc((100vw - var(--layout-rail)) * 0.25), 360px); }
+  /* the drawer covers the canvas edge only: navigator and magnification readout step left of it */
+  .app.flow.dock-open .navigator, .app.flow.dock-open .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.flow.dock-open .touchhint { right: auto; left: 30%; bottom: 6%; }
+  .app.flow.dock-open .tool-palette.penpal { left: 44%; }
 }
 /* Tablet portrait and phone: steps → bottom bar, tools → tray, panel → in-flow sheet
    (the canvas yields height instead of being covered: P1 holds even when expanded) */
@@ -338,6 +347,9 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 }
 @media (pointer: coarse) {
   .app.flow { --layout-rail: 96px; }
+  .layer-row { grid-template-columns: 44px 1fr auto; }
+  .chanrow { grid-template-columns: 44px 14px 1fr auto; }
+  .searchbtn .key { display: none; }
   .steptools { grid-template-columns: repeat(2, 44px); } .steptools .tool { width: 44px; height: 44px; } .steptools .tool.wide { width: 92px; }
   .annlist .list__item, .queue .list__item, .slides .tray__slide { min-height: 44px; }
   .layer-row__vis { width: 44px; height: 44px; }
@@ -346,7 +358,7 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 @media (max-width: 599px) {
   :root { --review-h: 26px; --demo-h: 40px; }
   .app.flow {
-    --layout-bottombar: 60px; --tray-h: 52px; --sheet-peek: 112px;
+    --layout-bottombar: 56px; --tray-h: 48px; --sheet-peek: 112px;
     grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--tray-h) var(--layout-bottombar);
     grid-template-areas: "topbar" "canvas" "sheet" "tray" "bottombar";
     min-height: 0;
@@ -372,6 +384,57 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
 }
 @media (prefers-reduced-motion: reduce) {
   .canvas-area .world { transition: none !important; }
+}
+
+/* ---- Completion pass additions (2026-11-01) --------------------------------- */
+.railhint { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 9px; color: var(--color-text-secondary); padding: 0 0 var(--space-3); white-space: nowrap; }
+.railhint .key { min-width: 16px; height: 16px; font-size: 9px; }
+.steprail li { display: flex; flex-direction: column; align-items: stretch; }
+.worldlabel rect { fill: #262626; } .worldlabel text { fill: #f2f2f2; font: 13px var(--font-mono); }
+.hpfgrid { position: absolute; inset: 0; display: none; pointer-events: none; z-index: 1;
+  background-image: linear-gradient(to right, var(--color-canvas-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--color-canvas-grid) 1px, transparent 1px);
+  background-size: 160px 160px; }
+.canvas-area.is-grid-on .hpfgrid { display: block; }
+.ov-tileerr { display: none; } .canvas-area.has-tileerr .ov-tileerr { display: inline; }
+.strip .indicator { min-height: 24px; padding: 0 var(--space-2); font-size: inherit; }
+.scalebar .scalebar__bar { margin-bottom: 6px; }
+body.show-live .navigator[data-live], body.show-live .panelabel[data-live] { position: absolute; }   /* the review marker rule must not un-position overlays */
+.app.is-if .he-layer { display: none; } .app:not(.is-if) .if-layer { display: none; }
+.jobs .output__head .mono { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.jobs .output .btn { vertical-align: middle; }
+@media (max-width: 1079px) { .hide-md { display: none; } }
+.dx-only { display: none; } .app[data-product="dx"] .dx-only { display: inline-flex; }
+.demo .grow { flex: 1 1 auto; }
+.dock__eyebrow .stepnum { font-family: var(--font-mono); }
+.toolgrid .tool .swatch { position: static; width: 14px; height: 14px; }
+.steptools .tool .swatch, .steptray .tool .swatch { position: static; width: 14px; height: 14px; }
+.outputs .output .progress-bar { margin-top: 2px; }
+.annlist .list__item .swatch { width: 10px; height: 10px; }
+.curtainctl { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
+.navigator .navigator__labelimg { display: none; }
+.app[data-product="clinical"] .navigator__labelimg, .app[data-product="dx"] .navigator__labelimg { display: block; }
+.app[data-product="ruo"] .topbar__identity .patient { display: none; }
+.topbar__identity .patient { font-size: var(--text-sm); color: var(--color-text-secondary); white-space: nowrap; flex: 0 0 auto; }
+@container topbar (max-width: 1279px) { .topbar__identity .patient { display: none; } }
+.paneloverlay__head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-border); }
+.paneloverlay__head h2 { flex: 1; font-size: var(--text-xl); font-weight: var(--weight-semibold); }
+.paneloverlay .dock__body { padding: var(--space-4) 0; }
+.about dl { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-4); font-size: var(--text-sm); padding: 0 var(--space-5); }
+.about dt { color: var(--color-text-secondary); } .about dd { font-family: var(--font-mono); }
+.about p { padding: 0 var(--space-5); font-size: var(--text-sm); line-height: 1.5; }
+.about .badge-string { white-space: normal; display: block; padding: 0 var(--space-5); font-size: var(--text-md); color: var(--color-text); line-height: 1.5; }
+.stepsum { display: flex; align-items: center; gap: var(--space-3); min-height: 36px; padding: 0 var(--space-5); background: var(--color-surface--1); font-weight: var(--weight-semibold); font-size: var(--text-sm); }
+@media (max-width: 1079px) {
+  .paneloverlay .keymap { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+@media (max-width: 599px) {
+  .app.flow { --sheet-peek: 88px; }
+  .app.flow:not(.sheet-expanded) .dock__foot { display: none; }
+  .app.flow:not(.sheet-expanded) .dock__head { padding: 0 var(--space-4) var(--space-3) var(--space-4); }
+  .topbar__tools .searchbtn .key { display: none; }
+  .topbar__tools .searchbtn { padding: 0 var(--space-3); }
+  .hud { max-width: 48%; }
+  .hud--bl .hud__position { display: none; }
 }
 </style>
 </head>
@@ -520,6 +583,7 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
     <div class="topbar__identity" id="identity">
       <span class="accession" id="idName" data-live="state.slides[0]">CAMELYON16 · tumor_014</span>
       <span class="title" id="idTitle">Sentinel lymph node · H&amp;E · scanned 0.25 µm/px · 3 layers</span>
+      <span class="patient" id="idPatient" data-synthetic data-live="launch:accession">DOE, JANE · 1958 · synthetic</span>
       <span class="chip chip--licence" id="idLicence" data-live="state.slides[0].licence" title="Licence of this slide">CC0</span>
       <span class="chip chip--solid flowchip" id="idCohort" data-live="state.collection">Slide 14 of 48 · 3 done</span>
     </div>
@@ -559,6 +623,8 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
                 <use data-ch="foxp3" href="#ch-foxp3" style="mix-blend-mode:screen;display:none"/>
               </g>
             </g>
+            <!-- S14 tile errors: failed tiles keep the best resident ancestor (coarser pattern), never blank -->
+            <g class="ov-tileerr" aria-hidden="true"><rect x="1040" y="360" width="128" height="128" fill="url(#pat-tumour)" opacity=".9" transform="translate(1040 360) scale(2) translate(-1040 -360)" clip-path="inset(0 50% 50% 0)"/><rect x="1040" y="360" width="128" height="128" fill="none" stroke="#262626" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/><rect x="1168" y="360" width="128" height="128" fill="#d9a0c0" opacity=".85"/><rect x="1168" y="360" width="128" height="128" fill="none" stroke="#262626" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/><rect x="1040" y="488" width="128" height="128" fill="#d9a0c0" opacity=".85"/><rect x="1040" y="488" width="128" height="128" fill="none" stroke="#262626" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/></g>
             <!-- Layer: tumour/normal label map (raster labels; nearest sampling + LUT in the engine) -->
             <g class="ov ov-labels he-only" data-live="layers:labels"><use href="#geo-met" fill="url(#hatch-tumour)"/><use href="#geo-micro" fill="url(#hatch-tumour)"/></g>
             <!-- Layer: metastasis probability (raster; outline by default, heatmap on demand) -->
@@ -568,46 +634,44 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
               <ellipse cx="300" cy="620" rx="60" ry="40" fill="url(#g-heat)" opacity=".5"/>
             </g>
             <g class="ov ov-outline he-only" data-live="layers:probability">
-              <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#262626" stroke-width="6"/>
-              <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="14 8"/>
-              <circle cx="1222" cy="332" r="58" fill="none" stroke="#262626" stroke-width="6"/><circle cx="1222" cy="332" r="58" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="10 6"/>
+              <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#262626" stroke-width="6" vector-effect="non-scaling-stroke"/>
+              <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="14 8" vector-effect="non-scaling-stroke"/>
+              <circle cx="1222" cy="332" r="58" fill="none" stroke="#262626" stroke-width="6" vector-effect="non-scaling-stroke"/><circle cx="1222" cy="332" r="58" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="10 6" vector-effect="non-scaling-stroke"/>
             </g>
             <!-- Layer: 1,240,000 cell detections, centroid LOD below 10× (generated) -->
             <g class="ov ov-detect he-only" id="detect" data-live="layers:vector"></g>
             <!-- Layer: my annotations (op-based Annotation API) -->
             <g class="ov ov-ann he-only" id="ann" data-live="annotations">
-              <use href="#geo-met" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6"/>
-              <use href="#geo-met" fill="none" stroke="#8e3a15" stroke-width="3"/>
-              <g fill="#f7f7f7" stroke="#262626" stroke-width="1.5" id="handles">
-                <rect x="473" y="465" width="10" height="10"/><rect x="623" y="307" width="10" height="10"/><rect x="815" y="295" width="10" height="10"/><rect x="1025" y="367" width="10" height="10"/><rect x="1035" y="515" width="10" height="10"/><rect x="895" y="675" width="10" height="10"/><rect x="695" y="699" width="10" height="10"/><rect x="507" y="627" width="10" height="10"/>
-              </g>
-              <use href="#geo-micro" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6"/>
-              <use href="#geo-micro" fill="none" stroke="#8e3a15" stroke-width="3"/>
+              <path d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6" vector-effect="non-scaling-stroke"/>
+              <path d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z" fill="none" stroke="#8e3a15" stroke-width="3" vector-effect="non-scaling-stroke"/>
+              <g fill="#f7f7f7" stroke="#262626" stroke-width="1.5" id="handles"><rect class="counter" data-x="478" data-y="470" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="628" data-y="312" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="820" data-y="300" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="1030" data-y="372" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="1040" data-y="520" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="900" data-y="680" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="700" data-y="704" x="-5" y="-5" width="10" height="10"/><rect class="counter" data-x="512" data-y="632" x="-5" y="-5" width="10" height="10"/></g>
+              <path d="M1188 312 C1200 292 1236 290 1252 306 C1268 322 1262 352 1240 362 C1218 370 1190 360 1184 340 C1182 330 1182 320 1188 312 Z" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6" vector-effect="non-scaling-stroke"/>
+              <path d="M1188 312 C1200 292 1236 290 1252 306 C1268 322 1262 352 1240 362 C1218 370 1190 360 1184 340 C1182 330 1182 320 1188 312 Z" fill="none" stroke="#8e3a15" stroke-width="3" vector-effect="non-scaling-stroke"/>
               <!-- ROI 1 for the model run (Region*, deep blue, dashed, light halo) -->
               <rect x="904" y="232" width="180" height="130" fill="none" stroke="#e6e6e6" stroke-width="6"/>
               <rect x="904" y="232" width="180" height="130" fill="none" stroke="#173f86" stroke-width="3" stroke-dasharray="12 6"/>
-              <g transform="translate(904 222)"><rect x="0" y="-18" width="58" height="20" rx="2" fill="#262626"/><text x="6" y="-3" font-family="ui-monospace, Menlo, monospace" font-size="13" fill="#f2f2f2">ROI 1</text></g>
+              <g class="counter worldlabel" data-x="904" data-y="222"><rect x="0" y="-18" width="58" height="20" rx="2"/><text x="6" y="-3">ROI 1</text></g>
               <!-- Measurement: largest dimension of the metastatic focus -->
-              <line x1="478" y1="520" x2="1046" y2="452" stroke="#262626" stroke-width="5"/>
-              <line x1="478" y1="520" x2="1046" y2="452" stroke="#f7f7f7" stroke-width="2.5"/>
-              <circle cx="478" cy="520" r="5" fill="#f7f7f7" stroke="#262626" stroke-width="2"/><circle cx="1046" cy="452" r="5" fill="#f7f7f7" stroke="#262626" stroke-width="2"/>
-              <g transform="translate(700 470)"><rect x="0" y="-18" width="62" height="22" rx="2" fill="#262626"/><text x="7" y="-2" font-family="ui-monospace, Menlo, monospace" font-size="14" fill="#f7f7f7">2.3 mm</text></g>
+              <line x1="478" y1="520" x2="1046" y2="452" stroke="#262626" stroke-width="5" vector-effect="non-scaling-stroke"/>
+              <line x1="478" y1="520" x2="1046" y2="452" stroke="#f7f7f7" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+              <circle cx="478" cy="520" r="5" fill="#f7f7f7" stroke="#262626" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="1046" cy="452" r="5" fill="#f7f7f7" stroke="#262626" stroke-width="2" vector-effect="non-scaling-stroke"/>
+              <g class="counter worldlabel" data-x="700" data-y="470"><rect x="0" y="-18" width="62" height="22" rx="2"/><text x="7" y="-2">2.3 mm</text></g>
               <!-- Brush region, Stroma (teal) -->
-              <path d="M280 760 C300 716 352 700 392 716 C430 732 446 772 420 800 C392 828 336 832 304 812 C286 800 274 782 280 760 Z" fill="rgba(26,136,147,.14)" stroke="#e6e6e6" stroke-width="6"/>
-              <path d="M280 760 C300 716 352 700 392 716 C430 732 446 772 420 800 C392 828 336 832 304 812 C286 800 274 782 280 760 Z" fill="none" stroke="#1a8893" stroke-width="3"/>
+              <path d="M280 760 C300 716 352 700 392 716 C430 732 446 772 420 800 C392 828 336 832 304 812 C286 800 274 782 280 760 Z" fill="rgba(26,136,147,.14)" stroke="#e6e6e6" stroke-width="6" vector-effect="non-scaling-stroke"/>
+              <path d="M280 760 C300 716 352 700 392 716 C430 732 446 772 420 800 C392 828 336 832 304 812 C286 800 274 782 280 760 Z" fill="none" stroke="#1a8893" stroke-width="3" vector-effect="non-scaling-stroke"/>
               <!-- Point markers: Lymphocytes (sky) near a follicle, Other (amber) -->
               <g stroke-width="2.5">
-                <g stroke="#262626" stroke-width="5"><path d="M352 292v14M345 299h14M372 316v14M365 323h14M338 330v14M331 337h14"/></g>
-                <g stroke="#7cc3f0"><path d="M352 292v14M345 299h14M372 316v14M365 323h14M338 330v14M331 337h14"/></g>
-                <g stroke="#262626" stroke-width="5"><path d="M1388 610v14M1381 617h14M1410 640v14M1403 647h14"/></g>
-                <g stroke="#be7b00"><path d="M1388 610v14M1381 617h14M1410 640v14M1403 647h14"/></g>
+                <g stroke="#262626" stroke-width="5"><path d="M352 292v14M345 299h14M372 316v14M365 323h14M338 330v14M331 337h14" vector-effect="non-scaling-stroke"/></g>
+                <g stroke="#7cc3f0"><path d="M352 292v14M345 299h14M372 316v14M365 323h14M338 330v14M331 337h14" vector-effect="non-scaling-stroke"/></g>
+                <g stroke="#262626" stroke-width="5"><path d="M1388 610v14M1381 617h14M1410 640v14M1403 647h14" vector-effect="non-scaling-stroke"/></g>
+                <g stroke="#be7b00"><path d="M1388 610v14M1381 617h14M1410 640v14M1403 647h14" vector-effect="non-scaling-stroke"/></g>
               </g>
             </g>
             <!-- Pen stroke in progress (tablet variant): pen draws, a finger pans -->
             <g class="ov ov-pen he-only">
-              <path d="M560 800 C590 772 640 770 668 790 C690 806 720 812 748 798" fill="none" stroke="#e6e6e6" stroke-width="7" stroke-linecap="round"/>
-              <path d="M560 800 C590 772 640 770 668 790 C690 806 720 812 748 798" fill="none" stroke="#1a8893" stroke-width="4" stroke-linecap="round"/>
-              <g transform="translate(748 798) rotate(-35)"><path d="M0 0l8-4 46-46-8-8-46 46z" fill="#f2f2f2" stroke="#262626" stroke-width="2"/></g>
+              <path d="M560 800 C590 772 640 770 668 790 C690 806 720 812 748 798" fill="none" stroke="#e6e6e6" stroke-width="7" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+              <path d="M560 800 C590 772 640 770 668 790 C690 806 720 812 748 798" fill="none" stroke="#1a8893" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+              <g transform="translate(748 798) rotate(-35)"><path d="M0 0l8-4 46-46-8-8-46 46z" fill="#f2f2f2" stroke="#262626" stroke-width="2" vector-effect="non-scaling-stroke"/></g>
             </g>
           </g>
         </svg>
@@ -616,13 +680,14 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
       <div class="pane" id="paneB">
         <svg class="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <g class="world" id="worldB"><use href="#world-ihc" width="1600" height="1000"/>
-            <g class="ov ov-ann"><use href="#geo-met" fill="none" stroke="#e6e6e6" stroke-width="6" transform="translate(14 -8) rotate(1.5 800 500)"/><use href="#geo-met" fill="none" stroke="#8e3a15" stroke-width="3" transform="translate(14 -8) rotate(1.5 800 500)"/></g>
+            <g class="ov ov-ann"><path d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z" fill="none" stroke="#e6e6e6" stroke-width="6" transform="translate(14 -8) rotate(1.5 800 500)" vector-effect="non-scaling-stroke"/><path d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z" fill="none" stroke="#8e3a15" stroke-width="3" transform="translate(14 -8) rotate(1.5 800 500)" vector-effect="non-scaling-stroke"/></g>
           </g>
         </svg>
         <span class="hud__item panelabel" data-live="state.views[1]"><b>tumor_014 · CK AE1/AE3 (IHC)</b>&nbsp;· affine</span>
       </div>
     </div>
     <div class="curtain-line" aria-hidden="true"></div>
+    <div class="hpfgrid" aria-hidden="true"></div><!-- G: HPF reticle; a GPU HUD layer in the product (placeholder DOM here) -->
 
     <!-- Channel grid view (multiplex): one pane per visible channel, same camera -->
     <div class="grid6" id="grid6" aria-label="Channel grid view"></div>
@@ -633,7 +698,7 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
     <!-- HUD: four corners only -->
     <div class="hud hud--tl" id="hudTL">
       <span class="hud__item" data-live="state.slides[0]"><b id="hudName">tumor_014 · H&amp;E</b></span>
-      <span class="hud__item hud__item--quiet hud__sharp indicator indicator--sharp" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span>
+      <span class="hud__item hud__sharp indicator indicator--sharp" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span>
     </div>
     <div class="hud hud--bl">
       <div class="hud__item scalebar" data-live="state.views[0].scale_um_per_px" style="--scalebar-length:125px" id="scalebar">
@@ -658,7 +723,7 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
           <button class="right" aria-label="Pan right" data-pan="1,0">▶</button><button class="down" aria-label="Pan down" data-pan="0,1">▼</button>
         </div>
       </div>
-      <div class="navigator__label"><span>Overview · click to recentre</span><kbd class="key">O</kbd></div>
+      <div class="navigator__label"><span>Overview<span class="hide-md"> · click to recentre</span></span><span class="navigator__labelimg" data-live="launch:slideLabelText" data-synthetic>AP-26-04417<br>A1-1 H&amp;E</span><kbd class="key">O</kbd></div>
     </div>
 
     <!-- Transient pen-tip palette (Pencil Pro squeeze; a GPU layer in the product) and touch hint -->
@@ -688,3 +753,1486 @@ pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var
       </div>
     </div>
   </main>
+
+  <!-- D. Context dock = the step panel. One step's panel at a time (progressive disclosure);
+       the "all steps" toggle stacks every panel for power users. Below 1080 px this is an
+       in-flow peeking sheet: the canvas yields height instead of being covered. -->
+  <aside class="dock region" id="dock" aria-label="Step panel">
+    <button class="dock__grab" id="sheetGrab" aria-expanded="false" aria-controls="dockBody" aria-label="Expand the step panel"><span></span></button>
+    <div class="dock__head">
+      <span class="dock__eyebrow" id="dockEyebrow"><span class="stepnum">Step 4 of 5</span> · Annotate</span>
+      <h2 class="dock__title" id="dockTitle">Annotate the metastasis</h2>
+      <p class="dock__purpose" id="dockPurpose">Draw, classify and measure; every tool has a key.</p>
+      <div class="dock__headactions">
+        <button class="btn btn--icon btn--ghost" id="expertBtn" aria-pressed="false" aria-label="Show all steps at once (expert mode)" title="All steps at once"><svg class="icon"><use href="#i-allsteps"/></svg></button>
+        <button class="btn btn--icon btn--ghost dock__collapse" id="dockCollapse" aria-label="Collapse the step panel (backslash)" title="Collapse panel (\)"><svg class="icon"><use href="#i-panel"/></svg></button>
+      </div>
+    </div>
+
+    <div class="dock__body" id="dockBody">
+
+      <!-- ================= Step 1 · Open ================= -->
+      <section class="steppanel" data-step="open" aria-labelledby="sp-open-h">
+        <div class="steppanel__summary stepsum"><span class="step__num"><span>1</span></span><span id="sp-open-h">Open</span><span class="grow"></span><span class="text-secondary text-xs">cohort · slide · files</span></div>
+        <p class="sublead ruo-only">Pick a slide from the cohort or drop a file. Nothing here reaches a LIS: this is the research build and the worklist is yours, not a laboratory's.</p>
+        <p class="sublead clinical-only">Slides come from the launch context. The case and slide identity are shown before the first tile is drawn.</p>
+
+        <details class="section" open>
+          <summary>Cohort <span class="count" data-live="state.collection">48 slides</span></summary>
+          <div class="section__body stack stack--tight">
+            <div class="pad">
+              <label class="select" aria-label="Collection"><select data-live="state.collection">
+                <option selected>CAMELYON16 · sentinel lymph node · 48 slides</option>
+                <option>CAMELYON17 · 5 centres · 100 slides</option>
+                <option>IDC · TCGA-BRCA · 1,133 slides (DICOMweb)</option>
+                <option>Institutional · IRB 2026-114 · 212 slides</option>
+              </select></label>
+            </div>
+            <div class="pad classes" role="group" aria-label="Filters">
+              <button class="chip" aria-pressed="true">All · 48</button>
+              <button class="chip chip--stain" aria-pressed="false">H&amp;E · 40</button>
+              <button class="chip chip--stain" aria-pressed="false">IHC · 6</button>
+              <button class="chip chip--stain" aria-pressed="false">IF · 2</button>
+              <button class="chip" aria-pressed="false">To do · 33</button>
+              <button class="chip" aria-pressed="false">In progress · 12</button>
+              <button class="chip" aria-pressed="false">Done · 3</button>
+              <button class="chip chip--licence" aria-pressed="false">CC0 · 46</button>
+            </div>
+            <div class="tray slides" role="listbox" aria-label="Slides in this cohort" data-live="state.slides[]">
+              <button class="tray__slide is-viewed" role="option" aria-selected="false" data-slide="he" data-name="tumor_013">
+                <span class="tray__thumb"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#world-he" width="1600" height="1000"/></svg><span class="tray__viewed"></span><span class="tray__coverage"><span style="--coverage:100%"></span></span></span>
+                <span class="tray__label"><span class="id">tumor_013</span><span class="text">H&amp;E · 0.25 µm/px · 2 layers · done</span></span>
+                <span class="state"><span class="chip chip--licence">CC0</span></span>
+              </button>
+              <button class="tray__slide is-partial" role="option" aria-selected="true" data-slide="he" data-name="tumor_014">
+                <span class="tray__thumb"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#world-he" width="1600" height="1000"/></svg><span class="tray__viewed"></span><span class="tray__coverage"><span style="--coverage:62%"></span></span></span>
+                <span class="tray__label"><span class="id">tumor_014</span><span class="text">H&amp;E · 0.25 µm/px · 3 layers · in progress</span></span>
+                <span class="state"><span class="chip chip--licence">CC0</span></span>
+              </button>
+              <button class="tray__slide" role="option" aria-selected="false" data-slide="ihc" data-name="tumor_014_ihc">
+                <span class="tray__thumb"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#world-ihc" width="1600" height="1000"/></svg></span>
+                <span class="tray__label"><span class="id">tumor_014_ihc</span><span class="text">CK AE1/AE3 · serial section · registered (affine)</span></span>
+                <span class="state"><span class="chip chip--stain">IHC</span></span>
+              </button>
+              <button class="tray__slide" role="option" aria-selected="false" data-slide="if" data-name="cycif_sln_02">
+                <span class="tray__thumb" style="background:#06060a"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#if-base"/><use href="#ch-dapi"/><use href="#ch-panck" style="mix-blend-mode:screen"/></svg></span>
+                <span class="tray__label"><span class="id">cycif_sln_02</span><span class="text">IF · 8 channels · OME-Zarr 16-bit · IRB 2026-114</span></span>
+                <span class="state"><span class="chip chip--stain">IF</span></span>
+              </button>
+              <button class="tray__slide is-unviewed" role="option" aria-selected="false" data-slide="he" data-name="tumor_015">
+                <span class="tray__thumb"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#world-he" width="1600" height="1000"/></svg></span>
+                <span class="tray__label"><span class="id">tumor_015</span><span class="text">H&amp;E · 0.25 µm/px · to do</span></span>
+                <span class="state"><span class="chip chip--licence">CC0</span></span>
+              </button>
+            </div>
+            <p class="hint pad"><kbd class="key">]</kbd> next slide · <kbd class="key">[</kbd> previous · Enter opens the focused slide</p>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>This slide</summary>
+          <div class="section__body">
+            <dl class="kv pad" data-live="state.slides[0]">
+              <dt>Source</dt><dd>dicomweb://idc/camelyon16/tumor_014</dd>
+              <dt>Scan</dt><dd>0.25 µm/px · 97,792 × 221,184 px · 9 levels</dd>
+              <dt>Format</dt><dd>DICOM WSI · TILED_FULL · JPEG 4:4:4</dd>
+              <dt>sid</dt><dd>sha256:9f3a81c0…c21e</dd>
+              <dt>Licence</dt><dd>CC0 1.0 · CAMELYON16</dd>
+              <dt>Layers</dt><dd>3 attached · 1 local Parquet</dd>
+            </dl>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Add data</summary>
+          <div class="section__body">
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Drop a slide or an overlay file here, or press Enter to browse" data-live="layers:add">
+              Drop a slide (SVS, NDPI, DICOM, OME-TIFF, OME-Zarr), a GeoJSON, a GeoParquet or a label pyramid here<br>
+              <span class="ruo-only">or <code>v.layers.add_vector("detections.parquet")</code> from Python</span>
+            </div>
+            <div class="btnrow pad">
+              <button class="btn btn--secondary btn--sm" data-cmd="openurl"><svg class="icon icon--sm"><use href="#i-folder"/></svg> Open from URL…</button>
+              <button class="btn btn--secondary btn--sm" data-cmd="importgeo"><svg class="icon icon--sm"><use href="#i-upload"/></svg> Import GeoJSON (QuPath)</button>
+            </div>
+            <p class="hint pad">Files above 10<sup>5</sup> features are tiled locally; the hard warning fires before anything is drawn.</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- ================= Step 2 · Screen ================= -->
+      <section class="steppanel" data-step="screen" aria-labelledby="sp-screen-h">
+        <div class="steppanel__summary stepsum"><span class="step__num"><span>2</span></span><span id="sp-screen-h">Screen</span><span class="grow"></span><span class="text-secondary text-xs">low power · candidates</span></div>
+        <p class="sublead">Low power first. Work through the model's candidate regions, mark each one reviewed, and note what the overview tells you. <b>Fly there</b> is the keyboard and single-pointer path (SC 2.5.7).</p>
+
+        <details class="section" open>
+          <summary>Coverage <span class="count" data-live="geometry:visibleCoverage">62 %</span></summary>
+          <div class="section__body pad stack stack--tight">
+            <div class="slider__label"><span>Tissue viewed at ≥ 5×</span><span class="num">62 %</span></div>
+            <div class="progress-bar" style="--value:62%" aria-hidden="true"><span></span></div>
+            <p class="hint">Computed by the engine's <code>visibleCoverage</code> service from the viewport trail; nothing is marked viewed by time alone.</p>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Candidate regions <span class="count" data-live="events:aiResultArrived">4</span></summary>
+          <div class="section__body">
+            <div class="list queue" role="listbox" aria-label="Candidate regions from unet-tumour 1.3">
+              <div class="list__item is-reviewed" role="option" aria-selected="false" tabindex="0" data-fly="met">
+                <span class="rid">R1</span><span class="what">Metastasis · p 0.97 · 2.3 mm</span>
+                <button class="btn btn--sm btn--secondary" data-fly="met" aria-label="Fly to region R1">Fly there</button>
+                <span class="meta2">reviewed 10:42 · annotated A1</span>
+              </div>
+              <div class="list__item" role="option" aria-selected="true" tabindex="0" data-fly="micro">
+                <span class="rid">R2</span><span class="what">Micrometastasis · p 0.81 · 0.6 mm</span>
+                <button class="btn btn--sm btn--primary" data-fly="micro" aria-label="Fly to region R2">Fly there</button>
+                <span class="meta2">subcapsular · right pole · <label class="check" style="display:inline-flex;min-height:0;padding:0"><input type="checkbox" aria-label="Mark R2 reviewed"> mark reviewed</label></span>
+              </div>
+              <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="itc">
+                <span class="rid">R3</span><span class="what">ITC candidate · p 0.42 · 0.1 mm</span>
+                <button class="btn btn--sm btn--secondary" data-fly="itc" aria-label="Fly to region R3">Fly there</button>
+                <span class="meta2">needs 20× · CK AE1/AE3 available on tumor_014_ihc</span>
+              </div>
+              <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="cap">
+                <span class="rid">R4</span><span class="what">Capsular artefact? · p 0.18</span>
+                <button class="btn btn--sm btn--secondary" data-fly="cap" aria-label="Fly to region R4">Fly there</button>
+                <span class="meta2">low confidence · fold</span>
+              </div>
+            </div>
+            <p class="hint pad"><kbd class="key">Space</kbd> flies to the focused row · <kbd class="key">Tab</kbd> moves through the list · candidates come from the uncertainty queue (<code>aiResultArrived</code>)</p>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Overview notes</summary>
+          <div class="section__body pad stack stack--tight">
+            <div class="classes" role="group" aria-label="Quick tags">
+              <button class="chip" aria-pressed="true">Capsule intact</button>
+              <button class="chip" aria-pressed="true">Follicular hyperplasia</button>
+              <button class="chip" aria-pressed="false">Sinus histiocytosis</button>
+              <button class="chip" aria-pressed="false">Necrosis</button>
+              <button class="chip" aria-pressed="false">Extranodal extension</button>
+            </div>
+            <textarea class="input" rows="2" placeholder="Free text stays with the slide record, never in telemetry." aria-label="Overview note"></textarea>
+          </div>
+        </details>
+      </section>
+
+      <!-- ================= Step 3 · Examine ================= -->
+      <section class="steppanel" data-step="examine" aria-labelledby="sp-examine-h">
+        <div class="steppanel__summary stepsum"><span class="step__num"><span>3</span></span><span id="sp-examine-h">Examine</span><span class="grow"></span><span class="text-secondary text-xs">layers · model · compare · channels</span></div>
+        <p class="sublead">Layers, inference and comparison. AI output is an <b>outline by default</b>; the heatmap is on demand because it hides the tissue it claims to explain.</p>
+
+        <details class="section" open id="layersSection">
+          <summary>Layers <span class="count" data-live="layers">4</span></summary>
+          <div class="section__body">
+
+            <div class="layer-row he-layer" data-layer="prob" data-live="layers:probability">
+              <button class="layer-row__vis" aria-pressed="true" aria-label="Metastasis probability: visible" data-vis="prob"><svg class="icon"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Metastasis probability</span><span class="kind">raster</span><span class="marker-notvalidated dx-only">Not validated for diagnostic use on this viewer</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Layer menu: provenance, accept, reject, remove"><svg class="icon"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="55" aria-label="Metastasis probability opacity" data-opacity="heat"><span class="num" id="heatOpacityNum">55 %</span></div>
+              <div class="layer-row__provenance"><span>producer unet</span><span>version 1.3</span><span>inputHash 9f3a…c21e</span><span>2026-10-30</span><span class="state-tag">research</span></div>
+              <div class="layer-row__legend stack stack--tight">
+                <div class="row row--between">
+                  <div class="segmented" role="radiogroup" aria-label="Presentation of the probability layer">
+                    <button class="segmented__item" role="radio" aria-checked="true" data-ai="outline">Outline</button>
+                    <button class="segmented__item" role="radio" aria-checked="false" data-ai="heatmap">Heatmap <kbd class="key">⇧H</kbd></button>
+                  </div>
+                  <button class="btn btn--sm btn--secondary" data-cmd="accept" data-live="events:aiResultAccepted">Accept <kbd class="key">⇧A</kbd></button>
+                </div>
+                <div class="slider"><div class="slider__label"><span>Threshold</span><span class="slider__value" id="thrVal">p ≥ 0.50</span></div><input type="range" min="0" max="100" value="50" aria-label="Probability threshold" id="thrRange"></div>
+                <div class="legend"><span class="legend__item"><span class="swatch swatch--dash" style="--swatch:var(--ann-3)"></span>outline · p ≥ 0.50 <span class="pattern">dash</span></span><span class="legend__item"><span class="swatch" style="--swatch:var(--ann-6)"></span>heat 0.5 – 1.0</span></div>
+              </div>
+            </div>
+
+            <div class="layer-row is-hidden he-layer" data-layer="labels" data-live="layers:labels">
+              <button class="layer-row__vis" aria-pressed="false" aria-label="Tumour and normal labels: hidden" data-vis="labels"><svg class="icon"><use href="#i-eye-off"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Tumour / normal labels</span><span class="kind">labels</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Layer menu"><svg class="icon"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="40" aria-label="Labels opacity" data-opacity="labels"><span class="num">40 %</span></div>
+              <div class="layer-row__provenance"><span>producer unet</span><span>version 1.3</span><span>nearest + LUT</span><span>OME-Zarr labels</span><span class="state-tag">research</span></div>
+              <div class="layer-row__legend legend"><span class="legend__item"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor · 2 regions <span class="pattern">hatch</span></span><span class="legend__item"><span class="swatch swatch--outline" style="--swatch:var(--ann-8)"></span>Normal</span></div>
+            </div>
+
+            <div class="layer-row if-layer" data-layer="seg" data-live="layers:labels">
+              <button class="layer-row__vis" aria-pressed="true" aria-label="Cell segmentation: visible" data-vis="seg"><svg class="icon"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Cell segmentation</span><span class="kind">labels</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Layer menu"><svg class="icon"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="35" aria-label="Segmentation opacity"><span class="num">35 %</span></div>
+              <div class="layer-row__provenance"><span>producer mesmer</span><span>version 0.4</span><span>whole-cell · 16-bit labels</span><span class="state-tag">research</span></div>
+              <div class="layer-row__legend legend"><span class="legend__item"><span class="swatch swatch--outline" style="--swatch:var(--ann-8)"></span>cell boundary <span class="count">241,880</span></span><span class="legend__item"><span class="swatch" style="--swatch:var(--ann-3)"></span>PanCK+ <span class="count">38,112</span></span></div>
+            </div>
+
+            <div class="layer-row" data-layer="detect" data-live="layers:vector">
+              <button class="layer-row__vis" aria-pressed="true" aria-label="Cell detections: visible" data-vis="detect"><svg class="icon"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">Cell detections</span><span class="kind">vector</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="Layer menu"><svg class="icon"><use href="#i-more"/></svg></button></div>
+              <div class="layer-row__opacity"><input type="range" min="0" max="100" value="90" aria-label="Detections opacity" data-opacity="detect"><span class="num">90 %</span></div>
+              <div class="layer-row__provenance"><span>producer cell-detect</span><span>version 2.0</span><span>detections.parquet (local)</span><span class="state-tag is-solid">tiling locally</span></div>
+              <div class="layer-row__legend stack stack--tight">
+                <p class="hint" data-live="events:error">1,240,000 features — tiling locally so zoom stays smooth · <span id="lodLabel">centroids below 10×</span></p>
+                <div class="legend" data-live="layers:vector.classes">
+                  <button class="legend__item" data-fly="met"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <span class="count">412,300</span></button>
+                  <button class="legend__item" data-fly="follicle"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <span class="count">790,110</span></button>
+                  <button class="legend__item"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <span class="count">37,590</span></button>
+                </div>
+                <p class="hint">Click a class to jump to its densest tile. Styling is a uniform change, never a re-upload.</p>
+              </div>
+            </div>
+
+            <div class="layer-row" data-layer="ann" data-live="annotations">
+              <button class="layer-row__vis" aria-pressed="true" aria-label="My annotations: visible" data-vis="ann"><svg class="icon"><use href="#i-eye"/></svg></button>
+              <div class="layer-row__name"><span class="truncate">My annotations</span><span class="kind">vector</span></div>
+              <div class="layer-row__actions"><button class="btn btn--sm btn--ghost" data-act="gostep" data-step-target="annotate">Edit →</button></div>
+              <div class="layer-row__provenance"><span>9 objects</span><span>op log · 41 ops</span><span>author you</span></div>
+            </div>
+
+            <div class="empty" hidden><span class="empty__glyph"></span><span class="empty__title">No overlays</span><span>Drop a label pyramid, GeoJSON or Parquet file here, or add one from Python.</span></div>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Model <span class="count">3 runs</span></summary>
+          <div class="section__body stack stack--tight">
+            <div class="pad grid-2">
+              <label class="field"><span class="field__label">Model</span><span class="select"><select id="modelSel" aria-label="Model"><option>unet-tumour 1.3 · local GPU</option><option>cell-detect 2.0 · local GPU</option><option>hovernet-pannuke 1.0 · remote</option></select></span></label>
+              <label class="field"><span class="field__label">Region</span><span class="select"><select id="roiSel" aria-label="Region to run on"><option>ROI 1 · 180 × 130 µm</option><option>Current view</option><option>Whole slide · queued job</option></select></span></label>
+            </div>
+            <div class="btnrow pad">
+              <button class="btn btn--primary" id="runModelBtn" data-live="commands:model.run"><svg class="icon icon--sm"><use href="#i-model"/></svg> Run on ROI 1</button>
+              <button class="btn btn--secondary" data-cmd="drawroi">Draw a new ROI <kbd class="key">X</kbd></button>
+            </div>
+            <div class="outputs" id="outputs" data-live="events:aiResultArrived">
+              <div class="output">
+                <div class="output__head"><span class="state-tag is-solid">done</span><span class="grow">unet-tumour 1.3 → ROI 1</span><span class="text-secondary text-xs mono">12 s</span></div>
+                <div class="hint">Added as layer <b>Metastasis probability</b> · <span class="mono">inputHash 9f3a…c21e · createdAt 10:41:07 · research</span></div>
+              </div>
+              <div class="output">
+                <div class="output__head"><span class="state-tag">running</span><span class="grow">cell-detect 2.0 → whole slide</span><span class="text-secondary text-xs mono">64 %</span></div>
+                <div class="progress-bar" style="--value:64%"><span></span></div>
+                <div class="hint">Streaming detections to the local tiler · 793,600 of 1,240,000</div>
+              </div>
+              <div class="output">
+                <div class="output__head"><span class="state-tag">queued</span><span class="grow">hovernet-pannuke 1.0 → ROI 1</span><span class="text-secondary text-xs mono">2 ahead</span></div>
+                <div class="hint">Remote service · provenance recorded on arrival · <button class="btn btn--sm btn--ghost">Cancel</button></div>
+              </div>
+            </div>
+            <p class="hint pad">Every output carries <code>{producer, version, inputHash, createdAt, regulatoryStatus}</code>. Nothing runs without a region or an explicit whole-slide job.</p>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Compare</summary>
+          <div class="section__body stack stack--tight pad">
+            <div class="segmented" role="radiogroup" aria-label="Compare layout" id="compareSeg">
+              <button class="segmented__item" role="radio" aria-checked="true" data-compare="single">Single</button>
+              <button class="segmented__item" role="radio" aria-checked="false" data-compare="side">Side by side <kbd class="key">C</kbd></button>
+              <button class="segmented__item" role="radio" aria-checked="false" data-compare="curtain">Curtain <kbd class="key">/</kbd></button>
+            </div>
+            <label class="field"><span class="field__label">Second slide</span><span class="select"><select aria-label="Second slide" data-live="state.views[1]"><option>tumor_014_ihc · CK AE1/AE3 · registered (VALIS affine)</option><option>tumor_013 · H&amp;E · unregistered</option></select></span></label>
+            <div class="row row--between">
+              <span class="field__label">Sync</span>
+              <div class="segmented" role="radiogroup" aria-label="Sync mode" data-live="state.views[].sync.mode">
+                <button class="segmented__item" role="radio" aria-checked="false">lock</button>
+                <button class="segmented__item" role="radio" aria-checked="true">affine</button>
+                <button class="segmented__item" role="radio" aria-checked="false">none</button>
+              </div>
+            </div>
+            <div class="curtainctl" id="curtainCtl" hidden>
+              <input type="range" min="10" max="90" value="50" id="curtainRange" aria-label="Curtain position (percent of the canvas width)">
+              <span class="num text-xs" id="curtainNum">50 %</span>
+            </div>
+            <p class="hint">The curtain slider is the single-pointer and keyboard alternative to dragging the divider. Sync is a transform in the camera, not a copy of events.</p>
+          </div>
+        </details>
+
+        <details class="section" id="channelsSection">
+          <summary>Channels <span class="count" id="chanCount">1 (brightfield)</span></summary>
+          <div class="section__body">
+            <p class="hint pad he-only-dock" id="chanHint">This slide is brightfield (one RGB channel). Open <b>cycif_sln_02</b> for the 8-channel multiplex panel.</p>
+            <div id="chanRows" data-live="state.views[0].channels[]"></div>
+            <div class="pad stack stack--tight if-only-dock" id="chanFoot" hidden>
+              <p class="hint" data-live="telemetry:tier"><span class="indicator indicator--sharpening" style="min-height:0;padding:0"><span class="indicator__glyph"></span></span> 8-bit preview tier while moving · 16-bit at settle</p>
+              <div class="btnrow"><button class="btn btn--secondary btn--sm" data-compare="grid">Channel grid view</button><button class="btn btn--secondary btn--sm">Save as omero defaults</button></div>
+              <p class="hint">Phones show ≤ 3 visible channels as an 8-bit composite; this device shows 8.</p>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ================= Step 4 · Annotate ================= -->
+      <section class="steppanel" data-step="annotate" aria-labelledby="sp-annotate-h">
+        <div class="steppanel__summary stepsum"><span class="step__num"><span>4</span></span><span id="sp-annotate-h">Annotate</span><span class="grow"></span><span class="text-secondary text-xs">tools · classes · list</span></div>
+        <p class="sublead">Draw, classify, measure. <kbd class="key">Q</kbd> opens the class picker, then <kbd class="key">1</kbd>–<kbd class="key">8</kbd> picks a class. Strokes are engine layers with a 1 px halo so they read on any stain.</p>
+
+        <details class="section" open>
+          <summary>Tools</summary>
+          <div class="section__body stack stack--tight pad">
+            <div class="toolgrid" role="toolbar" aria-label="Annotation tools" id="toolGrid">
+              <button class="tool tool--labelled" data-tool="select" aria-pressed="false" aria-label="Select or pan (V)"><svg class="icon"><use href="#i-select"/></svg><span class="tool__label">Select</span><kbd class="tool__key">V</kbd></button>
+              <button class="tool tool--labelled tool--drawing" data-tool="polygon" aria-pressed="true" aria-label="Polygon (P): click to place vertices, Enter closes"><svg class="icon"><use href="#i-polygon"/></svg><span class="tool__label">Polygon</span><kbd class="tool__key">P</kbd></button>
+              <button class="tool tool--labelled tool--drawing" data-tool="brush" aria-pressed="false" aria-label="Brush, freehand with pen pressure (F)"><svg class="icon"><use href="#i-brush"/></svg><span class="tool__label">Brush</span><kbd class="tool__key">F</kbd></button>
+              <button class="tool tool--labelled" data-tool="point" aria-pressed="false" aria-label="Point marker (T)"><svg class="icon"><use href="#i-point"/></svg><span class="tool__label">Point</span><kbd class="tool__key">T</kbd></button>
+              <button class="tool tool--labelled tool--drawing" data-tool="rect" aria-pressed="false" aria-label="Rectangle or ROI (X)"><svg class="icon"><use href="#i-rect"/></svg><span class="tool__label">Rectangle</span><kbd class="tool__key">X</kbd></button>
+              <button class="tool tool--labelled" data-tool="measure" aria-pressed="false" aria-label="Measure length, two clicks (M)"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__label">Measure</span><kbd class="tool__key">M</kbd></button>
+            </div>
+            <div class="row row--between">
+              <div class="btnrow">
+                <button class="btn btn--sm btn--secondary" data-cmd="undo" data-live="annotations:undo"><svg class="icon icon--sm"><use href="#i-undo"/></svg> Undo <kbd class="key">⌃Z</kbd></button>
+                <button class="btn btn--sm btn--secondary" data-cmd="redo" disabled><svg class="icon icon--sm"><use href="#i-redo"/></svg> Redo <kbd class="key">⌃Y</kbd></button>
+              </div>
+              <button class="btn btn--sm btn--ghost" data-cmd="delete">Delete <kbd class="key">⌫</kbd></button>
+            </div>
+            <p class="hint"><kbd class="key">Space</kbd> held: temporary pan while drawing · pen draws, finger pans · Pencil double-tap toggles the last tool and Select</p>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Class <span class="count" id="classCur">Tumor</span></summary>
+          <div class="section__body stack stack--tight pad">
+            <div class="classes" role="radiogroup" aria-label="Annotation class (QuPath names)" id="classPicker" data-live="annotations:classes">
+              <button class="class-chip" role="radio" aria-checked="true" data-class="Tumor" style="--swatch:var(--ann-2)"><span class="swatch"></span>Tumor <span class="count">2</span><kbd class="key">1</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Stroma" style="--swatch:var(--ann-5)"><span class="swatch"></span>Stroma <span class="count">1</span><kbd class="key">2</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Lymphocytes" style="--swatch:var(--ann-1)"><span class="swatch"></span>Lymphocytes <span class="count">3</span><kbd class="key">3</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Necrosis" style="--swatch:var(--ann-7)"><span class="swatch"></span>Necrosis <span class="count">0</span><kbd class="key">4</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Other" style="--swatch:var(--ann-6)"><span class="swatch"></span>Other <span class="count">2</span><kbd class="key">5</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Region*" style="--swatch:var(--ann-4)"><span class="swatch swatch--dash"></span>Region* <span class="count">1</span><kbd class="key">6</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Positive" style="--swatch:var(--ann-3)"><span class="swatch"></span>Positive <span class="count">0</span><kbd class="key">7</kbd></button>
+              <button class="class-chip" role="radio" aria-checked="false" data-class="Negative" style="--swatch:var(--ann-8)"><span class="swatch"></span>Negative <span class="count">0</span><kbd class="key">8</kbd></button>
+            </div>
+            <div class="row row--between">
+              <span class="field__label">Simulate colour vision</span>
+              <div class="segmented" role="radiogroup" aria-label="Colour-vision simulation (author-side check)" id="cvdSeg">
+                <button class="segmented__item" role="radio" aria-checked="true" data-cvd="none">None</button>
+                <button class="segmented__item" role="radio" aria-checked="false" data-cvd="deutan">Deuteranopia</button>
+                <button class="segmented__item" role="radio" aria-checked="false" data-cvd="protan">Protanopia</button>
+              </div>
+            </div>
+            <p class="hint">QuPath class <b>names</b> are kept verbatim; on screen the colours are the CVD-safe, luminance-separated palette (pairwise ΔE00 ≥ 20 under deuteranopia and protanopia) and QuPath's own RGB is restored on GeoJSON export.</p>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Annotations <span class="count" data-live="annotations">9</span></summary>
+          <div class="section__body annlist" role="listbox" aria-label="Annotations on tumor_014" id="annList" data-live="annotations">
+            <div class="grouphead"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <span class="count">2 · 2.40 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="true" tabindex="0" data-fly="met"><span class="id">A1</span><span class="what">Polygon · metastasis · 2.31 mm²</span><span class="meta">8 vtx</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="micro"><span class="id">A2</span><span class="what">Polygon · micrometastasis · 0.09 mm²</span><span class="meta">6 vtx</span></div>
+            <div class="grouphead"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <span class="count">1 · 0.04 mm²</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="stroma"><span class="id">A3</span><span class="what">Brush · capsule · 0.04 mm²</span><span class="meta">pen</span></div>
+            <div class="grouphead"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <span class="count">3 points</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="follicle"><span class="id">A4</span><span class="what">Point · follicle margin</span><span class="meta">·</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="follicle"><span class="id">A5</span><span class="what">Point · follicle margin</span><span class="meta">·</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="follicle"><span class="id">A6</span><span class="what">Point · follicle margin</span><span class="meta">·</span></div>
+            <div class="grouphead"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <span class="count">2 points</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="other"><span class="id">A7</span><span class="what">Point · histiocyte cluster</span><span class="meta">·</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="other"><span class="id">A8</span><span class="what">Point · histiocyte cluster</span><span class="meta">·</span></div>
+            <div class="grouphead"><span class="swatch swatch--dash" style="--swatch:var(--ann-4)"></span>Region* <span class="count">1</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="roi"><span class="id">R</span><span class="what">ROI 1 · 180 × 130 µm · model input</span><span class="meta">rect</span></div>
+            <div class="grouphead"><span class="swatch" style="--swatch:var(--ann-8)"></span>Measurements <span class="count">1</span></div>
+            <div class="list__item" role="option" aria-selected="false" tabindex="0" data-fly="met"><span class="id">M1</span><span class="what">Length · largest metastatic dimension</span><span class="meta">2.3 mm</span></div>
+            <p class="hint pad"><kbd class="key">Tab</kbd> moves through the list · <kbd class="key">Space</kbd> flies to the item · <kbd class="key">⌫</kbd> deletes the selection</p>
+            <div class="btnrow pad">
+              <button class="btn btn--secondary btn--sm" data-cmd="importgeo"><svg class="icon icon--sm"><use href="#i-upload"/></svg> Import GeoJSON</button>
+              <button class="btn btn--secondary btn--sm" data-act="gostep" data-step-target="export"><svg class="icon icon--sm"><use href="#i-download"/></svg> Export…</button>
+            </div>
+          </div>
+        </details>
+        <div class="empty" id="annEmpty" hidden><span class="empty__glyph"></span><span class="empty__title">No annotations yet.</span><span>Press <kbd class="key">P</kbd> to draw a polygon or <kbd class="key">M</kbd> to measure.</span></div>
+      </section>
+
+      <!-- ================= Step 5 · Export ================= -->
+      <section class="steppanel" data-step="export" aria-labelledby="sp-export-h">
+        <div class="steppanel__summary stepsum"><span class="step__num"><span>5</span></span><span id="sp-export-h">Export</span><span class="grow"></span><span class="text-secondary text-xs">targets · manifest · jobs</span></div>
+        <p class="sublead">Choose what leaves the workspace. Every export carries a provenance manifest and re-exporting from the manifest is byte-identical. Exports are translator jobs, never mirrors.</p>
+
+        <details class="section" open>
+          <summary>Targets</summary>
+          <div class="section__body pad stack stack--tight" data-live="commands:export">
+            <label class="check"><input type="checkbox" checked><span>GeoJSON · QuPath dialect<small>Property names verbatim · QuPath RGB restored · opens in QuPath 0.7</small></span></label>
+            <label class="check"><input type="checkbox"><span>DICOM ANN · Microscopy Bulk Simple Annotations<small>via STOW-RS to the local store · SR TID 1500 for the measurement</small></span></label>
+            <label class="check"><input type="checkbox" checked><span>Patches + labels<small>256 px @ 0.50 µm/px · PNG16 + GeoParquet · from the Tumor and Stroma classes · 1,842 tiles</small></span></label>
+            <label class="check"><input type="checkbox"><span>Region as OME-TIFF<small>ROI 1 · 180 × 130 µm · all 9 levels</small></span></label>
+            <label class="check"><input type="checkbox" checked disabled><span>Provenance manifest<small>Always included: slide sid, layers, state document, software and pathway hash</small></span></label>
+          </div>
+        </details>
+
+        <details class="section">
+          <summary>Manifest preview</summary>
+          <div class="section__body">
+<pre class="snippet" data-live="state" aria-label="Provenance manifest preview">{
+  "schema": "stoipath.export/1",
+  "slide": { "sid": "sha256:9f3a81c0…c21e", "mpp": 0.25, "source": "dicomweb://idc/…" },
+  "layers": [
+    { "producer": "unet", "version": "1.3", "inputHash": "9f3a…c21e",
+      "createdAt": "2026-10-30T10:41:07Z", "regulatoryStatus": "research" },
+    { "producer": "cell-detect", "version": "2.0", "features": 1240000 }
+  ],
+  "state": { "schema": "stoipath.state/1", "views": [ { "center_um": [3180, 1960],
+             "scale_um_per_px": 4.0, "rotation_deg": 0 } ], "render_mode": "nav" },
+  "software": { "viewer": "0.9.2", "build": "viewer-ruo", "pathway_hash": "3b7e…9a10" }
+}</pre>
+          </div>
+        </details>
+
+        <details class="section" open>
+          <summary>Jobs <span class="count" data-live="events:export">3</span></summary>
+          <div class="section__body">
+            <div class="outputs jobs" data-live="events:export">
+              <div class="output">
+                <div class="output__head"><span class="mono">#412</span><span class="grow">GeoJSON · QuPath dialect · 9 objects</span><span class="state-tag is-solid">done</span></div>
+                <div class="hint"><span class="dot dot--ok"></span>Done 10:52 · <span class="identical">byte-identical</span> · 2.1 MB · <button class="btn btn--sm btn--ghost">Download</button></div>
+              </div>
+              <div class="output">
+                <div class="output__head"><span class="mono">#413</span><span class="grow">Patches 256 px @ 0.50 µm/px + labels · 1,842 tiles</span><span class="state-tag">running</span></div>
+                <div class="progress-bar" style="--value:64%"><span></span></div>
+                <div class="hint"><span class="dot dot--pending"></span>Running · 64 % · PNG16 + GeoParquet · deterministic pixels (hash-stable)</div>
+              </div>
+              <div class="output">
+                <div class="output__head"><span class="mono">#414</span><span class="grow">DICOM ANN · 9 objects → STOW-RS</span><span class="state-tag">queued</span></div>
+                <div class="hint"><span class="dot dot--pending"></span>Queued · translator job · <button class="btn btn--sm btn--ghost">Cancel</button></div>
+              </div>
+            </div>
+            <p class="hint pad">The byte-identity badge means a re-export from this manifest produced the same bytes in CI (research reproducibility).</p>
+          </div>
+        </details>
+
+        <div class="btnrow pad">
+          <button class="btn btn--primary" id="submitExport" data-live="commands:export.submit"><svg class="icon icon--sm"><use href="#i-download"/></svg> Submit export</button>
+          <button class="btn btn--secondary" data-cmd="snapshot">Snapshot <kbd class="key">⇧S</kbd></button>
+        </div>
+        <p class="hint pad">Snapshots burn in the scale bar and the product footer (the RUO string travels with every image).</p>
+      </section>
+    </div><!-- /dock__body -->
+
+    <div class="dock__foot">
+      <span class="grow" id="dockFootText" data-live="state.collection">Slide 14 of 48 · 3 done · tumor_014 in progress</span>
+      <button class="btn btn--secondary btn--sm" id="prevStepBtn" aria-label="Previous step (Shift+N)"><svg class="icon icon--sm"><use href="#i-prev"/></svg></button>
+      <button class="btn btn--primary" id="nextStepBtn" data-live="commands:step.next">Next: Export <kbd class="key">N</kbd></button>
+    </div>
+
+    <!-- In-panel overlays: they replace the panel, never the slide (keyboard map, About) -->
+    <div class="paneloverlay" id="keymapOverlay" role="dialog" aria-modal="false" aria-labelledby="keymapTitle">
+      <div class="paneloverlay__head"><h2 id="keymapTitle">Keyboard map</h2><button class="btn btn--icon btn--ghost" data-act="closeOverlay" aria-label="Close keyboard map"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dock__body">
+        <div class="keymap__preset pad"><span class="text-secondary text-sm">Preset</span><div class="segmented"><button class="segmented__item" aria-pressed="true">Default</button><button class="segmented__item">Left-hand cluster</button><button class="segmented__item">Right-hand cluster</button></div></div>
+        <div class="keymap" id="keymapGroups" data-live="commands"></div>
+        <p class="hint pad">No Ctrl, Alt or F-key is bound inside the canvas. This build has no <kbd class="key">⇧Enter</kbd> (sign-out) and no <kbd class="key">⇧D</kbd> (Dx mode): neither exists in Stoipath Viewer.</p>
+      </div>
+    </div>
+    <div class="paneloverlay about" id="aboutOverlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle">
+      <div class="paneloverlay__head"><h2 id="aboutTitle">About this build</h2><button class="btn btn--icon btn--ghost" data-act="closeOverlay" aria-label="Close About"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dock__body stack">
+        <div class="pad"><span class="badge badge--ruo" id="aboutBadge">RUO</span></div>
+        <span class="badge-string badge-string--ruo" id="aboutString" data-live="launch:product"></span>
+        <dl>
+          <dt>Product</dt><dd id="aboutProduct">Stoipath Viewer 0.9.2</dd>
+          <dt>Build</dt><dd>viewer-ruo · 3b7e…9a10</dd>
+          <dt>Engine</dt><dd>stoi-core 0.9.2 · WebGL2 · Tier 1 (W+)</dd>
+          <dt>Surfaces</dt><dd>no sign-out · no LIS write-back · no Dx mode</dd>
+          <dt>Telemetry</dt><dd><div class="segmented" data-live="telemetry:switch"><button class="segmented__item" aria-pressed="true">On</button><button class="segmented__item">Off</button><button class="segmented__item">Air-gap</button></div></dd>
+          <dt>Licence</dt><dd>Apache-2.0</dd>
+        </dl>
+        <p>Telemetry carries no PHI, no free text and no file names; command telemetry records command names, never keys. The full product label is also in English in every locale.</p>
+        <div class="pad"><label class="toggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle__track"></span><span class="toggle__text">CVD-friendly stain remap<span class="toggle__hint">Per-user shader LUT (Dalton 2026); applies to tissue, not to the palette</span></span></label></div>
+        <div class="pad"><label class="toggle" role="switch" aria-checked="false" tabindex="0" id="motionToggle"><span class="toggle__track"></span><span class="toggle__text">Reduce motion<span class="toggle__hint">Instant fly-to, no inertia; follows the OS setting by default</span></span></label></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Bottom bar (< 1080): the five steps; tray: the current step's tools. Both filled from the STEPS registry. -->
+  <nav class="bottombar stepbar region" id="stepbar" aria-label="Task steps"></nav>
+  <div class="steptray" id="steptray" role="toolbar" aria-label="Tools for the current step"></div>
+
+  <!-- E. Status strip: the live region's visual twin -->
+  <footer class="strip region" id="strip" aria-label="Status">
+    <span class="indicator indicator--sharp" id="stripSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label" id="stripSharpLabel">Sharp</span></span>
+    <span class="strip__notice" id="stripNotice" data-live="events:error">1,240,000 features — tiling locally so zoom stays smooth</span>
+    <span class="strip__group" id="stripChips" data-live="telemetry:network"></span>
+    <span class="strip__group strip__group--end">
+      <span class="chip ruo-only" id="tilerChip" data-live="python">Local tiler · ready</span>
+      <span class="chip clinical-only" id="qaChip" data-live="events:displayQaStatus">QA passed 3 days ago</span>
+      <span class="chip chip--solid" title="Telemetry on · PHI-free" data-live="telemetry:switch">Telemetry on</span>
+      <span class="mono" id="stripStep">Step 4/5 · <kbd class="key">N</kbd> next</span>
+    </span>
+  </footer>
+
+  <!-- Command palette: drops from the top bar, right-aligned, outside the central 50 % -->
+  <div class="palette-layer" id="paletteLayer">
+    <div class="palette" role="dialog" aria-label="Command palette">
+      <div class="palette__input"><svg class="icon icon--sm"><use href="#i-search"/></svg><input id="paletteInput" type="text" placeholder="Type a command, step, slide or class…" aria-label="Search commands" role="combobox" aria-expanded="true" aria-controls="paletteList" aria-autocomplete="list" autocomplete="off"></div>
+      <div class="palette__list" id="paletteList" role="listbox" aria-label="Commands"></div>
+      <div class="palette__footer"><span>↑↓ move</span><span>Enter runs</span><span>Esc closes</span><span class="grow"></span><span>one registry: keyboard, pen, voice, Python, tests</span></div>
+    </div>
+  </div>
+</div><!-- /app -->
+
+<!-- Live regions (principles §8.4): polite for position/magnification/sharpness at settle; assertive for faults -->
+<div class="live-region" id="livePolite" aria-live="polite" aria-atomic="true"></div>
+<div class="live-region" id="liveAssertive" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- ===================== Variant: Jupyter widget (the viewer as a cell output) ===================== -->
+<section class="nb" id="nb" aria-label="Jupyter widget variant (review only)">
+  <div class="nb__page">
+    <div class="nb__bar"><b>JupyterLab</b><span>camelyon_review.ipynb</span><span>Python 3.12 · stoipath 0.9.2 (anywidget)</span><span class="grow"></span><span>widget variant · synthetic notebook</span></div>
+    <div class="nb__cell"><div class="nb__prompt">In [3]:</div><pre class="nb__code">import stoipath as sp
+slide = sp.open("dicomweb://idc/camelyon16/tumor_014")           # or a local .svs through the in-process translator
+v = sp.Viewer(slide, product="viewer-ruo", step="annotate")
+v.layers.add_labels("preds/unet-1.3/prob.ome.zarr", provenance={"producer": "unet", "version": "1.3", "input_hash": slide.sid})
+v.layers.add_vector("detections.parquet")                       # 1.24 M rows → local tiler, no server job
+v</pre></div>
+    <div class="nb__cell"><div class="nb__prompt">Out[3]:</div>
+      <div class="nb__widget">
+        <div class="app app--widget flowwidget" id="widgetApp" data-step="annotate" data-product="ruo">
+          <header class="topbar region" aria-label="Widget top bar">
+            <div class="topbar__slot-badge"><button class="badge badge--ruo" aria-label="Stoipath Viewer, for research use only. Open product label" data-live="launch:product">RUO</button></div>
+            <span class="topbar__label badge-string badge-string--ruo" aria-label="For Research Use Only. Not for use in diagnostic procedures."></span>
+            <div class="topbar__identity"><span class="accession" data-live="state.slides[0]">tumor_014 · H&amp;E</span><span class="chip chip--licence">CC0</span></div>
+            <div class="wsteps" role="tablist" aria-label="Steps" id="wsteps" data-live="commands:step"></div>
+            <span class="indicator indicator--syncing" id="widgetSync" data-live="python" style="margin-left:var(--space-3)"><span class="indicator__glyph"></span><span class="indicator__label">Syncing with Python…</span></span>
+            <button class="btn btn--icon btn--ghost btn--sm" id="widgetRailBtn" aria-label="Show or hide tools" aria-pressed="true" style="margin-left:auto"><svg class="icon"><use href="#i-panel"/></svg></button>
+          </header>
+          <nav class="rail region" aria-label="Tools" id="widgetRail">
+            <button class="tool" aria-label="Select (V)"><svg class="icon"><use href="#i-select"/></svg></button>
+            <button class="tool" aria-pressed="true" aria-label="Polygon (P)"><svg class="icon"><use href="#i-polygon"/></svg></button>
+            <button class="tool" aria-label="Brush (F)"><svg class="icon"><use href="#i-brush"/></svg></button>
+            <button class="tool" aria-label="Point (T)"><svg class="icon"><use href="#i-point"/></svg></button>
+            <button class="tool" aria-label="Measure (M)"><svg class="icon"><use href="#i-measure"/></svg></button>
+            <div class="rail__divider"></div>
+            <button class="tool" aria-label="Class: Tumor (Q)"><span class="swatch swatch--lg" style="--swatch:var(--ann-2);position:static"></span></button>
+            <button class="tool" aria-label="Overlays (H)"><svg class="icon"><use href="#i-layers"/></svg></button>
+            <div class="rail__spacer"></div>
+            <button class="tool" aria-label="Command palette (Ctrl+K)"><svg class="icon"><use href="#i-search"/></svg></button>
+          </nav>
+          <main class="canvas-area region ai-outline" tabindex="0" role="application" aria-label="Slide canvas inside the notebook, tumor_014 H and E, 2.5 times" data-live="state.views[0]">
+            <svg class="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g class="world" id="worldW">
+                <use href="#world-he" width="1600" height="1000"/>
+                <g class="ov">
+                  <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#262626" stroke-width="6" vector-effect="non-scaling-stroke"/>
+                  <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="14 8" vector-effect="non-scaling-stroke"/>
+                  <path d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6" vector-effect="non-scaling-stroke"/>
+                  <path d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z" fill="none" stroke="#8e3a15" stroke-width="3" vector-effect="non-scaling-stroke"/>
+                  <g id="detectW"></g>
+                </g>
+              </g>
+            </svg>
+            <div class="hud hud--tl"><span class="hud__item"><b>tumor_014 · H&amp;E</b></span></div>
+            <div class="hud hud--bl"><div class="hud__item scalebar" style="--scalebar-length:125px"><span class="scalebar__bar"></span><span class="scalebar__label">500 µm</span></div></div>
+            <div class="hud hud--br"><button class="hud__item magnification" aria-label="Magnification 2.5 times. Press Enter to type a zoom."><span class="magnification__value">2.5×</span><span class="magnification__line2">4.00 µm/px · derived</span></button></div>
+          </main>
+          <footer class="strip region" aria-label="Status">
+            <span class="indicator indicator--sharp"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span>
+            <span class="strip__notice" data-live="events:error">1,240,000 features — tiling locally so zoom stays smooth</span>
+            <span class="strip__group strip__group--end"><span class="chip" data-live="python">state ⇄ Python · 41 ops</span><span class="mono">anywidget 0.11 · W+</span></span>
+          </footer>
+        </div>
+      </div>
+    </div>
+    <div class="nb__cell"><div class="nb__prompt">In [4]:</div><pre class="nb__code">gdf = v.annotations.to_geodataframe()                           # GeoArrow, zero copy
+v.annotations.to_geojson("tumor_014.geojson", dialect="qupath")  # names verbatim, QuPath RGB restored
+v.state</pre></div>
+    <div class="nb__cell"><div class="nb__prompt">Out[4]:</div><pre class="nb__out">{'schema': 'stoipath.state/1',
+ 'views': [{'slide': 'tumor_014', 'center_um': [3180.0, 1960.0], 'scale_um_per_px': 4.0, 'rotation_deg': 0,
+            'overlays': ['prob:unet-1.3', 'det:cell-detect-2.0', 'ann:me']}],
+ 'render_mode': 'nav'}</pre></div>
+  </div>
+</section>
+
+<!-- ===================== Review chrome: demo controls ===================== -->
+<nav class="demo" id="demo" aria-label="Demo controls (review only)">
+  <span class="review-tag">DEMO</span>
+  <div class="demo__group"><span>View</span><button data-view="workspace" aria-pressed="true">Workspace</button><button data-view="notebook" aria-pressed="false">Widget</button></div>
+  <span class="demo__sep"></span>
+  <div class="demo__group"><span>Step</span>
+    <select id="demoStep" aria-label="Current step"><option value="open">1 Open</option><option value="screen">2 Screen</option><option value="examine">3 Examine</option><option value="annotate" selected>4 Annotate</option><option value="export">5 Export</option></select>
+    <button id="demoExpert" aria-pressed="false">All steps</button>
+  </div>
+  <span class="demo__sep"></span>
+  <div class="demo__group"><span>Build</span>
+    <select id="demoProduct" aria-label="Product build"><option value="ruo" selected>Viewer (RUO)</option><option value="clinical">Clinical-IH</option><option value="dx">Dx (attested)</option></select>
+  </div>
+  <div class="demo__group"><span>State</span>
+    <select id="demoState" aria-label="Simulated state">
+      <option value="normal" selected>Normal</option>
+      <option value="cold4g">Cold 4G</option>
+      <option value="offline-pack">Offline · pack</option>
+      <option value="offline-nopack">Offline · no pack</option>
+      <option value="tile-error">Tile errors</option>
+      <option value="server-slow">Translator slow</option>
+      <option value="soft-level">Soft · level n/a</option>
+      <option value="tier2">Tier 2 · 60 Hz</option>
+      <option value="dx-refused">Dx refused</option>
+      <option value="context-loss">GPU reset</option>
+      <option value="manifest-fail">Manifest 503</option>
+      <option value="launch-refused">Launch refused</option>
+    </select>
+  </div>
+  <span class="demo__sep"></span>
+  <div class="demo__group"><span>Slide</span><select id="demoSlide" aria-label="Slide"><option value="he" selected>tumor_014 H&amp;E</option><option value="if">cycif IF 8 ch</option></select></div>
+  <div class="demo__group"><span>Compare</span><select id="demoCompare" aria-label="Compare layout"><option value="single" selected>Single</option><option value="side">Side by side</option><option value="curtain">Curtain</option><option value="grid">Channel grid</option></select></div>
+  <div class="demo__group"><span>Input</span><button data-input="mouse" aria-pressed="true">Mouse</button><button data-input="pen" aria-pressed="false">Pen+touch</button></div>
+  <div class="demo__group"><span>CVD sim</span><select id="demoCvd" aria-label="Colour-vision simulation"><option value="none" selected>None</option><option value="deutan">Deutan</option><option value="protan">Protan</option></select></div>
+  <span class="demo__sep"></span>
+  <div class="demo__group"><span>Review</span><button id="demoLive" aria-pressed="false">Live markers</button><button id="demoGuides" aria-pressed="false">Centre guide</button><button id="demoTheme" aria-pressed="false">Light</button></div>
+</nav>
+
+<!-- ===================== Design rationale (review only; collapsed) ===================== -->
+<details class="rationale" id="rationale">
+  <summary>Design rationale · concept C "Task-flow" · what to look at, trade-offs, engine contracts</summary>
+
+  <h3>What this concept does differently</h3>
+  <p>The workspace is organised around the sequence a reviewer actually follows, <b>Open → Screen → Examine → Annotate → Export</b>, instead of around panels. The tool rail (region C) becomes a <b>step rail</b>; the context dock (region D) becomes <b>one step's panel at a time</b>, with the current step's tools nested under it. Everything a step needs is in reach and nothing else is on screen, which is what a learner, a consultant on an iPad or a frozen-section reviewer wants. Power users get two escape hatches that cost nothing when unused: the <b>"all steps" toggle</b> stacks every panel (the classic dock), and the <b>command palette</b> (<kbd class="key">Ctrl K</kbd>) reaches every command from any step. The same five steps are the bottom bar on tablets and phones, so the flow scales down without a second information architecture.</p>
+
+  <h3>Key choices</h3>
+  <ol>
+    <li><b>Progressive disclosure by step, not by panel.</b> The dock shows one step; its eyebrow says "Step 4 of 5 · Annotate", its title says what to do, its footer carries the single primary action ("Next: Export"). The step rail shows done / current / next with luminance and a check glyph, never colour.</li>
+    <li><b>Tools live under their step.</b> Annotation tools appear only in Annotate (and in the pen-tip palette), compare and channel controls only in Examine. The keymap is global, so <kbd class="key">P</kbd> still draws a polygon from any step; the step changes what is visible, not what is possible.</li>
+    <li><b>Mobile-first geometry.</b> Below 1080 px the step panel is an <i>in-flow</i> peeking sheet: the canvas yields height rather than being covered, so P1's "nothing over the centre" holds even when the sheet is expanded. The tray under the canvas holds the step's tools at 44 px; the bottom bar holds the five steps.</li>
+    <li><b>AI outline first, heatmap on demand</b>; threshold and opacity are uniform updates; every output row carries the provenance tuple and the <code>research</code> status tag; in the Dx build the fixed not-validated marker appears on the layer.</li>
+    <li><b>Honest pixels.</b> The sharpness indicator in the strip (and in the HUD on phones) reads Sharp / Sharpening… / Soft — reason / Offline; the demo strip reproduces cold 4G, offline, tile errors, translator slow, "level not yet available", Tier 2, GPU reset and the two plates. The canvas is never blank: failed tiles keep the ancestor.</li>
+    <li><b>Product and mode unmistakable.</b> The RUO badge and the full string sit first in the top bar at every width ≥ 1024; below that the string is one tap away behind the badge and in About. The Clinical-IH / Dx variants add the NAV / DX indicator, the session-purpose chip, the accession and the label image placeholder; the RUO build refuses a clinical launch with the fixed plate.</li>
+    <li><b>CVD-safe palette with an author-side check.</b> QuPath class names are verbatim; on-screen colours are the design system's luminance-separated palette; the deuteranopia / protanopia simulation runs on the canvas and the swatches so a reviewer sees what a dichromat sees before encoding meaning in colour.</li>
+  </ol>
+
+  <h3>Trade-offs and the risk the brief names</h3>
+  <ul>
+    <li><b>Friction for power users</b> is the stated risk. Mitigations: all-steps mode; the palette; global keys (<kbd class="key">N</kbd> / <kbd class="key">⇧N</kbd> step, <kbd class="key">\</kbd> panel); the step rail is 88 px, wider than a tool rail, which buys ≈ 2 % of canvas width on a 1920 display. A pathologist who annotates 200 slides a day will live in all-steps mode and the palette; the step rail then degrades to a progress indicator, which is still useful.</li>
+    <li><b>Steps imply an order the work does not always have.</b> Examine and Annotate interleave constantly. The steps are therefore <i>not gates</i>: any step is one click away, nothing is locked, and the only sequencing that matters (export after annotation) is encoded as the footer's primary action, not as a wall.</li>
+    <li><b>Laptop (1080–1599 px)</b> follows the design system: the panel is a drawer over the canvas edge, closed by default to keep P1's ≥ 70 % canvas; the current step opens it. The judges should look at both 1440 × 900 screenshots (closed and open).</li>
+    <li><b>Multiplex channels</b> are a section inside Examine, which is one level deeper than a dedicated panel. For spatial biologists this is a real cost; the channel grid view and the palette commands reduce it, and all-steps mode removes it.</li>
+  </ul>
+
+  <h3>What the judges should look at</h3>
+  <ul>
+    <li>Switch steps with the demo control or <kbd class="key">N</kbd> and watch the rail tools, the panel, the footer action and the canvas <code>aria-label</code> change together: one registry drives all four.</li>
+    <li>Zoom with <kbd class="key">+</kbd> / <kbd class="key">−</kbd>, the wheel (pointer-anchored) or <kbd class="key">1</kbd>–<kbd class="key">6</kbd>: the magnification readout, the µm/px line, the 1/2/5 scale bar, the navigator rectangle and the detection LOD (centroids below 10×, outlines above) update without the chrome moving.</li>
+    <li>Set the state to <i>Cold 4G</i> and zoom: Sharpening… turns into Soft — slow link; set <i>Tile errors</i>: three tiles show the ancestor with a dashed edge and the strip says so.</li>
+    <li>Set the build to Clinical-IH or Dx: badge, string, NAV / DX, purpose chip, label image, QA chip and the not-validated marker appear; set the state to <i>Launch refused</i>: the fixed plate, nothing opened.</li>
+    <li>Resize to 1024 × 1366 or 390 × 844 (or open the screenshots): steps become the bottom bar, tools the tray, the panel a peeking sheet; on the phone the drawing tools reduce to point and measure (Design note D9) and the sharpness dot joins the HUD.</li>
+    <li>Toggle <i>Live markers</i>: every element the engine drives is outlined with its contract; <i>Centre guide</i>: nothing in the DOM intersects the central 50 %.</li>
+  </ul>
+
+  <h3>Responsive behaviour</h3>
+  <div class="table-wrap"><table class="table table--dense">
+    <thead><tr><th>Viewport</th><th>Layout</th><th>Canvas share at rest</th></tr></thead>
+    <tbody>
+      <tr><td>3840 × 2160</td><td>Step rail 112 · panel 460 · navigator 320 · body 14 px</td><td>≈ 82 %</td></tr>
+      <tr><td>1920 × 1080</td><td>Step rail 88 · panel 360 open · strip 32</td><td>≈ 71 %</td></tr>
+      <tr><td>1440 × 900</td><td>Panel is a drawer over the canvas edge, closed by default; current step opens it</td><td>87 % closed · 70 % open</td></tr>
+      <tr><td>1024 × 1366</td><td>Steps → bottom bar 72 · tools → tray 56 · panel → in-flow sheet (peek 124, expanded 42 %)</td><td>≈ 76 % (sheet closed)</td></tr>
+      <tr><td>390 × 844</td><td>Top bar 44 · sheet peek 88 · tray 52 · bottom bar 60 · strip hidden, sharpness dot in HUD · navigator behind <kbd class="key">O</kbd></td><td>≈ 71 %</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Accessibility notes</h3>
+  <ul>
+    <li>Canvas is <code>role="application"</code> with a descriptive label and <code>aria-describedby</code> → polite live region; HUD values are announced at settle, debounced 500 ms.</li>
+    <li>Every drag has a single-pointer alternative: navigator pan buttons, Fly there, click-to-place vertices, two-click measurement, curtain slider, typeable sliders (SC 2.5.7). Targets are 24 px, 44 px on coarse pointers (SC 2.5.8).</li>
+    <li>Annotations, candidates, layers and slides are real lists (<code>listbox</code>/<code>option</code>, <code>Tab</code> moves, <code>Space</code> flies). The class picker is a radiogroup with keys 1–8. The keymap and About replace the panel, never the slide.</li>
+    <li>No meaning by colour alone: state tags, dots and glyphs carry text; swatches carry pattern text in legends; the CVD simulation is one click away.</li>
+    <li>Reduced motion: the fly-to tween is skipped; chrome transitions are zeroed by the design system; nothing animates over the canvas during a gesture.</li>
+  </ul>
+
+  <h3>Elements that map to an engine contract (plan 12 §1.1, plan 04 §8)</h3>
+  <div class="table-wrap"><table class="table table--dense">
+    <thead><tr><th>Element in this mock</th><th>Contract</th><th>Rendered by</th></tr></thead>
+    <tbody>
+      <tr><td>Canvas, HUD magnification / µm-per-px / scale bar / position, navigator rectangle, compare panes, curtain, channel grid</td><td>State document <code>views[]</code> (<code>center_um</code>, <code>scale_um_per_px</code>, <code>rotation_deg</code>, <code>channels[]</code>, <code>overlays[]</code>, <code>sync</code>), <code>flyTo</code></td><td>Pixels, overlays, scale-bar numerals: engine (GPU). HUD text, navigator frame: DOM</td></tr>
+      <tr><td>Cohort select, slide list, "Slide 14 of 48", next/previous slide</td><td>State document <code>slides[]</code> + collection store (research package)</td><td>DOM</td></tr>
+      <tr><td>Layer rows (probability, labels, detections, annotations), opacity / threshold / outline-heatmap, provenance tuple, <code>research</code> tag, not-validated marker, legend click-to-jump, "1,240,000 features — tiling locally"</td><td>Layer API with provenance <code>{producer, version, inputHash, createdAt, regulatoryStatus}</code> and ACL; local vector tiler; untiled ceiling warning</td><td>Overlay pixels/vectors/LUT: engine. Rows and controls: DOM</td></tr>
+      <tr><td>Tools, class picker, annotation list, undo/redo, import/export GeoJSON, DICOM ANN, pen stroke, ROI 1</td><td>Annotation API (op-based, stable ids, GeoJSON-QuPath / DICOM ANN adapters)</td><td>Strokes, halos, handles: engine. Tools, chips, lists: DOM</td></tr>
+      <tr><td>Coverage 62 %, areas in mm², 2.3 mm measurement, candidate sizes</td><td>Geometry services (coverage, area, distance in µm)</td><td>Rust values shown in DOM</td></tr>
+      <tr><td>Model panel (run on ROI, status, outputs), Accept, candidate queue</td><td>Event bus <code>aiResultArrived / Accepted / Rejected</code>; research uncertainty queue</td><td>DOM</td></tr>
+      <tr><td>Sharpness indicator (strip, HUD on phone), tile-error notice, GPU-reset notice, manifest plate</td><td>Event bus <code>tileSettled</code>, <code>error</code>; telemetry quality record (NTF %, deficit)</td><td>DOM text by <code>textContent</code>; live regions</td></tr>
+      <tr><td>Step rail, bottom bar, tray, every button, palette, keymap, N / ⇧N / \ keys, pen-tip palette</td><td>Command bus (serialisable; keyboard, palette, pen, voice, Python, test harness)</td><td>DOM invokers; pen-tip palette is an engine layer in the product</td></tr>
+      <tr><td>RUO / CLINICAL-IH / DX badge and string, purpose chip, accession, label image, launch-refused plate, NAV / DX indicator</td><td>Launch-context contract (<code>product</code> must equal the build; <code>accession</code>, <code>slideLabelText</code>, <code>purposeOfUse</code>); <code>render_mode</code></td><td>DOM</td></tr>
+      <tr><td>Network / tier / offline chips, telemetry switch, "Telemetry on"</td><td>Telemetry record and kill switch; offline pack</td><td>DOM</td></tr>
+      <tr><td>Rendering Complete (Dx build), QA chip, Dx refusal strings</td><td>Dx mode / Rendering Complete, display attestation, display QA</td><td>Settled-frame flag from the verifier; DOM shows it</td></tr>
+      <tr><td>Widget top bar, "Syncing with Python…", state ⇄ Python, <code>v.state</code> output</td><td>anywidget traitlets carrying the same state document; command bus from Python</td><td>DOM inside the cell output</td></tr>
+      <tr><td>Channel rows (colour, window), 8-bit preview / 16-bit settle note, phone cap note</td><td>State document <code>channels[]</code>; multichannel delivery tiers; <code>omero</code> settings</td><td>Compositing: engine. Rows: DOM</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Design notes (departures and gaps the plan owner should see)</h3>
+  <ul>
+    <li><b>C-1</b> Region C is a step rail, not a tool rail; tools nest under the current step. The shared viewer core still has the full tool set (keymap, palette, pen-tip palette), so the pillar adds a panel arrangement, not canvas behaviour (plan 12 §1 corollary).</li>
+    <li><b>C-2</b> New bindings <kbd class="key">N</kbd> / <kbd class="key">⇧N</kbd> (step) and <kbd class="key">\</kbd> (panel) use keys free in maps A and B; <kbd class="key">N</kbd> is also Learn's "next step", so the mental model is shared.</li>
+    <li><b>C-3</b> In the Clinical-IH variant the session purpose shown is <i>QA review · blinded</i>: an in-house model review is a QA purpose under D1's four fixed strings; if counsel wants a fifth string, it is one token.</li>
+    <li><b>C-4</b> The HPF grid and the tile-error patches are DOM/SVG placeholders here; in the product they are GPU HUD layers (Design note D11).</li>
+    <li><b>C-5</b> Threshold and opacity ranges are plain <code>&lt;input type="range"&gt;</code>; the product binds them to one-frame uniform updates (US-R2).</li>
+  </ul>
+
+  <h3>Known weaknesses (honest)</h3>
+  <ul>
+    <li>The step metaphor costs one click for anyone who switches between Examine and Annotate constantly; all-steps mode fixes it but then the concept is close to a conventional dock with a progress rail.</li>
+    <li>Multiplex controls are a level deeper than a spatial biologist would want; the channel grid and palette help, a dedicated step would be the alternative.</li>
+    <li>The placeholder canvas is an SVG pattern; at 20–40× it looks like a pattern, not tissue, and the tissue patterns are not colour-managed. The zoom demo exists to show the HUD and LOD language, not pixels.</li>
+    <li>Pinch, rotate and drag-with-pen are not simulated; the pen variant is a static illustration of "pen draws, finger pans".</li>
+    <li>Accept/reject write-back, the uncertainty queue and the local tiler are shown as states, not behaviour; the export jobs are static rows.</li>
+  </ul>
+</details>
+
+<script>
+/* =============================================================================
+   Concept C · Task-flow · wireframe behaviour (vanilla JS, no dependencies)
+   Everything here stands in for the command bus, state document and event bus.
+   ========================================================================== */
+(function () {
+  'use strict';
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+  const app = $('#app');
+  const canvasArea = $('#canvasArea');
+  const dock = $('#dock');
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches || $('#motionToggle').getAttribute('aria-checked') === 'true';
+  const isNarrow = () => window.matchMedia('(max-width: 1079px)').matches;
+  const isDrawer = () => window.matchMedia('(min-width: 1080px) and (max-width: 1599px)').matches;
+
+  /* ---------------- Registries (the command bus would own these) ---------------- */
+  const STEPS = [
+    { id: 'open',     n: 1, label: 'Open',     title: 'Open a slide',                     purpose: 'Choose a slide from the cohort, or drop a file.', next: 'Next: Screen',   tools: ['openurl', 'importgeo', 'nextslide'] },
+    { id: 'screen',   n: 2, label: 'Screen',   title: 'Screen at low power',              purpose: 'Low power first: work through the candidate regions.', next: 'Next: Examine',  tools: ['fit', 'flynext', 'grid', 'nav'] },
+    { id: 'examine',  n: 3, label: 'Examine',  title: 'Examine layers and model output',  purpose: 'Layers, model output and comparison.', next: 'Next: Annotate', tools: ['overlays', 'heat', 'compare', 'curtain', 'channels'] },
+    { id: 'annotate', n: 4, label: 'Annotate', title: 'Annotate the metastasis',          purpose: 'Draw, classify and measure; every tool has a key.', next: 'Next: Export',   tools: ['select', 'polygon', 'brush', 'point', 'rect', 'measure', 'undo', 'redo', 'classpick'] },
+    { id: 'export',   n: 5, label: 'Export',   title: 'Export with provenance',           purpose: 'Choose what leaves the workspace, with provenance.', next: 'Mark slide complete', tools: ['snapshot', 'geojsonout', 'submit'] }
+  ];
+  const TOOLS = {
+    select:    { icon: 'select',   label: 'Select',         key: 'V', cmd: 'tool:select' },
+    polygon:   { icon: 'polygon',  label: 'Polygon',        key: 'P', cmd: 'tool:polygon', drawing: true },
+    brush:     { icon: 'brush',    label: 'Brush',          key: 'F', cmd: 'tool:brush', drawing: true },
+    point:     { icon: 'point',    label: 'Point',          key: 'T', cmd: 'tool:point' },
+    rect:      { icon: 'rect',     label: 'Rectangle',      key: 'X', cmd: 'tool:rect', drawing: true },
+    measure:   { icon: 'measure',  label: 'Measure',        key: 'M', cmd: 'tool:measure' },
+    undo:      { icon: 'undo',     label: 'Undo',           key: '⌃Z', cmd: 'undo' },
+    redo:      { icon: 'redo',     label: 'Redo',           key: '⌃Y', cmd: 'redo' },
+    classpick: { swatch: true,     label: 'Class: Tumor',   key: 'Q', cmd: 'classpick', wide: true },
+    fit:       { icon: 'fit',      label: 'Fit slide',      key: '0', cmd: 'zoom:fit' },
+    flynext:   { icon: 'target',   label: 'Next candidate', key: 'Space', cmd: 'fly:micro' },
+    grid:      { icon: 'grid',     label: 'HPF grid',       key: 'G', cmd: 'grid' },
+    nav:       { icon: 'nav',      label: 'Navigator',      key: 'O', cmd: 'nav' },
+    overlays:  { icon: 'layers',   label: 'Overlays',       key: 'H', cmd: 'overlays' },
+    heat:      { icon: 'adjust',   label: 'Heatmap',        key: '⇧H', cmd: 'heat' },
+    compare:   { icon: 'compare',  label: 'Compare',        key: 'C', cmd: 'compare:side' },
+    curtain:   { icon: 'curtain',  label: 'Curtain',        key: '/', cmd: 'compare:curtain' },
+    channels:  { icon: 'channels', label: 'Channel grid',   key: '',  cmd: 'compare:grid' },
+    openurl:   { icon: 'folder',   label: 'Open URL…',      key: '',  cmd: 'openurl' },
+    importgeo: { icon: 'upload',   label: 'Import GeoJSON', key: '',  cmd: 'importgeo' },
+    nextslide: { icon: 'next',     label: 'Next slide',     key: ']', cmd: 'slide:next' },
+    snapshot:  { icon: 'download', label: 'Snapshot',       key: '⇧S', cmd: 'snapshot' },
+    geojsonout:{ icon: 'download', label: 'GeoJSON out',    key: '',  cmd: 'export:geojson' },
+    submit:    { icon: 'check',    label: 'Submit export',  key: '',  cmd: 'export:submit', wide: true }
+  };
+  const CHANNELS = [
+    { id: 'dapi',  name: 'DAPI',   marker: 'nuclei',      colour: '#3f6dff', on: true,  lo: 8,  hi: 70, win: '120 – 3,800' },
+    { id: 'cd3',   name: 'CD3',    marker: 'T cells',     colour: '#33d16b', on: true,  lo: 12, hi: 62, win: '210 – 2,900' },
+    { id: 'cd8',   name: 'CD8',    marker: 'cytotoxic T', colour: '#e04ad6', on: true,  lo: 10, hi: 55, win: '180 – 2,400' },
+    { id: 'cd20',  name: 'CD20',   marker: 'B cells',     colour: '#ff4a3d', on: true,  lo: 14, hi: 66, win: '260 – 3,100' },
+    { id: 'panck', name: 'PanCK',  marker: 'epithelium',  colour: '#f2e23a', on: true,  lo: 6,  hi: 80, win: '90 – 4,200' },
+    { id: 'cd68',  name: 'CD68',   marker: 'macrophages', colour: '#2fd6e6', on: true,  lo: 11, hi: 58, win: '200 – 2,600' },
+    { id: 'ki67',  name: 'Ki-67',  marker: 'proliferation', colour: '#ffffff', on: false, lo: 9,  hi: 50, win: '160 – 2,000' },
+    { id: 'foxp3', name: 'FOXP3',  marker: 'Treg',        colour: '#ff9a1f', on: false, lo: 15, hi: 60, win: '300 – 2,700' }
+  ];
+  const FLY = {   /* named views (world units of the 1600 × 1000 placeholder) */
+    met:      { mag: 5,  cx: 760,  cy: 500 },
+    micro:    { mag: 10, cx: 1222, cy: 332 },
+    itc:      { mag: 20, cx: 300,  cy: 620 },
+    cap:      { mag: 5,  cx: 1290, cy: 660 },
+    follicle: { mag: 10, cx: 300,  cy: 360 },
+    stroma:   { mag: 10, cx: 352,  cy: 766 },
+    other:    { mag: 10, cx: 1400, cy: 626 },
+    roi:      { mag: 10, cx: 994,  cy: 297 },
+    fit:      { mag: 2.5, cx: 800, cy: 500 }
+  };
+  const MAGS = [1.25, 2.5, 5, 10, 20, 40];
+
+  const state = {
+    step: app.dataset.step || 'annotate',
+    expert: false,
+    product: 'ruo',
+    demo: 'normal',
+    slide: 'he',
+    compare: 'single',
+    pen: false,
+    cvd: 'none',
+    tool: 'polygon',
+    cls: 'Tumor',
+    cam: { s: 1, tx: 0, ty: 0 },   /* world → viewBox: p * s + t ; s = mag / 2.5 */
+    mag: 2.5,
+    heatmap: false,
+    gridOn: false,
+    navOpen: false,
+    overlaysHidden: false,
+    sharpTimer: null,
+    syncTimer: null,
+    liveTimer: null
+  };
+
+  /* ---------------- Helpers ---------------- */
+  const iconSvg = (name) => `<svg class="icon" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+  const announce = (text, assertive) => {
+    const el = $(assertive ? '#liveAssertive' : '#livePolite');
+    clearTimeout(state.liveTimer);
+    state.liveTimer = setTimeout(() => { el.textContent = ''; el.textContent = text; }, assertive ? 0 : 500);
+  };
+  let noticeTimer = null;
+  const defaultNotice = () => {
+    if (state.demo === 'tile-error') return '3 tiles could not be loaded — retrying';
+    if (state.demo === 'context-loss') return 'Graphics memory was reset — restoring the view';
+    if (state.demo === 'manifest-fail') return 'This slide could not be opened (HTTP 503 from the tile server). Retry · Report a problem';
+    if (state.demo === 'launch-refused') return 'This launch asked for Stoipath Clinical-IH but this is Stoipath Viewer (research use only). Nothing was opened.';
+    if (state.demo === 'offline-pack') return 'Working from the offline pack — exports queue until a link returns';
+    if (state.demo === 'dx-refused') return state.product === 'ruo'
+      ? 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.'
+      : 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.';
+    if (state.product === 'dx' && state.demo === 'normal') return 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+    if (state.slide === 'if') return '8-bit preview tier while moving · 16-bit at settle · 6 of 8 channels';
+    return '1,240,000 features — tiling locally so zoom stays smooth';
+  };
+  const notice = (text, ms) => {
+    const el = $('#stripNotice');
+    clearTimeout(noticeTimer);
+    el.textContent = text;
+    announce(text);
+    if (ms) noticeTimer = setTimeout(() => { el.textContent = defaultNotice(); }, ms);
+  };
+
+  /* ---------------- Steps: rail, bottom bar, tray, panel ---------------- */
+  function toolButton(id, variant) {
+    const t = TOOLS[id];
+    const label = id === 'classpick' ? `Class: ${state.cls}` : t.label;
+    const classes = ['tool', t.wide ? 'wide' : '', t.drawing ? 'tool--drawing' : ''].filter(Boolean).join(' ');
+    const pressed = (t.cmd || '').startsWith('tool:') ? (state.tool === id ? 'true' : 'false') : null;
+    const inner = t.swatch ? `<span class="swatch" style="--swatch:var(--ann-${classIndex(state.cls)})"></span>` : iconSvg(t.icon);
+    const key = t.key ? `<kbd class="tool__key">${t.key}</kbd>` : '';
+    const lbl = variant === 'tray' || t.wide ? `<span class="tool__label">${label}</span>` : '';
+    return `<button class="${classes}" data-cmd="${t.cmd}" data-toolid="${id}" ${pressed !== null ? `aria-pressed="${pressed}"` : ''} aria-label="${label}${t.key ? ' (' + t.key + ')' : ''}" title="${label}${t.key ? ' · ' + t.key : ''}">${inner}${lbl}${key}</button>`;
+  }
+  const classIndex = (name) => ({ Tumor: 2, Stroma: 5, Lymphocytes: 1, Necrosis: 7, Other: 6, 'Region*': 4, Positive: 3, Negative: 8 })[name] || 2;
+
+  function renderSteps() {
+    const cur = STEPS.findIndex(s => s.id === state.step);
+    const rail = $('#steprail');
+    rail.innerHTML = `<div class="railhint" aria-hidden="true"><kbd class="key">N</kbd> next step</div><ol>` + STEPS.map((s, i) => {
+      const done = i < cur ? ' is-done' : '';
+      const current = i === cur ? ' aria-current="step"' : '';
+      const tools = i === cur ? `<div class="steptools" role="toolbar" aria-label="Tools for ${s.label}">${s.tools.map(id => toolButton(id, 'rail')).join('')}</div>` : '';
+      const link = i < STEPS.length - 1 ? '<div class="step-link" aria-hidden="true"></div>' : '';
+      return `<li><button class="step${done}"${current} data-step-target="${s.id}" data-act="gostep" aria-label="Step ${s.n}, ${s.label}${i < cur ? ', done' : i === cur ? ', current' : ''}"><span class="step__num"><span>${s.n}</span></span><span class="step__label">${s.label}</span></button>${tools}${link}</li>`;
+    }).join('') + `</ol><div class="rail__spacer"></div><div class="railfoot">
+      <button class="tool" data-act="keymap" aria-label="Keyboard map (?)" title="Keyboard map · ?">${iconSvg('keyboard')}<kbd class="tool__key">?</kbd></button>
+      <button class="tool" data-act="about" aria-label="About, settings and product label" title="About">${iconSvg('settings')}</button>
+    </div>`;
+    const bar = $('#stepbar');
+    bar.innerHTML = STEPS.map((s, i) => `<button class="step${i < cur ? ' is-done' : ''}"${i === cur ? ' aria-current="step"' : ''} data-step-target="${s.id}" data-act="gostep" aria-label="Step ${s.n}, ${s.label}"><span class="step__num"><span>${s.n}</span></span><span class="step__label">${s.label}</span></button>`).join('');
+    const tray = $('#steptray');
+    const s = STEPS[cur];
+    tray.innerHTML = s.tools.map(id => toolButton(id, 'tray')).join('') + `<span class="steptray__divider"></span><button class="tool" data-act="keymap" aria-label="Keyboard map">${iconSvg('keyboard')}</button>`;
+    /* widget mini steps */
+    const w = $('#wsteps');
+    if (w) w.innerHTML = STEPS.map((st, i) => `<button role="tab" aria-selected="${i === cur}" ${i === cur ? 'aria-current="step"' : ''} data-step-target="${st.id}" data-act="gostep"><span class="n">${st.n}</span><span class="lbl">${st.label}</span></button>`).join('');
+  }
+
+  function setStep(id, opts) {
+    const s = STEPS.find(x => x.id === id);
+    if (!s) return;
+    state.step = id;
+    app.dataset.step = id;
+    $('#demoStep').value = id;
+    $('#dockEyebrow').innerHTML = `<span class="stepnum">Step ${s.n} of ${STEPS.length}</span> · ${s.label}`;
+    $('#dockTitle').textContent = s.title;
+    $('#dockPurpose').textContent = s.purpose;
+    const next = $('#nextStepBtn');
+    next.innerHTML = `${s.next} <kbd class="key">N</kbd>`;
+    $('#prevStepBtn').disabled = s.n === 1;
+    $('#stripStep').innerHTML = `Step ${s.n}/${STEPS.length} · <kbd class="key">N</kbd> next`;
+    canvasArea.setAttribute('aria-label', `Slide canvas, ${state.slide === 'if' ? 'cycif_sln_02, 6 channels' : 'CAMELYON16 tumor_014, H and E'}, ${fmtMag(state.mag)} times. Step ${s.n} of 5, ${s.label}. Arrow keys pan, plus and minus zoom, N next step.`);
+    renderSteps();
+    if (!state.expert) { const body = $('#dockBody'); body.scrollTop = 0; }
+    if (opts && opts.open) { if (isDrawer()) app.classList.add('dock-open'); if (isNarrow()) setSheet(true); }
+    if (!(opts && opts.silent)) announce(`Step ${s.n} of ${STEPS.length}: ${s.label}. ${s.title}.`);
+  }
+  function stepBy(delta) {
+    const i = STEPS.findIndex(x => x.id === state.step);
+    const j = Math.min(STEPS.length - 1, Math.max(0, i + delta));
+    if (j === i) { if (delta > 0) notice('Slide marked complete · opening tumor_015', 2500); return; }
+    setStep(STEPS[j].id);
+  }
+  function setExpert(on) {
+    state.expert = on;
+    app.classList.toggle('is-expert', on);
+    $('#expertBtn').setAttribute('aria-pressed', String(on));
+    $('#demoExpert').setAttribute('aria-pressed', String(on));
+    $('#dockEyebrow').innerHTML = on ? `<span class="stepnum">All steps</span> · expert mode` : `<span class="stepnum">Step ${STEPS.find(s => s.id === state.step).n} of 5</span> · ${STEPS.find(s => s.id === state.step).label}`;
+    if (on) { $('#dockTitle').textContent = 'Every panel at once'; $('#dockPurpose').textContent = 'The classic dock. The step rail becomes a progress indicator; the footer still carries the next action.'; }
+    else setStep(state.step, { silent: true });
+  }
+  function setSheet(expanded) {
+    app.classList.toggle('sheet-expanded', expanded);
+    $('#sheetGrab').setAttribute('aria-expanded', String(expanded));
+    $('#sheetGrab').setAttribute('aria-label', expanded ? 'Collapse the step panel' : 'Expand the step panel');
+  }
+
+  /* ---------------- Camera, HUD, navigator, LOD ---------------- */
+  const fmtMag = (m) => (m % 1 === 0 ? String(m) : m.toFixed(m < 2 ? 2 : 1).replace(/\.?0+$/, ''));
+  function scaleBar(umPerPx) {
+    const cands = [];
+    for (let e = 0; e <= 4; e++) [1, 2, 5].forEach(k => cands.push(k * Math.pow(10, e)));
+    let best = cands[0];
+    for (const c of cands) { const px = c / umPerPx; if (px >= 80 && px <= 200) best = c; }
+    if (best / umPerPx < 80 || best / umPerPx > 200) best = cands.reduce((a, c) => (c / umPerPx <= 200 ? c : a), cands[0]);
+    const px = Math.round(best / umPerPx);
+    return { px, label: best >= 1000 ? `${best / 1000} mm` : `${best} µm` };
+  }
+  function applyCamera() {
+    const { s, tx, ty } = state.cam;
+    const t = `matrix(${s} 0 0 ${s} ${tx} ${ty})`;
+    ['#worldA', '#worldB'].forEach(id => { const g = $(id); if (g) g.setAttribute('transform', t); });
+    $$('#grid6 .world').forEach(g => g.setAttribute('transform', t));
+    /* counter-scaled handles and labels keep their screen size */
+    $$('.counter').forEach(el => {
+      const x = +el.dataset.x, y = +el.dataset.y;
+      el.setAttribute('transform', `translate(${x} ${y}) scale(${1 / s})`);
+    });
+    const mag = state.mag;
+    const um = 10 / mag;                      /* 2.5× ↔ 4.00 µm/px on this placeholder */
+    $('#magVal').textContent = `${fmtMag(mag)}×`;
+    $('#magLine').textContent = `${um.toFixed(2)} µm/px · derived`;
+    $('#magBtn').setAttribute('aria-label', `Magnification ${fmtMag(mag)} times, ${um.toFixed(2)} micrometres per pixel. Press Enter to type a zoom.`);
+    const sb = scaleBar(um);
+    $('#scalebar').style.setProperty('--scalebar-length', sb.px + 'px');
+    $('#scaleLabel').textContent = sb.label;
+    const cxw = (800 - tx) / s, cyw = (500 - ty) / s;
+    $('#hudPos').textContent = `x ${(3.18 + (cxw - 800) * 4 / 1000).toFixed(2)} mm · y ${(1.96 + (cyw - 500) * 4 / 1000).toFixed(2)} mm`;
+    /* navigator rectangle */
+    const x0 = Math.max(0, (-tx) / s), y0 = Math.max(0, (-ty) / s);
+    const x1 = Math.min(1600, (1600 - tx) / s), y1 = Math.min(1000, (1000 - ty) / s);
+    const r = $('#navRect');
+    r.style.left = (x0 / 16) + '%'; r.style.top = (y0 / 10) + '%';
+    r.style.width = Math.max(2, (x1 - x0) / 16) + '%'; r.style.height = Math.max(2, (y1 - y0) / 10) + '%';
+    renderDetections();
+    $('#lodLabel').textContent = mag >= 10 ? 'outlines at ≥ 10×' : 'centroids below 10×';
+    canvasArea.setAttribute('aria-label', canvasArea.getAttribute('aria-label').replace(/, [\d.]+ times/, `, ${fmtMag(mag)} times`));
+  }
+  function zoomTo(mag, anchor, animate) {
+    mag = Math.min(40, Math.max(1.25, mag));
+    const s1 = mag / 2.5;
+    const { s, tx, ty } = state.cam;
+    const ax = anchor ? anchor.x : 800, ay = anchor ? anchor.y : 500;   /* viewBox point that must stay fixed */
+    const target = { s: s1, tx: ax - (ax - tx) * (s1 / s), ty: ay - (ay - ty) * (s1 / s) };
+    setCamera(target, mag, animate);
+  }
+  function flyTo(view, animate) {
+    const s1 = view.mag / 2.5;
+    setCamera({ s: s1, tx: 800 - view.cx * s1, ty: 500 - view.cy * s1 }, view.mag, animate !== false);
+  }
+  let tween = null;
+  function setCamera(target, mag, animate) {
+    cancelAnimationFrame(tween);
+    const from = { ...state.cam }, fromMag = state.mag;
+    const settle = () => { state.cam = target; state.mag = mag; applyCamera(); sharpen(); };
+    if (!animate || reduceMotion()) { settle(); return; }
+    const t0 = performance.now(), dur = 120;
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      state.cam = { s: from.s + (target.s - from.s) * e, tx: from.tx + (target.tx - from.tx) * e, ty: from.ty + (target.ty - from.ty) * e };
+      state.mag = Math.exp(Math.log(fromMag) + (Math.log(mag) - Math.log(fromMag)) * e);
+      applyCamera();
+      if (k < 1) tween = requestAnimationFrame(step); else settle();
+    };
+    tween = requestAnimationFrame(step);
+  }
+  function pan(dxFrac, dyFrac) {
+    const { s, tx, ty } = state.cam;
+    setCamera({ s, tx: tx - dxFrac * 1600, ty: ty - dyFrac * 1000 }, state.mag, false);
+  }
+  function screenToViewBox(ev) {
+    const svg = $('#svgA');
+    const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  /* Deterministic placeholder detections (centroid LOD below 10×, outlines above) */
+  const DET = [];
+  (function seed() {
+    let x = 1234567;
+    const rnd = () => { x = (x * 1103515245 + 12345) & 0x7fffffff; return x / 0x7fffffff; };
+    const inMet = (px, py) => Math.pow((px - 760) / 280, 2) + Math.pow((py - 500) / 190, 2) < 1;
+    for (let i = 0; i < 3200; i++) {
+      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd());
+      const px = 800 + Math.cos(a) * r * 690, py = 500 + Math.sin(a) * r * 408;
+      const cls = inMet(px, py) ? (rnd() < 0.8 ? 2 : 1) : (rnd() < 0.93 ? 1 : 6);
+      DET.push({ x: px, y: py, c: cls });
+    }
+  })();
+  const ANN = { 1: '#7cc3f0', 2: '#8e3a15', 6: '#be7b00' };
+  function renderDetections() {
+    const g = $('#detect'); if (!g) return;
+    const { s, tx, ty } = state.cam;
+    const x0 = (-tx) / s - 20, y0 = (-ty) / s - 20, x1 = (1600 - tx) / s + 20, y1 = (1000 - ty) / s + 20;
+    const hi = state.mag >= 10;
+    const r = hi ? 7 : 2.6 / s;
+    const parts = [];
+    let n = 0;
+    for (const d of DET) {
+      if (d.x < x0 || d.x > x1 || d.y < y0 || d.y > y1) continue;
+      if (hi) parts.push(`<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="${r}" fill="none" stroke="${ANN[d.c]}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`);
+      else parts.push(`<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="${r.toFixed(2)}" fill="${ANN[d.c]}"/>`);
+      if (++n > 4000) break;
+    }
+    g.innerHTML = (hi ? '<g stroke="#262626" stroke-width="3.5" opacity=".9">' + parts.join('').replace(/stroke="#[0-9a-f]{6}" stroke-width="1.5"/g, '') + '</g>' : '') + parts.join('');
+    const w = $('#detectW');
+    if (w && !w.childElementCount) w.innerHTML = DET.slice(0, 1800).map(d => `<circle cx="${d.x.toFixed(0)}" cy="${d.y.toFixed(0)}" r="2.6" fill="${ANN[d.c]}"/>`).join('');
+  }
+
+  /* Sharpness indicator: driven by tileSettled in the product; simulated here per demo state */
+  function setIndicator(kind, label) {
+    const ind = $('#stripSharp'), hud = $('#hudSharp');
+    [ind, hud].forEach(el => { el.className = el.className.replace(/indicator--[a-z]+/g, '').trim() + ' indicator--' + kind; });
+    $('#stripSharpLabel').textContent = label; $('#hudSharp .indicator__label').textContent = label;
+  }
+  function restingIndicator() {
+    if (state.product === 'dx' && state.demo === 'normal') return ['complete', 'Rendering Complete'];
+    switch (state.demo) {
+      case 'cold4g': return ['soft', 'Soft — slow link'];
+      case 'offline-nopack': return ['offline', 'Offline — cached tiles only'];
+      case 'soft-level': return ['soft', 'Soft — level not yet available'];
+      case 'server-slow': return ['sharpening', 'Sharpening…'];
+      default: return ['sharp', 'Sharp'];
+    }
+  }
+  function sharpen() {
+    clearTimeout(state.sharpTimer);
+    const [k, l] = restingIndicator();
+    if (k === 'sharp' || k === 'complete') {
+      setIndicator(state.product === 'dx' ? 'rendering' : 'sharpening', state.product === 'dx' ? 'Rendering…' : 'Sharpening…');
+      state.sharpTimer = setTimeout(() => { setIndicator(k, l); announce(`${fmtMag(state.mag)} times, ${(10 / state.mag).toFixed(2)} micrometres per pixel, ${l}`); }, reduceMotion() ? 0 : 320);
+    } else if (k === 'soft' && state.demo === 'cold4g') {
+      setIndicator('sharpening', 'Sharpening…');
+      state.sharpTimer = setTimeout(() => setIndicator(k, l), reduceMotion() ? 0 : 1400);
+    } else setIndicator(k, l);
+  }
+
+  /* ---------------- Layers, compare, channels ---------------- */
+  function setCompare(mode) {
+    state.compare = mode;
+    canvasArea.classList.toggle('is-side', mode === 'side');
+    canvasArea.classList.toggle('is-curtain', mode === 'curtain');
+    canvasArea.classList.toggle('is-grid', mode === 'grid');
+    $$('#compareSeg [data-compare]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.compare === mode)));
+    $('#curtainCtl').hidden = mode !== 'curtain';
+    $('#demoCompare').value = mode;
+    if (mode === 'grid') renderGrid();
+    applyCamera();
+  }
+  function renderGrid() {
+    const g = $('#grid6');
+    const on = CHANNELS.filter(c => c.on).slice(0, 6);
+    const list = state.slide === 'if' ? on : [{ id: 'he', name: 'H&E' }, { id: 'ihc', name: 'CK AE1/AE3' }];
+    g.innerHTML = list.map(c => `<div class="pane"><svg class="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g class="world">${c.id === 'he' ? '<use href="#world-he" width="1600" height="1000"/>' : c.id === 'ihc' ? '<use href="#world-ihc" width="1600" height="1000"/>' : `<use href="#if-base"/><use href="#ch-${c.id}"/>`}</g></svg><span class="hud__item panelabel"><b>${c.name}</b>${c.marker ? ' · ' + c.marker : ''}</span></div>`).join('');
+  }
+  function renderChannels() {
+    const host = $('#chanRows');
+    const isIf = state.slide === 'if';
+    $('#chanHint').hidden = isIf;
+    $('#chanFoot').hidden = !isIf;
+    $('#channelsSection').open = isIf || $('#channelsSection').open;
+    $('#chanCount').textContent = isIf ? `${CHANNELS.filter(c => c.on).length} of 8` : '1 (brightfield)';
+    if (!isIf) { host.innerHTML = ''; return; }
+    host.innerHTML = CHANNELS.map((c, i) => {
+      const bars = Array.from({ length: 24 }, (_, k) => Math.round(4 + 28 * Math.exp(-Math.pow((k - 6 - (i % 3) * 3) / 5, 2)))).map(h => `<span style="height:${h}px"></span>`).join('');
+      return `<div class="chanrow${c.on ? '' : ' is-off'}" data-ch="${c.id}" data-live="state.views[0].channels[${i}]">
+        <button class="layer-row__vis" aria-pressed="${c.on}" aria-label="${c.name} ${c.on ? 'visible' : 'hidden'}" data-chvis="${c.id}">${iconSvg(c.on ? 'eye' : 'eye-off')}</button>
+        <span class="swatch" style="--swatch:${c.colour}"></span>
+        <span class="name">${c.name} <span class="text-secondary text-xs">· ${c.marker}</span></span>
+        <select class="chsel" aria-label="${c.name} colour" data-chcolour="${c.id}">${['Blue', 'Green', 'Magenta', 'Red', 'Yellow', 'Cyan', 'White', 'Orange'].map(n => `<option${colourName(c.colour) === n ? ' selected' : ''}>${n}</option>`).join('')}</select>
+        <div class="win"><div class="range-dual" aria-label="${c.name} window"><span class="range-dual__track"></span><span class="range-dual__fill" style="--lo:${c.lo}%;--hi:${c.hi}%"></span><input type="range" min="0" max="100" value="${c.lo}" aria-label="${c.name} window low"><input type="range" min="0" max="100" value="${c.hi}" aria-label="${c.name} window high"></div><span class="num">${c.win}</span></div>
+      </div>`;
+    }).join('');
+  }
+  const colourName = (hex) => ({ '#3f6dff': 'Blue', '#33d16b': 'Green', '#e04ad6': 'Magenta', '#ff4a3d': 'Red', '#f2e23a': 'Yellow', '#2fd6e6': 'Cyan', '#ffffff': 'White', '#ff9a1f': 'Orange' })[hex] || 'White';
+  function applyChannels() {
+    CHANNELS.forEach(c => { const u = $(`#ifComposite [data-ch="${c.id}"]`); if (u) u.style.display = c.on ? '' : 'none'; });
+    if (state.compare === 'grid') renderGrid();
+    $('#chanCount').textContent = `${CHANNELS.filter(c => c.on).length} of 8`;
+  }
+  function setSlide(kind) {
+    state.slide = kind;
+    canvasArea.classList.toggle('is-if', kind === 'if');
+    app.classList.toggle('is-if', kind === 'if');
+    const isIf = kind === 'if';
+    /* multiplex slide: channels are the first thing in Examine; brightfield: last */
+    const chSec = $('#channelsSection'), exPanel = chSec.closest('.steppanel');
+    if (isIf) exPanel.insertBefore(chSec, $('#layersSection')); else exPanel.appendChild(chSec);
+    $('#idName').textContent = isIf ? 'Institutional · cycif_sln_02' : (state.product === 'ruo' ? 'CAMELYON16 · tumor_014' : 'AP-26-04417 · A1-1');
+    $('#idTitle').textContent = isIf ? 'Sentinel lymph node · CyCIF 8-plex · 16-bit OME-Zarr · 0.325 µm/px' : (state.product === 'ruo' ? 'Sentinel lymph node · H&E · scanned 0.25 µm/px · 3 layers' : 'Sentinel lymph node · H&E · in-house model review');
+    $('#idLicence').textContent = isIf ? 'IRB 2026-114' : 'CC0';
+    $('#idLicence').hidden = state.product !== 'ruo';
+    $('#hudName').textContent = isIf ? 'cycif_sln_02 · 6 ch' : 'tumor_014 · H&E';
+    $('#labelA').innerHTML = isIf ? '<b>cycif_sln_02 · composite</b>&nbsp;· view 1' : '<b>tumor_014 · H&amp;E</b>&nbsp;· view 1';
+    $$('.slides .tray__slide').forEach(b => b.setAttribute('aria-selected', String(b.dataset.slide === kind && (kind !== 'he' || b.dataset.name === 'tumor_014'))));
+    $('#demoSlide').value = kind;
+    renderChannels();
+    if (isIf && state.compare === 'single' && state.step === 'examine') { /* keep */ }
+    if (state.compare === 'grid') renderGrid();
+    $('#stripNotice').textContent = defaultNotice();
+    announce(isIf ? 'Opened cycif_sln_02, 8 channels, 6 visible.' : 'Opened tumor_014, H and E.');
+  }
+
+  /* ---------------- Product build and demo states ---------------- */
+  const STRINGS = { ruo: 'badge-string--ruo', clinical: 'badge-string--clinical', dx: 'badge-string--dx' };
+  function setProduct(p) {
+    state.product = p;
+    app.dataset.product = p;
+    const badge = $('#badge'), ab = $('#aboutBadge');
+    [badge, ab].forEach(b => { b.className = 'badge badge--' + (p === 'ruo' ? 'ruo' : p === 'clinical' ? 'clinical' : 'dx'); b.textContent = p === 'ruo' ? 'RUO' : p === 'clinical' ? 'CLINICAL-IH' : 'DX'; });
+    badge.setAttribute('aria-label', p === 'ruo' ? 'Stoipath Viewer, for research use only. Open product label and About' : p === 'clinical' ? 'Stoipath Clinical-IH, in-house laboratory-validated tool. Open product label and About' : 'Stoipath Dx, cleared edition. Open product label and About');
+    ['#labelString', '#aboutString'].forEach(sel => { const el = $(sel); el.className = el.className.replace(/badge-string--\w+/, STRINGS[p]); });
+    $('#aboutProduct').textContent = p === 'ruo' ? 'Stoipath Viewer 0.9.2' : p === 'clinical' ? 'Stoipath Clinical-IH 0.9.2 · ‹laboratory name›' : 'Stoipath Dx 1.0 · UDI (01)00850…';
+    $('#modeSlot').hidden = p === 'ruo';
+    const mode = $('#modeInd');
+    const dxActive = p === 'dx' && state.demo === 'normal';
+    mode.className = 'mode ' + (dxActive ? 'mode--dx' : 'mode--nav'); mode.textContent = dxActive ? 'DX' : 'NAV';
+    const chip = $('#purposeChip');
+    chip.hidden = p === 'ruo';
+    chip.textContent = 'QA review · blinded';
+    $('#idPatient').hidden = p === 'ruo';
+    setSlide(state.slide);
+    $('#demoProduct').value = p;
+    sharpen();
+    $('#stripNotice').textContent = defaultNotice();
+    announce(p === 'ruo' ? 'Stoipath Viewer, research use only.' : p === 'clinical' ? 'Stoipath Clinical-IH, Nav mode.' : (dxActive ? 'Stoipath Dx, Dx mode, Rendering Complete.' : 'Stoipath Dx, Nav mode.'));
+  }
+  function setDemoState(name) {
+    state.demo = name;
+    const chips = $('#stripChips');
+    const chipHtml = (t, extra) => `<span class="chip chip--tier">${t}</span>${extra || ''}`;
+    let html = '';
+    switch (name) {
+      case 'cold4g': html = chipHtml('Slow link (6 Mbps) — reduced detail while moving'); break;
+      case 'offline-pack': html = chipHtml('Offline pack · CAMELYON16 subset, 12 slides · saved 2026-10-28'); break;
+      case 'offline-nopack': html = chipHtml('Offline — showing cached tiles only'); break;
+      case 'server-slow': html = chipHtml('Server slow (p95 1.2 s) — prefetch paused'); break;
+      case 'tier2': html = chipHtml('Tier 2 · 60 Hz'); break;
+      case 'tile-error': html = `<button class="chip" data-act="retryTiles">Retry</button>`; break;
+      default: html = '';
+    }
+    chips.innerHTML = html;
+    canvasArea.classList.toggle('has-tileerr', name === 'tile-error');
+    $('#plateManifest').hidden = name !== 'manifest-fail';
+    $('#plateManifest').classList.add('plate--dim');
+    $('#plateLaunch').hidden = name !== 'launch-refused';
+    const plated = name === 'launch-refused' || name === 'manifest-fail';
+    $('#navigator').hidden = plated;
+    $('#stripSharp').hidden = plated; $('#hudSharp').hidden = plated;
+    $('#runModelBtn').disabled = name === 'offline-nopack';
+    $('#tilerChip').textContent = name === 'offline-nopack' ? 'Local tiler · ready (offline)' : 'Local tiler · ready';
+    $('#demoState').value = name;
+    setProduct(state.product);   /* refreshes mode indicator, notice and indicator */
+    if (name === 'manifest-fail' || name === 'launch-refused') announce($(name === 'manifest-fail' ? '#plateManifest .plate__text' : '#plateLaunch .plate__text').textContent, true);
+    if (name === 'context-loss') announce('Graphics memory was reset — restoring the view', true);
+  }
+
+  /* ---------------- Tools, classes, CVD, pen ---------------- */
+  function setTool(id) {
+    state.tool = id;
+    $$('[data-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === id)));
+    renderSteps();
+    announce(`${TOOLS[id].label} tool`);
+  }
+  function setClass(name) {
+    state.cls = name;
+    $$('#classPicker .class-chip').forEach(c => c.setAttribute('aria-checked', String(c.dataset.class === name)));
+    $('#classCur').textContent = name;
+    renderSteps();
+    announce(`Class ${name}`);
+  }
+  function setCvd(mode) {
+    state.cvd = mode;
+    ['deutan', 'protan'].forEach(m => { canvasArea.classList.toggle('is-cvd-' + m, mode === m); dock.classList.toggle('is-cvd-' + m, mode === m); });
+    $$('#cvdSeg [data-cvd]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.cvd === mode)));
+    $('#demoCvd').value = mode;
+  }
+  function setPen(on) {
+    state.pen = on;
+    canvasArea.classList.toggle('is-pen', on);
+    $$('[data-input]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.input === 'pen') === on)));
+  }
+
+  /* ---------------- Command dispatch (stands in for the command bus) ---------------- */
+  function run(cmd, src) {
+    if (!cmd) return;
+    const [verb, arg] = cmd.split(':');
+    switch (verb) {
+      case 'tool': setTool(arg); if (state.step !== 'annotate' && !state.expert) notice(`${TOOLS[arg].label} tool active · tools stay global; the Annotate step just shows them`, 3000); break;
+      case 'undo': notice('Undid: polygon A2 (micrometastasis) · op 41 → 40', 2500); $('[data-cmd="redo"]').disabled = false; break;
+      case 'redo': notice('Redid: polygon A2 · op 40 → 41', 2500); $('[data-cmd="redo"]').disabled = true; break;
+      case 'delete': notice('Deleted A1 · Ctrl+Z to undo', 2500); break;
+      case 'classpick': setStep('annotate', { open: true }); setTimeout(() => { const c = $('#classPicker [aria-checked="true"]'); if (c) c.focus(); }, 50); break;
+      case 'zoom': if (arg === 'fit') flyTo(FLY.fit); else if (arg === 'in') zoomTo(state.mag * 2); else if (arg === 'out') zoomTo(state.mag / 2); else if (arg === 'fine-in') zoomTo(state.mag * 1.2); else if (arg === 'fine-out') zoomTo(state.mag / 1.2); else zoomTo(+arg); break;
+      case 'fly': if (FLY[arg]) { flyTo(FLY[arg]); notice(`Flew to ${arg === 'micro' ? 'R2 · micrometastasis' : arg === 'met' ? 'R1 · metastasis' : arg === 'itc' ? 'R3 · ITC candidate' : arg === 'cap' ? 'R4 · capsule' : arg}`, 2000); } break;
+      case 'grid': state.gridOn = !state.gridOn; canvasArea.classList.toggle('is-grid-on', state.gridOn); notice(state.gridOn ? 'HPF grid on · 0.237 mm² per field at this display' : 'HPF grid off', 2000); break;
+      case 'nav': state.navOpen = !state.navOpen; app.classList.toggle('nav-open', state.navOpen); $('#navigator').classList.toggle('is-hidden', !state.navOpen && !isNarrow() ? false : false); if (!isNarrow()) $('#navigator').hidden = !$('#navigator').hidden; break;
+      case 'overlays': state.overlaysHidden = !state.overlaysHidden; canvasArea.classList.toggle('overlays-hidden', state.overlaysHidden); notice(state.overlaysHidden ? 'All overlays hidden · H to show' : 'Overlays shown', 2000); break;
+      case 'heat': setHeat(!state.heatmap); break;
+      case 'compare': setCompare(state.compare === arg ? 'single' : arg); break;
+      case 'openurl': setStep('open', { open: true }); setTimeout(() => $('#dropzone').focus(), 50); break;
+      case 'importgeo': notice('Imported tumor_014_qupath.geojson · 212 objects · 5 classes mapped to the on-screen palette', 3500); break;
+      case 'slide': notice(arg === 'next' ? 'Opening tumor_014_ihc · CK AE1/AE3' : 'Opening tumor_013', 2500); break;
+      case 'snapshot': notice('Snapshot saved · 1920 × 1080 · scale bar and product footer burned in', 3000); break;
+      case 'export': if (arg === 'submit') { notice('Export #415 submitted · GeoJSON + patches · provenance manifest attached', 3500); } else notice('GeoJSON (QuPath dialect) · job #416 queued', 2500); break;
+      case 'accept': notice('Accepted unet-tumour 1.3 output on ROI 1 · aiResultAccepted · research label', 3000); break;
+      case 'drawroi': setTool('rect'); setStep('annotate'); break;
+      case 'step': if (arg === 'next') stepBy(1); else stepBy(-1); break;
+      case 'palette': openPalette(); break;
+      case 'keymap': openOverlay('keymap'); break;
+      case 'about': openOverlay('about'); break;
+      case 'dx': notice(state.product === 'ruo' ? 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.' : 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.', 4000); break;
+      default: notice(`Command ${cmd} dispatched (${src || 'ui'})`, 1500);
+    }
+  }
+  function setHeat(on) {
+    state.heatmap = on;
+    canvasArea.classList.toggle('ai-heatmap', on);
+    $$('[data-ai]').forEach(b => b.setAttribute('aria-checked', String((b.dataset.ai === 'heatmap') === on)));
+  }
+
+  /* ---------------- Overlays (keymap, About) and palette ---------------- */
+  const KEYMAP = [
+    { h: 'Steps and panel (this concept)', rows: [['N', 'Next step'], ['⇧ N', 'Previous step'], ['\\', 'Show / hide the step panel'], ['Ctrl K', 'Command palette'], ['?', 'This map'], ['Esc', 'Cancel tool · close sheet']] },
+    { h: 'Navigation', rows: [['← ↑ ↓ →  W A S D', 'Pan 10 %'], ['⇧ arrows', 'Pan one viewport'], ['+  −', 'Zoom 2× in / out'], ['⇧ +  ⇧ −', 'Zoom 1.2× fine'], ['0  Home', 'Fit slide'], ['1 … 6', '1.25× · 2.5× · 5× · 10× · 20× · 40×'], ['Z', 'Last two magnifications'], ['R  ⇧ R', 'Rotate 90°'], [']  [', 'Next / previous slide'], ['O', 'Navigator'], ['G', 'HPF grid'], ['B  ⇧ B', 'Bookmark · gallery'], ['⇧ S', 'Snapshot'], ['J', 'Brightness / contrast / gamma']] },
+    { h: 'Overlays and compare', rows: [['H', 'Hide / show overlays'], ['⇧ H', 'AI heatmap on / off'], [',  .', 'Overlay opacity'], ['/', 'Curtain'], ['C', 'Side by side'], ['⇧ A  ⇧ X', 'Accept / reject AI result'], ['⇧ Q', 'Class legend']] },
+    { h: 'Annotation', rows: [['V', 'Select / pan'], ['P', 'Polygon · Enter closes · ⌫ removes last'], ['F', 'Brush (pen pressure)'], ['Y', 'Polyline'], ['X', 'Rectangle / ROI'], ['E', 'Ellipse'], ['T', 'Point'], ['M  ⇧ M', 'Measure length · area'], ['⇧ T', 'Count'], ['Q then 1–8', 'Class picker'], ['Space (held)', 'Temporary pan while drawing'], ['Ctrl Z  Ctrl Y', 'Undo · redo'], ['Ctrl C  Ctrl V', 'Copy · paste'], ['Tab  Space', 'Through the list · fly to item'], ['⌫', 'Delete selection']] },
+    { h: 'Not in this build', rows: [['⇧ Enter', 'Request sign-out (Clinical-IH / Dx only)', true], ['⇧ D', 'Dx mode (Dx-capable builds only)', true], ['F1 … F12, Alt+…', 'Never bound (Hyperdrive, browsers)', true]] }
+  ];
+  function renderKeymap() {
+    $('#keymapGroups').innerHTML = KEYMAP.map(g => `<div class="keymap__group"><h4>${g.h}</h4>${g.rows.map(r => `<div class="keymap__row${r[2] ? ' is-reserved' : ''}"><span class="keymap__keys">${r[0].split('  ').map(k => `<kbd class="key${r[2] ? ' key--reserved' : ''}">${k}</kbd>`).join('')}</span><span>${r[1]}</span></div>`).join('')}</div>`).join('');
+  }
+  let overlayReturn = null;
+  function openOverlay(which) {
+    closeOverlays();
+    overlayReturn = document.activeElement;
+    const el = $(which === 'keymap' ? '#keymapOverlay' : '#aboutOverlay');
+    el.classList.add('is-open');
+    if (isDrawer()) app.classList.add('dock-open');
+    if (isNarrow()) setSheet(true);
+    const btn = $('[data-act="closeOverlay"]', el); if (btn) btn.focus();
+  }
+  function closeOverlays() {
+    let any = false;
+    $$('.paneloverlay.is-open').forEach(el => { el.classList.remove('is-open'); any = true; });
+    if (any && overlayReturn && overlayReturn.focus) overlayReturn.focus();
+    return any;
+  }
+
+  const COMMANDS = [];
+  function buildCommands() {
+    STEPS.forEach(s => COMMANDS.push({ group: 'Steps', label: `Go to step ${s.n} · ${s.label}`, keys: [], run: () => setStep(s.id, { open: true }) }));
+    Object.entries(TOOLS).forEach(([id, t]) => COMMANDS.push({ group: 'Tools and actions', label: t.label, keys: t.key ? [t.key] : [], run: () => run(t.cmd, 'palette') }));
+    [['Zoom in', ['+'], 'zoom:in'], ['Zoom out', ['−'], 'zoom:out'], ['Fit slide', ['0'], 'zoom:fit'], ['Jump to 20×', ['5'], 'zoom:20'], ['Jump to 40×', ['6'], 'zoom:40'], ['Toggle navigator', ['O'], 'nav'], ['Hide / show overlays', ['H'], 'overlays'], ['AI heatmap on / off', ['⇧H'], 'heat'], ['Curtain compare', ['/'], 'compare:curtain'], ['Side by side', ['C'], 'compare:side'], ['Keyboard map', ['?'], 'keymap'], ['About and product label', [], 'about'], ['Enter Dx mode', ['⇧D'], 'dx']].forEach(([l, k, c]) => COMMANDS.push({ group: 'View', label: l, keys: k, run: () => run(c, 'palette') }));
+    ['Tumor', 'Stroma', 'Lymphocytes', 'Necrosis', 'Other', 'Region*', 'Positive', 'Negative'].forEach((c, i) => COMMANDS.push({ group: 'Classes', label: `Class: ${c}`, keys: ['Q', String(i + 1)], run: () => setClass(c) }));
+    [['tumor_013 · H&E', 'he'], ['tumor_014 · H&E', 'he'], ['tumor_014_ihc · CK AE1/AE3', 'ihc'], ['cycif_sln_02 · IF 8 ch', 'if'], ['tumor_015 · H&E', 'he']].forEach(([l, k]) => COMMANDS.push({ group: 'Slides', label: `Open ${l}`, keys: [], run: () => { if (k === 'if' || k === 'he') setSlide(k); else notice(`Opening ${l}`, 2000); } }));
+    ['R1 · Metastasis', 'R2 · Micrometastasis', 'R3 · ITC candidate', 'R4 · Capsular artefact?'].forEach((l, i) => COMMANDS.push({ group: 'Candidates', label: `Fly to ${l}`, keys: [], run: () => run('fly:' + ['met', 'micro', 'itc', 'cap'][i], 'palette') }));
+  }
+  let paletteSel = 0, paletteItems = [];
+  function openPalette() {
+    const layer = $('#paletteLayer');
+    layer.classList.add('is-open');
+    const input = $('#paletteInput'); input.value = ''; filterPalette(''); input.focus();
+    $('#paletteBtn').setAttribute('aria-expanded', 'true');
+  }
+  function closePalette() { $('#paletteLayer').classList.remove('is-open'); $('#paletteBtn').setAttribute('aria-expanded', 'false'); }
+  function filterPalette(q) {
+    q = q.trim().toLowerCase();
+    paletteItems = COMMANDS.filter(c => !q || c.label.toLowerCase().includes(q) || c.group.toLowerCase().includes(q)).slice(0, 40);
+    paletteSel = 0;
+    let lastGroup = null;
+    $('#paletteList').innerHTML = paletteItems.map((c, i) => {
+      const head = c.group !== lastGroup ? `<div class="palette__group">${c.group}</div>` : '';
+      lastGroup = c.group;
+      const label = q ? c.label.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'i'), '<mark>$1</mark>') : c.label;
+      return `${head}<div class="palette__item" role="option" id="pal-${i}" aria-selected="${i === 0}" data-i="${i}"><span>${label}</span><span class="keys">${c.keys.map(k => `<kbd class="key">${k}</kbd>`).join('')}</span></div>`;
+    }).join('') || '<div class="palette__item" aria-disabled="true">No command matches.</div>';
+  }
+  function paletteMove(d) {
+    if (!paletteItems.length) return;
+    paletteSel = (paletteSel + d + paletteItems.length) % paletteItems.length;
+    $$('#paletteList .palette__item').forEach(el => el.setAttribute('aria-selected', String(+el.dataset.i === paletteSel)));
+    const el = $(`#pal-${paletteSel}`); if (el) el.scrollIntoView({ block: 'nearest' });
+  }
+
+  /* ---------------- Wiring ---------------- */
+  document.addEventListener('click', (ev) => {
+    const t = ev.target.closest('[data-act], [data-cmd], [data-fly], [data-compare], [data-ai], [data-cvd], [data-vis], [data-chvis], [data-tool], [data-class], [data-view], [data-input], [data-pan], .palette__item');
+    if (!t) return;
+    if (t.matches('[data-tool]')) { setTool(t.dataset.tool); return; }
+    if (t.matches('[data-class]')) { setClass(t.dataset.class); return; }
+    if (t.matches('[data-cvd]')) { setCvd(t.dataset.cvd); return; }
+    if (t.matches('[data-ai]')) { setHeat(t.dataset.ai === 'heatmap'); return; }
+    if (t.matches('[data-compare]')) { setCompare(t.dataset.compare); return; }
+    if (t.matches('[data-fly]') && !t.matches('.list__item')) { run('fly:' + t.dataset.fly, 'pointer'); return; }
+    if (t.matches('.list__item[data-fly]') && ev.target === t) { $$('[role="option"]', t.parentElement).forEach(o => o.setAttribute('aria-selected', String(o === t))); return; }
+    if (t.matches('[data-vis]')) {
+      const on = t.getAttribute('aria-pressed') !== 'true';
+      t.setAttribute('aria-pressed', String(on));
+      t.innerHTML = iconSvg(on ? 'eye' : 'eye-off');
+      t.setAttribute('aria-label', t.getAttribute('aria-label').replace(/(visible|hidden)/, on ? 'visible' : 'hidden'));
+      t.closest('.layer-row').classList.toggle('is-hidden', !on);
+      const map = { prob: 'ai-off', labels: 'labels-on', detect: 'det-off', ann: 'ann-off', seg: 'seg-off' };
+      if (t.dataset.vis === 'labels') canvasArea.classList.toggle('labels-on', on); else canvasArea.classList.toggle(map[t.dataset.vis], !on);
+      return;
+    }
+    if (t.matches('[data-chvis]')) { const c = CHANNELS.find(x => x.id === t.dataset.chvis); c.on = !c.on; renderChannels(); applyChannels(); return; }
+    if (t.matches('[data-view]')) { setView(t.dataset.view); return; }
+    if (t.matches('[data-input]')) { setPen(t.dataset.input === 'pen'); return; }
+    if (t.matches('[data-pan]')) { const [dx, dy] = t.dataset.pan.split(',').map(Number); pan(dx * 0.25, dy * 0.25); return; }
+    if (t.matches('.palette__item') && t.dataset.i !== undefined) { const c = paletteItems[+t.dataset.i]; closePalette(); if (c) c.run(); return; }
+    if (t.dataset.act) {
+      switch (t.dataset.act) {
+        case 'gostep': setStep(t.dataset.stepTarget, { open: true }); break;
+        case 'keymap': openOverlay('keymap'); break;
+        case 'about': openOverlay('about'); break;
+        case 'closeOverlay': closeOverlays(); break;
+        case 'clearFault': setDemoState('normal'); break;
+        case 'clearLaunch': setDemoState('normal'); break;
+        case 'retryTiles': notice('Retrying 3 tiles…', 1200); setTimeout(() => setDemoState('normal'), 1200); break;
+      }
+      return;
+    }
+    if (t.dataset.cmd) run(t.dataset.cmd, 'pointer');
+  });
+  $('#nextStepBtn').addEventListener('click', () => stepBy(1));
+  $('#prevStepBtn').addEventListener('click', () => stepBy(-1));
+  $('#expertBtn').addEventListener('click', () => setExpert(!state.expert));
+  $('#demoExpert').addEventListener('click', () => setExpert(!state.expert));
+  $('#dockCollapse').addEventListener('click', () => { if (isDrawer()) app.classList.remove('dock-open'); else app.classList.toggle('dock-closed'); });
+  $('#sheetGrab').addEventListener('click', () => setSheet(!app.classList.contains('sheet-expanded')));
+  $('#paletteBtn').addEventListener('click', () => $('#paletteLayer').classList.contains('is-open') ? closePalette() : openPalette());
+  $('#keymapBtn').addEventListener('click', () => openOverlay('keymap'));
+  $('#moreBtn').addEventListener('click', () => openOverlay('about'));
+  $('#badge').addEventListener('click', () => openOverlay('about'));
+  $('#paletteInput').addEventListener('input', (e) => filterPalette(e.target.value));
+  $('#paletteInput').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); paletteMove(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); paletteMove(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); const c = paletteItems[paletteSel]; closePalette(); if (c) c.run(); }
+    else if (e.key === 'Escape') { e.preventDefault(); closePalette(); $('#paletteBtn').focus(); }
+  });
+  document.addEventListener('pointerdown', (e) => { if ($('#paletteLayer').classList.contains('is-open') && !e.target.closest('.palette-layer, #paletteBtn')) closePalette(); });
+  $('#demoStep').addEventListener('change', (e) => setStep(e.target.value, { open: true }));
+  $('#demoProduct').addEventListener('change', (e) => setProduct(e.target.value));
+  $('#demoState').addEventListener('change', (e) => setDemoState(e.target.value));
+  $('#demoSlide').addEventListener('change', (e) => setSlide(e.target.value));
+  $('#demoCompare').addEventListener('change', (e) => setCompare(e.target.value));
+  $('#demoCvd').addEventListener('change', (e) => setCvd(e.target.value));
+  $('#demoLive').addEventListener('click', (e) => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('show-live', on); });
+  $('#demoGuides').addEventListener('click', (e) => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('show-guides', on); });
+  $('#demoTheme').addEventListener('click', (e) => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', String(on)); document.documentElement.dataset.theme = on ? 'light' : 'dark'; });
+  $('#motionToggle').addEventListener('click', (e) => { const el = e.currentTarget; el.setAttribute('aria-checked', String(el.getAttribute('aria-checked') !== 'true')); });
+  $$('.toggle[role="switch"]').forEach(el => el.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); el.click(); } }));
+  $('#curtainRange').addEventListener('input', (e) => { canvasArea.style.setProperty('--curtain', e.target.value + '%'); $('#curtainNum').textContent = e.target.value + ' %'; });
+  $('#thrRange').addEventListener('input', (e) => { $('#thrVal').textContent = `p ≥ ${(e.target.value / 100).toFixed(2)}`; const k = 0.4 + 0.6 * (1 - e.target.value / 100); $('#heat').style.opacity = (0.55 * k).toFixed(2); });
+  document.addEventListener('input', (e) => {
+    const r = e.target.closest('[data-opacity]');
+    if (r) { const v = +r.value; r.closest('.layer-row').querySelector('.num').textContent = `${v} %`; if (r.dataset.opacity === 'heat') $('#heat').style.opacity = (v / 100).toFixed(2); if (r.dataset.opacity === 'detect') $('#detect').style.opacity = (v / 100).toFixed(2); if (r.dataset.opacity === 'labels') $$('.ov-labels').forEach(g => g.style.opacity = (v / 100).toFixed(2)); }
+    const d = e.target.closest('.range-dual');
+    if (d) { const [lo, hi] = $$('input', d); const fill = $('.range-dual__fill', d); fill.style.setProperty('--lo', Math.min(+lo.value, +hi.value) + '%'); fill.style.setProperty('--hi', Math.max(+lo.value, +hi.value) + '%'); }
+  });
+  document.addEventListener('change', (e) => { const sel = e.target.closest('[data-chcolour]'); if (sel) { const c = CHANNELS.find(x => x.id === sel.dataset.chcolour); c.colour = { Blue: '#3f6dff', Green: '#33d16b', Magenta: '#e04ad6', Red: '#ff4a3d', Yellow: '#f2e23a', Cyan: '#2fd6e6', White: '#ffffff', Orange: '#ff9a1f' }[sel.value]; renderChannels(); notice(`${c.name} → ${sel.value} · uniform update, no refetch`, 2000); } });
+  $$('.slides .tray__slide').forEach(b => b.addEventListener('click', () => { if (b.dataset.slide === 'if' || b.dataset.name === 'tumor_014') setSlide(b.dataset.slide); else notice(`Opening ${b.dataset.name}`, 2000); }));
+  $('#navigator .navigator__thumb').addEventListener('click', (e) => {
+    if (e.target.closest('button')) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const wx = (e.clientX - r.left) / r.width * 1600, wy = (e.clientY - r.top) / r.height * 1000;
+    flyTo({ mag: state.mag, cx: wx, cy: wy });
+  });
+  $('#magBtn').addEventListener('click', () => { const v = prompt('Zoom (× or µm/px), e.g. 20 or 0.5µm', fmtMag(state.mag)); if (!v) return; const m = /µm|um/.test(v) ? 10 / parseFloat(v) : parseFloat(v); if (m) zoomTo(m); });
+  /* wheel zoom: 1.2× per notch, anchored at the cursor; drag pans */
+  canvasArea.addEventListener('wheel', (e) => { if ($('#plateManifest').hidden && $('#plateLaunch').hidden) { e.preventDefault(); const k = e.deltaY < 0 ? 1.2 : 1 / 1.2; zoomTo(state.mag * k, screenToViewBox(e), false); } }, { passive: false });
+  let drag = null;
+  canvasArea.addEventListener('pointerdown', (e) => { if (e.button !== 0 || e.target.closest('button, .navigator, .tool-palette')) return; drag = { x: e.clientX, y: e.clientY, cam: { ...state.cam } }; app.classList.add('is-gesturing'); canvasArea.setPointerCapture(e.pointerId); });
+  canvasArea.addEventListener('pointermove', (e) => { if (!drag) return; const r = $('#svgA').getBoundingClientRect(); const k = 1600 / r.width; state.cam = { s: drag.cam.s, tx: drag.cam.tx + (e.clientX - drag.x) * k, ty: drag.cam.ty + (e.clientY - drag.y) * k }; applyCamera(); });
+  const endDrag = () => { if (!drag) return; drag = null; app.classList.remove('is-gesturing'); sharpen(); };
+  canvasArea.addEventListener('pointerup', endDrag); canvasArea.addEventListener('pointercancel', endDrag);
+  canvasArea.addEventListener('dblclick', (e) => zoomTo(state.mag * (e.shiftKey ? 0.5 : 2), screenToViewBox(e)));
+
+  /* Keyboard: unmodified keys and Shift inside the viewer window; Ctrl only for K / Z / Y */
+  document.addEventListener('keydown', (e) => {
+    const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.matches('[type="range"], [type="checkbox"]');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openPalette(); return; }
+    if (e.key === 'Escape') { if ($('#paletteLayer').classList.contains('is-open')) { closePalette(); return; } if (closeOverlays()) return; if (isNarrow() && app.classList.contains('sheet-expanded')) { setSheet(false); return; } if (state.tool !== 'select') { setTool('select'); } return; }
+    if (inField) return;
+    if (e.altKey || e.key.startsWith('F') && e.key.length > 1) return;
+    if (e.ctrlKey || e.metaKey) { if (e.key.toLowerCase() === 'z') { e.preventDefault(); run(e.shiftKey ? 'redo' : 'undo', 'keyboard'); } else if (e.key.toLowerCase() === 'y') { e.preventDefault(); run('redo', 'keyboard'); } return; }
+    const k = e.key;
+    const focusInList = e.target.matches('[role="option"]');
+    if (focusInList && k === ' ') { e.preventDefault(); const f = e.target.dataset.fly; if (f) run('fly:' + f, 'keyboard'); return; }
+    const map = {
+      'n': () => stepBy(1), 'N': () => stepBy(-1), '\\': () => { if (isDrawer()) app.classList.toggle('dock-open'); else if (isNarrow()) setSheet(!app.classList.contains('sheet-expanded')); else app.classList.toggle('dock-closed'); },
+      '?': () => openOverlay('keymap'),
+      '+': () => run(e.shiftKey ? 'zoom:fine-in' : 'zoom:in'), '=': () => run('zoom:in'), '-': () => run('zoom:out'), '_': () => run('zoom:fine-out'),
+      '0': () => run('zoom:fit'), 'Home': () => run('zoom:fit'),
+      '1': () => run('zoom:1.25'), '2': () => run('zoom:2.5'), '3': () => run('zoom:5'), '4': () => run('zoom:10'), '5': () => run('zoom:20'), '6': () => run('zoom:40'),
+      'ArrowLeft': () => pan(-0.1, 0), 'ArrowRight': () => pan(0.1, 0), 'ArrowUp': () => pan(0, -0.1), 'ArrowDown': () => pan(0, 0.1),
+      'a': () => pan(-0.1, 0), 'd': () => pan(0.1, 0), 'w': () => pan(0, -0.1), 's': () => pan(0, 0.1),
+      'v': () => setTool('select'), 'p': () => setTool('polygon'), 'f': () => setTool('brush'), 't': () => setTool('point'), 'x': () => setTool('rect'), 'm': () => setTool('measure'),
+      'q': () => run('classpick'), 'o': () => run('nav'), 'h': () => run('overlays'), 'H': () => run('heat'), 'g': () => run('grid'), '/': () => run('compare:curtain'), 'c': () => run('compare:side'),
+      ']': () => run('slide:next'), '[': () => run('slide:prev'), 'S': () => run('snapshot'), 'D': () => run('dx'), 'A': () => run('accept'),
+      'Delete': () => run('delete'), 'Backspace': () => run('delete')
+    };
+    /* class picker: after Q, digits 1–8 pick a class (while focus is in the picker) */
+    if (e.target.closest('#classPicker') && /^[1-8]$/.test(k)) { e.preventDefault(); setClass(['Tumor', 'Stroma', 'Lymphocytes', 'Necrosis', 'Other', 'Region*', 'Positive', 'Negative'][+k - 1]); return; }
+    if (map[k]) { e.preventDefault(); map[k](); }
+  });
+
+  /* Resize: keep the drawer state coherent with the breakpoint */
+  let lastNarrow = isNarrow();
+  window.addEventListener('resize', () => { const n = isNarrow(); if (n !== lastNarrow) { lastNarrow = n; app.classList.remove('dock-open'); setSheet(false); } });
+
+  /* Views: workspace vs notebook widget (review only) */
+  function setView(v) {
+    const nb = v === 'notebook';
+    $('#nb').classList.toggle('is-on', nb);
+    app.classList.toggle('is-widget-hidden', nb);
+    $$('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+    if (nb) { renderDetections(); const s = $('#widgetSync'); s.className = 'indicator indicator--syncing'; s.querySelector('.indicator__label').textContent = 'Syncing with Python…'; clearTimeout(state.syncTimer); state.syncTimer = setTimeout(() => { s.className = 'indicator indicator--sharp'; s.querySelector('.indicator__label').textContent = 'Synced with Python'; }, 4000); }
+  }
+  const wr = $('#widgetRailBtn'); if (wr) wr.addEventListener('click', () => { const on = wr.getAttribute('aria-pressed') !== 'true'; wr.setAttribute('aria-pressed', String(on)); $('#widgetApp').classList.toggle('rail-closed', !on); });
+
+  /* URL hash: ?step=…&state=…&product=…&slide=…&compare=…&view=…&pen=1 for screenshots */
+  function applyQuery() {
+    const q = new URLSearchParams(location.search);
+    if (q.get('product')) setProduct(q.get('product'));
+    if (q.get('slide')) setSlide(q.get('slide'));
+    if (q.get('compare')) setCompare(q.get('compare'));
+    if (q.get('state')) setDemoState(q.get('state'));
+    if (q.get('step')) setStep(q.get('step'), { silent: true, open: q.get('open') === '1' });
+    if (q.get('expert') === '1') setExpert(true);
+    if (q.get('pen') === '1') setPen(true);
+    if (q.get('cvd')) setCvd(q.get('cvd'));
+    if (q.get('heat') === '1') setHeat(true);
+    if (q.get('open') === '1') { if (isDrawer()) app.classList.add('dock-open'); if (isNarrow()) setSheet(true); }
+    if (q.get('mag')) zoomTo(+q.get('mag'), null, false);
+    if (q.get('fly') && FLY[q.get('fly')]) flyTo(FLY[q.get('fly')], false);
+    if (q.get('live') === '1') $('#demoLive').click();
+    if (q.get('guides') === '1') $('#demoGuides').click();
+    if (q.get('view') === 'notebook') setView('notebook');
+    if (q.get('keymap') === '1') openOverlay('keymap');
+    if (q.get('palette') === '1') openPalette();
+    if (q.get('rationale') === '1') { $('#rationale').open = true; $('#rationale').scrollIntoView(); }
+  }
+
+  /* ---------------- Boot ---------------- */
+  buildCommands();
+  renderKeymap();
+  renderChannels();
+  setProduct('ruo');
+  setStep(state.step, { silent: true });
+  applyCamera();
+  setIndicator('sharp', 'Sharp');
+  applyQuery();
+})();
+</script>
+</body>
+</html>

@@ -371,6 +371,56 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .app.tf .toast-stack > * { pointer-events: auto; }
 @media (max-width: 1079px) { .app.tf .toast-stack { bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); right: var(--space-4); left: var(--space-4); align-items: flex-end; } }
 .toast .toast__glyph { color: var(--color-text); }
+/* the hidden attribute always wins over component display rules (the script toggles it) */
+[hidden] { display: none !important; }
+/* the review live-marker forces position:relative on [data-live]; keep the absolutely positioned ones where they are */
+body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { position: absolute; }
+/* user-drawn annotations (mock of the engine's annotation layer) */
+.user-ann .halo { stroke: rgba(0,0,0,.85); stroke-width: 4; fill: none; }
+.user-ann .ink { stroke-width: 1.8; fill-opacity: .12; }
+.user-ann .ink.is-open { fill: none; stroke-dasharray: 6 4; }
+.user-ann .ink.pt { fill-opacity: .9; }
+.user-ann text { font-size: 14px; fill: #f7f7f7; stroke: rgba(0,0,0,.85); stroke-width: 4; }
+.user-ann .tick { stroke: #f7f7f7; stroke-width: 1.6; }
+/* magnification typed-zoom field */
+.magnification input { width: 7ch; }
+/* pane B static when sync is none */
+.pane svg.canvas { transition: none; }
+/* a sent / reviewed final button */
+.dock__foot .btn--final[disabled] { opacity: .6; }
+/* the strip chips are buttons in the design system; keep their text visible on 24 px strips */
+.app--embedded .strip .chip { min-height: 18px; font-size: var(--text-2xs); }
+.app--embedded .strip .indicator { min-height: 18px; }
+@media (max-width: 1599px) and (min-width: 1280px) { .topbar__identity .meta { display: none; } }
+/* ---- fixes after the first screenshot pass (2026-11-01) ---- */
+.app:not(.app--embedded) .embed-only { display: none !important; }
+.dock .hintline { display: block; line-height: 1.55; }
+.dock .hintline .segmented, .dock .hintline .key { vertical-align: middle; }
+.dock .hintline .segmented { margin: 0 var(--space-2); }
+.idcard { grid-template-columns: 1fr; gap: var(--space-3); }
+.idcard .labelimg { width: 100%; max-width: 232px; height: 84px; font-size: 11px; }
+.idcard .kv { grid-template-columns: auto minmax(0, 1fr); }
+.navigator__labelimg { width: 76px; font-size: 8.5px; letter-spacing: -.1px; }
+.navigator__label .mono { flex: 1 1 auto; min-width: 0; line-height: 1.3; }
+.navigator__trail rect { fill: rgba(255,255,255,.32); stroke: rgba(0,0,0,.35); stroke-width: 24; }
+.navigator__trail rect.is-hp { fill: rgba(255,255,255,.55); }
+.app.tf .hud__position { background: var(--color-hud-backdrop); }
+.dock .layer-row.is-off .layer-row__name, .dock .layer-row.is-off .layer-row__opacity { opacity: .5; }
+@media (max-width: 599px) { .bottombar [data-cmd="fit"], .bottombar [data-cmd="zoomin"], .bottombar [data-cmd="zoomout"], .bottombar [data-cmd="bookmark"], .bottombar [data-cmd="compare"] { display: none !important; } }
+.app.has-banner .hud--tl, .app.has-banner .navigator { top: calc(var(--layout-hud-inset) + 38px); }
+.app.has-banner .banner-slot .banner + .banner { margin-top: 0; }
+@media (max-width: 599px) {
+  .navigator__label { flex-direction: column; align-items: stretch; gap: 4px; }
+  .navigator__label .mono { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 10px; }
+  .navigator__label .mono br { display: none; }
+  .navigator__label .nav-sep { display: inline; }
+  .navigator__labelimg { width: 100%; height: 34px; }
+}
+.app.tf.app--embedded.dock-open .dock { top: auto; height: auto; }
+.app--embedded .dock .sheet__grabber { display: block; }
+.app--embedded .dock__close { display: inline-flex; }
+.layer-row__name .kind { white-space: nowrap; }
+.nav-sep { display: none; }
 </style>
 </head>
 <body>
@@ -420,13 +470,13 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
     <pattern id="p-cortex" patternUnits="userSpaceOnUse" width="90" height="90"><rect width="90" height="90" fill="#dbb6cc"/><circle cx="12" cy="18" r="4.2" fill="#5b4a9c"/><circle cx="40" cy="8" r="3.8" fill="#64539f"/><circle cx="70" cy="22" r="4.4" fill="#5b4a9c"/><circle cx="26" cy="48" r="4" fill="#6a58a6"/><circle cx="58" cy="52" r="4.3" fill="#5b4a9c"/><circle cx="84" cy="60" r="3.9" fill="#64539f"/><circle cx="14" cy="76" r="4.1" fill="#5b4a9c"/><circle cx="46" cy="82" r="4.4" fill="#64539f"/><circle cx="74" cy="80" r="3.7" fill="#6a58a6"/></pattern>
     <pattern id="p-follicle" patternUnits="userSpaceOnUse" width="60" height="60"><rect width="60" height="60" fill="#c9a0c2"/><circle cx="8" cy="10" r="3.6" fill="#4b3a8e"/><circle cx="26" cy="6" r="3.4" fill="#554397"/><circle cx="46" cy="12" r="3.7" fill="#4b3a8e"/><circle cx="16" cy="30" r="3.5" fill="#554397"/><circle cx="36" cy="28" r="3.6" fill="#4b3a8e"/><circle cx="54" cy="34" r="3.3" fill="#554397"/><circle cx="6" cy="50" r="3.6" fill="#4b3a8e"/><circle cx="28" cy="48" r="3.5" fill="#554397"/><circle cx="48" cy="54" r="3.6" fill="#4b3a8e"/></pattern>
     <pattern id="p-medulla" patternUnits="userSpaceOnUse" width="120" height="120"><rect width="120" height="120" fill="#e9cbd9"/><path d="M0 30q30 20 60 0t60 0M0 90q30-20 60 0t60 0" stroke="#f3dde6" stroke-width="10" fill="none"/><circle cx="20" cy="60" r="4" fill="#6a58a6"/><circle cx="70" cy="50" r="3.8" fill="#6a58a6"/><circle cx="100" cy="100" r="4" fill="#6a58a6"/><circle cx="45" cy="105" r="3.6" fill="#6a58a6"/></pattern>
-    <pattern id="p-met" patternUnits="userSpaceOnUse" width="80" height="80"><rect width="80" height="80" fill="#efc3cd"/><circle cx="20" cy="20" r="14" fill="#f5d6dc" stroke="#e2a9b7" stroke-width="1.5"/><circle cx="20" cy="20" r="7.5" fill="#3b2c78"/><circle cx="60" cy="24" r="15" fill="#f5d6dc" stroke="#e2a9b7" stroke-width="1.5"/><circle cx="60" cy="24" r="8.5" fill="#34276e"/><circle cx="26" cy="60" r="13" fill="#f5d6dc" stroke="#e2a9b7" stroke-width="1.5"/><circle cx="26" cy="60" r="6.5" fill="#3b2c78"/><circle cx="62" cy="62" r="14" fill="#f5d6dc" stroke="#e2a9b7" stroke-width="1.5"/><circle cx="62" cy="62" r="9" fill="#2f2466"/></pattern>
+    <pattern id="p-met" patternUnits="userSpaceOnUse" width="96" height="96"><rect width="96" height="96" fill="#e8b7c5"/><ellipse cx="18" cy="20" rx="14" ry="11" transform="rotate(-20 18 20)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="50" cy="14" rx="12" ry="13" transform="rotate(0 50 14)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="80" cy="26" rx="13" ry="10" transform="rotate(30 80 26)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="30" cy="52" rx="15" ry="12" transform="rotate(15 30 52)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="64" cy="56" rx="12" ry="14" transform="rotate(-10 64 56)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="14" cy="82" rx="12" ry="10" transform="rotate(0 14 82)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="46" cy="84" rx="14" ry="11" transform="rotate(25 46 84)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="84" cy="84" rx="11" ry="12" transform="rotate(0 84 84)" fill="#f2cdd7" stroke="#d59fb2" stroke-width="1.2"/><ellipse cx="21" cy="22" rx="7" ry="5.5" transform="rotate(-20 21 22)" fill="#2f2466"/><circle cx="22.5" cy="21" r="1.6" fill="#1b1340"/><ellipse cx="48" cy="16" rx="6.5" ry="7.5" transform="rotate(10 48 16)" fill="#3b2c78"/><circle cx="49.5" cy="15" r="1.6" fill="#1b1340"/><ellipse cx="78" cy="28" rx="7.5" ry="5.5" transform="rotate(30 78 28)" fill="#2f2466"/><circle cx="79.5" cy="27" r="1.6" fill="#1b1340"/><ellipse cx="27" cy="50" rx="8" ry="6" transform="rotate(15 27 50)" fill="#3b2c78"/><circle cx="28.5" cy="49" r="1.6" fill="#1b1340"/><ellipse cx="66" cy="54" rx="6" ry="7.5" transform="rotate(-10 66 54)" fill="#2f2466"/><circle cx="67.5" cy="53" r="1.6" fill="#1b1340"/><ellipse cx="16" cy="80" rx="6.5" ry="5.5" transform="rotate(0 16 80)" fill="#3b2c78"/><circle cx="17.5" cy="79" r="1.6" fill="#1b1340"/><ellipse cx="44" cy="86" rx="8" ry="6" transform="rotate(25 44 86)" fill="#2f2466"/><circle cx="45.5" cy="85" r="1.6" fill="#1b1340"/><ellipse cx="85" cy="83" rx="6" ry="6.5" transform="rotate(0 85 83)" fill="#3b2c78"/><circle cx="86.5" cy="82" r="1.6" fill="#1b1340"/><circle cx="36" cy="34" r="3.2" fill="#4b3a8e"/><circle cx="70" cy="40" r="3.2" fill="#4b3a8e"/><circle cx="10" cy="48" r="3.2" fill="#4b3a8e"/><circle cx="90" cy="60" r="3.2" fill="#4b3a8e"/><circle cx="30" cy="70" r="3.2" fill="#4b3a8e"/><circle cx="58" cy="74" r="3.2" fill="#4b3a8e"/><circle cx="94" cy="8" r="3.2" fill="#4b3a8e"/><circle cx="4" cy="8" r="3.2" fill="#4b3a8e"/></pattern>
     <pattern id="p-fat" patternUnits="userSpaceOnUse" width="70" height="70"><rect width="70" height="70" fill="#f8eef2"/><circle cx="35" cy="35" r="31" fill="#fbf4f7" stroke="#e8c2cf" stroke-width="1.6"/></pattern>
     <!-- IHC (CK AE1/AE3, DAB brown on hematoxylin counterstain) -->
     <pattern id="p-cortex-ihc" patternUnits="userSpaceOnUse" width="90" height="90"><rect width="90" height="90" fill="#e1e4ec"/><circle cx="12" cy="18" r="4.2" fill="#8f9bc2"/><circle cx="40" cy="8" r="3.8" fill="#98a3c7"/><circle cx="70" cy="22" r="4.4" fill="#8f9bc2"/><circle cx="26" cy="48" r="4" fill="#a0aacb"/><circle cx="58" cy="52" r="4.3" fill="#8f9bc2"/><circle cx="84" cy="60" r="3.9" fill="#98a3c7"/><circle cx="14" cy="76" r="4.1" fill="#8f9bc2"/><circle cx="46" cy="82" r="4.4" fill="#98a3c7"/><circle cx="74" cy="80" r="3.7" fill="#a0aacb"/></pattern>
     <pattern id="p-follicle-ihc" patternUnits="userSpaceOnUse" width="60" height="60"><rect width="60" height="60" fill="#d4d9e6"/><circle cx="8" cy="10" r="3.6" fill="#8390bb"/><circle cx="26" cy="6" r="3.4" fill="#8c98c0"/><circle cx="46" cy="12" r="3.7" fill="#8390bb"/><circle cx="16" cy="30" r="3.5" fill="#8c98c0"/><circle cx="36" cy="28" r="3.6" fill="#8390bb"/><circle cx="54" cy="34" r="3.3" fill="#8c98c0"/><circle cx="6" cy="50" r="3.6" fill="#8390bb"/><circle cx="28" cy="48" r="3.5" fill="#8c98c0"/><circle cx="48" cy="54" r="3.6" fill="#8390bb"/></pattern>
     <pattern id="p-medulla-ihc" patternUnits="userSpaceOnUse" width="120" height="120"><rect width="120" height="120" fill="#e9ebf1"/><path d="M0 30q30 20 60 0t60 0M0 90q30-20 60 0t60 0" stroke="#f2f3f7" stroke-width="10" fill="none"/><circle cx="20" cy="60" r="4" fill="#a0aacb"/><circle cx="70" cy="50" r="3.8" fill="#a0aacb"/><circle cx="100" cy="100" r="4" fill="#a0aacb"/></pattern>
-    <pattern id="p-met-ihc" patternUnits="userSpaceOnUse" width="80" height="80"><rect width="80" height="80" fill="#8a4a1c"/><circle cx="20" cy="20" r="14" fill="#9c5a28" stroke="#6b3410" stroke-width="1.5"/><circle cx="20" cy="20" r="7.5" fill="#3a2410"/><circle cx="60" cy="24" r="15" fill="#9c5a28" stroke="#6b3410" stroke-width="1.5"/><circle cx="60" cy="24" r="8.5" fill="#3a2410"/><circle cx="26" cy="60" r="13" fill="#9c5a28" stroke="#6b3410" stroke-width="1.5"/><circle cx="26" cy="60" r="6.5" fill="#3a2410"/><circle cx="62" cy="62" r="14" fill="#9c5a28" stroke="#6b3410" stroke-width="1.5"/><circle cx="62" cy="62" r="9" fill="#3a2410"/></pattern>
+    <pattern id="p-met-ihc" patternUnits="userSpaceOnUse" width="96" height="96"><rect width="96" height="96" fill="#dfe1e8"/><ellipse cx="18" cy="20" rx="14" ry="11" transform="rotate(-20 18 20)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="50" cy="14" rx="12" ry="13" transform="rotate(0 50 14)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="80" cy="26" rx="13" ry="10" transform="rotate(30 80 26)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="30" cy="52" rx="15" ry="12" transform="rotate(15 30 52)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="64" cy="56" rx="12" ry="14" transform="rotate(-10 64 56)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="14" cy="82" rx="12" ry="10" transform="rotate(0 14 82)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="46" cy="84" rx="14" ry="11" transform="rotate(25 46 84)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="84" cy="84" rx="11" ry="12" transform="rotate(0 84 84)" fill="#8a4a1c" stroke="#5e2f10" stroke-width="1.2"/><ellipse cx="21" cy="22" rx="7" ry="5.5" transform="rotate(-20 21 22)" fill="#4a2410"/><circle cx="22.5" cy="21" r="1.6" fill="#2a1608"/><ellipse cx="48" cy="16" rx="6.5" ry="7.5" transform="rotate(10 48 16)" fill="#3a1c08"/><circle cx="49.5" cy="15" r="1.6" fill="#2a1608"/><ellipse cx="78" cy="28" rx="7.5" ry="5.5" transform="rotate(30 78 28)" fill="#4a2410"/><circle cx="79.5" cy="27" r="1.6" fill="#2a1608"/><ellipse cx="27" cy="50" rx="8" ry="6" transform="rotate(15 27 50)" fill="#3a1c08"/><circle cx="28.5" cy="49" r="1.6" fill="#2a1608"/><ellipse cx="66" cy="54" rx="6" ry="7.5" transform="rotate(-10 66 54)" fill="#4a2410"/><circle cx="67.5" cy="53" r="1.6" fill="#2a1608"/><ellipse cx="16" cy="80" rx="6.5" ry="5.5" transform="rotate(0 16 80)" fill="#3a1c08"/><circle cx="17.5" cy="79" r="1.6" fill="#2a1608"/><ellipse cx="44" cy="86" rx="8" ry="6" transform="rotate(25 44 86)" fill="#4a2410"/><circle cx="45.5" cy="85" r="1.6" fill="#2a1608"/><ellipse cx="85" cy="83" rx="6" ry="6.5" transform="rotate(0 85 83)" fill="#3a1c08"/><circle cx="86.5" cy="82" r="1.6" fill="#2a1608"/><circle cx="36" cy="34" r="3.2" fill="#8390bb"/><circle cx="70" cy="40" r="3.2" fill="#8390bb"/><circle cx="10" cy="48" r="3.2" fill="#8390bb"/><circle cx="90" cy="60" r="3.2" fill="#8390bb"/><circle cx="30" cy="70" r="3.2" fill="#8390bb"/><circle cx="58" cy="74" r="3.2" fill="#8390bb"/><circle cx="94" cy="8" r="3.2" fill="#8390bb"/><circle cx="4" cy="8" r="3.2" fill="#8390bb"/></pattern>
     <pattern id="p-fat-ihc" patternUnits="userSpaceOnUse" width="70" height="70"><rect width="70" height="70" fill="#f4f3f1"/><circle cx="35" cy="35" r="31" fill="#f8f7f5" stroke="#dcdde3" stroke-width="1.6"/></pattern>
     <radialGradient id="g-heat" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#be7b00" stop-opacity=".62"/><stop offset=".6" stop-color="#be7b00" stop-opacity=".32"/><stop offset="1" stop-color="#be7b00" stop-opacity="0"/></radialGradient>
 
@@ -581,6 +631,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
               <line id="tickA2" x1="9550" y1="2270" x2="9550" y2="2330" stroke="#f7f7f7" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
               <text id="measA" x="8400" y="2250" text-anchor="middle" font-size="14" fill="#f7f7f7" stroke="rgba(0,0,0,.85)" stroke-width="4">2.3 mm</text>
             </g>
+            <g class="user-ann" id="userAnn" data-live="annotations"></g>
           </svg>
           <span class="hud__item pane__id" data-live="state.views[0].slide"><span data-synthetic>A1-1 · H&amp;E</span></span>
         </div>
@@ -667,7 +718,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
               <dt>Accession</dt><dd class="mono" data-synthetic>AP-26-04417</dd>
               <dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958 · F <span class="syn text-xs text-secondary">(synthetic)</span></dd>
               <dt>Specimen</dt><dd>Sentinel lymph node, left axilla</dd>
-              <dt>Part · block · slide</dt><dd class="mono" id="kvSlide">A · 1 · A1-1</dd>
+              <dt>Slide</dt><dd class="mono" id="kvSlide">Part A · block 1 · A1-1</dd>
               <dt>Stain</dt><dd id="kvStain">H&amp;E</dd>
               <dt>Scanner</dt><dd>0.25 µm/px · 40× scan · 2026-10-24</dd>
               <dt>Worklist</dt><dd><span class="chip chip--worklist" id="worklistChip2" data-live="lis:worklist">In review</span></dd>
@@ -732,7 +783,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
                   </div>
                 </div>
               </div>
-              <div class="layer-row is-hidden">
+              <div class="layer-row is-off">
                 <button class="layer-row__vis" aria-pressed="false" aria-label="Mitosis counter, hidden"><svg class="icon icon--sm"><use href="#i-eye-off"/></svg></button>
                 <div class="layer-row__name"><span class="truncate">Mitosis counter</span><span class="kind">AI · vector</span></div>
                 <div class="layer-row__actions"><button class="btn btn--sm btn--icon btn--ghost" aria-label="More"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
@@ -1000,6 +1051,23 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   </div>
 </template>
 
+<template id="tpl-send">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="sd-title" data-live="lis:preliminary">
+    <div class="dialog__header"><h2 class="dialog__title" id="sd-title">Send preliminary to the OR · <span class="mono" data-synthetic>AP-26-04417</span></h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="dialog__body">
+      <p class="text-sm text-secondary">The note goes to OR 4 through the LIS as an ORU / FHIR Observation marked <b>preliminary</b>. Final sign-out waits for permanent sections on a diagnostic display.</p>
+      <div class="alert alert--neutral"><span class="alert__glyph">“</span><div id="sdNote">Metastatic carcinoma present, 2.3 mm focus (macrometastasis). Preliminary; await permanent sections.</div></div>
+      <ul class="checklist" style="padding:0">
+        <li><span class="g ok">✓</span><span>Session purpose <b>Consultation · preliminary only</b> · Nav mode (Tier 2 iPad, MDM profile)</span></li>
+        <li><span class="g ok">✓</span><span>Evidence attached: 1 measurement · 2.3 mm (SR TID 1500) · 1 region · viewed <span id="sdViewed">2 of 3</span> slides</span></li>
+        <li><span class="g ok">✓</span><span>Turnaround <span class="mono" id="sdTat">06:12</span> of the CAP 20-minute target · received 09:41</span></li>
+      </ul>
+      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Also page the surgeon</span><span class="toggle__hint">Pager / Teams via the integration service</span></span></label>
+    </div>
+    <div class="dialog__footer"><button class="btn btn--ghost" data-close>Keep reviewing</button><button class="btn btn--secondary" data-cmd="consult">Request consult first</button><button class="btn btn--accent" data-cmd="confirmSend"><svg class="icon icon--sm"><use href="#i-send"/></svg>Send preliminary</button></div>
+  </div>
+</template>
+
 <!-- ====== Design rationale (collapsed by default) ====== -->
 <section class="rationale" id="rationale" aria-label="Design rationale">
 <details>
@@ -1090,6 +1158,933 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   <li>Rotation, curtain compare, snapshot and the B/C/γ panel are stubs (toasts), and pen pressure is not simulated.</li>
   <li>Only the lock sync mode is honoured in the compare panes; affine and none are labels.</li>
   <li>Coverage percentages grow with the trail but are not computed from true viewport union.</li>
+  <li>A2-1 reuses the A1-1 drawing (a second level of the same node would differ), and the synthetic metastasis repeats every 96 µm; measurement labels are drawn in slide space, so they scale with zoom instead of staying screen-sized as the engine's HUD text would.</li>
+  <li>Tested in headless Chromium only (mouse, keyboard and touch taps); Apple Pencil hover, palm rejection and 120 Hz pen latency are not represented.</li>
 </ul>
 </details>
 </section>
+
+<!-- ====== Script block A · state, geometry, rendering (completed 2026-11-01) ====== -->
+<script>
+/* Concept C mock. Everything here stands in for the engine contracts named in
+   the rationale table: the state document (views[], slides[], render_mode),
+   the event bus (tileSettled, renderingcomplete, caseStatusChanged …), the
+   command bus (every data-cmd / key / palette item) and the launch context.
+   Nothing in this script runs inside a frame loop in the product. */
+'use strict';
+const $ = (id) => document.getElementById(id);
+const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SLIDE_W = 12000, SLIDE_H = 6000;              /* µm; the synthetic node is 12 × 6 mm */
+const SCAN = 0.25;                                   /* µm/px at the 40× scan */
+const PRESETS = [8, 4, 2, 1, 0.5, 0.25];             /* µm/px for 1.25 · 2.5 · 5 · 10 · 20 · 40× (derived, D8) */
+const STRINGS = {
+  'clinical-ih': 'In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.',
+  dx: 'Stoipath Dx · cleared configuration · see About for UDI, version and hashes.',
+  ruo: 'For Research Use Only. Not for use in diagnostic procedures.'
+};
+const SLIDES = [
+  { id: 'A1-1', part: 'A', block: '1', stain: 'H&E', art: '#art-he', text: 'Sentinel node, level I', opened: true, coverage: 78, hasAnn: true,
+    trail: [[0, 0, 4800, 2800, 0], [4000, 0, 4800, 2800, 0], [7600, 0, 4400, 2800, 0], [0, 2900, 4800, 2800, 0], [4200, 2900, 4000, 2600, 0], [6800, 1700, 2400, 1400, 0], [7300, 1850, 1000, 600, 1], [8200, 1900, 1000, 600, 1], [9000, 1950, 1000, 600, 1], [7700, 2450, 1000, 600, 1], [8600, 2500, 1000, 600, 1]] },
+  { id: 'A1-2', part: 'A', block: '1', stain: 'CK AE1/AE3', kind: 'IHC', art: '#art-ihc', text: 'CK AE1/AE3', opened: true, coverage: 31,
+    trail: [[2800, 300, 4800, 2800, 0], [6800, 1700, 2400, 1400, 0], [8000, 2000, 1000, 600, 1]] },
+  { id: 'A2-1', part: 'A', block: '2', stain: 'H&E', art: '#art-he', text: 'Sentinel node, level II', opened: false, coverage: 0, trail: [] }
+];
+const STEP_SETS = {
+  signout:  [['Open', 'Verify identity before pixels'], ['Screen', 'Low-power survey of every slide'], ['Examine', 'High power, compare, overlays'], ['Annotate', 'Marks and measurements'], ['Sign-out', 'Hand status and evidence back to the LIS']],
+  consult:  [['Open', 'Verify identity · frozen section'], ['Screen', 'Low-power survey'], ['Examine', 'High power, compare'], ['Note', 'Preliminary diagnosis for the OR'], ['Send', 'Preliminary to the OR via the LIS']],
+  embedded: [['Open', 'Verify identity'], ['Screen', 'Low-power survey'], ['Examine', 'High power, compare, overlays'], ['Annotate', 'Marks and measurements'], ['Hand-off', 'Open on the diagnostic display']]
+};
+const S = {
+  product: 'clinical-ih', variant: 'signout', cond: 'normal', step: 3, guided: true, dxWanted: true,
+  compare: false, overlay: false, heat: false, live: false, guides: false, dock: true, nav: true, label: true, grid: false,
+  tool: 'select', slide: 0, cx: 8700, cy: 2400, scale: 0.5, lastScale: 2, adjust: false, aiDecision: null,
+  sync: 'lock', cls: 'Tumor', clsVar: 'ann-2', regions: 1, measures: 1, bookmarks: 2, reviewed: false, sent: false,
+  dialog: null, settled: true, soft: false, opacity: 55, qHeld: false
+};
+const app = $('app'), host = $('host'), canvas = $('canvas');
+let paneSize = { w: 1200, h: 700 };
+
+/* ---- gates ------------------------------------------------------------- */
+function dxGate() {
+  if (S.product === 'ruo') return { ok: false, reason: 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.' };
+  if (S.variant === 'embedded') return { ok: false, reason: 'Dx mode unavailable inside an embedded window. Open on the diagnostic display to continue.' };
+  if (S.variant === 'consult') return { ok: false, reason: 'Dx mode unavailable on this device (Tier 2). Consultation · preliminary only.' };
+  if (S.cond === 'dxrefused') return { ok: false, reason: 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.' };
+  if (S.cond === 'mismatch') return { ok: false, reason: 'Slide identity mismatch. Viewing is blocked.' };
+  return { ok: true, reason: null };
+}
+const isDx = () => S.dxWanted && dxGate().ok;
+const isBlocked = () => S.cond === 'mismatch' || S.cond === 'expired' || S.product === 'ruo';
+const pitchLabel = () => S.variant === 'embedded' ? 'pitch unknown' : (S.variant === 'consult' ? 'pitch MDM profile' : 'pitch EDID');
+const pitchUnknown = () => S.variant === 'embedded';
+
+/* ---- geometry (state document views[0]) ------------------------------- */
+function measure() { const r = $('paneA').getBoundingClientRect(); if (r.width > 40 && r.height > 40) paneSize = { w: r.width, h: r.height }; }
+function fitScale() { return Math.max(SLIDE_W / paneSize.w, SLIDE_H / paneSize.h) * 1.06; }
+function clampScale(s) { return Math.min(Math.max(s, SCAN), fitScale() * 1.6); }
+function viewBoxFor(cx, cy, scale) { const w = paneSize.w * scale, h = paneSize.h * scale; return (cx - w / 2) + ' ' + (cy - h / 2) + ' ' + w + ' ' + h; }
+function worldAt(px, py, pane) { const r = (pane || $('paneA')).getBoundingClientRect(); return { x: S.cx + (px - r.left - r.width / 2) * S.scale, y: S.cy + (py - r.top - r.height / 2) * S.scale }; }
+function magOf(scale) { return 10 / scale; }
+function magText(scale) { const m = magOf(scale); const t = m >= 10 ? m.toFixed(0) : (m >= 2.5 ? m.toFixed(1) : m.toFixed(2)).replace(/\.?0+$/, ''); return t + '×'; }
+function setView(cx, cy, scale, opts) {
+  opts = opts || {};
+  if (scale !== S.scale) { const prev = S.scale; S.scale = clampScale(scale); if (Math.abs(prev - S.scale) > 1e-6) S.lastScale = prev; }
+  const w = paneSize.w * S.scale, h = paneSize.h * S.scale;
+  S.cx = Math.min(Math.max(cx, -w / 2 + 600), SLIDE_W + w / 2 - 600);
+  S.cy = Math.min(Math.max(cy, -h / 2 + 600), SLIDE_H + h / 2 - 600);
+  paintView();
+  if (!opts.silent) scheduleSettle();
+}
+function zoomAt(px, py, newScale, pane) {
+  const r = (pane || $('paneA')).getBoundingClientRect();
+  const ox = px - r.left - r.width / 2, oy = py - r.top - r.height / 2;
+  const wx = S.cx + ox * S.scale, wy = S.cy + oy * S.scale;
+  newScale = clampScale(newScale);
+  setView(wx - ox * newScale, wy - oy * newScale, newScale, { silent: true });
+}
+let flyRaf = null;
+function flyTo(cx, cy, scale, opts) {
+  opts = opts || {};
+  cancelAnimationFrame(flyRaf);
+  const target = { cx, cy, scale: clampScale(scale) };
+  if (RM || opts.immediate) { setView(target.cx, target.cy, target.scale); return; }
+  const from = { cx: S.cx, cy: S.cy, scale: S.scale }, t0 = performance.now(), dur = 380;
+  app.classList.add('is-gesturing');
+  const step = (t) => {
+    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    const sc = from.scale * Math.pow(target.scale / from.scale, e);
+    S.scale = sc; S.cx = from.cx + (target.cx - from.cx) * e; S.cy = from.cy + (target.cy - from.cy) * e; paintView();
+    if (k < 1) flyRaf = requestAnimationFrame(step); else { app.classList.remove('is-gesturing'); S.lastScale = from.scale; setView(target.cx, target.cy, target.scale); }
+  };
+  S.settled = false; renderIndicator();
+  flyRaf = requestAnimationFrame(step);
+}
+function scalebarPick(scale) {
+  const L = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
+  let best = L[0];
+  L.forEach((l) => { const px = l / scale; if (px <= 200 && px >= 60) best = l; });
+  return best;
+}
+
+/* ---- paint the view: canvas viewBox, HUD, navigator rectangle ---------- */
+function paintView() {
+  const vb = viewBoxFor(S.cx, S.cy, S.scale);
+  $('svgA').setAttribute('viewBox', vb);
+  if (S.compare) $('svgB').setAttribute('viewBox', S.sync === 'none' ? viewBoxFor(6000, 3000, fitScale()) : vb);
+  const mt = magText(S.scale);
+  $('magValue').textContent = (pitchUnknown() ? '~' : '') + mt;
+  $('magLine2').textContent = S.scale.toFixed(2) + ' µm/px · ' + pitchLabel();
+  $('magBtn').setAttribute('aria-label', 'Magnification ' + mt.replace('×', ' times') + ', ' + S.scale.toFixed(2) + ' micrometres per pixel, ' + pitchLabel() + '. Press Enter to type a zoom');
+  const L = scalebarPick(S.scale);
+  $('scalebarBar').style.setProperty('--scalebar-length', (L / S.scale).toFixed(1) + 'px');
+  $('scalebarLabel').textContent = L >= 1000 ? (L / 1000) + ' mm' : L + ' µm';
+  $('hudPos').textContent = 'x ' + (S.cx / 1000).toFixed(2) + ' mm · y ' + (S.cy / 1000).toFixed(2) + ' mm';
+  const w = paneSize.w * S.scale, h = paneSize.h * S.scale;
+  const nv = $('navViewport');
+  const l = Math.max(0, (S.cx - w / 2) / SLIDE_W * 100), t = Math.max(0, (S.cy - h / 2) / SLIDE_H * 100);
+  const r = Math.min(100, (S.cx + w / 2) / SLIDE_W * 100), b = Math.min(100, (S.cy + h / 2) / SLIDE_H * 100);
+  nv.style.left = l + '%'; nv.style.top = t + '%'; nv.style.width = Math.max(1, r - l) + '%'; nv.style.height = Math.max(1, b - t) + '%';
+  $$('[data-mag]').forEach((btn) => { const sc = 10 / parseFloat(btn.dataset.mag); btn.setAttribute('aria-pressed', Math.abs(sc - S.scale) / sc < 0.02 ? 'true' : 'false'); });
+  $('presetCount').textContent = mt;
+  canvas.setAttribute('aria-label', 'Slide canvas, ' + SLIDES[S.slide].id + ' ' + SLIDES[S.slide].stain + ', ' + mt.replace('×', ' times') + ', use arrow keys to pan and plus or minus to zoom');
+}
+
+/* ---- settle simulation (tileSettled / renderingcomplete) --------------- */
+let settleTimer = null, softTimer = null, quietTimer = null, ncTimer = null, gestureTimer = null;
+function gesturing() { app.classList.add('is-gesturing'); clearTimeout(gestureTimer); gestureTimer = setTimeout(() => app.classList.remove('is-gesturing'), 160); }
+function scheduleSettle() {
+  S.settled = false; S.soft = false;
+  clearTimeout(settleTimer); clearTimeout(softTimer); clearTimeout(ncTimer);
+  if (S.cond === 'cold4g') app.classList.add('is-soft');
+  renderIndicator();
+  const delay = S.cond === 'cold4g' ? 900 : (S.cond === 'offline' ? 180 : 320);
+  settleTimer = setTimeout(() => {
+    S.settled = true; S.soft = S.cond === 'cold4g';
+    if (!S.soft) app.classList.remove('is-soft');
+    addTrail(); renderIndicator(); announceView();
+    if (S.soft) softTimer = setTimeout(() => { S.soft = false; app.classList.remove('is-soft'); renderIndicator(); }, 1800);
+  }, delay);
+}
+function renderIndicator() {
+  const ind = $('stripIndicator'), lab = $('stripIndicatorLabel'), hud = $('hudSharp');
+  let cls, text;
+  clearTimeout(quietTimer); ind.classList.remove('is-quiet');
+  if (isDx()) {
+    if (!S.settled) { cls = 'rendering'; text = 'Rendering…'; }
+    else if (S.cond === 'tileerror') {
+      if (S.ncShown) { cls = 'notcomplete'; text = 'Not complete — do not interpret'; }
+      else { cls = 'rendering'; text = 'Rendering…'; clearTimeout(ncTimer); ncTimer = setTimeout(() => { S.ncShown = true; renderIndicator(); announce('Not complete. Do not interpret.', true); }, 2000); }
+    } else { cls = 'complete'; text = 'Rendering Complete'; }
+  } else if (S.cond === 'offline') { cls = 'offline'; text = 'Offline — cached tiles only'; }
+  else if (!S.settled) { cls = 'sharpening'; text = 'Sharpening…'; }
+  else if (S.soft) { cls = 'soft'; text = 'Soft — slow link'; }
+  else if (S.cond === 'tileerror') { cls = 'soft'; text = 'Soft — level not yet available'; }
+  else { cls = 'sharp'; text = 'Sharp'; if (!RM) quietTimer = setTimeout(() => ind.classList.add('is-quiet'), 800); }
+  if (S.cond !== 'tileerror') S.ncShown = false;
+  ind.className = 'indicator indicator--' + cls; lab.textContent = text;
+  hud.className = 'hud__item hud__sharp indicator indicator--' + cls; hud.setAttribute('aria-label', text);
+  renderStrip();
+}
+function announce(text, assertive) { $(assertive ? 'lr-assertive' : 'lr-polite').textContent = text; }
+function announceView() { announce($('stripIndicatorLabel').textContent + '. ' + magText(S.scale).replace('×', ' times') + '. ' + SLIDES[S.slide].id + '.'); }
+
+/* ---- trail and coverage (geometry service visibleCoverage) ------------ */
+function addTrail() {
+  if (isBlocked()) return;
+  const sl = SLIDES[S.slide], w = paneSize.w * S.scale, h = paneSize.h * S.scale;
+  sl.trail.push([S.cx - w / 2, S.cy - h / 2, w, h, S.scale <= 0.5 ? 1 : 0]);
+  if (sl.trail.length > 90) sl.trail.shift();
+  sl.coverage = Math.min(100, sl.coverage + (S.scale > 2 ? 3 : 0.6));
+  renderTrail(); renderTray();
+}
+function renderTrail() {
+  $('trail').innerHTML = SLIDES[S.slide].trail.map((r) => '<rect x="' + (r[0] | 0) + '" y="' + (r[1] | 0) + '" width="' + (r[2] | 0) + '" height="' + (r[3] | 0) + '"' + (r[4] ? ' class="is-hp"' : '') + '/>').join('');
+}
+
+/* ---- slides (state document slides[]) --------------------------------- */
+function slideClass(sl) { return !sl.opened ? 'is-unviewed' : (sl.coverage >= 60 ? 'is-viewed' : 'is-partial'); }
+function renderTray() {
+  SLIDES.forEach((sl, i) => {
+    const el = document.querySelector('.tray [data-slide="' + sl.id + '"]');
+    if (el) {
+      el.classList.remove('is-viewed', 'is-partial', 'is-unviewed'); el.classList.add(slideClass(sl));
+      el.setAttribute('aria-selected', i === S.slide ? 'true' : 'false');
+      el.querySelector('.tray__coverage span').style.setProperty('--coverage', Math.round(sl.coverage) + '%');
+      el.querySelector('.tray__label .text').textContent = sl.text + ' · ' + (sl.opened ? Math.round(sl.coverage) + ' % viewed' : 'not viewed');
+      let v = el.querySelector('.tray__viewed'); if (!v && sl.opened) { v = document.createElement('span'); v.className = 'tray__viewed'; el.querySelector('.tray__thumb').appendChild(v); }
+      if (v) v.setAttribute('aria-label', sl.coverage >= 60 ? 'Viewed' : 'Partly viewed');
+    }
+    const chip = document.querySelector('.embed-tray [data-slide="' + sl.id + '"]');
+    if (chip) { chip.classList.toggle('is-selected', i === S.slide); chip.setAttribute('aria-selected', i === S.slide ? 'true' : 'false'); chip.querySelector('.v').textContent = !sl.opened ? '•' : (sl.coverage >= 60 ? '✓' : '½'); }
+  });
+  const cur = SLIDES[S.slide];
+  $('navCoverage').textContent = Math.round(cur.coverage) + ' %';
+  const unv = SLIDES.filter((s) => !s.opened);
+  const line = document.querySelector('#panel-2 .statusline');
+  if (line) {
+    line.querySelector('.g').className = 'g ' + (unv.length ? 'attn' : 'ok'); line.querySelector('.g').textContent = unv.length ? '!' : '✓';
+    line.querySelector('span:last-child').innerHTML = unv.length ? '<b>' + unv.map((s) => s.id).join(', ') + ' not yet viewed.</b> The LIS receives viewed / unviewed per slide at sign-out.' : '<b>All three slides opened.</b> Coverage per slide returns to the LIS at sign-out.';
+  }
+}
+function setSlide(i, opts) {
+  opts = opts || {};
+  S.slide = i; const sl = SLIDES[i];
+  const first = !sl.opened; if (first) { sl.opened = true; sl.coverage = 4; }
+  $('artA').setAttribute('href', sl.art); $('navArt').setAttribute('href', sl.art);
+  $('annA').style.display = sl.hasAnn ? '' : 'none';
+  $('userAnn').style.display = sl.hasAnn ? '' : 'none';
+  const stainLine = sl.id + ' · ' + sl.stain + (sl.kind ? ' · ' + sl.kind : '');
+  $('hudIdentity').firstElementChild.textContent = stainLine + ' · AP-26-04417';
+  $('paneA').querySelector('.pane__id span').textContent = stainLine;
+  $('kvSlide').textContent = 'Part ' + sl.part + ' · block ' + sl.block + ' · ' + sl.id; $('kvStain').textContent = sl.stain + (sl.kind ? ' (' + sl.kind + ')' : '');
+  $('navSlideLabel').innerHTML = sl.id + ' · ' + (sl.kind || sl.stain) + '<br><span class="nav-sep"> · </span><span id="navCoverage"></span> viewed';
+  $('navLabelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' ' + (sl.kind || sl.stain) + '<br>DOE, JANE';
+  $('labelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' · ' + (sl.kind || sl.stain) + '<br>DOE, JANE · 1958<span class="lab">UT Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span>';
+  if (!opts.keepView) { measure(); setView(6000, 3000, fitScale(), { silent: true }); scheduleSettle(); }
+  renderOverlay(); renderTrail(); renderTray(); renderChecklist(); renderFlow();
+  announce('Slide ' + sl.id + ' ' + sl.stain + ' opened.' + (first ? ' First view: fit to slide.' : ''));
+}
+
+/* ---- product, variant, condition (launch context) ---------------------- */
+function renderProduct() {
+  const map = { 'clinical-ih': ['Clinical-IH', 'clinical'], dx: ['Dx', 'dx'], ruo: ['RUO', 'ruo'] };
+  const m = map[S.product];
+  const badge = $('badge'); badge.className = 'badge badge--' + m[1]; badge.textContent = m[0];
+  badge.setAttribute('aria-label', 'Product: Stoipath ' + (S.product === 'ruo' ? 'Viewer, research use only' : m[0]) + '. Opens the full label and About');
+  $('labelString').className = 'topbar__label badge-string badge-string--' + m[1];
+  app.classList.toggle('is-refused', S.product === 'ruo'); $('plateRefused').hidden = S.product !== 'ruo';
+  app.dataset.build = S.product;
+  $('purposeChip').hidden = S.product !== 'clinical-ih';
+}
+function renderVariant() {
+  const v = S.variant;
+  host.classList.toggle('is-embedded', v === 'embedded'); app.classList.toggle('app--embedded', v === 'embedded'); app.dataset.variant = v;
+  $$('.consult-only').forEach((e) => { e.hidden = v !== 'consult'; });
+  $$('.not-consult').forEach((e) => { e.hidden = v === 'consult'; });
+  $('frozenLine').hidden = v !== 'consult';
+  $('kvPurpose').textContent = v === 'consult' ? 'consultation · preliminary only' : 'sign-out';
+  $('purposeChip').textContent = v === 'consult' ? 'Consultation · preliminary only' : 'Sign-out';
+  $('worklistChip').textContent = $('worklistChip2').textContent = S.reviewed ? 'Reviewed' : (v === 'consult' ? 'Frozen · in review' : 'In review');
+  $('worklistChip').classList.toggle('is-reviewed', S.reviewed); $('worklistChip2').classList.toggle('is-reviewed', S.reviewed);
+  const at = $('attestLine');
+  if (v === 'consult') at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>iPad Pro 12.9</span> · MDM profile · Tier 2 (60 Hz) · no display attestation → Nav mode · <b>Consultation · preliminary only</b></span>';
+  else if (v === 'embedded') at.innerHTML = '<span class="g off">–</span><span>Embedded window (Hyperdrive) · attestation not available inside an iframe → Nav mode · hand off to the companion window for Dx</span>';
+  else if (S.cond === 'dxrefused') at.innerHTML = '<span class="g attn">!</span><span>This display cannot be attested (no EDID, no MDM profile) · Nav mode · ask your display administrator</span>';
+  else at.innerHTML = '<span class="g ok">✓</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span>';
+  $('stripMic').hidden = v === 'consult';
+  $('stripTier').hidden = v !== 'consult'; $('stripPitch').hidden = v !== 'embedded';
+  $('qaChip').hidden = v !== 'signout' || S.cond === 'dxrefused';
+  $('finalBtn').innerHTML = v === 'consult' ? '<svg class="icon"><use href="#i-send"/></svg>Send preliminary to OR <kbd class="key">⇧↵</kbd>' : (v === 'embedded' ? 'Open on diagnostic display <kbd class="key">⇧↵</kbd>' : '<svg class="icon"><use href="#i-signout"/></svg>Request sign-out <kbd class="key">⇧↵</kbd>');
+  $('finalBtn').disabled = (v === 'signout' && S.reviewed) || (v === 'consult' && S.sent);
+  if ((v === 'signout' && S.reviewed)) $('finalBtn').innerHTML = 'Returned to LIS · Reviewed';
+  if ((v === 'consult' && S.sent)) $('finalBtn').innerHTML = 'Preliminary sent · 09:47';
+  const tab = $('tabLast'); if (tab) tab.textContent = STEP_SETS[v][4][0];
+}
+function renderCond() {
+  app.dataset.cond = S.cond;
+  const blocked = S.cond === 'mismatch' || S.cond === 'expired';
+  app.classList.toggle('is-blocked', blocked); app.classList.toggle('is-mismatch', S.cond === 'mismatch');
+  $('plateMismatch').hidden = S.cond !== 'mismatch'; $('plateExpired').hidden = S.cond !== 'expired';
+  $('stripNet').hidden = S.cond !== 'cold4g'; $('stripOffline').hidden = S.cond !== 'offline';
+  const g = dxGate(), slot = $('bannerSlot');
+  let banner = '';
+  if (S.dxWanted && !g.ok && S.cond === 'dxrefused' && S.variant === 'signout' && S.product !== 'ruo') {
+    banner = '<div class="banner banner--warning" role="status" data-live="dx:attestation"><span class="banner__glyph">!</span><span class="banner__text"><b>Dx mode unavailable:</b> this display cannot be attested. Viewing in Nav mode.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary" data-cmd="step1">Display record <kbd class="key">I</kbd></button></div></div>';
+  }
+  if (S.cond === 'offline' && isDx()) banner += '<div class="banner" role="status" data-live="offline:pack"><span class="banner__glyph">i</span><span class="banner__text">Offline pack · AP-26-04417 frozen · saved 09:43 · L* tiles from the pack; the verifier still asserts Rendering Complete per frame.</span></div>';
+  slot.innerHTML = banner; app.classList.toggle('has-banner', !!banner);
+}
+function renderStrip() {
+  const g = dxGate(); let notice;
+  if (S.product === 'ruo') notice = g.reason;
+  else if (S.cond === 'mismatch') notice = 'Slide identity mismatch · viewing blocked · audit event identityMismatch recorded';
+  else if (S.cond === 'expired') notice = 'Your session has expired. Sign in again to continue viewing AP-26-04417.';
+  else if (S.cond === 'tileerror') notice = '3 tiles could not be loaded — retrying';
+  else if (isDx()) notice = S.adjust ? 'Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)' : 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+  else if (S.dxWanted && !g.ok) notice = g.reason;
+  else if (!g.ok) notice = g.reason;
+  else notice = 'Nav mode · Shift+D enters Dx mode (display attested · QA passed 3 days ago)';
+  if (S.cond === 'offline' && !isDx() && S.product !== 'ruo') notice = 'Offline pack · AP-26-04417 frozen · saved 09:43 · ' + notice;
+  $('stripNotice').textContent = notice;
+  const mode = $('modeChip'); mode.className = 'mode mode--' + (isDx() ? 'dx' : 'nav'); mode.textContent = isDx() ? 'DX' : 'NAV';
+  app.classList.toggle('is-dx', isDx());
+  $('hudAdjust').hidden = !S.adjust; $('adjustCount').textContent = S.adjust ? 'adjusted · logged' : 'default';
+  $('svgA').style.filter = S.adjust ? 'contrast(1.12) brightness(1.04)' : '';
+}
+
+/* ---- steps (command bus flow.goto; one panel per step) ----------------- */
+const steps = () => STEP_SETS[S.variant];
+function flowHTML() {
+  return steps().map((st, i) => {
+    const n = i + 1, cur = n === S.step, attn = n === 2 && !SLIDES[2].opened && !cur, done = n < S.step && !attn;
+    return '<li' + (cur ? ' class="is-current"' : '') + '><button class="flow__step' + (done ? ' is-done' : '') + (attn ? ' is-attn' : '') + '" data-step="' + n + '"' + (cur ? ' aria-current="step"' : '') + ' aria-label="Step ' + n + ' of 5: ' + st[0] + (attn ? ' (needs attention: a slide is unviewed)' : '') + (done ? ' (done)' : '') + '"><span class="flow__num">' + (done ? '✓' : n) + '</span><span class="flow__label">' + st[0] + '</span></button></li>';
+  }).join('');
+}
+function renderFlow() {
+  const html = flowHTML(), st = steps()[S.step - 1];
+  $('flowRailList').innerHTML = html; $('flowBarList').innerHTML = html;
+  const d = $('flowDialogList'); if (d) d.innerHTML = html;
+  $('stepKicker').textContent = 'Step ' + S.step + ' of 5'; $('stepTitle').textContent = st[0]; $('stepSub').textContent = st[1];
+  $$('#stepProgress span').forEach((sp, i) => { sp.className = i + 1 < S.step ? 'is-done' : (i + 1 === S.step ? 'is-current' : ''); });
+  $$('.step-panel').forEach((p) => p.classList.toggle('is-active', p.id === 'panel-' + S.step));
+  $$('#dockTabs .tab').forEach((t) => t.setAttribute('aria-selected', t.dataset.step === String(S.step) ? 'true' : 'false'));
+  $$('[data-steps]').forEach((t) => { t.hidden = S.guided && !t.dataset.steps.split(' ').includes(String(S.step)); });
+  const next = $('nextBtn'), fin = $('finalBtn'), back = document.querySelector('.dock__foot .btn--back');
+  next.hidden = S.step === 5; fin.hidden = S.step !== 5;
+  if (S.step < 5) next.innerHTML = 'Next: ' + steps()[S.step][0] + ' <kbd class="key">N</kbd>';
+  back.disabled = S.step === 1;
+  $('embedFlowChip').innerHTML = '<span class="n">' + S.step + '/5</span> ' + st[0] + ' <svg class="icon icon--sm"><use href="#i-next"/></svg>';
+  $('flowBarNext').hidden = S.step === 5;
+  app.dataset.step = S.step; app.classList.toggle('flow-off', !S.guided);
+  $('dock').setAttribute('aria-label', S.guided ? 'Step panel: ' + st[0] : 'Panels');
+  const dockClose = document.querySelector('.dock__close'); if (dockClose) dockClose.hidden = false;
+}
+function gotoStep(n, opts) {
+  opts = opts || {};
+  n = Math.min(5, Math.max(1, n)); S.step = n;
+  if (S.guided) {
+    const tools = $$('#railTools [data-tool]').filter((t) => t.dataset.steps.split(' ').includes(String(n))).map((t) => t.dataset.tool);
+    if (!tools.includes(S.tool)) setTool('select');
+  }
+  if (!S.dock && !opts.quiet) { S.dock = true; }
+  renderFlow(); renderChrome(); writeHash();
+  const title = steps()[n - 1];
+  announce('Step ' + n + ' of 5, ' + title[0] + '. ' + title[1] + '.');
+  if (S.variant === 'embedded' && !opts.quiet) { /* the sheet opens over the canvas bottom edge */ }
+}
+
+/* ---- checklist (what returns to the LIS) ------------------------------ */
+function renderChecklist() {
+  const opened = SLIDES.filter((s) => s.opened).length, unv = SLIDES.filter((s) => !s.opened);
+  const ai = S.aiDecision ? (S.aiDecision === 'accepted' ? 'accepted' : 'rejected') : (S.overlay ? 'shown · not reviewed' : 'not reviewed');
+  const g = dxGate();
+  const rows = [
+    [unv.length ? 'attn' : 'ok', 'Slides viewed: <b>' + opened + ' of 3</b><span class="sub">' + (unv.length ? unv.map((s) => s.id).join(', ') + ' (H&amp;E, level II) has not been opened. Press ] to open it.' : 'Coverage ' + SLIDES.map((s) => s.id + ' ' + Math.round(s.coverage) + ' %').join(' · ')) + '</span>', unv.length ? '<button class="btn btn--sm btn--secondary act" data-cmd="nextUnviewed">Open</button>' : ''],
+    ['ok', 'Measurements: <b>' + S.measures + '</b><span class="sub">2.3 mm · metastatic focus · A1-1 · SR TID 1500</span>'],
+    ['ok', 'Regions: <b>' + S.regions + '</b><span class="sub">Polygon · Tumor · 1.9 mm² · DICOM ANN / GeoJSON</span>'],
+    [S.aiDecision ? 'ok' : 'off', 'AI results: <b>' + ai + '</b><span class="sub">Metastasis detector (research status) ' + (isDx() ? 'stays off in Dx unless you open it' : 'off by default') + '</span>'],
+    ['ok', 'Bookmarks: <b>' + S.bookmarks + '</b><span class="sub">state documents with thumbnails</span>'],
+    [isDx() ? 'ok' : 'attn', 'Render mode: <b>' + (isDx() ? 'DX · Rendering Complete' : 'NAV') + '</b><span class="sub">' + (isDx() ? 'Barco MDPC-8127 · EDID · QA passed 3 days ago · adjustments ' + (S.adjust ? 'logged' : 'default') : (g.reason || 'Nav mode by choice; Shift+D enters Dx')) + '</span>'],
+  ];
+  if (S.variant === 'signout') rows.push(['ok', 'Dictation: <b>Mic: dictation</b> (Dragon Medical One in Epic)<span class="sub">The viewer never records audio</span>']);
+  if (S.variant === 'consult') rows.push(['ok', 'Purpose: <b>Consultation · preliminary only</b><span class="sub">The note is preliminary; permanent sections follow</span>']);
+  $('checklist').innerHTML = rows.map((r) => '<li><span class="g ' + r[0] + '">' + (r[0] === 'ok' ? '✓' : r[0] === 'attn' ? '!' : '–') + '</span><span>' + r[1] + '</span>' + (r[2] || '') + '</li>').join('');
+  $('aiDecision').textContent = ai; $('aiEvidence').textContent = ai;
+  $('overlayCount').textContent = S.overlay ? '1 shown · research status' : (isDx() ? 'off by default in Dx' : 'off');
+  const bm = document.querySelector('#panel-4 details:nth-of-type(2) summary .count'); if (bm) bm.textContent = S.bookmarks;
+  const an = document.querySelector('#panel-4 details:nth-of-type(1) summary .count'); if (an) an.textContent = S.regions + S.measures;
+}
+
+/* ---- overlays (layer API) ---------------------------------------------- */
+function renderOverlay() {
+  const show = S.overlay && SLIDES[S.slide].hasAnn;
+  $('aiA').style.display = show ? '' : 'none'; $('heatA').style.display = S.heat ? '' : 'none';
+  $('aiA').style.opacity = S.opacity / 100;
+  $$('[data-cmd="overlay"]').forEach((b) => b.setAttribute('aria-pressed', S.overlay ? 'true' : 'false'));
+  $('layerMetVis').innerHTML = '<svg class="icon icon--sm"><use href="#i-eye' + (S.overlay ? '' : '-off') + '"/></svg>';
+  $('layerMetVis').setAttribute('aria-label', 'Metastasis detector, ' + (S.overlay ? 'shown' : 'hidden'));
+  $('layerMet').classList.toggle('is-off', !S.overlay);
+  $$('[data-present]').forEach((b) => b.setAttribute('aria-checked', (b.dataset.present === 'heatmap') === S.heat ? 'true' : 'false'));
+  $('overlayOpacity').value = S.opacity; $('overlayOpacityNum').textContent = S.opacity + ' %';
+}
+
+/* ---- chrome classes and demo controls ---------------------------------- */
+function renderChrome() {
+  app.classList.toggle('dock-open', S.dock); app.classList.toggle('nav-open', S.nav); app.classList.toggle('label-off', !S.label);
+  app.classList.toggle('grid-on', S.grid); app.dataset.tool = S.tool;
+  $$('#panes').forEach((p) => p.classList.toggle('is-compare', S.compare));
+  $$('[data-cmd="compare"]').forEach((b) => b.setAttribute('aria-pressed', S.compare ? 'true' : 'false'));
+  $$('[data-cmd="nav"]').forEach((b) => b.setAttribute('aria-pressed', S.nav ? 'true' : 'false'));
+  $$('[data-cmd="dock"]').forEach((b) => b.setAttribute('aria-pressed', S.dock ? 'true' : 'false'));
+  $$('[data-cmd="grid"]').forEach((b) => b.setAttribute('aria-pressed', S.grid ? 'true' : 'false'));
+  $$('[data-tool]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tool === S.tool ? 'true' : 'false'));
+  $$('[data-sync]').forEach((b) => b.setAttribute('aria-checked', b.dataset.sync === S.sync ? 'true' : 'false'));
+  $('syncLabel').textContent = 'sync ' + S.sync;
+  $$('.class-chip').forEach((c) => c.setAttribute('aria-pressed', c.dataset.cls === S.cls ? 'true' : 'false'));
+  document.body.classList.toggle('show-live', S.live); document.body.classList.toggle('show-guides', S.guides);
+}
+function renderControls() {
+  $('ctlProduct').value = S.product; $('ctlVariant').value = S.variant; $('ctlCond').value = S.cond; $('ctlStep').value = String(S.step);
+  $('ctlGuided').checked = S.guided; $('ctlDx').checked = S.dxWanted; $('ctlCompare').checked = S.compare; $('ctlOverlay').checked = S.overlay;
+  $('ctlLive').checked = S.live; $('ctlGuides').checked = S.guides;
+}
+function applyAll() {
+  renderProduct(); renderVariant(); renderCond(); renderFlow(); renderOverlay(); renderChrome(); measure(); paintView(); renderIndicator(); renderChecklist(); renderTray(); renderTrail(); renderControls(); writeHash();
+}
+function writeHash() {
+  const p = new URLSearchParams();
+  p.set('product', S.product); p.set('variant', S.variant); p.set('cond', S.cond); p.set('step', S.step);
+  if (!S.guided) p.set('guided', '0'); if (!S.dxWanted) p.set('dx', '0'); if (S.compare) p.set('compare', '1'); if (S.overlay) p.set('overlay', '1');
+  if (S.heat) p.set('heat', '1'); if (S.live) p.set('live', '1'); if (S.guides) p.set('guides', '1'); if (!S.dock) p.set('dock', '0'); if (!S.nav) p.set('nav', '0');
+  if (S.slide) p.set('slide', S.slide); if (S.dialog) p.set('dialog', S.dialog); if (S.adjust) p.set('adjust', '1'); if (S.tool !== 'select') p.set('tool', S.tool);
+  const mt = magText(S.scale); if (mt !== '20×') p.set('mag', mt.replace('×', ''));
+  const h = '#' + p.toString();
+  try { history.replaceState(null, '', h); } catch (e) { /* file:// in some browsers */ }
+  $('hashOut').textContent = h;
+}
+function readHash() {
+  const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (h.get('product')) S.product = h.get('product'); if (h.get('variant')) S.variant = h.get('variant'); if (h.get('cond')) S.cond = h.get('cond');
+  if (h.get('step')) S.step = Math.min(5, Math.max(1, parseInt(h.get('step'), 10) || 3));
+  if (h.get('guided') === '0') S.guided = false; if (h.get('dx') === '0') S.dxWanted = false;
+  S.compare = h.get('compare') === '1'; S.overlay = h.get('overlay') === '1'; S.heat = h.get('heat') === '1'; S.live = h.get('live') === '1'; S.guides = h.get('guides') === '1';
+  if (h.get('dock') === '0') S.dock = false; if (h.get('nav') === '0') S.nav = false; if (h.get('adjust') === '1') S.adjust = true;
+  if (h.get('slide')) S.slide = Math.min(2, Math.max(0, parseInt(h.get('slide'), 10) || 0));
+  if (h.get('tool')) S.tool = h.get('tool');
+  if (h.get('mag')) { const sc = 10 / parseFloat(h.get('mag')); if (sc > 0) S.scale = sc; }
+  return h;
+}
+/* demo controls → state */
+$('ctlProduct').addEventListener('change', (e) => { S.product = e.target.value; applyAll(); });
+$('ctlVariant').addEventListener('change', (e) => { S.variant = e.target.value; S.dock = S.variant !== 'embedded'; if (S.variant === 'consult' && S.step === 4) S.step = 4; applyAll(); });
+$('ctlCond').addEventListener('change', (e) => { S.cond = e.target.value; S.ncShown = false; applyAll(); scheduleSettle(); if (S.cond === 'mismatch') announce('Slide identity mismatch. Viewing is blocked. Report to the laboratory.', true); });
+$('ctlStep').addEventListener('change', (e) => gotoStep(parseInt(e.target.value, 10)));
+$('ctlGuided').addEventListener('change', (e) => { S.guided = e.target.checked; renderFlow(); writeHash(); });
+$('ctlDx').addEventListener('change', (e) => { S.dxWanted = e.target.checked; if (S.dxWanted) { S.adjust = false; S.overlay = false; } applyAll(); scheduleSettle(); });
+$('ctlCompare').addEventListener('change', (e) => { S.compare = e.target.checked; renderChrome(); requestAnimationFrame(() => { measure(); paintView(); scheduleSettle(); }); writeHash(); });
+$('ctlOverlay').addEventListener('change', (e) => { S.overlay = e.target.checked; renderOverlay(); renderChecklist(); writeHash(); });
+$('ctlLive').addEventListener('change', (e) => { S.live = e.target.checked; renderChrome(); writeHash(); });
+$('ctlGuides').addEventListener('change', (e) => { S.guides = e.target.checked; renderChrome(); writeHash(); });
+$('ctlReset').addEventListener('click', () => { location.hash = ''; location.reload(); });
+</script>
+
+<!-- ====== Script block B · input, tools, dialogs, palette, init ====== -->
+<script>
+'use strict';
+/* ---- helpers ------------------------------------------------------------ */
+const SVGNS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs) { const n = document.createElementNS(SVGNS, tag); Object.keys(attrs || {}).forEach((k) => n.setAttribute(k, attrs[k])); return n; }
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function hl(label, q) { if (!q) return esc(label); const i = label.toLowerCase().indexOf(q.toLowerCase()); if (i < 0) return esc(label); return esc(label.slice(0, i)) + '<mark>' + esc(label.slice(i, i + q.length)) + '</mark>' + esc(label.slice(i + q.length)); }
+function now() { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+function fmtLen(um) { return um >= 1000 ? (um / 1000).toFixed(um >= 10000 ? 0 : 1) + ' mm' : Math.round(um) + ' µm'; }
+function fmtArea(um2) { return um2 >= 1e5 ? (um2 / 1e6).toFixed(2) + ' mm²' : Math.round(um2).toLocaleString() + ' µm²'; }
+function shoelace(p) { let a = 0; for (let i = 0; i < p.length; i++) { const j = (i + 1) % p.length; a += p[i].x * p[j].y - p[j].x * p[i].y; } return Math.abs(a) / 2; }
+function productFooter() { return { 'clinical-ih': 'Clinical-IH · UT Example Lab · not FDA cleared', dx: 'Stoipath Dx · cleared configuration', ruo: 'RUO · not for use in diagnostic procedures' }[S.product]; }
+
+/* ---- toasts (event bus → DOM; never over the canvas centre) ------------ */
+function toast(title, body, opts) {
+  opts = opts || {};
+  const t = document.createElement('div'); t.className = 'toast toast--neutral'; t.setAttribute('role', 'status');
+  t.innerHTML = '<span class="toast__glyph">' + (opts.glyph || '✓') + '</span><div class="toast__body"><span class="toast__title"></span><span class="toast__text"></span></div><button class="btn btn--sm btn--icon btn--ghost" aria-label="Dismiss"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>';
+  t.querySelector('.toast__title').textContent = title;
+  if (body) t.querySelector('.toast__text').textContent = body; else t.querySelector('.toast__text').remove();
+  t.querySelector('button').addEventListener('click', () => t.remove());
+  const stack = $('toasts'); stack.prepend(t); while (stack.children.length > 3) stack.lastChild.remove();
+  setTimeout(() => t.remove(), opts.ms || 6500);
+}
+
+/* ---- commands (command bus) --------------------------------------------- */
+const DRAW_TOOLS = ['polygon', 'freehand', 'rect', 'ellipse', 'point', 'measure'];
+function setTool(t) { cancelDraft(); S.tool = t; app.dataset.tool = t; renderChrome(); writeHash(); }
+function toggleDock() { S.dock = !S.dock; renderChrome(); writeHash(); requestAnimationFrame(() => { measure(); paintView(); }); }
+function toggleNav() { S.nav = !S.nav; renderChrome(); writeHash(); }
+function toggleCompare() {
+  S.compare = !S.compare; renderChrome(); renderControls();
+  requestAnimationFrame(() => { measure(); paintView(); scheduleSettle(); }); writeHash();
+  if (S.compare) toast('Compare · A1-1 H&E with A1-2 CK AE1/AE3', 'Serial sections · sync ' + S.sync + ' · views[1] follows views[0]');
+}
+function toggleOverlay() {
+  if (!SLIDES[S.slide].hasAnn) { toast('No AI result on ' + SLIDES[S.slide].id, 'The metastasis detector ran on A1-1 only'); return; }
+  S.overlay = !S.overlay; renderOverlay(); renderChecklist(); renderControls(); writeHash();
+  if (S.overlay && isDx()) toast('Overlay shown in Dx mode', 'Not validated for diagnostic use on this viewer · Example AI Inc. · unet-lnmet v1.3 · status research · the marker stays on the layer and in the legend', { glyph: '!' });
+  announce(S.overlay ? 'Metastasis detector shown. Not validated for diagnostic use on this viewer.' : 'AI overlay hidden.');
+}
+function toggleDx() {
+  if (isDx()) { S.dxWanted = false; applyAll(); scheduleSettle(); announce('Nav mode.'); toast('Nav mode', 'Dx mode left · the sharpness indicator now describes the pixels'); return; }
+  const g = dxGate(); if (!g.ok) { toast('Dx mode unavailable', g.reason, { glyph: '!' }); announce(g.reason, true); return; }
+  openDialog('dxentry');
+}
+function nextUnviewed() { const i = SLIDES.findIndex((s) => !s.opened); if (i >= 0) setSlide(i); else toast('All slides opened', 'Coverage ' + SLIDES.map((s) => s.id + ' ' + Math.round(s.coverage) + ' %').join(' · ')); }
+function panBy(dx, dy, frac) { gesturing(); setView(S.cx + dx * paneSize.w * S.scale * frac, S.cy + dy * paneSize.h * S.scale * frac, S.scale); }
+function finalAction() {
+  if (S.product === 'ruo') { toast('No sign-out in this build', STRINGS.ruo, { glyph: '!' }); return; }
+  if (S.cond === 'mismatch' || S.cond === 'expired') return;
+  if (S.variant === 'embedded') { runCmd('handoff'); return; }
+  if (S.variant === 'consult') { if (S.sent) { toast('Preliminary already sent', 'An addendum goes through the LIS'); return; } openDialog('send'); return; }
+  if (S.reviewed) { toast('Already returned to the LIS', 'The case is Reviewed; reopen it from Beaker'); return; }
+  openDialog('signout');
+}
+function runCmd(cmd, src) {
+  switch (cmd) {
+    case 'nextStep': gotoStep(S.step + 1); break;
+    case 'prevStep': gotoStep(S.step - 1); break;
+    case 'step1': case 'identity': gotoStep(1); break;
+    case 'gallery': gotoStep(S.variant === 'consult' ? 3 : 4); break;
+    case 'fit': flyTo(6000, 3000, fitScale()); break;
+    case 'zoomin': flyTo(S.cx, S.cy, S.scale / 2); break;
+    case 'zoomout': flyTo(S.cx, S.cy, S.scale * 2); break;
+    case 'togglemag': flyTo(S.cx, S.cy, S.lastScale); break;
+    case 'rotate': toast('Rotate 90°', 'state.views[0].rotation_deg → 90 · stub in this mock'); break;
+    case 'nav': toggleNav(); break;
+    case 'dock': toggleDock(); break;
+    case 'compare': toggleCompare(); break;
+    case 'curtain': toast('Curtain compare', 'Stub in this mock: A1-1 H&E over A1-2 IHC with a draggable split (/)'); break;
+    case 'overlay': toggleOverlay(); break;
+    case 'hideAll': S.overlay = false; renderOverlay(); renderChecklist(); renderControls(); writeHash(); break;
+    case 'grid': S.grid = !S.grid; renderChrome(); toast(S.grid ? 'HPF reticle on' : 'HPF reticle off', 'Calibrated field area 0.237 mm² at 40× · engine HUD layer (D11)'); break;
+    case 'bookmark': addBookmark(); break;
+    case 'snapshot': toast('Snapshot exported', 'PNG · scale bar burned in · footer: ' + productFooter() + ' · label image: ' + (S.variant === 'embedded' ? 'no (Tier 0)' : 'yes (Tier 2)')); break;
+    case 'adjust': S.adjust = true; renderStrip(); renderChecklist(); writeHash(); if (isDx()) toast('Adjustment logged', 'adjustChanged · Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)', { glyph: '!' }); else toast('Brightness / contrast / γ', 'B 0 · C +8 · γ 1.0 · stub panel'); break;
+    case 'resetAdjust': S.adjust = false; renderStrip(); renderChecklist(); writeHash(); break;
+    case 'keymap': openDialog('keymap'); break;
+    case 'palette': openDialog('palette'); break;
+    case 'about': openDialog('about'); break;
+    case 'signout': finalAction(); break;
+    case 'consult': openDialog('consult'); break;
+    case 'confirmConsult': closeDialog(); toast('Consult requested', 'Dr Example paged · shareCreated · Tier 0 link (no label image, no identifiers) · expires in 2 h · the reply lands in the LIS as an addendum'); break;
+    case 'confirmSignout': closeDialog(); S.reviewed = true; renderVariant(); renderChecklist(); toast('Returned to LIS', 'caseStatusChanged → Reviewed · viewed state per slide · 1 SR measurement · 1 ANN region · focus returned to Beaker'); announce('Case marked Reviewed. Focus returned to the LIS.'); break;
+    case 'openUnviewed': closeDialog(); nextUnviewed(); gotoStep(2); break;
+    case 'confirmSend': closeDialog(); S.sent = true; renderVariant(); toast('Preliminary sent', 'OR 4 · ORU / FHIR Observation (preliminary) · 06:12 of the 20-minute target · surgeon paged'); announce('Preliminary diagnosis sent to the OR.'); break;
+    case 'confirmDx': closeDialog(); S.dxWanted = true; S.adjust = false; S.overlay = false; applyAll(); scheduleSettle(); announce('Dx mode. Display attested, EDID, Barco MDPC-8127. QA passed 3 days ago.'); break;
+    case 'dx': toggleDx(); break;
+    case 'handoff': toast('Hand-off sent', 'Companion window on the diagnostic display · launch token · BroadcastChannel / postMessage · no popup, no top navigation'); announce('Hand-off sent to the companion window.'); break;
+    case 'nextUnviewed': nextUnviewed(); break;
+    case 'nextSlide': setSlide((S.slide + 1) % 3); break;
+    case 'prevSlide': setSlide((S.slide + 2) % 3); break;
+    case 'acceptAi': case 'rejectAi': S.aiDecision = cmd === 'acceptAi' ? 'accepted' : 'rejected'; renderChecklist(); toast('AI result ' + S.aiDecision, 'aiResult' + (cmd === 'acceptAi' ? 'Accepted' : 'Rejected') + ' · Metastasis detector · unet-lnmet v1.3 · returns to the LIS as evidence'); break;
+    case 'reportMismatch': toast('Reported to the laboratory', 'identityMismatch audit event · the case is flagged in the LIS'); break;
+    case 'returnLis': toast('Returning to LIS', 'Focus returned to Beaker · nothing was changed'); break;
+    case 'signin': S.cond = 'normal'; applyAll(); scheduleSettle(); toast('Signed in', 'Session renewed · the view is restored'); break;
+    case 'guided': S.guided = !S.guided; renderFlow(); renderControls(); writeHash(); toast(S.guided ? 'Guided flow on' : 'Guided flow off', S.guided ? 'Step rail and one panel per step' : 'Plain tabs · all tools shown · every key unchanged'); break;
+    case 'label': if (isDx()) toast('Label image fixed in Dx mode', 'FR-R9 · D13: the label image cannot be collapsed in Dx', { glyph: '!' }); else { S.label = !S.label; renderChrome(); } break;
+    case 'hoverpan': toast('Hover auto-pan', 'Drag alternative (SC 2.5.7): the view follows the pointer near the canvas edge · stub'); break;
+    case 'netsheet': toast('Slow link (6 Mbps)', 'Reduced detail while moving · the centre sharpens within about half a second after the gesture · never blank'); break;
+    case 'tiersheet': toast('Tier 2 · 60 Hz (iPad Safari)', 'Never blank · at most one level soft during fast bursts · centre sharp within about half a second on a cold burst · Dx not available on this tier'); break;
+    case 'offsheet': toast('Offline pack · AP-26-04417 frozen', '3 slides · 412 MB · saved 09:43 · L* tiles for the frozen; permanents are not in the pack'); break;
+    case 'pitchsheet': toast('Pitch unknown', 'The host window exposes no EDID: magnification is approximate (~) and Dx is refused (FR-R10)'); break;
+    default: toast('Command', cmd + ' · not wired in this mock');
+  }
+}
+
+/* ---- delegated clicks ---------------------------------------------------- */
+document.addEventListener('click', (e) => {
+  const t = e.target;
+  if (t.closest('#backdrop')) { closeDialog(); return; }
+  const closeBtn = t.closest('[data-close]'); if (closeBtn) { closeDialog(); return; }
+  const cmd = t.closest('button[data-cmd]'); if (cmd) { if (!cmd.disabled) runCmd(cmd.dataset.cmd, cmd); return; }
+  const tool = t.closest('button[data-tool]'); if (tool) { setTool(tool.dataset.tool); return; }
+  const mag = t.closest('button[data-mag]'); if (mag) { flyTo(S.cx, S.cy, 10 / parseFloat(mag.dataset.mag)); return; }
+  const st = t.closest('button[data-step]'); if (st) { const n = parseInt(st.dataset.step, 10); if (S.dialog === 'steps') closeDialog(); gotoStep(n); return; }
+  const fly = t.closest('button[data-fly]'); if (fly) {
+    const p = fly.dataset.fly.split(',').map(parseFloat);
+    if (!SLIDES[S.slide].hasAnn && fly.closest('.annlist, .legend, .bookmarks')) setSlide(0, { keepView: true });
+    flyTo(p[0], p[1], p[2]);
+    $$('.annlist [role="option"]').forEach((o) => o.setAttribute('aria-selected', o === fly ? 'true' : 'false'));
+    return;
+  }
+  const sl = t.closest('button[data-slide]'); if (sl) { setSlide(SLIDES.findIndex((s) => s.id === sl.dataset.slide)); return; }
+  const pan = t.closest('button[data-pan]'); if (pan) { const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[pan.dataset.pan]; panBy(d[0], d[1], 0.25); return; }
+  const sync = t.closest('button[data-sync]'); if (sync) { S.sync = sync.dataset.sync; renderChrome(); paintView(); return; }
+  const pres = t.closest('button[data-present]'); if (pres) { S.heat = pres.dataset.present === 'heatmap'; renderOverlay(); writeHash(); return; }
+  const cls = t.closest('button[data-cls]'); if (cls) { S.cls = cls.dataset.cls; S.clsVar = cls.dataset.sw; renderChrome(); return; }
+  const tpl = t.closest('button[data-tpl]'); if (tpl) { $('prelimText').value = tpl.dataset.tpl; return; }
+  if (t.closest('#badge, #moreBtn')) { openDialog('about'); return; }
+  if (t.closest('#embedFlowChip')) { openDialog('steps'); return; }
+  if (t.closest('#stripNet')) runCmd('netsheet'); else if (t.closest('#stripTier')) runCmd('tiersheet'); else if (t.closest('#stripOffline')) runCmd('offsheet'); else if (t.closest('#stripPitch')) runCmd('pitchsheet');
+});
+$('overlayOpacity').addEventListener('input', (e) => { S.opacity = parseInt(e.target.value, 10); renderOverlay(); });
+$('prelimText').addEventListener('keydown', (e) => e.stopPropagation());
+/* navigator: click to recentre (SC 2.5.7 alternative: the pan buttons) */
+$('navigator').querySelector('.navigator__thumb').addEventListener('click', (e) => {
+  if (e.target.closest('button')) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  flyTo((e.clientX - r.left) / r.width * SLIDE_W, (e.clientY - r.top) / r.height * SLIDE_H, S.scale);
+});
+/* typed zoom field in the magnification readout (§5.1) */
+$('magBtn').addEventListener('click', () => {
+  const val = $('magValue'); if (val.querySelector('input')) return;
+  const prev = val.textContent.replace('~', '');
+  val.innerHTML = '<input type="text" aria-label="Type a magnification such as 20 or 20x, or a scale such as 0.5 µm/px" autocomplete="off">';
+  const inp = val.querySelector('input'); inp.value = prev; inp.focus(); inp.select();
+  let finished = false;
+  const done = (commit) => {
+    if (finished) return; finished = true;
+    if (commit) { const s = inp.value.trim().toLowerCase(); const num = parseFloat(s.replace(',', '.')); if (!isNaN(num) && num > 0) { if (/µ|um|\/px/.test(s)) flyTo(S.cx, S.cy, num); else flyTo(S.cx, S.cy, 10 / num); } }
+    paintView(); canvas.focus({ preventScroll: true });
+  };
+  inp.addEventListener('keydown', (ev) => { ev.stopPropagation(); if (ev.key === 'Enter') { ev.preventDefault(); done(true); } else if (ev.key === 'Escape') { ev.preventDefault(); done(false); } });
+  inp.addEventListener('blur', () => done(false));
+});
+
+/* ---- pointer: drag pans, wheel zooms at the pointer, two fingers pinch;
+        pen draws when a drawing tool is active, a finger always pans ------- */
+const pointers = new Map(); let drag = null, pinch = null, spaceHeld = false, wheelTimer = null;
+function paneOf(e) { return (e.target && e.target.closest && e.target.closest('.pane')) || $('paneA'); }
+canvas.addEventListener('pointerdown', (e) => {
+  if (isBlocked() || e.button > 0) return;
+  if (e.target.closest('.navigator, .hud, .plate, button, input, .banner-slot')) return;
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) {
+    const v = Array.from(pointers.values());
+    pinch = { d: Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y), scale: S.scale, mid: { x: (v[0].x + v[1].x) / 2, y: (v[0].y + v[1].y) / 2 }, cx: S.cx, cy: S.cy };
+    drag = null; if (draft && draft.kind === 'freehand') cancelDraft(); canvas.classList.add('is-dragging'); return;
+  }
+  const drawing = DRAW_TOOLS.includes(S.tool) && !spaceHeld && e.pointerType !== 'touch';
+  drag = { x: e.clientX, y: e.clientY, cx: S.cx, cy: S.cy, moved: false, drawing, pane: paneOf(e) };
+  if (drawing && S.tool === 'freehand') startFreehand(e);
+  if (!drawing) canvas.classList.add('is-dragging');
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && pointers.size === 2) {
+    const v = Array.from(pointers.values()), d = Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y), mid = { x: (v[0].x + v[1].x) / 2, y: (v[0].y + v[1].y) / 2 };
+    const ns = clampScale(pinch.scale * pinch.d / Math.max(10, d)), r = $('paneA').getBoundingClientRect();
+    const ox = pinch.mid.x - r.left - r.width / 2, oy = pinch.mid.y - r.top - r.height / 2;
+    const wx = pinch.cx + ox * pinch.scale, wy = pinch.cy + oy * pinch.scale;
+    const nx = mid.x - r.left - r.width / 2, ny = mid.y - r.top - r.height / 2;
+    S.scale = ns; S.cx = wx - nx * ns; S.cy = wy - ny * ns; S.settled = false; gesturing(); paintView(); return;
+  }
+  if (!drag) { if (draft && draft.kind !== 'freehand') drawDraft(worldAt(e.clientX, e.clientY, paneOf(e))); return; }
+  if (drag.drawing) { if (S.tool === 'freehand' && draft) extendFreehand(e); return; }
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (Math.abs(dx) + Math.abs(dy) > 2) drag.moved = true;
+  if (drag.moved) { S.cx = drag.cx - dx * S.scale; S.cy = drag.cy - dy * S.scale; S.settled = false; gesturing(); paintView(); if ($('stripIndicatorLabel').textContent === 'Sharp' || $('stripIndicatorLabel').textContent === 'Rendering Complete') renderIndicator(); }
+});
+function endPointer(e) {
+  pointers.delete(e.pointerId);
+  if (pinch) { if (pointers.size < 2) { pinch = null; canvas.classList.remove('is-dragging'); setView(S.cx, S.cy, S.scale); } return; }
+  if (!drag) return;
+  const d = drag; drag = null; canvas.classList.remove('is-dragging');
+  if (d.drawing) { if (S.tool === 'freehand') finishFreehand(); else placePoint(e, d.pane); return; }
+  if (d.moved) setView(S.cx, S.cy, S.scale);
+}
+canvas.addEventListener('pointerup', endPointer); canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('dblclick', (e) => {
+  if (draft && draft.kind === 'polygon') { commitDraft(); return; }
+  if (isBlocked() || e.target.closest('.navigator, .hud, button')) return;
+  zoomAt(e.clientX, e.clientY, S.scale / 2, paneOf(e)); scheduleSettle();
+});
+canvas.addEventListener('wheel', (e) => {
+  if (isBlocked() || e.target.closest('.navigator')) return;
+  e.preventDefault();
+  const f = Math.exp(Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 60) * 0.0045);
+  zoomAt(e.clientX, e.clientY, S.scale * f, paneOf(e));
+  S.settled = false; gesturing(); renderIndicator();
+  clearTimeout(wheelTimer); wheelTimer = setTimeout(() => scheduleSettle(), 140);
+}, { passive: false });
+
+/* ---- drawing tools (annotation API, op-based) --------------------------- */
+let draft = null; const undoStack = [];
+const clsColor = () => 'var(--' + S.clsVar + ')';
+function placePoint(e, pane) {
+  const p = worldAt(e.clientX, e.clientY, pane);
+  if (S.tool === 'point') { commitShape('point', [p]); return; }
+  if (!draft) { draft = { kind: S.tool, pts: [p], g: el('g') }; $('userAnn').appendChild(draft.g); drawDraft(p); return; }
+  draft.pts.push(p);
+  if (S.tool === 'measure' || S.tool === 'rect' || S.tool === 'ellipse') { commitDraft(); return; }
+  drawDraft(p);
+}
+function drawDraft(cursor) {
+  if (!draft) return;
+  const g = draft.g; g.innerHTML = '';
+  const pts = draft.pts.concat(cursor ? [cursor] : []);
+  if (draft.kind === 'polygon' || draft.kind === 'freehand') {
+    const d = pts.map((p) => p.x + ',' + p.y).join(' ');
+    g.appendChild(el('polyline', { points: d, class: 'halo', 'vector-effect': 'non-scaling-stroke' }));
+    g.appendChild(el('polyline', { points: d, class: 'ink is-open', style: 'stroke:' + clsColor(), 'vector-effect': 'non-scaling-stroke' }));
+  } else if (draft.kind === 'measure') {
+    const a = pts[0], b = pts[1]; if (!b) return;
+    g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'halo', 'vector-effect': 'non-scaling-stroke' }));
+    g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'tick', 'vector-effect': 'non-scaling-stroke' }));
+    const t = el('text', { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 10 * S.scale, 'text-anchor': 'middle', 'font-size': 13 * S.scale }); t.textContent = fmtLen(Math.hypot(a.x - b.x, a.y - b.y)); g.appendChild(t);
+  } else { const a = pts[0], b = pts[1]; if (b) shapeEl(draft.kind, a, b, g, true); }
+}
+function shapeEl(kind, a, b, g, open) {
+  const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y), w = Math.abs(a.x - b.x), h = Math.abs(a.y - b.y);
+  const ink = 'ink' + (open ? ' is-open' : ''), st = 'stroke:' + clsColor() + ';fill:' + clsColor();
+  if (kind === 'rect') { g.appendChild(el('rect', { x, y, width: w, height: h, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('rect', { x, y, width: w, height: h, class: ink, style: st, 'vector-effect': 'non-scaling-stroke' })); }
+  else { g.appendChild(el('ellipse', { cx: x + w / 2, cy: y + h / 2, rx: w / 2, ry: h / 2, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('ellipse', { cx: x + w / 2, cy: y + h / 2, rx: w / 2, ry: h / 2, class: ink, style: st, 'vector-effect': 'non-scaling-stroke' })); }
+  return { w, h };
+}
+function commitDraft() {
+  if (!draft) return;
+  const d = draft; draft = null;
+  if ((d.kind === 'polygon' || d.kind === 'freehand') && d.pts.length < 3) { d.g.remove(); return; }
+  if ((d.kind === 'measure' || d.kind === 'rect' || d.kind === 'ellipse') && d.pts.length < 2) { d.g.remove(); return; }
+  commitShape(d.kind, d.pts, d.g);
+}
+function commitShape(kind, pts, g) {
+  g = g || el('g'); g.innerHTML = ''; $('userAnn').appendChild(g);
+  const col = clsColor(), sid = SLIDES[S.slide].id; let title, sub, sw = 'sw', swStyle = 'background:' + col, meta, c;
+  if (kind === 'point') {
+    const p = pts[0], r = 5 * S.scale; c = p;
+    g.appendChild(el('circle', { cx: p.x, cy: p.y, r, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('circle', { cx: p.x, cy: p.y, r, class: 'ink pt', style: 'fill:' + col + ';stroke:' + col, 'vector-effect': 'non-scaling-stroke' }));
+    title = 'Point · ' + S.cls; sub = sid + ' · x ' + (p.x / 1000).toFixed(2) + ' mm · y ' + (p.y / 1000).toFixed(2) + ' mm · ' + now(); meta = 'T'; S.regions++;
+  } else if (kind === 'measure') {
+    const a = pts[0], b = pts[1], len = Math.hypot(a.x - b.x, a.y - b.y); c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'tick', 'vector-effect': 'non-scaling-stroke' }));
+    const t = el('text', { x: c.x, y: c.y - 10 * S.scale, 'text-anchor': 'middle', 'font-size': 13 * S.scale }); t.textContent = fmtLen(len); g.appendChild(t);
+    title = 'Measurement · <b>' + fmtLen(len) + '</b>'; sub = sid + ' · µm from MPP (0.25 µm/px scan) · ' + now(); sw = 'sw sw--line'; swStyle = 'background:var(--ann-8)'; meta = 'M'; S.measures++;
+    toast('measurementCreated', fmtLen(len) + ' · returns to the LIS as SR TID 1500');
+  } else if (kind === 'polygon' || kind === 'freehand') {
+    const d = pts.map((p) => p.x + ',' + p.y).join(' '), area = shoelace(pts); c = { x: pts.reduce((s, p) => s + p.x, 0) / pts.length, y: pts.reduce((s, p) => s + p.y, 0) / pts.length };
+    g.appendChild(el('polygon', { points: d, class: 'halo', 'vector-effect': 'non-scaling-stroke' })); g.appendChild(el('polygon', { points: d, class: 'ink', style: 'stroke:' + col + ';fill:' + col, 'vector-effect': 'non-scaling-stroke' }));
+    title = (kind === 'polygon' ? 'Polygon' : 'Freehand') + ' · ' + S.cls + ' · ' + fmtArea(area); sub = sid + ' · ' + pts.length + ' vertices · created ' + now(); meta = kind === 'polygon' ? 'P' : 'F'; S.regions++;
+  } else {
+    const a = pts[0], b = pts[1], dim = shapeEl(kind, a, b, g, false), area = kind === 'rect' ? dim.w * dim.h : Math.PI * dim.w * dim.h / 4; c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    title = (kind === 'rect' ? 'Rectangle' : 'Ellipse') + ' · ' + S.cls + ' · ' + fmtArea(area); sub = sid + ' · ' + fmtLen(dim.w) + ' × ' + fmtLen(dim.h) + ' · created ' + now(); meta = kind === 'rect' ? 'X' : 'E'; S.regions++;
+  }
+  const li = document.createElement('button'); li.className = 'list__item'; li.setAttribute('role', 'option'); li.dataset.fly = c.x + ',' + c.y + ',' + S.scale;
+  li.innerHTML = '<span class="' + sw + '" style="' + swStyle + '"></span><span class="txt"><span class="t">' + title + '</span><span class="s">' + esc(sub) + '</span></span><span class="meta">' + meta + '</span>';
+  document.querySelector('.annlist').prepend(li);
+  undoStack.push({ g, li, kind });
+  renderChecklist(); announce(title.replace(/<[^>]+>/g, '') + ' created.');
+}
+function cancelDraft() { if (draft) { draft.g.remove(); draft = null; } }
+function undo() { const u = undoStack.pop(); if (!u) { toast('Nothing to undo'); return; } u.g.remove(); u.li.remove(); if (u.kind === 'measure') S.measures--; else S.regions--; renderChecklist(); toast('Undone', u.kind + ' removed · annotation op reverted'); }
+function startFreehand(e) { cancelDraft(); draft = { kind: 'freehand', pts: [worldAt(e.clientX, e.clientY, paneOf(e))], g: el('g') }; $('userAnn').appendChild(draft.g); }
+function extendFreehand(e) { const p = worldAt(e.clientX, e.clientY, paneOf(e)), last = draft.pts[draft.pts.length - 1]; if (Math.hypot(p.x - last.x, p.y - last.y) > 2 * S.scale) { draft.pts.push(p); drawDraft(); } }
+function finishFreehand() { if (draft && draft.pts.length > 4) commitDraft(); else cancelDraft(); }
+function pickClass(i) { const chips = $$('.class-chip'); const c = chips[i]; if (!c) return; S.cls = c.dataset.cls; S.clsVar = c.dataset.sw; renderChrome(); toast('Class · ' + S.cls, 'Q then ' + (i + 1)); }
+function addBookmark() {
+  if (isBlocked()) return;
+  S.bookmarks++;
+  const w = paneSize.w * S.scale, h = paneSize.h * S.scale;
+  const b = document.createElement('button'); b.className = 'bookmark'; b.dataset.fly = S.cx + ',' + S.cy + ',' + S.scale;
+  b.innerHTML = '<span class="thumb"><svg viewBox="' + (S.cx - w / 2) + ' ' + (S.cy - h / 2) + ' ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="' + SLIDES[S.slide].art + '"/></svg></span><span class="t">View ' + S.bookmarks + '</span><span class="s">' + SLIDES[S.slide].id + ' · ' + magText(S.scale) + '</span>';
+  document.querySelector('.bookmarks').prepend(b);
+  renderChecklist(); toast('Bookmark saved', 'View ' + S.bookmarks + ' · ' + magText(S.scale) + ' · ' + SLIDES[S.slide].id + ' · B to add another, ⇧B to open the gallery');
+}
+
+/* ---- keyboard (every action has a key; no Ctrl/Alt/F-keys) ------------- */
+function trapFocus(e) {
+  const f = $$('button, input, select, textarea, [tabindex]:not([tabindex="-1"])', $('modalLayer')).filter((x) => !x.disabled && x.offsetParent !== null);
+  if (!f.length) return;
+  const i = f.indexOf(document.activeElement);
+  if (e.shiftKey && i <= 0) { f[f.length - 1].focus(); e.preventDefault(); } else if (!e.shiftKey && i === f.length - 1) { f[0].focus(); e.preventDefault(); }
+}
+function key(k) {
+  const whole = k.startsWith('shift+Arrow') ? 1 : 0.1;
+  switch (k) {
+    case 'ArrowLeft': case 'shift+ArrowLeft': case 'A': panBy(-1, 0, whole); return true;
+    case 'ArrowRight': case 'shift+ArrowRight': case 'D': panBy(1, 0, whole); return true;
+    case 'ArrowUp': case 'shift+ArrowUp': case 'W': panBy(0, -1, whole); return true;
+    case 'ArrowDown': case 'shift+ArrowDown': case 'S': panBy(0, 1, whole); return true;
+    case '+': case '=': runCmd('zoomin'); return true;
+    case '-': case '_': runCmd('zoomout'); return true;
+    case '0': case 'Home': runCmd('fit'); return true;
+    case '1': case '2': case '3': case '4': case '5': case '6': flyTo(S.cx, S.cy, PRESETS[parseInt(k, 10) - 1]); return true;
+    case 'Z': runCmd('togglemag'); return true;
+    case 'R': case 'shift+R': runCmd('rotate'); return true;
+    case ']': runCmd('nextSlide'); return true;
+    case '[': runCmd('prevSlide'); return true;
+    case 'O': toggleNav(); return true;
+    case 'L': runCmd('label'); return true;
+    case 'B': addBookmark(); return true;
+    case 'shift+B': runCmd('gallery'); return true;
+    case 'shift+S': runCmd('snapshot'); return true;
+    case 'C': toggleCompare(); return true;
+    case '/': runCmd('curtain'); return true;
+    case 'H': runCmd('hideAll'); return true;
+    case 'shift+H': toggleOverlay(); return true;
+    case ',': S.opacity = Math.max(0, S.opacity - 10); renderOverlay(); return true;
+    case '.': S.opacity = Math.min(100, S.opacity + 10); renderOverlay(); return true;
+    case 'G': runCmd('grid'); return true;
+    case 'J': runCmd('adjust'); return true;
+    case 'shift+J': runCmd('resetAdjust'); return true;
+    case 'shift+L': runCmd('hoverpan'); return true;
+    case 'V': setTool('select'); return true;
+    case 'P': setTool('polygon'); return true;
+    case 'F': case 'Y': setTool('freehand'); return true;
+    case 'X': setTool('rect'); return true;
+    case 'E': setTool('ellipse'); return true;
+    case 'T': setTool('point'); return true;
+    case 'M': setTool('measure'); return true;
+    case 'shift+M': toast('Measure area', 'Stub: draw a polygon with P; its area is listed in mm²'); return true;
+    case 'shift+T': toast('Count', 'Stub: point markers per class are counted in the annotation list'); return true;
+    case 'Q': S.qHeld = true; return true;
+    case 'shift+A': runCmd('acceptAi'); return true;
+    case 'shift+X': runCmd('rejectAi'); return true;
+    case 'Enter': if (draft) { commitDraft(); return true; } return false;
+    case 'Backspace': case 'Delete': if (draft) { cancelDraft(); } else undo(); return true;
+    case ' ': spaceHeld = true; return true;
+    case 'N': gotoStep(S.step + 1); return true;
+    case 'shift+N': gotoStep(S.step - 1); return true;
+    case 'shift+G': runCmd('guided'); return true;
+    case 'K': toggleDock(); return true;
+    case 'I': gotoStep(1); return true;
+    case 'shift+Enter': finalAction(); return true;
+    case 'shift+D': toggleDx(); return true;
+    case '?': openDialog('keymap'); return true;
+  }
+  return false;
+}
+document.addEventListener('keydown', (e) => {
+  const tgt = e.target, tag = tgt.tagName;
+  const inField = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tgt.isContentEditable;
+  if (e.key === 'Escape') {
+    if (S.dialog) { closeDialog(); e.preventDefault(); return; }
+    if (inField) return;
+    if (draft) { cancelDraft(); return; }
+    if (S.tool !== 'select') { setTool('select'); return; }
+    if (S.dock && innerWidth < 1080) { S.dock = false; renderChrome(); writeHash(); }
+    return;
+  }
+  if (S.dialog) { if (e.key === 'Tab') trapFocus(e); return; }
+  if (inField) return;
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); openDialog('palette'); return; }
+  if (ctrl && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); undo(); return; }
+  if (ctrl || e.altKey || e.key === 'Tab' || /^F\d+$/.test(e.key)) return;        /* Hyperdrive and browser keys stay with the host */
+  if (tag === 'BUTTON' && (e.key === ' ' || e.key === 'Enter')) return;             /* native activation: Space on a list item flies to it */
+  let k = e.key;
+  if (k.length === 1 && /[a-z]/i.test(k)) k = (e.shiftKey ? 'shift+' : '') + k.toUpperCase();
+  else if (k === 'Enter' && e.shiftKey) k = 'shift+Enter';
+  else if (k.startsWith('Arrow') && e.shiftKey) k = 'shift+' + k;
+  if (S.qHeld && /^[1-9]$/.test(k)) { pickClass(parseInt(k, 10) - 1); e.preventDefault(); return; }
+  if (key(k)) e.preventDefault();
+});
+document.addEventListener('keyup', (e) => { if (e.key === 'q' || e.key === 'Q') S.qHeld = false; if (e.key === ' ') spaceHeld = false; });
+
+/* ---- dialogs (inset below the top bar: badge, label and mode stay visible) */
+function openDialog(name) {
+  const tpl = $('tpl-' + name); if (!tpl) return;
+  closeDialog(true);
+  const node = tpl.content.firstElementChild.cloneNode(true);
+  const layer = $('modalLayer'); layer.innerHTML = ''; layer.appendChild(node); layer.hidden = false; $('backdrop').hidden = false; S.dialog = name;
+  if (name === 'signout') {
+    node.querySelector('#soWarn').hidden = SLIDES[2].opened;
+    node.querySelector('#soAi').textContent = $('aiEvidence').textContent;
+    node.querySelector('#soMode').textContent = isDx() ? 'DX · Rendering Complete · Barco MDPC-8127 (EDID) · QA 3 days ago' + (S.adjust ? ' · adjustments logged' : '') : 'NAV · ' + (dxGate().reason || 'Nav mode by choice');
+  }
+  if (name === 'send') { const v = $('prelimText').value.trim(); if (v) node.querySelector('#sdNote').textContent = v; node.querySelector('#sdViewed').textContent = SLIDES.filter((s) => s.opened).length + ' of 3'; node.querySelector('#sdTat').textContent = $('tatBig').textContent; }
+  if (name === 'about') {
+    node.querySelector('#aboutString').textContent = STRINGS[S.product];
+    node.querySelector('#aboutProduct').textContent = { 'clinical-ih': 'Stoipath Clinical-IH · UT Example Lab', dx: 'Stoipath Dx · cleared edition · UDI (01)00850000000000 (synthetic)', ruo: 'Stoipath Viewer · research use only' }[S.product];
+  }
+  if (name === 'steps') node.querySelector('#flowDialogList').innerHTML = flowHTML();
+  if (name === 'palette') wirePalette(node);
+  node.querySelectorAll('.toggle[role="switch"]').forEach((t) => t.addEventListener('click', () => t.setAttribute('aria-checked', t.getAttribute('aria-checked') === 'true' ? 'false' : 'true')));
+  const f = node.querySelector('input') || node.querySelector('.dialog__footer .btn--accent') || node.querySelector('.dialog__footer .btn--secondary') || node.querySelector('button');
+  if (f) f.focus({ preventScroll: true });
+  writeHash();
+}
+function closeDialog(silent) {
+  const layer = $('modalLayer'); if (layer.hidden && !S.dialog) return;
+  layer.hidden = true; layer.innerHTML = ''; $('backdrop').hidden = true; S.dialog = null;
+  if (!silent) { writeHash(); if (!matchMedia('(pointer: coarse)').matches) canvas.focus({ preventScroll: true }); }
+}
+
+/* ---- command palette (the same registry as keys, voice and the harness) - */
+const COMMANDS = [
+  ['nextStep', 'Next step', 'Flow', ['N']], ['prevStep', 'Previous step', 'Flow', ['⇧N']], ['guided', 'Guided flow on / off', 'Flow', ['⇧G']], ['dock', 'Show / hide the step panel', 'Flow', ['K']], ['step1', 'Identity and case (step 1)', 'Flow', ['I']],
+  ['signout', 'Request sign-out · hand status and evidence back', 'Flow', ['⇧↵']], ['dx', 'Enter / leave Dx mode', 'Flow', ['⇧D']], ['keymap', 'Keyboard shortcuts', 'Flow', ['?']], ['about', 'About this build · label · UDI · hashes', 'Flow', []],
+  ['fit', 'Fit whole slide', 'Navigate', ['0']], ['zoomin', 'Zoom in 2×', 'Navigate', ['+']], ['zoomout', 'Zoom out 2×', 'Navigate', ['−']], ['togglemag', 'Toggle the last two magnifications', 'Navigate', ['Z']], ['rotate', 'Rotate 90°', 'Navigate', ['R']],
+  ['nextSlide', 'Next slide', 'Navigate', [']']], ['prevSlide', 'Previous slide', 'Navigate', ['[']], ['nextUnviewed', 'Open the next unviewed slide', 'Navigate', []], ['nav', 'Navigator on / off', 'Navigate', ['O']], ['label', 'Label image (Nav mode only)', 'Navigate', ['L']],
+  ['bookmark', 'Bookmark this view', 'Navigate', ['B']], ['snapshot', 'Snapshot with scale bar and footer', 'Navigate', ['⇧S']], ['compare', 'Compare H&E and IHC side by side', 'Navigate', ['C']], ['curtain', 'Curtain compare', 'Navigate', ['/']],
+  ['overlay', 'AI overlay on / off', 'Navigate', ['⇧H']], ['hideAll', 'Hide all overlays', 'Navigate', ['H']], ['grid', 'HPF reticle', 'Navigate', ['G']], ['adjust', 'Brightness / contrast / γ', 'Navigate', ['J']], ['resetAdjust', 'Reset adjustments', 'Navigate', ['⇧J']], ['hoverpan', 'Hover auto-pan (drag alternative)', 'Navigate', ['⇧L']],
+  ['tool:select', 'Select / pan', 'Annotate', ['V']], ['tool:polygon', 'Polygon', 'Annotate', ['P']], ['tool:freehand', 'Freehand (pen)', 'Annotate', ['F']], ['tool:rect', 'Rectangle', 'Annotate', ['X']], ['tool:ellipse', 'Ellipse', 'Annotate', ['E']], ['tool:point', 'Point marker', 'Annotate', ['T']], ['tool:measure', 'Measure length', 'Annotate', ['M']],
+  ['acceptAi', 'Accept the AI result', 'Annotate', ['⇧A']], ['rejectAi', 'Reject the AI result', 'Annotate', ['⇧X']], ['consult', 'Request consult', 'Annotate', []]
+];
+function paletteItems(q) {
+  q = (q || '').trim().toLowerCase();
+  const items = COMMANDS.map((c) => ({ id: c[0], label: c[1], group: c[2], keys: c[3] }));
+  [1.25, 2.5, 5, 10, 20, 40].forEach((m, i) => items.push({ id: 'mag:' + m, label: 'Magnification ' + m + '× (derived from µm/px)', group: 'Navigate', keys: [String(i + 1)] }));
+  SLIDES.forEach((s, i) => items.push({ id: 'slide:' + i, label: 'Open slide ' + s.id + ' · ' + s.stain + (s.kind ? ' (' + s.kind + ')' : '') + (s.opened ? '' : ' · not viewed'), group: 'Slides', keys: [] }));
+  steps().forEach((s, i) => items.push({ id: 'step:' + (i + 1), label: 'Go to step ' + (i + 1) + ' · ' + s[0], group: 'Flow', keys: [] }));
+  $$('.bookmark').forEach((b) => items.push({ id: 'fly:' + b.dataset.fly, label: 'Bookmark · ' + b.querySelector('.t').textContent + ' · ' + b.querySelector('.s').textContent, group: 'Bookmarks', keys: [] }));
+  const f = q ? items.filter((i) => i.label.toLowerCase().includes(q) || i.group.toLowerCase().includes(q)) : items;
+  return f.slice(0, 14);
+}
+function runPaletteItem(id) {
+  if (id.startsWith('tool:')) setTool(id.slice(5));
+  else if (id.startsWith('mag:')) flyTo(S.cx, S.cy, 10 / parseFloat(id.slice(4)));
+  else if (id.startsWith('slide:')) setSlide(parseInt(id.slice(6), 10));
+  else if (id.startsWith('step:')) gotoStep(parseInt(id.slice(5), 10));
+  else if (id.startsWith('fly:')) { const p = id.slice(4).split(',').map(parseFloat); flyTo(p[0], p[1], p[2]); }
+  else runCmd(id);
+}
+function wirePalette(node) {
+  const inp = node.querySelector('#paletteInput'), list = node.querySelector('#paletteList'); let sel = 0, cur = [];
+  const render = () => {
+    cur = paletteItems(inp.value); sel = Math.min(sel, Math.max(0, cur.length - 1)); let lastGroup = null;
+    list.innerHTML = cur.map((it, i) => {
+      let h = ''; if (it.group !== lastGroup) { h += '<div class="palette__group">' + it.group + '</div>'; lastGroup = it.group; }
+      return h + '<button class="palette__item" role="option" id="pi-' + i + '" aria-selected="' + (i === sel) + '" data-pi="' + i + '"><span>' + hl(it.label, inp.value) + '</span><span class="keys">' + it.keys.map((k) => '<kbd class="key">' + k + '</kbd>').join('') + '</span></button>';
+    }).join('') || '<div class="palette__group">No command matches “' + esc(inp.value) + '”</div>';
+    inp.setAttribute('aria-activedescendant', 'pi-' + sel);
+  };
+  const run = (i) => { const it = cur[i]; if (!it) return; closeDialog(); runPaletteItem(it.id); };
+  inp.addEventListener('input', () => { sel = 0; render(); });
+  inp.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+    if (e.key === 'ArrowDown') { sel = Math.min(cur.length - 1, sel + 1); render(); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { sel = Math.max(0, sel - 1); render(); e.preventDefault(); }
+    else if (e.key === 'Enter') { run(sel); e.preventDefault(); }
+    else if (e.key === 'Escape') { closeDialog(); e.preventDefault(); }
+  });
+  list.addEventListener('click', (e) => { const b = e.target.closest('[data-pi]'); if (b) run(parseInt(b.dataset.pi, 10)); });
+  render();
+}
+
+/* ---- frozen-section turnaround timer (consult variant) ------------------ */
+let tatSec = 372;
+setInterval(() => {
+  if (S.variant !== 'consult') return;
+  tatSec++; const m = Math.floor(tatSec / 60), s = tatSec % 60;
+  $('tatBig').textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  const bar = document.querySelector('.tat .bar span'); if (bar) bar.style.width = Math.min(100, tatSec / 1200 * 100) + '%';
+}, 1000);
+
+/* ---- init ---------------------------------------------------------------- */
+(function init() {
+  const h = readHash();
+  if (!h.has('dock') && (innerWidth <= 599 || S.variant === 'embedded')) S.dock = false;
+  if (!h.has('nav') && innerWidth <= 599) S.nav = false;
+  renderProduct(); renderVariant(); renderCond(); renderChrome();
+  setSlide(S.slide, { keepView: true });
+  applyAll();
+  measure(); setView(S.cx, S.cy, S.scale, { silent: true });
+  S.settled = true; renderIndicator(); renderTrail();
+  $$('#svgA text').forEach((t) => t.setAttribute('font-size', 13 * S.scale));
+  if (h.get('dialog')) openDialog(h.get('dialog'));
+  if ('ResizeObserver' in window) new ResizeObserver(() => { measure(); paintView(); }).observe($('paneA'));
+  window.addEventListener('hashchange', () => { readHash(); applyAll(); });
+  announceView();
+})();
+</script>
+</body>
+</html>

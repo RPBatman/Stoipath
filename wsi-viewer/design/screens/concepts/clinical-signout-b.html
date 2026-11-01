@@ -36,6 +36,7 @@
 body.review-hidden { --review-top: 0px; --review-bottom: 0px; }
 body.surface-embedded { --host-bar: 30px; }
 body { overflow-x: hidden; background: var(--color-surface--1); }
+html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; }   /* review page only: the product app never scrolls */
 
 /* ---------- review chrome (plum: deliberately outside the product palette) ---------- */
 .review-head, .review-foot {
@@ -91,8 +92,9 @@ body.surface-embedded .hostbar { display: flex; }
 .app.wb .bottombar { grid-area: bottombar; }
 
 /* Embedded (EHR / Hyperdrive iframe): compact chrome, no docks, no rail */
-.app.wb.wb--embedded { --layout-topbar: 40px; --layout-strip: 24px; --wb-rail: 0px; --wb-abar: 0px; --wb-lcol: 0px !important; --wb-rcol: 0px !important; --wb-ribbon: 0px; --wb-slides: 0px; --wb-bb: 0px; }
-.app.wb.wb--embedded .rail, .app.wb.wb--embedded .abar, .app.wb.wb--embedded .ldock:not(.is-drawer), .app.wb.wb--embedded .rdock, .app.wb.wb--embedded .bottombar, .app.wb.wb--embedded .wb-ribbon, .app.wb.wb--embedded .wb-slides { display: none !important; }
+.app.wb.wb--embedded { --layout-topbar: 40px; --layout-strip: 24px; --wb-rail: 0px; --wb-abar: 0px; --wb-lcol: 0px !important; --wb-rcol: 0px !important; --wb-ribbon: 32px; --wb-slides: 0px; --wb-bb: 0px; }
+.app.wb.wb--embedded .rail, .app.wb.wb--embedded .abar, .app.wb.wb--embedded .ldock:not(.is-drawer), .app.wb.wb--embedded .rdock, .app.wb.wb--embedded .bottombar, .app.wb.wb--embedded .wb-slides, .app.wb.wb--embedded .wb-id, .app.wb.wb--embedded .wb-id-mini, .app.wb.wb--embedded .wb-search, .app.wb.wb--embedded #btnKeys, .app.wb.wb--embedded .topbar .chip--purpose, .app.wb.wb--embedded .topbar .wb-fs { display: none !important; }
+.app.wb.wb--embedded .wb-ribbon { display: flex !important; }   /* identity never hidden: it moves to the ribbon under the 40 px bar */
 .wb-emb { display: none; }
 .app.wb.wb--embedded .wb-emb { display: inline-flex; }
 .app.wb.wb--embedded .wb-notemb { display: none !important; }
@@ -105,7 +107,7 @@ body.surface-embedded .hostbar { display: flex; }
 .wb-id .accession { flex: 0 0 auto; font-family: var(--font-mono); font-weight: var(--weight-semibold); font-size: var(--text-lg); }
 .wb-id__patient { flex: 0 0 auto; font-weight: var(--weight-semibold); }
 .wb-id__meta, .wb-id__slide { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-secondary); font-size: var(--text-sm); }
-.wb-id__slide { font-family: var(--font-mono); color: var(--color-text); }
+.wb-id__slide { flex: 0 0 auto; font-family: var(--font-mono); color: var(--color-text); }
 .wb-id .chip { flex: 0 0 auto; }
 .wb-top-end { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3); margin-left: auto; }
 .app.wb .topbar__slot-mode { margin-left: 0; }
@@ -121,11 +123,12 @@ button.mode:hover { filter: brightness(1.15); }
 .mode .mode__sub { font-weight: 500; letter-spacing: 0; text-transform: none; font-family: var(--font-ui); opacity: .85; }
 .chip.wb-fs { font-family: var(--font-mono); font-weight: 600; }
 /* collapse by the bar's own width (container query): purpose chip and search text go first */
-@container topbar (max-width: 1899px) { .wb-search__text { display: none; } }
-@container topbar (max-width: 1749px) { .wb-id__meta { display: none; } }
-@container topbar (max-width: 1599px) { .wb-id .chip--worklist, .wb-btn-label { display: none; } .app.wb .topbar__label { font-size: var(--text-xs); } }
+@container topbar (max-width: 2199px) { .wb-search__text { display: none; } }
+@container topbar (max-width: 1999px) { .wb-id__meta { display: none; } }
+@container topbar (max-width: 1599px) { .wb-id .chip--worklist, .wb-btn-label, .wb-id__slide { display: none; } .app.wb .topbar__label { font-size: var(--text-xs); } }
 @container topbar (max-width: 1279px) { .wb-id { display: none; } .wb-id-mini { display: inline-flex !important; } }
 @container topbar (max-width: 1100px) { .app.wb .topbar .chip--purpose, .app.wb .topbar .wb-fs { display: none; } .app.wb .topbar { gap: var(--space-3); } }
+@container topbar (max-width: 599px) { .app.wb .topbar .wb-search, .app.wb .topbar .wb-notemb, .app.wb .topbar #btnKeys { display: none !important; } }
 .wb-id-mini { display: none; flex: 0 0 auto; font-family: var(--font-mono); font-weight: var(--weight-semibold); white-space: nowrap; }
 
 /* identity ribbon (< 1280 px): the full identity block moves here, never hidden */
@@ -135,6 +138,7 @@ button.mode:hover { filter: brightness(1.15); }
   white-space: nowrap; overflow: hidden; z-index: var(--z-bars); min-width: 0;
 }
 @media (max-width: 1279px) { .wb-ribbon { display: flex; } }
+@media (max-width: 599px) { .wb-ribbon .meta, .wb-ribbon .chip--purpose { display: none; } }
 .wb-ribbon .lblthumb { flex: 0 0 auto; width: 44px; height: 24px; border-radius: 2px; overflow: hidden; border: 1px solid var(--color-border-strong); background: var(--grey-91); }
 .wb-ribbon .lblthumb svg { width: 100%; height: 100%; display: block; }
 .wb-ribbon .accession { font-family: var(--font-mono); font-weight: 600; }
@@ -341,6 +345,7 @@ button.mode:hover { filter: brightness(1.15); }
 .lyt-row .pct { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
 .wb-hint { font-size: var(--text-xs); color: var(--color-text-secondary); padding: var(--space-2) var(--space-5); }
 .class-chip .swatch { width: 10px; height: 10px; }
+.layer-row__name .kind { white-space: nowrap; }
 .wb-row-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; padding: var(--space-3) var(--space-5) 0; }
 
 /* rationale (review document below the wireframe) */
@@ -356,6 +361,7 @@ button.mode:hover { filter: brightness(1.15); }
 .rationale code { font-family: var(--font-mono); font-size: .92em; }
 .rationale .dn { font-weight: 700; }
 .rationale .tw { overflow-x: auto; }
+.is-focus { box-shadow: var(--focus-shadow) !important; outline: none; }
 </style>
 </head>
 <body>
@@ -745,7 +751,7 @@ button.mode:hover { filter: brightness(1.15); }
   <!-- E. Status strip -->
   <footer class="strip" id="strip">
     <span class="indicator indicator--sharp" id="ind" data-live="events:tileSettled · renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label" id="indL">Sharp</span></span>
-    <span class="wb-chips" id="chips"></span>
+    <span class="wb-chips" id="chips"><span class="wb-chips" id="slideChips"></span><span class="wb-chips" id="tierChips"></span></span>
     <span class="strip__notice" id="notice"></span>
     <div class="strip__group strip__group--end">
       <button type="button" class="chip" id="layoutChip" aria-haspopup="menu" aria-controls="layoutMenu" data-live="shell:panelToggled (proposed)"><svg class="icon icon--sm"><use href="#i-panel-l"/></svg><span id="layoutTxt">Layout · Sign-out</span></button>
@@ -802,11 +808,799 @@ button.mode:hover { filter: brightness(1.15); }
 <section class="rationale" id="rationale" aria-label="Design rationale">
   <details id="ratDetails">
     <summary>Design rationale · Concept B “Workbench” · 2026-11-01</summary>
-    <div class="rat" id="ratBody"><p>(rationale is written below)</p></div>
+    <div class="rat" id="ratBody">
+      <p><b>What this concept does differently.</b> Concept A hides everything until summoned; Concept B keeps a <b>workbench</b> open: an <b>Explorer</b> on the left (case &amp; identity, slides, layers &amp; AI, bookmarks), an <b>Inspector</b> on the right (clinical context, measure &amp; annotate, compare &amp; sync, case analytics, consult, sign-out hand-off, keyboard map) with an <b>activity bar</b> that switches its panels, and a <b>Ctrl/Cmd-K palette</b> that reaches every command, slide, bookmark, class and layout preset from one keystroke. The bet is <i>learnability and completeness</i>: a resident who has used VS Code, QuPath or Sectra recognises the shape in seconds, and nothing is more than one visible click or two keystrokes away. The cost is the obvious one named in the brief, chrome eating the canvas on laptops, and the concept answers it with a mechanical rule rather than good intentions.</p>
+
+      <h3>The three ideas to judge</h3>
+      <ol>
+        <li><b>A canvas-floor governor (P1 made executable).</b> The shell knows the predicted canvas share for any dock configuration. When a request would take the canvas below <b>70 %</b> of the window, the governor degrades the <i>least important</i> chrome first: the Explorer narrows to a slide strip (identity thumbnail, accession and the three slide thumbnails never disappear), and if that is still not enough the Inspector <b>floats</b> over the canvas edge instead of docking. The dock header states what happened and why (<i>“Narrowed to the slide strip so the canvas stays ≥ 70 %… U restores it”</i>). The review header shows the measured share live; try the <i>Open → Inspector (governor)</i> demo at 1440 × 900 and at 1920 × 1080 and watch the readout. Resizing a dock by hand is never fought, but the dock says when you have gone below the floor.</li>
+        <li><b>One command registry.</b> Rail labels, the palette, the keyboard map, the activity bar, the strip chips and the demo strip all dispatch the same serialisable command ids (<code>runCmd</code>), the plan's command bus. The keyboard map is <i>generated</i> from the registry (filterable, names the preset and the reserved Dragon/F-key/Alt/Ctrl sets, greyed), so it cannot drift from the bindings. The palette lists slides with their viewed state, bookmarks, annotations and layout presets, which keeps the rail to twelve tools.</li>
+        <li><b>Panels are the dialogs.</b> Sign-out hand-off, Request consult, the Dx gate and the keyboard map are Inspector sections (or dock-anchored popovers), never modal boxes in the canvas centre. They can stay open while the pathologist keeps screening: the hand-off section updates its “2 slides not opened” warning as slides are viewed; the consult section shows exactly what the link carries (Tier 0, 24 h, audit) before it is sent.</li>
+      </ol>
+
+      <h3>Layout by surface (P1 share at rest, measured on the app window)</h3>
+      <div class="tw"><table>
+        <tr><th>Surface</th><th>Default</th><th>Canvas share</th><th>What the governor does</th></tr>
+        <tr><td>4K sign-out 3840 × 2160</td><td>Explorer 360 docked · Inspector 400 docked · rail 48 · activity bar 44</td><td>≈ 75 %</td><td>Nothing; both docks fit. Chrome text 14 px, every panel open, label image at full size.</td></tr>
+        <tr><td>Desktop 1920 × 1080</td><td>Explorer 280 docked · Inspector closed (activity bar visible)</td><td>≈ 75 %</td><td>Docking the Inspector narrows the Explorer to the strip (71 %); both full docks would give 61 %, refused.</td></tr>
+        <tr><td>Laptop 1440 × 900</td><td>Explorer 248 docked · Inspector floats on demand</td><td>≈ 70 %</td><td>The Inspector never docks here; it floats over the right canvas edge and closes with Esc / Shift+U. Compare preset uses the strip.</td></tr>
+        <tr><td>Tablet portrait 1024 × 1366 · landscape 1366 × 1024</td><td>Identity ribbon + horizontal slide row (portrait) · docks become bottom sheets ≤ 40 %</td><td>≈ 82–88 %</td><td>Rail → bottom bar (44 px targets); Case and Inspect buttons open the sheets; purpose is <i>Consultation · preliminary only</i>; Tier 2 chip.</td></tr>
+        <tr><td>Phone 390 × 844</td><td>Ribbon with accession and patient, canvas, bottom bar</td><td>≈ 84 %</td><td>Not a sign-out surface; included so the shell degrades rather than breaks (consult view-only; point + measure tools).</td></tr>
+        <tr><td>EHR iframe (Hyperdrive)</td><td>40 px bar: badge, label string, identity, <i>Open on diagnostic display</i>; 24 px strip with slide chips</td><td>≥ 85 %</td><td>No docks, no rail, no keys bound, Dx refused with the iframe string; everything else is the hand-off.</td></tr>
+      </table></div>
+
+      <h3>Identity, product and mode (P4, P5)</h3>
+      <ul>
+        <li>The <b>Case &amp; identity</b> section is pinned: it can be compacted (strip, ribbon) but never hidden; the section menu says so. In Dx mode the label image is not collapsible (<code>L</code> says why). Identity is also in the top bar (≥ 1280 px), in the ribbon (&lt; 1280 px), as the HUD identity line and in the navigator label.</li>
+        <li>Badge, full label string (with the lab name as a build-time constant; Design note D2) and the <code>NAV</code>/<code>DX</code> indicator sit outside every dismissible layer; the popovers are anchored to the dock columns and inset from the three top-bar slots. The RUO build removes every <code>data-clinical</code> element (patient block, purpose chip, mode slot, QA and mic chips, sign-out and consult) rather than greying them.</li>
+        <li>The Dx gate is a checklist, not a yes/no: build, window, device tier, display attestation, display QA, deployment self-check, each with its state and the first failure's exact refusal string from principles §5.4. The strip and the live region repeat the same string.</li>
+      </ul>
+
+      <h3>Degraded states (P3, P9)</h3>
+      <p>Cold 4G → <i>Soft — slow link</i> half-dot, chip and a soft canvas; offline with pack → pack chip, <i>Sharp</i>; offline without pack → <i>Offline — cached tiles only</i>; slow translator → chip + <i>Sharpening…</i>; tile errors → three blurred ancestor tiles outlined, <i>3 tiles could not be loaded — retrying</i> (in Dx this becomes <i>Not complete — do not interpret</i>); manifest 503, session expired, identity mismatch (blocking plate in clinical builds, banner in RUO), wrong-product launch and GPU context loss each use the principles §5.6 microcopy. The canvas is never blank: plates sit over a dimmed thumbnail and the identity header stays.</p>
+
+      <h3>Accessibility</h3>
+      <ul>
+        <li>Every accordion header is a real <code>button[aria-expanded]</code>; the tray, annotation list, strip and palette use the listbox/combobox patterns; dock resizers are <code>role="separator"</code> with arrow-key, Home/End and double-click-to-reset; the activity bar is a toolbar with pressed state.</li>
+        <li>SC 2.5.7: navigator pan buttons, click-to-recentre, two-click measure, click-to-place vertices, <code>Space</code> fly-to from any list. SC 2.5.8: 24 px minimum, 44 px under coarse pointers (bottom bar, sheets). All chrome text ≥ 4.5:1 on the neutral greys from the design system; no state by colour alone (filled/ring/half/check/square-with-! plus text).</li>
+        <li>Two live regions: polite for magnification, position, slide and tool changes (debounced 500 ms, spoken at settle); assertive for Dx dropped, identity mismatch and session expiry, using the same strings as the strip.</li>
+      </ul>
+
+      <h3>Trade-offs the judges should weigh</h3>
+      <ul>
+        <li><b>More chrome at rest than A or C.</b> On a 1080p desktop one dock is always open; the governor keeps the floor but the canvas is 75 %, not 85 %. The brief's risk is real and the mitigation is the mechanism above, not a smaller UI.</li>
+        <li><b>Two docks means two places to look.</b> The split is by <i>what</i> (Explorer: what is in the case) versus <i>how</i> (Inspector: what you are doing to it). Sections can be moved between docks from their menus, so a lab or a user can collapse the model to one dock; the layout chip remembers presets per surface.</li>
+        <li><b>Floating Inspector overlays the canvas edge</b> on laptops. It stays out of the central 50 % by construction (width ≤ 288 px of 1440) and closes with Esc, but it does cover tissue at the edge while open. The alternative, a bottom sheet, costs vertical space the laptop has less of.</li>
+        <li><b>Palette discoverability</b> relies on the search box in the top bar and the rail button; first-time users who never press Ctrl-K still have the activity bar and the rail, so nothing is palette-only.</li>
+      </ul>
+
+      <h3>Engine-contract map (every <code>data-live</code> element)</h3>
+      <div class="tw"><table>
+        <tr><th>Contract (plan 12 §1.1)</th><th>Elements in this concept</th></tr>
+        <tr><td><b>Launch context</b> <code>{accession, caseId, part, block, slideIds[], user, role, purposeOfUse, mode}</code> + product (plan 04 / FR-I1)</td><td>Product badge and label string; identity block (top bar, ribbon, Case &amp; identity card, HUD identity line); label image (Tier 2 by role); purpose chip; worklist chip's initial value; hanging-protocol order of the tray; iframe vs companion surface; Dx gate's build row; About (version, hashes, telemetry switch).</td></tr>
+        <tr><td><b>State document</b> <code>slides[], views[]: {center_um, scale_um_per_px, rotation_deg, overlays[], sync}</code>, <code>flyTo</code></td><td>Both canvases; magnification readout and µm/px line; scale bar (snapped 1/2/5 × 10ⁿ); position readout; rotation chip; navigator viewport rectangle; tray selection; compare/sync segmented control and sync chip; bookmarks (entries and fly-to); <i>Fly there</i> buttons; typed-zoom field; layout presets do <i>not</i> touch it (shell state only).</td></tr>
+        <tr><td><b>Layer API</b> with provenance tuple and ACL</td><td>Layer rows (visibility, opacity, outline/heatmap, legend, provenance, <i>Not validated for diagnostic use on this viewer</i> marker, <i>off in Dx</i> tag); AI overlay outlines on the canvas; label-image layer (Tier 2 ACL); accept/reject buttons.</td></tr>
+        <tr><td><b>Annotation API</b> (op-based, stable ids, GeoJSON/ANN/SR adapters)</td><td>Tool rail and class chips; annotation list (measurement 2.3 mm, Tumor polygon); strokes/halos on the canvas; sign-out summary's measurement line; consult link contents.</td></tr>
+        <tr><td><b>Geometry services</b></td><td>Viewed-area coverage bars and tray coverage; “AI-flagged regions viewed at ≥ 10×” (point-in-polygon × viewChanged); µm distances.</td></tr>
+        <tr><td><b>Event bus</b></td><td><code>tileSettled</code> → sharpness indicator; <code>renderingcomplete</code> → Rendering Complete; <code>caseStatusChanged</code> / <code>signoutRequested</code> → worklist chips and hand-off section; <code>displayQaStatus</code> / <code>dxattestation</code> → QA chip, Dx gate, dropped banner; <code>identityMismatch</code> → plate/banner and identity check line; <code>adjustChanged</code> → B/C/γ indicator and Dx banner; <code>shareCreated</code> → consult status; <code>aiResultAccepted/Rejected</code> → notices; <code>error</code> → tile, manifest and context-loss states.</td></tr>
+        <tr><td><b>Command bus</b></td><td>Every tool, rail, activity-bar, palette, menu and key dispatches a command id; mic-arbitration chip; the Hyperdrive controller binds nothing. Proposed shell events (Design note D4): <code>commandInvoked</code>, <code>panelToggled</code>, <code>dxRefused</code>, <code>hudStateChanged</code>.</td></tr>
+        <tr><td><b>Telemetry / quality record</b></td><td>Viewport trail in the navigator and the coverage/dwell analytics (PHI-free, disclosed in About); NTF/deficit drive the indicator states.</td></tr>
+        <tr><td><b>Offline pack</b></td><td>Pack chip; indicator stays Sharp from the pack; consult pack naming.</td></tr>
+        <tr><td><b>Dx mode / Rendering Complete</b></td><td>Mode slot, gate popover, strip indicator with its three strings, overlays-off default, label image not collapsible, adjustment banner, drop-to-Nav with assertive announcement.</td></tr>
+      </table></div>
+
+      <h3>Design notes (conflicts flagged, not decided here)</h3>
+      <ul>
+        <li><span class="dn">DN-B1</span> The plan fixes the dock as one region (D, right side). This concept uses two docks; if the final screen keeps two, principles §3.1's region table needs a seventh region or a note that D may be split. Pillars still “add panels, never canvas behaviour”.</li>
+        <li><span class="dn">DN-B2</span> The 70 % floor is applied to the <i>app window</i>, with floating docks not subtracted (they overlay the edge). Whether a floating dock counts against P1 should be settled in the critique; the readout in the header makes either reading measurable.</li>
+        <li><span class="dn">DN-B3</span> <code>U</code> / <code>Shift+U</code> / <code>Shift+P</code> are new bindings for the docks and layout presets; they avoid Ctrl/Alt/F-keys and do not collide with map A/B, but they are not in principles §4.5 and must be filed with the registry (D15).</li>
+        <li><span class="dn">DN-B4</span> The offline-pack string for a clinical consult pack (<i>Offline pack · AP-26-04417 consult pack · saved …</i>) follows the Learn pattern in §5.5; the clinical wording is not in the plan and needs the microcopy owner's sign-off.</li>
+        <li><span class="dn">DN-B5</span> The frozen-section variant reuses the purpose chip <i>Consultation · preliminary only</i> plus a TAT chip (<i>Frozen · OR 7 · mm:ss</i>) and a worklist state <i>Frozen · in progress</i>; the plan's fixed purpose strings do not include “frozen”, so this is a proposal.</li>
+      </ul>
+      <p class="wb-small">All patient, case, display-serial and vendor content is synthetic. Review chrome (plum header, demo strip, this section) is not product. Concept B · Workbench · 2026-11-01.</p>
+    </div>
   </details>
 </section>
 
 <div class="live-region" id="livePolite" aria-live="polite" aria-atomic="true"></div>
 <div class="live-region" id="liveAssert" aria-live="assertive" aria-atomic="true"></div>
+<script>
+/* ===================== Concept B · Workbench · script (2026-11-01) =====================
+   Review-only simulation. Everything marked data-live would be driven by the engine
+   contracts (state document, layer API, annotation API, event bus, command bus,
+   launch context). Nothing here runs inside a frame loop: the shell only sets
+   textContent / transform / classes between gestures (P2).                            */
+(function () {
+'use strict';
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const app = $('#app'), body = document.body;
+
+/* ---------- 1. Synthetic data (launch context, state document, layers, annotations) ---------- */
+const CASE = { accession: 'AP-26-04417', patient: 'DOE, JANE', meta: 'F · 1958-03-14 · MRN 00-000-0000', lab: 'Example University AP Laboratory' };
+const SLIDES = [
+  { id: 'A1-1', stain: 'H&E', kind: 'HE',  text: 'Sentinel node #1, level I',  sym: 'tissue-he',  lbl: 'lbl-A1-1', viewed: 'partial', cov: 38, umpp: 0.25 },
+  { id: 'A1-2', stain: 'IHC', kind: 'IHC', text: 'CK AE1/AE3 (IHC)',           sym: 'tissue-ihc', lbl: 'lbl-A1-2', viewed: 'unviewed', cov: 0, umpp: 0.25 },
+  { id: 'A2-1', stain: 'H&E', kind: 'HE',  text: 'Sentinel node #1, level II', sym: 'tissue-he2', lbl: 'lbl-A2-1', viewed: 'unviewed', cov: 0, umpp: 0.25 },
+];
+const LAYERS = [
+  { id: 'ai', name: 'Metastasis detector', kind: 'AI', vis: true, opacity: 55, prov: ['raster', 'unet-lnmet', 'v1.3', 'in:7f3a…c9e1', '2026-10-31', 'Example AI Vendor'], status: 'research', mode: 'outline', legend: [['Metastasis', 'var(--ann-2)', 3, 'solid'], ['Suspicious', 'var(--ann-6)', 7, 'dashed']] },
+  { id: 'ann', name: 'My annotations', kind: 'vector', vis: true, opacity: 100, prov: ['you', 'this session', '2 objects'], status: 'user' },
+  { id: 'nuc', name: 'Nuclei segmentation', kind: 'labels', vis: false, opacity: 40, prov: ['hovernet', 'v0.9', 'in:a21b…77d0', '2026-10-31', 'Example AI Vendor'], status: 'research' },
+  { id: 'lbl', name: 'Label image (Tier 2)', kind: 'raster', vis: true, opacity: 100, prov: ['scanner', 'assoc/label', 'role: pathologist'], status: 'tier2' },
+];
+const ANN = [
+  { id: 'm1', type: 'measure', label: 'Measurement · 2.3 mm', sub: 'metastatic focus, greatest dimension', meta: '2.3 mm', sw: 'var(--ann-8)', at: [11150, 2000] },
+  { id: 'p1', type: 'polygon', label: 'Tumor · polygon', sub: 'macrometastasis, subcapsular → parenchymal', meta: '4.1 mm²', sw: 'var(--ann-2)', at: [11300, 2300] },
+];
+const BOOKMARKS = [
+  { id: 'b1', t: 'Macrometastasis, A1-1', m: '20× · 11.2 mm, 1.9 mm · 06:02', sym: 'tissue-he', at: [11150, 1850, 0.5] },
+  { id: 'b2', t: 'Capsule, hilum (clear)', m: '10× · 2.9 mm, 5.1 mm · 06:07', sym: 'tissue-he', at: [2900, 5100, 1] },
+];
+/* AI-flagged regions (geometry service: pointInPolygon × viewChanged decides "viewed at ≥ 10×") */
+const AIREG = [
+  { id: 'r1', cls: 'met', x: 11300, y: 2300, rx: 1250, ry: 700, viewed: true },
+  { id: 'r2', cls: 'sus', x: 4200,  y: 6900, rx: 260,  ry: 200, viewed: false },
+  { id: 'r3', cls: 'sus', x: 15800, y: 5600, rx: 300,  ry: 240, viewed: false },
+];
+/* Command registry: one source for keys, palette, keyboard map, rail labels, voice and the test harness. */
+const CMD = [
+  // Navigate
+  { id: 'pan',       g: 'Navigate', l: 'Pan 10 % of viewport (held = continuous)', k: ['←↑↓→', 'WASD'], hidden: true },
+  { id: 'panpage',   g: 'Navigate', l: 'Pan one full viewport (systematic coverage)', k: ['⇧', '←↑↓→'], hidden: true },
+  { id: 'zoomin',    g: 'Navigate', l: 'Zoom in 2×', k: ['+'], ico: 'i-fit' },
+  { id: 'zoomout',   g: 'Navigate', l: 'Zoom out 2×', k: ['−'], ico: 'i-fit' },
+  { id: 'zoomfine',  g: 'Navigate', l: 'Zoom fine 1.2× in / out', k: ['⇧+', '⇧−'], hidden: true },
+  { id: 'fit',       g: 'Navigate', l: 'Fit whole slide', k: ['0', 'Home'], ico: 'i-fit' },
+  { id: 'mag1', g: 'Navigate', l: 'Jump to 1.25× (8 µm/px, derived)', k: ['1'], meta: 'derived from µm/px' },
+  { id: 'mag2', g: 'Navigate', l: 'Jump to 2.5× (4 µm/px, derived)', k: ['2'] },
+  { id: 'mag3', g: 'Navigate', l: 'Jump to 5× (2 µm/px, derived)', k: ['3'] },
+  { id: 'mag4', g: 'Navigate', l: 'Jump to 10× (1 µm/px, derived)', k: ['4'] },
+  { id: 'mag5', g: 'Navigate', l: 'Jump to 20× (0.50 µm/px, derived)', k: ['5'] },
+  { id: 'mag6', g: 'Navigate', l: 'Jump to 40× (0.25 µm/px, derived)', k: ['6'] },
+  { id: 'magtoggle', g: 'Navigate', l: 'Toggle between the last two magnifications', k: ['Z'] },
+  { id: 'rotate',    g: 'Navigate', l: 'Rotate 90° clockwise', k: ['R'], ico: 'i-rotate' },
+  { id: 'rotateccw', g: 'Navigate', l: 'Rotate 90° anticlockwise', k: ['⇧R'], ico: 'i-rotate' },
+  { id: 'nav',       g: 'Navigate', l: 'Toggle navigator', k: ['O'], ico: 'i-grid' },
+  { id: 'grid',      g: 'Navigate', l: 'HPF reticle (0.237 mm² on this display)', k: ['G'], ico: 'i-grid' },
+  { id: 'autopan',   g: 'Navigate', l: 'Hover auto-pan on / off (drag alternative)', k: ['⇧L'] },
+  { id: 'typezoom',  g: 'Navigate', l: 'Type a zoom (× or µm/px) with the magnification readout focused', k: ['Enter'], hidden: true },
+  // Slides & case
+  { id: 'next',      g: 'Slides & case', l: 'Next slide in the case', k: [']'], ico: 'i-next' },
+  { id: 'prev',      g: 'Slides & case', l: 'Previous slide in the case', k: ['['], ico: 'i-prev' },
+  { id: 'nextpart',  g: 'Slides & case', l: 'Next / previous part or block', k: ['}', '{'], hidden: true },
+  { id: 'identity',  g: 'Slides & case', l: 'Case and identity panel', k: ['I'], ico: 'i-identity' },
+  { id: 'label',     g: 'Slides & case', l: 'Toggle label image (Tier 2; never in Dx)', k: ['L'], ico: 'i-identity' },
+  { id: 'bookmark',  g: 'Slides & case', l: 'Bookmark this view', k: ['B'], ico: 'i-bookmark' },
+  { id: 'bookmarks', g: 'Slides & case', l: 'Bookmark gallery', k: ['⇧B'], ico: 'i-bookmark' },
+  { id: 'snapshot',  g: 'Slides & case', l: 'Snapshot (PNG with scale bar and product footer)', k: ['⇧S'], ico: 'i-camera' },
+  { id: 'compare',   g: 'Slides & case', l: 'Side by side H&E ↔ IHC (synchronized)', k: ['C'], ico: 'i-compare' },
+  { id: 'curtain',   g: 'Slides & case', l: 'Curtain compare on / off', k: ['/'], ico: 'i-curtain' },
+  { id: 'overlays',  g: 'Slides & case', l: 'Hide / show all overlays', k: ['H'], ico: 'i-layers' },
+  { id: 'ai',        g: 'Slides & case', l: 'AI overlay on / off', k: ['⇧H'], ico: 'i-layers' },
+  { id: 'opacity',   g: 'Slides & case', l: 'Overlay opacity down / up', k: [',', '.'], hidden: true },
+  { id: 'adjust',    g: 'Slides & case', l: 'Brightness / contrast / gamma panel', k: ['J'] },
+  { id: 'adjreset',  g: 'Slides & case', l: 'Reset adjustments (logged in Dx)', k: ['⇧J'] },
+  // Annotate
+  { id: 'select',  g: 'Annotate', l: 'Select / pan tool', k: ['V'], ico: 'i-select', tool: 'select' },
+  { id: 'measure', g: 'Annotate', l: 'Measure length (two clicks, µm)', k: ['M'], ico: 'i-measure', tool: 'measure' },
+  { id: 'area',    g: 'Annotate', l: 'Measure area (click vertices, mm²)', k: ['⇧M'], ico: 'i-area', tool: 'area' },
+  { id: 'polygon', g: 'Annotate', l: 'Polygon (click to place; Enter closes)', k: ['P'], ico: 'i-polygon', tool: 'polygon' },
+  { id: 'point',   g: 'Annotate', l: 'Point marker', k: ['T'], ico: 'i-point', tool: 'point' },
+  { id: 'freehand',g: 'Annotate', l: 'Freehand (pen pressure)', k: ['F'], ico: 'i-freehand', tool: 'freehand' },
+  { id: 'count',   g: 'Annotate', l: 'Count tool (increments on click)', k: ['⇧T'], ico: 'i-point' },
+  { id: 'class',   g: 'Annotate', l: 'Class picker (then 1–9)', k: ['Q'] },
+  { id: 'flyann',  g: 'Annotate', l: 'Fly to the focused annotation', k: ['Space'], hidden: true },
+  { id: 'undo',    g: 'Annotate', l: 'Undo / redo', k: ['Ctrl Z', 'Ctrl Y'], hidden: true },
+  { id: 'delete',  g: 'Annotate', l: 'Delete selected annotation', k: ['Del'], hidden: true },
+  // Panels & layout
+  { id: 'palette', g: 'Panels & layout', l: 'Command palette', k: ['Ctrl K'], ico: 'i-search' },
+  { id: 'keys',    g: 'Panels & layout', l: 'Keyboard map (names the preset and reserved keys)', k: ['?'], ico: 'i-keyboard' },
+  { id: 'left',    g: 'Panels & layout', l: 'Explorer: full ↔ slide strip', k: ['U'], ico: 'i-panel-l' },
+  { id: 'right',   g: 'Panels & layout', l: 'Inspector: open / close', k: ['⇧U'], ico: 'i-panel-r' },
+  { id: 'layout',  g: 'Panels & layout', l: 'Layout presets (Sign-out, Compare, AI review, Consult, Minimal)', k: ['⇧P'], ico: 'i-panel-l' },
+  { id: 'sec:context',   g: 'Panels & layout', l: 'Inspector · Clinical context', ico: 'i-info' },
+  { id: 'sec:annotate',  g: 'Panels & layout', l: 'Inspector · Measure & annotate', ico: 'i-measure' },
+  { id: 'sec:compare',   g: 'Panels & layout', l: 'Inspector · Compare & sync', ico: 'i-compare' },
+  { id: 'sec:analytics', g: 'Panels & layout', l: 'Inspector · Case analytics (coverage, dwell)', ico: 'i-chart' },
+  { id: 'esc',     g: 'Panels & layout', l: 'Cancel tool / close top-most layer', k: ['Esc'], hidden: true },
+  // Clinical
+  { id: 'dx',      g: 'Clinical', l: 'Enter / leave Dx mode (confirms attestation)', k: ['⇧D'], ico: 'i-display', clinical: true },
+  { id: 'signout', g: 'Clinical', l: 'Request sign-out (hand-off to the LIS)', k: ['⇧↵'], ico: 'i-signout', clinical: true },
+  { id: 'consult', g: 'Clinical', l: 'Request consult (de-identified link)', ico: 'i-share', clinical: true },
+  { id: 'aiaccept',g: 'Clinical', l: 'Accept AI result under focus', k: ['⇧A'], ico: 'i-check', clinical: true },
+  { id: 'aireject',g: 'Clinical', l: 'Reject AI result under focus', k: ['⇧X'], ico: 'i-close', clinical: true },
+  { id: 'about',   g: 'Clinical', l: 'About: label, UDI, version, hashes, telemetry', ico: 'i-info' },
+  // Reserved (shown greyed in the map; never bound)
+  { id: 'rsv1', g: 'Reserved', l: 'Numeric keypad · Dragon Medical One push-to-talk', k: ['Num 0–9'], reserved: true },
+  { id: 'rsv2', g: 'Reserved', l: 'F1–F12 · browser and Hyperdrive', k: ['F1…F12'], reserved: true },
+  { id: 'rsv3', g: 'Reserved', l: 'Alt + letter · Hyperdrive activity menus', k: ['Alt …'], reserved: true },
+  { id: 'rsv4', g: 'Reserved', l: 'Ctrl + T W N L D F P S R · browser', k: ['Ctrl …'], reserved: true },
+];
+const KEYMAPSTR = { '←↑↓→': 'ArrowKeys' };
+
+/* ---------- 2. Inline SVG: label images and tissue symbols (generated once; no network) ---------- */
+function labelSym(id, slide, stain, extra) {
+  const bars = []; let x = 150;
+  for (let i = 0; i < 34; i++) { const w = (i * 7 % 3) + 1; bars.push(`<rect x="${x}" y="58" width="${w}" height="30" fill="#111"/>`); x += w + 1 + (i % 4 === 0 ? 1 : 0); }
+  return `<symbol id="${id}" viewBox="0 0 260 100"><rect width="260" height="100" fill="#ececec"/><rect x="2" y="2" width="256" height="96" fill="none" stroke="#9a9a9a"/>
+  <text x="12" y="30" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="19" font-weight="700" fill="#111">${CASE.accession}</text>
+  <text x="12" y="52" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="16" font-weight="700" fill="#111">${slide}  ${stain}</text>
+  <text x="12" y="72" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" fill="#333">${extra}</text>
+  <text x="12" y="90" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9" fill="#555">SYNTHETIC · EXAMPLE UNIV AP LAB</text>${bars.join('')}
+  <text x="150" y="96" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="7" fill="#333">${CASE.accession.replace(/-/g, '')}${slide.replace('-', '')}</text></symbol>`;
+}
+function tissueSym(id, kind) {
+  const base = kind === 'IHC' ? '#efe9e2' : '#ecd2de', cortex = kind === 'IHC' ? '#e3dad0' : '#d9b6cc', fol = kind === 'IHC' ? '#d8cdc0' : '#c49ab9', cap = kind === 'IHC' ? '#b9ad9f' : '#b78aa8';
+  const met = kind === 'IHC' ? '#8b5a2b' : '#d9a0bd';
+  const folli = [[40, 38, 9], [60, 70, 8], [90, 25, 7], [120, 74, 9], [150, 40, 8], [168, 62, 6], [75, 50, 6], [105, 52, 7]].map(f => `<circle cx="${f[0]}" cy="${f[1]}" r="${f[2]}" fill="${fol}" opacity=".8"/>`).join('');
+  const metast = kind === 'HE2' ? '' : `<ellipse cx="113" cy="23" rx="12.5" ry="7" fill="${met}" opacity="${kind === 'IHC' ? .95 : .9}"/><ellipse cx="42" cy="69" rx="2.6" ry="2" fill="${met}" opacity=".7"/><ellipse cx="158" cy="56" rx="3" ry="2.4" fill="${met}" opacity=".7"/>`;
+  return `<symbol id="${id}" viewBox="0 0 200 100"><rect width="200" height="100" fill="#3a3a3a"/><ellipse cx="100" cy="50" rx="85" ry="42" fill="${base}" stroke="${cap}" stroke-width="2"/><ellipse cx="100" cy="50" rx="70" ry="30" fill="${cortex}" opacity=".7"/>${folli}<path d="M22 50 q30 6 60 0" stroke="${cap}" stroke-width="1.2" fill="none" opacity=".6"/>${metast}</symbol>`;
+}
+(function injectDefs() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true'); svg.style.position = 'absolute';
+  svg.innerHTML = '<defs>' + labelSym('lbl-A1-1', 'A1-1', 'H&amp;E', 'DOE, JANE  ·  LN SENTINEL #1 L AXILLA') + labelSym('lbl-A1-2', 'A1-2', 'CK AE1/AE3', 'DOE, JANE  ·  IHC  ·  BLOCK A1') + labelSym('lbl-A2-1', 'A2-1', 'H&amp;E', 'DOE, JANE  ·  LEVEL II  ·  BLOCK A2') +
+    tissueSym('tissue-he', 'HE') + tissueSym('tissue-ihc', 'IHC') + tissueSym('tissue-he2', 'HE2') + '</defs>';
+  document.body.insertBefore(svg, document.body.firstChild);
+})();
+
+/* ---------- 3. The two slide canvases (placeholder "tiles": SVG patterns in µm space) ---------- */
+/* Slide space: 20 000 × 10 000 µm. The engine would render tiles; here a pattern-filled
+   rect stands in. Transform = translate(W/2 − cx/umpp, H/2 − cy/umpp) scale(1/umpp). */
+function canvasSvg(kind, idx) {
+  const he = kind !== 'IHC';
+  const nuc = he ? '#4a3d7a' : '#8a94a6', cyto = he ? '#f0d5e2' : '#f2ede6', stroma = he ? '#edd3df' : '#f3eee8';
+  const tnuc = he ? '#3d2f6b' : '#6d4a24', tcyto = he ? '#e9b9d0' : '#a86b36';
+  return `<svg class="canvas" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="lymph${idx}" patternUnits="userSpaceOnUse" width="14" height="14"><rect width="14" height="14" fill="${stroma}"/><circle cx="7" cy="7" r="3.2" fill="${nuc}"/><circle cx="0" cy="0" r="2.6" fill="${nuc}"/><circle cx="14" cy="14" r="2.6" fill="${nuc}"/></pattern>
+    <pattern id="tumor${idx}" patternUnits="userSpaceOnUse" width="30" height="30"><rect width="30" height="30" fill="${tcyto}"/><circle cx="15" cy="15" r="11" fill="${cyto}" stroke="${tcyto}" stroke-width="1"/><circle cx="16" cy="14" r="6.5" fill="${tnuc}"/><circle cx="14" cy="12" r="1.6" fill="${he ? '#1b1340' : '#2a1a0c'}"/><circle cx="1" cy="1" r="5" fill="${tnuc}"/><circle cx="29" cy="29" r="5" fill="${tnuc}"/></pattern>
+    <pattern id="sinus${idx}" patternUnits="userSpaceOnUse" width="22" height="22"><rect width="22" height="22" fill="${he ? '#f3e2ea' : '#f5f1ec'}"/><circle cx="11" cy="11" r="2.4" fill="${nuc}" opacity=".75"/></pattern>
+    <radialGradient id="capsule${idx}"><stop offset="92%" stop-color="transparent"/><stop offset="100%" stop-color="${he ? '#c48aae' : '#b6a898'}"/></radialGradient>
+  </defs>
+  <g class="cam">
+    <rect x="-4000" y="-3000" width="28000" height="16000" fill="#3a3a3a"/>
+    <ellipse cx="10000" cy="5000" rx="8500" ry="4200" fill="url(#lymph${idx})"/>
+    <ellipse cx="10000" cy="5000" rx="8500" ry="4200" fill="url(#capsule${idx})"/>
+    <ellipse cx="10000" cy="5000" rx="8500" ry="4200" fill="none" stroke="${he ? '#b47aa0' : '#a89a88'}" stroke-width="120"/>
+    <path d="M1700 5000 q 3000 500 6000 0 t 6000 0" fill="none" stroke="${he ? '#f3e2ea' : '#f5f1ec'}" stroke-width="180" opacity=".9"/>
+    ${[[4000, 3800, 900], [6000, 7000, 800], [9000, 2500, 700], [12000, 7400, 900], [15000, 4000, 800], [16800, 6200, 600], [7500, 5000, 600], [10500, 5200, 700]].map(f => `<circle cx="${f[0]}" cy="${f[1]}" r="${f[2]}" fill="url(#sinus${idx})" stroke="${he ? '#c9a3bd' : '#cfc3b4'}" stroke-width="40"/>`).join('')}
+    <ellipse cx="11300" cy="2300" rx="1250" ry="700" fill="url(#tumor${idx})" transform="rotate(-12 11300 2300)"/>
+    <ellipse cx="4200" cy="6900" rx="260" ry="200" fill="url(#tumor${idx})"/>
+    <ellipse cx="15800" cy="5600" rx="300" ry="240" fill="url(#tumor${idx})"/>
+    <g class="ov-ai" data-live="layers · GPU layer">
+      <ellipse cx="11300" cy="2300" rx="1290" ry="740" transform="rotate(-12 11300 2300)" fill="none" stroke="#8e3a15" stroke-width="2" vector-effect="non-scaling-stroke" style="paint-order:stroke;filter:drop-shadow(0 0 1px rgba(255,255,255,.9))"/>
+      <ellipse cx="4200" cy="6900" rx="300" ry="240" fill="none" stroke="#be7b00" stroke-width="2" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"/>
+      <ellipse cx="15800" cy="5600" rx="340" ry="280" fill="none" stroke="#be7b00" stroke-width="2" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"/>
+    </g>
+    <g class="ov-ann" data-live="annotations · GPU layer">
+      <path d="M10400 1500 L11200 1250 L12400 1500 L12750 2300 L12300 3200 L11200 3350 L10350 2900 Z" fill="rgba(142,58,21,.18)" stroke="#8e3a15" stroke-width="1.5" vector-effect="non-scaling-stroke" style="filter:drop-shadow(0 0 1px rgba(255,255,255,.9))"/>
+      <line x1="10000" y1="2000" x2="12300" y2="2000" stroke="#f7f7f7" stroke-width="1.5" vector-effect="non-scaling-stroke" style="filter:drop-shadow(0 0 1px rgba(0,0,0,.9))"/>
+      <line x1="10000" y1="1900" x2="10000" y2="2100" stroke="#f7f7f7" stroke-width="1.5" vector-effect="non-scaling-stroke"/><line x1="12300" y1="1900" x2="12300" y2="2100" stroke="#f7f7f7" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+      <g class="mlabel" transform="translate(11150 1960)"><rect x="-26" y="-12" width="52" height="15" rx="2" fill="rgba(20,20,20,.75)"/><text x="0" y="0" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#f2f2f2">2.3 mm</text></g>
+    </g>
+    <g class="ov-grid" style="display:none"><rect x="10700" y="1900" width="1030" height="1030" fill="none" stroke="rgba(255,255,255,.5)" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/></g>
+  </g>
+  <g class="tileerrs"></g></svg>`;
+}
+const MAGS = [8, 4, 2, 1, 0.5, 0.25]; // µm/px for 1.25× … 40×
+const view = { cx: 11150, cy: 1850, umpp: 0.5, rot: 0, last: 1, W: 800, H: 600, trail: [[11150, 1850, 0.5], [2900, 5100, 1], [6000, 5000, 4], [10000, 5000, 16]], pitch: 'EDID' };
+let slideIdx = 0;
+const views = [$('#view0'), $('#view1')];
+views[0].insertAdjacentHTML('afterbegin', canvasSvg('HE', 0));
+views[1].insertAdjacentHTML('afterbegin', canvasSvg('IHC', 1));
+
+/* ---------- 4. Camera, HUD, scale bar, navigator (state document → DOM text / transform) ---------- */
+function magOf(umpp) { return 10 / umpp; }
+function fmtMag(umpp) { const m = magOf(umpp); return (m >= 10 ? m.toFixed(0) : m.toFixed(m >= 2 ? 1 : 2).replace(/\.?0+$/, '')) + '×'; }
+function scaleBar() {
+  const cands = []; for (let e = 0; e <= 4; e++) for (const b of [1, 2, 5]) cands.push(b * Math.pow(10, e));
+  let best = cands[0]; for (const c of cands) if (c / view.umpp <= 200) best = c;
+  const px = best / view.umpp; $('#sbBar').style.setProperty('--scalebar-length', px.toFixed(0) + 'px');
+  $('#sbLabel').textContent = best >= 1000 ? (best / 1000) + ' mm' : best + ' µm';
+}
+function syncCam(announce) {
+  views.forEach((v, i) => {
+    const r = v.getBoundingClientRect(); const W = r.width || 800, H = r.height || 600; if (i === 0) { view.W = W; view.H = H; }
+    const cam = $('svg.canvas .cam', v); if (!cam) return;
+    const s = 1 / view.umpp;
+    cam.setAttribute('transform', `translate(${(W / 2 - view.cx * s).toFixed(2)} ${(H / 2 - view.cy * s).toFixed(2)}) rotate(${view.rot} ${(view.cx * s).toFixed(2)} ${(view.cy * s).toFixed(2)}) scale(${s})`);
+    const ml = $('.mlabel', cam); if (ml) ml.setAttribute('transform', `translate(11150 1960) scale(${view.umpp})`);
+  });
+  const umpp = view.umpp, mag = fmtMag(umpp);
+  $('#magV').innerHTML = (view.pitch === 'unknown' ? '<span class="tilde">~</span>' : '') + mag;
+  $('#magL2').textContent = `${umpp.toFixed(2)} µm/px · pitch ${view.pitch === 'unknown' ? 'unknown' : view.pitch}`;
+  $('#pitchChip').hidden = view.pitch !== 'unknown';
+  $('#pos').textContent = `x ${(view.cx / 1000).toFixed(2)} mm · y ${(view.cy / 1000).toFixed(2)} mm`;
+  $('#mag').setAttribute('aria-label', `Magnification ${mag}. Activate to type a zoom`);
+  $('#hudRot').hidden = view.rot === 0; $('#hudRot').textContent = `Rotation ${view.rot}°`;
+  scaleBar(); drawNav();
+  if (announce) say(`${mag}, ${umpp.toFixed(2)} micrometres per pixel, centre ${(view.cx / 1000).toFixed(1)} by ${(view.cy / 1000).toFixed(1)} millimetres`);
+}
+function drawNav() {
+  const t = $('#navThumb'); const sl = SLIDES[slideIdx];
+  const vw = view.W * view.umpp, vh = view.H * view.umpp; // viewport in µm
+  const rect = (x, y, w, h, cls, extra) => `<rect x="${(x / 100).toFixed(1)}" y="${(y / 100).toFixed(1)}" width="${Math.max(1.2, w / 100).toFixed(1)}" height="${Math.max(1.2, h / 100).toFixed(1)}" class="${cls}" ${extra || ''}/>`;
+  const trail = view.trail.map(p => { const w = view.W * p[2], h = view.H * p[2]; return rect(p[0] - w / 2, p[1] - h / 2, w, h, 'tr', 'fill="rgba(255,255,255,.14)" stroke="rgba(255,255,255,.35)" stroke-width=".4"'); }).join('');
+  t.innerHTML = `<svg viewBox="0 0 200 112" preserveAspectRatio="none" aria-hidden="true"><use href="#${sl.sym}" width="200" height="100" y="6"/><g transform="translate(0 6)">${trail}${rect(view.cx - vw / 2, view.cy - vh / 2, vw, vh, 'vp', 'fill="none" stroke="#f2f2f2" stroke-width="1.2" style="filter:drop-shadow(0 0 1px #000)"')}</g><text x="3" y="110" font-size="7" fill="#b8b8b8" font-family="ui-monospace,Menlo,monospace">viewed ${sl.cov} % · ${view.trail.length} viewports</text></svg>`;
+}
+function pushTrail() { view.trail.push([view.cx, view.cy, view.umpp]); if (view.trail.length > 60) view.trail.shift(); const sl = SLIDES[slideIdx]; sl.cov = Math.min(100, sl.cov + 2); if (sl.viewed === 'unviewed') sl.viewed = 'partial'; }
+function setZoom(umpp, ax, ay) { // anchored zoom: slide point under (ax, ay) stays put
+  umpp = Math.max(0.25, Math.min(16, umpp));
+  if (ax !== undefined) { const sx = view.cx + (ax - view.W / 2) * view.umpp, sy = view.cy + (ay - view.H / 2) * view.umpp; view.cx = sx - (ax - view.W / 2) * umpp; view.cy = sy - (ay - view.H / 2) * umpp; }
+  if (Math.abs(umpp - view.umpp) > 1e-6) view.last = view.umpp;
+  view.umpp = umpp; clampView(); pushTrail(); syncCam(true); afterGesture();
+}
+function clampView() { view.cx = Math.max(0, Math.min(20000, view.cx)); view.cy = Math.max(0, Math.min(10000, view.cy)); }
+function panBy(dx, dy) { view.cx += dx * view.W * view.umpp; view.cy += dy * view.H * view.umpp; clampView(); pushTrail(); syncCam(true); afterGesture(); }
+function flyTo(x, y, umpp) { view.cx = x; view.cy = y; if (umpp) { view.last = view.umpp; view.umpp = umpp; } clampView(); pushTrail(); syncCam(true); afterGesture(); }
+function fit() { const u = Math.max(20000 / view.W, 10000 / view.H) * 1.05; view.last = view.umpp; view.umpp = u; view.cx = 10000; view.cy = 5000; pushTrail(); syncCam(true); afterGesture(); }
+function afterGesture() { renderCov(); renderAiViewed(); renderTray(); renderSignout(); }
+
+/* ---------- 5. Renderers (DOM lists that consume state.slides[], layers, annotations) ---------- */
+function thumb(sl, extraCls) { return `<span class="tray__thumb ${extraCls || ''}"><svg viewBox="0 0 200 100" aria-hidden="true"><use href="#${sl.sym}"/></svg><span class="tray__viewed" aria-label="${sl.viewed === 'viewed' ? 'Viewed' : 'Partly viewed'}"></span><span class="tray__coverage"><span style="--coverage:${sl.cov}%"></span></span></span>`; }
+function renderTray() {
+  const vcls = s => s.viewed === 'viewed' ? 'is-viewed' : s.viewed === 'partial' ? 'is-partial' : 'is-unviewed';
+  $('#tray').innerHTML = SLIDES.map((s, i) => `<button type="button" class="tray__slide ${vcls(s)}" role="option" aria-selected="${i === slideIdx}" data-slide="${i}" aria-label="${s.id} ${s.stain}, ${s.text}, ${s.viewed === 'viewed' ? 'viewed' : s.viewed === 'partial' ? 'partly viewed, ' + s.cov + ' percent' : 'not yet viewed'}">${thumb(s)}<span class="tray__label"><span class="id">${s.id} <span class="chip chip--stain" style="min-height:16px;padding:0 4px;font-size:10px">${s.stain}</span></span><span class="text">${s.text}</span></span><span class="viewstate">${s.viewed === 'viewed' ? 'viewed ✓' : s.viewed === 'partial' ? s.cov + ' % seen' : 'unviewed •'}</span></button>`).join('');
+  $('#sstrip').innerHTML = SLIDES.map((s, i) => `<button type="button" class="sstrip__item ${vcls(s)}" role="option" aria-selected="${i === slideIdx}" data-slide="${i}" aria-label="${s.id} ${s.stain}" title="${s.id} · ${s.text}"><span class="tray__thumb"><svg viewBox="0 0 200 100" aria-hidden="true"><use href="#${s.sym}"/></svg><span class="tray__viewed"></span><span class="tray__coverage"><span style="--coverage:${s.cov}%"></span></span></span><span class="st">${s.id}</span></button>`).join('');
+  $('#hslides').innerHTML = SLIDES.map((s, i) => `<button type="button" class="hslide ${vcls(s)}" role="option" aria-selected="${i === slideIdx}" data-slide="${i}">${thumb(s)}<span><span class="id">${s.id}</span> <span class="chip chip--stain" style="min-height:16px;padding:0 4px;font-size:10px">${s.stain}</span><br><span class="st">${s.viewed === 'viewed' ? 'viewed ✓' : s.viewed === 'partial' ? s.cov + ' % seen' : 'unviewed •'}</span></span></button>`).join('');
+  const nv = SLIDES.filter(s => s.viewed === 'viewed').length; $('#slideCount').textContent = `${SLIDES.length} · ${nv} of ${SLIDES.length} viewed`;
+  const chips = $('#slideChips'); if (app.classList.contains('wb--embedded')) chips.innerHTML = SLIDES.map((s, i) => `<button type="button" class="chip chip--stain" aria-pressed="${i === slideIdx}" data-slide="${i}">${s.id} ${s.stain}${s.viewed === 'viewed' ? ' ✓' : s.viewed === 'unviewed' ? ' •' : ''}</button>`).join(''); else chips.innerHTML = '';
+  $$('[data-slide]').forEach(b => b.onclick = () => selectSlide(+b.dataset.slide));
+}
+function selectSlide(i) {
+  slideIdx = i; const s = SLIDES[i]; const line = `${s.id} · ${s.stain === 'IHC' ? 'CK AE1/AE3 (IHC)' : s.stain}`;
+  ['#topSlide', '#ribSlide', '#navSlide', '#v0id'].forEach(q => $(q).textContent = line);
+  $('#kvSlide').textContent = `${s.id.split('-')[0]} · ${s.id} · ${s.stain === 'IHC' ? 'CK AE1/AE3' : 'H&E'}`;
+  $('#hudId').textContent = `${line} · ${CASE.accession}`;
+  $$('.lbluse').forEach(u => u.setAttribute('href', '#' + s.lbl));
+  if (s.viewed === 'unviewed') { s.viewed = 'partial'; s.cov = 4; }
+  const v0 = $('svg.canvas', views[0]); v0.outerHTML = canvasSvg(s.kind, 0); applyLayers(); fit(); renderSignout();
+  say(`Slide ${s.id} ${s.stain} opened. ${SLIDES.filter(x => x.viewed === 'unviewed').length} slides not yet viewed.`);
+}
+function renderLayers() {
+  const dx = state.renderMode === 'dx';
+  $('#layers').innerHTML = LAYERS.map(L => {
+    const ai = L.status === 'research';
+    const prov = L.prov.map((p, i) => `<span${i === 2 ? ' title="inputHash"' : ''}>${p}</span>`).join('') + (ai ? `<span class="marker-notvalidated" data-live="dx">Not validated for diagnostic use on this viewer</span>` : '');
+    const legend = L.legend ? `<div class="layer-row__legend"><div class="row" style="gap:8px;margin-bottom:6px"><div class="segmented" style="padding:1px" role="radiogroup" aria-label="Presentation"><button type="button" class="segmented__item" role="radio" aria-checked="${L.mode === 'outline'}" data-lmode="outline" style="min-height:20px;font-size:11px">Outline</button><button type="button" class="segmented__item" role="radio" aria-checked="${L.mode === 'heatmap'}" data-lmode="heatmap" style="min-height:20px;font-size:11px">Heatmap</button></div><span class="text-xs text-secondary">p ≥ 0.70</span></div><div class="legend" role="list" aria-label="Legend; activate a class to jump to it">${L.legend.map(g => `<button type="button" class="legend__item" role="listitem" data-cmd="${g[0] === 'Metastasis' ? 'flyMet' : 'flyITC'}"><span class="swatch swatch--outline" style="--swatch:${g[1]}"></span>${g[0]} <span class="count">${g[2]}</span>${g[3] === 'dashed' ? '<span class="pattern">dashed</span>' : ''}</button>`).join('')}</div></div>` : '';
+    const acts = ai ? `<button type="button" class="btn btn--sm btn--icon btn--ghost" aria-label="Accept AI result (Shift+A)" data-cmd="aiaccept"><svg class="icon icon--sm"><use href="#i-check"/></svg></button><button type="button" class="btn btn--sm btn--icon btn--ghost" aria-label="Reject AI result (Shift+X)" data-cmd="aireject"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>` : '';
+    return `<div class="layer-row ${L.vis ? '' : 'is-hidden'}" data-layer="${L.id}" data-live="layers:${L.id} · ACL · provenance">
+      <button type="button" class="layer-row__vis" aria-pressed="${L.vis}" aria-label="${L.name}, ${L.vis ? 'visible' : 'hidden'}" data-vis="${L.id}"><svg class="icon icon--sm"><use href="#${L.vis ? 'i-eye' : 'i-eye-off'}"/></svg></button>
+      <div class="layer-row__name"><span class="truncate">${L.name}</span><span class="kind">${L.kind}</span>${ai && dx && !L.vis ? '<span class="kind" title="Dx: overlays off by default">off in Dx</span>' : ''}</div>
+      <div class="layer-row__actions">${acts}<button type="button" class="btn btn--sm btn--icon btn--ghost" aria-label="Layer options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+      <div class="layer-row__opacity"><input type="range" min="0" max="100" value="${L.opacity}" aria-label="Opacity of ${L.name}" ${L.id === 'lbl' ? 'disabled' : ''}><span class="num">${L.opacity} %</span></div>
+      <div class="layer-row__provenance">${prov}</div>${legend}</div>`;
+  }).join('') + `<p class="wb-hint">${dx ? 'Dx mode: AI overlays start hidden; a layer without <code>validated-on-this-viewer</code> keeps its marker when shown.' : 'Provenance tuple shown per layer; accept / reject emit <code>aiResultAccepted/Rejected</code> for LIS write-back.'}</p>`;
+  $('#layerCount').textContent = LAYERS.filter(l => l.vis).length + ' of ' + LAYERS.length + ' on';
+  $$('[data-vis]').forEach(b => b.onclick = () => { const L = LAYERS.find(l => l.id === b.dataset.vis); L.vis = !L.vis; applyLayers(); renderLayers(); });
+  $$('[data-lmode]').forEach(b => b.onclick = () => { LAYERS[0].mode = b.dataset.lmode; renderLayers(); notice(`AI overlay as ${b.dataset.lmode}`); });
+  $$('#layers input[type=range]').forEach(r => r.oninput = () => { const L = LAYERS.find(l => l.id === r.closest('.layer-row').dataset.layer); L.opacity = +r.value; r.nextElementSibling.textContent = r.value + ' %'; applyLayers(); });
+  bindCmds($('#layers'));
+}
+function applyLayers() {
+  const ai = LAYERS[0], ann = LAYERS[1];
+  views.forEach(v => { const a = $('.ov-ai', v), n = $('.ov-ann', v); if (a) { a.style.display = ai.vis ? '' : 'none'; a.style.opacity = ai.opacity / 100 + .3; } if (n) n.style.display = ann.vis ? '' : 'none'; });
+  $$('[data-cmd="ai"]').forEach(b => b.setAttribute('aria-pressed', String(ai.vis)));
+  app.classList.toggle('label-collapsed', !LAYERS[3].vis);
+}
+function renderBookmarks() {
+  $('#bookmarks').innerHTML = BOOKMARKS.map(b => `<button type="button" class="bkm" data-bk="${b.id}" aria-label="Bookmark ${b.t}, ${b.m}"><span class="tray__thumb"><svg viewBox="0 0 200 100" aria-hidden="true"><use href="#${b.sym}"/></svg></span><span><span class="t">${b.t}</span><br><span class="m">${b.m}</span></span></button>`).join('') + `<p class="wb-hint"><kbd class="key">B</kbd> bookmarks this view · bookmarks are state-document entries and travel with the consult link.</p>`;
+  $('#bkCount').textContent = BOOKMARKS.length;
+  $$('[data-bk]').forEach(b => b.onclick = () => { const k = BOOKMARKS.find(x => x.id === b.dataset.bk); flyTo(k.at[0], k.at[1], k.at[2]); notice('Flew to bookmark · ' + k.t); });
+}
+function renderAnn() {
+  $('#annList').innerHTML = ANN.map((a, i) => `<div class="annrow" role="option" tabindex="${i === 0 ? 0 : -1}" aria-selected="${i === 0}" data-ann="${a.id}"><span class="swatch ${a.type === 'measure' ? '' : 'swatch--outline'}" style="--swatch:${a.sw};width:12px;height:12px"></span><span>${a.label}<span class="sub">${a.sub}</span></span><span class="meta">${a.meta}</span></div>`).join('');
+  $('#annCount').textContent = ANN.length;
+  $$('[data-ann]').forEach(r => { r.onclick = () => { const a = ANN.find(x => x.id === r.dataset.ann); flyTo(a.at[0], a.at[1], 0.5); $$('[data-ann]').forEach(x => x.setAttribute('aria-selected', x === r)); }; r.onkeydown = e => { if (e.key === ' ') { e.preventDefault(); r.click(); } }; });
+}
+function renderCov() {
+  $('#covBars').innerHTML = SLIDES.map(s => `<div class="covbar"><span class="id">${s.id}</span><span class="bar"><span style="--v:${s.cov}%"></span></span><span class="num">${s.cov} %</span></div>`).join('');
+}
+function renderAiViewed() {
+  const vw = view.W * view.umpp, vh = view.H * view.umpp;
+  AIREG.forEach(r => { if (view.umpp <= 1 && Math.abs(r.x - view.cx) < vw / 2 && Math.abs(r.y - view.cy) < vh / 2 && slideIdx === 0) r.viewed = true; });
+  const n = AIREG.filter(r => r.viewed).length; const nxt = AIREG.find(r => !r.viewed);
+  $('#aiViewed').innerHTML = `${n} of ${AIREG.length}${nxt ? ` · next unviewed: suspicious focus ${nxt.id === 'r2' ? 'near the hilum' : 'right pole, subcapsular'} <button type="button" class="btn btn--sm btn--secondary" data-cmd="flyITC">Fly there</button>` : ' · all AI-flagged regions viewed at ≥ 10×'}`;
+  bindCmds($('#aiViewed'));
+}
+function renderSignout() {
+  const unv = SLIDES.filter(s => s.viewed === 'unviewed');
+  $('#signoutSum').innerHTML = [
+    ['●', `Worklist state → <b>Reviewed</b> (<code>caseStatusChanged</code>)`],
+    ['●', `Slides viewed: ${SLIDES.filter(s => s.viewed !== 'unviewed').map(s => s.id + (s.viewed === 'viewed' ? ' ✓' : ' ' + s.cov + ' %')).join(', ') || 'none'}`],
+    ['●', `Measurements: 1 (2.3 mm) · Annotations: 1 polygon → SR TID 1500 / ANN via the integration service`],
+    ['●', `AI results: 1 pending (${LAYERS[0].name}) · accepted 0 · rejected 0`],
+    ['●', `Viewport trail (sampled) attached to the laboratory's quality record`],
+  ].map(r => `<li><span class="dot">${r[0]}</span><span>${r[1]}</span></li>`).join('');
+  const w = $('#signoutWarn'); w.hidden = unv.length === 0; if (unv.length) $('b', w).textContent = `${unv.length} slide${unv.length > 1 ? 's' : ''} not opened (${unv.map(s => s.id).join(', ')}).`;
+}
+function keyHtml(k) { return `<span class="keymap__keys">${k.map(x => `<kbd class="key${/^(Num|F1|Alt|Ctrl …)/.test(x) ? ' key--reserved' : ''}">${x}</kbd>`).join('')}</span>`; }
+function renderKeymap(filter) {
+  const f = (filter || '').trim().toLowerCase(); const groups = {};
+  CMD.forEach(c => { if (!c.k) return; if (c.clinical && state.product === 'ruo') return; if (f && !(c.l.toLowerCase().includes(f) || c.k.join(' ').toLowerCase().includes(f))) return; (groups[c.g] = groups[c.g] || []).push(c); });
+  $('#keymap').innerHTML = Object.keys(groups).map(g => `<div class="keymap__group"><h4>${g}</h4>${groups[g].map(c => `<div class="keymap__row ${c.reserved ? 'is-reserved' : ''}">${keyHtml(c.k)}<span>${c.l}</span></div>`).join('')}</div>`).join('') || '<p class="wb-hint">No command matches.</p>';
+}
+const LIS_SECS = ['context', 'consult', 'signout'];
+function showSecs(list) { $$('#rbody .wbsec').forEach(s => { s.hidden = !(list.includes(s.dataset.sec) && !(state.product === 'ruo' && LIS_SECS.includes(s.dataset.sec))); }); }
+function renderAbar() {
+  const secs = $$('#rbody .wbsec').filter(s => !(state.product === 'ruo' && LIS_SECS.includes(s.dataset.sec)));
+  $('#abar').innerHTML = secs.map(s => `<button type="button" class="tool" data-sec="${s.dataset.sec}" aria-pressed="${!s.hidden}" aria-label="${s.dataset.title.replace(/&amp;/g, '&')} panel" title="${s.dataset.title.replace(/&amp;/g, '&')}"><svg class="icon"><use href="#${s.dataset.icon || 'i-info'}"/></svg>${s.dataset.sec === 'signout' && SLIDES.some(x => x.viewed === 'unviewed') ? '<span class="badge-dot" aria-hidden="true"></span>' : ''}</button>`).join('') +
+    `<div class="rail__spacer"></div><div class="rail__divider"></div><button type="button" class="tool" data-cmd="rightdock" aria-label="${app.classList.contains('r-float') ? 'Dock the Inspector' : 'Float the Inspector over the canvas edge'}" title="Dock / float"><svg class="icon"><use href="#i-panel-r"/></svg></button><button type="button" class="tool" data-cmd="right" aria-label="Inspector open / close (Shift+U)" aria-pressed="${app.classList.contains('r-docked') || app.classList.contains('r-float')}"><svg class="icon"><use href="#i-prev"/></svg></button>`;
+  $$('#abar [data-sec]').forEach(b => b.onclick = () => toggleSection(b.dataset.sec));
+  bindCmds($('#abar'));
+}
+function toggleSection(id, force) {
+  const s = $(`.wbsec[data-sec="${id}"]`); if (!s) return; if (state.product === 'ruo' && LIS_SECS.includes(id)) return;
+  const show = force !== undefined ? force : s.hidden;
+  s.hidden = !show; if (show) { s.classList.remove('is-collapsed'); $('.wbsec__toggle', s).setAttribute('aria-expanded', 'true'); }
+  const anyVisible = $$('#rbody .wbsec').some(x => !x.hidden);
+  if (show && s.closest('#rbody')) openRight(true); else if (!anyVisible && s.closest('#rbody')) openRight(false);
+  if (show) { s.scrollIntoView({ block: 'nearest' }); const foc = $('input, button.btn--primary, .wbsec__toggle', s); }
+  renderAbar();
+}
+
+/* ---------- 6. Session state (launch context + demo controls) ---------- */
+const state = { product: 'clinical-ih', display: 'auto', mode: 'nav', renderMode: 'nav', purpose: 'auto', net: 'lan', err: 'none', surface: 'companion', overlay: 'none', consult: false };
+const live = { polite: $('#livePolite'), assert: $('#liveAssert') };
+let sayT; function say(t) { clearTimeout(sayT); sayT = setTimeout(() => { live.polite.textContent = t; }, 500); }
+function shout(t) { live.assert.textContent = t; }
+function notice(t) { $('#notice').textContent = t || ''; }
+const isTablet = () => window.innerWidth < 1080 || matchMedia('(pointer: coarse)').matches;
+const isEmbedded = () => state.surface === 'embedded';
+function displayState() {
+  if (state.display === 'auto') return (window.innerWidth >= 1600 && !isEmbedded() && !isTablet()) ? 'attested' : 'none';
+  return state.display;
+}
+function purposeStr() {
+  if (state.purpose === 'frozen') return 'Consultation · preliminary only';
+  if (state.purpose === 'auto') return isTablet() ? 'Consultation · preliminary only' : 'Sign-out';
+  return 'Sign-out';
+}
+/* The Dx gate (FR-V4, FR-R7, FR-R10, FR-I10): all must pass; the first failure gives the refusal string. */
+function dxGate() {
+  const d = displayState(); const rows = [];
+  const ok = (g, t) => rows.push({ ok: true, g, t }); const fail = (g, t, msg) => rows.push({ ok: false, g, t, msg });
+  if (state.product === 'ruo') fail('Build', 'Stoipath Viewer (RUO)', 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.'); else ok('Build', state.product === 'dx' ? 'Stoipath Dx · cleared configuration' : 'Stoipath Clinical-IH · lab-validated');
+  if (isEmbedded()) fail('Window', 'embedded (EHR iframe)', 'Dx mode unavailable inside an embedded window. Open on the diagnostic display to continue.'); else ok('Window', 'top-level companion window');
+  if (isTablet()) fail('Device tier', 'Tier 2 (tablet)', 'Dx mode unavailable on this device (Tier 2). Consultation · preliminary only.'); else ok('Device tier', 'Tier 1');
+  if (d === 'none') fail('Display attestation', 'none (no EDID, no dx_profile.json)', 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.'); else ok('Display attestation', 'EDID · Barco MDPC-8127 · SN ****-0042');
+  if (d === 'qa') fail('Display QA', 'last pass 34 days ago', 'Dx mode unavailable: display QA overdue (last pass 34 days ago). Ask your display administrator.'); else if (d !== 'none') ok('Display QA', 'passed 3 days ago');
+  if (state.err === 'gpu') fail('Deployment self-check', 'context lost during check', 'Dx mode unavailable: deployment check failed (unregistered build hash). Nav mode only.'); else ok('Deployment self-check', 'build 3f9c…a71e · pathway 9b20…44d1 registered');
+  const first = rows.find(r => !r.ok); return { rows, pass: !first, msg: first && first.msg };
+}
+function renderDxGate() {
+  const g = dxGate();
+  $('#dxGate').innerHTML = g.rows.map(r => `<span class="g" aria-hidden="true">${r.ok ? '✓' : '✕'}</span><span class="${r.ok ? '' : 'fail'}">${r.g}: ${r.t}${r.ok ? '' : ' — fails'}</span>`).join('');
+  $('#dxNote').textContent = g.pass ? 'All gates pass. Dx mode: Rendering Complete replaces the sharpness indicator, overlays start hidden, B/C/γ reset, derived-tier tiles never drawn, label image not collapsible.' : g.msg;
+  $('#btnDx').disabled = !g.pass; $('#btnDx').innerHTML = (state.renderMode === 'dx' ? 'Leave Dx mode' : 'Enter Dx mode') + ' <kbd class="key">⇧D</kbd>';
+}
+function setBanners() {
+  const b = $('#banners'); const out = [];
+  const info = (html, acts, cls, role) => out.push(`<div class="banner ${cls || ''}" role="${role || 'status'}"><span class="banner__glyph">${cls && cls.includes('danger') || cls && cls.includes('warning') ? '!' : 'i'}</span><span class="banner__text">${html}</span>${acts ? `<div class="banner__actions">${acts}</div>` : ''}</div>`);
+  if (state.mode === 'dx' && state.renderMode !== 'dx') { const g = dxGate(); const m = g.msg.split(/(?<=:)|(?<=unavailable)/); info(`<b>${g.msg.replace(/^(Dx mode unavailable[:]?|This is Stoipath Viewer,)/, '<b>$1</b>')}`, isEmbedded() ? '<button type="button" class="btn btn--sm btn--primary" data-cmd="handoff">Open on diagnostic display</button>' : '<button type="button" class="btn btn--sm btn--secondary" data-cmd="dxwhy">Why?</button>'); }
+  if (state.mode === 'dropped') info('<b>Dx mode ended:</b> display attestation lost. Viewing in Nav mode.', '', 'banner--danger', 'alert');
+  if (state.err === 'mismatch' && state.product === 'ruo') info(`<b>Warning:</b> launch context and slide manifest disagree (<span class="mono" data-synthetic>${CASE.accession} · A1-1</span>). Check the slide label before using this view.`, '<button type="button" class="btn btn--sm btn--secondary" data-cmd="label">Show label <kbd class="key">L</kbd></button>', 'banner--warning', 'alert');
+  if (state.product === 'dx' && state.err === 'gpu') info('<b>Unverified build</b> — not for clinical use. build_hash 9c21…e4 is not in the cleared-configuration register.', '<button type="button" class="btn btn--sm btn--secondary" data-cmd="about">About</button>', 'banner--persistent banner--warning');
+  if (state.renderMode === 'dx' && $('#hudAdj') && !$('#hudAdj').hidden) info('<b>Brightness/contrast adjusted</b> — not the reference rendering.', '<button type="button" class="btn btn--sm btn--secondary" data-cmd="adjreset">Reset <kbd class="key">⇧J</kbd></button>');
+  b.innerHTML = out.join(''); bindCmds(b);
+}
+function setPlate() {
+  const p = $('#plate'); const acc = `<span class="accession" data-synthetic>${CASE.accession}</span>`; let html = '';
+  const clin = state.product !== 'ruo';
+  if (state.err === 'manifest') html = `<div class="plate" style="background:transparent" role="alert" data-live="events:error"><div class="plate__card"><span class="plate__title">This slide could not be opened</span><span class="plate__text">HTTP 503 from the tile server. The thumbnail and identity stay; nothing is interpreted from this frame.</span><div class="plate__actions"><button type="button" class="btn btn--primary" data-cmd="retry">Retry</button><button type="button" class="btn btn--secondary">Report a problem</button></div></div></div>`;
+  if (state.err === 'expired') html = `<div class="plate plate--dim" role="alert"><div class="plate__card"><span class="plate__title">Your session has expired.</span><span class="plate__text">Sign in again to continue viewing ${acc}.</span><div class="plate__actions"><button type="button" class="btn btn--primary" data-cmd="retry">Sign in again</button></div><span class="text-xs" style="color:var(--grey-75)">Last frame dimmed 40 % · identity header stays</span></div></div>`;
+  if (state.err === 'mismatch' && clin) html = `<div class="plate" role="alert" data-live="events:identityMismatch"><div class="plate__card plate__card--blocking"><span class="plate__glyph">!</span><span class="plate__title">Slide identity mismatch</span><span class="plate__text">The launch context (${acc} · A1-1) does not match this slide's manifest. <b>Viewing is blocked.</b> Report to the laboratory.</span><div class="plate__actions"><button type="button" class="btn btn--primary">Report to the laboratory</button><button type="button" class="btn btn--secondary" data-cmd="retry">Return to LIS</button></div><span class="text-xs" style="color:var(--grey-75)">Logged as an AuditEvent · canvas content replaced, identity above stays</span></div></div>`;
+  if (state.err === 'wrong') html = `<div class="plate" role="alert" data-live="launch:product"><div class="plate__card plate__card--blocking"><span class="plate__glyph">!</span><span class="plate__title">Launch refused</span><span class="plate__text">This launch asked for <b>Stoipath Clinical-IH</b> but this is <b>Stoipath Viewer</b> (research use only). Nothing was opened.</span><div class="plate__actions"><button type="button" class="btn btn--secondary" data-cmd="retry">Close</button></div></div></div>`;
+  p.innerHTML = html; bindCmds(p);
+  views.forEach(v => { $('svg.canvas', v).style.opacity = (state.err === 'manifest' || state.err === 'wrong' || (state.err === 'mismatch' && clin)) ? '.25' : ''; $('svg.canvas', v).style.filter = (state.err === 'manifest') ? 'blur(3px)' : ''; });
+  $('#idcheck') ; const chk = $('.idcheck'); if (chk) chk.innerHTML = state.err === 'mismatch' ? '<span aria-hidden="true">✕</span><span><b>Identity mismatch</b> · manifest sid differs from the launch context. ' + (clin ? 'Viewing is blocked.' : 'Warning only in this build.') + '</span>' : '<span aria-hidden="true">✓</span><span><b>Identity verified</b> · launch context matches the manifest (sid, Study UID) before the first tile was drawn.</span>';
+}
+function setTileErrors() {
+  views.forEach(v => { const g = $('.tileerrs', v); g.innerHTML = ''; });
+  $$('.tileerr').forEach(e => e.remove());
+  if (state.err === 'tiles') [[0.18, 0.22], [0.62, 0.55], [0.4, 0.7]].forEach(p => { const d = document.createElement('div'); d.className = 'tileerr'; d.style.left = (p[0] * 100) + '%'; d.style.top = (p[1] * 100) + '%'; d.setAttribute('aria-hidden', 'true'); views[0].appendChild(d); });
+}
+function setIndicator() {
+  const ind = $('#ind'), L = $('#indL'); ind.className = 'indicator'; let reason = '';
+  const dx = state.renderMode === 'dx';
+  let soft = false;
+  if (dx) { ind.classList.add(state.err === 'tiles' ? 'indicator--notcomplete' : state.err === 'gpu' ? 'indicator--rendering' : 'indicator--complete'); L.textContent = state.err === 'tiles' ? 'Not complete — do not interpret' : state.err === 'gpu' ? 'Rendering…' : 'Rendering Complete'; }
+  else if (state.net === 'offline') { ind.classList.add('indicator--offline'); L.textContent = 'Offline — cached tiles only'; soft = true; }
+  else if (state.net === '4g') { ind.classList.add('indicator--soft'); L.textContent = 'Soft — slow link'; soft = true; }
+  else if (state.err === 'gpu' || state.net === 'slow') { ind.classList.add('indicator--sharpening'); L.textContent = 'Sharpening…'; soft = state.net === 'slow'; }
+  else { ind.classList.add('indicator--sharp'); L.textContent = 'Sharp'; }
+  views[0].classList.toggle('is-soft', soft); $('#hudSharpTxt').textContent = L.textContent.split(' — ')[0].split('…')[0];
+  const hs = $('#hudSharp .indicator__glyph'); hs.style.background = soft ? 'linear-gradient(90deg,var(--grey-72) 50%,transparent 50%)' : 'var(--grey-95)'; hs.style.boxShadow = soft ? 'inset 0 0 0 1.5px var(--grey-72)' : 'none';
+}
+function setStripChips() {
+  const c = []; const chip = (t, extra) => c.push(`<span class="chip chip--tier">${t}</span>${extra || ''}`);
+  if (state.net === '4g') chip('Slow link (6 Mbps) — reduced detail while moving');
+  if (state.net === 'pack') chip(`Offline pack · ${CASE.accession} consult pack · saved 2026-10-31`);
+  if (state.net === 'offline') chip('Offline — showing cached tiles only');
+  if (state.net === 'slow') chip('Server slow (p95 1.2 s) — prefetch paused');
+  if (isTablet()) chip('Tier 2 · 60 Hz');
+  const qa = $('#qaChip'); const d = displayState();
+  $('#qaTxt').textContent = d === 'none' ? 'Display not attested' : d === 'qa' ? 'QA overdue · 34 days' : 'QA passed 3 days ago';
+  qa.hidden = state.product === 'ruo';
+  $('#micChip').hidden = state.product === 'ruo' || isEmbedded();
+  const n = $('#notice');
+  if (state.err === 'tiles') n.textContent = '3 tiles could not be loaded — retrying';
+  else if (state.err === 'gpu') n.textContent = 'Graphics memory was reset — restoring the view';
+  else if (state.renderMode === 'dx') n.textContent = 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+  else if (state.mode === 'dx') n.textContent = dxGate().msg || '';
+  else if (state.err === 'none' && state.net === 'lan') n.textContent = '';
+  $('#tierChips').innerHTML = c.join(''); renderTray();
+}
+function applyState() {
+  const clin = state.product !== 'ruo';
+  // product badge, label string, mode slot (P4 rules)
+  const badge = $('#badge'); badge.className = 'badge ' + (state.product === 'ruo' ? 'badge--ruo' : state.product === 'dx' ? 'badge--dx' : 'badge--clinical');
+  badge.textContent = state.product === 'ruo' ? 'RUO' : state.product === 'dx' ? 'Dx' : 'CLINICAL-IH';
+  $('#labelstring').className = 'badge-string ' + (state.product === 'ruo' ? 'badge-string--ruo' : state.product === 'dx' ? 'badge-string--dx' : 'badge-string--clinical');
+  $('#aboutString').className = $('#labelstring').className; $('#aboutTitle').textContent = state.product === 'ruo' ? 'Stoipath Viewer · research use only' : state.product === 'dx' ? 'Stoipath Dx · cleared configuration' : 'Stoipath Clinical-IH';
+  $$('[data-clinical]').forEach(e => e.hidden = !clin);
+  if (!clin) LIS_SECS.forEach(id => { const sec = $(`.wbsec[data-sec="${id}"]`); if (sec) sec.hidden = true; });
+  // render mode
+  if (state.mode === 'dx' && dxGate().pass) state.renderMode = 'dx'; else state.renderMode = 'nav';
+  const m = $('#mode'); m.className = 'mode ' + (state.renderMode === 'dx' ? 'mode--dx' : 'mode--nav'); m.textContent = state.renderMode === 'dx' ? 'DX' : 'NAV';
+  m.setAttribute('aria-label', state.renderMode === 'dx' ? 'Render mode: Dx. Shift+D leaves Dx mode' : 'Render mode: Nav. Shift+D requests Dx mode');
+  if (state.renderMode === 'dx') { LAYERS[0].vis = false; LAYERS[2].vis = false; LAYERS[3].vis = true; $('#hudAdj').hidden = true; $('#pinNote').textContent = 'pinned · Dx'; $('#noLbl').textContent = 'Label image (not collapsible in Dx)'; } else { $('#pinNote').textContent = 'pinned'; $('#noLbl').textContent = 'Label image collapsed · L'; }
+  if (state.mode === 'dropped') { state.renderMode = 'nav'; shout('Dx mode ended: display attestation lost. Viewing in Nav mode.'); }
+  // purpose, frozen section, primary action
+  $('#purpose').textContent = purposeStr(); $('#purposeRib').textContent = purposeStr();
+  $('#fsChip').hidden = state.purpose !== 'frozen';
+  const consult = purposeStr() !== 'Sign-out', frozen = state.purpose === 'frozen';
+  $('#btnPrimaryLabel').textContent = consult ? 'Request consult' : 'Request sign-out'; $('#btnPrimary').dataset.cmd = consult ? 'consult' : 'signout';
+  $('#btnPrimary').setAttribute('aria-keyshortcuts', consult ? '' : 'Shift+Enter');
+  $$('#worklistTop,#worklistRib,#worklistCard').forEach(w => { w.textContent = frozen ? 'Frozen · in progress' : 'In review'; });
+  $$('#consultSeg .segmented__item').forEach(b => b.setAttribute('aria-checked', String((b.dataset.cp === 'frozen') === (state.purpose === 'frozen'))));
+  // pitch source
+  view.pitch = (displayState() === 'none' && !isTablet()) ? 'unknown' : displayState() === 'none' ? 'device' : 'EDID';
+  // surface
+  body.classList.toggle('surface-embedded', isEmbedded()); app.classList.toggle('wb--embedded', isEmbedded());
+  if (isEmbedded()) app.classList.remove('r-docked', 'r-float', 'sheet-r', 'sheet-l');
+  // product-specific text
+  $('#ldockTitle').textContent = clin ? 'Explorer' : 'Explorer · research';
+  // chrome
+  setIndicator(); setStripChips(); setBanners(); setPlate(); setTileErrors(); renderDxGate(); renderLayers(); applyLayers(); renderKeymap($('#kmFilter').value); renderAbar(); renderSignout(); syncCam(false); updateShare();
+  if (state.mode === 'dx' && state.renderMode !== 'dx') say(dxGate().msg); else if (state.renderMode === 'dx') say('Dx mode entered. Display attested, EDID, Barco MDPC-8127. QA passed 3 days ago.');
+}
+
+/* ---------- 7. Workbench shell: docks, governor, resizers, sheets, menus ---------- */
+const FLOOR = 0.70;
+function measureShare(opts) { // predicted canvas share for a hypothetical dock configuration
+  const W = app.clientWidth, H = app.clientHeight; if (!W || !H) return 1;
+  const css = getComputedStyle(app); const px = v => parseFloat(css.getPropertyValue(v)) || 0;
+  const wide = window.innerWidth >= 1080 && !isEmbedded();
+  const rail = wide ? px('--wb-rail') : 0, abar = wide ? px('--wb-abar') : 0;
+  const left = !wide ? 0 : opts.left === 'open' ? (parseFloat(app.style.getPropertyValue('--wb-left')) || px('--wb-left')) : opts.left === 'strip' ? px('--wb-strip') : 0;
+  const right = !wide ? 0 : opts.right === 'docked' ? (parseFloat(app.style.getPropertyValue('--wb-right')) || px('--wb-right')) : 0;
+  const rows = px('--layout-topbar') + px('--wb-ribbon') + px('--wb-slides') + px('--wb-bb') + (window.innerWidth < 600 ? 0 : px('--layout-strip'));
+  const cw = W - rail - abar - left - right, ch = H - rows;
+  let area = cw * ch; if (opts.right === 'float') area -= Math.min(cw, px('--wb-right')) * ch * 0.0; // floating dock does not change the canvas area (it overlays the edge)
+  return area / (W * H);
+}
+function updateShare() {
+  const el = $('#rvShare'); const r = $('#canvasArea').getBoundingClientRect(); const a = app.getBoundingClientRect();
+  let share = (r.width * r.height) / (a.width * a.height || 1);
+  const txt = `canvas ${(share * 100).toFixed(0)} %` + (app.classList.contains('r-float') ? ' (Inspector floats)' : '');
+  el.textContent = txt; el.classList.toggle('is-low', share < FLOOR); el.title = `Measured canvas share of the app window: ${(share * 100).toFixed(1)} % (P1 floor 70 %). Floating docks overlay the canvas edge and are not subtracted.`;
+}
+const want = { left: 'open', right: 'closed' };
+function govern(reason) {
+  if (window.innerWidth < 1080 || isEmbedded()) { app.classList.remove('r-docked', 'r-float', 'l-strip'); $('#lmode').textContent = $('#rmode').textContent = isEmbedded() ? 'off' : 'sheet'; updateShare(); return; }
+  let left = want.left, right = want.right, lnote = '', rnote = '';
+  if (right === 'docked' && measureShare({ left, right }) < FLOOR) {
+    if (left === 'open' && measureShare({ left: 'strip', right }) >= FLOOR) { left = 'strip'; lnote = `Narrowed to the slide strip so the canvas stays ≥ 70 % while the Inspector is docked (${(measureShare({ left: 'open', right }) * 100).toFixed(0)} % otherwise). U restores it.`; }
+    else { right = 'float'; rnote = `Floating over the canvas edge: docking here would leave the canvas at ${(measureShare({ left: 'strip', right: 'docked' }) * 100).toFixed(0)} % (floor 70 %). Shift+U closes it; Esc too.`; }
+  }
+  app.classList.toggle('l-strip', left === 'strip'); app.classList.toggle('l-open', left === 'open');
+  app.classList.toggle('r-docked', right === 'docked'); app.classList.toggle('r-float', right === 'float');
+  $('#lmode').textContent = left; $('#rmode').textContent = right === 'closed' ? 'closed' : right;
+  const ln = $('#lnote'); ln.hidden = !lnote; ln.textContent = lnote; const rn = $('#rnote'); rn.hidden = !rnote; rn.textContent = rnote;
+  $('#layoutTxt').textContent = 'Layout · ' + (currentPreset || 'Custom');
+  renderAbar(); updateShare(); requestAnimationFrame(() => syncCam(false));
+}
+let currentPreset = 'Sign-out';
+function openRight(open) { if (window.innerWidth < 1080) { app.classList.toggle('sheet-r', open); if (open) app.classList.remove('sheet-l'); renderAbar(); return; } want.right = open ? (want.right === 'closed' ? 'docked' : want.right) : 'closed'; currentPreset = null; govern(); }
+function toggleLeft() { if (window.innerWidth < 1080) { app.classList.toggle('sheet-l'); if (app.classList.contains('sheet-l')) app.classList.remove('sheet-r'); return; } want.left = want.left === 'open' ? 'strip' : 'open'; currentPreset = null; govern(); }
+const PRESETS = {
+  'Sign-out':  { left: 'open', right: 'closed', secs: ['context', 'annotate', 'compare'], compare: false },
+  'Compare':   { left: 'strip', right: 'docked', secs: ['compare', 'annotate'], compare: true },
+  'AI review': { left: 'open', right: 'docked', secs: ['analytics', 'annotate'], compare: false, layers: true },
+  'Consult':   { left: 'strip', right: 'docked', secs: ['consult', 'context'], compare: false },
+  'Minimal':   { left: 'strip', right: 'closed', secs: [], compare: false },
+};
+function applyPreset(name) {
+  const p = PRESETS[name]; if (!p) return; currentPreset = name;
+  showSecs(p.secs);
+  want.left = p.left; want.right = p.secs.length ? p.right : 'closed';
+  setCompare(p.compare); govern(); currentPreset = name; $('#layoutTxt').textContent = 'Layout · ' + name;
+  if (p.layers) $('.wbsec[data-sec="layers"]').classList.remove('is-collapsed');
+  notice(`Layout preset: ${name}`);
+}
+function renderLayoutMenu() {
+  $('#layoutMenu').innerHTML = `<div class="menu__heading">Layout presets · per surface, remembered per user</div>` + Object.keys(PRESETS).map(n => `<button type="button" class="menu__item" role="menuitem" data-preset="${n}" aria-checked="${currentPreset === n}">${currentPreset === n ? '✓ ' : ''}${n}<span class="text-xs text-secondary" style="margin-left:6px">${PRESETS[n].left === 'strip' ? 'strip' : 'Explorer'} · ${PRESETS[n].secs.length ? 'Inspector: ' + PRESETS[n].secs.join(', ') : 'canvas only'}</span></button>`).join('') + `<div class="menu__divider"></div><button type="button" class="menu__item" role="menuitem" data-cmd="rightdock">${app.classList.contains('r-float') ? 'Dock the Inspector (governor permitting)' : 'Float the Inspector over the canvas edge'}</button><button type="button" class="menu__item" role="menuitem" data-cmd="resetlayout">Reset panel widths</button>`;
+  $$('#layoutMenu [data-preset]').forEach(b => b.onclick = () => { applyPreset(b.dataset.preset); closeMenus(); }); bindCmds($('#layoutMenu'));
+}
+function closeMenus() { $$('.menu.wbmenu').forEach(m => m.hidden = true); }
+function openMenu(menu, anchor) { closeMenus(); menu.hidden = false; const a = anchor.getBoundingClientRect(), r = app.getBoundingClientRect(); menu.style.left = Math.min(a.left - r.left, r.width - 320) + 'px'; menu.style.top = (a.top - r.top - menu.offsetHeight - 4) + 'px'; if (a.top - r.top - menu.offsetHeight - 4 < 0) menu.style.top = (a.bottom - r.top + 4) + 'px'; $('.menu__item', menu).focus(); }
+function sectionMenu(btn) {
+  const sec = btn.closest('.wbsec'); const inRight = !!sec.closest('#rbody'); const m = $('#secMenu');
+  m.innerHTML = `<div class="menu__heading">${sec.dataset.title}</div><button type="button" class="menu__item" role="menuitem" data-a="collapse">${sec.classList.contains('is-collapsed') ? 'Expand' : 'Collapse'}</button>${sec.dataset.sec === 'case' ? '<button type="button" class="menu__item" role="menuitem" disabled>Hide panel (identity is pinned in clinical builds)</button>' : `<button type="button" class="menu__item" role="menuitem" data-a="hide">Hide panel</button><button type="button" class="menu__item" role="menuitem" data-a="move">Move to ${inRight ? 'Explorer' : 'Inspector'}</button>`}<button type="button" class="menu__item" role="menuitem" data-a="up">Move up</button><button type="button" class="menu__item" role="menuitem" data-a="down">Move down</button>`;
+  $$('[data-a]', m).forEach(b => b.onclick = () => {
+    const a = b.dataset.a; closeMenus();
+    if (a === 'collapse') { sec.classList.toggle('is-collapsed'); $('.wbsec__toggle', sec).setAttribute('aria-expanded', String(!sec.classList.contains('is-collapsed'))); }
+    if (a === 'hide') { if (inRight) toggleSection(sec.dataset.sec, false); else sec.hidden = true; }
+    if (a === 'move') { (inRight ? $('#lbody') : $('#rbody')).appendChild(sec); if (!inRight) { sec.dataset.icon = sec.dataset.icon || 'i-layers'; sec.hidden = false; openRight(true); } renderAbar(); currentPreset = null; $('#layoutTxt').textContent = 'Layout · Custom'; }
+    if (a === 'up' && sec.previousElementSibling) sec.parentNode.insertBefore(sec, sec.previousElementSibling);
+    if (a === 'down' && sec.nextElementSibling) sec.parentNode.insertBefore(sec.nextElementSibling, sec);
+    btn.focus();
+  });
+  openMenu(m, btn);
+}
+function setupResizer(res, prop, min, max, dir) {
+  const apply = v => { v = Math.max(min, Math.min(max, v)); app.style.setProperty(prop, v + 'px'); res.setAttribute('aria-valuenow', v); updateShare(); const s = measureShare({ left: want.left, right: want.right }); const n = prop === '--wb-left' ? $('#lnote') : $('#rnote'); if (s < FLOOR && app.classList.contains(prop === '--wb-left' ? 'l-open' : 'r-docked')) { n.hidden = false; n.textContent = `Canvas ${(s * 100).toFixed(0)} % — below the 70 % floor. ${prop === '--wb-left' ? 'U narrows the Explorer' : 'Shift+U closes the Inspector'}; the width is kept as you set it.`; } else if (!n.textContent.startsWith('Floating') && !n.textContent.startsWith('Narrowed')) n.hidden = true; };
+  const cur = () => parseFloat(getComputedStyle(app).getPropertyValue(prop)) || 280;
+  res.addEventListener('pointerdown', e => { e.preventDefault(); res.setPointerCapture(e.pointerId); res.classList.add('is-dragging'); app.classList.add('is-gesturing'); const x0 = e.clientX, w0 = cur(); const mv = ev => apply(w0 + dir * (ev.clientX - x0)); res.addEventListener('pointermove', mv); res.addEventListener('pointerup', () => { res.removeEventListener('pointermove', mv); res.classList.remove('is-dragging'); app.classList.remove('is-gesturing'); syncCam(false); }, { once: true }); });
+  res.addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); apply(cur() + (e.key === 'ArrowRight' ? 16 : -16) * dir); syncCam(false); } if (e.key === 'Home') { apply(min); syncCam(false); } if (e.key === 'End') { apply(max); syncCam(false); } });
+  res.addEventListener('dblclick', () => { app.style.removeProperty(prop); updateShare(); syncCam(false); });
+}
+setupResizer($('#lres'), '--wb-left', 220, 420, 1); setupResizer($('#rres'), '--wb-right', 260, 520, -1);
+$$('.wbsec__toggle').forEach(t => t.addEventListener('click', () => { const s = t.closest('.wbsec'); s.classList.toggle('is-collapsed'); t.setAttribute('aria-expanded', String(!s.classList.contains('is-collapsed'))); }));
+$$('.secmenu').forEach(b => b.addEventListener('click', () => sectionMenu(b)));
+
+/* ---------- 8. Command bus (one dispatcher for keys, palette, rail, abar, menus, demo strip) ---------- */
+function setTool(t) { $$('[data-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t))); views[0].style.cursor = t === 'select' ? '' : 'crosshair'; say(`Tool: ${t}`); }
+function setCompare(on) {
+  app.classList.toggle('is-compare', on); $$('[data-cmd="compare"]').forEach(b => b.setAttribute('aria-pressed', String(on))); $('#cmpToggle').setAttribute('aria-checked', String(on));
+  if (on) { SLIDES[1].viewed = SLIDES[1].viewed === 'unviewed' ? 'partial' : SLIDES[1].viewed; SLIDES[1].cov = Math.max(SLIDES[1].cov, 12); }
+  requestAnimationFrame(() => { syncCam(false); renderTray(); renderSignout(); renderAbar(); updateShare(); });
+}
+function openPop(id) { closePops(id); const p = $('#' + id); p.hidden = false; const f = $('input, button.btn--primary, button', p); if (f) f.focus(); }
+function closePops(except) { $$('.wbpop').forEach(p => { if (p.id !== except) p.hidden = true; }); }
+function runCmd(id, src) {
+  const c = CMD.find(x => x.id === id); if (c && c.tool) return setTool(c.tool);
+  const consult = purposeStr() !== 'Sign-out';
+  switch (id) {
+    case 'zoomin': return setZoom(view.umpp / 2, view.W / 2, view.H / 2);
+    case 'zoomout': return setZoom(view.umpp * 2, view.W / 2, view.H / 2);
+    case 'fit': return fit();
+    case 'mag1': case 'mag2': case 'mag3': case 'mag4': case 'mag5': case 'mag6': return setZoom(MAGS[+id.slice(3) - 1], view.W / 2, view.H / 2);
+    case 'magtoggle': return setZoom(view.last, view.W / 2, view.H / 2);
+    case 'rotate': view.rot = (view.rot + 90) % 360; syncCam(true); return;
+    case 'rotateccw': view.rot = (view.rot + 270) % 360; syncCam(true); return;
+    case 'nav': $('#nav').hidden = !$('#nav').hidden; app.classList.toggle('nav-open', !$('#nav').hidden); return;
+    case 'grid': views.forEach(v => { const g = $('.ov-grid', v); g.style.display = g.style.display === 'none' ? '' : 'none'; }); return notice('HPF reticle · 0.237 mm² on this display (calibrated from EDID pitch)');
+    case 'next': return selectSlide((slideIdx + 1) % SLIDES.length);
+    case 'prev': return selectSlide((slideIdx + SLIDES.length - 1) % SLIDES.length);
+    case 'identity': { if (window.innerWidth < 1080) { app.classList.add('sheet-l'); } else { want.left = 'open'; govern(); } const s = $('.wbsec[data-sec="case"]'); s.classList.remove('is-collapsed'); $('.wbsec__toggle', s).setAttribute('aria-expanded', 'true'); s.scrollIntoView({ block: 'start' }); return; }
+    case 'label': if (state.renderMode === 'dx') return notice('Label image stays visible in Dx mode (FR-R9).'); LAYERS[3].vis = !LAYERS[3].vis; applyLayers(); renderLayers(); return;
+    case 'bookmark': BOOKMARKS.unshift({ id: 'b' + (BOOKMARKS.length + 1), t: `View ${BOOKMARKS.length + 1}, ${SLIDES[slideIdx].id}`, m: `${fmtMag(view.umpp)} · ${(view.cx / 1000).toFixed(1)} mm, ${(view.cy / 1000).toFixed(1)} mm · now`, sym: SLIDES[slideIdx].sym, at: [view.cx, view.cy, view.umpp] }); renderBookmarks(); return notice('Bookmarked this view (state-document entry)');
+    case 'bookmarks': { const s = $('.wbsec[data-sec="bookmarks"]'); s.classList.remove('is-collapsed'); $('.wbsec__toggle', s).setAttribute('aria-expanded', 'true'); if (window.innerWidth < 1080) app.classList.add('sheet-l'); else { want.left = 'open'; govern(); } s.scrollIntoView({ block: 'nearest' }); return; }
+    case 'snapshot': return notice(`Snapshot saved · PNG with 100 µm scale bar, ${state.product === 'ruo' ? 'RUO' : 'product'} footer · label image ${LAYERS[3].vis && state.product !== 'ruo' ? 'included (Tier 2)' : 'not included (Tier 0)'}`);
+    case 'compare': return setCompare(!app.classList.contains('is-compare'));
+    case 'curtain': return notice('Curtain compare: both views in one viewport, divider follows the pointer (engine viewport)');
+    case 'overlays': { const any = LAYERS.some(l => l.vis && l.id !== 'lbl'); LAYERS.forEach(l => { if (l.id !== 'lbl') l.vis = !any; }); applyLayers(); renderLayers(); return; }
+    case 'ai': LAYERS[0].vis = !LAYERS[0].vis; applyLayers(); renderLayers(); return;
+    case 'adjust': $('#hudAdj').hidden = !$('#hudAdj').hidden; setBanners(); return notice($('#hudAdj').hidden ? 'B/C/γ reset' : 'B/C/γ panel (J): adjustment shown while non-default');
+    case 'adjreset': $('#hudAdj').hidden = true; setBanners(); return notice(state.renderMode === 'dx' ? 'Adjustments reset to the reference rendering (logged)' : 'Adjustments reset');
+    case 'palette': return openPalette();
+    case 'keys': toggleSection('keys', true); $('#kmFilter').focus(); return;
+    case 'left': return toggleLeft();
+    case 'right': return openRight(!(app.classList.contains('r-docked') || app.classList.contains('r-float') || app.classList.contains('sheet-r')));
+    case 'rightdock': want.right = app.classList.contains('r-float') ? 'docked' : 'float'; currentPreset = null; govern(); if (want.right === 'docked' && !app.classList.contains('r-docked')) notice('Governor kept the Inspector floating: docking would take the canvas below 70 %.'); return;
+    case 'resetlayout': app.style.removeProperty('--wb-left'); app.style.removeProperty('--wb-right'); govern(); return;
+    case 'layout': return openMenu($('#layoutMenu'), $('#layoutChip'));
+    case 'sheetL': app.classList.toggle('sheet-l'); app.classList.remove('sheet-r'); return;
+    case 'sheetR': app.classList.toggle('sheet-r'); app.classList.remove('sheet-l'); renderAbar(); return;
+    case 'dx': if (state.renderMode === 'dx') { state.mode = 'nav'; $('#dMode').value = 'nav'; applyState(); return notice('Left Dx mode. Viewing in Nav mode.'); } renderDxGate(); return openPop('dxpop');
+    case 'dxconfirm': state.mode = 'dx'; $('#dMode').value = 'dx'; closePops(); return applyState();
+    case 'dxwhy': renderDxGate(); return openPop('dxpop');
+    case 'signout': if (state.product === 'ruo') return; if (consult) return runCmd('consult'); toggleSection('signout', true); $('#btnReturn').focus(); return;
+    case 'consult': if (state.product === 'ruo') return; toggleSection('consult', true); return;
+    case 'about': return openPop('about');
+    case 'aiaccept': return notice('aiResultAccepted → LIS write-back (Clinical-IH / Dx only) · layer stays marked');
+    case 'aireject': return notice('aiResultRejected · logged with the provenance tuple');
+    case 'flyITC': { const r = AIREG.find(x => !x.viewed) || AIREG[1]; return flyTo(r.x, r.y, 0.5); }
+    case 'flyMet': return flyTo(11300, 2300, 0.5);
+    case 'handoff': return notice('Hand-off: opens the companion window on the diagnostic display via the IID URL + launch-context token; this iframe becomes the controller.');
+    case 'retry': state.err = 'none'; $('#dErr').value = 'none'; return applyState();
+    case 'esc': closePops(); closeMenus(); if (app.classList.contains('sheet-l') || app.classList.contains('sheet-r')) { app.classList.remove('sheet-l', 'sheet-r'); renderAbar(); } else if (app.classList.contains('r-float')) openRight(false); setTool('select'); return;
+    default: return notice(`Command "${id}" (${c ? c.l : id}) dispatched on the command bus`);
+  }
+}
+function bindCmds(root) { $$('[data-cmd]', root).forEach(b => { if (b.dataset.bound) return; b.dataset.bound = '1'; b.addEventListener('click', e => { e.stopPropagation(); runCmd(b.dataset.cmd, 'pointer'); }); }); }
+$$('[data-tool]').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
+$$('[data-close]').forEach(b => b.addEventListener('click', () => { const t = b.dataset.close; if (t === 'consult' || t === 'signout') toggleSection(t, false); else closePops(); }));
+$('#btnDx').addEventListener('click', () => runCmd('dxconfirm'));
+$('#btnConsult').addEventListener('click', () => { $('#consultStatus').innerHTML = '<b>Consult requested</b> · <code>shareCreated</code> emitted · de-identified link (Tier 0) expires in 24 h · the consultant sees Consultation · preliminary only.'; notice('Consult requested · shareCreated'); });
+$('#btnReturn').addEventListener('click', () => { SLIDES.forEach(s => { if (s.viewed === 'partial' && s.cov >= 30) s.viewed = 'viewed'; }); renderTray(); renderSignout(); $$('#worklistTop,#worklistRib,#worklistCard').forEach(w => { w.textContent = 'Reviewed'; w.classList.add('is-reviewed'); }); notice('signoutRequested → caseStatusChanged: Reviewed · focus returns to the LIS window'); say('Sign-out requested. Case status Reviewed sent to the LIS.'); });
+$('#cmpToggle').addEventListener('click', () => setCompare($('#cmpToggle').getAttribute('aria-checked') !== 'true'));
+$$('#syncSeg .segmented__item').forEach(b => b.addEventListener('click', () => { $$('#syncSeg .segmented__item').forEach(x => x.setAttribute('aria-checked', String(x === b))); const m = b.dataset.sync; $('#syncTxt').textContent = 'Sync · ' + m; $('#syncHint').textContent = m === 'lock' ? 'Lock: both views share centre and scale (µm).' : m === 'affine' ? 'Affine: serial-section registration maps the IHC view onto the H&E (engine registration).' : 'None: views move independently.'; }));
+$$('#consultSeg .segmented__item').forEach(b => b.addEventListener('click', () => $$('#consultSeg .segmented__item').forEach(x => x.setAttribute('aria-checked', String(x === b)))));
+$('#layoutChip').addEventListener('click', () => { renderLayoutMenu(); openMenu($('#layoutMenu'), $('#layoutChip')); });
+$('#mode').addEventListener('click', () => runCmd('dx'));
+$('#badge').addEventListener('click', () => runCmd('about'));
+$('#palTrig').addEventListener('click', () => runCmd('palette'));
+$('#btnKeys').addEventListener('click', () => runCmd('keys'));
+$('#qaChip').addEventListener('click', () => { renderDxGate(); openPop('dxpop'); });
+$('#kmFilter').addEventListener('input', () => renderKeymap($('#kmFilter').value));
+$('#mag').addEventListener('click', () => { const v = prompt('Zoom: enter × (e.g. 20) or µm/px (e.g. 0.5)', fmtMag(view.umpp).replace('×', '')); if (!v) return; const n = parseFloat(v); if (!isFinite(n) || n <= 0) return; setZoom(/µm|um/.test(v) || n < 1 ? n : 10 / n, view.W / 2, view.H / 2); });
+$$('.navigator__pan button').forEach(b => b.addEventListener('click', () => { const [dx, dy] = b.dataset.pan.split(',').map(Number); panBy(dx * .25, dy * .25); }));
+$('#navThumb').addEventListener('click', e => { const r = $('#navThumb').getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * 20000, y = ((e.clientY - r.top) / r.height * 112 - 6) / 100 * 10000; flyTo(x, y); });
+document.addEventListener('click', e => { if (!e.target.closest('.menu.wbmenu, #layoutChip, .secmenu')) closeMenus(); });
+bindCmds(document);
+
+/* ---------- 9. Command palette (combobox pattern; same registry as the keys) ---------- */
+let palSel = 0, palItems = [];
+function paletteItems(q) {
+  q = q.trim().toLowerCase(); const items = [];
+  const hit = s => !q || s.toLowerCase().includes(q);
+  const mark = s => q ? s.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), m => `<mark>${m}</mark>`) : s;
+  CMD.forEach(c => { if (c.hidden || c.reserved) return; if (c.clinical && state.product === 'ruo') return; if (hit(c.l) || (c.k && hit(c.k.join(' ')))) items.push({ g: c.g, html: `${c.ico ? `<svg class="ico"><use href="#${c.ico}"/></svg>` : '<span class="ico"></span>'}<span class="label">${mark(c.l)}</span>${c.meta ? `<span class="meta">${c.meta}</span>` : ''}<span class="keys">${(c.k || []).map(k => `<kbd class="key">${k}</kbd>`).join('')}</span>`, run: () => runCmd(c.id, 'palette') }); });
+  SLIDES.forEach((s, i) => { const l = `${s.id} · ${s.text}`; if (hit(l) || hit(s.stain)) items.push({ g: 'Slides', html: `<span class="chip chip--stain" style="min-height:18px">${s.stain}</span><span class="label">${mark(l)}</span><span class="meta">${s.viewed === 'viewed' ? 'viewed' : s.viewed === 'partial' ? s.cov + ' % viewed' : 'not yet viewed'}</span><span class="keys">${i === (slideIdx + 1) % SLIDES.length ? '<kbd class="key">]</kbd>' : ''}</span>`, run: () => selectSlide(i) }); });
+  BOOKMARKS.forEach(b => { if (hit(b.t)) items.push({ g: 'Bookmarks', html: `<svg class="ico"><use href="#i-bookmark"/></svg><span class="label">${mark(b.t)}</span><span class="meta">${b.m}</span>`, run: () => flyTo(b.at[0], b.at[1], b.at[2]) }); });
+  ANN.forEach(a => { if (hit(a.label)) items.push({ g: 'Annotations', html: `<span class="swatch" style="--swatch:${a.sw}"></span><span class="label">${mark(a.label)}</span><span class="meta">${SLIDES[0].id}</span><span class="keys"><kbd class="key">Space</kbd></span>`, run: () => flyTo(a.at[0], a.at[1], 0.5) }); });
+  Object.keys(PRESETS).forEach(n => { if (hit('layout ' + n)) items.push({ g: 'Layouts', html: `<svg class="ico"><use href="#i-panel-l"/></svg><span class="label">Layout · ${mark(n)}</span><span class="meta">${PRESETS[n].secs.join(', ') || 'canvas only'}</span>`, run: () => applyPreset(n) }); });
+  [['Tumor', 'var(--ann-2)'], ['Region*', 'var(--ann-4)'], ['Other', 'var(--ann-6)'], ['Lymphocytes', 'var(--ann-1)'], ['Negative', 'var(--ann-8)']].forEach(c => { if (q && hit('class ' + c[0])) items.push({ g: 'Classes', html: `<span class="swatch" style="--swatch:${c[1]}"></span><span class="label">Class · ${mark(c[0])}</span><span class="meta">QuPath name kept</span>`, run: () => notice('Class set: ' + c[0]) }); });
+  return items.slice(0, 40);
+}
+function renderPalette() {
+  palItems = paletteItems($('#palInput').value); palSel = Math.min(palSel, Math.max(0, palItems.length - 1));
+  let g = ''; $('#palList').innerHTML = palItems.map((it, i) => (g !== it.g ? (g = it.g, `<div class="palette__group">${g}</div>`) : '') + `<div class="palette__item" role="option" id="pal-${i}" aria-selected="${i === palSel}" data-i="${i}">${it.html}</div>`).join('') || '<div class="palette__group">No matches · Esc</div>';
+  $('#palInput').setAttribute('aria-activedescendant', 'pal-' + palSel);
+  $$('#palList [data-i]').forEach(d => d.onclick = () => { palItems[+d.dataset.i].run(); closePalette(); });
+  const sel = $('#pal-' + palSel); if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+function openPalette() { openPop('palette'); $('#palInput').value = ''; palSel = 0; renderPalette(); $('#palInput').focus(); }
+function closePalette() { $('#palette').hidden = true; views[0].focus({ preventScroll: true }); }
+$('#palInput').addEventListener('input', () => { palSel = 0; renderPalette(); });
+$('#palInput').addEventListener('keydown', e => { if (e.key === 'ArrowDown') { e.preventDefault(); palSel = Math.min(palSel + 1, palItems.length - 1); renderPalette(); } else if (e.key === 'ArrowUp') { e.preventDefault(); palSel = Math.max(0, palSel - 1); renderPalette(); } else if (e.key === 'Enter') { e.preventDefault(); if (palItems[palSel]) { palItems[palSel].run(); closePalette(); } } else if (e.key === 'Escape') { e.preventDefault(); closePalette(); } });
+
+/* ---------- 10. Keyboard: unmodified keys + Shift inside the viewer; Ctrl only for K; none in the iframe ---------- */
+const KEYS = { 'v': 'select', 'm': 'measure', 'M': 'area', 'p': 'polygon', 't': 'point', 'f': 'freehand', 'T': 'count', 'q': 'class', '+': 'zoomin', '=': 'zoomin', '-': 'zoomout', '0': 'fit', 'Home': 'fit', '1': 'mag1', '2': 'mag2', '3': 'mag3', '4': 'mag4', '5': 'mag5', '6': 'mag6', 'z': 'magtoggle', 'r': 'rotate', 'R': 'rotateccw', 'o': 'nav', 'g': 'grid', ']': 'next', '[': 'prev', 'i': 'identity', 'l': 'label', 'b': 'bookmark', 'B': 'bookmarks', 'S': 'snapshot', 'c': 'compare', '/': 'curtain', 'h': 'overlays', 'H': 'ai', 'j': 'adjust', 'J': 'adjreset', 'u': 'left', 'U': 'right', 'P': 'layout', 'D': 'dx', 'A': 'aiaccept', 'X': 'aireject', '?': 'keys', 'Escape': 'esc' };
+document.addEventListener('keydown', e => {
+  const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
+  if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'k') { e.preventDefault(); if (isEmbedded()) return notice('The embedded controller binds no keys; use the companion window.'); return runCmd('palette', 'keyboard'); }
+  if (e.key === 'Escape') { if (!$('#palette').hidden) return; runCmd('esc'); return; }
+  if (inField || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (isEmbedded()) return;
+  if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); return runCmd('signout', 'keyboard'); }
+  if (e.key.startsWith('Arrow')) { e.preventDefault(); const f = e.shiftKey ? 1 : 0.1; const d = { ArrowLeft: [-f, 0], ArrowRight: [f, 0], ArrowUp: [0, -f], ArrowDown: [0, f] }[e.key]; return panBy(d[0], d[1]); }
+  if (/^[wasd]$/.test(e.key)) { const d = { w: [0, -.1], a: [-.1, 0], s: [0, .1], d: [.1, 0] }[e.key]; if (e.key === 'a' || e.key === 's' || e.key === 'w' || e.key === 'd') { e.preventDefault(); return panBy(d[0], d[1]); } }
+  const id = KEYS[e.key]; if (id) { e.preventDefault(); runCmd(id, 'keyboard'); }
+});
+
+/* ---------- 11. Canvas gestures (the engine's job; simulated so the HUD, navigator and trail move) ---------- */
+views.forEach(v => {
+  v.addEventListener('wheel', e => { e.preventDefault(); const r = v.getBoundingClientRect(); const k = e.ctrlKey ? 1.05 : 1.2; setZoom(e.deltaY > 0 ? view.umpp * k : view.umpp / k, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  let drag = null;
+  v.addEventListener('pointerdown', e => { if (e.button !== 0 || e.target.closest('button, .navigator, .hud, .plate')) return; drag = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy }; v.setPointerCapture(e.pointerId); app.classList.add('is-gesturing'); $('svg.canvas', v).style.cursor = 'grabbing'; });
+  v.addEventListener('pointermove', e => { if (!drag) return; view.cx = drag.cx - (e.clientX - drag.x) * view.umpp; view.cy = drag.cy - (e.clientY - drag.y) * view.umpp; clampView(); syncCam(false); });
+  v.addEventListener('pointerup', () => { if (!drag) return; drag = null; app.classList.remove('is-gesturing'); $('svg.canvas', v).style.cursor = ''; pushTrail(); syncCam(true); afterGesture(); });
+  v.addEventListener('dblclick', e => { const r = v.getBoundingClientRect(); setZoom(e.shiftKey ? view.umpp * 2 : view.umpp / 2, e.clientX - r.left, e.clientY - r.top); });
+  v.addEventListener('contextmenu', e => e.preventDefault());
+});
+
+/* ---------- 12. Demo controls and review chrome (not product) ---------- */
+const sel = (id, k) => $(id).addEventListener('change', e => { state[k] = e.target.value; if (k === 'surface') { want.right = 'closed'; } applyState(); govern(); if (k === 'overlay') demoOverlay(); });
+sel('#dProduct', 'product'); sel('#dDisplay', 'display'); sel('#dMode', 'mode'); sel('#dPurpose', 'purpose'); sel('#dNet', 'net'); sel('#dErr', 'err'); sel('#dSurface', 'surface'); sel('#dOverlay', 'overlay');
+function demoOverlay() {
+  closePops(); const o = state.overlay;
+  if (o === 'palette') { openPalette(); $('#palInput').value = 'meas'; renderPalette(); }
+  if (o === 'keys') runCmd('keys'); if (o === 'signout') runCmd('signout'); if (o === 'consult') runCmd('consult'); if (o === 'dx') runCmd('dxwhy'); if (o === 'about') runCmd('about');
+  if (o === 'inspector') { want.right = 'docked'; showSecs(['context', 'annotate', 'compare']); govern(); }
+  if (o === 'compare') { setCompare(true); toggleSection('compare', true); }
+  if (o === 'none') { closePops(); }
+}
+$('#rvRationale').addEventListener('click', () => { const d = $('#ratDetails'); d.open = true; d.scrollIntoView({ behavior: 'smooth' }); });
+$('#rvLive').addEventListener('click', () => { const on = body.classList.toggle('show-live'); $('#rvLive').setAttribute('aria-pressed', String(on)); });
+$('#rvGuide').addEventListener('click', () => { let g = $('#centreGuide'); if (!g) { g = document.createElement('div'); g.id = 'centreGuide'; g.setAttribute('aria-hidden', 'true'); g.style.cssText = 'position:absolute;left:25%;top:25%;width:50%;height:50%;border:2px dashed #e879f9;z-index:65;pointer-events:none;box-sizing:border-box;display:none'; g.innerHTML = '<span style="position:absolute;left:4px;top:2px;font:600 11px/1.4 var(--font-mono);color:#e879f9;background:rgba(0,0,0,.6);padding:0 4px">central 50 % × 50 % — nothing may enter (P1)</span>'; $('#canvasArea').appendChild(g); } const on = g.style.display === 'none'; g.style.display = on ? 'block' : 'none'; $('#rvGuide').setAttribute('aria-pressed', String(on)); });
+$('#rvHide').addEventListener('click', () => { body.classList.add('review-hidden'); requestAnimationFrame(() => { syncCam(false); updateShare(); }); });
+$('#rvShow').addEventListener('click', () => { body.classList.remove('review-hidden'); requestAnimationFrame(() => { syncCam(false); updateShare(); }); });
+let fsSec = 372; setInterval(() => { if ($('#fsChip').hidden) return; fsSec++; $('#fsT').textContent = String(Math.floor(fsSec / 60)).padStart(2, '0') + ':' + String(fsSec % 60).padStart(2, '0'); }, 1000);
+/* URL parameters for the review harness: ?product=dx&mode=dx&display=attested&net=4g&err=tiles&surface=embedded&open=palette&layout=Compare&left=strip&right=docked&review=hidden */
+(function fromUrl() { const u = new URLSearchParams(location.search); const map = { product: '#dProduct', display: '#dDisplay', mode: '#dMode', purpose: '#dPurpose', net: '#dNet', err: '#dErr', surface: '#dSurface', open: '#dOverlay' }; Object.keys(map).forEach(k => { const v = u.get(k); if (v) { $(map[k]).value = v; state[k === 'open' ? 'overlay' : k] = v; } }); if (u.get('review') === 'hidden') body.classList.add('review-hidden'); if (u.get('left')) want.left = u.get('left'); if (u.get('right')) want.right = u.get('right'); window.__layout = u.get('layout'); window.__live = u.get('live'); })();
+
+/* ---------- 13. Boot: identity first (P5), then the frame, then the first view ---------- */
+let lastBp = null; function bp() { const w = window.innerWidth; return w >= 3200 ? '4k' : w >= 1600 ? 'desk' : w >= 1080 ? 'lap' : w >= 600 ? 'tab' : 'phone'; }
+function defaults() { const b = bp(); if (b === '4k') { want.left = 'open'; want.right = 'docked'; showSecs(['context', 'annotate', 'compare']); } else { want.left = 'open'; want.right = 'closed'; } if (window.__layout) applyPreset(window.__layout); }
+function init() {
+  renderTray(); renderBookmarks(); renderAnn(); renderCov(); renderLayoutMenu();
+  const u = new URLSearchParams(location.search); if (!u.get('left') && !u.get('right')) defaults(); lastBp = bp();
+  applyState(); govern(); selectSlide(0); flyTo(11150, 1850, 0.5); setTool('select');
+  if (window.__live) { body.classList.add('show-live'); $('#rvLive').setAttribute('aria-pressed', 'true'); }
+  demoOverlay(); views[0].focus({ preventScroll: true });
+  renderAiViewed(); updateShare();
+  const fq = new URLSearchParams(location.search).get('focus'); const fsel = { tray: app.classList.contains('l-strip') ? '#sstrip [aria-selected="true"]' : '#tray [aria-selected="true"]', signout: '#btnPrimary', resizer: '#lres', layer: '[data-vis="ai"]', mode: '#mode' }[fq]; if (fsel) { const el = $(fsel); if (el) { el.focus(); el.classList.add('is-focus'); } }
+}
+window.addEventListener('resize', () => { const b = bp(); if (b !== lastBp) { lastBp = b; defaults(); } applyState(); govern(); });
+init();
+})();
+
+</script>
 </body>
 </html>
