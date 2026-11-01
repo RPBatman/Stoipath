@@ -184,7 +184,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .panes.is-compare ~ .hud--tl { display: none; }
 .pane.is-active::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 2px var(--grey-95); pointer-events: none; display: none; }
 .panes.is-compare .pane.is-active::after { display: block; }
-.app[data-cond="cold4g"] .pane svg.canvas { filter: blur(1.3px); }           /* mock of "best resident ancestor" while the link is slow (never blank) */
+.app.is-soft .pane svg.canvas { filter: blur(1.3px); }           /* mock of "best resident ancestor" while the link is slow (never blank) */
 .app[data-cond="offline"] .pane svg.canvas { filter: saturate(.92); }
 .pane svg text { font-family: var(--font-mono); font-weight: 600; paint-order: stroke; stroke-linejoin: round; }
 /* failed tiles keep their ancestor (S14) */
@@ -326,6 +326,51 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .rationale a { color: #cfe3b5; }
 .rationale ul { padding-left: 20px; }
 .rationale li { margin: 3px 0; }
+
+/* ---- completed 2026-11-01: state classes driven by the script ---------- */
+/* The lab name is a build-time constant substituted into the controlled
+   Clinical-IH string (principles §2.1); the token stays the single source.  */
+.app.tf { --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation."; }
+.app.tf:not(.nav-open) .navigator { display: none; }
+.app.tf.is-refused { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
+.app.is-refused .topbar__identity, .app.is-refused .embed-tray, .app.is-refused #qaChip, .app.is-refused #modeChip,
+.app.is-refused #purposeChip, .app.is-refused .flow, .app.is-refused .flowbar .btn, .app.is-refused #railTools, .app.is-refused .rail__divider,
+.app.is-refused .navigator, .app.is-refused .hud, .app.is-refused .panes, .app.is-refused .dock, .app.is-refused .bottombar .tool:not([data-cmd="keymap"]),
+.app.is-refused #stripMic { display: none !important; }
+.app.is-blocked .navigator, .app.is-blocked .hud, .app.is-blocked .reticle, .app.is-blocked .tilegrid { display: none !important; }
+.app.is-blocked.is-mismatch .panes { visibility: hidden; }
+.app.tf .canvas-area svg.canvas .user-ann text { font-family: var(--font-mono); font-weight: 600; paint-order: stroke; stroke-linejoin: round; }
+.app[data-tool="select"] .canvas-area.space-pan, .canvas-area.space-pan { cursor: grab; }
+/* typed zoom */
+.magnification input { font-family: var(--font-mono); }
+/* checklist rows rendered by the script */
+.checklist .act { margin-left: auto; flex: 0 0 auto; }
+.checklist li > span:nth-child(2) { flex: 1 1 auto; min-width: 0; }
+/* tray inside the step panel: room for the stain chip */
+.dock .tray__slide { padding: var(--space-3) var(--space-5); }
+/* embedded: tray chips compact, only when the bar has room (label string first, P4) */
+@container topbar (max-width: 1599px) { .app--embedded .embed-tray .chip .stain { display: none; } }
+@container topbar (max-width: 1279px) { .app--embedded .embed-tray { display: none; } }
+.app--embedded .topbar__label { font-size: var(--text-xs); }
+/* dock sheet on tablet / phone: grabber row doubles as a close target */
+@media (max-width: 1079px) {
+  .app.tf .dock .step-head { padding-top: 0; }
+  .app.tf .dock__body { max-height: calc(var(--layout-sheet-max) - 140px); }
+}
+@media (max-width: 599px) {
+  .app.tf .dock__body { max-height: calc(60vh - 140px); }
+  .idcard { grid-template-columns: 96px 1fr; }
+  .labelimg { width: 96px; height: 64px; font-size: 9px; }
+}
+/* pane B id sits top-left of its own pane; in drawer widths keep it clear of the navigator */
+.pane--b .pane__id { left: var(--layout-hud-inset); right: auto; }
+/* focus demo: one element shows the ring in the static screenshots (brief: "keyboard focus visible on one element") */
+.demo-focus { box-shadow: var(--focus-shadow) !important; }
+/* toasts never over the canvas centre: they sit above the strip on the dock side */
+.app.tf .toast-stack { pointer-events: none; }
+.app.tf .toast-stack > * { pointer-events: auto; }
+@media (max-width: 1079px) { .app.tf .toast-stack { bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); right: var(--space-4); left: var(--space-4); align-items: flex-end; } }
+.toast .toast__glyph { color: var(--color-text); }
 </style>
 </head>
 <body>
@@ -453,7 +498,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 
 <!-- ====== Concept header (review chrome; not product) ====== -->
 <header class="review-head" aria-label="Concept header">
-  <b>Concept C</b><span class="sep">·</span>Screen: <b>Clinical sign-out viewer</b> (Stoipath Clinical-IH / Dx)<span class="sep">·</span>Angle: <b>Task-flow</b> (step rail, one panel per step, pen and touch first)<span class="sep">·</span>2026-10-26<span class="sep">·</span>Synthetic case and patient
+  <b>Concept C</b><span class="sep">·</span>Screen: <b>Clinical sign-out viewer</b> (Stoipath Clinical-IH / Dx)<span class="sep">·</span>Angle: <b>Task-flow</b> (step rail, one panel per step, pen and touch first)<span class="sep">·</span>2026-11-01 (draft 2026-10-26, completed 2026-11-01)<span class="sep">·</span>Synthetic case and patient
   <span class="hint"><kbd class="key">N</kbd> next step · <kbd class="key">?</kbd> keys · <kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd> palette · drag / wheel / pinch the slide</span>
 </header>
 
@@ -519,7 +564,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
         <button class="tool" data-cmd="snapshot" data-steps="4 5" aria-label="Snapshot with scale bar and footer (Shift+S)"><svg class="icon"><use href="#i-camera"/></svg><span class="tool__key">⇧S</span></button>
       </div>
       <div class="rail__spacer"></div>
-      <button class="tool" data-cmd="dock" aria-label="Show or hide the step panel (D)" aria-pressed="true"><svg class="icon"><use href="#i-panel"/></svg><span class="tool__key">D</span></button>
+      <button class="tool" data-cmd="dock" aria-label="Show or hide the step panel (K)" aria-pressed="true"><svg class="icon"><use href="#i-panel"/></svg><span class="tool__key">K</span></button>
       <button class="tool" data-cmd="keymap" aria-label="Keyboard shortcuts (?)"><svg class="icon"><use href="#i-keyboard"/></svg><span class="tool__key">?</span></button>
     </nav>
 
@@ -708,11 +753,11 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
         <section class="step-panel" id="panel-4" aria-label="Annotate and decide">
           <div class="not-consult">
             <div class="btnrow" role="toolbar" aria-label="Annotation classes" data-live="annotations">
-              <button class="class-chip" aria-pressed="true"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <kbd class="key">1</kbd></button>
-              <button class="class-chip"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <kbd class="key">2</kbd></button>
-              <button class="class-chip"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <kbd class="key">3</kbd></button>
-              <button class="class-chip"><span class="swatch" style="--swatch:var(--ann-7)"></span>Necrosis <kbd class="key">4</kbd></button>
-              <button class="class-chip"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <kbd class="key">5</kbd></button>
+              <button class="class-chip" aria-pressed="true" data-cls="Tumor" data-sw="ann-2"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <kbd class="key">Q 1</kbd></button>
+              <button class="class-chip" aria-pressed="false" data-cls="Lymphocytes" data-sw="ann-1"><span class="swatch" style="--swatch:var(--ann-1)"></span>Lymphocytes <kbd class="key">Q 2</kbd></button>
+              <button class="class-chip" aria-pressed="false" data-cls="Stroma" data-sw="ann-5"><span class="swatch" style="--swatch:var(--ann-5)"></span>Stroma <kbd class="key">Q 3</kbd></button>
+              <button class="class-chip" aria-pressed="false" data-cls="Necrosis" data-sw="ann-7"><span class="swatch" style="--swatch:var(--ann-7)"></span>Necrosis <kbd class="key">Q 4</kbd></button>
+              <button class="class-chip" aria-pressed="false" data-cls="Other" data-sw="ann-6"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <kbd class="key">Q 5</kbd></button>
             </div>
             <details class="section" open><summary>Annotations <span class="count">2</span></summary>
               <div class="section__body">
@@ -732,7 +777,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
               </div>
             </details>
             <details class="section" open><summary>Evidence returning to the LIS <span class="count">preview</span></summary>
-              <div class="section__body"><div class="hintline" data-live="events">1 measurement (SR TID 1500) · 1 region (DICOM ANN / GeoJSON) · AI results: <span id="aiEvidence">none reviewed</span> · 2 bookmarks (state documents) · viewed-area trail (sampled). The diagnosis itself is dictated in the LIS, never here.</div></div>
+              <div class="section__body"><div class="hintline" id="evidenceLine" data-live="events">1 measurement (SR TID 1500) · 1 region (DICOM ANN / GeoJSON) · AI results: <span id="aiEvidence">none reviewed</span> · 2 bookmarks (state documents) · viewed-area trail (sampled). The diagnosis itself is dictated in the LIS, never here.</div></div>
             </details>
           </div>
           <div class="consult-only" hidden>
@@ -840,7 +885,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
         <div class="keymap__group"><h4>Flow (this concept)</h4>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">N</kbd> <kbd class="key">⇧N</kbd></span><span class="desc">Next / previous step</span></div>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧G</kbd></span><span class="desc">Guided flow on / off (power users)</span></div>
-          <div class="keymap__row"><span class="keymap__keys"><kbd class="key">D</kbd></span><span class="desc">Show / hide the step panel</span></div>
+          <div class="keymap__row"><span class="keymap__keys"><kbd class="key">K</kbd></span><span class="desc">Show / hide the step panel (D stays WASD pan right)</span></div>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">I</kbd></span><span class="desc">Identity and case (step 1)</span></div>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧↵</kbd></span><span class="desc">Request sign-out (Clinical-IH / Dx; opens the hand-off dialog)</span></div>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧D</kbd></span><span class="desc">Enter / leave Dx mode (confirms the attestation source)</span></div>
@@ -984,7 +1029,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   <li><b>The sheet on tablet portrait</b> covers up to 40 % of the viewport while open; it is transient (closes with the grabber, Esc or <kbd>D</kbd>) and the canvas is ≈ 86 % at rest.</li>
   <li><b>Scale-bar note (Design note).</b> At 20× (0.50 µm/px, DPR 1) a 200 µm bar is 400 CSS px, outside the 80–200 px snap rule, so this mock shows <b>100 µm</b> at 20× and <b>200 µm</b> at 10×. The brief's pairing "20× with a 200 µm bar" cannot hold at DPR 1 under the plan's rule; the owner should confirm which rule wins.</li>
   <li><b>Preset ladder (Design note D8).</b> The brief names 4×/10×/20×/40× (microscope objectives); the plan's ladder is 1.25/2.5/5/10/20/40 (derived). The presets follow the plan; "4×" is the 2.5 µm/px point between the 2.5× and 5× presets and is reachable by typed zoom.</li>
-  <li><b>N / ⇧N for steps</b> reuses the Learn build's tour-step keys, which are free in the clinical builds; <kbd>⇧G</kbd> and <kbd>D</kbd> are new bindings and must be filed against the command registry.</li>
+  <li><b>N / ⇧N for steps</b> reuses the Learn build's tour-step keys, which are free in the clinical builds; <kbd>⇧G</kbd> and <kbd>K</kbd> are new bindings and must be filed against the command registry.</li>
 </ul>
 
 <h3>What the judges should look at</h3>
@@ -1032,10 +1077,10 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 
 <h3>Design notes and conflicts flagged</h3>
 <ul>
-  <li><b>DN-C1</b> Step keys <kbd>N</kbd>/<kbd>⇧N</kbd> (free in clinical builds), <kbd>⇧G</kbd> guided toggle and <kbd>D</kbd> panel toggle are new bindings; file against the command registry.</li>
+  <li><b>DN-C1</b> Step keys <kbd>N</kbd>/<kbd>⇧N</kbd> (free in clinical builds), <kbd>⇧G</kbd> guided toggle and <kbd>K</kbd> panel toggle are new bindings; file against the command registry. <kbd>K</kbd> was chosen because <kbd>D</kbd> is already WASD pan-right in default map A and D15 leaves <kbd>K</kbd> unbound.</li>
   <li><b>DN-C2</b> The scale-bar / magnification pairing in the brief (20× with 200 µm) conflicts with the 80–200 px snap rule at DPR 1; this mock follows the rule.</li>
   <li><b>DN-C3</b> The frozen-section consult variant keeps the Tier-2 label image (in-lab iPad under MDM, role-scoped); a share-link consult would be Tier 0 and show no label image, as the Request-consult dialog states.</li>
-  <li><b>DN-C4</b> The dock drawer at 1080–1599 px opens by default on step entry (the design system closes it by default) because the step panel is the concept; it closes with <kbd>D</kbd>, Esc or the rail button and never changes during a gesture.</li>
+  <li><b>DN-C4</b> The dock drawer at 1080–1599 px opens by default on step entry (the design system closes it by default) because the step panel is the concept; it closes with <kbd>K</kbd>, Esc or the rail button and never changes during a gesture.</li>
   <li><b>DN-C5</b> Selecting the RUO product shows the launch-refused plate rather than a research workspace: the clinical launch has no home in that build (plan 04 §8, FR-R3).</li>
 </ul>
 

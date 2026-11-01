@@ -363,6 +363,152 @@ html[data-view="director"] .app { display: none; }
 }
 /* Short viewports */
 @media (max-height: 760px) { .phase { min-height: 48px; } .phase__sub { display: none; } }
+
+/* ===== Revision 2026-11-01: completion of the truncated draft ===================== */
+/* Tissue placeholder (inline SVG; the product draws tiles on the GPU). H&E first, CK AE1/AE3 via .is-ihc */
+.slide-art .cap { fill: #d98fb0; }
+.slide-art .cx { fill: url(#p-cortex); }
+.slide-art .fo circle { fill: url(#p-follicle); }
+.slide-art .gc circle { fill: url(#p-gc); }
+.slide-art .me { fill: url(#p-medulla); }
+.slide-art .fat { fill: url(#p-fat); }
+.slide-art .mt { fill: url(#p-met); }
+.slide-art .si { stroke: #ecd2e2; stroke-width: 70; }
+.slide-art .si-ch path { fill: none; stroke: #ecd2e2; stroke-width: 110; stroke-linecap: round; }
+.slide-art .trab path { fill: none; stroke: #d27aa3; stroke-width: 55; stroke-linecap: round; }
+.slide-art .vessel circle { fill: #cf6f99; } .slide-art .vessel .lumen { fill: #b8325c; }
+#slide .p-bg { fill: #b98cc0; } #slide .p-bg2 { fill: #a37cb8; } #slide .p-bg3 { fill: #d3a9cd; } #slide .p-bg4 { fill: #efd6e5; } #slide .p-bg5 { fill: #e3a9c5; } #slide .p-bg6 { fill: #f6f0f3; }
+#slide .p-nuc { fill: #3d2a78; } #slide .p-nuc2 { fill: #6450a0; } #slide .p-nuc3 { fill: #6a4c9c; } #slide .p-tbm { fill: #efcde0; } #slide .p-cord { fill: #dc9fc6; } #slide .p-hist { fill: #e7bdd6; } #slide .p-cyto { fill: #f1bfd6; } #slide .p-adip { fill: #fcf9fb; stroke: #dbaac8; stroke-width: 3; }
+.canvas-area.is-ihc #slide .p-bg, .canvas-area.is-ihc #slide .p-bg2, .canvas-area.is-ihc #slide .p-bg3, .canvas-area.is-ihc #slide .p-cord { fill: #dfe3ee; }
+.canvas-area.is-ihc #slide .p-bg4, .canvas-area.is-ihc #slide .p-hist, .canvas-area.is-ihc #slide .p-tbm { fill: #eceef4; }
+.canvas-area.is-ihc #slide .p-nuc { fill: #4d5c9e; } .canvas-area.is-ihc #slide .p-nuc2 { fill: #6c7ab2; }
+.canvas-area.is-ihc #slide .p-bg5 { fill: #9b6a3c; } .canvas-area.is-ihc #slide .p-cyto { fill: #8a5527; } .canvas-area.is-ihc #slide .p-nuc3 { fill: #3c4778; }
+.canvas-area.is-ihc .slide-art .cap, .canvas-area.is-ihc .slide-art .trab path { fill: #e6e6ee; stroke: #e6e6ee; }
+.canvas-area.is-ihc .slide-art .si, .canvas-area.is-ihc .slide-art .si-ch path { stroke: #eef0f5; }
+.canvas-area.is-ihc .slide-art .vessel circle { fill: #e3dbe2; }
+.lyr .ss { pointer-events: none; }
+
+/* Step-scoped and state-scoped content */
+.stepblock, .istate { display: none; }
+html[data-step="1"] .stepblock[data-s~="1"], html[data-step="2"] .stepblock[data-s~="2"], html[data-step="3"] .stepblock[data-s~="3"],
+html[data-step="4"] .stepblock[data-s~="4"], html[data-step="5"] .stepblock[data-s~="5"], html[data-step="6"] .stepblock[data-s~="6"],
+html[data-step="7"] .stepblock[data-s~="7"], html[data-step="8"] .stepblock[data-s~="8"], html[data-step="9"] .stepblock[data-s~="9"] { display: flex; flex-direction: column; gap: var(--space-4); }
+html[data-item="awaiting"] .istate[data-i~="awaiting"], html[data-item="committed"] .istate[data-i~="committed"],
+html[data-item="revealed"] .istate[data-i~="revealed"], html[data-item="postfail"] .istate[data-i~="postfail"] { display: flex; flex-direction: column; gap: var(--space-3); }
+.only-audience.row { display: none; }
+.only-audience.inline { display: none; }
+html[data-audience="ms"] .only-ms.inline, html[data-audience="ug"] .only-ug.inline, html[data-audience="res"] .only-res.inline, html[data-audience="cme"] .only-cme.inline { display: inline; }
+html[data-audience="ms"] .only-ms.stackx, html[data-audience="ug"] .only-ug.stackx, html[data-audience="res"] .only-res.stackx, html[data-audience="cme"] .only-cme.stackx { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.stepinline, .stepblock-inline { display: none; }
+html[data-step="1"] .stepinline[data-s~="1"] { display: inline; } html[data-step="1"] .stepblock-inline[data-s~="1"] { display: grid; }
+html[data-step="2"] .stepinline[data-s~="2"] { display: inline; } html[data-step="2"] .stepblock-inline[data-s~="2"] { display: grid; }
+html[data-step="3"] .stepinline[data-s~="3"] { display: inline; } html[data-step="3"] .stepblock-inline[data-s~="3"] { display: grid; }
+html[data-step="4"] .stepinline[data-s~="4"] { display: inline; } html[data-step="4"] .stepblock-inline[data-s~="4"] { display: grid; }
+html[data-step="5"] .stepinline[data-s~="5"] { display: inline; } html[data-step="5"] .stepblock-inline[data-s~="5"] { display: grid; }
+html[data-step="6"] .stepinline[data-s~="6"] { display: inline; } html[data-step="6"] .stepblock-inline[data-s~="6"] { display: grid; }
+html[data-step="7"] .stepinline[data-s~="7"] { display: inline; } html[data-step="7"] .stepblock-inline[data-s~="7"] { display: grid; }
+html[data-step="8"] .stepinline[data-s~="8"] { display: inline; } html[data-step="8"] .stepblock-inline[data-s~="8"] { display: grid; }
+html[data-step="9"] .stepinline[data-s~="9"] { display: inline; } html[data-step="9"] .stepblock-inline[data-s~="9"] { display: grid; }
+/* Top bar on narrow widths: the step label is the one thing that may truncate in Learn */
+.identity-learn.stepper { min-width: 0; overflow: hidden; white-space: nowrap; }
+#step-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+html[data-product="learn"] .topbar__identity { min-width: 0; }
+.step-short { display: none; }
+@media (max-width: 599px) {
+  .step-long { display: none; } .step-short { display: inline; }
+  .topbar__slot-mode [data-action="keymap"] { display: none; }
+  .concept .segmented__item .long { display: none; }
+}
+.topbar__identity .accession { font-size: var(--text-lg); }
+
+/* Task card extras */
+.task__status { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.task__status:empty { display: none; }
+.cta-note { font-size: var(--text-xs); color: var(--color-text-secondary); text-align: center; }
+.gatebox { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-2); font-size: var(--text-sm); }
+.gatebox .glyph { font: 700 var(--text-sm)/1 var(--font-mono); width: 20px; height: 20px; display: grid; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; }
+.gatebox.is-met { border-style: solid; }
+.gatebox small { grid-column: 2; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.region-opt { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-3); align-items: center; }
+.region-opt .candidate__letter { width: 26px; height: 26px; }
+.diag-entry textarea { min-height: 64px; }
+.ranked { display: flex; flex-direction: column; gap: 1px; counter-reset: dd; }
+.ranked li { display: grid; grid-template-columns: 22px 1fr auto auto; gap: var(--space-2); align-items: center; min-height: var(--target); padding: 0 var(--space-2); border-bottom: 1px solid var(--color-divider); font-size: var(--text-sm); counter-increment: dd; }
+.ranked li::before { content: counter(dd); font-family: var(--font-mono); color: var(--color-text-secondary); font-size: var(--text-xs); }
+.ranked .btn--icon { width: 28px; height: 28px; min-width: 28px; }
+html[data-coarse="1"] .ranked .btn--icon { width: 44px; height: 44px; }
+@media (pointer: coarse) { .ranked .btn--icon { width: 44px; height: 44px; } }
+.module-list .outline__row { min-height: var(--target); }
+.progress-line { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--text-sm); }
+.progress-line .progress-bar { grid-column: 1 / -1; }
+.chip--state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.chip--state.is-pending::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.chip--state.is-fail::before { border-radius: 1px; }
+.expert-compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.expert-compare .card { padding: var(--space-3); font-size: var(--text-sm); }
+.expert-compare .lbl { font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+.mini-thumb { position: relative; aspect-ratio: 15 / 8; background: var(--color-canvas-bg); border-radius: var(--radius-1); overflow: hidden; border: 1px solid var(--color-border-strong); }
+.mini-thumb svg { width: 100%; height: 100%; display: block; }
+.timerbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-2); }
+html:not([data-timer="1"]) .timer-on { display: none; }
+html[data-timer="1"] .timer-off { display: none; }
+.lock-note { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-text); border-radius: var(--radius-2); }
+.lock-note .glyph { font: 700 var(--text-sm)/1 var(--font-mono); }
+.tray-mini { display: flex; flex-direction: column; gap: 1px; }
+.kbd-row { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.kbd-row span { display: inline-flex; align-items: center; gap: var(--space-2); }
+
+/* Dock as sheet: grabber + expand toggle visible only on tablet portrait / phone */
+.task__grab { display: none; }
+@media (max-width: 1079px) { .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; } }
+.app.sheet-peek .task__head .sheet-toggle .icon { transform: rotate(180deg); }
+
+/* Flow bar labels in author view */
+html[data-view="author"] .learner-only, html[data-view="director"] .learner-only { display: none !important; }
+html:not([data-view="author"]) .author-only { display: none !important; }
+
+/* Canvas: author recording frame (engine draws nothing; DOM border on the canvas edge only) */
+.rec-frame { display: none; position: absolute; inset: 0; border: 2px solid var(--grey-95); pointer-events: none; z-index: var(--z-hud); }
+html[data-view="author"][data-phase="screen"] .rec-frame { display: block; }
+.hud__rec { display: none; font-family: var(--font-ui); font-weight: var(--weight-semibold); }
+html[data-view="author"][data-phase="screen"] .hud__rec { display: inline-flex; }
+.hud__rec .rec-dot { width: 8px; height: 8px; }
+
+/* Typed zoom field */
+.magnification input { width: 7ch; }
+
+/* Strip chips */
+.strip .chip { min-height: 20px; }
+.strip button.chip { min-height: 24px; }
+#strip-rc { display: none; }
+html[data-product="dx"]:not([data-dxrefused="1"]) #strip-rc { display: inline-flex; }
+html[data-product="dx"]:not([data-dxrefused="1"]) #strip-sharp { display: none; }
+html[data-product="dx"]:not([data-dxrefused="1"]) .mode--nav { display: none; }
+html[data-product] .mode.mode--dx { display: none; }
+html[data-product="dx"]:not([data-dxrefused="1"]) .mode.mode--dx { display: inline-flex; }
+
+/* Toasts sit above the strip, over the dock column, never over the canvas centre */
+.toast-stack { right: var(--space-4); bottom: calc(var(--layout-strip) + var(--space-4)); }
+@media (min-width: 1600px) { .toast-stack { width: calc(var(--layout-dock) - 2 * var(--space-4)); } .toast-stack .toast { width: 100%; } }
+@media (max-width: 1079px) { .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--layout-bottombar) + var(--space-4)); top: auto; } }
+
+/* Keyboard map / about dialog content widths */
+.dialog--wide .keymap { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.dialog__body .tabs { margin: 0 calc(-1 * var(--space-6)); padding: 0 var(--space-6); }
+
+/* Director extras */
+.director .topbar { grid-area: topbar; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+.kpi { padding: var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+.kpi .v { font: 600 var(--text-2xl)/1.1 var(--font-mono); }
+.kpi .l { font-size: var(--text-xs); color: var(--color-text-secondary); }
+.director .table td, .director .table th { padding: var(--space-2) var(--space-3); }
+.span-2 { grid-column: 1 / -1; }
+@media (max-width: 1279px) { .director__main { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Demo strip select spacing; the strip scrolls horizontally rather than wrap */
+.demo .grp { display: inline-flex; align-items: center; gap: 4px; }
 </style>
 </head>
 <body>
@@ -412,11 +558,11 @@ html[data-view="director"] .app { display: none; }
 
 <!-- Review-only concept header -->
 <header class="concept" aria-label="Concept header (review only)">
-  <span class="grow">Screen: <b>Education module — guided case and assessment (Stoipath Learn)</b> <span class="sep">·</span> <span class="concept__angle">Angle: <b>Task-flow</b> — step rail, one primary action per step, progressive disclosure; pen and touch first, scaling up to desktop</span> <span class="sep">·</span> <span class="concept__date">Concept C · 2026-10-26</span></span>
+  <span class="grow">Screen: <b>Education module — guided case and assessment (Stoipath Learn)</b> <span class="sep">·</span> <span class="concept__angle">Angle: <b>Task-flow</b> — step rail, one primary action per step, progressive disclosure; pen and touch first, scaling up to desktop</span> <span class="sep">·</span> <span class="concept__date">Concept C · 2026-11-01 (revision of the 2026-10-26 draft)</span></span>
   <div class="segmented" role="radiogroup" aria-label="View">
     <button class="segmented__item" role="radio" aria-checked="true" data-view="learner">Learner</button>
-    <button class="segmented__item" role="radio" aria-checked="false" data-view="author">Author (faculty)</button>
-    <button class="segmented__item" role="radio" aria-checked="false" data-view="director">Director analytics</button>
+    <button class="segmented__item" role="radio" aria-checked="false" data-view="author">Author<span class="long"> (faculty)</span></button>
+    <button class="segmented__item" role="radio" aria-checked="false" data-view="director">Director<span class="long"> analytics</span></button>
   </div>
 </header>
 
@@ -440,16 +586,15 @@ html[data-view="director"] .app { display: none; }
     </div>
     <div class="topbar__identity">
       <span class="identity-learn title" id="module-title" data-live="lti">Sentinel lymph node: finding the metastasis</span>
-      <span class="identity-learn stepper topbar__step" data-live="lti:step"><span id="step-label">Step 4 of 9 · Identify the metastasis</span><span class="stepper__dots" id="step-dots" aria-hidden="true"></span></span>
+      <span class="identity-learn stepper topbar__step" data-live="lti:step"><span id="step-label"><span class="step-long" id="step-long">Step 4 of 9 · Identify the metastasis</span><span class="step-short" id="step-short">4/9 · Identify the metastasis</span></span><span class="stepper__dots" id="step-dots" aria-hidden="true"></span></span>
       <span class="identity-clin"><span class="accession" data-live="launch:accession" data-synthetic>AP-26-04417</span><span class="meta">A1-1 · H&amp;E · <span data-synthetic>DOE, JANE · 1958 · synthetic</span></span><span class="chip chip--worklist" data-live="lis:worklist">In review</span></span>
     </div>
     <div class="topbar__slot-mode">
       <span class="chip chip--purpose" data-live="launch:purposeOfUse">Consultation · preliminary only</span>
-      <span class="chip chip--tier" id="tier-chip" data-live="telemetry:tier" hidden>Tier 2 · 60 Hz</span>
       <button class="btn btn--icon btn--ghost" data-action="keymap" aria-label="Keyboard map, shortcut ?"><svg class="icon"><use href="#i-keyboard"/></svg></button>
       <button class="btn btn--icon btn--ghost" data-action="palette" aria-label="Command palette, shortcut Control K"><svg class="icon"><use href="#i-search"/></svg></button>
       <button class="btn btn--icon btn--ghost" data-action="settings" aria-label="Settings and accessibility"><svg class="icon"><use href="#i-gear"/></svg></button>
-      <span class="mode mode--nav" data-live="state.render_mode">NAV</span>
+      <span class="mode mode--nav" id="mode-nav" data-live="state.render_mode">NAV</span><span class="mode mode--dx" data-live="state.render_mode">DX</span>
     </div>
   </header>
 
@@ -548,7 +693,20 @@ html[data-view="director"] .app { display: none; }
         <g class="ss" data-x="7600" data-y="1330"><rect x="-70" y="-10" width="140" height="20" rx="2" fill="rgba(20,20,20,.75)"/><text y="4" text-anchor="middle" font-size="11" fill="#f7f7f7" font-family="system-ui, sans-serif">Subcapsular sinus</text></g>
         <g class="ss" data-x="7600" data-y="880"><rect x="-40" y="-10" width="80" height="20" rx="2" fill="rgba(20,20,20,.75)"/><text y="4" text-anchor="middle" font-size="11" fill="#f7f7f7" font-family="system-ui, sans-serif">Capsule</text></g>
       </g>
-      <g class="lyr tile-err" aria-hidden="true"><rect x="12300" y="1900" width="256" height="256" fill="rgba(58,58,58,.35)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="12556" y="1900" width="256" height="256" fill="rgba(58,58,58,.35)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="12300" y="2156" width="256" height="256" fill="rgba(58,58,58,.35)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g>
+      <!-- Image-region MCQ (step 5): author-placed regions A–D, outlines in µm, letters in screen space -->
+      <g class="lyr" id="lyr-regions" hidden data-live="annotations:itemRegions">
+        <circle cx="7400" cy="3900" r="560" fill="none" stroke="var(--ann-halo-dark)" stroke-width="4" vector-effect="non-scaling-stroke"/><circle cx="7400" cy="3900" r="560" fill="none" stroke="var(--ann-8)" stroke-width="2" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"/>
+        <circle cx="12650" cy="2600" r="820" fill="none" stroke="var(--ann-halo-dark)" stroke-width="4" vector-effect="non-scaling-stroke"/><circle cx="12650" cy="2600" r="820" fill="none" stroke="var(--ann-8)" stroke-width="2" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"/>
+        <circle cx="4200" cy="4250" r="700" fill="none" stroke="var(--ann-halo-dark)" stroke-width="4" vector-effect="non-scaling-stroke"/><circle cx="4200" cy="4250" r="700" fill="none" stroke="var(--ann-8)" stroke-width="2" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"/>
+        <circle cx="10200" cy="1250" r="420" fill="none" stroke="var(--ann-halo-dark)" stroke-width="4" vector-effect="non-scaling-stroke"/><circle cx="10200" cy="1250" r="420" fill="none" stroke="var(--ann-8)" stroke-width="2" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"/>
+        <g class="ss" data-x="6900" data-y="3400"><rect x="-13" y="-13" width="26" height="26" rx="3" fill="#f7f7f7" stroke="#111"/><text y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#111" font-family="ui-monospace, Menlo, monospace">A</text></g>
+        <g class="ss" data-x="11900" data-y="1850"><rect x="-13" y="-13" width="26" height="26" rx="3" fill="#f7f7f7" stroke="#111"/><text y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#111" font-family="ui-monospace, Menlo, monospace">B</text></g>
+        <g class="ss" data-x="3600" data-y="3650"><rect x="-13" y="-13" width="26" height="26" rx="3" fill="#f7f7f7" stroke="#111"/><text y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#111" font-family="ui-monospace, Menlo, monospace">C</text></g>
+        <g class="ss" data-x="9850" data-y="900"><rect x="-13" y="-13" width="26" height="26" rx="3" fill="#f7f7f7" stroke="#111"/><text y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#111" font-family="ui-monospace, Menlo, monospace">D</text></g>
+      </g>
+      <!-- Keyboard-alternative candidate (the learner's choice) is drawn as a point when placed by keyboard -->
+      <g class="lyr" id="lyr-kbmark" hidden data-live="annotations"><g class="ss" id="kbmark" data-x="12650" data-y="2600"><circle r="11" fill="none" stroke="#111" stroke-width="4"/><circle r="11" fill="none" stroke="var(--ann-5)" stroke-width="2"/><path d="M-18 0h10M8 0h10M0 -18v10M0 8v10" stroke="var(--ann-8)" stroke-width="2"/></g></g>
+      <g class="lyr tile-err" aria-hidden="true"><rect x="12300" y="1900" width="256" height="256" fill="rgba(58,58,58,.18)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="12556" y="1900" width="256" height="256" fill="rgba(58,58,58,.18)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/><rect x="12300" y="2156" width="256" height="256" fill="rgba(58,58,58,.18)" stroke="rgba(58,58,58,.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g>
     </svg>
 
     <!-- HUD: lightweight text in the corners, outside the central 50 % -->
@@ -581,6 +739,10 @@ html[data-view="director"] .app { display: none; }
     <!-- Banner slot (under the top bar) -->
     <div class="banner-slot" id="banner-slot"></div>
 
+    <!-- Author recording frame: a 2 px edge ring (outside the central 50 %), plus a HUD line -->
+    <div class="rec-frame" aria-hidden="true"></div>
+    <div class="hud hud--tr" style="top:auto;bottom:var(--layout-hud-inset);right:auto;left:50%;transform:translateX(-50%);max-width:none"><span class="hud__item hud__rec" data-live="commands:recordTour"><span class="rec-dot"></span> Recording tour · 02:14 · view + ink + voice</span></div>
+
     <!-- Plates: never a blank canvas; these replace content only for named states -->
     <div class="plate" id="plate-lti" hidden>
       <div class="plate__card plate__card--blocking" role="alert">
@@ -591,3 +753,572 @@ html[data-view="director"] .app { display: none; }
       </div>
     </div>
   </main>
+
+  <!-- D. Task card (the dock re-purposed): one card per phase, ONE primary action at the bottom -->
+  <aside class="dock taskdock region" id="dock" aria-label="Task card">
+
+    <!-- ============ LEARNER · OPEN (step 1) ============ -->
+    <section class="task" data-task="learn-open" aria-labelledby="t-open-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head">
+        <div class="stack stack--tight min-w-0">
+          <div class="task__meta"><span>Step 1 of 9</span><span>Open the case</span></div>
+          <h2 class="task__title" id="t-open-h">Before you look</h2>
+          <div class="task__status js-status"></div>
+        </div>
+        <button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button>
+      </header>
+      <div class="task__body">
+        <div class="progress-line" data-live="lti:nrps">
+          <span><b class="only-audience only-ms inline">PATH 601 · Pathology for medical students</b><b class="only-audience only-ug inline">HIST 210 · Histology lab 7: lymphoid organs</b><b class="only-audience only-res inline">Residency · unknown-slide conference</b><b class="only-audience only-cme inline">CME · Sentinel lymph node update</b></span>
+          <span class="num text-secondary">Module 3 of 6</span>
+          <div class="progress-bar" role="progressbar" aria-label="Course progress" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="--value:33%"><span></span></div>
+        </div>
+        <details class="section more" open>
+          <summary>Modules <span class="count">2 of 6 done</span></summary>
+          <div class="section__body module-list">
+            <div class="outline" role="list">
+              <button class="outline__row" role="listitem"><span class="n">✓</span><span>1 · Normal lymph node</span><span class="meta">12 min</span></button>
+              <button class="outline__row" role="listitem"><span class="n">✓</span><span>2 · Reactive patterns</span><span class="meta">18 min</span></button>
+              <button class="outline__row is-current" role="listitem" aria-current="step"><span class="n">3</span><span>Sentinel node: finding the metastasis</span><span class="meta">9 steps</span></button>
+              <button class="outline__row" role="listitem"><span class="n">4</span><span>Lymphoma or reactive?</span><span class="meta">locked</span></button>
+              <button class="outline__row" role="listitem"><span class="n">5</span><span>Granulomas</span><span class="meta">—</span></button>
+              <button class="outline__row" role="listitem"><span class="n">6</span><span>Unknowns review</span><span class="meta">—</span></button>
+            </div>
+          </div>
+        </details>
+        <dl class="vignette" aria-label="Case vignette">
+          <dt>Case <span data-synthetic>(synthetic teaching case · no PHI)</span></dt>
+          <dd class="only-audience only-ms only-cme only-ug">62-year-old woman with a 1.8 cm invasive ductal carcinoma of the left breast. Sentinel lymph node biopsy, left axilla. Frozen section was not performed.</dd>
+          <dd class="only-audience only-res">Unknown 43-2. History only: 62-year-old woman, breast mass. Diagnosis hidden until you commit yours.</dd>
+          <dt>Slides</dt>
+          <dd>A1-1 H&amp;E · A1-2 CK AE1/AE3 (IHC) · <span class="text-secondary">CAMELYON16 · CC0</span></dd>
+          <dt>You will</dt>
+          <dd>Survey at low power, follow a narrated tour, then mark the deposit, answer two questions and compare your path with the attending's.</dd>
+        </dl>
+        <div class="ready" aria-label="Readiness check" data-live="offline">
+          <span class="dot dot--ok"></span><span>Slides ready <span class="text-secondary" id="ready-src">· streaming, 2 slides</span></span><span class="num">38 MB</span>
+          <span class="dot dot--ok"></span><span>Captions on · audio narration optional</span><span class="num">CC</span>
+          <span class="dot dot--ok"></span><span>Keyboard: <kbd class="key">N</kbd> next, <kbd class="key">Space</kbd> play, <kbd class="key">?</kbd> all keys</span><span class="num"></span>
+          <span class="dot dot--pending" id="ready-net-dot"></span><span id="ready-net">Link OK (24 Mbps)</span><span class="num"></span>
+        </div>
+        <div class="disclosure only-audience only-cme">Activity provided by the accredited CME provider (joint providership; synthetic). Faculty disclosure: no relevant financial relationships. Learning objective: classify sentinel node deposits by size. Credit is claimed at the end, after the evaluation.</div>
+      </div>
+      <footer class="task__cta">
+        <button class="btn btn--primary btn--cta js-cta">Start the case <kbd class="key">N</kbd></button>
+        <div class="cta-note">Your place is saved in the course after every step.</div>
+      </footer>
+    </section>
+
+    <!-- ============ LEARNER · SCREEN + EXAMINE (steps 2–3): narrated tour ============ -->
+    <section class="task" data-task="learn-tour" aria-labelledby="t-tour-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head">
+        <div class="stack stack--tight min-w-0">
+          <div class="task__meta"><span id="tour-meta">Step 2 of 9</span><span class="only-audience only-ms only-ug only-cme inline">Guided tour</span><span class="only-audience only-res inline">Unknown · no narration</span></div>
+          <h2 class="task__title" id="t-tour-h"><span class="stepinline" data-s="2">Survey at low power</span><span class="stepinline" data-s="3">The subcapsular sinus at 20×</span></h2>
+          <div class="task__status js-status"></div>
+        </div>
+        <button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button>
+      </header>
+      <div class="task__body">
+        <div class="only-audience only-ms only-ug only-cme stackx">
+          <div class="player" role="group" aria-label="Tour player" data-live="commands:tour">
+            <button class="player__btn" data-action="prev" aria-label="Previous step, shortcut Shift N"><svg class="icon"><use href="#i-prev"/></svg><span class="tool__key">⇧N</span></button>
+            <button class="player__btn player__btn--play" id="btn-play" data-action="play" aria-label="Play narration, shortcut Space" aria-pressed="false"><svg class="icon"><use href="#i-play" id="play-glyph"/></svg></button>
+            <span class="player__time" id="player-time">0:00 / 0:48</span>
+            <button class="player__btn player__cc" data-action="cc" aria-pressed="true" aria-label="Captions on"><svg class="icon"><use href="#i-cc"/></svg></button>
+            <button class="player__btn" data-action="next" aria-label="Next step, shortcut N"><svg class="icon"><use href="#i-next"/></svg><span class="tool__key">N</span></button>
+            <div class="player__track" aria-hidden="true"><span id="player-track" style="--value:0%"></span></div>
+          </div>
+          <div class="caption" id="caption" aria-live="off" data-live="tour:caption">
+            <span class="stepinline" data-s="2"><span class="caption__now">Start at low power. The node is ovoid with a thin fibrous capsule; follicles sit in the outer cortex.</span> <span class="caption__ahead">Under the capsule runs the subcapsular sinus: this is where metastases arrive first, via the afferent lymphatics.</span></span>
+            <span class="stepinline" data-s="3"><span class="caption__now">At 20× the sinus at the right pole is expanded by cohesive cells with abundant pink cytoplasm and large vesicular nuclei.</span> <span class="caption__ahead">Compare them with the small dark lymphocytes around them. Open A1-2 to see the same cells on cytokeratin.</span></span>
+            <span class="caption__src">Narrated by <span data-synthetic>Dr A. Example</span> · captions edited by the author · <button class="btn btn--sm btn--ghost" type="button" data-action="transcript">Transcript</button></span>
+          </div>
+          <div class="hotspots" role="list" aria-label="Hotspots in this step" data-live="annotations:tour">
+            <button class="hotspot stepblock-inline" data-s="2" data-fly="hs1" role="listitem"><span class="hotspot__n">1</span><span class="hotspot__t">Follicle with germinal centre<small>Outer cortex · fly there</small></span><span class="text-xs text-secondary">Fly ↵</span></button>
+            <button class="hotspot stepblock-inline" data-s="2" data-fly="hs2" role="listitem"><span class="hotspot__n">2</span><span class="hotspot__t">Subcapsular sinus<small>Under the capsule · fly there</small></span><span class="text-xs text-secondary">Fly ↵</span></button>
+            <button class="hotspot stepblock-inline" data-s="2" data-fly="hs3" role="listitem"><span class="hotspot__n">3</span><span class="hotspot__t">Medulla and hilum<small>Cords, sinuses, vessels · fly there</small></span><span class="text-xs text-secondary">Fly ↵</span></button>
+            <button class="hotspot stepblock-inline" data-s="3" data-fly="hs4" role="listitem"><span class="hotspot__n">4</span><span class="hotspot__t">Expanded sinus, right pole<small>20× · fly there</small></span><span class="text-xs text-secondary">Fly ↵</span></button>
+            <button class="hotspot stepblock-inline" data-s="3" data-fly="ihc" role="listitem"><span class="hotspot__n">5</span><span class="hotspot__t">Same area on CK AE1/AE3<small>Opens A1-2 · <kbd class="key">]</kbd> next slide</small></span><span class="text-xs text-secondary">Fly ↵</span></button>
+          </div>
+          <div class="kbd-row" aria-hidden="true"><span><kbd class="key">Space</kbd> play / pause</span><span><kbd class="key">N</kbd> / <kbd class="key">⇧N</kbd> step</span><span><kbd class="key">+</kbd> <kbd class="key">−</kbd> zoom</span><span><kbd class="key">0</kbd> fit</span></div>
+        </div>
+        <div class="only-audience only-res stackx">
+          <div class="timerbar"><span class="timer-off text-sm">Timer off · practice at your own pace</span><span class="timer timer-on" id="timer" data-live="lti:timer">06:12</span><button class="btn btn--sm btn--secondary" data-action="timer">Timer</button></div>
+          <div class="lock-note"><span class="glyph">◐</span><span>Hidden until you commit: the diagnosis, the structure labels and the attending's path. Nothing you do here is graded.</span></div>
+          <div class="progress-line"><span>Low-power coverage</span><span class="num" id="cov-num">64 %</span><div class="progress-bar" style="--value:64%"><span></span></div></div>
+          <p class="text-sm text-secondary">Screen the whole node at low power (<kbd class="key">⇧</kbd>+arrows steps one viewport), then examine anything suspicious at 20× (<kbd class="key">5</kbd>). Point markers (<kbd class="key">T</kbd>) are private notes.</p>
+        </div>
+        <details class="section more">
+          <summary>More for this step</summary>
+          <div class="section__body">
+            <div class="settings-row"><span>Structure labels <span class="hint">Follicle, sinus, medulla, capsule (hidden in unknowns)</span></span><button class="toggle" role="switch" aria-checked="false" data-action="labels"><span class="toggle__track"></span></button></div>
+            <div class="settings-row"><span>Slide <span class="hint">A1-1 H&amp;E · A1-2 CK AE1/AE3</span></span><div class="segmented" role="radiogroup" aria-label="Slide"><button class="segmented__item" role="radio" aria-checked="true" data-slide="he">H&amp;E</button><button class="segmented__item" role="radio" aria-checked="false" data-slide="ihc">CK</button></div></div>
+            <div class="settings-row"><span>Audio narration <span class="hint">Off in classroom mode; captions always available</span></span><button class="toggle" role="switch" aria-checked="false"><span class="toggle__track"></span></button></div>
+          </div>
+        </details>
+      </div>
+      <footer class="task__cta">
+        <button class="btn btn--primary btn--cta js-cta">Next step <kbd class="key">N</kbd></button>
+        <div class="task__secondary"><button class="btn btn--secondary" data-action="prev">Previous <kbd class="key">⇧N</kbd></button><button class="btn btn--ghost only-audience only-ms only-ug only-cme inline" data-action="skip">Skip to the question</button></div>
+      </footer>
+    </section>
+
+    <!-- ============ LEARNER · DECIDE (steps 4–6): items ============ -->
+    <section class="task" data-task="learn-decide" aria-labelledby="t-dec-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head">
+        <div class="stack stack--tight min-w-0">
+          <div class="task__meta"><span id="dec-meta">Step 4 of 9</span><span class="only-audience only-ms inline">Graded · Canvas</span><span class="only-audience only-ug inline">Practice · not graded</span><span class="only-audience only-cme inline">CME post-test</span><span class="only-audience only-res inline">Unknown · ungraded</span></div>
+          <h2 class="task__title" id="t-dec-h"><span class="only-audience only-ms only-ug only-cme inline"><span class="stepinline" data-s="4">Identify the metastasis</span><span class="stepinline" data-s="5">Confirm it on cytokeratin</span><span class="stepinline" data-s="6">Measure and classify</span></span><span class="only-audience only-res inline">Record your diagnosis</span></h2>
+          <div class="task__status js-status"></div>
+        </div>
+        <button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button>
+      </header>
+      <div class="task__body">
+        <!-- Step 4: region-marking item (ms / ug / cme) -->
+        <div class="only-audience only-ms only-ug only-cme stackx">
+        <div class="stepblock" data-s="4">
+          <form class="item-card" id="item-region" aria-labelledby="item-region-stem" data-live="lti:item" onsubmit="return false">
+            <div class="item-card__meta"><span>Item 1 of 3 · Region marking</span><span>1 point</span></div>
+            <p class="item-card__stem" id="item-region-stem">Mark the metastatic focus on this sentinel lymph node.</p>
+            <div class="gatebox" id="gatebox" data-live="state.views[0].scale_um_per_px"><span class="glyph" aria-hidden="true">×</span><span><b>Zoom to at least 20×</b> to earn full credit</span><small id="gate-status">Not met yet · highest magnification over the focus so far: 5×</small></div>
+            <div class="istate" data-i="awaiting">
+              <div class="mark-row" data-live="annotations"><span class="swatch swatch--lg" style="--swatch:var(--ann-5)"></span><span class="flex-1"><b>Your mark</b> · polygon, 7 points · 1.21 mm²<br><span class="text-secondary text-xs" id="mark-src">Drawn with Pencil · press <kbd class="key">P</kbd> to redraw</span></span><button class="btn btn--sm btn--secondary" data-action="clearmark">Clear</button></div>
+              <button class="btn btn--secondary btn--block" data-action="candidates" type="button"><svg class="icon"><use href="#i-text"/></svg>Mark without a pointer <kbd class="key">⇧↵</kbd></button>
+              <div class="field" role="radiogroup" aria-label="How sure are you?" id="conf"><span class="field__label">How sure are you? <span class="text-xs">(feeds your review queue, not your grade)</span></span>
+                <div class="confidence"><button class="opt" role="radio" aria-checked="false" type="button">Guessing</button><button class="opt" role="radio" aria-checked="false" type="button">Unsure</button><button class="opt" role="radio" aria-checked="true" type="button">Fairly sure</button><button class="opt" role="radio" aria-checked="false" type="button">Certain</button></div>
+              </div>
+              <div class="alert alert--neutral" id="gate-warn" hidden><span class="alert__glyph">!</span><div>You have not viewed the focus at 20× yet. Commit now for half credit, or press <kbd class="key">5</kbd> to jump to 20× first.</div></div>
+            </div>
+            <div class="istate" data-i="committed">
+              <div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><b>Answer saved.</b> Press <kbd class="key">⇧R</kbd> to reveal. <span class="text-secondary">Your mark and confidence are locked; the answer key is still hidden (layer ACL <code>revealOn(itemAnswered)</code>).</span></div></div>
+            </div>
+            <div class="istate" data-i="revealed postfail">
+              <div class="feedback" role="status" data-live="events:itemAnswered"><span class="feedback__glyph" aria-hidden="true">✓</span><div><div class="feedback__title" id="fb-title">Revealed · IoU 62 % · 1 / 1</div><div class="text-sm" id="fb-text">Your mark overlapped the lesion by 62 % (IoU). Any overlap of 50 % or more with the zoom gate met earns full credit.</div><div class="score" id="fb-calib">You said <b>Fairly sure</b> and were right: this item comes back in 9 days.</div></div></div>
+              <div class="mark-row"><span class="swatch swatch--outline swatch--lg" style="--swatch:var(--ann-3)"></span><span class="flex-1">Answer key (dashed yellow) · <span class="text-secondary">expert outline, 1.24 mm²</span></span><button class="btn btn--sm btn--secondary" data-action="keylayer" aria-pressed="true">Hide key</button></div>
+              <button class="btn btn--secondary btn--block" data-action="expert" type="button"><svg class="icon"><use href="#i-eye"/></svg>Show the expert's view <kbd class="key">⇧E</kbd></button>
+              <div class="gradebook" id="gb-line" data-live="lti:ags"><span class="dot dot--ok"></span><span id="gb-text">Posted to gradebook</span></div>
+            </div>
+          </form>
+        </div>
+        <!-- Step 5: MCQ with image regions -->
+        <div class="stepblock" data-s="5">
+          <form class="item-card" aria-labelledby="item-mcq-stem" data-live="lti:item" onsubmit="return false">
+            <div class="item-card__meta"><span>Item 2 of 3 · Image MCQ · A1-2 CK AE1/AE3</span><span>1 point</span></div>
+            <p class="item-card__stem" id="item-mcq-stem">Which labelled area shows the cytokeratin-positive tumour cells?</p>
+            <div class="item-card__hint">The letters are on the slide. Choose a letter, or use <i>Fly there</i> to look first.</div>
+            <div class="stack stack--tight" role="radiogroup" aria-labelledby="item-mcq-stem" id="mcq">
+              <label class="option region-opt" data-opt="A"><input type="radio" name="mcq" value="A"><span class="candidate__letter">A</span><span>Germinal centre, central cortex</span><span class="option__feedback"></span></label>
+              <label class="option region-opt" data-opt="B"><input type="radio" name="mcq" value="B" checked><span class="candidate__letter">B</span><span>Subcapsular sinus, right pole</span><span class="option__feedback"></span></label>
+              <label class="option region-opt" data-opt="C"><input type="radio" name="mcq" value="C"><span class="candidate__letter">C</span><span>Medulla near the hilum</span><span class="option__feedback"></span></label>
+              <label class="option region-opt" data-opt="D"><input type="radio" name="mcq" value="D"><span class="candidate__letter">D</span><span>Capsule, upper border</span><span class="option__feedback"></span></label>
+            </div>
+            <div class="row"><button class="btn btn--sm btn--secondary" type="button" data-fly="rB">Fly to the chosen letter</button><span class="text-xs text-secondary">Keys <kbd class="key">A</kbd>–<kbd class="key">D</kbd> choose · <kbd class="key">↵</kbd> commit</span></div>
+            <div class="istate" data-i="revealed postfail"><div class="feedback" role="status"><span class="feedback__glyph">✓</span><div><div class="feedback__title">Correct · B · 1 / 1</div><div class="text-sm">Strong cytoplasmic CK AE1/AE3 in the cohesive cells of the sinus. Lymphocytes (A, C) and the fibrous capsule (D) are negative.</div></div></div></div>
+          </form>
+        </div>
+        <!-- Step 6: measure and classify -->
+        <div class="stepblock" data-s="6">
+          <form class="item-card" aria-labelledby="item-size-stem" data-live="lti:item" onsubmit="return false">
+            <div class="item-card__meta"><span>Item 3 of 3 · Measure, then choose</span><span>1 point</span></div>
+            <p class="item-card__stem" id="item-size-stem">Measure the largest dimension of the deposit. Which size category is it?</p>
+            <div class="mark-row" data-live="annotations:measurement"><span class="swatch swatch--dash" style="--swatch:var(--ann-8)"></span><span class="flex-1"><b>Your measurement · 2.3 mm</b><br><span class="text-xs text-secondary">Two taps with <kbd class="key">M</kbd>, or type a length:</span></span><input class="input" style="width:7ch;min-height:32px" aria-label="Length in millimetres" value="2.3"><span class="text-sm">mm</span></div>
+            <div class="stack stack--tight" role="radiogroup" aria-labelledby="item-size-stem">
+              <label class="option"><input type="radio" name="size"><span class="option__key">1</span><span>Isolated tumour cells (≤ 0.2 mm)</span></label>
+              <label class="option"><input type="radio" name="size"><span class="option__key">2</span><span>Micrometastasis (&gt; 0.2 mm to 2 mm)</span></label>
+              <label class="option"><input type="radio" name="size" checked><span class="option__key">3</span><span>Macrometastasis (&gt; 2 mm)</span></label>
+            </div>
+            <div class="istate" data-i="revealed postfail"><div class="feedback" role="status"><span class="feedback__glyph">✓</span><div><div class="feedback__title">Correct · 1 / 1</div><div class="text-sm">The expert measured 2.3 mm along the long axis. The size category is asked here, not the stage.</div></div></div></div>
+          </form>
+        </div>
+        </div>
+
+        <!-- Resident unknown: diagnosis before the reveal (phone conference variant) -->
+        <div class="only-audience only-res stackx">
+          <div class="istate" data-i="awaiting committed">
+            <div class="lock-note" role="note"><span class="glyph">!</span><span><b>Record your diagnosis before the reveal.</b> The attending's diagnosis and path unlock when you commit.</span></div>
+            <div class="field"><span class="field__label">Differential (ranked)</span>
+              <ol class="ranked" id="ddx" aria-label="Differential diagnosis, ranked">
+                <li><span>Metastatic carcinoma (breast)</span><button class="btn btn--icon btn--ghost" aria-label="Move up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button><button class="btn btn--icon btn--ghost" aria-label="Move down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button></li>
+                <li><span>Sinus histiocytosis</span><button class="btn btn--icon btn--ghost" aria-label="Move up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button><button class="btn btn--icon btn--ghost" aria-label="Move down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button></li>
+                <li><span>Nodal nevus (capsular)</span><button class="btn btn--icon btn--ghost" aria-label="Move up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button><button class="btn btn--icon btn--ghost" aria-label="Move down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button></li>
+              </ol>
+            </div>
+            <div class="diff" aria-label="Add to the differential"><button class="chip" type="button">+ Melanoma</button><button class="chip" type="button">+ Lymphoma</button><button class="chip" type="button">+ Mesothelial inclusion</button></div>
+            <div class="field diag-entry"><label class="field__label" for="dx-final">Final diagnosis</label><textarea class="input" id="dx-final">Metastatic carcinoma in subcapsular sinus, 2.3 mm (macrometastasis)</textarea></div>
+            <div class="field" role="radiogroup" aria-label="Confidence"><span class="field__label">Confidence</span><div class="confidence"><button class="opt" role="radio" aria-checked="false" type="button">Guessing</button><button class="opt" role="radio" aria-checked="false" type="button">Unsure</button><button class="opt" role="radio" aria-checked="true" type="button">Fairly sure</button><button class="opt" role="radio" aria-checked="false" type="button">Certain</button></div></div>
+            <div class="istate" data-i="committed"><div class="alert alert--neutral" role="status"><span class="alert__glyph">✓</span><div><b>Diagnosis recorded 06:12 into the case.</b> Press <kbd class="key">⇧R</kbd> to reveal.</div></div></div>
+          </div>
+          <div class="istate" data-i="revealed postfail">
+            <div class="feedback" role="status"><span class="feedback__glyph">✓</span><div><div class="feedback__title">Revealed · concordant</div><div class="text-sm">Attending: <b>metastatic ductal carcinoma, 2.3 mm, no extranodal extension</b>. Your first-ranked diagnosis matches; the size category matches.</div></div></div>
+            <div class="expert-compare">
+              <div class="card"><div class="lbl">Your path</div><div class="mini-thumb"><svg viewBox="0 0 15000 8000" aria-hidden="true"><use href="#slide-art"/><path d="M3000 4000 C5000 2200 7400 1500 9400 1600 S12300 2200 12900 2700" fill="none" stroke="var(--ann-1)" stroke-width="140" stroke-dasharray="300 200"/></svg></div>20× reached at 4:51</div>
+              <div class="card"><div class="lbl">Attending's path</div><div class="mini-thumb"><svg viewBox="0 0 15000 8000" aria-hidden="true"><use href="#slide-art"/><path d="M3000 4000 C4000 2200 6000 1300 8400 1350 S11200 1700 12600 2500 S13900 3600 13700 4600" fill="none" stroke="var(--ann-6)" stroke-width="140"/></svg></div>20× reached at 0:38</div>
+            </div>
+            <button class="btn btn--secondary btn--block" data-action="expert" type="button">Show both paths on the slide <kbd class="key">⇧E</kbd></button>
+          </div>
+        </div>
+      </div>
+      <footer class="task__cta">
+        <button class="btn btn--primary btn--cta js-cta">Commit answer <kbd class="key">↵</kbd></button>
+        <div class="task__secondary"><button class="btn btn--secondary" data-action="prev">Back <kbd class="key">⇧N</kbd></button><button class="btn btn--ghost" data-action="keymap">All keys <kbd class="key">?</kbd></button></div>
+      </footer>
+    </section>
+
+    <!-- ============ LEARNER · COMPLETE (steps 7–9) ============ -->
+    <section class="task" data-task="learn-complete" aria-labelledby="t-done-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head">
+        <div class="stack stack--tight min-w-0">
+          <div class="task__meta"><span id="done-meta">Step 7 of 9</span><span>Complete</span></div>
+          <h2 class="task__title" id="t-done-h"><span class="stepinline" data-s="7">Compare with the expert</span><span class="stepinline" data-s="8">What comes back, and when</span><span class="stepinline" data-s="9">Submit to your course</span></h2>
+          <div class="task__status js-status"></div>
+        </div>
+        <button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button>
+      </header>
+      <div class="task__body">
+        <div class="stepblock" data-s="7">
+          <p class="text-sm">Your viewing trace (blue, dashed) against the attending's path (amber) and dwell (amber haze). Both are drawn on the slide now; <kbd class="key">H</kbd> hides them.</p>
+          <div class="expert-compare" data-live="telemetry:viewTrace">
+            <div class="card"><div class="lbl">You</div><div class="scorecard" style="padding:0;border:0;background:none;grid-template-columns:1fr"><dl><dt>First 20× on the focus</dt><dd>1:42</dd><dt>Dwell on the focus</dt><dd>22 %</dd><dt>Low-power coverage</dt><dd>64 %</dd></dl></div></div>
+            <div class="card"><div class="lbl">Attending <span data-synthetic>(Dr A. Example)</span></div><div class="scorecard" style="padding:0;border:0;background:none;grid-template-columns:1fr"><dl><dt>First 20× on the focus</dt><dd>0:38</dd><dt>Dwell on the focus</dt><dd>41 %</dd><dt>Low-power coverage</dt><dd>88 %</dd></dl></div></div>
+          </div>
+          <div class="alert alert--neutral"><span class="alert__glyph">i</span><div>The attending surveyed the whole capsule first, then went straight to the right pole. You skipped the lower border: <button class="btn btn--sm btn--secondary" data-fly="lower">Fly to what you missed</button></div></div>
+        </div>
+        <div class="stepblock" data-s="8">
+          <p class="text-sm">Spaced retrieval brings back what you got wrong confidently first. Due dates follow your answers, not the calendar of the course.</p>
+          <div class="queue" role="list" aria-label="Review queue" data-live="events:itemAnswered">
+            <div class="queue__row" role="listitem"><span>Measure and classify · this case<span class="why">Half credit · you were Certain</span></span><span class="due">in 1 day</span></div>
+            <div class="queue__row" role="listitem"><span>Sinus histiocytosis vs metastasis · Module 2<span class="why">Wrong · Fairly sure</span></span><span class="due">in 2 days</span></div>
+            <div class="queue__row" role="listitem"><span>Region marking · this case<span class="why">Correct · Fairly sure</span></span><span class="due">in 9 days</span></div>
+            <div class="queue__row" role="listitem"><span>Image MCQ · CK pattern<span class="why">Correct · Certain</span></span><span class="due">in 21 days</span></div>
+          </div>
+          <button class="btn btn--secondary btn--block" type="button">Export queue to Anki <span class="text-xs text-secondary">(v1)</span></button>
+        </div>
+        <div class="stepblock" data-s="9">
+          <div class="scorecard" data-live="lti:ags">
+            <div class="progress-ring progress-ring--lg" style="--value:83" role="img" aria-label="Score 2.5 of 3"><svg viewBox="0 0 36 36"><circle class="track" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="value" cx="18" cy="18" r="15.9" pathLength="100"/></svg><span class="progress-ring__label">2.5/3</span></div>
+            <dl><dt>Region marking</dt><dd>1 / 1</dd><dt>Image MCQ</dt><dd>1 / 1</dd><dt>Measure and classify</dt><dd>0.5 / 1</dd><dt>Modality</dt><dd>pen</dd></dl>
+          </div>
+          <div class="gradebook" id="gb-line-9"><span class="dot dot--ok"></span><span class="gb-text">Posted to gradebook</span></div>
+          <div class="only-audience only-cme stackx cme" data-live="lti:cme">
+            <div class="field__label">Claim CME credit</div>
+            <label class="check"><input type="checkbox" checked> I attest that I completed this activity and claim only the time I spent (0.5 h).</label>
+            <label class="check"><input type="checkbox"> I completed the activity evaluation (required). <a href="#" onclick="return false">Open evaluation</a></label>
+            <div class="disclosure">Credit is issued by the accredited provider, not by Stoipath; your record is kept for 6 years and exported in the provider's format (synthetic).</div>
+            <button class="btn btn--secondary btn--block" type="button" disabled>Claim 0.5 credit · evaluation needed</button>
+          </div>
+          <div class="only-audience only-ug stackx"><div class="alert alert--neutral"><span class="alert__glyph">i</span><div>Practice lab: nothing is posted to the gradebook. Your teacher sees completion only.</div></div></div>
+        </div>
+      </div>
+      <footer class="task__cta">
+        <button class="btn btn--primary btn--cta js-cta">Next <kbd class="key">N</kbd></button>
+        <div class="task__secondary"><button class="btn btn--secondary" data-action="prev">Back <kbd class="key">⇧N</kbd></button><button class="btn btn--ghost" type="button">Next module</button></div>
+      </footer>
+    </section>
+
+    <!-- ============ CLINICAL-IH / DX: same flow shell, consult on iPad or frozen section ============ -->
+    <section class="task" data-task="clin-open" aria-labelledby="t-co-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Open</span><span data-live="lis:worklist">From Epic Beaker · In review</span></div><h2 class="task__title" id="t-co-h"><span data-synthetic>AP-26-04417</span> · Left axillary SLN</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <dl class="vignette" data-live="launch"><dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958 · synthetic</dd><dt>Parts</dt><dd>A Left axillary sentinel node · B Non-sentinel node · C Breast, left (re-excision)</dd><dt>Purpose</dt><dd>Consultation · preliminary only (set by the launch, not editable here)</dd></dl>
+        <div class="tray tray-mini" role="listbox" aria-label="Slides in this case" data-live="state.slides">
+          <button class="tray__slide is-selected" role="option" aria-selected="true"><span class="tray__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg><span class="tray__coverage"><span style="--coverage:64%"></span></span></span><span class="tray__label"><span class="id">A1-1</span><span class="text">H&amp;E</span></span><span class="chip chip--stain">H&amp;E</span></button>
+          <button class="tray__slide" role="option" aria-selected="false"><span class="tray__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg></span><span class="tray__label"><span class="id">A1-2</span><span class="text">CK AE1/AE3</span></span><span class="chip chip--stain">IHC</span></button>
+          <button class="tray__slide" role="option" aria-selected="false"><span class="tray__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg></span><span class="tray__label"><span class="id">A2-1</span><span class="text">H&amp;E</span></span><span class="chip chip--stain">H&amp;E</span></button>
+        </div>
+        <p class="text-xs text-secondary">Opened with the lab's preset: first slide fit to slide, stains in the configured order. Worklist state comes from the LIS and is never edited here.</p>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Start screening <kbd class="key">N</kbd></button></footer>
+    </section>
+    <section class="task" data-task="clin-review" aria-labelledby="t-cr-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span id="cr-meta">Screen</span><span>A1-1 H&amp;E</span></div><h2 class="task__title" id="t-cr-h">Systematic survey</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="progress-line"><span>Viewed at ≥ 10×</span><span class="num">64 %</span><div class="progress-bar" style="--value:64%"><span></span></div></div>
+        <div class="checks"><div class="checks__row"><span class="dot dot--ok"></span><span>Capsule and subcapsular sinus, full circumference</span><span class="meta">done</span></div><div class="checks__row"><span class="dot dot--pending"></span><span>Lower border not yet seen at ≥ 10×</span><span class="meta"><button class="btn btn--sm btn--secondary" data-fly="lower">Go</button></span></div><div class="checks__row"><span class="dot dot--ok"></span><span>A1-2 CK AE1/AE3 opened</span><span class="meta">done</span></div></div>
+        <p class="text-xs text-secondary"><kbd class="key">⇧</kbd>+arrows step one viewport at a time; the coverage counter is telemetry, not a QA gate.</p>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Next <kbd class="key">N</kbd></button></footer>
+    </section>
+    <section class="task" data-task="clin-decide" aria-labelledby="t-cd-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Decide</span><span>Preliminary</span></div><h2 class="task__title" id="t-cd-h">Preliminary impression</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="stack stack--tight" role="radiogroup" aria-label="Impression">
+          <label class="option"><input type="radio" name="imp" checked><span class="option__key">1</span><span>Positive for metastatic carcinoma</span></label>
+          <label class="option"><input type="radio" name="imp"><span class="option__key">2</span><span>Negative for metastatic carcinoma</span></label>
+          <label class="option"><input type="radio" name="imp"><span class="option__key">3</span><span>Defer to permanent sections</span></label>
+        </div>
+        <div class="mark-row" data-live="annotations:measurement"><span class="swatch swatch--dash" style="--swatch:var(--ann-8)"></span><span class="flex-1">Largest deposit <b>2.3 mm</b> · measured on A1-1</span></div>
+        <div class="mark-row" data-live="annotations"><span class="swatch swatch--lg" style="--swatch:var(--ann-5)"></span><span class="flex-1">Polygon · class <b>Tumor</b> (CVD-safe teal) · 1.21 mm²</span></div>
+        <div class="field"><label class="field__label" for="imp-note">Note to the signing pathologist</label><textarea class="input" id="imp-note">Subcapsular deposit, right pole, CK+. Preliminary only.</textarea></div>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Save preliminary impression <kbd class="key">↵</kbd></button></footer>
+    </section>
+    <section class="task" data-task="clin-complete" aria-labelledby="t-cc-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Hand off</span><span data-live="lis:worklist">In review</span></div><h2 class="task__title" id="t-cc-h">Hand off for sign-out</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="alert alert--neutral" id="clin-dx-note"><span class="alert__glyph">!</span><div id="clin-dx-text">Sign-out needs Dx mode on an attested diagnostic display. This device stays in Nav mode.</div></div>
+        <div class="checks"><div class="checks__row"><span class="dot dot--ok"></span><span>Preliminary impression saved</span><span class="meta">14:02</span></div><div class="checks__row"><span class="dot dot--ok"></span><span>Bookmarks: 2 views travel with the case</span><span class="meta">state doc</span></div><div class="checks__row"><span class="dot dot--pending"></span><span>Final sign-out on the diagnostic display</span><span class="meta">pending</span></div></div>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta" data-action="handoff">Request sign-out <kbd class="key">⇧↵</kbd></button></footer>
+    </section>
+
+    <!-- ============ STOIPATH VIEWER (RUO): the same shell ends in export, never in sign-out ============ -->
+    <section class="task" data-task="ruo-any" aria-labelledby="t-ruo-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span id="ruo-meta">Annotate</span><span>CAMELYON16 · tumor_014 · CC0</span></div><h2 class="task__title" id="t-ruo-h">Annotate and export</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="list" role="listbox" aria-label="Annotations" data-live="annotations"><div class="list__item" role="option" aria-selected="true"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor · polygon<span class="meta">1.21 mm²</span></div><div class="list__item" role="option" aria-selected="false"><span class="swatch swatch--dash" style="--swatch:var(--ann-8)"></span>Measurement<span class="meta">2.3 mm</span></div></div>
+        <div class="row"><button class="btn btn--secondary" type="button">Import GeoJSON</button><button class="btn btn--secondary" type="button">Export GeoJSON (QuPath)</button></div>
+        <p class="text-xs text-secondary">This build has no sign-out, no LIS write-back and no Dx mode. The RUO string is burned into every snapshot.</p>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Export GeoJSON <kbd class="key">↵</kbd></button></footer>
+    </section>
+
+    <!-- ============ AUTHOR (faculty) · the same rail, five authoring steps ============ -->
+    <section class="task" data-task="author-open" aria-labelledby="t-ao-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Author · 1 Collect</span><span>Draft v3</span></div><h2 class="task__title" id="t-ao-h">Collection: Lymph node unknowns, week 43</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="steps-edit" role="list" aria-label="Slides in the collection" data-live="collections">
+          <div class="step-edit" role="listitem"><span class="step-edit__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg></span><span>A1-1 H&amp;E · sentinel node<small>CAMELYON16 · CC0 · PCME lymphoid · difficulty 2</small></span><span class="row" style="gap:2px"><button class="btn btn--icon btn--ghost btn--sm" aria-label="Move up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button><button class="btn btn--icon btn--ghost btn--sm" aria-label="Move down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button></span></div>
+          <div class="step-edit" role="listitem"><span class="step-edit__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg></span><span>A1-2 CK AE1/AE3<small>CAMELYON16 · CC0 · paired IHC</small></span><span class="row" style="gap:2px"><button class="btn btn--icon btn--ghost btn--sm" aria-label="Move up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button><button class="btn btn--icon btn--ghost btn--sm" aria-label="Move down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button></span></div>
+          <div class="step-edit" role="listitem"><span class="step-edit__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg></span><span>Reactive node, sinus histiocytosis<small>IDC · CC BY 4.0 · attribution shown</small></span><span class="row" style="gap:2px"><button class="btn btn--icon btn--ghost btn--sm" aria-label="Move up"><svg class="icon icon--sm"><use href="#i-up"/></svg></button><button class="btn btn--icon btn--ghost btn--sm" aria-label="Move down"><svg class="icon icon--sm"><use href="#i-down"/></svg></button></span></div>
+        </div>
+        <div class="row"><button class="btn btn--secondary" type="button"><svg class="icon"><use href="#i-plus"/></svg>Add slide</button><button class="btn btn--secondary" type="button">Convert a sign-out case…</button></div>
+        <p class="text-xs text-secondary">Converting a sign-out annotation set goes through the de-identification stage first; nothing with PHI enters Stoipath Learn. Reordering uses buttons, not drag (SC 2.5.7).</p>
+        <div class="settings-row"><span>Offline pack <span class="hint">Pixels, annotations, items and media for classrooms with poor Wi-Fi</span></span><button class="btn btn--sm btn--secondary" type="button"><svg class="icon icon--sm"><use href="#i-download"/></svg>Build pack (412 MB)</button></div>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Record a tour on A1-1 <kbd class="key">N</kbd></button></footer>
+    </section>
+    <section class="task" data-task="author-screen" aria-labelledby="t-as-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Author · 2 Record</span><span>A1-1 H&amp;E</span></div><h2 class="task__title" id="t-as-h">Record a tour</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="rec" role="status" data-live="commands:recordTour"><span class="rec-dot" aria-hidden="true"></span><b>Recording</b><span class="rec__sig"><span class="k is-on">VIEW</span><span class="k is-on">INK</span><span class="k is-on">MIC</span></span><span class="rec__time">02:14</span></div>
+        <p class="text-sm">Navigate, draw and talk as you would at the microscope. Each pause longer than 2 s, or <kbd class="key">⇧N</kbd>, cuts a step: the view (state document), the ink you drew and the audio since the last cut.</p>
+        <div class="steps-edit" role="list" aria-label="Steps captured so far" data-live="state">
+          <div class="step-edit" role="listitem"><span class="step-edit__thumb"><svg viewBox="0 0 15000 8000"><use href="#slide-art"/></svg></span><span>1 · Whole node, low power<small>0:00–0:31 · 2 hotspots · captions drafted</small></span><span class="meta text-xs">0:31</span></div>
+          <div class="step-edit" role="listitem"><span class="step-edit__thumb"><svg viewBox="2000 500 6000 3200"><use href="#slide-art"/></svg></span><span>2 · Capsule and sinus<small>0:31–1:19 · 1 hotspot</small></span><span class="meta text-xs">0:48</span></div>
+          <div class="step-edit" role="listitem"><span class="step-edit__thumb"><svg viewBox="11500 1700 2400 1300"><use href="#slide-art"/></svg></span><span>3 · Right pole at 20× <small>1:19–now · recording</small></span><span class="meta text-xs">0:55</span></div>
+        </div>
+        <div class="row"><button class="btn btn--secondary" type="button"><svg class="icon"><use href="#i-pause"/></svg>Pause <kbd class="key">Space</kbd></button><button class="btn btn--secondary" type="button">Cut step <kbd class="key">⇧N</kbd></button><button class="btn btn--ghost" type="button"><svg class="icon"><use href="#i-mic"/></svg>Mic: navigation</button></div>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Stop and edit steps <kbd class="key">N</kbd></button></footer>
+    </section>
+    <section class="task" data-task="author-examine" aria-labelledby="t-ae-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Author · 3 Edit</span><span>3 steps · 2:14</span></div><h2 class="task__title" id="t-ae-h">Edit step 3</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="field"><label class="field__label" for="cap-edit">Caption (from your narration; edit freely)</label><textarea class="input" id="cap-edit">At 20× the sinus at the right pole is expanded by cohesive cells with abundant pink cytoplasm and large vesicular nuclei.</textarea><span class="field__hint">Captions are required for every step with audio; the publish check blocks without them.</span></div>
+        <div class="settings-row"><span>Transition <span class="hint">Reduced-motion learners always get an instant jump</span></span><div class="segmented" role="radiogroup" aria-label="Transition"><button class="segmented__item" role="radio" aria-checked="true">Fly</button><button class="segmented__item" role="radio" aria-checked="false">Cut</button></div></div>
+        <div class="settings-row"><span>Hotspot 4 <span class="hint">Point, 20×, "Expanded sinus, right pole"</span></span><button class="btn btn--sm btn--secondary" type="button">Re-place</button></div>
+        <div class="settings-row"><span>Audio <span class="hint">0:55 · trim silence</span></span><button class="btn btn--sm btn--secondary" type="button">Trim</button></div>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Add items <kbd class="key">N</kbd></button></footer>
+    </section>
+    <section class="task" data-task="author-decide" aria-labelledby="t-ad-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Author · 4 Items</span><span>Region marking</span></div><h2 class="task__title" id="t-ad-h">Item editor</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="field"><label class="field__label" for="stem-edit">Stem</label><input class="input" id="stem-edit" value="Mark the metastatic focus on this sentinel lymph node."></div>
+        <div class="grid-2"><div class="field"><label class="field__label" for="gate-edit">Zoom gate</label><span class="select"><select id="gate-edit"><option>20× (0.50 µm/px)</option><option>10×</option><option>None</option></select></span></div><div class="field"><label class="field__label" for="iou-edit">Full credit at IoU ≥</label><input class="input" id="iou-edit" value="50 %"></div></div>
+        <div class="mark-row"><span class="swatch swatch--outline swatch--lg" style="--swatch:var(--ann-3)"></span><span class="flex-1">Answer key layer · hidden until <code>itemAnswered</code></span><button class="btn btn--sm btn--secondary" type="button" data-action="keylayer" aria-pressed="false">Show</button></div>
+        <details class="section more" open><summary>Keyboard alternative · candidates <span class="count">6</span></summary>
+          <div class="section__body">
+            <div class="cand-edit"><span class="candidate__letter">A</span><input class="input" value="Subcapsular sinus, upper pole — thin rim of small lymphocytes"></div>
+            <div class="cand-edit"><span class="candidate__letter">B</span><input class="input" value="Germinal centre, left cortex — tingible-body macrophages"></div>
+            <div class="cand-edit"><span class="candidate__letter">C</span><input class="input" value="Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells"></div>
+            <div class="cand-edit"><span class="candidate__letter">D</span><input class="input" value="Medullary cords — plasma cells"></div>
+            <p class="text-xs text-secondary">E and F collapsed · text-answer rubric: compartment + size + feature (3 criteria).</p>
+          </div>
+        </details>
+        <div class="settings-row"><span>Colour-vision check <span class="hint">Simulates deuteranopia on the slide and your marks</span></span><button class="toggle" role="switch" aria-checked="false" data-action="cvdsim"><span class="toggle__track"></span><span class="toggle__text text-sm">Deutan</span></button></div>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta">Check and publish <kbd class="key">N</kbd></button></footer>
+    </section>
+    <section class="task" data-task="author-complete" aria-labelledby="t-ap-h" hidden>
+      <div class="task__grab" aria-hidden="true"></div>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Author · 5 Publish</span><span>7 checks</span></div><h2 class="task__title" id="t-ap-h">Publish checks</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <div class="task__body">
+        <div class="checks" role="list" aria-label="Publish checks">
+          <div class="checks__row" role="listitem"><span class="dot dot--ok"></span><span>Keyboard path scores identically (CI run)</span><span class="meta">pass</span></div>
+          <div class="checks__row" role="listitem"><span class="dot dot--ok"></span><span>Captions on 3 / 3 audio steps</span><span class="meta">pass</span></div>
+          <div class="checks__row" role="listitem"><span class="dot dot--ok"></span><span>Marks distinguishable under deutan / protan</span><span class="meta">ΔE 24</span></div>
+          <div class="checks__row" role="listitem"><span class="dot dot--ok"></span><span>Licence recorded for every slide</span><span class="meta">CC0, CC BY</span></div>
+          <div class="checks__row" role="listitem"><span class="dot dot--ok"></span><span>No PHI: label images stripped, text scanned</span><span class="meta">pass</span></div>
+          <div class="checks__row" role="listitem"><span class="dot dot--fail"></span><span>Item 3 has no text alternative rubric</span><span class="meta"><button class="btn btn--sm btn--secondary" type="button" data-step-go="4">Fix</button></span></div>
+          <div class="checks__row" role="listitem"><span class="dot dot--pending"></span><span>CME disclosure fields (CME modules only)</span><span class="meta">n/a</span></div>
+        </div>
+        <div class="blocker" role="alert"><span class="glyph">!</span><span>Publishing is blocked: every region or measurement item needs a keyboard or text alternative (NFR-A5).</span></div>
+        <p class="text-xs text-secondary">After publishing, add it to a course with LTI Deep Linking (<i>Add to Canvas assignment</i>); grades flow back through AGS.</p>
+      </div>
+      <footer class="task__cta"><button class="btn btn--primary btn--cta js-cta" disabled>Publish to collection</button></footer>
+    </section>
+  </aside>
+
+  <!-- Laptop / tablet-landscape one-line task bar: the step and its one action, even with the card closed -->
+  <div class="taskbar" id="taskbar" role="region" aria-label="Current step">
+    <span class="taskbar__step" id="tb-step">Step 4 of 9 · Decide</span>
+    <span class="taskbar__stem" id="tb-stem">Mark the metastatic focus on this sentinel lymph node.</span>
+    <button class="btn btn--secondary" data-action="dock" id="tb-dock" aria-expanded="true">Task card</button>
+    <button class="btn btn--primary" id="tb-cta">Commit answer <kbd class="key">↵</kbd></button>
+  </div>
+
+  <!-- Tablet portrait / phone: the step rail becomes the bottom flow bar -->
+  <nav class="bottombar flowbar" aria-label="Task steps">
+    <ol class="flow flow--h" id="flow2"></ol>
+    <span class="flowbar__divider" aria-hidden="true"></span>
+    <button class="tool tool--contextual tool--open tool--screen tool--examine tool--decide tool--complete" aria-pressed="true" aria-label="Pan"><svg class="icon"><use href="#i-pan"/></svg></button>
+    <button class="tool tool--contextual tool--decide tool--drawing" aria-label="Pen: freehand"><svg class="icon"><use href="#i-pen"/></svg></button>
+    <button class="tool tool--contextual tool--examine tool--decide" aria-label="Measure"><svg class="icon"><use href="#i-measure"/></svg></button>
+    <button class="tool tool--contextual tool--decide" data-action="candidates" aria-label="Mark without a pointer"><svg class="icon"><use href="#i-text"/></svg></button>
+    <span class="flowbar__end"><button class="tool" data-action="nav" aria-label="Show or hide the overview (O)"><svg class="icon"><use href="#i-grid"/></svg></button></span>
+  </nav>
+
+  <!-- E. Status strip: visual twin of the live region -->
+  <footer class="strip" id="strip" aria-label="Status">
+    <span class="indicator indicator--sharp is-quiet" id="strip-sharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label" id="sharp-label">Sharp</span><span class="indicator__reason" id="sharp-reason"></span></span>
+    <span class="indicator indicator--complete" id="strip-rc" data-live="dx:renderingComplete"><span class="indicator__glyph"></span><span class="indicator__label">Rendering Complete</span></span>
+    <span class="strip__notice" id="strip-notice" data-live="events"></span>
+    <div class="strip__group strip__group--end">
+      <span class="chip chip--solid" id="net-chip" data-live="telemetry:network" hidden></span>
+      <button class="chip chip--tier" id="tier-chip" data-live="telemetry:tier" data-action="tier" hidden>Tier 2 · 60 Hz</button>
+      <span class="chip chip--state learner-only" id="gb-chip" data-live="lti:ags" hidden>Posted to gradebook</span>
+      <span class="chip learner-only" id="lti-chip" data-live="lti">LTI 1.3 · Canvas</span>
+    </div>
+  </footer>
+
+  <div class="toast-stack" id="toasts" aria-hidden="true"></div>
+
+  <!-- Dialog layer: inset below the top bar so the badge and label string are never covered -->
+  <div class="modal-layer" id="modal-layer" hidden>
+    <div class="backdrop" data-action="close"></div>
+
+    <div class="dialog dialog--wide" id="dlg-keymap" role="dialog" aria-modal="true" aria-labelledby="km-t" hidden>
+      <div class="dialog__header"><h2 class="dialog__title" id="km-t">Keyboard map · Stoipath Learn</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dialog__body">
+        <div class="keymap__preset"><span class="text-sm text-secondary">Preset</span><div class="segmented" role="radiogroup" aria-label="Key preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand cluster</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand cluster</button></div><span class="text-xs text-secondary">No F-keys, no Alt, no Ctrl except Ctrl+K and Ctrl+Z: safe inside an LMS or EHR iframe.</span></div>
+        <div class="keymap">
+          <div class="keymap__group"><h4>The flow</h4>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">N</kbd></span>Next step or item</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">N</kbd></span>Previous step</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">↵</kbd></span>The step's primary action (commit)</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">R</kbd></span>Reveal (after commit)</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">↵</kbd></span>Mark without a pointer</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd><kbd class="key">E</kbd></span>Expert's view</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Space</kbd></span>Play / pause narration</div>
+          </div>
+          <div class="keymap__group"><h4>Navigate</h4>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">←</kbd><kbd class="key">↑</kbd><kbd class="key">↓</kbd><kbd class="key">→</kbd> / WASD</span>Pan 10 %</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⇧</kbd>+arrows</span>Pan one viewport</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">+</kbd><kbd class="key">−</kbd></span>Zoom 2×</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">0</kbd> / Home</span>Fit whole slide</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">1</kbd>–<kbd class="key">6</kbd></span>1.25× … 20× (<kbd class="key">5</kbd>) … 40×</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">]</kbd><kbd class="key">[</kbd></span>Next / previous slide</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">O</kbd></span>Overview on / off</div>
+          </div>
+          <div class="keymap__group"><h4>Mark and measure</h4>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">V</kbd></span>Select / pan</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">P</kbd></span>Polygon (click vertices, ↵ closes)</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">F</kbd></span>Freehand (pen pressure)</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">T</kbd></span>Point marker</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">M</kbd></span>Measure (two clicks)</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">H</kbd></span>Hide / show overlays</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Ctrl</kbd><kbd class="key">Z</kbd></span>Undo</div>
+          </div>
+          <div class="keymap__group"><h4>Help</h4>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">?</kbd></span>This map</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Ctrl</kbd><kbd class="key">K</kbd></span>Command palette</div>
+            <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Esc</kbd></span>Cancel tool / close</div>
+            <div class="keymap__row"><span class="keymap__keys">A–D, 1–3</span>Choose an option (item focused)</div>
+            <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">⇧D</kbd></span>Dx mode: not in this build</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog" id="dlg-cand" role="dialog" aria-modal="true" aria-labelledby="cand-t" data-live="lti:item:keyboard" hidden>
+      <div class="dialog__header"><h2 class="dialog__title" id="cand-t">Mark the metastatic focus without a pointer</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="tabs tabs--fill" role="tablist" aria-label="Answer method"><button class="tab" role="tab" aria-selected="true" aria-controls="cand-p1" id="cand-tab1">Candidate regions</button><button class="tab" role="tab" aria-selected="false" aria-controls="cand-p2" id="cand-tab2" tabindex="-1">Answer in text</button></div>
+      <div class="dialog__body" id="cand-p1" role="tabpanel" aria-labelledby="cand-tab1">
+        <p class="text-sm text-secondary">Choose the region that contains the focus. <i>Fly there</i> moves the view to 20×, which also meets the zoom gate. Scoring uses the same geometry as a drawn mark.</p>
+        <div role="radiogroup" aria-label="Candidate regions" class="stack stack--tight" id="cand-list">
+          <div class="candidate" role="radio" aria-checked="false" tabindex="0" data-c="A"><span class="candidate__letter">A</span><span class="candidate__desc">Subcapsular sinus, upper pole — thin rim of small lymphocytes</span><button class="btn btn--sm btn--secondary" data-fly="cA" data-live="commands:flyTo" tabindex="-1">Fly there</button></div>
+          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="B"><span class="candidate__letter">B</span><span class="candidate__desc">Germinal centre, central cortex — tingible-body macrophages</span><button class="btn btn--sm btn--secondary" data-fly="cB" tabindex="-1">Fly there</button></div>
+          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="C"><span class="candidate__letter">C</span><span class="candidate__desc">Subcapsular sinus, right pole — ~1 mm cluster of large cohesive cells with abundant cytoplasm</span><button class="btn btn--sm btn--secondary" data-fly="cC" tabindex="-1">Fly there</button></div>
+          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="D"><span class="candidate__letter">D</span><span class="candidate__desc">Medullary cords — plasma cells</span><button class="btn btn--sm btn--secondary" data-fly="cD" tabindex="-1">Fly there</button></div>
+          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="E"><span class="candidate__letter">E</span><span class="candidate__desc">Hilum — vessels and adipose tissue</span><button class="btn btn--sm btn--secondary" data-fly="cE" tabindex="-1">Fly there</button></div>
+          <div class="candidate" role="radio" aria-checked="false" tabindex="-1" data-c="F"><span class="candidate__letter">F</span><span class="candidate__desc">Capsule, lower border — fibrous tissue only</span><button class="btn btn--sm btn--secondary" data-fly="cF" tabindex="-1">Fly there</button></div>
+        </div>
+      </div>
+      <div class="dialog__body" id="cand-p2" role="tabpanel" aria-labelledby="cand-tab2" hidden>
+        <p class="text-sm text-secondary">Describe where the focus is. Scored against the author's rubric (compartment, position, size); recorded as <code>modality: text</code>, never discounted.</p>
+        <div class="grid-2">
+          <div class="field"><label class="field__label" for="tx-comp">Compartment</label><span class="select"><select id="tx-comp"><option>Subcapsular sinus</option><option>Cortex / follicle</option><option>Paracortex</option><option>Medulla</option><option>Capsule</option><option>Hilum</option></select></span></div>
+          <div class="field"><label class="field__label" for="tx-pos">Position</label><span class="select"><select id="tx-pos"><option>Right pole</option><option>Upper border</option><option>Lower border</option><option>Left pole</option></select></span></div>
+          <div class="field"><label class="field__label" for="tx-size">Size</label><span class="select"><select id="tx-size"><option>&gt; 2 mm</option><option>0.2–2 mm</option><option>≤ 0.2 mm</option></select></span></div>
+          <div class="field"><label class="field__label" for="tx-feat">Feature</label><input class="input" id="tx-feat" value="cohesive large cells"></div>
+        </div>
+      </div>
+      <div class="dialog__footer"><button class="btn btn--ghost" data-action="close">Cancel</button><button class="btn btn--accent" data-action="cand-commit" id="cand-commit">Use C as my mark <kbd class="key">↵</kbd></button></div>
+    </div>
+
+    <div class="dialog" id="dlg-about" role="dialog" aria-modal="true" aria-labelledby="ab-t" hidden>
+      <div class="dialog__header"><h2 class="dialog__title" id="ab-t">About this build</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dialog__body about">
+        <div><div class="lbl">Product</div><div id="ab-product">Stoipath Learn</div></div>
+        <div><div class="lbl">Label</div><div><span class="badge-string badge-string--learn"></span><span class="badge-string badge-string--ruo"></span><span class="badge-string badge-string--clinical"></span><span class="badge-string badge-string--dx"></span></div></div>
+        <div><div class="lbl">Version</div><div class="num" data-live="launch:build">0.7.0 · build_hash 4f1c9e2 · engine 0.7.0</div></div>
+        <div><div class="lbl">Launch</div><div data-live="launch" id="ab-launch">LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn</div></div>
+        <div><div class="lbl">Data</div><div>No protected health information. Slides: CAMELYON16 (CC0). Viewing trace is pseudonymous and leaves only as course aggregates.</div></div>
+      </div>
+      <div class="dialog__footer"><button class="btn btn--secondary" data-action="close">Close</button></div>
+    </div>
+
+    <div class="dialog" id="dlg-settings" role="dialog" aria-modal="true" aria-labelledby="st-t" hidden>
+      <div class="dialog__header"><h2 class="dialog__title" id="st-t">Settings and accessibility</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dialog__body">
+        <div class="settings-row"><span>Colour-vision remap <span class="hint">Applied to the slide in the shader (per user); marks keep their patterns</span></span><span class="select" style="width:140px"><select id="set-cvd" data-live="dx:cvdLut"><option value="off">Off</option><option value="deutan">Deutan</option><option value="protan">Protan</option><option value="tritan">Tritan</option></select></span></div>
+        <div class="settings-row"><span>Captions</span><button class="toggle" role="switch" aria-checked="true"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span>Audio narration <span class="hint">Off by default in a classroom</span></span><button class="toggle" role="switch" aria-checked="false"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span>Reduced motion <span class="hint">Follows your system; fly-to becomes an instant jump</span></span><button class="toggle" role="switch" aria-checked="false" id="set-rm" data-action="rm"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span>Larger targets <span class="hint">44 px everywhere (on by default with touch or pen)</span></span><button class="toggle" role="switch" aria-checked="false" id="set-coarse" data-action="coarse"><span class="toggle__track"></span></button></div>
+        <div class="settings-row"><span>Chrome theme <span class="hint">The canvas surround stays neutral grey</span></span><div class="segmented" role="radiogroup" aria-label="Theme"><button class="segmented__item" role="radio" aria-checked="true" data-theme-set="dark">Dark</button><button class="segmented__item" role="radio" aria-checked="false" data-theme-set="light">Light</button></div></div>
+        <div class="settings-row"><span>Pen <span class="hint">Pencil draws, finger pans; double-tap Pencil toggles eraser</span></span><span class="text-sm text-secondary">Automatic</span></div>
+      </div>
+      <div class="dialog__footer"><button class="btn btn--accent" data-action="close">Done</button></div>
+    </div>
+
+    <div class="dialog" id="dlg-tier" role="dialog" aria-modal="true" aria-labelledby="ti-t" hidden>
+      <div class="dialog__header"><h2 class="dialog__title" id="ti-t">Tier 2 · 60 Hz</h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dialog__body"><p>This device renders at 60 Hz (iPad Safari). What that means for you: the slide is never blank, it may be up to one level soft during fast bursts, and the centre is sharp within about half a second on a cold burst.</p><p class="text-sm text-secondary">Nothing in this module needs Tier 1. Dx mode is not part of Stoipath Learn.</p></div>
+      <div class="dialog__footer"><button class="btn btn--secondary" data-action="close">OK</button></div>
+    </div>
+
+    <div class="dialog" id="dlg-handoff" role="dialog" aria-modal="true" aria-labelledby="ho-t" hidden>
+      <div class="dialog__header"><h2 class="dialog__title" id="ho-t">Request sign-out · <span data-synthetic>AP-26-04417</span></h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="dialog__body">
+        <div class="alert alert--info"><span class="alert__glyph">i</span><div id="ho-text">This device cannot sign out. The case, your preliminary impression and 2 bookmarks will open on the diagnostic display, where Dx mode can be attested.</div></div>
+        <div class="field"><label class="field__label" for="ho-to">Open on</label><span class="select"><select id="ho-to"><option>My reading-room workstation · RR-3 (Barco MDPC-8127)</option><option>Dr Example's queue (synthetic)</option></select></span></div>
+      </div>
+      <div class="dialog__footer"><button class="btn btn--ghost" data-action="close">Cancel</button><button class="btn btn--accent" data-action="close">Send to workstation <kbd class="key">↵</kbd></button></div>
+    </div>
+  </div>
+
+  <!-- Command palette (anchored to the top bar) -->
+  <div class="palette-layer" id="palette-layer" hidden>
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input id="pal-input" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list" placeholder="Type a command, step or slide…" autocomplete="off"></div>
+      <div class="palette__list" id="pal-list" role="listbox" aria-label="Commands" data-live="commands"></div>
+      <div class="palette__footer"><span><kbd class="key">↑</kbd><kbd class="key">↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span>Same registry as keys, voice and the test harness</span></div>
+    </div>
+  </div>
+</div><!-- /.app -->

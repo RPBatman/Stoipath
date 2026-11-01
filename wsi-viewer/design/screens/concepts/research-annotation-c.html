@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Research annotation workspace · concept C "Task-flow" · Stoipath Viewer (RUO)</title>
+<meta name="description" content="Concept C (Task-flow) for the Stoipath Viewer research annotation and overlay workspace: a five-step rail (Open, Screen, Examine, Annotate, Export) with progressive disclosure, pen and touch first, scaling from phone to 4K. Static, self-contained wireframe for the UX/UI review, dated 2026-11-01.">
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/base.css">
+<style>
+/* =============================================================================
+   Concept C · Task-flow · page-scoped CSS (2026-11-01)
+   Everything that base.css does not already provide is here. Review chrome
+   (concept header, demo controls, rationale) uses the magenta review colour
+   of the live markers so it can never be mistaken for product UI.
+   ========================================================================== */
+:root {
+  --review-h: 30px;          /* concept header (review only)            */
+  --demo-h: 44px;            /* demo controls strip (review only)       */
+  --review-accent: #e879f9;
+  --sheet-peek: 124px;       /* step panel as a peeking sheet (< 1080)  */
+  --tray-h: 56px;            /* current-step tool tray (< 1080)         */
+}
+html, body { background: var(--color-surface--1); }
+body { overflow-x: hidden; }
+
+/* ---- Review chrome --------------------------------------------------------- */
+.concept-head {
+  height: var(--review-h); display: flex; align-items: center; gap: var(--space-5);
+  padding: 0 var(--space-5); font-size: var(--text-xs); color: var(--color-text-secondary);
+  background: var(--color-surface--1); border-bottom: 2px solid var(--review-accent);
+  white-space: nowrap; overflow: hidden;
+}
+.concept-head b { color: var(--color-text); font-weight: var(--weight-semibold); }
+.review-tag { font: 600 10px/16px var(--font-mono); padding: 0 6px; border-radius: 3px; background: var(--review-accent); color: #1a0b1f; flex: 0 0 auto; }
+.concept-head a { color: var(--color-text); text-decoration: underline; text-underline-offset: 2px; }
+.concept-head .sep { opacity: .5; }
+.concept-head .grow { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+.demo {
+  min-height: var(--demo-h); display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-2) var(--space-5); background: #1c1420; color: var(--color-text);
+  border-top: 2px solid var(--review-accent); font-size: var(--text-xs);
+  overflow-x: auto; white-space: nowrap; scrollbar-width: thin;
+}
+.demo__group { display: inline-flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
+.demo__group > span { color: #e7c9ee; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+.demo select, .demo button {
+  min-height: 26px; padding: 0 8px; font-size: var(--text-xs); color: var(--color-text);
+  background: #2c2030; border: 1px solid #6b4a75; border-radius: 4px;
+}
+.demo button[aria-pressed="true"] { background: #4a2f55; border-color: var(--review-accent); }
+.demo__sep { width: 1px; height: 22px; background: #6b4a75; flex: 0 0 auto; }
+
+.rationale { max-width: 1180px; margin: 0 auto; padding: var(--space-6) var(--space-6) var(--space-12); color: var(--color-text); }
+.rationale > summary { cursor: pointer; display: flex; align-items: center; gap: var(--space-4); min-height: 44px; font-size: var(--text-xl); font-weight: var(--weight-semibold); border-bottom: 2px solid var(--review-accent); }
+.rationale > summary::marker { color: var(--review-accent); }
+.rationale h3 { font-size: var(--text-xl); margin: var(--space-8) 0 var(--space-4); }
+.rationale p, .rationale li { font-size: var(--text-lg); line-height: 1.55; color: var(--color-text); max-width: 92ch; }
+.rationale ul, .rationale ol { padding-left: 1.4em; display: flex; flex-direction: column; gap: var(--space-3); }
+.rationale ul { list-style: disc; } .rationale ol { list-style: decimal; }
+.rationale code { font-family: var(--font-mono); font-size: .92em; background: var(--color-surface-1); padding: 0 4px; border-radius: 3px; }
+.rationale .table-wrap { margin-top: var(--space-4); }
+.rationale .table td, .rationale .table th { font-size: var(--text-sm); vertical-align: top; }
+
+/* ---- App frame overrides for this concept -------------------------------- */
+.app.flow {
+  --layout-rail: 88px;
+  --layout-dock: 360px;
+  height: calc(100vh - var(--review-h) - var(--demo-h));
+  height: calc(100dvh - var(--review-h) - var(--demo-h));
+  min-height: 560px;
+}
+.app.flow.is-widget-hidden { display: none; }
+
+/* Top bar additions */
+.topbar .flowchip { font-family: var(--font-mono); }
+.topbar__identity .chip--licence { display: inline-flex !important; }    /* must-show at every width */
+.topbar__tools { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
+.searchbtn { display: inline-flex; align-items: center; gap: var(--space-3); min-height: var(--target); padding: 0 var(--space-4); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); color: var(--color-text-secondary); font-size: var(--text-sm); background: var(--color-surface--1); }
+.searchbtn:hover { color: var(--color-text); background: var(--color-row-hover); }
+.searchbtn .lbl { min-width: 9ch; text-align: left; }
+@container topbar (max-width: 1279px) { .searchbtn .lbl { display: none; } }
+
+/* ---- Step rail (region C on ≥ 1080) -------------------------------------- */
+.steprail { align-items: stretch; padding: var(--space-3) var(--space-2); gap: 0; }
+.steprail ol { display: flex; flex-direction: column; gap: 0; }
+.step {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  width: 100%; min-height: 58px; padding: var(--space-3) var(--space-1);
+  border-radius: var(--radius-2); color: var(--color-text-secondary); text-align: center;
+}
+.step:hover { background: var(--color-row-hover); color: var(--color-text); }
+.step__num {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  font: 700 12px/1 var(--font-mono); box-shadow: inset 0 0 0 1.5px currentColor; flex: 0 0 auto;
+}
+.step.is-done .step__num { background: var(--color-text-secondary); color: var(--color-surface-0); box-shadow: none; }
+.step.is-done .step__num::before { content: "\2713"; }
+.step.is-done .step__num span { display: none; }
+.step[aria-current="step"] { background: var(--color-control-selected); color: var(--color-text); }
+.step[aria-current="step"]::before { content: ""; position: absolute; left: -2px; top: 18%; height: 64%; width: 3px; border-radius: 1px; background: var(--color-control-selected-indicator); }
+.step[aria-current="step"] .step__num { background: var(--color-text); color: var(--color-surface-0); box-shadow: none; }
+.step[aria-current="step"] .step__num::before { content: none; }
+.step[aria-current="step"] .step__num span { display: inline; }
+.step__label { font-size: var(--text-xs); font-weight: var(--weight-semibold); line-height: 1.1; }
+.step__key { font: 9px/1 var(--font-mono); color: var(--color-text-secondary); }
+.step-link { width: 1px; height: 8px; margin: 0 auto; background: var(--color-border-strong); }
+.steptools {
+  display: grid; grid-template-columns: repeat(2, 36px); gap: 4px; justify-content: center;
+  padding: var(--space-3) 0 var(--space-4); margin: 2px 0 var(--space-2);
+  border-bottom: 1px solid var(--color-border); border-top: 1px solid var(--color-border);
+}
+.steptools .tool { width: 36px; height: 36px; }
+.steptools .tool.wide { grid-column: 1 / -1; width: 76px; flex-direction: row; gap: 4px; font-size: var(--text-2xs); }
+.steprail .rail__spacer { flex: 1 1 auto; min-height: var(--space-4); }
+.steprail .railfoot { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
+.tool .swatch { position: absolute; left: 3px; bottom: 3px; width: 8px; height: 8px; }
+
+/* ---- Step bar + tool tray (< 1080) ---------------------------------------- */
+.stepbar { justify-content: stretch; padding: 0 var(--space-2); gap: var(--space-1); }
+.stepbar .step { flex: 1 1 0; min-height: calc(var(--layout-bottombar) - 8px); flex-direction: column; padding: var(--space-2) 0; }
+.stepbar .step[aria-current="step"]::before { left: 20%; width: 60%; top: -1px; height: 3px; }
+.stepbar .step__key { display: none; }
+.steptray {
+  grid-area: tray; display: none; align-items: center; gap: var(--space-2);
+  height: var(--tray-h); padding: 0 var(--space-4); overflow-x: auto; scrollbar-width: none;
+  background: var(--color-surface-0); border-top: 1px solid var(--color-border);
+  z-index: var(--z-bars);
+}
+.steptray .tool { width: auto; min-width: 44px; height: 44px; padding: 0 var(--space-3); flex-direction: row; gap: var(--space-3); flex: 0 0 auto; }
+.steptray .tool__label { font-size: var(--text-sm); }
+.steptray .tool__key { display: none; }
+.steptray__divider { width: 1px; height: 28px; background: var(--color-border); flex: 0 0 auto; }
+
+/* ---- Dock = the step panel ------------------------------------------------- */
+.dock { position: relative; }
+.dock__head { flex: 0 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-border); }
+.dock__eyebrow { grid-column: 1; font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); font-weight: var(--weight-semibold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock__title { grid-column: 1; font-size: var(--text-xl); font-weight: var(--weight-semibold); line-height: 1.2; }
+.dock__purpose { grid-column: 1 / -1; font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.4; margin-top: 2px; }
+.dock__headactions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 2px; align-items: flex-start; }
+.dock__grab { display: none; }
+.dock__foot { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-top: 1px solid var(--color-border); background: var(--color-surface-0); }
+.dock__foot .grow { flex: 1 1 auto; min-width: 0; font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock__foot .btn--primary { min-height: 32px; }
+
+.steppanel { display: none; }
+.app[data-step="open"]     .steppanel[data-step="open"],
+.app[data-step="screen"]   .steppanel[data-step="screen"],
+.app[data-step="examine"]  .steppanel[data-step="examine"],
+.app[data-step="annotate"] .steppanel[data-step="annotate"],
+.app[data-step="export"]   .steppanel[data-step="export"] { display: block; }
+.steppanel > .steppanel__summary { display: none; }
+.app.is-expert .steppanel { display: block; border-bottom: 2px solid var(--color-border-strong); }
+.app.is-expert .steppanel > .steppanel__summary { display: flex; align-items: center; gap: var(--space-3); min-height: 36px; padding: 0 var(--space-5); background: var(--color-surface--1); font-weight: var(--weight-semibold); font-size: var(--text-sm); }
+.app.is-expert .steppanel > .steppanel__summary .step__num { width: 20px; height: 20px; font-size: 10px; }
+
+.sublead { padding: var(--space-3) var(--space-5) 0; font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.45; }
+.pad { padding: var(--space-2) var(--space-5); }
+.dock .section > summary { min-height: 34px; }
+.dock .section__body { padding: var(--space-1) 0 var(--space-4); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-4); font-size: var(--text-xs); }
+.kv dt { color: var(--color-text-secondary); }
+.kv dd { font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hint { font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; line-height: 1.5; }
+.btnrow { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.toolgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+.toolgrid .tool { width: 100%; height: auto; min-height: 52px; padding: var(--space-3) var(--space-2); border: 1px solid var(--color-border); gap: var(--space-2); }
+.toolgrid .tool__label { font-size: var(--text-xs); }
+.toolgrid .tool__key { position: static; font-size: 10px; }
+.classes { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.class-chip .pattern { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--color-text-secondary); }
+.annlist .list__item { gap: var(--space-3); padding: var(--space-2) var(--space-5); min-height: 32px; font-size: var(--text-sm); cursor: default; }
+.annlist .list__item .id { font-family: var(--font-mono); color: var(--color-text-secondary); font-size: var(--text-xs); min-width: 3.5ch; }
+.annlist .list__item .what { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.annlist .grouphead { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5) var(--space-1); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.annlist .grouphead .count { margin-left: auto; font-family: var(--font-mono); }
+.queue .list__item { display: grid; grid-template-columns: auto 1fr auto; gap: 2px var(--space-3); padding: var(--space-3) var(--space-5); }
+.queue .rid { font-family: var(--font-mono); font-weight: var(--weight-bold); width: 26px; height: 22px; display: grid; place-items: center; border: 1.5px solid var(--color-border-strong); border-radius: var(--radius-1); font-size: var(--text-xs); }
+.queue .list__item.is-reviewed .rid { background: var(--color-text-secondary); color: var(--color-surface-0); border-color: transparent; }
+.queue .what { font-size: var(--text-sm); }
+.queue .meta2 { grid-column: 2; font-size: var(--text-xs); color: var(--color-text-secondary); font-family: var(--font-mono); }
+.outputs .output { padding: var(--space-3) var(--space-5); border-top: 1px solid var(--color-divider); display: flex; flex-direction: column; gap: var(--space-2); }
+.outputs .output__head { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.outputs .output__head .grow { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.state-tag { font: 600 var(--text-2xs)/18px var(--font-mono); padding: 0 6px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.state-tag.is-solid { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
+.chanrow { display: grid; grid-template-columns: var(--target-min) 14px 1fr auto; grid-template-rows: auto auto; gap: 2px var(--space-3); align-items: center; padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-divider); }
+.chanrow .name { font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.chanrow .win { grid-column: 2 / -1; display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
+.chanrow .win .histogram { height: 18px; padding: 0; }
+.chanrow .num { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--color-text-secondary); }
+.chanrow.is-off .name, .chanrow.is-off .win { opacity: .45; }
+.chanrow .chsel { min-height: 24px; font-size: var(--text-xs); padding: 0 4px; background: var(--color-surface-1); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); color: var(--color-text); }
+.jobs td { white-space: nowrap; }
+.jobs td.what { white-space: normal; }
+.identical { display: inline-flex; align-items: center; gap: 4px; font: 600 var(--text-2xs)/18px var(--font-mono); padding: 0 6px; border: 1px solid var(--color-text); border-radius: var(--radius-1); color: var(--color-text); }
+.identical::before { content: "\2261"; font-size: 12px; }
+.check { display: flex; align-items: flex-start; gap: var(--space-3); min-height: var(--target); padding: var(--space-2) 0; font-size: var(--text-sm); }
+.check input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--grey-91); flex: 0 0 auto; }
+.check small { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.slides .tray__slide { grid-template-columns: 56px 1fr auto; min-height: 50px; padding: var(--space-2) var(--space-5); }
+.slides .tray__thumb { width: 56px; height: 34px; }
+.slides .state { font-size: var(--text-2xs); font-family: var(--font-mono); color: var(--color-text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+.dropzone { margin: var(--space-2) var(--space-5); padding: var(--space-4); border: 1.5px dashed var(--color-border-strong); border-radius: var(--radius-3); font-size: var(--text-xs); color: var(--color-text-secondary); text-align: center; line-height: 1.5; }
+pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var(--space-4); background: var(--color-surface--1); border: 1px solid var(--color-border); border-radius: var(--radius-2); font: var(--text-xs)/1.5 var(--font-mono); color: var(--color-text); overflow-x: auto; white-space: pre; }
+.clinical-only { display: none; }
+.app[data-product="clinical"] .clinical-only, .app[data-product="dx"] .clinical-only { display: block; }
+.app[data-product="clinical"] .ruo-only, .app[data-product="dx"] .ruo-only { display: none; }
+
+/* In-panel overlay (keyboard map, About): replaces the panel, never the slide */
+.paneloverlay { position: absolute; inset: 0; z-index: 5; display: none; flex-direction: column; background: var(--color-surface-0); }
+.paneloverlay.is-open { display: flex; }
+.paneloverlay .dock__body { padding-bottom: var(--space-6); }
+.paneloverlay .keymap { grid-template-columns: 1fr; gap: var(--space-5); padding: var(--space-4) var(--space-5); }
+.paneloverlay .keymap__keys { flex-basis: 108px; }
+
+/* Command palette: drops from the top-bar search, right-aligned, outside the central 50 % */
+.palette-layer { position: absolute; top: calc(var(--layout-topbar) + 4px); right: var(--space-4); z-index: var(--z-palette); display: none; }
+.palette-layer.is-open { display: block; }
+.palette-layer .palette { width: min(540px, calc(100vw - 32px)); }
+.palette-layer .palette__list { max-height: 330px; }
+
+/* ---- Canvas, HUD, overlays (placeholder for engine-drawn GPU layers) ------ */
+.canvas-area .world { transform-origin: 800px 500px; }
+.panes { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; }
+.pane { position: relative; overflow: hidden; min-width: 0; min-height: 0; }
+.pane + .pane { display: none; }
+.canvas-area.is-side .panes { grid-template-columns: 1fr 1fr; gap: 2px; background: var(--color-surface--1); }
+.canvas-area.is-side .pane + .pane { display: block; }
+.canvas-area.is-curtain .pane + .pane { display: block; position: absolute; inset: 0; clip-path: inset(0 0 0 var(--curtain, 50%)); }
+.curtain-line { position: absolute; top: 0; bottom: 0; left: var(--curtain, 50%); width: 2px; margin-left: -1px; background: var(--grey-95); box-shadow: 0 0 0 1px rgba(0,0,0,.6); display: none; z-index: 2; pointer-events: none; }
+.canvas-area.is-curtain .curtain-line { display: block; }
+.panelabel { position: absolute; top: var(--layout-hud-inset); left: var(--layout-hud-inset); z-index: var(--z-hud); }
+.pane + .pane .panelabel { left: auto; right: var(--layout-hud-inset); }
+.canvas-area.is-side .navigator, .canvas-area.is-curtain .navigator { top: auto; bottom: 64px; }
+.canvas-area.is-side .pane + .pane .panelabel { left: var(--layout-hud-inset); right: auto; }
+.canvas-area:not(.is-side):not(.is-curtain) .panelabel { display: none; }
+.grid6 { position: absolute; inset: 0; display: none; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 2px; background: var(--color-surface--1); z-index: 1; }
+.canvas-area.is-grid .grid6 { display: grid; }
+.grid6 .pane { background: #050608; }
+.grid6 .pane .panelabel { display: inline-flex !important; left: var(--layout-hud-inset) !important; right: auto !important; }
+.canvas-area.is-grid .navigator { display: none; }
+.hud--tl .hud__item b { font-weight: var(--weight-semibold); }
+.hud .hud__sharp .indicator__glyph { width: 9px; height: 9px; }
+.canvas-area.is-cvd-deutan svg.canvas, .canvas-area.is-cvd-deutan .pane svg { filter: url(#cvd-deutan); }
+.canvas-area.is-cvd-protan svg.canvas, .canvas-area.is-cvd-protan .pane svg { filter: url(#cvd-protan); }
+.dock.is-cvd-deutan .swatch { filter: url(#cvd-deutan); }
+.dock.is-cvd-protan .swatch { filter: url(#cvd-protan); }
+.ov-heat, .ov-labels, .ov-pen, .ov-penpal, .ov-detect-high { display: none; }
+.canvas-area.ai-heatmap .ov-heat { display: inline; }
+.canvas-area.ai-heatmap .ov-outline { opacity: .5; }
+.canvas-area.ai-off .ov-outline, .canvas-area.ai-off .ov-heat { display: none; }
+.canvas-area.labels-on .ov-labels { display: inline; }
+.canvas-area.det-off .ov-detect { display: none; }
+.canvas-area.ann-off .ov-ann { display: none; }
+.canvas-area.overlays-hidden .ov { display: none !important; }
+.canvas-area.is-pen .ov-pen { display: inline; }
+.tool-palette.penpal { position: absolute; z-index: var(--z-hud); display: none; grid-template-columns: repeat(4, 40px); }
+.tool-palette.penpal .tool { width: 40px; height: 40px; }
+.canvas-area.is-pen .tool-palette.penpal { display: grid; }
+.touchhint { position: absolute; z-index: var(--z-hud); display: none; pointer-events: none; }
+.canvas-area.is-pen .touchhint { display: block; }
+.canvas-area.is-if .he-only, .canvas-area:not(.is-if) .if-only { display: none; }
+.plate .accession { font-weight: 600; }
+.strip .chip { flex: 0 0 auto; }
+.strip .strip__group--end .mono { font-family: var(--font-mono); }
+
+/* Notebook (Jupyter widget variant) ------------------------------------------ */
+.nb { display: none; padding: var(--space-6); background: #f7f7f7; color: #1a1a1a; min-height: calc(100dvh - var(--review-h) - var(--demo-h)); }
+.nb.is-on { display: block; }
+.nb__page { max-width: 1260px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-4); }
+.nb__bar { display: flex; gap: var(--space-5); align-items: center; font-size: var(--text-sm); color: #4a4a4a; border-bottom: 1px solid #d0d0d0; padding-bottom: var(--space-3); }
+.nb__bar b { color: #1a1a1a; }
+.nb__cell { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: var(--space-3); }
+.nb__prompt { font: var(--text-sm)/1.6 var(--font-mono); color: #4a4a4a; text-align: right; padding-top: 6px; }
+.nb__code { font: var(--text-sm)/1.6 var(--font-mono); background: #ffffff; border: 1px solid #d0d0d0; border-radius: 4px; padding: var(--space-3) var(--space-4); white-space: pre; overflow-x: auto; color: #1a1a1a; }
+.nb__out { font: var(--text-sm)/1.6 var(--font-mono); color: #1a1a1a; padding: var(--space-2) 0; }
+.nb__widget { width: 100%; max-width: 1200px; height: 640px; border: 1px solid #b8b8b8; border-radius: 4px; overflow: hidden; }
+.app--widget.flowwidget { --layout-rail: 52px; height: 100%; grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
+.app--widget.flowwidget.rail-closed { grid-template-columns: 0 minmax(0, 1fr) 0; }
+.app--widget .topbar { gap: var(--space-3); padding: 0 var(--space-3); }
+.app--widget .badge { min-height: 20px; }
+.app--widget .dock { display: none; }
+.wsteps { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--color-border); border-radius: var(--radius-2); background: var(--color-surface--1); }
+.wsteps button { min-height: 24px; padding: 0 var(--space-3); font-size: var(--text-xs); border-radius: 3px; color: var(--color-text-secondary); display: inline-flex; align-items: center; gap: 4px; }
+.wsteps button .n { font-family: var(--font-mono); font-weight: 700; }
+.wsteps button[aria-current="step"] { background: var(--color-control-selected); color: var(--color-text); box-shadow: inset 0 -2px 0 var(--color-text); }
+.app--widget .rail { gap: 2px; padding: var(--space-2) 0; }
+.app--widget .rail .tool { width: 32px; height: 32px; }
+@container topbar (max-width: 1023px) { .wsteps .lbl { display: none; } }
+
+/* ---- Responsive ------------------------------------------------------------- */
+/* 4K: larger rail and panel; the canvas still dominates (≈ 86 %) */
+@media (min-width: 3200px) {
+  .app.flow { --layout-rail: 112px; --layout-dock: 460px; }
+  .step { min-height: 76px; } .step__num { width: 32px; height: 32px; font-size: 14px; }
+  .step__label { font-size: var(--text-md); } .step__key { font-size: 11px; }
+  .steptools { grid-template-columns: repeat(2, 44px); } .steptools .tool { width: 44px; height: 44px; } .steptools .tool.wide { width: 92px; }
+  .dock__title { font-size: var(--text-2xl); } .dock__purpose, .annlist .list__item, .queue .what, .check { font-size: var(--text-md); }
+  .kv, .hint, .sublead, .layer-row__provenance, .provenance { font-size: var(--text-sm); }
+}
+/* Laptop and tablet landscape: the step panel is a drawer that never reaches the central 50 % */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.flow { --layout-dock: clamp(280px, calc((100vw - var(--layout-rail)) * 0.25), 360px); }
+}
+/* Tablet portrait and phone: steps → bottom bar, tools → tray, panel → in-flow sheet
+   (the canvas yields height instead of being covered: P1 holds even when expanded) */
+@media (max-width: 1079px) {
+  .app.flow {
+    --layout-bottombar: 64px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--tray-h) var(--layout-bottombar) var(--layout-strip);
+    grid-template-areas: "topbar" "canvas" "sheet" "tray" "bottombar" "strip";
+  }
+  .app.flow .steprail { display: none; }
+  .app.flow .steptray { display: flex; }
+  .app.flow .dock, .app.flow.dock-open .dock {
+    grid-area: sheet; display: flex; position: relative; inset: auto; width: auto; height: var(--sheet-peek); max-height: none;
+    border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0;
+    box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail);
+  }
+  .app.flow.sheet-expanded .dock { height: 42vh; height: 42dvh; }
+  .app.flow:not(.sheet-expanded) .dock > .dock__body, .app.flow:not(.sheet-expanded) .dock__purpose { display: none; }
+  .app.flow:not(.sheet-expanded) .dock__head { border-bottom: 0; padding-top: var(--space-1); }
+  .dock__grab { display: flex; justify-content: center; align-items: center; width: 100%; min-height: 20px; flex: 0 0 auto; }
+  .dock__grab span { width: 40px; height: 4px; border-radius: 2px; background: var(--color-border-strong); }
+  .dock__foot { padding: var(--space-2) var(--space-4); }
+  .dock__foot .btn { min-height: 40px; }
+  .dock__collapse { display: none; }
+  .canvas-area.is-side .panes { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .palette-layer { left: var(--space-4); right: var(--space-4); }
+  .palette-layer .palette { width: 100%; }
+}
+@media (min-width: 600px) and (max-width: 1079px) {
+  .app.flow { --layout-bottombar: 72px; }
+}
+@media (pointer: coarse) {
+  .app.flow { --layout-rail: 96px; }
+  .steptools { grid-template-columns: repeat(2, 44px); } .steptools .tool { width: 44px; height: 44px; } .steptools .tool.wide { width: 92px; }
+  .annlist .list__item, .queue .list__item, .slides .tray__slide { min-height: 44px; }
+  .layer-row__vis { width: 44px; height: 44px; }
+  .dock .section > summary { min-height: 44px; }
+}
+@media (max-width: 599px) {
+  :root { --review-h: 26px; --demo-h: 40px; }
+  .app.flow {
+    --layout-bottombar: 60px; --tray-h: 52px; --sheet-peek: 112px;
+    grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--tray-h) var(--layout-bottombar);
+    grid-template-areas: "topbar" "canvas" "sheet" "tray" "bottombar";
+    min-height: 0;
+  }
+  .concept-head .hide-sm { display: none; }
+  .topbar__identity .accession { font-size: var(--text-md); }
+  .topbar__tools .btn--icon.hide-sm { display: none; }
+  .stepbar .step__label { font-size: 10px; }
+  .stepbar .step__num { width: 24px; height: 24px; font-size: 11px; }
+  .steptray .tool__label { font-size: var(--text-xs); }
+  .app.flow.sheet-expanded .dock { height: 52vh; height: 52dvh; }
+  .dock__title { font-size: var(--text-lg); }
+  .dock__eyebrow { font-size: 10px; }
+  .grid6 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+  .nb { padding: var(--space-3); }
+  .nb__cell { grid-template-columns: 1fr; }
+  .nb__prompt { text-align: left; padding: 0; }
+  .nb__widget { height: 560px; }
+}
+@media (max-height: 760px) and (min-width: 1080px) {
+  .step { min-height: 48px; padding: var(--space-2) var(--space-1); }
+  .steptools .tool { width: 32px; height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .canvas-area .world { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<!-- PART 1 END (head + CSS). Body follows. -->
+<a class="skip-link" href="#canvasArea">Skip to slide</a>
+
+<!-- ===================== Review chrome: concept header ===================== -->
+<header class="concept-head" aria-label="Concept header (review only)">
+  <span class="review-tag">CONCEPT C</span>
+  <b>Research annotation and overlay workspace</b><span class="sep hide-sm">·</span>
+  <span class="hide-sm">Stoipath Viewer (RUO)</span><span class="sep">·</span>
+  <span>angle <b>Task-flow</b></span><span class="sep hide-sm">·</span>
+  <span class="hide-sm">2026-11-01 · wireframe, synthetic content</span>
+  <span class="grow"></span>
+  <a href="#rationale" class="hide-sm">Design rationale ↓</a>
+</header>
+
+<!-- ===================== Shared SVG defs: icons, tissue, filters ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+    <symbol id="i-pan" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+    <symbol id="i-polygon" viewBox="0 0 24 24"><path d="M6 4l12 3 2 10-8 4-7-6z"/></symbol>
+    <symbol id="i-brush" viewBox="0 0 24 24"><path d="M4 16c3-8 6 2 9-4s4 6 7 0"/><circle cx="20" cy="12" r="1.6"/></symbol>
+    <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+    <symbol id="i-rect" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14"/></symbol>
+    <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="14"/></symbol>
+    <symbol id="i-curtain" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17v.5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10 10a3 3 0 004 4M2 12s4-7 10-7c2 0 4 .6 5.5 1.5M22 12s-4 7-10 7c-2 0-4-.6-5.5-1.5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24"><path d="M12 3l10 18H2zM12 10v4M12 17v1"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+    <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8v6M8 11h6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 19h16"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16zM13 7l3 3"/></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113-6l3 3M20 12a8 8 0 01-13 6l-3-3M17 4v5h-5M7 20v-5h5"/></symbol>
+    <symbol id="i-adjust" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 3a9 9 0 010 18" fill="currentColor"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><rect x="12" y="11" width="6" height="5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3"/></symbol>
+    <symbol id="i-model" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10h4v4h-4z"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol>
+    <symbol id="i-queue" viewBox="0 0 24 24"><path d="M4 6h11M4 12h11M4 18h7M18 15l3 3-3 3"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></symbol>
+    <symbol id="i-allsteps" viewBox="0 0 24 24"><path d="M4 5h16M4 10h16M4 15h16M4 20h10"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="i-channels" viewBox="0 0 24 24"><circle cx="9" cy="10" r="5"/><circle cx="15" cy="10" r="5"/><circle cx="12" cy="15" r="5"/></symbol>
+    <symbol id="i-finger" viewBox="0 0 24 24"><path d="M9 11V5a1.5 1.5 0 013 0v5M12 10V8.5a1.5 1.5 0 013 0V11M15 11a1.5 1.5 0 013 0v3a7 7 0 01-7 7h-1a6 6 0 01-5-3l-2-4a1.5 1.5 0 012.5-1.5L9 14"/></symbol>
+
+    <!-- CVD simulation (Machado 2009, severity 1.0; linear RGB) for the deuteranopia/protanopia toggle -->
+    <filter id="cvd-deutan" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.367322 0.860646 -0.227968 0 0  0.280085 0.672501 0.047413 0 0  -0.011820 0.042940 0.968881 0 0  0 0 0 1 0"/></filter>
+    <filter id="cvd-protan" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.152286 1.052583 -0.204868 0 0  0.114503 0.786281 0.099216 0 0  -0.003882 -0.048116 1.051998 0 0  0 0 0 1 0"/></filter>
+
+    <!-- Synthetic H&E textures (placeholders for engine-drawn tiles; not a real slide) -->
+    <pattern id="pat-node" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#d9a0c0"/><circle cx="4" cy="5" r="2.1" fill="#7158a8"/><circle cx="14" cy="3" r="1.8" fill="#6a51a3"/><circle cx="18" cy="13" r="2.1" fill="#7158a8"/><circle cx="8" cy="15" r="1.9" fill="#6a51a3"/><circle cx="12" cy="20" r="1.6" fill="#7a62ad"/><circle cx="2" cy="19" r="1.4" fill="#8468b4"/></pattern>
+    <pattern id="pat-follicle" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#a688c2"/><circle cx="3" cy="3" r="2.2" fill="#4b3a8e"/><circle cx="9" cy="5" r="2" fill="#53409a"/><circle cx="5" cy="9.5" r="2.1" fill="#4b3a8e"/><circle cx="10.5" cy="10.5" r="1.4" fill="#5a46a0"/></pattern>
+    <pattern id="pat-gc" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#c9a9d3"/><circle cx="4" cy="4" r="2.6" fill="#7a62ad"/><circle cx="13" cy="8" r="2.4" fill="#8468b4"/><circle cx="6" cy="14" r="2.2" fill="#7a62ad"/></pattern>
+    <pattern id="pat-tumour" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#e4aac6"/><circle cx="6" cy="7" r="4.6" fill="#9a80c2"/><circle cx="6" cy="7" r="1.2" fill="#4b3a8e"/><circle cx="19" cy="5" r="4.2" fill="#a28ac7"/><circle cx="19" cy="5" r="1.1" fill="#4b3a8e"/><circle cx="13" cy="17" r="4.8" fill="#9a80c2"/><circle cx="13" cy="17" r="1.2" fill="#4b3a8e"/><circle cx="24" cy="21" r="3.8" fill="#a28ac7"/><circle cx="3" cy="23" r="3.4" fill="#9a80c2"/></pattern>
+    <pattern id="pat-fat" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#fbf8f8"/><circle cx="20" cy="22" r="18" fill="none" stroke="#e8d0db" stroke-width="1.5"/><circle cx="52" cy="50" r="15" fill="none" stroke="#e8d0db" stroke-width="1.5"/><circle cx="52" cy="12" r="11" fill="none" stroke="#e8d0db" stroke-width="1.5"/><circle cx="14" cy="56" r="10" fill="none" stroke="#e8d0db" stroke-width="1.5"/></pattern>
+    <pattern id="pat-ihc-node" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#e3e4ea"/><circle cx="4" cy="5" r="2.1" fill="#8f9cc6"/><circle cx="14" cy="3" r="1.8" fill="#8a97c2"/><circle cx="18" cy="13" r="2.1" fill="#8f9cc6"/><circle cx="8" cy="15" r="1.9" fill="#8a97c2"/><circle cx="12" cy="20" r="1.6" fill="#97a3ca"/></pattern>
+    <pattern id="pat-ihc-follicle" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#c4cadc"/><circle cx="3" cy="3" r="2.2" fill="#6f7fb4"/><circle cx="9" cy="5" r="2" fill="#7584b8"/><circle cx="5" cy="9.5" r="2.1" fill="#6f7fb4"/></pattern>
+    <pattern id="pat-ihc-tumour" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#b9733d"/><circle cx="6" cy="7" r="4.6" fill="#8b4a1c"/><circle cx="6" cy="7" r="1.6" fill="#7a83b2"/><circle cx="19" cy="5" r="4.2" fill="#93531f"/><circle cx="13" cy="17" r="4.8" fill="#8b4a1c"/><circle cx="13" cy="17" r="1.6" fill="#7a83b2"/><circle cx="24" cy="21" r="3.8" fill="#93531f"/></pattern>
+    <pattern id="hatch-tumour" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="rgba(142,58,21,.18)"/><rect width="3" height="10" fill="#8e3a15"/></pattern>
+    <radialGradient id="g-heat" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f0e442" stop-opacity=".95"/><stop offset=".45" stop-color="#be7b00" stop-opacity=".8"/><stop offset=".8" stop-color="#8e3a15" stop-opacity=".55"/><stop offset="1" stop-color="#8e3a15" stop-opacity="0"/></radialGradient>
+
+    <!-- Metastasis geometry (shared by tissue, label map, outline and the user's polygon) -->
+    <path id="geo-met" d="M478 470 C470 392 540 330 628 312 C700 296 760 318 820 300 C902 276 990 310 1030 372 C1062 424 1046 480 1040 520 C1032 588 980 652 900 680 C820 706 760 690 700 704 C620 722 548 690 512 632 C486 590 486 530 478 470 Z"/>
+    <path id="geo-micro" d="M1188 312 C1200 292 1236 290 1252 306 C1268 322 1262 352 1240 362 C1218 370 1190 360 1184 340 C1182 330 1182 320 1188 312 Z"/>
+
+    <symbol id="world-he" viewBox="0 0 1600 1000">
+      <rect width="1600" height="1000" fill="url(#pat-fat)"/>
+      <ellipse cx="800" cy="500" rx="712" ry="430" fill="#c98bae"/>
+      <ellipse cx="800" cy="500" rx="702" ry="420" fill="#f1d6e2"/>
+      <ellipse cx="800" cy="500" rx="690" ry="408" fill="url(#pat-node)"/>
+      <path d="M760 860 C820 760 900 740 1000 760 M560 840 C600 780 660 770 700 800 M1120 820 C1150 760 1220 740 1280 770" stroke="#f1d6e2" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <g>
+        <circle cx="300" cy="360" r="78" fill="url(#pat-follicle)"/><circle cx="300" cy="360" r="40" fill="url(#pat-gc)"/>
+        <circle cx="420" cy="232" r="70" fill="url(#pat-follicle)"/><circle cx="420" cy="232" r="34" fill="url(#pat-gc)"/>
+        <circle cx="610" cy="180" r="66" fill="url(#pat-follicle)"/>
+        <circle cx="1070" cy="170" r="72" fill="url(#pat-follicle)"/><circle cx="1070" cy="170" r="36" fill="url(#pat-gc)"/>
+        <circle cx="1330" cy="440" r="80" fill="url(#pat-follicle)"/><circle cx="1330" cy="440" r="38" fill="url(#pat-gc)"/>
+        <circle cx="250" cy="600" r="70" fill="url(#pat-follicle)"/>
+        <circle cx="1290" cy="660" r="64" fill="url(#pat-follicle)"/>
+      </g>
+      <use href="#geo-met" fill="url(#pat-tumour)"/>
+      <path d="M760 520 C780 500 820 506 826 530 C832 556 800 572 778 562 C762 554 754 536 760 520 Z" fill="#edcbdb"/>
+      <use href="#geo-micro" fill="url(#pat-tumour)"/>
+    </symbol>
+
+    <symbol id="world-ihc" viewBox="0 0 1600 1000">
+      <rect width="1600" height="1000" fill="#f6f5f3"/>
+      <ellipse cx="800" cy="500" rx="712" ry="430" fill="#bcc3d6"/>
+      <ellipse cx="800" cy="500" rx="690" ry="408" fill="url(#pat-ihc-node)"/>
+      <circle cx="300" cy="360" r="78" fill="url(#pat-ihc-follicle)"/><circle cx="420" cy="232" r="70" fill="url(#pat-ihc-follicle)"/><circle cx="610" cy="180" r="66" fill="url(#pat-ihc-follicle)"/>
+      <circle cx="1070" cy="170" r="72" fill="url(#pat-ihc-follicle)"/><circle cx="1330" cy="440" r="80" fill="url(#pat-ihc-follicle)"/><circle cx="250" cy="600" r="70" fill="url(#pat-ihc-follicle)"/><circle cx="1290" cy="660" r="64" fill="url(#pat-ihc-follicle)"/>
+      <use href="#geo-met" fill="url(#pat-ihc-tumour)" transform="translate(14 -8) rotate(1.5 800 500)"/>
+      <use href="#geo-micro" fill="url(#pat-ihc-tumour)" transform="translate(14 -8)"/>
+    </symbol>
+
+    <!-- Synthetic multiplex IF (CyCIF-like) channels: each is a separate group so composite and grid share them -->
+    <pattern id="pat-dapi" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2.4" fill="#3f6dff"/><circle cx="12" cy="9" r="2.2" fill="#3a63f0"/><circle cx="6" cy="13" r="2" fill="#3f6dff"/></pattern>
+    <pattern id="pat-cd3" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="5" cy="6" r="3.2" fill="none" stroke="#33d16b" stroke-width="2"/><circle cx="18" cy="14" r="3" fill="none" stroke="#33d16b" stroke-width="2"/><circle cx="9" cy="21" r="2.8" fill="none" stroke="#2bbd60" stroke-width="2"/></pattern>
+    <pattern id="pat-cd8" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="10" cy="12" r="3" fill="none" stroke="#e04ad6" stroke-width="2"/><circle cx="30" cy="30" r="3" fill="none" stroke="#e04ad6" stroke-width="2"/></pattern>
+    <pattern id="pat-cd20" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="3" fill="none" stroke="#ff4a3d" stroke-width="2"/><circle cx="10" cy="10" r="3" fill="none" stroke="#ff4a3d" stroke-width="2"/></pattern>
+    <pattern id="pat-panck" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#5c5410"/><path d="M0 7h28M0 21h28M7 0v28M21 0v28" stroke="#f2e23a" stroke-width="3"/></pattern>
+    <pattern id="pat-cd68" width="34" height="34" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="5" fill="#2fd6e6"/><circle cx="26" cy="25" r="4" fill="#2fd6e6"/></pattern>
+    <pattern id="pat-ki67" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="2.6" fill="#ffffff"/><circle cx="22" cy="20" r="2.4" fill="#f0f0f0"/></pattern>
+    <pattern id="pat-foxp3" width="48" height="48" patternUnits="userSpaceOnUse"><circle cx="14" cy="18" r="2.6" fill="#ff9a1f"/><circle cx="36" cy="38" r="2.4" fill="#ff9a1f"/></pattern>
+    <g id="if-base"><rect width="1600" height="1000" fill="#040507"/><ellipse cx="800" cy="500" rx="712" ry="430" fill="none" stroke="#1b2030" stroke-width="10"/></g>
+    <g id="ch-dapi"><ellipse cx="800" cy="500" rx="690" ry="408" fill="url(#pat-dapi)"/></g>
+    <g id="ch-cd3"><path d="M150 500 C200 300 420 120 800 110 C1180 120 1420 300 1460 500 C1420 700 1180 880 800 890 C420 880 200 700 150 500 Z M420 500 C420 420 600 330 800 320 C1000 330 1180 420 1180 500 C1180 580 1000 680 800 690 C600 680 420 580 420 500 Z" fill="url(#pat-cd3)" fill-rule="evenodd"/></g>
+    <g id="ch-cd8"><ellipse cx="800" cy="500" rx="660" ry="390" fill="url(#pat-cd8)"/></g>
+    <g id="ch-cd20"><circle cx="300" cy="360" r="78" fill="url(#pat-cd20)"/><circle cx="420" cy="232" r="70" fill="url(#pat-cd20)"/><circle cx="610" cy="180" r="66" fill="url(#pat-cd20)"/><circle cx="1070" cy="170" r="72" fill="url(#pat-cd20)"/><circle cx="1330" cy="440" r="80" fill="url(#pat-cd20)"/><circle cx="250" cy="600" r="70" fill="url(#pat-cd20)"/><circle cx="1290" cy="660" r="64" fill="url(#pat-cd20)"/></g>
+    <g id="ch-panck"><use href="#geo-met" fill="url(#pat-panck)"/><use href="#geo-micro" fill="url(#pat-panck)"/></g>
+    <g id="ch-cd68"><path d="M760 860 C820 760 900 740 1000 760 M560 840 C600 780 660 770 700 800 M1120 820 C1150 760 1220 740 1280 770 M120 500 C160 260 420 110 800 96" stroke="url(#pat-cd68)" stroke-width="44" fill="none" stroke-linecap="round"/></g>
+    <g id="ch-ki67"><circle cx="300" cy="360" r="40" fill="url(#pat-ki67)"/><circle cx="1330" cy="440" r="38" fill="url(#pat-ki67)"/><use href="#geo-met" fill="url(#pat-ki67)"/></g>
+    <g id="ch-foxp3"><ellipse cx="800" cy="500" rx="600" ry="360" fill="url(#pat-foxp3)"/></g>
+  </defs>
+</svg>
+
+<!-- ===================== The product: Stoipath Viewer workspace ===================== -->
+<div class="app flow" id="app" data-step="annotate" data-product="ruo">
+
+  <!-- A. Top bar: product badge + full label string first, never dismissible -->
+  <header class="topbar region" aria-label="Top bar">
+    <div class="topbar__slot-badge">
+      <button class="badge badge--ruo" id="badge" data-live="launch:product" aria-label="Stoipath Viewer, for research use only. Open product label and About">RUO</button>
+      <span class="chip chip--purpose clinical-only" id="purposeChip" data-live="launch:purposeOfUse" hidden>Sign-out</span>
+    </div>
+    <span class="topbar__label badge-string badge-string--ruo" id="labelString" aria-label="For Research Use Only. Not for use in diagnostic procedures."></span>
+    <div class="topbar__identity" id="identity">
+      <span class="accession" id="idName" data-live="state.slides[0]">CAMELYON16 · tumor_014</span>
+      <span class="title" id="idTitle">Sentinel lymph node · H&amp;E · scanned 0.25 µm/px · 3 layers</span>
+      <span class="chip chip--licence" id="idLicence" data-live="state.slides[0].licence" title="Licence of this slide">CC0</span>
+      <span class="chip chip--solid flowchip" id="idCohort" data-live="state.collection">Slide 14 of 48 · 3 done</span>
+    </div>
+    <div class="topbar__tools">
+      <button class="searchbtn" id="paletteBtn" aria-haspopup="dialog" aria-controls="paletteLayer" aria-label="Command palette (Ctrl+K)"><svg class="icon icon--sm"><use href="#i-search"/></svg><span class="lbl">Commands</span><kbd class="key">Ctrl K</kbd></button>
+      <button class="btn btn--icon btn--ghost hide-sm" id="keymapBtn" aria-label="Keyboard map (?)"><svg class="icon"><use href="#i-keyboard"/></svg></button>
+      <button class="btn btn--icon btn--ghost" id="moreBtn" aria-label="About, settings and help"><svg class="icon"><use href="#i-more"/></svg></button>
+    </div>
+    <div class="topbar__slot-mode" id="modeSlot" hidden>
+      <span class="mode mode--nav" id="modeInd" data-live="state.render_mode">NAV</span>
+    </div>
+  </header>
+
+  <!-- C. Step rail (≥ 1080): the five steps; the current step's tools nest under it. Filled from the STEPS registry. -->
+  <nav class="rail region steprail" id="steprail" aria-label="Task steps"></nav>
+
+  <!-- B. Canvas: engine-drawn GPU layers (placeholder SVG); DOM over it is HUD text and the navigator frame only -->
+  <main class="canvas-area region ai-outline" id="canvasArea" tabindex="0" role="application"
+        aria-roledescription="slide canvas"
+        aria-label="Slide canvas, CAMELYON16 tumor_014, H and E, 2.5 times. Arrow keys pan, plus and minus zoom, N next step."
+        aria-describedby="livePolite" data-live="state.views[0]">
+    <div class="panes" id="panes">
+      <div class="pane" id="paneA">
+        <svg class="canvas" id="svgA" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g class="world" id="worldA">
+            <use class="he-only" href="#world-he" width="1600" height="1000"/>
+            <g class="if-only" id="ifComposite">
+              <use href="#if-base"/>
+              <g style="isolation:isolate">
+                <use data-ch="dapi" href="#ch-dapi" style="mix-blend-mode:screen"/>
+                <use data-ch="cd3" href="#ch-cd3" style="mix-blend-mode:screen"/>
+                <use data-ch="cd8" href="#ch-cd8" style="mix-blend-mode:screen"/>
+                <use data-ch="cd20" href="#ch-cd20" style="mix-blend-mode:screen"/>
+                <use data-ch="panck" href="#ch-panck" style="mix-blend-mode:screen"/>
+                <use data-ch="cd68" href="#ch-cd68" style="mix-blend-mode:screen"/>
+                <use data-ch="ki67" href="#ch-ki67" style="mix-blend-mode:screen;display:none"/>
+                <use data-ch="foxp3" href="#ch-foxp3" style="mix-blend-mode:screen;display:none"/>
+              </g>
+            </g>
+            <!-- Layer: tumour/normal label map (raster labels; nearest sampling + LUT in the engine) -->
+            <g class="ov ov-labels he-only" data-live="layers:labels"><use href="#geo-met" fill="url(#hatch-tumour)"/><use href="#geo-micro" fill="url(#hatch-tumour)"/></g>
+            <!-- Layer: metastasis probability (raster; outline by default, heatmap on demand) -->
+            <g class="ov ov-heat he-only" id="heat" data-live="layers:probability" style="opacity:.55">
+              <ellipse cx="760" cy="500" rx="330" ry="250" fill="url(#g-heat)"/>
+              <ellipse cx="1222" cy="330" rx="70" ry="60" fill="url(#g-heat)"/>
+              <ellipse cx="300" cy="620" rx="60" ry="40" fill="url(#g-heat)" opacity=".5"/>
+            </g>
+            <g class="ov ov-outline he-only" data-live="layers:probability">
+              <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#262626" stroke-width="6"/>
+              <path d="M462 470 C452 380 532 312 626 294 C702 278 762 300 822 282 C910 256 1006 296 1048 366 C1082 424 1064 484 1058 524 C1048 600 992 668 904 698 C820 724 760 708 700 722 C612 742 536 706 496 640 C468 594 470 532 462 470 Z" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="14 8"/>
+              <circle cx="1222" cy="332" r="58" fill="none" stroke="#262626" stroke-width="6"/><circle cx="1222" cy="332" r="58" fill="none" stroke="#f0e442" stroke-width="3" stroke-dasharray="10 6"/>
+            </g>
+            <!-- Layer: 1,240,000 cell detections, centroid LOD below 10× (generated) -->
+            <g class="ov ov-detect he-only" id="detect" data-live="layers:vector"></g>
+            <!-- Layer: my annotations (op-based Annotation API) -->
+            <g class="ov ov-ann he-only" id="ann" data-live="annotations">
+              <use href="#geo-met" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6"/>
+              <use href="#geo-met" fill="none" stroke="#8e3a15" stroke-width="3"/>
+              <g fill="#f7f7f7" stroke="#262626" stroke-width="1.5" id="handles">
+                <rect x="473" y="465" width="10" height="10"/><rect x="623" y="307" width="10" height="10"/><rect x="815" y="295" width="10" height="10"/><rect x="1025" y="367" width="10" height="10"/><rect x="1035" y="515" width="10" height="10"/><rect x="895" y="675" width="10" height="10"/><rect x="695" y="699" width="10" height="10"/><rect x="507" y="627" width="10" height="10"/>
+              </g>
+              <use href="#geo-micro" fill="rgba(142,58,21,.10)" stroke="#e6e6e6" stroke-width="6"/>
+              <use href="#geo-micro" fill="none" stroke="#8e3a15" stroke-width="3"/>
+              <!-- ROI 1 for the model run (Region*, deep blue, dashed, light halo) -->
+              <rect x="904" y="232" width="180" height="130" fill="none" stroke="#e6e6e6" stroke-width="6"/>
+              <rect x="904" y="232" width="180" height="130" fill="none" stroke="#173f86" stroke-width="3" stroke-dasharray="12 6"/>
+              <g transform="translate(904 222)"><rect x="0" y="-18" width="58" height="20" rx="2" fill="#262626"/><text x="6" y="-3" font-family="ui-monospace, Menlo, monospace" font-size="13" fill="#f2f2f2">ROI 1</text></g>
+              <!-- Measurement: largest dimension of the metastatic focus -->
+              <line x1="478" y1="520" x2="1046" y2="452" stroke="#262626" stroke-width="5"/>
+              <line x1="478" y1="520" x2="1046" y2="452" stroke="#f7f7f7" stroke-width="2.5"/>
+              <circle cx="478" cy="520" r="5" fill="#f7f7f7" stroke="#262626" stroke-width="2"/><circle cx="1046" cy="452" r="5" fill="#f7f7f7" stroke="#262626" stroke-width="2"/>
+              <g transform="translate(700 470)"><rect x="0" y="-18" width="62" height="22" rx="2" fill="#262626"/><text x="7" y="-2" font-family="ui-monospace, Menlo, monospace" font-size="14" fill="#f7f7f7">2.3 mm</text></g>
+              <!-- Brush region, Stroma (teal) -->
+              <path d="M280 760 C300 716 352 700 392 716 C430 732 446 772 420 800 C392 828 336 832 304 812 C286 800 274 782 280 760 Z" fill="rgba(26,136,147,.14)" stroke="#e6e6e6" stroke-width="6"/>
+              <path d="M280 760 C300 716 352 700 392 716 C430 732 446 772 420 800 C392 828 336 832 304 812 C286 800 274 782 280 760 Z" fill="none" stroke="#1a8893" stroke-width="3"/>
+              <!-- Point markers: Lymphocytes (sky) near a follicle, Other (amber) -->
+              <g stroke-width="2.5">
+                <g stroke="#262626" stroke-width="5"><path d="M352 292v14M345 299h14M372 316v14M365 323h14M338 330v14M331 337h14"/></g>
+                <g stroke="#7cc3f0"><path d="M352 292v14M345 299h14M372 316v14M365 323h14M338 330v14M331 337h14"/></g>
+                <g stroke="#262626" stroke-width="5"><path d="M1388 610v14M1381 617h14M1410 640v14M1403 647h14"/></g>
+                <g stroke="#be7b00"><path d="M1388 610v14M1381 617h14M1410 640v14M1403 647h14"/></g>
+              </g>
+            </g>
+            <!-- Pen stroke in progress (tablet variant): pen draws, a finger pans -->
+            <g class="ov ov-pen he-only">
+              <path d="M560 800 C590 772 640 770 668 790 C690 806 720 812 748 798" fill="none" stroke="#e6e6e6" stroke-width="7" stroke-linecap="round"/>
+              <path d="M560 800 C590 772 640 770 668 790 C690 806 720 812 748 798" fill="none" stroke="#1a8893" stroke-width="4" stroke-linecap="round"/>
+              <g transform="translate(748 798) rotate(-35)"><path d="M0 0l8-4 46-46-8-8-46 46z" fill="#f2f2f2" stroke="#262626" stroke-width="2"/></g>
+            </g>
+          </g>
+        </svg>
+        <span class="hud__item panelabel" id="labelA" data-live="state.views[0]"><b>tumor_014 · H&amp;E</b>&nbsp;· view 1</span>
+      </div>
+      <div class="pane" id="paneB">
+        <svg class="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g class="world" id="worldB"><use href="#world-ihc" width="1600" height="1000"/>
+            <g class="ov ov-ann"><use href="#geo-met" fill="none" stroke="#e6e6e6" stroke-width="6" transform="translate(14 -8) rotate(1.5 800 500)"/><use href="#geo-met" fill="none" stroke="#8e3a15" stroke-width="3" transform="translate(14 -8) rotate(1.5 800 500)"/></g>
+          </g>
+        </svg>
+        <span class="hud__item panelabel" data-live="state.views[1]"><b>tumor_014 · CK AE1/AE3 (IHC)</b>&nbsp;· affine</span>
+      </div>
+    </div>
+    <div class="curtain-line" aria-hidden="true"></div>
+
+    <!-- Channel grid view (multiplex): one pane per visible channel, same camera -->
+    <div class="grid6" id="grid6" aria-label="Channel grid view"></div>
+
+    <!-- Banner slot (under the top bar, neutral) -->
+    <div class="banner-slot" id="bannerSlot"></div>
+
+    <!-- HUD: four corners only -->
+    <div class="hud hud--tl" id="hudTL">
+      <span class="hud__item" data-live="state.slides[0]"><b id="hudName">tumor_014 · H&amp;E</b></span>
+      <span class="hud__item hud__item--quiet hud__sharp indicator indicator--sharp" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span>
+    </div>
+    <div class="hud hud--bl">
+      <div class="hud__item scalebar" data-live="state.views[0].scale_um_per_px" style="--scalebar-length:125px" id="scalebar">
+        <span class="scalebar__bar"></span><span class="scalebar__label" id="scaleLabel">500 µm</span>
+      </div>
+      <span class="hud__item hud__position" id="hudPos" data-live="state.views[0].center_um">x 3.18 mm · y 1.96 mm</span>
+    </div>
+    <div class="hud hud--br">
+      <button class="hud__item magnification" id="magBtn" data-live="state.views[0].scale_um_per_px" aria-label="Magnification 2.5 times, 4.00 micrometres per pixel. Press Enter to type a zoom.">
+        <span class="magnification__value" id="magVal">2.5×</span>
+        <span class="magnification__line2" id="magLine">4.00 µm/px · derived</span>
+      </button>
+    </div>
+
+    <!-- F. Navigator (top-right, never auto-fades, pan buttons = SC 2.5.7 alternative) -->
+    <div class="navigator" id="navigator" data-live="state.views[0]">
+      <div class="navigator__thumb" style="aspect-ratio:16/10">
+        <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use class="he-only" href="#world-he" width="1600" height="1000"/><g class="if-only"><use href="#if-base"/><use href="#ch-dapi"/><use href="#ch-panck" style="mix-blend-mode:screen"/></g></svg>
+        <span class="navigator__viewport" id="navRect" style="left:6%;top:6%;width:88%;height:88%"></span>
+        <div class="navigator__pan">
+          <button class="up" aria-label="Pan up" data-pan="0,-1">▲</button><button class="left" aria-label="Pan left" data-pan="-1,0">◀</button>
+          <button class="right" aria-label="Pan right" data-pan="1,0">▶</button><button class="down" aria-label="Pan down" data-pan="0,1">▼</button>
+        </div>
+      </div>
+      <div class="navigator__label"><span>Overview · click to recentre</span><kbd class="key">O</kbd></div>
+    </div>
+
+    <!-- Transient pen-tip palette (Pencil Pro squeeze; a GPU layer in the product) and touch hint -->
+    <div class="tool-palette penpal" style="left:58%;bottom:13%" aria-label="Pen-tip palette (transient)">
+      <button class="tool" aria-label="Brush" aria-pressed="true"><svg class="icon"><use href="#i-brush"/></svg></button>
+      <button class="tool" aria-label="Polygon"><svg class="icon"><use href="#i-polygon"/></svg></button>
+      <button class="tool" aria-label="Point"><svg class="icon"><use href="#i-point"/></svg></button>
+      <button class="tool" aria-label="Class: Stroma"><span class="swatch swatch--lg" style="--swatch:var(--ann-5);position:static"></span></button>
+    </div>
+    <div class="touchhint hud__item" style="right:24%;bottom:22%"><svg class="icon"><use href="#i-finger"/></svg>&nbsp;finger pans · pen draws</div>
+
+    <!-- Plates (replace canvas content; S15 and launch refused) -->
+    <div class="plate" id="plateManifest" hidden>
+      <div class="plate__card">
+        <span class="plate__glyph">!</span>
+        <span class="plate__title">This slide could not be opened</span>
+        <span class="plate__text">This slide could not be opened (HTTP 503 from the tile server). Retry · Report a problem</span>
+        <div class="plate__actions"><button class="btn btn--primary" data-act="clearFault">Retry</button><button class="btn btn--secondary">Report a problem</button><button class="btn btn--secondary" data-act="gostep" data-step-target="open">Back to Open</button></div>
+      </div>
+    </div>
+    <div class="plate" id="plateLaunch" hidden>
+      <div class="plate__card plate__card--blocking">
+        <span class="plate__glyph">!</span>
+        <span class="plate__title">Launch refused</span>
+        <span class="plate__text">This launch asked for Stoipath Clinical-IH but this is Stoipath Viewer (research use only). Nothing was opened.</span>
+        <div class="plate__actions"><button class="btn btn--secondary" data-act="clearLaunch">Close</button></div>
+      </div>
+    </div>
+  </main>

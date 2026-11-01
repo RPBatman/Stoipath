@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinical sign-out · Concept B · Workbench</title>
+<meta name="description" content="Concept B of three for the Stoipath clinical sign-out viewer (Clinical-IH / Dx): the Workbench angle. Persistent, resizable, dockable panels (Explorer left: case, slides, layers; Inspector right: context, tools, analytics, hand-offs) around a large canvas, a canvas-floor governor that keeps the slide at 70 % or more of the window, and a Ctrl/Cmd-K command palette as the universal entry point. Interactive wireframe with switchable degraded states. All case and patient content is synthetic. Dated 2026-11-01.">
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/base.css">
+<style>
+/* =====================================================================
+   Concept B · Workbench · page-scoped CSS (2026-11-01).
+   Reuses design-system classes for every product component. New here:
+   the five-column workbench frame (.app.wb), the two docks (.wbdock),
+   their accordion sections (.wbsec), the collapsed slide strip, the
+   activity bar, the identity ribbon, the docked palette/popovers that
+   never enter the canvas centre, and the plum review chrome (not product).
+   ===================================================================== */
+:root {
+  --review-top: 30px;
+  --review-bottom: 40px;
+  --host-bar: 0px;
+  /* Workbench geometry (re-set per breakpoint; JS may set --wb-left/--wb-right inline when resized) */
+  --wb-rail: 44px;  --wb-abar: 40px;
+  --wb-left: 280px; --wb-strip: 64px; --wb-right: 300px;
+  --wb-ribbon: 0px; --wb-slides: 0px; --wb-bb: 0px;
+  --wb-floor: 0.70;              /* P1: canvas share at rest */
+  /* Controlled label string with the (synthetic) lab name; still one token (Design note D2). */
+  --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within Example University AP Laboratory under CLIA/CAP validation.";
+}
+@media (min-width: 3200px) { :root { --wb-rail: 48px; --wb-abar: 44px; --wb-left: 360px; --wb-right: 400px; --wb-strip: 72px; } }
+@media (min-width: 1080px) and (max-width: 1599px) { :root { --wb-rail: 40px; --wb-abar: 36px; --wb-left: 248px; --wb-right: 288px; --wb-strip: 60px; } }
+@media (max-width: 1279px) { :root { --wb-ribbon: 34px; } }
+@media (max-width: 1079px) { :root { --wb-rail: 0px; --wb-abar: 0px; --wb-left: 0px; --wb-right: 0px; --wb-strip: 0px; --wb-slides: 52px; --wb-bb: var(--layout-bottombar); } }
+@media (max-width: 599px)  { :root { --wb-ribbon: 32px; --wb-slides: 0px; } }
+body.review-hidden { --review-top: 0px; --review-bottom: 0px; }
+body.surface-embedded { --host-bar: 30px; }
+body { overflow-x: hidden; background: var(--color-surface--1); }
+
+/* ---------- review chrome (plum: deliberately outside the product palette) ---------- */
+.review-head, .review-foot {
+  display: flex; align-items: center; gap: var(--space-5);
+  padding: 0 var(--space-5); background: #24192f; color: #eadff7;
+  font-size: var(--text-sm); white-space: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin;
+}
+.review-head { height: var(--review-top); border-bottom: 1px solid #45345e; }
+.review-foot { height: var(--review-bottom); border-top: 1px solid #45345e; gap: var(--space-4); }
+.review-head b { color: #fff; }
+.review-head .rv-sep { opacity: .45; }
+.review-head .rv-share { font-family: var(--font-mono); font-size: var(--text-xs); padding: 1px 6px; border: 1px solid #6c5590; border-radius: 3px; }
+.review-head .rv-share.is-low { background: #eadff7; color: #24192f; }
+.rv-btn { min-height: 22px; padding: 0 8px; border: 1px solid #6c5590; border-radius: 3px; color: #eadff7; font-size: var(--text-xs); background: transparent; }
+.rv-btn:hover, .rv-btn[aria-pressed="true"] { background: #45345e; }
+.review-foot label { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); color: #cdbfe0; }
+.review-foot select { background: #352748; color: #fff; border: 1px solid #6c5590; border-radius: 3px; font-size: var(--text-xs); min-height: 24px; padding: 0 4px; }
+.review-foot .rv-title { font-weight: 700; color: #fff; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .06em; }
+body.review-hidden .review-head, body.review-hidden .review-foot { display: none; }
+.rv-show { position: fixed; right: 6px; bottom: 6px; z-index: 200; display: none; }
+body.review-hidden .rv-show { display: inline-flex; background: #24192f; }
+.hostbar { display: none; height: var(--host-bar); align-items: center; gap: 12px; padding: 0 12px; background: #1c2a24; color: #d8eadf; font-size: var(--text-xs); border-bottom: 1px solid #36503f; white-space: nowrap; overflow: hidden; }
+body.surface-embedded .hostbar { display: flex; }
+.hostbar b { color: #fff; }
+
+/* ---------- the workbench frame: rail | Explorer | canvas | Inspector | activity bar ---------- */
+.app.wb {
+  --wb-lcol: var(--wb-left); --wb-rcol: 0px;
+  height: calc(100vh - var(--review-top) - var(--review-bottom) - var(--host-bar));
+  height: calc(100dvh - var(--review-top) - var(--review-bottom) - var(--host-bar));
+  grid-template-columns: var(--wb-rail) var(--wb-lcol) minmax(0, 1fr) var(--wb-rcol) var(--wb-abar);
+  grid-template-rows: var(--layout-topbar) var(--wb-ribbon) var(--wb-slides) minmax(0, 1fr) var(--wb-bb) var(--layout-strip);
+  grid-template-areas:
+    "topbar topbar topbar topbar topbar"
+    "ribbon ribbon ribbon ribbon ribbon"
+    "slides slides slides slides slides"
+    "rail   ldock  canvas rdock  abar"
+    "bottombar bottombar bottombar bottombar bottombar"
+    "strip  strip  strip  strip  strip";
+}
+.app.wb.l-strip { --wb-lcol: var(--wb-strip); }
+.app.wb.r-docked { --wb-rcol: var(--wb-right); }
+@media (max-width: 1079px) {
+  .app.wb { --wb-lcol: 0px !important; --wb-rcol: 0px !important; }
+}
+@media (max-width: 599px) {
+  .app.wb { grid-template-rows: var(--layout-topbar) var(--wb-ribbon) 0 minmax(0, 1fr) var(--wb-bb) 0; }
+}
+.app.wb .topbar { grid-area: topbar; }
+.app.wb .rail { grid-area: rail; width: var(--wb-rail); }
+.app.wb .canvas-area { grid-area: canvas; }
+.app.wb .strip { grid-area: strip; }
+.app.wb .bottombar { grid-area: bottombar; }
+
+/* Embedded (EHR / Hyperdrive iframe): compact chrome, no docks, no rail */
+.app.wb.wb--embedded { --layout-topbar: 40px; --layout-strip: 24px; --wb-rail: 0px; --wb-abar: 0px; --wb-lcol: 0px !important; --wb-rcol: 0px !important; --wb-ribbon: 0px; --wb-slides: 0px; --wb-bb: 0px; }
+.app.wb.wb--embedded .rail, .app.wb.wb--embedded .abar, .app.wb.wb--embedded .ldock:not(.is-drawer), .app.wb.wb--embedded .rdock, .app.wb.wb--embedded .bottombar, .app.wb.wb--embedded .wb-ribbon, .app.wb.wb--embedded .wb-slides { display: none !important; }
+.wb-emb { display: none; }
+.app.wb.wb--embedded .wb-emb { display: inline-flex; }
+.app.wb.wb--embedded .wb-notemb { display: none !important; }
+.app.wb.wb--embedded .ldock.is-drawer { grid-area: canvas; position: absolute; left: 0; top: 0; bottom: 0; width: min(300px, 25%); min-width: 240px; z-index: var(--z-drawer); box-shadow: var(--shadow-3); }
+
+/* ---------- top bar ---------- */
+.app.wb .topbar { gap: var(--space-4); padding: 0 var(--space-3) 0 var(--space-4); }
+.app.wb .topbar__label { flex: 0 0 auto; }
+.wb-id { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: var(--space-4); overflow: hidden; white-space: nowrap; }
+.wb-id .accession { flex: 0 0 auto; font-family: var(--font-mono); font-weight: var(--weight-semibold); font-size: var(--text-lg); }
+.wb-id__patient { flex: 0 0 auto; font-weight: var(--weight-semibold); }
+.wb-id__meta, .wb-id__slide { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-secondary); font-size: var(--text-sm); }
+.wb-id__slide { font-family: var(--font-mono); color: var(--color-text); }
+.wb-id .chip { flex: 0 0 auto; }
+.wb-top-end { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-3); margin-left: auto; }
+.app.wb .topbar__slot-mode { margin-left: 0; }
+.wb-search {
+  display: inline-flex; align-items: center; gap: var(--space-3); min-height: 26px; padding: 0 var(--space-3) 0 var(--space-4);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); color: var(--color-text-secondary);
+  font-size: var(--text-sm); background: var(--color-surface--1); white-space: nowrap;
+}
+.wb-search:hover { color: var(--color-text); background: var(--color-control-bg-hover); }
+.wb-search .icon { width: 16px; height: 16px; }
+button.mode { cursor: pointer; min-height: 24px; }
+button.mode:hover { filter: brightness(1.15); }
+.mode .mode__sub { font-weight: 500; letter-spacing: 0; text-transform: none; font-family: var(--font-ui); opacity: .85; }
+.chip.wb-fs { font-family: var(--font-mono); font-weight: 600; }
+/* collapse by the bar's own width (container query): purpose chip and search text go first */
+@container topbar (max-width: 1899px) { .wb-search__text { display: none; } }
+@container topbar (max-width: 1749px) { .wb-id__meta { display: none; } }
+@container topbar (max-width: 1599px) { .wb-id .chip--worklist, .wb-btn-label { display: none; } .app.wb .topbar__label { font-size: var(--text-xs); } }
+@container topbar (max-width: 1279px) { .wb-id { display: none; } .wb-id-mini { display: inline-flex !important; } }
+@container topbar (max-width: 1100px) { .app.wb .topbar .chip--purpose, .app.wb .topbar .wb-fs { display: none; } .app.wb .topbar { gap: var(--space-3); } }
+.wb-id-mini { display: none; flex: 0 0 auto; font-family: var(--font-mono); font-weight: var(--weight-semibold); white-space: nowrap; }
+
+/* identity ribbon (< 1280 px): the full identity block moves here, never hidden */
+.wb-ribbon {
+  grid-area: ribbon; display: none; align-items: center; gap: var(--space-4); padding: 0 var(--space-4);
+  background: var(--color-surface-0); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm);
+  white-space: nowrap; overflow: hidden; z-index: var(--z-bars); min-width: 0;
+}
+@media (max-width: 1279px) { .wb-ribbon { display: flex; } }
+.wb-ribbon .lblthumb { flex: 0 0 auto; width: 44px; height: 24px; border-radius: 2px; overflow: hidden; border: 1px solid var(--color-border-strong); background: var(--grey-91); }
+.wb-ribbon .lblthumb svg { width: 100%; height: 100%; display: block; }
+.wb-ribbon .accession { font-family: var(--font-mono); font-weight: 600; }
+.wb-ribbon .pt { font-weight: 600; }
+.wb-ribbon .meta { color: var(--color-text-secondary); overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.wb-ribbon .chip { flex: 0 0 auto; }
+
+/* horizontal slide row (tablet portrait): the tray never disappears, it changes shape */
+.wb-slides { grid-area: slides; display: none; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); overflow-x: auto; background: var(--color-surface-0); border-bottom: 1px solid var(--color-border); z-index: var(--z-bars); }
+@media (min-width: 600px) and (max-width: 1079px) { .wb-slides { display: flex; } }
+.hslide { position: relative; flex: 0 0 auto; display: inline-flex; align-items: center; gap: var(--space-3); min-height: 44px; padding: 3px var(--space-4) 3px 3px; border: 1px solid var(--color-border); border-radius: var(--radius-2); color: var(--color-text); font-size: var(--text-sm); }
+.hslide[aria-selected="true"] { background: var(--color-control-selected); border-color: var(--color-text); }
+.hslide .tray__thumb { width: 52px; height: 32px; }
+.hslide .id { font-family: var(--font-mono); font-weight: 600; }
+.hslide .st { font-size: var(--text-xs); color: var(--color-text-secondary); }
+
+/* ---------- docks ---------- */
+.wbdock { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--color-surface-0); overflow: hidden; contain: layout paint style; z-index: var(--z-rail); }
+.ldock { grid-area: ldock; border-right: 1px solid var(--color-border); }
+.rdock { grid-area: rdock; border-left: 1px solid var(--color-border); }
+.app.wb:not(.r-docked):not(.r-float):not(.sheet-r) .rdock { display: none; }
+.app.wb.r-float .rdock { position: absolute; top: 0; bottom: 0; right: 0; width: var(--wb-rfloat, var(--wb-right)); z-index: var(--z-drawer); box-shadow: var(--shadow-3); border-left: 1px solid var(--color-border-strong); }
+.wbdock__head { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-1); height: 32px; padding: 0 var(--space-2) 0 var(--space-5); border-bottom: 1px solid var(--color-border); }
+.wbdock__title { flex: 1; min-width: 0; font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wbdock__mode { font-size: var(--text-2xs); font-family: var(--font-mono); color: var(--color-text-secondary); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; white-space: nowrap; }
+.wbdock__body { flex: 1 1 auto; overflow: hidden auto; min-height: 0; scrollbar-width: thin; }
+.wbdock__note { flex: 0 0 auto; font-size: var(--text-xs); color: var(--color-text); padding: var(--space-2) var(--space-5); background: var(--color-surface--1); border-bottom: 1px solid var(--color-border); white-space: normal; }
+.wb-resizer { position: absolute; top: 0; bottom: 0; width: 7px; cursor: col-resize; z-index: 3; }
+.ldock .wb-resizer { right: 0; } .rdock .wb-resizer { left: 0; }
+.wb-resizer::after { content: ""; position: absolute; top: 0; bottom: 0; left: 3px; width: 1px; background: transparent; }
+.wb-resizer:hover::after, .wb-resizer:focus-visible::after, .wb-resizer.is-dragging::after { background: var(--color-text-secondary); width: 2px; }
+.wb-resizer:focus-visible { box-shadow: none; }
+
+/* accordion sections (accessible: a button per header, not <summary> with nested buttons) */
+.wbsec { border-bottom: 1px solid var(--color-border); }
+.wbsec__head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: var(--space-1); min-height: 28px; padding-right: var(--space-2); background: var(--color-surface-0); }
+.wbsec__toggle { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--space-3); min-height: 28px; padding: 0 var(--space-3) 0 var(--space-5); font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--color-text-secondary); text-align: left; white-space: nowrap; overflow: hidden; }
+.wbsec__toggle::before { content: ""; width: 6px; height: 6px; border-right: 1.75px solid currentColor; border-bottom: 1.75px solid currentColor; transform: rotate(-45deg); flex: 0 0 auto; }
+.wbsec__toggle[aria-expanded="true"]::before { transform: rotate(45deg); }
+.wbsec__toggle:hover { color: var(--color-text); background: var(--color-row-hover); }
+.wbsec__toggle .count { margin-left: auto; font-family: var(--font-mono); font-weight: var(--weight-regular); text-transform: none; letter-spacing: 0; }
+.wbsec__pin { font-size: var(--text-2xs); color: var(--color-text-secondary); font-family: var(--font-mono); padding: 0 4px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); white-space: nowrap; }
+.wbsec__body { padding: var(--space-2) 0 var(--space-5); }
+.wbsec.is-collapsed > .wbsec__body { display: none; }
+.wbsec[hidden] { display: none; }
+.wbsec__pad { padding: 0 var(--space-5); }
+.wb-p { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--leading-body); }
+.wb-small { font-size: var(--text-xs); color: var(--color-text-secondary); }
+.wb-sub { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); font-weight: 600; margin: var(--space-4) 0 var(--space-2); }
+.wb-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px var(--space-4); font-size: var(--text-sm); }
+.wb-kv dt { color: var(--color-text-secondary); white-space: nowrap; }
+.wb-kv dd { min-width: 0; overflow-wrap: anywhere; }
+.wb-kv .mono { font-family: var(--font-mono); }
+
+/* identity card (pinned; never collapsible in Dx) */
+.idcard { display: flex; flex-direction: column; gap: var(--space-4); padding: 0 var(--space-5); }
+.idcard__label { position: relative; width: 100%; aspect-ratio: 2.6 / 1; max-height: 120px; background: var(--grey-91); border-radius: var(--radius-1); overflow: hidden; border: 1px solid var(--color-border-strong); }
+.idcard__label svg { width: 100%; height: 100%; display: block; }
+.idcard__label .tier { position: absolute; right: 3px; bottom: 3px; font: 600 9px/12px var(--font-mono); background: rgba(0,0,0,.72); color: #f2f2f2; padding: 0 4px; border-radius: 2px; }
+.idcard__pt { font-size: var(--text-xl); font-weight: var(--weight-semibold); line-height: 1.2; }
+.idcard__pt small { display: block; font-size: var(--text-sm); font-weight: 400; color: var(--color-text-secondary); margin-top: 2px; }
+.idcheck { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-xs); color: var(--color-text-secondary); }
+.idcheck b { color: var(--color-text); font-weight: 600; }
+
+/* tray inside the Explorer */
+.wb-tray .tray__slide { grid-template-columns: 64px minmax(0, 1fr) auto; padding: var(--space-2) var(--space-5); min-height: 50px; }
+.wb-tray .tray__label .text { white-space: normal; }
+.wb-tray .viewstate { font-size: var(--text-2xs); font-family: var(--font-mono); color: var(--color-text-secondary); text-align: right; white-space: nowrap; }
+.wb-group { padding: var(--space-3) var(--space-5) var(--space-1); font-size: var(--text-2xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); display: flex; justify-content: space-between; gap: 8px; }
+.wb-protocol { margin: 0 var(--space-5) var(--space-3); font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
+
+/* collapsed Explorer = slide strip (identity thumb + slides) */
+.ldock__strip { display: none; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; overflow: hidden auto; height: 100%; }
+.app.wb.l-strip .ldock__full { display: none; }
+.app.wb.l-strip .ldock__strip { display: flex; }
+.ldock__full { display: flex; flex-direction: column; min-height: 0; height: 100%; }
+.sstrip__lbl { width: calc(var(--wb-strip) - 12px); aspect-ratio: 2.6/1; border-radius: 2px; overflow: hidden; border: 1px solid var(--color-border-strong); background: var(--grey-91); }
+.sstrip__lbl svg { width: 100%; height: 100%; display: block; }
+.sstrip__acc { font: 600 9px/1.1 var(--font-mono); color: var(--color-text-secondary); text-align: center; writing-mode: horizontal-tb; }
+.sstrip__item { position: relative; width: calc(var(--wb-strip) - 10px); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 2px; border-radius: var(--radius-2); font: 600 10px/1.15 var(--font-mono); color: var(--color-text-secondary); }
+.sstrip__item .tray__thumb { width: calc(var(--wb-strip) - 18px); height: 28px; }
+.sstrip__item:hover { background: var(--color-row-hover); color: var(--color-text); }
+.sstrip__item[aria-selected="true"] { background: var(--color-control-selected); color: var(--color-text); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }
+.sstrip__item.is-unviewed .st::after { content: " \2022"; color: var(--color-text); }
+
+/* activity bar (Inspector switcher) */
+.abar { grid-area: abar; display: flex; flex-direction: column; align-items: center; gap: var(--space-1); padding: var(--space-3) 0; background: var(--color-surface-0); border-left: 1px solid var(--color-border); z-index: var(--z-rail); overflow: hidden auto; contain: layout paint style; }
+.abar .rail__divider { width: 60%; }
+.abar .tool { width: calc(var(--wb-abar) - 8px); height: calc(var(--wb-abar) - 8px); }
+.abar .tool[aria-pressed="true"]::before { left: auto; right: -4px; }
+.tool .badge-dot { position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text); }
+
+/* rail tweaks */
+.app.wb .rail .tool { width: calc(var(--wb-rail) - 10px); height: calc(var(--wb-rail) - 12px); }
+
+/* ---------- canvas, views, HUD ---------- */
+.wbviews { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.app.wb.is-compare .wbviews { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px; background: var(--grey-12); }
+.wbview { position: relative; overflow: hidden; background: var(--color-canvas-bg); min-width: 0; }
+.wbview + .wbview { display: none; }
+.app.wb.is-compare .wbview + .wbview { display: block; }
+.wbview svg.canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
+.wbview.is-soft svg.canvas .cam { filter: blur(1.4px); }
+.wbview__id { position: absolute; top: var(--layout-hud-inset); left: var(--layout-hud-inset); z-index: var(--z-hud); }
+.wbview:first-child .wbview__id { display: none; }
+.app.wb.is-compare .wbview:first-child .wbview__id { display: inline-flex; }
+.app.wb.is-compare .hud--tl .hud__identity { display: none; }
+.wb-sync { position: absolute; top: var(--layout-hud-inset); left: 50%; transform: translateX(-50%); z-index: var(--z-hud); display: none; font-family: var(--font-ui); font-size: var(--text-xs); }
+.app.wb.is-compare .wb-sync { display: inline-flex; }
+.app.wb.is-compare .wbview + .wbview .wbview__id { left: var(--layout-hud-inset); top: calc(var(--layout-hud-inset) + 28px); }
+.tileerr { position: absolute; width: 256px; height: 256px; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); outline: 1px dashed rgba(255,255,255,.35); pointer-events: none; }
+.hud__item .icon--sm { width: 14px; height: 14px; }
+.hud__chip { font-family: var(--font-ui); font-size: var(--text-xs); }
+.wb-hud-sharp { display: none; }
+@media (max-width: 599px) { .wb-hud-sharp { display: inline-flex; } }
+.magnification { pointer-events: auto; }
+.magnification .chip { margin-top: 3px; border-color: var(--grey-75); color: var(--grey-95); font-family: var(--font-ui); }
+
+/* navigator: label image + viewed-area trail */
+.app.wb .navigator__thumb { aspect-ratio: 16 / 9; }
+.navigator__thumb svg { display: block; }
+.app.wb .navigator__labelimg { width: 72px; height: 28px; padding: 0; background: var(--grey-91); }
+.app.wb .navigator__labelimg svg { width: 100%; height: 100%; display: block; }
+.navigator__label .lbltext { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.navigator__label .lbltext span:last-child { color: var(--grey-75); }
+.app.wb.label-collapsed .navigator__labelimg { display: none; }
+.navigator__nolbl { display: none; font-size: var(--text-xs); color: var(--grey-75); }
+.app.wb.label-collapsed .navigator__nolbl { display: inline; }
+
+/* banners / plates reuse base; plates sit above all views */
+.app.wb .plate { z-index: calc(var(--z-navigator) + 1); }
+
+/* ---------- strip ---------- */
+.app.wb .strip { gap: var(--space-3); padding: 0 var(--space-3); }
+.app.wb .strip .chip { min-height: 20px; }
+.app.wb .strip button.chip { min-height: 24px; }
+.wb-chips { display: flex; gap: var(--space-2); align-items: center; }
+
+/* ---------- transient layers that live in the dock columns, never over the canvas centre ---------- */
+.wbpop { position: absolute; z-index: var(--z-palette); top: calc(var(--layout-topbar) + var(--wb-ribbon) + 6px); max-height: calc(100% - var(--layout-topbar) - var(--wb-ribbon) - var(--layout-strip) - 12px); width: var(--wb-popw, 480px); }
+.wbpop.dialog { width: var(--wb-popw, 480px); max-height: calc(100% - var(--layout-topbar) - var(--wb-ribbon) - var(--layout-strip) - 12px); }
+.wbpop--left { left: 6px; }
+.wbpop--right { right: 6px; }
+.wbpop--bottomright { top: auto; bottom: calc(var(--layout-strip) + 6px); right: 6px; }
+.wbpop.palette { display: flex; flex-direction: column; }
+.wbpop.palette .palette__list { flex: 1 1 auto; max-height: none; min-height: 0; }
+.palette__item .keys .key { font-size: 10px; }
+.palette__item .ico { width: 16px; height: 16px; color: var(--color-text-secondary); flex: 0 0 auto; }
+.palette__item .label { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette__item .meta { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 1079px) {
+  .wbpop, .wbpop.dialog { left: 0 !important; right: 0 !important; top: auto !important; bottom: calc(var(--wb-bb) + var(--layout-strip)) !important; width: auto !important; max-height: 40vh; border-radius: var(--radius-5) var(--radius-5) 0 0; z-index: var(--z-sheet); }
+}
+@media (max-width: 599px) { .wbpop, .wbpop.dialog { bottom: var(--wb-bb) !important; max-height: 50vh; } }
+
+/* tablet / phone: docks become bottom sheets (<= 40 % height) inside the canvas row */
+@media (max-width: 1079px) {
+  .app.wb .ldock, .app.wb .rdock, .app.wb .abar { display: none; }
+  .app.wb.sheet-l .ldock, .app.wb.sheet-r .rdock { display: flex; grid-area: canvas; position: absolute; left: 0; right: 0; bottom: 0; top: auto; width: auto; max-height: 40vh; height: 40vh; border: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
+  .app.wb.sheet-l .ldock__full { display: flex !important; }
+  .app.wb.sheet-l .ldock__strip { display: none !important; }
+  .wb-resizer { display: none; }
+}
+@media (max-width: 599px) { .app.wb.sheet-l .ldock, .app.wb.sheet-r .rdock { max-height: 50vh; height: 50vh; } }
+.sheet-grab { display: none; align-self: center; width: 36px; height: 4px; margin: 6px 0 0; border-radius: 2px; background: var(--color-border-strong); flex: 0 0 auto; }
+@media (max-width: 1079px) { .sheet-grab { display: block; } }
+.app.wb .bottombar .tool { width: 44px; height: 44px; }
+.app.wb .bottombar .tool .tool__label { font-size: 10px; }
+.app.wb .bottombar .tool--labelled { width: auto; min-width: 52px; padding: 2px 6px; }
+
+/* misc components new to this concept */
+.covbar { display: grid; grid-template-columns: 52px minmax(0, 1fr) 4ch; gap: var(--space-3); align-items: center; font-size: var(--text-xs); min-height: 22px; }
+.covbar .bar { height: 6px; border-radius: 3px; background: var(--color-border); overflow: hidden; }
+.covbar .bar span { display: block; height: 100%; background: var(--color-text); width: var(--v, 0%); }
+.covbar .num { font-family: var(--font-mono); text-align: right; color: var(--color-text-secondary); }
+.covbar .id { font-family: var(--font-mono); }
+.dwell { display: flex; align-items: flex-end; gap: 4px; height: 44px; padding: 0 var(--space-5); }
+.dwell span { flex: 1; background: var(--color-border-strong); border-radius: 2px 2px 0 0; position: relative; }
+.dwell-l { display: flex; gap: 4px; padding: 2px var(--space-5) 0; font: 10px/1 var(--font-mono); color: var(--color-text-secondary); }
+.dwell-l span { flex: 1; text-align: center; }
+.annrow { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; min-height: 32px; padding: var(--space-2) var(--space-5); font-size: var(--text-sm); }
+.annrow:hover { background: var(--color-row-hover); }
+.annrow[aria-selected="true"] { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); }
+.annrow .meta { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.annrow .sub { display: block; font-size: var(--text-xs); color: var(--color-text-secondary); }
+.wb-sum { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-sm); }
+.wb-sum li { display: flex; gap: var(--space-3); align-items: baseline; }
+.wb-sum li .dot { flex: 0 0 auto; }
+.gate { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--space-2) var(--space-3); font-size: var(--text-sm); }
+.gate .g { font-family: var(--font-mono); font-weight: 700; }
+.gate .fail { font-weight: 600; }
+.bkm { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: var(--space-4); align-items: center; padding: var(--space-2) var(--space-5); min-height: 48px; width: 100%; text-align: left; }
+.bkm:hover { background: var(--color-row-hover); }
+.bkm .tray__thumb { width: 72px; height: 40px; }
+.bkm .t { font-size: var(--text-sm); }
+.bkm .m { font-size: var(--text-xs); color: var(--color-text-secondary); font-family: var(--font-mono); }
+.km-filter { margin: 0 var(--space-5) var(--space-3); }
+.wb-keymap .keymap__group { padding: 0 var(--space-5); margin-bottom: var(--space-4); }
+.wb-keymap .keymap__row { font-size: var(--text-sm); }
+.wb-keymap .keymap__keys { flex: 0 0 96px; }
+.app.wb .rdock.is-wide .wb-keymap { display: grid; grid-template-columns: 1fr 1fr; }
+.menu.wbmenu { position: absolute; z-index: var(--z-palette); }
+.lyt-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; }
+.lyt-row .pct { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.wb-hint { font-size: var(--text-xs); color: var(--color-text-secondary); padding: var(--space-2) var(--space-5); }
+.class-chip .swatch { width: 10px; height: 10px; }
+.wb-row-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; padding: var(--space-3) var(--space-5) 0; }
+
+/* rationale (review document below the wireframe) */
+.rationale { background: var(--color-surface--1); color: var(--color-text); padding: var(--space-6) var(--space-6) var(--space-10); border-top: 1px solid #45345e; }
+.rationale > details > summary { cursor: pointer; font-size: var(--text-xl); font-weight: 600; min-height: 32px; display: flex; align-items: center; gap: 8px; }
+.rationale .rat { max-width: 1180px; margin-top: var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); font-size: var(--text-md); line-height: var(--leading-body); }
+.rationale h3 { font-size: var(--text-xl); margin-top: var(--space-5); }
+.rationale ul, .rationale ol { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; list-style: disc; }
+.rationale ol { list-style: decimal; }
+.rationale table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.rationale th, .rationale td { border-bottom: 1px solid var(--color-border); padding: 6px 8px; text-align: left; vertical-align: top; }
+.rationale th { color: var(--color-text-secondary); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .05em; }
+.rationale code { font-family: var(--font-mono); font-size: .92em; }
+.rationale .dn { font-weight: 700; }
+.rationale .tw { overflow-x: auto; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#view0">Skip to slide</a>
+
+<!-- ====== inline SVG sprite: icons (from the design system) + slide-label images; tissue is generated by script ====== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+    <symbol id="i-pan" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+    <symbol id="i-polygon" viewBox="0 0 24 24"><path d="M6 4l12 3 2 10-8 4-7-6z"/></symbol>
+    <symbol id="i-freehand" viewBox="0 0 24 24"><path d="M4 16c3-8 6 2 9-4s4 6 7 0"/></symbol>
+    <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+    <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+    <symbol id="i-area" viewBox="0 0 24 24"><path d="M4 6l7-2 9 5-3 11-11-2z" stroke-dasharray="3 2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="14"/></symbol>
+    <symbol id="i-curtain" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17v.5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10 10a3 3 0 004 4M2 12s4-7 10-7c2 0 4 .6 5.5 1.5M22 12s-4 7-10 7c-2 0-4-.6-5.5-1.5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.7M20 4v5h-5"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 13v7h14v-7"/></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113-6l3 3M20 12a8 8 0 01-13 6l-3-3M17 4v5h-5M7 20v-5h5"/></symbol>
+    <symbol id="i-signout" viewBox="0 0 24 24"><path d="M14 4h6v16h-6M10 8l-4 4 4 4M6 12h10"/></symbol>
+    <symbol id="i-identity" viewBox="0 0 24 24"><circle cx="12" cy="9" r="3"/><path d="M5 20a7 7 0 0114 0"/></symbol>
+    <symbol id="i-panel-l" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M9 4v16"/></symbol>
+    <symbol id="i-panel-r" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></symbol>
+    <symbol id="i-display" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></symbol>
+  </defs>
+</svg>
+
+<!-- ====================== REVIEW HEADER (not product) ====================== -->
+<header class="review-head" aria-label="Concept header (review only)">
+  <b>Concept B · Workbench</b><span class="rv-sep">|</span>
+  <span>Screen: Clinical sign-out viewer (Stoipath Clinical-IH / Dx)</span><span class="rv-sep">|</span>
+  <span>Angle: persistent, resizable, dockable panels + Ctrl/Cmd-K palette</span><span class="rv-sep">|</span>
+  <span>2026-11-01</span><span class="rv-sep">|</span>
+  <span class="rv-share" id="rvShare" title="Measured canvas share of the app window (P1 floor 70 %)">canvas –</span>
+  <button class="rv-btn" type="button" id="rvRationale">Design rationale ↓</button>
+  <button class="rv-btn" type="button" id="rvLive" aria-pressed="false">Live markers</button>
+  <button class="rv-btn" type="button" id="rvGuide" aria-pressed="false">Centre-zone guide</button>
+  <button class="rv-btn" type="button" id="rvHide">Hide review chrome</button>
+  <span style="opacity:.7">All patient/case data synthetic · plum = review chrome</span>
+</header>
+<div class="hostbar" aria-hidden="true"><b>Synthetic EHR host frame</b> · Imaging activity · the viewer below runs in an iframe (postMessage JSON-RPC, no cookies, no popups, no top navigation) · not product chrome</div>
+
+<!-- ============================== THE APP ================================= -->
+<div class="app wb l-open" id="app">
+
+  <!-- A. Top bar -->
+  <header class="topbar" id="topbar">
+    <div class="topbar__slot-badge">
+      <button type="button" class="badge badge--clinical" id="badge" aria-haspopup="dialog" aria-controls="about" data-live="launch:product">CLINICAL-IH</button>
+    </div>
+    <span class="topbar__label" id="labelwrap"><span class="badge-string badge-string--clinical" id="labelstring" role="note" aria-label="Product label"></span></span>
+    <div class="wb-id" id="wbid" data-live="launch:accession·part·block">
+      <span class="accession" data-synthetic>AP-26-04417</span>
+      <span class="wb-id__patient" data-synthetic data-clinical>DOE, JANE</span>
+      <span class="wb-id__meta" data-synthetic data-clinical>F · 1958-03-14 · MRN 00-000-0000</span>
+      <span class="wb-id__slide" id="topSlide">A1-1 · H&amp;E</span>
+      <span class="chip chip--worklist" id="worklistTop" data-clinical data-live="lis:worklist">In review</span>
+    </div>
+    <span class="wb-id-mini" data-synthetic id="idmini">AP-26-04417</span>
+    <span class="chip chip--purpose" id="purpose" data-clinical data-live="launch:purposeOfUse">Sign-out</span>
+    <span class="chip wb-fs" id="fsChip" hidden data-live="lis:frozen-TAT">Frozen · OR 7 · <span id="fsT">06:12</span></span>
+    <div class="wb-top-end">
+      <button type="button" class="btn btn--secondary btn--sm wb-emb" id="btnHandoff"><svg class="icon icon--sm"><use href="#i-display"/></svg>Open on diagnostic display</button>
+      <button type="button" class="wb-search" id="palTrig" aria-haspopup="dialog" aria-controls="palette" aria-keyshortcuts="Control+K Meta+K" data-live="commands"><svg class="icon"><use href="#i-search"/></svg><span class="wb-search__text">Commands, slides, bookmarks…</span><kbd class="key">Ctrl K</kbd></button>
+      <button type="button" class="btn btn--primary btn--sm wb-notemb" id="btnPrimary" data-clinical aria-keyshortcuts="Shift+Enter"><svg class="icon icon--sm"><use href="#i-signout"/></svg><span class="wb-btn-label" id="btnPrimaryLabel">Request sign-out</span><kbd class="key">⇧↵</kbd></button>
+      <button type="button" class="btn btn--ghost btn--sm btn--icon" id="btnKeys" aria-label="Keyboard map (?)" aria-keyshortcuts="?"><svg class="icon icon--sm"><use href="#i-keyboard"/></svg></button>
+    </div>
+    <div class="topbar__slot-mode" data-clinical>
+      <button type="button" class="mode mode--nav" id="mode" aria-haspopup="dialog" aria-controls="dxpop" aria-keyshortcuts="Shift+D" data-live="state.render_mode">NAV</button>
+    </div>
+  </header>
+
+  <!-- identity ribbon (< 1280 px) -->
+  <div class="wb-ribbon" id="ribbon" data-live="launch:identity">
+    <span class="lblthumb" aria-hidden="true"><svg viewBox="0 0 260 100"><use href="#lbl-A1-1" class="lbluse"/></svg></span>
+    <span class="accession" data-synthetic>AP-26-04417</span>
+    <span class="pt" data-synthetic data-clinical>DOE, JANE</span>
+    <span class="meta" data-synthetic data-clinical>F · 1958-03-14 · MRN 00-000-0000</span>
+    <span class="meta" id="ribSlide" style="font-family:var(--font-mono);color:var(--color-text)">A1-1 · H&amp;E</span>
+    <span class="chip chip--worklist" id="worklistRib" data-clinical>In review</span>
+    <span class="chip chip--purpose" id="purposeRib" data-clinical>Sign-out</span>
+  </div>
+
+  <!-- horizontal slide row (tablet portrait) -->
+  <div class="wb-slides" id="hslides" role="listbox" aria-label="Slides in this case" data-live="state.slides[]"></div>
+
+  <!-- C. Tool rail -->
+  <nav class="rail" id="rail" aria-label="Tools">
+    <div class="rail__group" role="toolbar" aria-orientation="vertical" aria-label="Navigate and annotate">
+      <button type="button" class="tool" data-tool="select" aria-pressed="true" aria-label="Select / pan (V)"><svg class="icon"><use href="#i-select"/></svg><span class="tool__key">V</span></button>
+      <button type="button" class="tool" data-tool="measure" aria-pressed="false" aria-label="Measure length (M)"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__key">M</span></button>
+      <button type="button" class="tool" data-tool="area" aria-pressed="false" aria-label="Measure area (Shift+M)"><svg class="icon"><use href="#i-area"/></svg><span class="tool__key">⇧M</span></button>
+      <button type="button" class="tool tool--drawing" data-tool="polygon" aria-pressed="false" aria-label="Polygon (P)"><svg class="icon"><use href="#i-polygon"/></svg><span class="tool__key">P</span></button>
+      <button type="button" class="tool" data-tool="point" aria-pressed="false" aria-label="Point marker (T)"><svg class="icon"><use href="#i-point"/></svg><span class="tool__key">T</span></button>
+      <button type="button" class="tool tool--drawing" data-tool="freehand" aria-pressed="false" aria-label="Freehand (F)"><svg class="icon"><use href="#i-freehand"/></svg><span class="tool__key">F</span></button>
+    </div>
+    <div class="rail__divider"></div>
+    <div class="rail__group">
+      <button type="button" class="tool" data-cmd="compare" aria-pressed="false" aria-label="Side by side H&amp;E and IHC (C)"><svg class="icon"><use href="#i-compare"/></svg><span class="tool__key">C</span></button>
+      <button type="button" class="tool" data-cmd="ai" aria-pressed="true" aria-label="AI overlay on or off (Shift+H)"><svg class="icon"><use href="#i-layers"/></svg><span class="tool__key">⇧H</span></button>
+      <button type="button" class="tool" data-cmd="bookmark" aria-label="Bookmark this view (B)"><svg class="icon"><use href="#i-bookmark"/></svg><span class="tool__key">B</span></button>
+      <button type="button" class="tool" data-cmd="snapshot" aria-label="Snapshot with scale bar and label footer (Shift+S)"><svg class="icon"><use href="#i-camera"/></svg><span class="tool__key">⇧S</span></button>
+      <button type="button" class="tool" data-cmd="rotate" aria-label="Rotate 90 degrees (R)"><svg class="icon"><use href="#i-rotate"/></svg><span class="tool__key">R</span></button>
+      <button type="button" class="tool" data-cmd="fit" aria-label="Fit whole slide (0)"><svg class="icon"><use href="#i-fit"/></svg><span class="tool__key">0</span></button>
+    </div>
+    <div class="rail__spacer"></div>
+    <div class="rail__group">
+      <button type="button" class="tool" data-cmd="palette" aria-label="Command palette (Ctrl+K)"><svg class="icon"><use href="#i-search"/></svg><span class="tool__key">⌃K</span></button>
+      <button type="button" class="tool" data-cmd="keys" aria-label="Keyboard map (?)"><svg class="icon"><use href="#i-keyboard"/></svg><span class="tool__key">?</span></button>
+    </div>
+  </nav>
+
+  <!-- D-left. Explorer dock: case identity, slides, layers and AI, bookmarks -->
+  <aside class="wbdock ldock" id="ldock" aria-label="Explorer: case, slides, layers">
+    <div class="ldock__full">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <div class="wbdock__head">
+        <span class="wbdock__title" id="ldockTitle">Explorer</span>
+        <span class="wbdock__mode" id="lmode">docked</span>
+        <button type="button" class="btn btn--ghost btn--sm btn--icon" data-cmd="left" aria-label="Narrow Explorer to slide strip (U)" title="Narrow to slide strip (U)"><svg class="icon icon--sm"><use href="#i-prev"/></svg></button>
+      </div>
+      <div class="wbdock__note" id="lnote" hidden></div>
+      <div class="wbdock__body" id="lbody">
+
+        <section class="wbsec" data-sec="case" data-title="Case &amp; identity">
+          <div class="wbsec__head">
+            <button type="button" class="wbsec__toggle" aria-expanded="true">Case &amp; identity <span class="count" data-clinical>Tier 2</span></button>
+            <span class="wbsec__pin" id="pinNote" title="Identity is pinned: it can be compacted, never hidden">pinned</span>
+            <button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Case panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="wbsec__body">
+            <div class="idcard" id="idcard">
+              <div class="idcard__label" data-live="launch:assoc/label (Tier 2)"><svg viewBox="0 0 260 100" role="img" aria-label="Slide label image: AP-26-04417, A1-1, H and E"><use href="#lbl-A1-1" class="lbluse"/></svg><span class="tier">label · Tier 2</span></div>
+              <div class="idcard__pt" data-clinical><span data-synthetic>DOE, JANE</span><small data-synthetic>F · DOB 1958-03-14 · MRN 00-000-0000 · synthetic</small></div>
+              <dl class="wb-kv" id="idkv">
+                <dt>Accession</dt><dd class="mono" data-synthetic>AP-26-04417</dd>
+                <dt>Part</dt><dd>A · Lymph node, sentinel #1, left axilla</dd>
+                <dt>Block · slide</dt><dd class="mono" id="kvSlide">A1 · A1-1 · H&amp;E</dd>
+                <dt>Scanned</dt><dd class="mono">2026-10-31 07:42 · 0.25 µm/px</dd>
+                <dt>Worklist</dt><dd><span class="chip chip--worklist" id="worklistCard" data-live="lis:worklist">In review</span></dd>
+              </dl>
+              <div class="idcheck" data-live="events:identityMismatch"><span aria-hidden="true">✓</span><span><b>Identity verified</b> · launch context matches the manifest (sid, Study UID) before the first tile was drawn.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="wbsec" data-sec="slides" data-title="Slides">
+          <div class="wbsec__head">
+            <button type="button" class="wbsec__toggle" aria-expanded="true">Slides <span class="count" id="slideCount">3 · 0 of 3 viewed</span></button>
+            <button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Slides panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="wbsec__body">
+            <div class="wb-protocol" data-live="lis:hanging-protocol"><span class="chip chip--solid">Protocol · Sentinel LN</span><span>H&amp;E first, IHC beside · opened at fit</span></div>
+            <div class="tray wb-tray" id="tray" role="listbox" aria-label="Slides, in the lab's order" data-live="state.slides[] · lis:viewed"></div>
+            <p class="wb-hint">Viewed state returns to the LIS. <kbd class="key">]</kbd> <kbd class="key">[</kbd> next / previous · <kbd class="key">C</kbd> side by side</p>
+          </div>
+        </section>
+
+        <section class="wbsec" data-sec="layers" data-title="Layers &amp; AI">
+          <div class="wbsec__head">
+            <button type="button" class="wbsec__toggle" aria-expanded="true">Layers &amp; AI <span class="count" id="layerCount">4</span></button>
+            <button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Layers panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="wbsec__body" id="layers" data-live="layers"></div>
+        </section>
+
+        <section class="wbsec is-collapsed" data-sec="bookmarks" data-title="Bookmarks">
+          <div class="wbsec__head">
+            <button type="button" class="wbsec__toggle" aria-expanded="false">Bookmarks <span class="count" id="bkCount">2</span></button>
+            <button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Bookmarks panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button>
+          </div>
+          <div class="wbsec__body" id="bookmarks" data-live="state (bookmarks)"></div>
+        </section>
+      </div>
+      <div class="wb-resizer" id="lres" role="separator" aria-orientation="vertical" aria-label="Resize Explorer (arrow keys)" tabindex="0" aria-valuemin="220" aria-valuemax="420" aria-valuenow="280"></div>
+    </div>
+    <!-- collapsed state: the slide strip (identity thumbnail + slides); the tray never disappears -->
+    <div class="ldock__strip" id="lstrip">
+      <button type="button" class="btn btn--ghost btn--sm btn--icon" data-cmd="left" aria-label="Open Explorer (U)" title="Open Explorer (U)"><svg class="icon icon--sm"><use href="#i-next"/></svg></button>
+      <button type="button" class="sstrip__lbl" data-cmd="identity" aria-label="Case and identity, AP-26-04417 (I)"><svg viewBox="0 0 260 100"><use href="#lbl-A1-1" class="lbluse"/></svg></button>
+      <span class="sstrip__acc" data-synthetic>AP-26<br>04417</span>
+      <div id="sstrip" role="listbox" aria-label="Slides" style="display:flex;flex-direction:column;gap:4px;align-items:center"></div>
+    </div>
+  </aside>
+
+  <!-- B. Canvas -->
+  <main class="canvas-area" id="canvasArea">
+    <div class="wbviews" id="views">
+      <div class="wbview" id="view0" tabindex="0" role="application" aria-roledescription="slide canvas" aria-label="Slide canvas, A1-1 H&amp;E, 20 times. Arrow keys pan, plus and minus zoom." aria-describedby="livePolite">
+        <span class="hud__item hud__identity wbview__id" id="v0id">A1-1 · H&amp;E</span>
+      </div>
+      <div class="wbview" id="view1" tabindex="0" role="application" aria-roledescription="slide canvas" aria-label="Second view, A1-2 CK AE1/AE3, locked to the first">
+        <span class="hud__item hud__identity wbview__id" id="v1id">A1-2 · CK AE1/AE3 (IHC)</span>
+      </div>
+    </div>
+    <span class="hud__item wb-sync" id="syncChip" data-live="state.views[].sync"><svg class="icon icon--sm"><use href="#i-sync"/></svg><span id="syncTxt">Sync · lock</span></span>
+
+    <div class="hud hud--tl">
+      <span class="hud__item hud__identity" id="hudId" data-live="launch:identity line">A1-1 · H&amp;E · AP-26-04417</span>
+      <span class="hud__item hud__chip" id="hudRot" hidden>Rotation 90°</span>
+    </div>
+
+    <div class="navigator" id="nav" aria-label="Navigator">
+      <div class="navigator__thumb" id="navThumb" data-live="state.views[0] · telemetry:viewport trail"></div>
+      <div class="navigator__pan">
+        <button type="button" class="up" data-pan="0,-1" aria-label="Pan up"><svg class="icon icon--sm" style="transform:rotate(90deg)"><use href="#i-prev"/></svg></button>
+        <button type="button" class="left" data-pan="-1,0" aria-label="Pan left"><svg class="icon icon--sm"><use href="#i-prev"/></svg></button>
+        <button type="button" class="right" data-pan="1,0" aria-label="Pan right"><svg class="icon icon--sm"><use href="#i-next"/></svg></button>
+        <button type="button" class="down" data-pan="0,1" aria-label="Pan down"><svg class="icon icon--sm" style="transform:rotate(90deg)"><use href="#i-next"/></svg></button>
+      </div>
+      <div class="navigator__label">
+        <span class="navigator__labelimg" aria-label="Slide label image (Tier 2)"><svg viewBox="0 0 260 100"><use href="#lbl-A1-1" class="lbluse"/></svg></span>
+        <span class="navigator__nolbl" id="noLbl">Label image collapsed · L</span>
+        <span class="lbltext"><span id="navSlide">A1-1 · H&amp;E</span><span>Bright = viewed · <kbd class="key">O</kbd> <kbd class="key">L</kbd></span></span>
+      </div>
+    </div>
+
+    <div class="hud hud--bl">
+      <span class="hud__item wb-hud-sharp" id="hudSharp"><span class="indicator__glyph" style="width:8px;height:8px;border-radius:50%;background:var(--grey-95)"></span><span id="hudSharpTxt">Sharp</span></span>
+      <div class="hud__item scalebar" id="scalebar" data-live="state.views[0].scale_um_per_px" aria-label="Scale bar"><span class="scalebar__bar" id="sbBar" style="--scalebar-length:200px"></span><span class="scalebar__label" id="sbLabel">100 µm</span></div>
+      <span class="hud__item hud__position" id="pos" data-live="state.views[0].center_um">x 10.00 mm · y 2.70 mm</span>
+    </div>
+
+    <div class="hud hud--br">
+      <span class="hud__item hud__adjust" id="hudAdj" hidden data-live="events:adjustChanged">B/C/γ adjusted</span>
+      <button type="button" class="hud__item magnification" id="mag" aria-label="Magnification 20 times. Activate to type a zoom" data-live="state.views[0].scale_um_per_px">
+        <span class="magnification__value" id="magV">20×</span>
+        <span class="magnification__line2" id="magL2">0.50 µm/px · pitch EDID</span>
+        <span class="chip" id="pitchChip" hidden>Pitch unknown</span>
+      </button>
+    </div>
+
+    <div class="banner-slot" id="banners"></div>
+    <div id="plate"></div>
+  </main>
+
+  <!-- D-right. Inspector dock: context, tools, analytics, hand-offs (the "dialogs" of this concept live here) -->
+  <aside class="wbdock rdock" id="rdock" aria-label="Inspector: context, tools, analytics">
+    <div class="sheet-grab" aria-hidden="true"></div>
+    <div class="wbdock__head">
+      <span class="wbdock__title">Inspector</span>
+      <span class="wbdock__mode" id="rmode">docked</span>
+      <button type="button" class="btn btn--ghost btn--sm btn--icon" data-cmd="right" aria-label="Close Inspector (Shift+U)" title="Close (Shift+U)"><svg class="icon icon--sm"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="wbdock__note" id="rnote" hidden></div>
+    <div class="wbdock__body" id="rbody">
+
+      <section class="wbsec" data-sec="context" data-title="Clinical context" data-icon="i-info">
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Clinical context <span class="count">from LIS</span></button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Context panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body wbsec__pad" data-live="launch → integration service (read-only)">
+          <p class="wb-p" data-synthetic>67-year-old woman (synthetic). Left breast invasive ductal carcinoma, 1.8 cm on core biopsy (AP-26-03980). Sentinel lymph node biopsy; no neoadjuvant therapy.</p>
+          <div class="wb-sub">Specimen parts</div>
+          <dl class="wb-kv">
+            <dt class="mono">A</dt><dd>Sentinel node #1 · blocks A1, A2 · 3 slides</dd>
+            <dt class="mono">B</dt><dd>Sentinel node #2 · B1 · <i>scanning (LIS will update)</i></dd>
+            <dt class="mono">C</dt><dd>Non-sentinel node · C1 · <i>not yet scanned</i></dd>
+          </dl>
+          <div class="wb-sub">Prior</div>
+          <p class="wb-p" data-synthetic>AP-26-03980 · core biopsy, left breast · IDC, grade 2 · ER+ PR+ HER2 1+</p>
+        </div>
+      </section>
+
+      <section class="wbsec" data-sec="annotate" data-title="Measure &amp; annotate" data-icon="i-measure">
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Measure &amp; annotate <span class="count" id="annCount">2</span></button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Annotate panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body">
+          <div class="wbsec__pad row" style="gap:6px" role="radiogroup" aria-label="Annotation class">
+            <button type="button" class="class-chip" aria-pressed="true"><span class="swatch" style="--swatch:var(--ann-2)"></span>Tumor <kbd class="key">1</kbd></button>
+            <button type="button" class="class-chip" aria-pressed="false"><span class="swatch swatch--outline" style="--swatch:var(--ann-1)"></span>Region* <kbd class="key">2</kbd></button>
+            <button type="button" class="class-chip" aria-pressed="false"><span class="swatch" style="--swatch:var(--ann-6)"></span>Other <kbd class="key">3</kbd></button>
+          </div>
+          <div class="wb-sub wbsec__pad">On this slide</div>
+          <div role="listbox" aria-label="Annotations and measurements" id="annList" data-live="annotations"></div>
+          <p class="wb-hint">Two-click measure (<kbd class="key">M</kbd>) and click-to-place vertices (<kbd class="key">P</kbd>) — no drag needed (SC 2.5.7). <kbd class="key">Space</kbd> flies to the focused item.</p>
+        </div>
+      </section>
+
+      <section class="wbsec" data-sec="compare" data-title="Compare &amp; sync" data-icon="i-compare">
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Compare &amp; sync</button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Compare panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body wbsec__pad stack--tight stack">
+          <button type="button" class="toggle" role="switch" aria-checked="false" id="cmpToggle"><span class="toggle__track"></span><span class="toggle__text">Side by side <span class="toggle__hint">A1-1 H&amp;E ↔ A1-2 CK AE1/AE3 · <kbd class="key">C</kbd></span></span></button>
+          <div class="field"><span class="field__label">Sync</span>
+            <div class="segmented" role="radiogroup" aria-label="Sync mode" id="syncSeg" data-live="state.views[].sync.mode">
+              <button type="button" class="segmented__item" role="radio" aria-checked="true" data-sync="lock">Lock</button>
+              <button type="button" class="segmented__item" role="radio" aria-checked="false" data-sync="affine">Affine</button>
+              <button type="button" class="segmented__item" role="radio" aria-checked="false" data-sync="none">None</button>
+            </div>
+            <span class="field__hint" id="syncHint">Lock: both views share centre and scale (µm).</span>
+          </div>
+          <p class="wb-small">Curtain instead of N-up: <kbd class="key">/</kbd>. The divider and both views are engine viewports; nothing in the DOM moves while you pan.</p>
+        </div>
+      </section>
+
+      <section class="wbsec" data-sec="analytics" data-title="Case analytics" data-icon="i-chart" hidden>
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Case analytics <span class="count">PHI-free</span></button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Analytics panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body">
+          <div class="wb-sub wbsec__pad">Viewed-area coverage (geometry · visibleCoverage)</div>
+          <div class="wbsec__pad stack--tight stack" id="covBars" data-live="geometry:visibleCoverage"></div>
+          <div class="wb-sub wbsec__pad">AI-flagged regions viewed at ≥ 10×</div>
+          <p class="wbsec__pad wb-p" id="aiViewed" data-live="geometry:pointInPolygon × viewChanged">1 of 3 · next unviewed: suspicious focus near the hilum <button type="button" class="btn btn--sm btn--secondary" data-cmd="flyITC">Fly there</button></p>
+          <div class="wb-sub wbsec__pad">Time at magnification (this case)</div>
+          <div class="dwell" aria-label="Dwell: 1.25× 8 %, 2.5× 6 %, 5× 31 %, 10× 16 %, 20× 39 %, 40× 0 %"><span style="height:20%"></span><span style="height:15%"></span><span style="height:78%"></span><span style="height:40%"></span><span style="height:98%"></span><span style="height:2%"></span></div>
+          <div class="dwell-l"><span>1.25</span><span>2.5</span><span>5</span><span>10</span><span>20</span><span>40</span></div>
+          <p class="wb-hint">Time on case <span class="num" id="caseTime">06:12</span> · the sampled viewport trail is kept for the laboratory's quality record (About).</p>
+        </div>
+      </section>
+
+      <section class="wbsec" data-sec="consult" data-title="Request consult" data-icon="i-share" hidden>
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Request consult</button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Consult panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body wbsec__pad stack" id="consultBody" data-live="events:shareCreated">
+          <div class="field"><span class="field__label">Purpose</span>
+            <div class="segmented" role="radiogroup" aria-label="Consult purpose" id="consultSeg">
+              <button type="button" class="segmented__item" role="radio" aria-checked="false" data-cp="frozen">Frozen · intra-op</button>
+              <button type="button" class="segmented__item" role="radio" aria-checked="true" data-cp="second">Second opinion</button>
+            </div>
+          </div>
+          <label class="field"><span class="field__label">To</span><span class="select"><select aria-label="Consultant"><option data-synthetic>On-call breast pathologist · Dr Example A</option><option>Dr Example B (lymphoma)</option><option>Outside: Example Consult Service</option></select></span></label>
+          <div class="wb-kv">
+            <dt>Includes</dt><dd>current view (state document), 2 bookmarks, 2 annotations</dd>
+            <dt>Identity</dt><dd><b>De-identified</b> · label image not in scope (Tier 0)</dd>
+            <dt>Link</dt><dd>expires in 24 h · read-only · audit logged</dd>
+          </div>
+          <label class="field"><span class="field__label">Question</span><textarea class="input" rows="2" aria-label="Question for the consultant">Macrometastasis 2.3 mm in A1-1; please confirm extranodal extension status.</textarea></label>
+          <div class="row"><button type="button" class="btn btn--primary" id="btnConsult">Request consult</button><button type="button" class="btn btn--secondary" data-close="consult">Cancel <kbd class="key">Esc</kbd></button></div>
+          <p class="wb-small" id="consultStatus">Emits <code>shareCreated</code>; the consultant's view opens as Consultation · preliminary only.</p>
+        </div>
+      </section>
+
+      <section class="wbsec" data-sec="signout" data-title="Sign-out hand-off" data-icon="i-signout" hidden>
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Sign-out hand-off</button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Sign-out panel options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body wbsec__pad stack" id="signoutBody" data-live="events:signoutRequested · caseStatusChanged">
+          <p class="wb-p">Returns to the LIS for <b data-synthetic>AP-26-04417</b>. Dictation and the synoptic report stay in the LIS; nothing is signed here.</p>
+          <ul class="wb-sum" id="signoutSum"></ul>
+          <div class="alert alert--neutral" id="signoutWarn"><span class="alert__glyph">!</span><span><b>2 slides not opened</b> (A1-2, A2-1). You can still return; the LIS records which slides were viewed. <button type="button" class="btn btn--sm btn--secondary" data-cmd="next">Open A1-2 <kbd class="key">]</kbd></button></span></div>
+          <div class="row"><button type="button" class="btn btn--primary" id="btnReturn">Return to LIS</button><button type="button" class="btn btn--secondary" data-close="signout">Cancel <kbd class="key">Esc</kbd></button></div>
+        </div>
+      </section>
+
+      <section class="wbsec" data-sec="keys" data-title="Keyboard map" data-icon="i-keyboard" hidden>
+        <div class="wbsec__head"><button type="button" class="wbsec__toggle" aria-expanded="true">Keyboard map <span class="count">?</span></button><button type="button" class="btn btn--ghost btn--sm btn--icon secmenu" aria-label="Keyboard map options"><svg class="icon icon--sm"><use href="#i-more"/></svg></button></div>
+        <div class="wbsec__body" data-live="commands:registry">
+          <div class="wbsec__pad row" style="margin-bottom:8px">
+            <span class="wb-small">Preset</span>
+            <div class="segmented" role="radiogroup" aria-label="Key preset"><button type="button" class="segmented__item" role="radio" aria-checked="true">Default</button><button type="button" class="segmented__item" role="radio" aria-checked="false">Left-hand</button><button type="button" class="segmented__item" role="radio" aria-checked="false">Right-hand</button></div>
+          </div>
+          <input class="input km-filter" style="width:calc(100% - 32px)" type="search" id="kmFilter" placeholder="Filter keys or commands" aria-label="Filter keyboard map">
+          <div class="wb-keymap" id="keymap"></div>
+          <p class="wb-hint">Generated from the same command registry as the palette. Reserved here: numeric keypad (Dragon Medical One push-to-talk). No F-keys, no Alt, Ctrl only for K and editing.</p>
+        </div>
+      </section>
+    </div>
+    <div class="wb-resizer" id="rres" role="separator" aria-orientation="vertical" aria-label="Resize Inspector (arrow keys)" tabindex="0" aria-valuemin="260" aria-valuemax="520" aria-valuenow="300"></div>
+  </aside>
+
+  <!-- Activity bar: Inspector sections (toggle) -->
+  <nav class="abar" id="abar" aria-label="Inspector panels"></nav>
+
+  <!-- Bottom bar (tablet portrait, phone) -->
+  <nav class="bottombar" id="bottombar" aria-label="Tools">
+    <button type="button" class="tool tool--labelled" data-tool="select" aria-pressed="true"><svg class="icon"><use href="#i-select"/></svg><span class="tool__label">Select</span></button>
+    <button type="button" class="tool tool--labelled" data-tool="measure" aria-pressed="false"><svg class="icon"><use href="#i-measure"/></svg><span class="tool__label">Measure</span></button>
+    <button type="button" class="tool tool--labelled" data-tool="point" aria-pressed="false"><svg class="icon"><use href="#i-point"/></svg><span class="tool__label">Point</span></button>
+    <button type="button" class="tool tool--labelled" data-cmd="compare" aria-pressed="false"><svg class="icon"><use href="#i-compare"/></svg><span class="tool__label">Compare</span></button>
+    <button type="button" class="tool tool--labelled" data-cmd="sheetL" aria-pressed="false"><svg class="icon"><use href="#i-panel-l"/></svg><span class="tool__label">Case</span></button>
+    <button type="button" class="tool tool--labelled" data-cmd="sheetR" aria-pressed="false"><svg class="icon"><use href="#i-panel-r"/></svg><span class="tool__label">Inspect</span></button>
+    <button type="button" class="tool tool--labelled" data-cmd="palette"><svg class="icon"><use href="#i-search"/></svg><span class="tool__label">Commands</span></button>
+  </nav>
+
+  <!-- E. Status strip -->
+  <footer class="strip" id="strip">
+    <span class="indicator indicator--sharp" id="ind" data-live="events:tileSettled · renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label" id="indL">Sharp</span></span>
+    <span class="wb-chips" id="chips"></span>
+    <span class="strip__notice" id="notice"></span>
+    <div class="strip__group strip__group--end">
+      <button type="button" class="chip" id="layoutChip" aria-haspopup="menu" aria-controls="layoutMenu" data-live="shell:panelToggled (proposed)"><svg class="icon icon--sm"><use href="#i-panel-l"/></svg><span id="layoutTxt">Layout · Sign-out</span></button>
+      <button type="button" class="chip" id="qaChip" data-clinical data-live="events:displayQaStatus"><svg class="icon icon--sm"><use href="#i-display"/></svg><span id="qaTxt">QA passed 3 days ago</span></button>
+      <span class="chip" id="micChip" data-clinical data-live="commands:mic arbitration"><svg class="icon icon--sm"><use href="#i-mic"/></svg>Mic: dictation</span>
+    </div>
+  </footer>
+
+  <!-- Transient layers: anchored to the dock columns or the top bar, never in the canvas centre -->
+  <div class="palette wbpop wbpop--left" id="palette" role="dialog" aria-modal="false" aria-label="Command palette" hidden data-live="commands">
+    <div class="palette__input"><svg class="icon"><use href="#i-search"/></svg><input id="palInput" type="text" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" placeholder="Type a command, slide, bookmark or class" autocomplete="off"><kbd class="key">Esc</kbd></div>
+    <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
+    <div class="palette__footer"><span>↑↓ move</span><span>↵ run</span><span>Esc close</span><span>Same registry as keys, voice and the test harness</span></div>
+  </div>
+
+  <div class="dialog wbpop wbpop--right" id="dxpop" role="dialog" aria-modal="false" aria-labelledby="dxTitle" hidden data-live="dx:attestation · displayqa · FR-R7">
+    <div class="dialog__header"><h2 class="dialog__title" id="dxTitle">Enter Dx mode?</h2><button type="button" class="btn btn--icon btn--ghost" data-close="dx" aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="dialog__body"><div class="gate" id="dxGate"></div><p class="wb-small" id="dxNote"></p></div>
+    <div class="dialog__footer"><button type="button" class="btn btn--ghost" data-close="dx">Cancel <kbd class="key">Esc</kbd></button><button type="button" class="btn btn--primary" id="btnDx">Enter Dx mode <kbd class="key">⇧D</kbd></button></div>
+  </div>
+
+  <div class="dialog wbpop wbpop--left" id="about" role="dialog" aria-modal="false" aria-labelledby="aboutTitle" hidden>
+    <div class="dialog__header"><h2 class="dialog__title" id="aboutTitle">Stoipath Clinical-IH</h2><button type="button" class="btn btn--icon btn--ghost" data-close="about" aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="dialog__body">
+      <p><span class="badge-string badge-string--clinical" id="aboutString" style="white-space:normal;color:var(--color-text)"></span></p>
+      <dl class="wb-kv">
+        <dt>Laboratory</dt><dd data-synthetic>Example University AP Laboratory (synthetic)</dd>
+        <dt>Version</dt><dd class="mono">0.9.0-ih · build 3f9c…a71e · pathway 9b20…44d1</dd>
+        <dt>Launch</dt><dd class="mono">product=clinical-ih · purposeOfUse=TREAT</dd>
+      </dl>
+      <p class="wb-small">This session records where you looked, for the laboratory's quality record. Telemetry: on (PHI-free). Research Use Only string, English: “For Research Use Only. Not for use in diagnostic procedures.” applies to the Viewer build only.</p>
+    </div>
+  </div>
+
+  <div class="menu wbmenu" id="layoutMenu" role="menu" aria-label="Layout presets" hidden></div>
+  <div class="menu wbmenu" id="secMenu" role="menu" aria-label="Panel options" hidden></div>
+</div>
+
+<!-- ====================== DEMO CONTROLS (review chrome, not product) ====================== -->
+<footer class="review-foot" aria-label="Demo controls (review only)">
+  <span class="rv-title">Demo states</span>
+  <label>Product <select id="dProduct"><option value="clinical-ih">Clinical-IH</option><option value="dx">Dx (cleared)</option><option value="ruo">Viewer · RUO</option></select></label>
+  <label>Display <select id="dDisplay"><option value="auto">Auto (≥1600 attested · laptop not)</option><option value="attested">Attested · EDID Barco MDPC-8127</option><option value="none">Not attested (laptop)</option><option value="qa">Attested · QA overdue</option></select></label>
+  <label>Render mode <select id="dMode"><option value="nav">Nav</option><option value="dx">Request Dx</option><option value="dropped">Dx → attestation lost</option></select></label>
+  <label>Purpose <select id="dPurpose"><option value="auto">Auto (tablet = consult)</option><option value="signout">Sign-out</option><option value="frozen">Frozen section · consult</option></select></label>
+  <label>Network <select id="dNet"><option value="lan">LAN</option><option value="4g">Cold 4G</option><option value="pack">Offline · pack</option><option value="offline">Offline · no pack</option><option value="slow">Slow translator</option></select></label>
+  <label>Error <select id="dErr"><option value="none">None</option><option value="tiles">Tile errors</option><option value="manifest">Manifest 503</option><option value="mismatch">Identity mismatch</option><option value="expired">Session expired</option><option value="wrong">Wrong-product launch</option><option value="gpu">GPU context loss</option></select></label>
+  <label>Surface <select id="dSurface"><option value="companion">Companion window</option><option value="embedded">EHR iframe (Hyperdrive)</option></select></label>
+  <label>Open <select id="dOverlay"><option value="none">—</option><option value="palette">Command palette</option><option value="keys">Keyboard map</option><option value="signout">Sign-out hand-off</option><option value="consult">Request consult</option><option value="dx">Dx gate</option><option value="about">About / label</option><option value="inspector">Inspector (governor)</option><option value="compare">Side by side</option></select></label>
+</footer>
+<button class="rv-btn rv-show" type="button" id="rvShow">Show review chrome</button>
+
+<!-- ====================== DESIGN RATIONALE (review document) ====================== -->
+<section class="rationale" id="rationale" aria-label="Design rationale">
+  <details id="ratDetails">
+    <summary>Design rationale · Concept B “Workbench” · 2026-11-01</summary>
+    <div class="rat" id="ratBody"><p>(rationale is written below)</p></div>
+  </details>
+</section>
+
+<div class="live-region" id="livePolite" aria-live="polite" aria-atomic="true"></div>
+<div class="live-region" id="liveAssert" aria-live="assertive" aria-atomic="true"></div>
+</body>
+</html>
