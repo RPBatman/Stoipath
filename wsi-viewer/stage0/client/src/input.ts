@@ -88,12 +88,31 @@ interface PointerState {
   y: number;
 }
 
-export interface DomInputOptions {
-  /** CSS px -> device px factor (canvas.width / canvas.clientWidth). */
-  scale: () => number;
+/** The measurement page's keys besides +/- and arrows (MEASUREMENT_PROTOCOL: O overlay, R reset, P scripted path). */
+export interface MeasurementKeys {
   onToggleOverlay: () => void;
   onReset: () => void;
   onRunPath: () => void;
+}
+
+export interface DomInputOptions {
+  /** CSS px -> device px factor (canvas.width / canvas.clientWidth). */
+  scale: () => number;
+  /**
+   * Keyboard map. The measurement page passes its O/R/P handlers and gets +/-, arrows, O, R, P exactly as before;
+   * `false` binds no key handler at all, so a host page (the RUO shell) binds its own map through `Controls`.
+   */
+  keys: MeasurementKeys | false;
+  /**
+   * Top-left of the canvas in CSS px relative to the viewport, read on every event (a host keeps it current from its
+   * resize handling; never measured here). The measurement page's canvas is fixed at (0, 0) and omits it.
+   */
+  origin?: { x: number; y: number };
+  /**
+   * Called on pointerdown and dblclick; `false` leaves that pointer to the host (e.g. a measure tool), so the camera
+   * neither drags nor double-click-zooms for it. Omitted = every pointer is the camera's (measurement page).
+   */
+  acceptPointer?: (e: PointerEvent | MouseEvent) => boolean;
 }
 
 /** Normalise a wheel event to pyramid levels (positive = zoom in). 04 F6. */
@@ -116,7 +135,10 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
   let lastTapX = 0;
   let lastTapY = 0;
 
-  const dev = (v: number): number => v * opts.scale();
+  const origin = opts.origin ?? { x: 0, y: 0 };
+  const devX = (clientX: number): number => (clientX - origin.x) * opts.scale();
+  const devY = (clientY: number): number => (clientY - origin.y) * opts.scale();
+  const accept = opts.acceptPointer;
   const centroid = (): void => {
     let sx = 0;
     let sy = 0;
@@ -136,10 +158,11 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
   };
 
   canvas.addEventListener('pointerdown', (e) => {
+    if (accept !== undefined && !accept(e)) return;
     canvas.focus({ preventScroll: true });
     canvas.setPointerCapture(e.pointerId);
-    const x = dev(e.clientX);
-    const y = dev(e.clientY);
+    const x = devX(e.clientX);
+    const y = devY(e.clientY);
     pointers.set(e.pointerId, { x, y });
     if (pointers.size === 1) {
       // double-tap (touch/pen): two downs within 300 ms and 30 css px
@@ -163,8 +186,8 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
 
   canvas.addEventListener('pointermove', (e) => {
     const p = pointers.get(e.pointerId);
-    const x = dev(e.clientX);
-    const y = dev(e.clientY);
+    const x = devX(e.clientX);
+    const y = devY(e.clientY);
     if (p === undefined) {
       // hover: keep the focus point for zoom-intent prefetch
       c.pointerX = x;
@@ -208,14 +231,15 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
     (e) => {
       e.preventDefault();
       const levels = wheelToLevels(e);
-      if (levels !== 0) c.wheelLevels(levels, dev(e.clientX), dev(e.clientY), e.timeStamp, e.ctrlKey ? 'trackpad' : 'wheel');
+      if (levels !== 0) c.wheelLevels(levels, devX(e.clientX), devY(e.clientY), e.timeStamp, e.ctrlKey ? 'trackpad' : 'wheel');
     },
     { passive: false },
   );
 
   canvas.addEventListener('dblclick', (e) => {
     e.preventDefault();
-    c.wheelLevels(DOUBLE_TAP_LEVELS, dev(e.clientX), dev(e.clientY), e.timeStamp, 'doubleclick');
+    if (accept !== undefined && !accept(e)) return;
+    c.wheelLevels(DOUBLE_TAP_LEVELS, devX(e.clientX), devY(e.clientY), e.timeStamp, 'doubleclick');
   });
 
   // Safari legacy gesture events would double-apply; block them.
@@ -223,6 +247,8 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
   canvas.addEventListener('gesturechange', (e) => e.preventDefault());
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
+  const keys = opts.keys;
+  if (keys === false) return;
   window.addEventListener('keydown', (e) => {
     if (e.target instanceof HTMLElement && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
     // Ctrl/Cmd +/- is browser zoom (it changes devicePixelRatio; resize() follows it), not a viewer command (REVIEW M9).
@@ -250,15 +276,15 @@ export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomIn
         break;
       case 'o':
       case 'O':
-        opts.onToggleOverlay();
+        keys.onToggleOverlay();
         return;
       case 'r':
       case 'R':
-        opts.onReset();
+        keys.onReset();
         return;
       case 'p':
       case 'P':
-        opts.onRunPath();
+        keys.onRunPath();
         return;
       default:
         return;

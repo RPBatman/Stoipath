@@ -278,11 +278,16 @@ export function parseManifest(json: Json, manifestUrl: string): Pyramid {
   return pyramid;
 }
 
-export async function loadPyramid(manifestUrl: string): Promise<Pyramid> {
+/** Fetch and parse the manifest; also returns the raw JSON (the RUO shell shows `source`, licence, tile format). */
+export async function loadPyramidWithManifest(manifestUrl: string): Promise<{ pyramid: Pyramid; manifest: unknown }> {
   const res = await fetch(manifestUrl, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`manifest ${manifestUrl}: HTTP ${res.status}`);
   const json: unknown = await res.json();
-  return parseManifest(json, res.url || manifestUrl);
+  return { pyramid: parseManifest(json, res.url || manifestUrl), manifest: json };
+}
+
+export async function loadPyramid(manifestUrl: string): Promise<Pyramid> {
+  return (await loadPyramidWithManifest(manifestUrl)).pyramid;
 }
 
 /** Default manifest locations tried in order (relative to the page): deployed dist/ next to ../data, dev server alias, same dir. */
