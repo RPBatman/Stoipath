@@ -92,7 +92,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .flow__step[aria-current="step"] .flow__num { border-width: 2px; }
 .app.flow-off .flow__label { display: none; }
 .app.flow-off .flow__step { min-height: 30px; }
-@media (pointer: coarse) { .flow__step { min-height: 56px; } .flow__num { width: 26px; height: 26px; } .flow__label { font-size: 11px; } }
+@media (pointer: coarse) { .flow__step { min-height: 48px; } .flow__num { width: 26px; height: 26px; } .flow__label { font-size: 11px; } .flowbar .flow__step, .flowbar .btn { min-height: var(--target); } .app.fin { --layout-strip: 48px; } }   /* 44 px strip chips need a 48 px strip */
 @media (min-width: 3200px) { .flow__label { font-size: 12px; } .flow__num { width: 24px; height: 24px; } }
 
 /* flow bar: tablet portrait and phone (steps to the top, tools to the bottom) */
@@ -124,17 +124,17 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 }
 @media (max-width: 599px) {
   .app.fin:not(.app--embedded) {
-    --layout-flowbar: 40px;
+    --layout-flowbar: 48px;
     grid-template-rows: var(--layout-topbar) var(--layout-flowbar) minmax(0, 1fr) var(--layout-bottombar);
     grid-template-areas: "topbar" "flowbar" "canvas" "bottombar";
   }
   .flowbar .flow li { flex: 0 0 auto; }
   .flowbar .flow li.is-current { flex: 1 1 auto; }
-  .flowbar .flow__step { min-height: 32px; min-width: 32px; padding: 0 5px; gap: 4px; }   /* ≥ 24 px (SC 2.5.8); 32 so a thumb finds it */
+  .flowbar .flow__step { min-height: var(--target); min-width: var(--target); padding: 0 5px; gap: 4px; }   /* 24 px fine (SC 2.5.8), 44 px coarse */
   .flowbar .flow__num { width: 22px; height: 22px; font-size: 10px; }
   .flowbar .flow__label { display: none; }
   .flowbar .flow li.is-current .flow__label { display: inline; }
-  .flowbar .btn--sm { min-height: 32px; }
+  .flowbar .btn--sm { min-height: var(--target); }
 }
 
 /* embedded (Hyperdrive iframe): one column, compact bars, no rail / dock / flow bar; no keys bound */
@@ -158,9 +158,8 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .app--embedded .not-embedded { display: none !important; }
 .embed-tray { display: none; align-items: center; gap: var(--space-2); }
 .app--embedded .embed-tray { display: inline-flex; }
-.embed-tray .chip { min-height: 24px; }
-.flow-chip.chip { min-height: 24px; }
-.segmented__item { min-height: 24px; }
+.embed-tray .chip { min-height: var(--target-control); }
+.flow-chip.chip { min-height: var(--target-control); }
 .embed-tray .chip .v { font-family: var(--font-mono); font-size: 10px; }
 @container topbar (max-width: 1599px) { .app--embedded .embed-tray .chip .stain { display: none; } }
 @container topbar (max-width: 1279px) { .app--embedded .embed-tray { display: none; } }
@@ -178,17 +177,27 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   .app.fin.dock-open:not(.app--embedded) .hud--tr { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
   .app.fin.dock-open:not(.app--embedded) .toast-stack { right: calc(var(--layout-dock) + var(--space-5)); }
 }
-/* the width 1280-1599 top bar drops the patient meta before the chips (container query in base.css handles chips) */
-@media (max-width: 1599px) and (min-width: 1280px) { .topbar__identity .meta { display: none; } }
 
 /* top bar extras */
 .topbar__identity .meta .syn { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); border: 1px solid var(--color-border-strong); border-radius: 2px; padding: 0 3px; margin-left: 4px; vertical-align: middle; }
 .topbar .btn--handoff { font-size: var(--text-sm); min-height: 28px; }
-.topbar__slot-badge .chip--purpose { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 599px) { .topbar__slot-badge .chip--purpose { display: none; } }
-.topbar__slot-mode .mode { min-height: 24px; }
-.app.fin .topbar__identity .title { flex: 0 1 auto; width: auto; }
+/* Purpose chip (revision 2026-11-01): may shrink but never pushes the mode slot (P4); its short form
+   "Prelim only" takes over below a 1264 px container, one step before base.css hides it (≤ 1183). */
+.topbar__slot-badge .chip--purpose { flex: 0 1 auto; min-width: 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+.chip--purpose .chip__short { display: none; }
+@container topbar (max-width: 1263px) { .chip--purpose .chip__long { display: none; } .chip--purpose .chip__short { display: inline; } }
+/* Consult variant: the specimen title leaves the bar below 1600 so the full label string keeps its natural width (P4, D1). */
+@container topbar (max-width: 1599px) { .app[data-variant="consult"] .topbar__identity .title { display: none; } }
+/* Phone: the strip is hidden, so the purpose stays in the bar as the short chip beside the badge (P4, D1). */
+@media (max-width: 599px) { .app.fin .topbar__slot-badge .chip--purpose { display: inline-flex; } .chip--purpose .chip__long { display: none; } .chip--purpose .chip__short { display: inline; } }
 .topbar__slot-mode button.mode { cursor: pointer; }
+/* Inverted danger banner: its button and key inherit the inverse colour (base.css recolours only links; filed as a design-system issue). */
+.app.fin .banner--danger .btn, .app.fin .banner--danger .key { color: inherit; border-color: currentColor; background: transparent; }
+.app.fin .banner--danger .btn:hover { background: rgba(0,0,0,.08); }
+/* Rail: the step list and the three foot tools never shrink; the per-step tool group scrolls when the rail is short (1366 × 1024 coarse, 1440 × 900). */
+.app.fin .rail .flow, .app.fin .rail .rail__divider, .app.fin .rail .tool { flex-shrink: 0; }
+.app.fin #railTools { flex: 0 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.app.fin #railTools::-webkit-scrollbar { display: none; }
 
 /* ---- canvas panes (compare) ------------------------------------------ */
 .panes { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
@@ -226,8 +235,14 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .user-ann .ink { stroke-width: 1.8; fill-opacity: .12; }
 .user-ann .ink.is-open { fill: none; stroke-dasharray: 6 4; }
 .user-ann .ink.pt { fill-opacity: .9; }
-.user-ann text { font-size: 14px; fill: #f7f7f7; stroke: rgba(0,0,0,.85); stroke-width: 4; }
-.user-ann .tick { stroke: #f7f7f7; stroke-width: 1.6; }
+.user-ann .halo { stroke-width: 2.5; }
+.user-ann .tick { stroke: #f7f7f7; stroke-width: 1.5; }
+/* Measurement labels (revision 2026-11-01): HUD-layer text in screen space, clamped to the visible midpoint of the on-screen
+   segment, never slide-space SVG text (which scaled with zoom and floated off-screen). Engine rule for the handoff. */
+.meas-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.meas-pill { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); padding: 1px 6px; border-radius: var(--radius-1); background: var(--color-hud-backdrop); color: var(--grey-95); font: 600 12px/1.5 var(--font-mono); white-space: nowrap; display: none; }
+.meas-pill.is-on { display: block; }
+.app.is-blocked .meas-layer, .app[data-cond="manifest"] .meas-layer { display: none; }
 
 /* ---- HUD extras ---------------------------------------------------------- */
 /* Command echo (A): a FIXED-HEIGHT slot under the identity line, textContent only, so the HUD box never changes geometry (engineering judge). */
@@ -248,7 +263,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .legend-hud { font-family: var(--font-ui); font-size: var(--text-xs); flex-direction: column; align-items: flex-end; gap: 3px; display: none; }
 .app.legend-on.overlay-on .legend-hud { display: inline-flex; }
 .legend-hud .legend { justify-content: flex-end; }
-.legend-hud .legend__item { min-height: 24px; }
+.legend-hud .legend__item { min-height: var(--target-control); }
 .legend-hud .marker-notvalidated { font-size: var(--text-2xs); }
 .hud--br { max-width: 36%; }
 .hud--bl { max-width: 36%; }
@@ -329,9 +344,19 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   .app.fin .dock__body { max-height: calc(var(--layout-sheet-max) - 120px); }
   .idcard .labelimg { max-width: 100%; }
 }
-/* segmented controls in the dock: 24 px minimum everywhere (pathologist / ux-a11y fix), 44 under coarse */
-.dock .segmented__item { min-height: 24px; font-size: var(--text-xs); padding: 0 8px; }
-@media (pointer: coarse) { .dock .segmented__item { min-height: var(--target); } .dock .btnrow .btn, .dock .presets .btn { min-height: var(--target); } }
+/* segmented controls in the dock: sizes come from base.css (24 px; 40-in-44 under coarse); only type and padding are page-level */
+.dock .segmented__item { font-size: var(--text-xs); padding: 0 8px; }
+@media (pointer: coarse) {
+  .dock .btnrow .btn, .dock .presets .btn, .dock__foot .btn, .dock .section > summary, .dock .btn--sm, .dock .checklist .act { min-height: var(--target); }
+  .dock .btn--sm.btn--icon, .dock__close, .dock .layer-row__vis { width: var(--target); height: var(--target); min-width: var(--target); }
+}
+/* HUD and toasts lift above the dock sheet (tablet portrait, phone, embedded): --sheet-h is written once at settle from the dock's measured height (P8: magnification and scale bar stay on screen) */
+@media (max-width: 1079px) {
+  .app.fin.dock-open:not(.app--embedded) .hud--bl, .app.fin.dock-open:not(.app--embedded) .hud--br { bottom: calc(var(--sheet-h, 40vh) + var(--layout-hud-inset)); }
+  .app.fin.dock-open:not(.app--embedded) .toast-stack { bottom: calc(var(--sheet-h, 40vh) + var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
+}
+@media (max-width: 599px) { .app.fin.dock-open:not(.app--embedded) .toast-stack { bottom: calc(var(--sheet-h, 40vh) + var(--layout-bottombar) + var(--space-4)); } }
+.app.fin.app--embedded.dock-open .hud--bl, .app.fin.app--embedded.dock-open .hud--br { bottom: calc(var(--sheet-h, 0px) + var(--layout-hud-inset)); }
 
 /* identity card */
 .idcard { display: grid; grid-template-columns: 1fr; gap: var(--space-3); padding: var(--space-4) var(--space-5); align-items: start; }
@@ -375,13 +400,11 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .bookmark .t { font-size: var(--text-xs); }
 .bookmark .s { font-size: var(--text-2xs); color: var(--color-text-secondary); font-family: var(--font-mono); }
 
-/* layer rows: a hidden layer keeps 4.5:1 (secondary text, no opacity) and says "hidden" in text */
+/* layer rows: the hidden state (.is-off: secondary text, "hidden" in text) is base.css's; only the dock's spacing is page-level */
 .dock .layer-row { padding-left: var(--space-4); }
 .dock .layer-row__provenance .vendor { color: var(--color-text); }
-.dock .layer-row.is-off .layer-row__name { color: var(--color-text-secondary); }
 .dock .layer-row__name { flex-wrap: wrap; row-gap: 2px; }
 .dock .layer-row__name .truncate { flex: 0 1 auto; min-width: 0; }
-.dock .layer-row.is-off .layer-row__name::after { content: "hidden"; font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 0 4px; white-space: nowrap; }
 .dock .layer-row__name .kind { white-space: nowrap; color: var(--color-text-secondary); }
 .dock .layer-row .marker-ok { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); font-family: var(--font-ui); color: var(--color-text); border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); padding: 1px var(--space-2); }
 .dock .layer-row .marker-ok::before { content: "\2713"; font-family: var(--font-mono); }
@@ -399,9 +422,9 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 
 /* strip: one notice plus chips, never two notices */
 .strip .indicator { padding-left: 0; }
-.strip .chip { min-height: 24px; font-size: var(--text-xs); }
+.strip .chip { min-height: var(--target-control); font-size: var(--text-xs); }     /* 24 px; 44 under coarse (strip grows to 48) */
 .strip .strip__notice b { font-weight: var(--weight-semibold); }
-.strip .btn--sm { min-height: 24px; font-size: var(--text-xs); }   /* strip sign-out button raised to 24 px (A had 22) */
+.strip .btn--sm { min-height: var(--target-control); font-size: var(--text-xs); }   /* strip sign-out button 24 px (A had 22) */
 @media (max-width: 1079px) { .strip .strip-signout, .strip #stripMic { display: none; } }
 @media (pointer: coarse) { .strip .strip-signout, .flowbar .key, .strip .key { display: none; } }
 
@@ -410,6 +433,8 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .plate { z-index: calc(var(--z-navigator) + 1); }
 .app.is-blocked .navigator, .app.is-blocked .hud, .app.is-blocked .reticle, .app.is-blocked .tilegrid { display: none !important; }
 .app.is-blocked.is-mismatch .panes { visibility: hidden; }
+/* while the canvas is blocked the step panel is inert (set in renderCond) and its controls read as unavailable */
+.app.is-blocked .dock :is(.btn, .tool, .tray__slide, .segmented, .class-chip, .legend__item, input, .toggle, .list__item, .bookmark, .layer-row__vis, .layer-row__actions, .presets, .tabs) { opacity: .5; }
 .app.fin.is-refused { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
 .app.is-refused .topbar__identity, .app.is-refused .embed-tray, .app.is-refused #qaChip, .app.is-refused #modeChip,
 .app.is-refused #purposeChip, .app.is-refused .flow, .app.is-refused .flowbar .btn, .app.is-refused #railTools, .app.is-refused .rail__divider,
@@ -595,12 +620,19 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
       <circle cx="9800" cy="2650" r="90" fill="url(#p-met-ihc)" stroke="#5e2f10" stroke-width="12"/>
     </g>
     <!-- Pathologist annotations (engine GPU layer in product; annotation API) -->
-    <g id="art-ann" fill="none" vector-effect="non-scaling-stroke">
-      <polygon class="ann-polygon" points="7150,2250 7350,1800 7900,1650 8450,1700 9050,1680 9500,1900 9700,2300 9550,2750 9100,3050 8450,3080 7800,2950 7350,2750" fill="rgba(142,58,21,.10)" stroke="rgba(0,0,0,.85)" stroke-width="4" vector-effect="non-scaling-stroke"/>
-      <polygon points="7150,2250 7350,1800 7900,1650 8450,1700 9050,1680 9500,1900 9700,2300 9550,2750 9100,3050 8450,3080 7800,2950 7350,2750" stroke="#8e3a15" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
-      <line x1="7250" y1="2300" x2="9550" y2="2300" stroke="rgba(0,0,0,.85)" stroke-width="4" vector-effect="non-scaling-stroke"/>
-      <line x1="7250" y1="2300" x2="9550" y2="2300" stroke="#f7f7f7" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+    <!-- Halo 2.5 px / ink 1.5 px, both non-scaling (--ann-halo-dark): a 4 px halo at 20× read as a stitch seam. The region and the
+         measurement are separate symbols so each can be selected and deleted on its own; the 2.3 mm label is a HUD pill (screen space). -->
+    <g id="art-ann-poly" fill="none">
+      <polygon class="ann-polygon" points="7150,2250 7350,1800 7900,1650 8450,1700 9050,1680 9500,1900 9700,2300 9550,2750 9100,3050 8450,3080 7800,2950 7350,2750" fill="rgba(142,58,21,.10)" stroke="rgba(0,0,0,.85)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+      <polygon points="7150,2250 7350,1800 7900,1650 8450,1700 9050,1680 9500,1900 9700,2300 9550,2750 9100,3050 8450,3080 7800,2950 7350,2750" stroke="#8e3a15" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
     </g>
+    <g id="art-ann-line" fill="none">
+      <line x1="7250" y1="2300" x2="9550" y2="2300" stroke="rgba(0,0,0,.85)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+      <path d="M7250 2275v50M9550 2275v50" stroke="rgba(0,0,0,.85)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+      <line x1="7250" y1="2300" x2="9550" y2="2300" stroke="#f7f7f7" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+      <path d="M7250 2275v50M9550 2275v50" stroke="#f7f7f7" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+    </g>
+    <g id="art-ann"><use href="#art-ann-poly"/><use href="#art-ann-line"/></g>
     <!-- AI overlay: outline presentation (layer API; off by default in Dx) -->
     <g id="art-ai" fill="none">
       <path d="M7220 2320 C7260 1880 7760 1700 8300 1760 C8820 1660 9340 1800 9600 2240 C9660 2680 9220 2990 8700 2960 C8180 3020 7680 2880 7380 2680 C7220 2580 7180 2460 7220 2320 Z" stroke="rgba(0,0,0,.85)" stroke-width="4" vector-effect="non-scaling-stroke"/>
@@ -631,16 +663,18 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
     <!-- A. Top bar: badge → label string → identity → mode (fixed slots; outside every dismissible layer, P4) -->
     <header class="topbar region" aria-label="Top bar">
       <div class="topbar__slot-badge">
-        <button class="badge badge--clinical" id="badge" data-live="launch:product" aria-label="Product: Stoipath Clinical-IH. Opens the full label and About">Clinical-IH</button>
-        <span class="chip chip--purpose not-embedded" id="purposeChip" data-live="launch:purposeOfUse">Sign-out</span>
+        <button class="badge badge--clinical" id="badge" data-live="launch:product" aria-haspopup="dialog" aria-label="Product: Stoipath Clinical-IH. In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation. Opens the full label and About">Clinical-IH</button>
+        <span class="chip chip--purpose not-embedded" id="purposeChip" data-live="launch:purposeOfUse"><span class="chip__long">Sign-out</span><span class="chip__short">Sign-out</span></span>
         <button class="chip chip--solid flow-chip embed-only" id="embedFlowChip" aria-label="Current step; opens the step list" data-live="commands"><span class="n">3/5</span> Examine <svg class="icon icon--sm"><use href="#i-next"/></svg></button>
       </div>
-      <span class="topbar__label badge-string badge-string--clinical" id="labelString" aria-label="Product label"></span>
+      <span class="topbar__label badge-string badge-string--clinical" id="labelString" role="note"></span>
       <div class="topbar__identity" data-live="launch">
         <span class="accession" data-synthetic>AP-26-04417</span>
-        <span class="title">Sentinel lymph node, left axilla · parts A–C</span>
-        <span class="meta" data-synthetic>DOE, JANE · 1958<span class="syn">synthetic</span></span>
-        <span class="chip chip--worklist" id="worklistChip" data-live="lis:worklist">In review</span>
+        <span class="topbar__identity-rest">
+          <span class="title">Sentinel lymph node, left axilla · parts A–C</span>
+          <span class="meta" data-synthetic>DOE, JANE · 1958<span class="syn">synthetic</span></span>
+          <span class="chip chip--worklist" id="worklistChip" data-live="lis:worklist">In review</span>
+        </span>
       </div>
       <div class="embed-tray" role="listbox" aria-label="Slides" data-live="state.slides">
         <button class="chip is-selected" role="option" aria-selected="true" data-slide="A1-1">A1-1 <span class="stain">H&amp;E</span> <span class="v">✓</span></button>
@@ -663,13 +697,12 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
             <use href="#art-he" id="artA"/>
             <g id="aiA" data-live="layers" style="display:none"><use href="#art-heat" id="heatA" style="display:none"/><use href="#art-ai"/></g>
             <g id="annA" data-live="annotations">
-              <use href="#art-ann"/>
-              <line x1="7250" y1="2270" x2="7250" y2="2330" stroke="#f7f7f7" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
-              <line x1="9550" y1="2270" x2="9550" y2="2330" stroke="#f7f7f7" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
-              <text id="measA" x="8400" y="2250" text-anchor="middle" font-size="14" fill="#f7f7f7" stroke="rgba(0,0,0,.85)" stroke-width="4">2.3 mm</text>
+              <use href="#art-ann-poly" id="annPoly"/>
+              <use href="#art-ann-line" id="annLine"/>
             </g>
             <g class="user-ann" id="userAnn" data-live="annotations"></g>
           </svg>
+          <div class="meas-layer" id="measLayer" aria-hidden="true" data-live="annotations:labels (engine HUD layer; screen-space text)"></div>
           <span class="hud__item pane__id" data-live="state.views[0].slide"><span data-synthetic>A1-1 · H&amp;E</span></span>
         </div>
         <div class="panes__divider" aria-hidden="true"></div>
@@ -686,9 +719,9 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
         <div class="hud__item hud__echo" id="echo" aria-hidden="true" data-live="telemetry:commandInvoked (proposed)"></div>
       </div>
       <div class="hud hud--bl">
-        <span class="hud__item hud__sharp indicator indicator--sharp" id="hudSharp" data-live="events:tileSettled" aria-label="Sharp"><span class="indicator__glyph"></span></span>
+        <span class="hud__item hud__sharp indicator indicator--sharp" id="hudSharp" role="img" data-live="events:tileSettled" aria-label="Sharp"><span class="indicator__glyph"></span></span>
         <div class="hud__item scalebar" id="scalebar" data-live="state.views[0].scale_um_per_px" aria-label="Scale bar"><span class="scalebar__bar" id="scalebarBar" style="--scalebar-length:200px"></span><span class="scalebar__label" id="scalebarLabel">100 µm</span></div>
-        <div class="hud__item hud__item--quiet hud__position" id="hudPos" data-live="state.views[0].center_um">x 8.70 mm · y 2.40 mm</div>
+        <div class="hud__item hud__item--quiet hud__position" id="hudPos" data-live="state.views[0].center_um">x 9.25 mm · y 2.35 mm</div>
         <div class="hud__item hud__toolpill" id="toolPill" data-live="commands" aria-hidden="true"></div>
       </div>
       <div class="hud hud--br">
@@ -934,10 +967,10 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
             <details class="section" open><summary>Annotations <span class="count" id="annCount">2</span></summary>
               <div class="section__body">
                 <div class="list annlist" role="listbox" aria-label="Annotations on A1-1" data-live="annotations">
-                  <button class="list__item" role="option" aria-selected="true" data-fly="8400,2300,2"><span class="sw sw--line" style="background:var(--ann-8)"></span><span class="txt"><span class="t">Measurement · <b>2.3 mm</b></span><span class="s">Metastatic focus, greatest dimension · A1-1 · µm from MPP</span></span><span class="meta">M</span></button>
-                  <button class="list__item" role="option" data-fly="8400,2350,1"><span class="sw" style="background:var(--ann-2)"></span><span class="txt"><span class="t">Polygon · Tumor · 1.9 mm²</span><span class="s">A1-1 · 12 vertices · created 10:14</span></span><span class="meta">P</span></button>
+                  <button class="list__item" role="option" aria-selected="false" data-ann="line" data-fly="8400,2300,2"><span class="sw sw--line" style="background:var(--ann-8)"></span><span class="txt"><span class="t">Measurement · <b>2.3 mm</b></span><span class="s">Metastatic focus, greatest dimension · A1-1 · µm from MPP</span></span><span class="meta">M</span></button>
+                  <button class="list__item" role="option" aria-selected="false" data-ann="poly" data-fly="8400,2350,1"><span class="sw" style="background:var(--ann-2)"></span><span class="txt"><span class="t">Polygon · Tumor · 1.9 mm²</span><span class="s">A1-1 · 12 vertices · created 10:14</span></span><span class="meta">P</span></button>
                 </div>
-                <div class="hintline"><kbd class="key">Tab</kbd> moves through the list · <kbd class="key">Space</kbd> flies to the focused annotation · pen draws while a finger pans</div>
+                <div class="hintline"><kbd class="key">Tab</kbd> moves through the list · <kbd class="key">Space</kbd> flies to and selects the focused annotation · <kbd class="key">⌫</kbd> deletes the selected one (<kbd class="key">⌃Z</kbd> undoes) · pen draws while a finger pans</div>
               </div>
             </details>
             <details class="section" open><summary>Bookmarks <span class="count" id="bmCount">2</span></summary>
@@ -1035,6 +1068,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <span class="lbl">Demo</span>
   <label>Product <select id="ctlProduct"><option value="clinical-ih">Clinical-IH</option><option value="dx">Dx (cleared)</option><option value="ruo">Viewer (RUO)</option></select></label>
   <label>Surface <select id="ctlVariant"><option value="signout">Sign-out · companion window</option><option value="consult">Frozen consult · iPad</option><option value="embedded">Hyperdrive iframe</option></select></label>
+  <label title="Device tier comes from the quality record, never from the window width">Tier <select id="ctlTier"><option value="1">Tier 1 · N-Desk</option><option value="2">Tier 2 · 60 Hz (W60)</option></select></label>
   <label>State <select id="ctlCond"><option value="normal">Normal</option><option value="cold4g">Cold 4G</option><option value="offline">Offline pack</option><option value="slow">Slow translator</option><option value="tileerror">Tile errors</option><option value="dxrefused">Dx refused · no attestation</option><option value="qastale">Dx refused · QA overdue</option><option value="dropped">Dx dropped · attestation lost</option><option value="mismatch">Identity mismatch</option><option value="expired">Session expired</option><option value="manifest">Manifest 503</option><option value="ctxloss">GPU context loss</option></select></label>
   <label>Step <select id="ctlStep"><option value="1">1 Open</option><option value="2">2 Screen</option><option value="3">3 Examine</option><option value="4">4 Annotate</option><option value="5">5 Sign-out</option></select></label>
   <label><input type="checkbox" id="ctlGuided" checked> Guided flow</label>
@@ -1134,7 +1168,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
       <p class="text-sm text-secondary" style="margin:0">The note goes to OR 4 through the LIS as an ORU / FHIR Observation marked <b>preliminary</b>. Final sign-out waits for permanent sections on a diagnostic display.</p>
       <div class="alert alert--neutral"><span class="alert__glyph">“</span><div id="sdNote">Metastatic carcinoma present, 2.3 mm focus (macrometastasis). Preliminary; await permanent sections.</div></div>
       <ul class="checklist">
-        <li><span class="g ok">✓</span><span>Session purpose <b>Consultation · preliminary only</b> · Nav mode (Tier 2 iPad, no display attestation)</span></li>
+        <li><span class="g ok">✓</span><span>Session purpose <b>Consultation · preliminary only</b> · <span id="sdMode">Nav mode</span></span></li>
         <li><span class="g ok">✓</span><span>Evidence attached: 1 measurement · 2.3 mm (SR TID 1500) · 1 region · viewed <span id="sdViewed">2 of 3</span> slides</span></li>
         <li><span class="g ok">✓</span><span>Turnaround <span class="mono" id="sdTat">06:12</span> of the CAP 20-minute target · received 09:41</span></li>
       </ul>
