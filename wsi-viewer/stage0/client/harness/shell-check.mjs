@@ -9,6 +9,8 @@
 //   3. the navigator rectangle lies within the thumbnail and equals the state's viewport (phone: after O shows it);
 //   4. click-click and keyboard measurements (Enter, ArrowRight = 10 % of the viewport, Enter) within 1 %; on the phone
 //      also touch tap-tap; the result is spoken in the polite region; HUD text over the canvas does not block it;
+//      desktop: Fly to / Delete / Ctrl+Z with focus in the Measurements list keep focus on a rendered row button
+//      (WCAG 2.4.3) and the arrow keys there do not pan the slide;
 //   5. no console error or page error;
 //   6. frame cost during a scripted 1 s drag AND a wheel burst: zero layout-reading DOM calls (getBoundingClientRect,
 //      offset*/client*/scroll*, getComputedStyle, innerText; counted by wrapping them); zero redundant DOM writes
@@ -16,6 +18,8 @@
 //      (.is-gesturing) only text and style.transform inside the HUD / navigator rectangle, plus the class of #app and
 //      of the two sharpness indicators (state transitions), may change; CDP LayoutCount ≤ frames + 2 and
 //      RecalcStyleCount ≤ 2 × frames + 4 (no forced layouts), recorded next to the same input on index.html;
+//      desktop: the same rules over a whole scripted path with the Engine section open (its progress statuses are
+//      written at rest only), ending with the path's final status in the Engine section;
 //   7. sharpness state machine vs PlanStats, sampled every frame by this script: never "Sharp" while deficitCells > 0,
 //      blankCells > 0 or the WebGL context is lost (WEBGL_lose_context); under reduced motion an instant preset jump to
 //      a cold area and Evict GPU tiles pass through "Sharpening…" and end "Sharp" with no Soft on loopback; after a
@@ -469,6 +473,36 @@ for (const vp of VIEWPORTS) {
     const kPlan = ((0.1 * before.viewW) / 2 ** before.logZoom) * MPP;
     rec.keyboard = { expectedUm: +kPlan.toFixed(2), measuredUm: kM ? +kM.um.toFixed(2) : null };
     check(tag, meas2.length === 2 && kM !== undefined && Math.abs(kM.um - kExp) / kExp < 0.01 && Math.abs(kM.um - kPlan) / kPlan < 0.01, `keyboard measurement ${kM ? kM.um.toFixed(2) : '–'} µm == centre travel ${kExp.toFixed(2)} µm == 10 % of the viewport ${kPlan.toFixed(2)} µm within 1 %`);
+    if (!vp.coarse) {
+      // ---- 4b: the Measurements list keeps keyboard focus across its re-render (WCAG 2.4.3) ----
+      await page.keyboard.press('Control+k');
+      await page.keyboard.type('measurements list');
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(250);
+      const where = () => page.evaluate(() => { const a = document.activeElement; const row = a?.closest?.('#measList [data-id]'); return a === document.body ? 'body' : `${a.id ? '#' + a.id : a.tagName.toLowerCase()}${a.dataset?.act ? '[' + a.dataset.act + ']' : ''}${row ? ' M' + row.dataset.id : ''}${a.isConnected ? '' : ' (detached)'}`; });
+      await page.focus('#measList [data-id="1"] button[data-act="fly"]');
+      await page.keyboard.press('Enter');
+      await settle();
+      const fFly = await where();
+      check(tag, fFly === 'button[fly] M1', `Enter on Fly to M1: focus stays on that button (${fFly})`);
+      await page.waitForTimeout(400);
+      const c0 = await page.evaluate(() => window.__stage0.state());
+      await page.keyboard.press('ArrowLeft');
+      await page.waitForTimeout(400);
+      const c1 = await page.evaluate(() => window.__stage0.state());
+      check(tag, Math.hypot(c1.cx - c0.cx, c1.cy - c0.cy) < 2, `ArrowLeft with focus in the list does not pan the slide (${Math.hypot(c1.cx - c0.cx, c1.cy - c0.cy).toFixed(2)} level-0 px)`);
+      await page.focus('#measList [data-id="1"] button[data-act="del"]');
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(150);
+      const fDel = await where();
+      const nDel = await page.evaluate(() => window.__shell.measurements().length);
+      check(tag, fDel === 'button[del] M2' && nDel === 1, `Enter on Delete M1 (of 2): focus moves to the next row's Delete (${fDel}; ${nDel} left)`);
+      await page.keyboard.press('Control+z');
+      await page.waitForTimeout(150);
+      const fUndo = await where();
+      const nUndo = await page.evaluate(() => window.__shell.measurements().map((m) => m.id).join(','));
+      check(tag, fUndo === 'button[del] M2' && nUndo === '1,2', `Ctrl+Z in the list restores M1 and focus stays on M2's Delete (${fUndo}; ids ${nUndo})`);
+    }
     if (vp.coarse) {
       // touch tap-tap (a finger is never withheld from the camera; a tap places a point)
       await page.evaluate(() => window.__stage0.jumpTo(7680, 7680, -2));
@@ -568,6 +602,20 @@ for (const vp of VIEWPORTS) {
       rec.wheel = await frameCost(page, cdp, () => wheelBurst(page, canvasBox));
       frameCostChecks(tag, 'wheel burst', rec.wheel);
       console.log(`     [${tag}] wheel: ${rec.wheel.frames} frames, CDP ${JSON.stringify(rec.wheel.cdp)}, mutations while moving ${JSON.stringify(rec.wheel.kinds)}`);
+      await settle();
+      // ---- 6b: the scripted path with the Engine section open: engine statuses wait for rest ----
+      await page.click('#engineBtn');
+      await page.waitForTimeout(400);
+      rec.scriptedPath = await frameCost(page, cdp, async () => {
+        await page.evaluate(() => window.__stage0.runPath());
+        await page.waitForFunction(() => window.__stage0.pathDone === true, null, { timeout: 300_000, polling: 250 });
+        await page.waitForTimeout(300);
+      });
+      frameCostChecks(tag, 'scripted path (Engine section open)', rec.scriptedPath);
+      const eng = await page.evaluate(() => document.getElementById('engStatus').textContent);
+      check(tag, eng.startsWith('scripted path done'), `the path's final status reaches the Engine section at rest ("${eng}")`);
+      console.log(`     [${tag}] scripted path: ${rec.scriptedPath.frames} frames, CDP ${JSON.stringify(rec.scriptedPath.cdp)}, mutations while moving ${JSON.stringify(rec.scriptedPath.kinds)}`);
+      await page.keyboard.press('Escape');
       await settle();
     }
   }

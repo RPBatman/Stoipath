@@ -159,7 +159,28 @@ const engSummary = $('engSummary');
 const engDevice = $('engDevice');
 class ShellUi implements ViewerUi {
   handlers: ViewerButtonHandlers | null = null;
+  /**
+   * The engine issues statuses from inside its frame, `scripted path running n/N` every OVERLAY_REFRESH_FRAMES frames
+   * while the path moves the camera. The Engine status row and the strip notice are at-rest chrome (SHELL.md "Frame
+   * budget"), so a status waits here and the frame hook applies it on the next settled frame (the same frame when the
+   * view is at rest). Context loss and restore are applied at once (they go to the assertive region too), and so is
+   * every status before the first frame (loading).
+   */
+  private pending: string | null = null;
   setStatus(text: string): void {
+    if (viewer === null || text.startsWith('WebGL context')) {
+      this.pending = null; // a newer status: an older pending one must not overwrite it later
+      this.apply(text);
+    } else this.pending = text;
+  }
+  /** Frame hook, settled frames only. */
+  flush(): void {
+    if (this.pending === null) return;
+    const t = this.pending;
+    this.pending = null;
+    this.apply(t);
+  }
+  private apply(text: string): void {
     engStatus.set(text === '' ? '—' : text);
     const cap = text.charAt(0).toUpperCase() + text.slice(1);
     if (text.startsWith('loading') || text.startsWith('starting')) notices.engine('Opening the slide…');
@@ -424,6 +445,15 @@ const commands: Command[] = [
     keys: [['⇧', '+'], ['⇧', '−']],
     notInBuild: true,
     keymapOnly: true,
+  },
+  {
+    id: 'tool:area',
+    group: 'Not in this build',
+    label: 'Measure area',
+    meta: 'M measures length',
+    keys: [['⇧', 'M']],
+    notInBuild: true,
+    run: () => refuse('Area measurement is not part of this Stage-0 build; M measures length'),
   },
   { id: 'rotate', group: 'Not in this build', label: 'Rotate 90°', meta: 'not in the Stage-0 engine', keys: [['R'], ['⇧', 'R']], notInBuild: true, run: () => refuse('Rotation is not part of the Stage-0 engine') },
   { id: 'tool:polygon', group: 'Not in this build', label: 'Polygon, freehand, rectangle, ellipse, point', meta: 'measure only in Stage-0', keys: [['P'], ['F'], ['X'], ['E'], ['T']], notInBuild: true, run: notInBuild('Polygon and freehand drawing') },
@@ -710,7 +740,7 @@ window.addEventListener('keydown', (e) => {
       run('tool:measure');
       break;
     case 'M':
-      refuse('Area measurement is not part of this Stage-0 build; M measures length');
+      run('tool:area');
       break;
     case 'r':
     case 'R':
@@ -878,10 +908,26 @@ async function start(): Promise<void> {
 }
 
 // ------------------------------------------------------------------ measurements list (Context → Measurements)
+/**
+ * Focus a row's button after a re-render (WCAG 2.4.3): the row with `id`, else the row now at `index` (the one that
+ * slid into a deleted row's place, or the new last row), else the Measurements tab when the list is empty. The list is
+ * re-rendered with replaceChildren(), so a button held from before the change is detached and cannot take focus.
+ */
+function focusMeasurement(id: string, act: string, index: number): void {
+  const list = $('measList');
+  const row = list.querySelector<HTMLElement>(`[data-id="${id}"]`) ?? list.children[Math.min(index, list.children.length - 1)] ?? null;
+  (row?.querySelector<HTMLElement>(`button[data-act="${act}"]`) ?? $('tab-meas')).focus();
+}
+
 function renderMeasurements(): void {
   const m = measure;
   if (m === null) return;
   const list = $('measList');
+  // Keep a keyboard user's place across the re-render (select, delete, undo / redo with focus in the list).
+  const a = document.activeElement;
+  const btn = a instanceof HTMLElement && list.contains(a) ? a.closest<HTMLElement>('button[data-act]') : null;
+  const focusedRow = btn?.closest<HTMLElement>('[data-id]') ?? null;
+  const restore = btn != null && focusedRow !== null ? { id: focusedRow.dataset['id'] ?? '', act: btn.dataset['act'] ?? 'fly', index: Array.prototype.indexOf.call(list.children, focusedRow) as number } : null;
   list.replaceChildren();
   $('measCount').textContent = String(m.items.length);
   $('measEmpty').hidden = m.items.length > 0;
@@ -899,17 +945,19 @@ function renderMeasurements(): void {
     if (sel) row.setAttribute('aria-current', 'true');
     list.append(row);
   }
+  if (restore !== null) focusMeasurement(restore.id, restore.act, restore.index);
 }
 $('measList').addEventListener('click', (e) => {
   const btn = e.target instanceof Element ? e.target.closest<HTMLElement>('button[data-act]') : null;
   const row = btn?.closest<HTMLElement>('[data-id]');
   if (btn == null || row == null || measure === null || viewer === null) return;
   const mid = Number(row.dataset['id']);
+  const index = Array.prototype.indexOf.call(row.parentElement?.children ?? [], row) as number;
+  // The change re-renders the list (row and btn are detached after it). renderMeasurements() keeps focus when the
+  // button had it; the explicit focus below covers browsers that do not focus a clicked button (Safari, Firefox on macOS).
   if (btn.dataset['act'] === 'del') {
-    const next = row.nextElementSibling ?? row.previousElementSibling;
     measure.remove(mid);
-    const target = next instanceof HTMLElement ? next.querySelector<HTMLElement>('button[data-act="del"]') : null;
-    (target ?? $('tab-meas')).focus();
+    focusMeasurement(String(mid), 'del', index); // the neighbour that took its place, else the previous row, else the tab
     return;
   }
   const it = measure.items.find((x) => x.id === mid);
@@ -920,7 +968,7 @@ $('measList').addEventListener('click', (e) => {
   const lz = Math.min(s.maxLogZoom, Math.max(s.minLogZoom, Math.log2((0.6 * Math.min(s.viewW, s.viewH)) / span)));
   viewer.commands.flyTo((it.ax + it.bx) / 2, (it.ay + it.by) / 2, lz, 'nav', reduced());
   notices.transient(`Flew to M${it.id} · ${formatLengthUm(it.um)}`);
-  (row.querySelector<HTMLElement>('button[data-act="fly"]') ?? btn).focus();
+  focusMeasurement(String(mid), 'fly', index);
 });
 
 // ------------------------------------------------------------------ per-frame hook (inside the engine's rAF loop)
@@ -1000,6 +1048,7 @@ function onFrame(s: FrameSnapshot): void {
     renderSharp();
   notices.tick(s.now, s.settled);
   if (!s.settled) return;
+  ui.flush(); // an engine status issued while the view moved (the scripted path's progress) is written now, at rest
 
   // ---- at rest only: settle-time writes (aria, pressed states, chips, Engine section), throttled to 4 Hz
   if (s.now - lastSlow >= 250) {
