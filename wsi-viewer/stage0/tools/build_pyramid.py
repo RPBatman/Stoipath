@@ -5,7 +5,12 @@ Input : a tiled pyramidal TIFF (CAMELYON16 Philips BigTIFF, Aperio SVS, ...) as 
         https:// URL (read with HTTP Range requests; no full download needed).
 Output: <out>/tiles/{level}/{x}_{y}.jpg   level 0 = full resolution, last level = one tile
         <out>/manifest.json                geometry, per-level byte statistics, provenance
-        <out>/region_context.jpg           slide thumbnail with the chosen region outlined
+        <out>/region_context.jpg           slide thumbnail with the chosen region outlined (region mode)
+
+Modes: by default a tile-aligned region is cut (CAMELYON16 Stage-0 build). --full builds the whole
+level-0 extent of the slide instead (OpenSlide Aperio test slides, incl. JPEG 2000 SVS); level 0 is
+then read and written in bands of --band-rows rows so memory stays bounded, and the next level is
+assembled from the bands' exact 2x2 means, so the output equals an all-in-memory build.
 
 The region is cut from the source at its native resolution (no resampling), then OUR pyramid is
 built by exact 2x2 box averaging of the decoded pixels, so every level derives from the same
@@ -18,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import math
 import os
@@ -39,6 +45,7 @@ from wsi_source import (  # noqa: E402
     open_slide,
     pixel_spacing_um,
     read_region,
+    read_window,
     source_description,
     tissue_mask,
 )
@@ -68,6 +75,9 @@ PINNED_BASE_MAX_PX = 4096
 DEFAULT_SIZE = 16384
 # Margin (level-0 px) kept around an annotated tumour when auto-selecting the region.
 DEFAULT_MARGIN = 1024
+# --full: level-0 rows read, tiled and downsampled per band. A multiple of TILE_SIZE (so level-0 tiles
+# never straddle bands) and even (so 2x2 blocks never do). 4096 rows of a 66000 px wide slide = 0.8 GB.
+DEFAULT_BAND_ROWS = 4096
 
 
 def parse_region(s: str) -> tuple[int, int, int, int]:
@@ -186,22 +196,80 @@ def encode_tile(rgb: np.ndarray, quality: int, subsampling: str) -> bytes:
     return imagecodecs.jpeg_encode(np.ascontiguousarray(rgb), level=quality, subsampling=subsampling, optimize=True)
 
 
-def write_level(arr: np.ndarray, level: dict, tiles_dir: str, quality: int, subsampling: str, workers: int) -> list[int]:
+def write_level(arr: np.ndarray, level: dict, tiles_dir: str, quality: int, subsampling: str, workers: int,
+                row0: int = 0) -> list[int]:
+    """Encode `arr` as tiles of `level`. `arr` is the whole level (row0 = 0) or, in --full mode, a
+    band of it whose first row is tile row `row0`. Edge tiles are cropped, never padded."""
     d = os.path.join(tiles_dir, str(level["index"]))
     os.makedirs(d, exist_ok=True)
     t = TILE_SIZE
-    jobs = [(x, y) for y in range(level["rows"]) for x in range(level["cols"])]
+    rows = level["rows"] if row0 == 0 and arr.shape[0] == level["height"] else math.ceil(arr.shape[0] / t)
+    jobs = [(x, y) for y in range(rows) for x in range(level["cols"])]
 
     def work(xy):
         x, y = xy
         tile = arr[y * t : (y + 1) * t, x * t : (x + 1) * t]
         data = encode_tile(tile, quality, subsampling)
-        with open(os.path.join(d, f"{x}_{y}.jpg"), "wb") as fh:
+        with open(os.path.join(d, f"{x}_{y + row0}.jpg"), "wb") as fh:
             fh.write(data)
         return len(data)
 
     with ThreadPoolExecutor(max_workers=workers) as ex:
         return list(ex.map(work, jobs))
+
+
+def level_stats(lv: dict, sizes: list[int]) -> None:
+    lv.update({"tiles": len(sizes), "bytes": int(sum(sizes)), "medianBytesPerTile": int(statistics.median(sizes)),
+               "minBytesPerTile": int(min(sizes)), "maxBytesPerTile": int(max(sizes))})
+
+
+def sha256_file(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 22), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def build_full(src, source_level: int, levels: list[dict], tiles_dir: str, args, log) -> tuple[float, float]:
+    """--full: write every level of the whole-slide pyramid. Level 0 is streamed in bands of
+    args.band_rows rows (read -> tiles -> exact 2x2 mean into the level-1 array); levels >= 1 are then
+    built in memory exactly as in region mode. Returns (source read seconds, encode seconds)."""
+    W, H = levels[0]["width"], levels[0]["height"]
+    B = args.band_rows
+    nxt = np.empty((levels[1]["height"], levels[1]["width"], 3), np.uint8) if len(levels) > 1 else None
+    sizes0: list[int] = []
+    fetch_s = encode_s = 0.0
+    t_lv = time.time()
+    for by in range(0, H, B):
+        bh = min(B, H - by)
+        t0 = time.time()
+        band = read_window(src, source_level, 0, by, W, bh, workers=16 if src.is_remote else args.workers)
+        t1 = time.time()
+        sizes0 += write_level(band, levels[0], tiles_dir, args.quality, args.subsampling, args.workers, row0=by // TILE_SIZE)
+        if nxt is not None:
+            d = downsample2x(band)  # bands start on even rows, so this equals the whole-image 2x2 mean
+            nxt[by // 2 : by // 2 + d.shape[0]] = d
+        fetch_s += t1 - t0
+        encode_s += time.time() - t1
+        log(f"  level 0 band rows {by}-{by + bh - 1} of {H}: read {t1 - t0:.1f}s, tiles+downsample {time.time() - t1:.1f}s")
+        del band
+    lv = levels[0]
+    level_stats(lv, sizes0)
+    log(f"level 0: {lv['width']}x{lv['height']} {lv['cols']}x{lv['rows']}={len(sizes0)} tiles, "
+        f"{sum(sizes0)/1e6:.2f} MB, median {statistics.median(sizes0)/1e3:.1f} kB/tile, {time.time()-t_lv:.1f}s")
+    cur = nxt
+    t_enc = time.time()
+    for lv in levels[1:]:
+        assert cur.shape[1] == lv["width"] and cur.shape[0] == lv["height"], (cur.shape, lv)
+        t0 = time.time()
+        sizes = write_level(cur, lv, tiles_dir, args.quality, args.subsampling, args.workers)
+        level_stats(lv, sizes)
+        log(f"level {lv['index']}: {lv['width']}x{lv['height']} {lv['cols']}x{lv['rows']}={len(sizes)} tiles, "
+            f"{sum(sizes)/1e6:.2f} MB, median {statistics.median(sizes)/1e3:.1f} kB/tile, {time.time()-t0:.1f}s")
+        if lv is not levels[-1]:
+            cur = downsample2x(cur)
+    return fetch_s, encode_s + (time.time() - t_enc)
 
 
 def main(argv=None) -> int:
@@ -219,7 +287,20 @@ def main(argv=None) -> int:
     ap.add_argument("--source-meta", help="JSON file with extra provenance (licence, checksums) merged into manifest.source")
     ap.add_argument("--clean", action="store_true", help="delete <out>/tiles before writing")
     ap.add_argument("--dry-run", action="store_true", help="select the region and report; write nothing but region_context.jpg")
+    ap.add_argument("--full", action="store_true", help="build the whole slide (no region cut); level 0 is streamed in bands")
+    ap.add_argument("--band-rows", type=int, default=DEFAULT_BAND_ROWS,
+                    help=f"--full: level-0 rows per band, a multiple of {TILE_SIZE} (default {DEFAULT_BAND_ROWS})")
+    ap.add_argument("--input-url", help="canonical URL of the --input file (e.g. its release asset) recorded as "
+                    "manifest.source.input; a local --input is then SHA-256 hashed and must match source-meta 'sha256' if given")
     args = ap.parse_args(argv)
+    if args.full and (args.region or args.annotation):
+        ap.error("--full builds the whole slide; it cannot be combined with --region or --annotation")
+    if args.band_rows <= 0 or args.band_rows % TILE_SIZE:
+        ap.error(f"--band-rows must be a positive multiple of {TILE_SIZE}")
+    meta = {}
+    if args.source_meta:
+        with open(args.source_meta) as fh:
+            meta = json.load(fh)
 
     t_start = time.time()
     log = lambda *a: print(f"[{time.time()-t_start:7.1f}s]", *a, flush=True)  # noqa: E731
@@ -231,8 +312,20 @@ def main(argv=None) -> int:
     mpp0, mpp_note = pixel_spacing_um(src)
     mpp = round(mpp0 * (PYRAMID_FACTOR**args.source_level), 6) if mpp0 else None
 
+    local_sha256 = None
+    if args.input_url and not src.is_remote:
+        local_sha256 = sha256_file(args.input)
+        want = meta.get("sha256")
+        if want and want.lower() != local_sha256:
+            raise SystemExit(f"sha256 of {args.input} is {local_sha256}, source-meta expects {want}")
+        log(f"local copy sha256 {local_sha256}" + (" == source-meta sha256" if want else ""))
+
     os.makedirs(args.out, exist_ok=True)
-    if args.region:
+    if args.full:
+        region = (0, 0, int(p0.shape[1]), int(p0.shape[0]))
+        thumb = None
+        how = f"full slide: the whole source level-{args.source_level} extent, no region cut"
+    elif args.region:
         region = parse_region(args.region)
         thumb = None
         how = "explicit --region"
@@ -244,6 +337,22 @@ def main(argv=None) -> int:
     if args.dry_run:
         return 0
 
+    tiles_dir = os.path.join(args.out, "tiles")
+    if args.full:
+        if args.clean and os.path.isdir(tiles_dir):
+            shutil.rmtree(tiles_dir)
+        levels = level_geometry(w, h, TILE_SIZE)
+        fetch_s, encode_s = build_full(src, args.source_level, levels, tiles_dir, args, log)
+        net = {"requests": src.remote.requests, "bytes": src.remote.bytes} if src.remote else None
+    else:
+        levels, fetch_s, encode_s, net = build_region(src, args, region, tiles_dir, log)
+    return write_manifest(src, args, meta, region, how, mpp, mpp_note, levels, fetch_s, encode_s, net, local_sha256,
+                          t_start, log)
+
+
+def build_region(src, args, region, tiles_dir, log):
+    """Region mode (the original Stage-0 path): read the region into memory, then write every level."""
+    x0, y0, w, h = region
     t_fetch = time.time()
     last = [0]
 
@@ -257,7 +366,6 @@ def main(argv=None) -> int:
     net = {"requests": src.remote.requests, "bytes": src.remote.bytes} if src.remote else None
     log(f"source region read in {fetch_s:.1f}s" + (f" ({net['requests']} range requests, {net['bytes']/1e6:.1f} MB)" if net else ""))
 
-    tiles_dir = os.path.join(args.out, "tiles")
     if args.clean and os.path.isdir(tiles_dir):
         shutil.rmtree(tiles_dir)
     levels = level_geometry(w, h, TILE_SIZE)
@@ -269,14 +377,17 @@ def main(argv=None) -> int:
         t0 = time.time()
         sizes = write_level(cur, lv, tiles_dir, args.quality, args.subsampling, args.workers)
         per_level_bytes[lv["index"]] = sizes
-        lv.update({"tiles": len(sizes), "bytes": int(sum(sizes)), "medianBytesPerTile": int(statistics.median(sizes)),
-                   "minBytesPerTile": int(min(sizes)), "maxBytesPerTile": int(max(sizes))})
+        level_stats(lv, sizes)
         log(f"level {lv['index']}: {lv['width']}x{lv['height']} {lv['cols']}x{lv['rows']}={len(sizes)} tiles, "
             f"{sum(sizes)/1e6:.2f} MB, median {statistics.median(sizes)/1e3:.1f} kB/tile, {time.time()-t0:.1f}s")
         if lv is not levels[-1]:
             cur = downsample2x(cur)
     encode_s = time.time() - t_enc
+    return levels, fetch_s, encode_s, net
 
+
+def write_manifest(src, args, meta, region, how, mpp, mpp_note, levels, fetch_s, encode_s, net, local_sha256, t_start, log):
+    x0, y0, w, h = region
     total_bytes = sum(lv["bytes"] for lv in levels)
     pinned_bytes = sum(lv["bytes"] for lv in levels if lv["pinned"])
     source = {
@@ -291,9 +402,18 @@ def main(argv=None) -> int:
         "note": "Pixels are decoded source tiles (no resampling) re-encoded with the settings below; "
                 "coarser levels are exact 2x2 box means of the decoded level-0 pixels.",
     }
-    if args.source_meta:
-        with open(args.source_meta) as fh:
-            source.update(json.load(fh))
+    if args.full:
+        source["regionLevel0"]["fullSlide"] = True
+        lib, mag = source["format"].get("aperioLibrary"), source["format"].get("aperioAppMag")
+        if lib and "ScanScope ID" in (src.pages[0].description or ""):
+            source["scanner"] = f"Aperio ScanScope ({lib} in the ImageDescription{f'; AppMag {mag}' if mag else ''})"
+    if args.input_url:
+        source["input"] = args.input_url
+        if local_sha256:
+            source["sha256"] = local_sha256
+            source["inputReadFrom"] = ("local copy whose SHA-256 equals source-meta sha256" if meta.get("sha256")
+                                       else "local copy (SHA-256 recorded, not compared)")
+    source.update(meta)
     manifest = {
         "schema": "stoipath-stage0-pyramid/1",
         "width": w,

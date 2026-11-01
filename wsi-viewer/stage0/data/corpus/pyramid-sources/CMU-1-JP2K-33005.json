@@ -1,0 +1,18 @@
+{
+  "dataset": "OpenSlide test data (Aperio)",
+  "file": "Aperio/CMU-1-JP2K-33005.svs",
+  "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-JP2K-33005.svs",
+  "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-1-JP2K-33005.svs",
+  "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+  "releaseAssetDigest": "sha256:9a1923cd9bcb260ba4d99d64f8d6e32550648c332ba48817f920662f3a513420",
+  "sha256": "9a1923cd9bcb260ba4d99d64f8d6e32550648c332ba48817f920662f3a513420",
+  "description": "Export of CMU-1.svs, brightfield, JPEG 2000, ICT",
+  "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+  "licence": "CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)",
+  "licenceId": "CC0-1.0",
+  "stain": "H&E",
+  "stainNote": "H&E as registered for the samples-v1 corpus; the OpenSlide description itself says only 'brightfield'.",
+  "tissue": null,
+  "tissueNote": "not stated in the OpenSlide description ('Export of CMU-1.svs, brightfield, JPEG 2000, ICT'), so left out",
+  "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied."
+}

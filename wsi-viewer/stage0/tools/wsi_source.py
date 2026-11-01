@@ -5,8 +5,10 @@ A remote source is read with HTTP Range requests, so a 16k x 16k region can be p
 multi-gigabyte slide without downloading the whole file. Contiguous tiles are coalesced into one
 request because each request through a proxy costs ~0.3-0.7 s of latency.
 
-Verified against CAMELYON16 Philips-style BigTIFFs (512 px JPEG tiles with JPEGTables), and the
-generic tifffile path also covers Aperio SVS and other tiled TIFFs.
+Verified against CAMELYON16 Philips-style BigTIFFs (512 px JPEG tiles with JPEGTables) and, for the
+full-slide builds of the OpenSlide Aperio test slides (2026-11-01), against Aperio SVS with 240 px and
+256 px JPEG tiles and with JPEG 2000 tiles (compression 33003 YCbCr and 33005 RGB, decoded by
+imagecodecs through tifffile; decoded pixels checked against OpenSlide read_region).
 """
 from __future__ import annotations
 
@@ -121,6 +123,12 @@ class RangeFile(io.RawIOBase):
         return len(d)
 
 
+# Aperio associated images: the description's second line is 'label WxH', 'macro WxH' or, for the
+# stored thumbnail, 'WxH -> wxh - ...'.
+_APERIO_ASSOCIATED = re.compile(r"\n\s*(label|macro)\s+\d+x\d+", re.IGNORECASE)
+_APERIO_THUMB = re.compile(r"^Aperio[^\n]*\n\s*\d+x\d+\s*->\s*\d+x\d+", re.IGNORECASE)
+
+
 @dataclass
 class SlideSource:
     """A tiled pyramidal TIFF opened for region reads."""
@@ -151,11 +159,14 @@ def open_slide(path_or_url: str) -> SlideSource:
         size = os.path.getsize(path_or_url)
     # Pyramid pages: tiled, RGB-ish, sorted by width descending. Excludes the Philips 'Macro'
     # photo (not tiled) and Aperio label/macro strips, which must never reach the deploy.
+    # Aperio label/macro/thumbnail pages are stripped (not tiled); their description reads
+    # 'Aperio Image Library vX\nlabel 387x463', so the second test also excludes a tiled one.
     pages = [
         p
         for p in tif.pages
         if p.is_tiled and p.tilewidth and p.ndim >= 3 and p.shape[-1] in (3, 4)
         and not (p.description or "").lower().startswith(("macro", "label"))
+        and not _APERIO_ASSOCIATED.search(p.description or "")
     ]
     pages.sort(key=lambda p: p.shape[1], reverse=True)
     if not pages:
@@ -209,7 +220,49 @@ def source_description(src: SlideSource) -> dict:
     q = re.search(r"quality=(\d+)", "\n".join((p.description or "") for p in src.pages[1:2]))
     if q:
         info["sourceJpegQuality"] = int(q.group(1))
+    if desc.startswith("Aperio"):
+        info.update(aperio_description(src))
     return info
+
+
+def aperio_description(src: SlideSource) -> dict:
+    """Aperio SVS facts from the ImageDescription strings and the TIFF structure (no pixels read).
+
+    Keeps only technical fields (library version, AppMag, MPP, per-level codec and quality) and
+    lists the associated images that exist in the file, all of which the pyramid build skips.
+    Scan date/time, user GUID, filename and title fields are deliberately not copied.
+    """
+    p0 = src.pages[0]
+    desc = p0.description or ""
+    out: dict = {"compressionTag": int(p0.compression)}
+    m = re.match(r"(Aperio Image Library v[0-9.]+)", desc)
+    if m:
+        out["aperioLibrary"] = m.group(1)
+    fields = dict(re.findall(r"\|\s*([A-Za-z ]+?)\s*=\s*([^|\r\n]*)", desc))
+    for k in ("AppMag", "MPP"):
+        if k in fields:
+            out["aperio" + k] = fields[k].strip()
+    # Per pyramid level: '(256x256) JPEG/RGB Q=30' or '(256x256) -> 11500x8228 J2K/YUV16 Q=70'.
+    codecs = []
+    for p in src.pages:
+        c = re.search(r"\(\d+x\d+\)(?:\s*->\s*\d+x\d+)?\s+([A-Za-z0-9/]+)\s+Q=(\d+)", p.description or "")
+        codecs.append({"codec": c.group(1), "quality": int(c.group(2))} if c else None)
+    out["sourceLevelCodecs"] = codecs
+    if p0.compression.value in (33003, 33005):
+        out["jpeg2000"] = {33003: "Aperio JPEG 2000, YCbCr components (decoded to RGB by tifffile/imagecodecs)",
+                           33005: "Aperio JPEG 2000, RGB components (codestream MCT)"}[p0.compression.value]
+    assoc = {}
+    for p in src.tif.pages:
+        d = p.description or ""
+        if p in src.pages:
+            continue
+        a = _APERIO_ASSOCIATED.search(d)
+        name = a.group(1).lower() if a else ("thumbnail" if _APERIO_THUMB.search(d) else None)
+        if name:
+            assoc[name] = [int(p.shape[1]), int(p.shape[0])]
+    out["associatedImages"] = assoc
+    out["associatedImagesRead"] = False
+    return out
 
 
 def _coalesce(ranges: list[tuple[int, int, int]]) -> list[list[tuple[int, int, int]]]:
@@ -243,45 +296,86 @@ def read_region(src: SlideSource, level: int, x0: int, y0: int, w: int, h: int, 
     H, W = page.shape[0], page.shape[1]
     if x0 + w > W or y0 + h > H:
         raise ValueError(f"region {x0},{y0} {w}x{h} exceeds level {level} extent {W}x{H}")
+    return read_window(src, level, x0, y0, w, h, workers=workers, progress=progress)
+
+
+# Local reads: one coalesced group is at most this many bytes, so a band of a few thousand small
+# tiles is spread over several workers (decode runs in the workers; imagecodecs releases the GIL).
+LOCAL_GROUP_BYTES = 1 << 20
+
+
+def read_window(src: SlideSource, level: int, x0: int, y0: int, w: int, h: int, workers: int = DEFAULT_WORKERS,
+                progress=None) -> np.ndarray:
+    """Return an (h, w, 3) uint8 RGB array of any window inside the given *source* pyramid level.
+
+    Unlike `read_region` the window need not be tile-aligned: every source tile that intersects it is
+    decoded and the intersection copied (so a 512-row band of a 240 px-tiled SVS works, and a window
+    may end at the level's right/bottom edge, where the source tiles are partial). For a tile-aligned
+    window the result is the same array `read_region` always returned. Pixels are copied, never
+    resampled; source tiles with byte count 0 stay white (255).
+    """
+    page = src.pages[level]
+    tw, th = page.tilewidth, page.tilelength
+    H, W = page.shape[0], page.shape[1]
+    if x0 < 0 or y0 < 0 or w <= 0 or h <= 0 or x0 + w > W or y0 + h > H:
+        raise ValueError(f"window {x0},{y0} {w}x{h} is not inside level {level} extent {W}x{H}")
     cols = (W + tw - 1) // tw
     offsets, counts = page.dataoffsets, page.databytecounts
     jpegtables = page.jpegtables
     out = np.full((h, w, 3), 255, np.uint8)  # missing/empty tiles (count 0) are white background
     wanted = []
-    for ty in range(y0 // th, (y0 + h) // th):
-        for tx in range(x0 // tw, (x0 + w) // tw):
+    for ty in range(y0 // th, (y0 + h + th - 1) // th):
+        for tx in range(x0 // tw, (x0 + w + tw - 1) // tw):
             idx = ty * cols + tx
             if counts[idx] > 0:
                 wanted.append((idx, offsets[idx], counts[idx]))
-    groups = _coalesce(wanted)
-    done = [0]
-
-    def fetch_group(g):
-        start = g[0][1]
-        end = g[-1][1] + g[-1][2] - 1
-        if src.remote is not None:
-            blob = src.remote.fetch(start, end)
-        else:
-            fh = src.tif.filehandle
-            fh.seek(start)
-            blob = fh.read(end - start + 1)
-        return [(idx, blob[off - start : off - start + cnt]) for idx, off, cnt in g]
+    if src.remote is not None:
+        groups = _coalesce(wanted)
+    else:
+        groups = [g for big in _coalesce(wanted) for g in _split_group(big, LOCAL_GROUP_BYTES)]
+    fd = None if src.remote is not None else os.open(src.path, os.O_RDONLY)
 
     def place(idx, data):
-        seg, indices, _shape = page.decode(data, idx, jpegtables=jpegtables)
+        seg, _indices, _shape = page.decode(data, idx, jpegtables=jpegtables)
         arr = seg[0] if seg.ndim == 4 else seg
         ty, tx = idx // cols, idx % cols
-        y, x = ty * th - y0, tx * tw - x0
-        arr = arr[: min(th, h - y), : min(tw, w - x), :3]
-        out[y : y + arr.shape[0], x : x + arr.shape[1]] = arr
+        y, x = ty * th - y0, tx * tw - x0  # tile origin relative to the window (may be negative)
+        sy, sx = max(0, -y), max(0, -x)
+        ey, ex_ = min(th, h - y), min(tw, w - x)
+        arr = arr[sy:ey, sx:ex_, :3]
+        out[y + sy : y + sy + arr.shape[0], x + sx : x + sx + arr.shape[1]] = arr
 
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        for tiles in ex.map(fetch_group, groups):
-            for idx, data in tiles:
-                place(idx, data)
-            done[0] += len(tiles)
-            if progress:
-                progress(done[0], len(wanted))
+    def work(g):
+        start = g[0][1]
+        end = g[-1][1] + g[-1][2] - 1
+        if fd is None:
+            blob = src.remote.fetch(start, end)
+        else:
+            # os.pread is positional, so worker threads never race on a shared file offset.
+            blob = os.pread(fd, end - start + 1, start)
+        for idx, off, cnt in g:
+            place(idx, blob[off - start : off - start + cnt])  # disjoint writes into `out`
+        return len(g)
+
+    done = 0
+    try:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            for n in ex.map(work, groups):
+                done += n
+                if progress:
+                    progress(done, len(wanted))
+    finally:
+        if fd is not None:
+            os.close(fd)
+    return out
+
+
+def _split_group(g: list[tuple[int, int, int]], max_bytes: int) -> list[list[tuple[int, int, int]]]:
+    out: list[list[tuple[int, int, int]]] = [[]]
+    for r in g:
+        if out[-1] and (r[1] + r[2]) - out[-1][0][1] > max_bytes:
+            out.append([])
+        out[-1].append(r)
     return out
 
 

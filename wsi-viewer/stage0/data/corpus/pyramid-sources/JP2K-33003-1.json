@@ -1,0 +1,18 @@
+{
+  "dataset": "OpenSlide test data (Aperio)",
+  "file": "Aperio/JP2K-33003-1.svs",
+  "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1.svs",
+  "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/JP2K-33003-1.svs",
+  "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+  "releaseAssetDigest": "sha256:6205ccf75a8fa6c32df7c5c04b7377398971a490fb6b320d50d91f7ba6a0e6fd",
+  "sha256": "6205ccf75a8fa6c32df7c5c04b7377398971a490fb6b320d50d91f7ba6a0e6fd",
+  "description": "Aorta tissue, brightfield, JPEG 2000, YCbCr",
+  "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+  "licence": "distributable (licence field of the OpenSlide test data entry, as recorded in samples-manifest.json)",
+  "licenceId": "distributable",
+  "stain": "H&E, aorta",
+  "stainNote": "H&E as registered for the samples-v1 corpus; the OpenSlide description itself says only 'brightfield'.",
+  "tissue": "aorta",
+  "tissueNote": "from the OpenSlide description ('Aorta tissue, brightfield, JPEG 2000, YCbCr')",
+  "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied."
+}
