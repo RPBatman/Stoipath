@@ -156,7 +156,7 @@ Healthy and current: OpenSlide (4.0.1 Jun 2026, Python Oct 2026), libvips (8.18.
 ## Open questions
 
 1. **Real format mix of target customers.** No verified installed-base data; need a sample of actual slide inventories (clinical vs research) before fixing the ingest priority order and the iSyntax investment.
-2. **iSyntax strategy.** Is libisyntax complete and bit-accurate for all iSyntax versions (incl. newer i2Syntax **[unverified]**) and fast enough? Current Philips SDK licence text and whether a sealed worker is acceptable; whether Philips's move to DICOM (2026 conformance statements listing JPEG XL) makes iSyntax ingest a shrinking problem.
+2. **iSyntax strategy** (i2Syntax is now an explicit open row in plan 02 §4.1, 2026-11-01). Is libisyntax complete and bit-accurate for all iSyntax versions (incl. newer i2Syntax **[unverified]**) and fast enough? Current Philips SDK licence text and whether a sealed worker is acceptable; whether Philips's move to DICOM (2026 conformance statements listing JPEG XL) makes iSyntax ingest a shrinking problem.
 3. **NDPI JPEG XR prevalence** on current NanoZoomer firmware (opentile documents it; OpenSlide does not), and the share of NDPI low levels without restart markers.
 4. **Aperio GT450 specifics:** tile size (256?) and level factors; whether label/macro handling on "newer slides" (OpenSlide 4.0.1 note) affects us.
 5. **HTJ2K lossless transcoding from J2K Part 1** with open tooling (OpenJPH/OpenJPEG) at scale, and client-side openjphjs performance on low-end Android.

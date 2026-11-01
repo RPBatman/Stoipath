@@ -85,6 +85,7 @@ Must requirements are those without which goal 1 is unmeasurable, goal 2 is unre
 | FR-S7 | Local-file open in desktop and Python through the in-process core: TIFF-JPEG and DICOM directly; other vendors through an isolated LGPL/GPL worker; no copyleft code in any client SDK | M | R | v0.7 (Tauri desktop; **(adjusted after critique: was MVP)**), v0.9 (wheel) | scan, fuzz |
 | FR-S8 | Façades on the Edge Translator: DICOMweb over the Zarr side (MVP 0.5); IIIF/DZI over both (v0.7), Iris-shaped (v0.9); off-grid IIIF regions on a rate-limited slow path resampled with a permissive Rust crate (`fast_image_resize`/`image`) — **never libvips inside the translator** (ADR-0011) **(adjusted after critique)**; first-party clients only ever request grid-aligned tiles; the regional/on-prem binary behind Caddy/nginx is packaged at MVP 0.5 (UT-operated topology for pilots), the Cloudflare Worker build at v0.7 | M (DICOMweb; on-prem binary), S (IIIF/DZI), S (Iris) | All | MVP 0.5; v0.7; v0.9 | conf, gate |
 | FR-S9 | Published DICOM PS3.2 conformance statement with the first DICOMweb release; DICOM WG-26 WSI connectathon within 12 months of it; published `TILED_FULL`+EOT and sharded-0.5 conformance corpus | M | C | MVP 0.5; v1 | conf, human |
+| FR-S10 | Single-level still images (JPEG, PNG, BMP) open in every product as a one-level source with physical size when known (MPP from EXIF/DICOM VL or entered by the author, else shown in pixels with no scale bar); images above 4096 px on the long side get a derived 512² pyramid at ingest; the original bytes stay canonical **(added 2026-11-01: education collections and gross photographs need it)** | S | E, C | MVP 0.5 | auto |
 
 ### 2.4 Integration and embedding
 
@@ -268,6 +269,7 @@ Priority order follows expected volume and passthrough fidelity (note 01 §a.5):
 | Hamamatsu NDPI (S360MD) | C (JPEG levels), D (JPEG XR levels) | opentile re-mux via libjpeg-turbo transforms; OpenSlide for JXR levels | lossless (re-grouped) / one generation | MVP 0.5 | C, R |
 | Philips TIFF export | B | own TIFF; blank-tile synthesis for sparse tiles | lossless | MVP 0.5 | C |
 | Philips iSyntax | D | libisyntax (BSD-2) in an isolated worker after IP counsel; Philips SDK as sealed oracle only | one generation | v0.9 | C |
+| Philips i2Syntax (iSyntax 2) | D | **open item**: libisyntax is documented for iSyntax 1 only, so v2 support is **[unverified]**; candidates are a libisyntax extension, the Philips SDK under licence in a sealed worker, or the scanner's own DICOM export; decide after a corpus file is tested (added 2026-11-01 after the PathPresenter format comparison) | one generation | v0.9 (to confirm) | C |
 | 3DHISTECH MRXS | D | OpenSlide 4.0.1 (LGPL, isolated worker, v0.7) | one generation | v0.9 | C, R |
 | Roche/Ventana BIF | D at level 0 | OpenSlide 4.0.1 (isolated) | one generation | v0.9 | C |
 | Leica SCN (brightfield / fluorescence) | B per region / D | own TIFF per region; Bio-Formats (GPL, isolated) for fluorescence | lossless / one generation | v0.9 / v1 | C, R |
@@ -277,7 +279,11 @@ Priority order follows expected volume and passthrough fidelity (note 01 §a.5):
 | Olympus/Evident VSI | D | slideio / Bio-Formats (isolated) | one generation | v1 | R |
 | Huron, Motic, Mikroscan, ARGOS AVS | B / C by frame size | own TIFF; opentile oracle | lossless | v0.9 | C |
 | Sakura svslide, Trestle, VMS/VMU | D | OpenSlide (isolated) | one generation | v1 | legacy |
+| Zeiss ZVI (AxioVision, legacy) | D | Bio-Formats `ZeissZVIReader` (GPL, isolated) or slideio; wsi-rs as a permissive candidate after corpus evaluation (added 2026-11-01) | one generation | v1 | legacy, R |
 | DZI, IIIF Image 3.0 (as sources) | A | client adapters | as published | v0.7 | E, R |
+| Still images: JPEG, PNG, BMP (gross photographs, teaching figures, phone captures) | A (JPEG/PNG bytes kept as the original), D (BMP re-encoded to PNG) | own ingest (libjpeg-turbo, `png`); a single-level image is served as-is up to 4096 px on the long side and tiled into a derived 512² pyramid above that (FR-S10) | lossless (original kept) | MVP 0.5 | E, C |
+
+Video (MP4, AVI) and documents (PDF) are not viewer formats. Learn modules and case attachments carry them as media referenced from the module shell or the case record (FR-E2, FR-E7), never as slides **(added 2026-11-01)**.
 
 ### 4.2 Codecs
 
