@@ -2,7 +2,7 @@
 
 The authority is [`stage0/MEASUREMENT_PROTOCOL.md`](../../../stage0/MEASUREMENT_PROTOCOL.md) (§1 set-up, §2 devices, §3 networks,
 §4 cold/warm, §5 steps, §6 metrics, §7 limitations, §8 comparator) and [`stage0/results/README.md`](../../../stage0/results/README.md)
-(file names, CSV). This page is the short form for the Mon 26 / Tue 27 sessions. The viewer records everything itself; you record
+(file names, CSV). This page is the short form for the Mon 2 / Tue 3 Nov sessions (moved from Mon 26 / Tue 27 Oct with the deadline extension). The viewer records everything itself; you record
 only the device/network context, the two 0–3 scores and anomalies.
 
 ## 0. Before the first run (once)
@@ -34,7 +34,7 @@ or underscores.
 | cache | `cold`, `warm` |
 | run | `run1` … `runN`, or `manual` |
 
-Example: `?overlay=1&label=GalaxyA15_Chrome141_home-wifi_cold` → file `2026-10-26_GalaxyA15_Chrome141_home-wifi_cold_run1.json`.
+Example: `?overlay=1&label=GalaxyA15_Chrome141_home-wifi_cold` → file `2026-11-02_GalaxyA15_Chrome141_home-wifi_cold_run1.json`.
 
 ## 2. One cold run (repeat 3× minimum per device × network; each in a NEW private window)
 
@@ -86,7 +86,7 @@ screenshot as `<date>_<device>_<browser>_device.png`. One CSV row per run in `re
 
 ```bash
 cd wsi-viewer/stage0
-python3 tools/summarize_results.py results/exports/2026-10-26/            # writes summary.md + summary.csv into that folder
+python3 tools/summarize_results.py results/exports/2026-11-02/            # writes summary.md + summary.csv into that folder
 python3 tools/summarize_results.py results/ --recursive --out results/summary   # all dates pooled by condition
 ```
 

@@ -1,6 +1,6 @@
 # Results log — TSP 2027 device measurements
 
-Fill as runs come in (Mon 26 Wi-Fi, Tue 27 cellular; **freeze Wed 28 Oct 18:00 CT**). The JSON exports in
+Fill as runs come in (Mon 2 Nov Wi-Fi, Tue 3 Nov cellular; **freeze Wed 4 Nov 18:00 CT**; dates moved with the deadline extension to Fri 6 Nov). The JSON exports in
 `wsi-viewer/stage0/results/exports/<date>/` are the record; the numbers below are convenience copies from the summariser
 (`summary.md` / `summary.csv`, see [`measurement-quickstart.md`](measurement-quickstart.md) §6) so the owner and the agents
 read the same table. Never edit a JSON; an invalid run is deleted and noted here.
