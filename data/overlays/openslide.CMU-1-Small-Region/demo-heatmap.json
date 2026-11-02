@@ -1,0 +1,36 @@
+{
+  "encoding": "uint8-base64",
+  "generator": "stage0/tools/build_demo_heatmap.py 1 · Pillow 12.3.0 · libjpeg-turbo 3.1.4.1 · numpy 2.5.3",
+  "grid": {
+    "cellPx": 128,
+    "cols": 18,
+    "originX": 0,
+    "originY": 0,
+    "rows": 24
+  },
+  "id": "demo-heatmap",
+  "licence": {
+    "id": "CC0-1.0",
+    "text": "CC0 1.0 Universal",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "nodata": 255,
+  "note": "Demo overlay — not a model output",
+  "provenance": {
+    "createdAt": "2026-11-01T17:20:12+00:00",
+    "inputHash": "sha256:49d93e4cd7953e5ea1140369ddf8b17805ce488fb2ad4251bfdbe8b016ad7fb5",
+    "producer": "stoipath tools/build_demo_heatmap.py",
+    "regulatoryStatus": "research",
+    "version": "1"
+  },
+  "schema": "stoipath.rastergrid/1",
+  "slide": {
+    "fingerprint": "2220x2967@0.499@0,0@ed92d5a9f2e8",
+    "id": "openslide.CMU-1-Small-Region"
+  },
+  "sourceLevel": 3,
+  "statistic": "Mean haematoxylin optical density per cell (Ruifrok–Johnston colour deconvolution of the published JPEG tiles), scaled to the 5th–95th percentile of tissue cells. A stain-intensity proxy, not a model output.",
+  "threshold": 0.5,
+  "title": "Demo heatmap",
+  "values": "//////////8n////////////////////N2omTv///////////////////0YwJkv//////////////////0Ax/2Fc/////////////////0E2fv+MNf///////////////xNqua+o9f///////////////zxO5r2z/v///////////////zl5ncH++////////zFdOUFjOTF2if7+p2FH/////////////ww6uf37+3P/////////////CCAf332T//6rcv//////////OiGM13tm9f7/////////////OSK12WO38v//////////////E0uL/qjmbP//////////////Fzl04P5+HEx5////////////IVBukNkvKFhr//////////8AVkJP+cgSDx5k//////////8AZyZHiJEgCB6Z//////////8AOhESfy8KDaBK//////////8hIAcYMxYES/7//////////wpuLwACDhQJvsf//////////zxrJwAIEi0Agub//////////1BBAAAHAQ92zPf//////////0M6AAQAKB16xP7/////"
+}
