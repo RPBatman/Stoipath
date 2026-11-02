@@ -96,9 +96,14 @@ export function install(shell: ShellApi): void {
     }
   });
   shell.bus.on('compareChanged', schedule);
+  // a drawing tool's commit selects what it created (draw-tools DT3): the class picker tells that selection apart
+  shell.bus.on('annotationCreated', ({ slideKey, ids, cause }) => {
+    if (cause === 'edit') actions.noteCreated(slideKey, ids);
+  });
+  shell.bus.on('annotationSelected', ({ slideKey, ids }) => actions.noteSelected(slideKey, ids));
   shell.bus.on('commandInvoked', ({ commandId }) => {
     // the brush slider and the empty sentence depend on which tools are in the build
-    if (commandId.startsWith('tool:')) schedule();
+    if (commandId.startsWith('tool:') || commandId.startsWith('brush:')) schedule();
   });
   schedule();
 

@@ -180,9 +180,17 @@ export class AnnotationsPanel {
     this.capNote = h('p', { class: 'note ann-cap', hidden: '' });
     this.emptyText = h('span', { text: EMPTY_TEXT });
     this.empty = h('div', { class: 'empty ann-empty' }, h('span', { class: 'empty__glyph', 'aria-hidden': 'true' }), this.emptyText);
-    const hint = (this.hint = h('p', { class: 'note ann-hint', hidden: '' }, 'QuPath class names are kept verbatim; QuPath RGB is restored on export (FR-A2). ', h('kbd', { class: 'key', text: 'Tab' }), ' moves through the list · ', h('kbd', { class: 'key', text: 'Space' }), ' flies to the item · ', h('kbd', { class: 'key', text: '⌫' }), ' deletes.'));
+    // Two sentences (Phase A review): the keyboard one is hidden whole under a coarse pointer (annotations.css), as the
+    // library's .lib-keys note is, so touch never reads "… (FR-A2). moves through the list · flies to the item".
+    const hint = (this.hint = h(
+      'p',
+      { class: 'note ann-hint', hidden: '' },
+      h('span', { text: 'QuPath class names are kept verbatim; QuPath RGB is restored on export (FR-A2).' }),
+      h('span', { class: 'ann-keys' }, ' ', h('kbd', { class: 'key', text: 'Tab' }), ' moves through the list · ', h('kbd', { class: 'key', text: 'Space' }), ' flies to the item · ', h('kbd', { class: 'key', text: '⌫' }), ' deletes.'),
+      h('span', { class: 'ann-touch', text: ' Tap an item to fly to it and select it.' }),
+    ));
     this.status = h('p', { class: 'note ann-status', id: 'annStatus' });
-    io.actionsRow.append(io.coordsGroup);
+    io.actionsRow.append(io.coordsGroup, io.importCoordsGroup);
     root.replaceChildren(this.chips, tools, this.brushRow, this.list, this.capNote, this.empty, hint, io.actionsRow, io.dropzone, io.report, this.status, io.input);
   }
 
@@ -203,6 +211,13 @@ export class AnnotationsPanel {
     const brush = this.shell.commands.get('tool:brush');
     const showBrush = brush !== undefined && brush.notInBuild !== true;
     if (this.brushRow.hidden === showBrush) this.brushRow.hidden = !showBrush;
+    // brush:larger / brush:smaller write the pref (draw-tools): the slider follows it (TOOLS-QUESTIONS Wave 4 note)
+    const br = this.brushRadius();
+    if (this.brushInput.value !== String(br) && document.activeElement !== this.brushInput) {
+      this.brushInput.value = String(br);
+      setText(this.brushValue, `${br} px`);
+      setAttr(this.brushInput, 'aria-valuetext', `${br} pixels`);
+    }
     this.renderList(st, slide?.identity.name ?? 'this slide');
     this.io.renderCoords();
     setText(this.status, st === null ? 'No slide open' : st.persistence.text);

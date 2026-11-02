@@ -1171,6 +1171,13 @@ export interface ShellEnv {
   isCoarse(): boolean;
   isWide(): boolean;
   reducedMotion(): boolean;
+  /**
+   * Additive (Phase A review, 2026-11-02): how many CSS px of `view`'s pane an open drawer covers on its left (the
+   * Library drawer at ≥ 1080 px) and on its right (the Context drawer at 1080–1599 px); a docked column and the
+   * phone sheet are outside the canvas area already. Layout reads on call: commands only, never per frame. Fly-to
+   * fits into the uncovered span (annotations, layers' legend), as compare's availability does (§15.13 CP5).
+   */
+  visibleInsets?(view: ViewId): { left: number; right: number };
 }
 
 /** The status strip's one-notice-at-a-time slot (handoff §6.3) and its polite twin. */
@@ -1244,6 +1251,12 @@ export type StoreName = 'annotations' | 'coverage' | 'views' | 'session';
 /** IndexedDB key-value wrapper (database "stoipath-shell"); every call resolves, failures degrade to memory. */
 export interface KeyValueStore {
   readonly available: boolean;
+  /**
+   * Additive (Phase A review, 2026-11-02): why the most recent failed write failed when it left storage available
+   * (a `QuotaExceededError` or `DataCloneError` concerns that value only); null after a write succeeds. Optional so a
+   * test double needs no change.
+   */
+  readonly lastWriteError?: string | null;
   get<T>(store: StoreName, key: string): Promise<T | undefined>;
   put<T>(store: StoreName, key: string, value: T): Promise<boolean>;
   delete(store: StoreName, key: string): Promise<void>;

@@ -381,14 +381,16 @@ export default async function (t) {
         'invalid coordinates': 2,
         'MultiLineString not supported': 1,
         'not a Feature': 1,
-        'outside the slide': 1,
+        'outside this region': 1,
       },
-      'skip reasons are counted per reason',
+      'skip reasons are counted per reason (a region slide says "outside this region")',
     );
     t.ok(r.report.added === 2 && r.report.skipped === 9 && r.report.refused === null && r.drafts.length === 2, `2 added, 9 skipped, not refused (${r.report.added}, ${r.report.skipped})`);
     t.eq(r.drafts[1].draft.geometry.coordinates[0][0], [15300, 15300], 'a feature partly inside the slide is kept, unclipped');
     const all = m.interop.parse(fixtureText('skips.geojson'), PYR, REGION, m.UNBOUNDED);
-    t.ok(all.report.reasons['outside the slide'] === undefined && all.report.added === 3, 'with UNBOUNDED nothing is skipped as outside the slide (a store reloading its own text)');
+    t.ok(all.report.reasons['outside this region'] === undefined && all.report.reasons['outside the slide'] === undefined && all.report.added === 3, 'with UNBOUNDED nothing is skipped as outside the slide (a store reloading its own text)');
+    const full = m.interop.parse(fixtureText('skips.geojson'), PYR, null, BOUNDS);
+    t.ok(full.report.reasons['outside the slide'] === 1 && full.report.reasons['outside this region'] === undefined, 'a slide without a region offset says "outside the slide"');
   }
   {
     const pts = (n) => ({ type: 'FeatureCollection', features: Array.from({ length: n }, (_, i) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [i % 15000, 7] }, properties: { objectType: 'annotation' } })) });
@@ -466,7 +468,18 @@ export default async function (t) {
     delete bare.stoipath;
     t.eq(m.interop.parse(bare, AUTO, REGION, BOUNDS).report.coordinates, 'source-level0', 'auto detects source-level0 from the coordinates alone (every one outside, inside after subtracting)');
     t.eq(m.detectSourceSpace([{ type: 'Point', coordinates: [36864 + 10, 66560 + 10] }, { type: 'Point', coordinates: [100, 100] }], REGION, BOUNDS), false, 'one coordinate inside the pyramid keeps pyramid coordinates');
-    t.eq(m.detectSourceSpace([{ type: 'Point', coordinates: [36864 + 10, 66560 + 10] }, { type: 'Point', coordinates: [90000, 90000] }], REGION, BOUNDS), false, 'one coordinate outside both keeps pyramid coordinates');
+    t.eq(m.detectSourceSpace([{ type: 'Point', coordinates: [36864 + 10, 66560 + 10] }, { type: 'Point', coordinates: [100, 100] }], REGION, BOUNDS), false, 'a tie (one feature lands either way) keeps pyramid coordinates');
+    t.eq(m.detectSourceSpace([{ type: 'Point', coordinates: [36864 + 10, 66560 + 10] }, { type: 'Point', coordinates: [90000, 90000] }], REGION, BOUNDS), true, 'one feature elsewhere on the source scan no longer blocks source-level0: the reading that lands more features wins');
+    {
+      // Phase A review (engine lens): a QuPath export of the whole source slide, 10 features in the window plus one
+      // elsewhere on the scan (no stoipath member). The old all-or-nothing rule imported nothing.
+      const inWin = Array.from({ length: 10 }, (_, i) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[36864 + 1000 + i * 900, 66560 + 2000], [36864 + 1500 + i * 900, 66560 + 2000], [36864 + 1500 + i * 900, 66560 + 2600], [36864 + 1000 + i * 900, 66560 + 2000]]] }, properties: { objectType: 'annotation', classification: { name: 'Tumor', color: [200, 0, 0] } } }));
+      const far = { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[60000, 120000], [60500, 120000], [60500, 120400], [60000, 120000]]] }, properties: { objectType: 'annotation' } };
+      const r11 = m.interop.parse({ type: 'FeatureCollection', features: [...inWin, far] }, AUTO, REGION, BOUNDS);
+      t.ok(r11.report.coordinates === 'source-level0' && r11.report.added === 10 && r11.report.skipped === 1 && r11.report.reasons['outside this region'] === 1, `a whole-source QuPath export with one feature off the window: source-level0, 10 added, 1 skipped "outside this region" (${r11.report.coordinates}, ${r11.report.added}, ${JSON.stringify(r11.report.reasons)})`);
+      const forcedPyr = m.interop.parse({ type: 'FeatureCollection', features: [...inWin, far] }, PYR, REGION, BOUNDS);
+      t.ok(forcedPyr.report.coordinates === 'pyramid-level0' && forcedPyr.report.added === 0, 'an explicit pyramid-level0 override reads the same file as pyramid coordinates (the import control "This pyramid")');
+    }
     t.eq(m.detectSourceSpace([], REGION, BOUNDS), false, 'no coordinates: pyramid');
     t.eq(m.interop.parse(bare, AUTO, null, BOUNDS).report.coordinates, 'pyramid-level0', 'without a region offset (a full slide) auto means pyramid');
     const pyrText = m.interop.stringify(collection(feats), OUT);
@@ -474,7 +487,7 @@ export default async function (t) {
     const lying = JSON.parse(srcText);
     lying.stoipath.coordinateSpace = 'pyramid-level0';
     const lr = m.interop.parse(lying, AUTO, REGION, BOUNDS);
-    t.ok(lr.report.coordinates === 'pyramid-level0' && lr.report.reasons['outside the slide'] === feats.length, "auto honours the file's own coordinateSpace declaration (here everything then lies outside the slide)");
+    t.ok(lr.report.coordinates === 'pyramid-level0' && lr.report.reasons['outside this region'] === feats.length, "auto honours the file's own coordinateSpace declaration (here everything then lies outside this region)");
     const forced = m.interop.parse(pyrText, { ...PYR, coordinates: 'source-level0' }, REGION, BOUNDS);
     t.ok(forced.report.coordinates === 'source-level0' && forced.report.added === 0, 'an explicit source-level0 on pyramid data subtracts the offset (nothing then lies on the slide)');
     const toPyr = m.exportDocument(JSON.parse(srcText), { coordinates: 'pyramid-level0', precision: 2 });

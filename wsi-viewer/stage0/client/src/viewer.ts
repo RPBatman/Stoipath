@@ -935,6 +935,10 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     resizeHooks.length = 0;
     path.onDone = null;
     pool.terminate();
+    // A live PerformanceObserver is a GC root: without this every disposed engine (canvas, GL context, cache, frame log)
+    // stays reachable through Metrics (Phase A review, engine lens). Queued decoded bitmaps are closed at once too.
+    metrics.dispose();
+    renderer.dropQueue();
     // Free the texture array now rather than at GC (REVIEW H5: a phone must never hold two arrays during a switch).
     canvas.getContext('webgl2')?.getExtension('WEBGL_lose_context')?.loseContext();
     if (window.__stage0 === api) delete window.__stage0;

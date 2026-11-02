@@ -17,7 +17,7 @@ const MB = 1024 * 1024;
 
 export async function run(ctx) {
   const { browser, check, viewports, helpers, url } = ctx;
-  const { newPage, waitForShell, settle, axe, drag, pinch, frameCostChecks, frameCost, INSTRUMENT, LIVE_COUNTERS, vpTag } = helpers;
+  const { newPage, waitForShell, settle, axe, drag, pinch, frameCostChecks, frameCost, INSTRUMENT, LIVE_COUNTERS, vpTag, heapUsage, heapCensus } = helpers;
 
   // ------------------------------------------------------------------ is core wired into shell.html?
   {
@@ -198,25 +198,24 @@ export async function run(ctx) {
       await page.goto(url(), { waitUntil: 'load' });
       await waitForShell(page);
       const cat = await hasCatalogue(page);
-      const heap = async () => {
-        await cdp.send('HeapProfiler.enable');
-        await cdp.send('HeapProfiler.collectGarbage');
-        await page.waitForTimeout(100);
-        await cdp.send('HeapProfiler.collectGarbage');
-        return (await cdp.send('Runtime.getHeapUsage')).usedSize;
-      };
+      // The heap counts ArrayBuffer backing stores and embedder objects (helpers.heapUsage): usedSize alone missed a
+      // whole retained engine per switch (Phase A review, engine lens). The census counts the WebGL context wrappers.
       const seq = [SLIDES.small, SLIDES.tumor];
       await openVia(page, refOf(cat, seq[0]), 30_000);
       await settle(page, { sharp: false, quietMs: 200 });
-      const h1 = await heap();
+      const h1 = await heapUsage(cdp);
+      const n1 = await heapCensus(cdp, ['WebGL2RenderingContext']);
       const times = [];
       for (let i = 1; i < 10; i++) times.push(await openVia(page, refOf(cat, seq[i % 2]), 30_000));
       await settle(page, { sharp: false, quietMs: 300 });
-      const h10 = await heap();
+      const h10 = await heapUsage(cdp);
+      const n10 = await heapCensus(cdp, ['WebGL2RenderingContext']);
       const live = await page.evaluate(() => ({ ...window.__live, pool: window.__stage0.summary().device.workers, views: document.querySelectorAll('canvas#view').length, opens: window.__shell.tools.core().views[0].opens }));
+      const mb = (x) => (x / MB).toFixed(1);
       check(TAG, live.workers === live.pool, `CORE-2 ${vpTag(vp)}: after 10 switches live workers ${live.workers} = the pool size ${live.pool} (${live.created.workers} created in all)`);
       check(TAG, live.contexts === 1 && live.views === 1, `CORE-2: live WebGL contexts ${live.contexts} = 1 (${live.created.contexts} created), one canvas#view, ${live.opens} opens`);
-      check(TAG, h10 - h1 <= 15 * MB, `CORE-2: JS heap after the 10th switch is within +15 MB of the heap after the first (${(h1 / MB).toFixed(1)} → ${(h10 / MB).toFixed(1)} MB, Δ ${((h10 - h1) / MB).toFixed(1)} MB); switches ${times.join(', ')} ms`);
+      check(TAG, h10.total - h1.total <= 15 * MB, `CORE-2: heap incl. backing stores after the 10th switch is within +15 MB of the heap after the first (${mb(h1.total)} → ${mb(h10.total)} MB, Δ ${mb(h10.total - h1.total)} MB; JS ${mb(h1.used)} → ${mb(h10.used)}, backing ${mb(h1.backing)} → ${mb(h10.backing)}, embedder ${mb(h1.embedder)} → ${mb(h10.embedder)}); switches ${times.join(', ')} ms`);
+      check(TAG, n10.counts.WebGL2RenderingContext <= n1.counts.WebGL2RenderingContext && n10.selfBytes - n1.selfBytes <= 15 * MB, `CORE-2: no disposed engine is retained: WebGL2RenderingContext heap nodes ${n1.counts.WebGL2RenderingContext} → ${n10.counts.WebGL2RenderingContext} after 9 more switches; snapshot ${mb(n1.selfBytes)} → ${mb(n10.selfBytes)} MB`);
 
       // view B: a second engine without window.__stage0, closed through compareChanged → off (TOOLS-QUESTIONS core Q1)
       await page.evaluate(async (r) => {
@@ -339,6 +338,68 @@ export async function run(ctx) {
       await finish(page, errors, `CORE-5 ${vpTag(vp)}`);
     } catch (e) {
       check(TAG, false, `CORE-5 threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+    } finally {
+      await c.close();
+    }
+  }
+
+  // ------------------------------------------------------------------ CORE-5b a full quota is not "storage unavailable" (Phase A review)
+  // IDBObjectStore.put throws QuotaExceededError for values over 200,000 characters (as a real quota error would fail
+  // the large write). Storage must stay available: the large slide says "Not saved (browser storage is full)" (§6.5
+  // error), and a small write of another slide still saves.
+  {
+    const vp = viewports.desktop;
+    const quota = () => {
+      const put = IDBObjectStore.prototype.put;
+      IDBObjectStore.prototype.put = function (v, k) {
+        if (typeof v === 'string' && v.length > 200_000) throw new DOMException('The quota has been exceeded.', 'QuotaExceededError');
+        return put.call(this, v, k);
+      };
+    };
+    const { ctx: c, page, errors } = await newPage(browser, vp, { initScripts: [quota] });
+    try {
+      await page.goto(url(), { waitUntil: 'load' });
+      await waitForShell(page);
+      await settle(page, { sharp: false });
+      const ann = await page.evaluate(() => typeof window.__shell.tools.annotations === 'function');
+      if (!ann) console.log(`     [${TAG}] annotations not installed: CORE-5b not run`);
+      else {
+        await page.evaluate(() => {
+          const A = window.__shell.tools.annotations();
+          A.transaction(() => {
+            for (let i = 0; i < 120; i++) {
+              const cx = 500 + ((i * 7919) % 14000);
+              const cy = 500 + ((i * 104729) % 14000);
+              const ring = [];
+              for (let v = 0; v < 120; v++) {
+                const a = (v / 120) * 2 * Math.PI;
+                ring.push([cx + 123.456 * Math.cos(a), cy + 98.765 * Math.sin(a)]);
+              }
+              ring.push([...ring[0]]);
+              A.create({ kind: 'polygon', geometry: { type: 'Polygon', coordinates: [ring] }, input: 'command' });
+            }
+          });
+        });
+        await page.evaluate(() => window.__shell.tools.annotations().flush());
+        await page.waitForFunction(() => window.__shell.tools.annotations().persistence?.state === 'error', null, { timeout: 10_000, polling: 100 }).catch(() => {});
+        const big = await page.evaluate(() => ({ p: window.__shell.tools.annotations().persistence, st: window.__shell.tools.core().storage, notice: window.__shell.notice() }));
+        check(
+          TAG,
+          big.st.available === true && big.p?.state === 'error' && big.p?.text === 'Not saved (browser storage is full). Export GeoJSON to keep your annotations.' && /^QuotaExceededError/.test(big.st.lastWriteError ?? '') && big.notice !== STORAGE_TEXT,
+          `CORE-5b ${vpTag(vp)}: a write refused for quota keeps storage available (${big.st.available}; last write error "${big.st.lastWriteError}") and the slide says "${big.p?.text}" (state ${big.p?.state}), not the storage-unavailable notice`,
+        );
+        await page.evaluate((id) => window.__shell.openSlide({ kind: 'catalogue', id }, { view: 'A', reason: 'library' }), SLIDES.small.id);
+        await page.waitForFunction(() => window.__stage0?.state().baseLoaded === true, null, { timeout: 30_000, polling: 50 });
+        await settle(page, { sharp: false, quietMs: 200 });
+        await page.evaluate(() => window.__shell.tools.annotations().create({ kind: 'point', geometry: { type: 'Point', coordinates: [500, 500] }, input: 'command' }));
+        await page.evaluate(() => window.__shell.tools.annotations().flush());
+        await page.waitForFunction(() => window.__shell.tools.annotations().persistence?.state === 'saved', null, { timeout: 10_000, polling: 100 }).catch(() => {});
+        const small = await page.evaluate(() => ({ p: window.__shell.tools.annotations().persistence, st: window.__shell.tools.core().storage }));
+        check(TAG, small.st.available === true && small.p?.state === 'saved' && small.st.lastWriteError === null, `CORE-5b: a small write on ${SLIDES.small.name} afterwards is saved (state ${small.p?.state}, "${small.p?.text}"); last write error cleared (${small.st.lastWriteError})`);
+      }
+      check(TAG, errors.length === 0, `CORE-5b: no console or page error (${errors.length}${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''})`);
+    } catch (e) {
+      check(TAG, false, `CORE-5b threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
     } finally {
       await c.close();
     }

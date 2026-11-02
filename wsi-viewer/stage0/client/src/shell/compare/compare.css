@@ -73,3 +73,9 @@
 @media (min-width: 1080px) and (max-width: 1599px) {
   .app.shell.compare-on:is(.dock-open, .palette-open, .dialog-open) #paneB #magBoxB { margin-bottom: calc(58px + var(--space-2)); }
 }
+
+/* Under a coarse pointer the Sync items are 44 px targets (layout-check A1 at 1024 c and 1366 c; TOOLS-QUESTIONS
+   2026-11-02 Wave 4, applied in the Phase A review fixes): base.css draws 40 px segmented items in a 44 px control. */
+@media (pointer: coarse) {
+  #compareBar .segmented__item { min-height: var(--target); }
+}

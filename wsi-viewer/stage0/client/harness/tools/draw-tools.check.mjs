@@ -286,6 +286,9 @@ export async function run(ctx) {
       const quad = (await newest(page))?.geometry.coordinates[0];
       const wantQ = Q.map((q) => toWorld(c0, q[0], q[1]));
       check(TAG, quad?.length === 5 && wantQ.every((w, i) => nearPt(quad[i], w, tol)) && nearPt(quad[4], quad[0], 0), `DRW-3: four clicks + Enter make a closed quad at the clicked points (${quad?.map(fmtPt).join(' ')})`);
+      // Phase A review: the recorded input is how the polygon was drawn (its first vertex), not the key that closed it
+      const quadInput = (await newest(page))?.properties.stoipath.input;
+      check(TAG, quadInput === 'mouse', `DRW-3: a mouse-drawn polygon closed with Enter records stoipath.input "${quadInput}" (mouse)`);
       // ⌫ removes the last vertex; Esc cancels
       for (const q of Q.slice(0, 3)) {
         await page.mouse.click(q[0] + 20, q[1] + 15);
@@ -347,6 +350,8 @@ export async function run(ctx) {
       const tri3 = (await newest(page))?.geometry.coordinates[0];
       check(TAG, kline === 'Polygon (keyboard): Enter adds a point at the centre · arrows pan · Enter twice closes · ⌫ removes the last', `DRW-3: a keyboard-started polygon shows the keyboard hint ("${kline}")`);
       check(TAG, tri3?.length === 4 && ks.every((w, i) => nearPt(tri3[i], w, 0.006)), `DRW-3: Enter, →, Enter, ↓, Enter, Enter makes a triangle at the crosshair positions ${ks.map(fmtPt).join(' ')}: ${tri3?.map(fmtPt).join(' ')}`);
+      const triInput = (await newest(page))?.properties.stoipath.input;
+      check(TAG, triInput === 'keyboard', `DRW-3: the keyboard-drawn triangle records stoipath.input "${triInput}" (keyboard)`);
       // Enter twice right after an eased pan ends (the presented camera may still creep by ~1 CSS px): it closes
       await page.keyboard.press('Enter');
       await page.waitForTimeout(80);

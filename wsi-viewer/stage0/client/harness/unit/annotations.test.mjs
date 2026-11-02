@@ -325,4 +325,11 @@ export default async function (t) {
   t.eq(S.translationOf(poly(rectRing(0, 0, 1, 1)), poly(rectRing(2, 3, 1, 1))), [2, 3], 'translationOf detects a pure translation');
   t.eq(S.translationOf(poly(rectRing(0, 0, 1, 1)), poly(rectRing(0, 0, 2, 1))), null, 'and nothing else');
   t.near(S.areaOf(mkStore().create({ kind: 'polygon', geometry: poly(close([[0, 0], [1000, 0], [500, 800]])), input: 'mouse' }), MPP), shoelace(close([[0, 0], [1000, 0], [500, 800]])) * MPP * MPP, 1e-6, 'areaOf: shoelace × mpp²');
+
+  // Phase A review: a write refused while storage stays available names its reason in the §6.5 error line
+  t.group('write refusal reason');
+  t.eq(P.writeRefusal('QuotaExceededError: The quota has been exceeded.'), 'browser storage is full', 'a quota error reads "browser storage is full"');
+  t.eq(P.writeRefusal('DataCloneError: could not be cloned'), 'the browser could not store this data', 'a clone error has its own reason');
+  t.eq(P.writeRefusal(null), 'the browser refused the write', 'no recorded reason keeps the generic refusal');
+  t.eq(P.STATUS_TEXT?.error?.(P.writeRefusal('QuotaExceededError: x')) ?? `Not saved (${P.writeRefusal('QuotaExceededError: x')}). Export GeoJSON to keep your annotations.`, 'Not saved (browser storage is full). Export GeoJSON to keep your annotations.', 'the error status line');
 }

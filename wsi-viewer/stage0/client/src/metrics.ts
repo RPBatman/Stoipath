@@ -406,6 +406,9 @@ export class Metrics {
   private device: DeviceInfo | null = null;
   private counters: SchedulerCounters | null = null;
   private cacheStats: (() => CacheStats) | null = null;
+  /** The Event Timing observer. A live PerformanceObserver is a GC root that holds this object (and, through
+   *  cacheStats, the whole engine), so dispose() must disconnect it. */
+  private eventObs: PerformanceObserver | null = null;
 
   // gesture state
   private g: GestureRecord | null = null;
@@ -424,6 +427,16 @@ export class Metrics {
     this.build = build;
     this.run = { label, network, cache, pathRuns: 0, gpuCacheClears: 0, pathNotes: [] };
     this.observeEventTiming();
+  }
+
+  /** Additive (Phase A review, engine lens): stop observing so a disposed engine can be collected. The measurement
+   *  page never calls it. Idempotent. The recorded frames and gestures stay readable; the live scheduler and cache
+   *  readers are dropped, so a held Metrics no longer reaches the engine's scope either. */
+  dispose(): void {
+    this.eventObs?.disconnect();
+    this.eventObs = null;
+    this.cacheStats = null;
+    this.counters = null;
   }
 
   setDevice(d: DeviceInfo): void {
@@ -451,6 +464,7 @@ export class Metrics {
         }
       });
       obs.observe({ type: 'event', durationThreshold: EVENT_TIMING_THRESHOLD_MS } as PerformanceObserverInit);
+      this.eventObs = obs;
     } catch {
       this.eventTimingSupported = false;
     }

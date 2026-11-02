@@ -306,8 +306,16 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 }
 @media (max-width: 599px) {
   .app.shell .hud { max-width: 48%; }
-  .shell .class-menu { bottom: calc(var(--layout-bottombar) + var(--space-4)); }
-  .app.shell:is(.lib-open, .dock-open) .class-menu { bottom: calc(var(--layout-bottombar) + var(--layout-sheet-max) + var(--space-4)); }
+  /* Phase A review: the class picker is a bottom sheet on phones (main.ts adds base.css .sheet), two columns of 44 px
+     rows above the bottom bar, over an open Library or Context sheet too: a transient layer outside the rest state,
+     never a popover reaching the slide's central zone (layout-check Z1 at 390 × 844 coarse; S1 bounds it at 40 %). */
+  .shell .class-menu.sheet, .app.shell:is(.lib-open, .dock-open) .class-menu.sheet {
+    left: 0; right: 0; top: auto; bottom: var(--layout-bottombar); width: auto; min-width: 0; max-width: none;
+    max-height: var(--layout-sheet-max); overflow: auto;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: var(--space-1) var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-3); border-left: 0; border-right: 0; border-bottom: 0;
+  }
+  .shell .class-menu.sheet .menu__item { min-height: var(--target); padding: var(--space-2) var(--space-3); }
   /* Six labelled targets fit a 320 px phone (SC 1.4.10): Zoom in / out go (pinch, double tap, Search → Zoom). */
   .shell .bottombar .tool--secondary { display: none; }
   .shell .magnification__line2, .shell .hud__position { display: none; }

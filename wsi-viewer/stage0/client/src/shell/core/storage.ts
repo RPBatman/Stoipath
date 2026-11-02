@@ -6,6 +6,12 @@
  * STORAGE_OPEN_TIMEOUT_MS resolves `undefined` / `false`, sets `available = false` once and calls `onUnavailable` once
  * (the shell then shows the persistent notice and speaks it). Nothing is ever evicted. IndexedDB is asynchronous, so a
  * large write never blocks a frame; no call is made from the frame hook.
+ *
+ * One exception (Phase A review, 2026-11-02): a write refused for its own size or content (`QuotaExceededError`,
+ * `DataCloneError`) resolves `false` and records `lastWriteError`, but leaves storage available, so one large slide
+ * that fills the quota no longer stops every later write of other slides, coverage, views and the working set, and
+ * the caller can say why ("Not saved (browser storage is full)", TOOLS.md §6.5 `error`) instead of "blocks storage".
+ * A write's size is recorded only once its transaction completes.
  */
 import type { KeyValueStore, StoreName } from '../contracts';
 import { STORAGE_OPEN_TIMEOUT_MS } from './env';
@@ -19,6 +25,8 @@ export const STORAGE_UNAVAILABLE_TEXT = 'This browser does not allow saving here
 export interface CoreKeyValueStore extends KeyValueStore {
   /** Why storage became unavailable (null while available). */
   readonly reason: string | null;
+  /** Why the most recent write that failed without making storage unavailable failed (null after a write succeeds). */
+  readonly lastWriteError: string | null;
   /** Resolves true once the database is open, false when it never will be. */
   readonly ready: Promise<boolean>;
 }
@@ -41,6 +49,13 @@ export function valueBytes(v: unknown): number {
   }
 }
 
+/** Write errors that concern one value, not the store: the write fails, storage stays available. */
+export const RECOVERABLE_WRITE_ERRORS: ReadonlySet<string> = new Set(['QuotaExceededError', 'DataCloneError']);
+
+function errorName(e: unknown): string {
+  return typeof e === 'object' && e !== null && 'name' in e ? String((e as { name: unknown }).name) : '';
+}
+
 function describe(e: unknown): string {
   if (e instanceof Error || (typeof DOMException !== 'undefined' && e instanceof DOMException)) return `${(e as Error).name}: ${(e as Error).message}`;
   return String(e);
@@ -56,6 +71,12 @@ export function createKeyValueStore(opts: StorageOptions = {}): CoreKeyValueStor
   const sizes = new Map<StoreName, Map<string, number>>();
   let available = true;
   let reason: string | null = null;
+  let lastWriteError: string | null = null;
+  /** A failed request: recoverable write errors are recorded; anything else marks storage unavailable. */
+  const failed = (why: unknown, mode: IDBTransactionMode): void => {
+    if (mode === 'readwrite' && RECOVERABLE_WRITE_ERRORS.has(errorName(why))) lastWriteError = describe(why);
+    else fail(why);
+  };
   const fail = (why: unknown): void => {
     if (!available) return;
     available = false;
@@ -130,27 +151,39 @@ export function createKeyValueStore(opts: StorageOptions = {}): CoreKeyValueStor
             resolve(fallback);
             return;
           }
+          let settled = false;
+          const done = (v: T): void => {
+            if (settled) return;
+            settled = true;
+            resolve(v);
+          };
           try {
             const tx = db.transaction(store, mode);
             const req = make(tx.objectStore(store));
-            let result: T = fallback;
+            let ok = false;
             req.onsuccess = () => {
-              result = onOk(req.result);
-              if (mode === 'readonly') resolve(result);
+              ok = true;
+              if (mode === 'readonly') done(onOk(req.result));
             };
-            tx.oncomplete = () => resolve(result);
+            // a write counts (and its size is recorded) only once it is committed: a quota error aborts at commit
+            tx.oncomplete = () => {
+              if (mode === 'readwrite' && ok && !settled) {
+                lastWriteError = null;
+                done(onOk(req.result));
+              } else done(fallback);
+            };
             tx.onabort = () => {
-              fail(tx.error ?? new Error('transaction aborted'));
-              resolve(fallback);
+              if (!settled) failed(tx.error ?? new Error('transaction aborted'), mode);
+              done(fallback);
             };
             tx.onerror = (ev) => {
               ev.preventDefault();
-              fail(req.error ?? tx.error ?? new Error('transaction error'));
-              resolve(fallback);
+              if (!settled) failed(req.error ?? tx.error ?? new Error('transaction error'), mode);
+              done(fallback);
             };
           } catch (e) {
-            fail(e);
-            resolve(fallback);
+            failed(e, mode);
+            done(fallback);
           }
         }),
       () => fallback,
@@ -163,6 +196,9 @@ export function createKeyValueStore(opts: StorageOptions = {}): CoreKeyValueStor
     },
     get reason() {
       return reason;
+    },
+    get lastWriteError() {
+      return lastWriteError;
     },
     ready: dbPromise.then((db) => db !== null),
     get<T>(store: StoreName, key: string): Promise<T | undefined> {

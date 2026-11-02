@@ -49,6 +49,12 @@ export async function run(ctx) {
     const r = await newPage(browser, vp, opts);
     await r.page.goto(url(), { waitUntil: 'load' });
     await waitForShell(r.page);
+    // tumor_014 opens with the CAMELYON16 layer shown (owner decision 5): hide the shell's own layers so that only this
+    // check's sources draw (layers LQ2; TOOLS-QUESTIONS 2026-11-02 Wave 4, overlay OVL-2/3/5)
+    await r.page.evaluate(() => {
+      const L = window.__shell.tools.layers?.();
+      if (L) for (const [k, ls] of Object.entries(L.slides)) for (const l of ls) L.test.update(l.id, { visible: false }, k);
+    });
     await settle(r.page, { sharp: false });
     return r;
   };

@@ -40,6 +40,9 @@ export class PolygonTool extends BaseTool {
   private bandStyle: PreviewStyle = { stroke: '--ann-2', dash: 'dash', fill: false, width: 'normal' };
   committed = 0;
   lastNotice = '';
+  /** How the polygon was drawn: the modality of its first vertex, recorded as `stoipath.input` however it closes
+   *  (Phase A review: a mouse-drawn polygon closed with Enter was stored as keyboard). */
+  private startInput: InputModality = 'mouse';
 
   get busy(): boolean {
     return this.verts.length > 0;
@@ -82,7 +85,7 @@ export class PolygonTool extends BaseTool {
     this.lastUpT = e.timeStamp;
     this.lastUpX = e.clientX;
     this.lastUpY = e.clientY;
-    this.add(ev.view, ev.world, 'pointer');
+    this.add(ev.view, ev.world, 'pointer', input);
   }
 
   override pointerCancel(ev: ToolPointerEvent): void {
@@ -104,7 +107,7 @@ export class PolygonTool extends BaseTool {
       return;
     }
     this.hasCursor = false;
-    this.add(view, world, 'touch');
+    this.add(view, world, 'touch', inputOf(e));
   }
 
   override onKey(k: ToolKey, view: ViewHandle): boolean {
@@ -127,7 +130,7 @@ export class PolygonTool extends BaseTool {
     if (c === null) return;
     if (this.busy && view !== this.view) this.cancel();
     if (!this.busy) {
-      this.add(view, c, 'keyboard');
+      this.add(view, c, 'keyboard', 'keyboard');
       this.say(POLYGON_KEYBOARD_START);
       return;
     }
@@ -141,7 +144,7 @@ export class PolygonTool extends BaseTool {
     // by about a CSS px after it ends, and a zoom about the centre keeps the centre).
     const unpanned = k > 0 && Math.hypot(c[0] - last[0], c[1] - last[1]) * k <= CLICK_SLOP_CSS;
     if (unpanned || (this.verts.length >= 3 && this.nearFirst(view, c))) this.close('keyboard');
-    else this.add(view, c, 'keyboard');
+    else this.add(view, c, 'keyboard', 'keyboard');
   }
 
   /** `polygon:close` (palette): close the polygon in progress. */
@@ -180,9 +183,10 @@ export class PolygonTool extends BaseTool {
     this.env.say(text);
   }
 
-  private add(view: ViewHandle, p: Position, how: Mode): void {
+  private add(view: ViewHandle, p: Position, how: Mode, input: InputModality): void {
     if (!this.busy) {
       this.mode = how;
+      this.startInput = input;
       this.style = this.env.activeStyle();
       this.bandStyle = { stroke: this.style.stroke, dash: 'dash', fill: false, width: 'normal' };
       this.showPreview(view);
@@ -201,8 +205,11 @@ export class PolygonTool extends BaseTool {
     return k > 0 && Math.hypot(p[0] - first[0], p[1] - first[1]) * k <= tol;
   }
 
-  private close(input: InputModality): void {
+  /** `closedBy` is how the close was asked for; the feature records how it was drawn (`startInput`). */
+  private close(closedBy: InputModality): void {
+    void closedBy;
     const view = this.view;
+    const input = this.startInput;
     if (this.verts.length < 3 || view === null) {
       this.say(POLYGON_NEEDS_3);
       return;

@@ -6,7 +6,7 @@
  * - geometries: Point, MultiPoint, LineString, Polygon, MultiPolygon. Positions keep x and y (a z is dropped); rings
  *   are closed when the file left them open. Anything else is skipped and counted in `report.reasons` with one of
  *   SKIP_REASONS ("GeometryCollection not supported", "empty geometry", "invalid coordinates", "outside the slide",
- *   "not a Feature", or "<Type> not supported");
+ *   "outside this region", "not a Feature", or "<Type> not supported");
  * - properties are kept verbatim (FR-A2), with QuPath's version differences normalised: `classification.colorRGB`
  *   (≤ 0.3 packed int) becomes `classification.color` [r, g, b]; `measurements` as [{name, value}] becomes an object;
  *   `object_type` (0.3) and the 0.2/0.3 feature id "PathAnnotationObject" become `objectType`. The shell's own data
@@ -17,9 +17,10 @@
  *   (rect or ellipse only with a `stoipath.shape` that matches the polygon's bounds);
  * - coordinates: `source-level0` subtracts the region offset (from the geometry and from `stoipath.shape`); `auto`
  *   honours the file's own `stoipath.coordinateSpace` declaration (this module's exports carry one), else picks
- *   `source-level0` iff every coordinate lies outside `bounds` and inside them after subtracting the offset;
- * - a feature whose bounding box misses `bounds` entirely is skipped as "outside the slide" (pass UNBOUNDED to keep
- *   everything, e.g. when a store reloads what it saved);
+ *   `source-level0` iff more features' bounding boxes meet `bounds` after subtracting the offset than before (a tie
+ *   keeps pyramid coordinates; detectSourceSpace);
+ * - a feature whose bounding box misses `bounds` entirely is skipped as "outside the slide", or "outside this region"
+ *   on a region slide (pass UNBOUNDED to keep everything, e.g. when a store reloads what it saved);
  * - refusals (nothing imported, `report.refused` set): more than `opts.maxFeatures` features, more than
  *   MAX_IMPORT_TEXT characters of text, text that is not JSON, JSON that is not one of the three shapes. The bare
  *   NaN / Infinity tokens QuPath writes for undefined measurement values are read as null rather than refused.
@@ -52,7 +53,7 @@ import type {
   ShapeParams,
 } from '../contracts';
 import { int } from '../format';
-import { bbox, boxContainsPoint, boxesIntersect, isEmptyBox } from '../geometry';
+import { bbox, boxesIntersect, isEmptyBox } from '../geometry';
 import { isDefaultClassName, normaliseRgb, unpackRgb } from './classes';
 
 export type ParseResult = ReturnType<InteropService['parse']>;
@@ -79,6 +80,8 @@ export const SKIP_REASONS = Object.freeze({
   empty: 'empty geometry',
   invalid: 'invalid coordinates',
   outside: 'outside the slide',
+  /** A region slide (a window of a larger source scan): the feature lies elsewhere on the source scan. */
+  outsideRegion: 'outside this region',
   notFeature: 'not a Feature',
 });
 
@@ -264,25 +267,6 @@ function readGeometry(g: unknown): GeometryRead {
     }
     default:
       return typeof type === 'string' && type.length > 0 && type.length <= 40 ? { reason: unsupportedTypeReason(type) } : { reason: SKIP_REASONS.invalid };
-  }
-}
-
-/** Visit every coordinate of a geometry (no allocation). */
-function eachPosition(g: Geometry, fn: (x: number, y: number) => void): void {
-  switch (g.type) {
-    case 'Point':
-      fn(g.coordinates[0], g.coordinates[1]);
-      break;
-    case 'MultiPoint':
-    case 'LineString':
-      for (const p of g.coordinates) fn(p[0], p[1]);
-      break;
-    case 'Polygon':
-      for (const r of g.coordinates) for (const p of r) fn(p[0], p[1]);
-      break;
-    case 'MultiPolygon':
-      for (const poly of g.coordinates) for (const r of poly) for (const p of r) fn(p[0], p[1]);
-      break;
   }
 }
 
@@ -538,22 +522,24 @@ export function declaredSpace(doc: unknown): CoordinateSpace | null {
 }
 
 /**
- * TOOLS.md §6.4 `auto` rule: source-level0 iff there is at least one coordinate, every coordinate lies outside
- * `bounds`, and every coordinate lies inside `bounds` once the region offset is subtracted.
+ * TOOLS.md §6.4 `auto` rule (Phase A review, 2026-11-02): the reading under which **more features' bounding boxes
+ * intersect `bounds`** wins. source-level0 iff more features land on the pyramid once the region offset is subtracted
+ * than as they are; a tie (including none either way) keeps pyramid coordinates. The earlier all-or-nothing rule
+ * ("every coordinate outside, every coordinate inside after subtracting") imported nothing from a QuPath export of the
+ * whole source slide as soon as one annotation lay outside the region window (3 of CAMELYON16 tumor_014's 13 do).
  */
 export function detectSourceSpace(geometries: readonly Geometry[], regionOffset: readonly [number, number] | null, bounds: Box): boolean {
   if (!regionOffset || isEmptyBox(bounds)) return false;
   const [ox, oy] = regionOffset;
-  let n = 0;
-  let ok = true;
+  let asIs = 0;
+  let shifted = 0;
   for (const g of geometries) {
-    eachPosition(g, (x, y) => {
-      n++;
-      if (ok && (boxContainsPoint(bounds, x, y) || !boxContainsPoint(bounds, x - ox, y - oy))) ok = false;
-    });
-    if (!ok) return false;
+    const b = bbox(g);
+    if (isEmptyBox(b)) continue;
+    if (boxesIntersect(b, bounds)) asIs++;
+    if (boxesIntersect({ minX: b.minX - ox, minY: b.minY - oy, maxX: b.maxX - ox, maxY: b.maxY - oy }, bounds)) shifted++;
   }
-  return n > 0 && ok;
+  return shifted > asIs;
 }
 
 /**
@@ -665,7 +651,7 @@ export function parseQuPath(json: unknown, opts: ImportOptions, regionOffset: re
   for (const r of read) {
     const geometry = dx !== 0 || dy !== 0 ? translateGeometry(r.geometry, dx, dy) : r.geometry;
     if (clip && !boxesIntersect(bbox(geometry), bounds)) {
-      skip(SKIP_REASONS.outside);
+      skip(regionOffset ? SKIP_REASONS.outsideRegion : SKIP_REASONS.outside);
       continue;
     }
     const properties = readProperties(r.feature, dx, dy);

@@ -533,7 +533,7 @@ It provides `share` synchronously, registers `snapshot` (⇧S) and `copylink` (g
 
 ### share (Wave 3)
 
-**S1 · Added to TOOLS.md §4.** **S2 · Confirmed** on the integrated build: no conflict, the bookmark refusal ends "; Copy view link shares this view", and the View sub-head shows. **S3 · Noted** (S3 holds: ANN-3, LIB-4 and LAY's reload pass). **S4 · Accepted.** **S5 · Not taken in Phase A** (F7). **S6, S7 · Noted.**
+**S1 · Added to TOOLS.md §4.** **S2 · Confirmed** on the integrated build: no conflict (I-2: 116 commands), the View sub-head shows (Inspector screenshots), and the bookmark refusal carries "; Copy view link shares this view" because `copylink` is registered (J10). **S3 · Noted** (S3 holds: ANN-3, LIB-4 and LAY's reload pass). **S4 · Accepted.** **S5 · Not taken in Phase A** (F7). **S6, S7 · Noted.**
 
 ### For three check owners: stale assumptions in the gate (owned files, not edited)
 
@@ -567,3 +567,41 @@ Every Wave 4 screenshot (50 states at 1920 × 1080, 1440 × 900, 1024 × 1366 co
 - **annotations (annotations.css), under a coarse pointer:** the toolsrow's Undo, Redo and Delete buttons still show their `Ctrl Z`, `Ctrl Y` and `⌫` key caps on phones and tablets, where library (§15.9 LB12) and share (§15.14 SH1) hide keyboard hints. Suggested: `@media (pointer: coarse) { #tp-ann .toolsrow .key { display: none; } }`, keeping each button's name equal to its visible label.
 
 The tablet screenshots also show the engine bug of compare C3 in practice: the iPad UA gets the phone texture budget ("Tiles 21/112" in the strip). It is deferred with the reason in TOOLS.md §15.15 F5.
+
+### Layout-check A1 under a coarse pointer: two owners' CSS (owned files, not edited)
+
+The design-system `layout-check.mjs` (the http copy, run with the Library, Layers + demo heatmap, Annotations and compare states at the nine SHELL.md viewports) fails A1 (44 px coarse targets) in two module-owned places; everything else passes. Both fixes below were applied to a scratch copy of the tree, built privately and re-checked at 1024 × 1366 coarse and 1366 × 1024 coarse: all pass.
+- **compare (compare.css), new:** with compare open under a coarse pointer, the Sync items `lock` and `none` are 44 × 40 (a touch-screen desktop opens compare; iPads are refused). Suggested: `@media (pointer: coarse) { #compareBar .segmented__item { min-height: var(--target); } }`.
+- **annotations (annotations.css), the Wave 2 finding, still open:** at 1366 × 1024 coarse the export-coordinates items "This pyramid" (90 × 40) and "Source slide" (87 × 40) and the drop zone (301 × 35). Suggested: `@media (pointer: coarse) { #tp-ann .segmented__item, #tp-ann .dropzone { min-height: var(--target); } }`.
+
+## 2026-11-02 · Phase A review fixes (integrator): two additive contract points, one markup addition, what changed in owned files
+
+Two reviews of the Wave 4 build (engine lens; pathologist and accessibility lens) raised 15 issues. The integrator applied all of them, acting on every Phase A file as this task allowed; the judgement calls are TOOLS.md §15.16 R1–R16. Owners: this is what changed in your files and why, so the next wave starts from it.
+
+### Contract (contracts.ts, additive and optional; no existing type narrowed)
+
+- **`KeyValueStore.lastWriteError?: string | null`.** Why the most recent failed write failed when it left storage available. core's store sets it for `QuotaExceededError` and `DataCloneError` (a value-specific refusal) and clears it when a write commits; every other error still sets `available = false` (§6.1, as amended). annotations' persist.ts maps it to §6.5's `error` line: "Not saved (browser storage is full). Export GeoJSON to keep your annotations." Optional, so test doubles need no change.
+- **`ShellEnv.visibleInsets?(view): { left, right }`.** CSS px of a pane covered by an open drawer (Library on the left at ≥ 1080 px, Context drawer on the right at 1080–1599 px), read on call: commands only, never per frame. main.ts implements it with compare's CP5 rule. annotations' fly-to and layers' legend fly use it; compare keeps its own `canvasWidth()` (same rule, no change needed).
+
+### Markup (shell.html)
+
+- **`#hudMarkerB`** (`.hud__item.hud__marker`, hidden) in `#paneB .hud--br` right after `#panelabelB`. Content owner: layers (§4.2 table updated). It cannot go in a pane-B `.hud--tl`: the compare bar and the navigator occupy pane B's top edge (§15.13 CP1).
+
+### Changes in owned files (owners, please keep them)
+
+- **core** (`storage.ts`, `shell.ts`; `core.check.mjs`): recoverable write errors (R5); the debug view's `storage` gains `lastWriteError`. CORE-2 measures heap incl. backing stores and counts `WebGL2RenderingContext` nodes (R3); new **CORE-5b** (a quota error keeps storage available; the next small write saves).
+- **interop** (`qupath.ts`; `interop.test.mjs`): the `auto` majority rule and "outside this region" (R4). The two unit assertions that pinned the old rule ("one coordinate outside both keeps pyramid coordinates", "outside the slide" on a region slide) now pin the new one, plus a whole-source QuPath case.
+- **annotations** (`actions.ts`, `index.ts`, `io-ui.ts`, `list.ts`, `persist.ts`, `annotations.css`; `annotations.check.mjs`, `annotations.test.mjs`): commit-selection rule for the class picker (R8: `noteCreated` / `noteSelected` from the bus, cleared by any `actions.select`); fly-to into the uncovered span (R9); Import coordinates control, reading sentence and `aria-invalid` (R4, R14); the hint split (R12); `writeRefusal` (R5); the brush slider follows `brush.radius` (Wave 4 note); coarse 44 px coordinates items and drop zone, key caps hidden on touch (Wave 4 findings). Checks: ANN-4 (whole-source import, override, aria-invalid), ANN-5 (commit selection, then a list choice), ANN-6 (uncovered span, a wide feature; the Tab loop), ANN-7 (deselect before the drag; phone hint; phone sheet).
+- **layers** (`index.ts`, `hud-marker.ts`, `layers.css`; `layers.check.mjs`): one HudMarker per pane (R6); legend fly into the uncovered span (R9); provenance row aligned under a coarse pointer. New check **LAY marker B**.
+- **library** (`index.ts`; `library.check.mjs`): re-render on `slideOpenFailed` (R7). LIB-2 records polite writes (Wave 4 finding).
+- **draw-tools** (`polygon.ts`; `draw-tools.check.mjs`): `stoipath.input` from the first vertex (R15); DRW-3 asserts mouse and keyboard.
+- **compare** (`compare.css`; `compare.check.mjs`): coarse 44 px Sync items; CMP-4 memory over four cycles (R3).
+- **overlay** (`overlay.check.mjs` only): `openPage` hides the shell's layers (layers LQ2, Wave 4 finding).
+- **Engine (integrator)**: `src/metrics.ts` `dispose()`, `src/viewer.ts` calls it and `renderer.dropQueue()` in `dispose()` (R1). `src/main.ts` and `index.html` unchanged; run.mjs + check-metrics re-run.
+- **Integrator**: `navigator.ts` `dispose()` (R2); main.ts: navigator disposal, the "No slide open" state (R7), canvas B's name and sentence (R11), `visibleInsets` (R9), the phone class-menu sheet toggle (R10), the rail Tab stop (R13); `shell.css` phone sheet; `helpers.mjs` `heapUsage` / `heapCensus`; `tools-check.mjs` integrator checks **I-3** (rail stop at 1440, 1366, 1920), **I-4** (failed open and recovery), **I-5** (canvas B name and sentence).
+
+### Open for the owner (not changed)
+
+- **A tie under `auto`** (one feature lands either way, e.g. one feature in the window and one at a raw position that also lies inside it) keeps pyramid coordinates; the report says so and Import coordinates overrides it. A file-level heuristic beyond counting features would guess.
+- **View B has no sharpness machine**, so its settle sentence has no Sharp / Sharpening word. A per-view machine is a Phase B change to main.ts (it would run on B's frames, which only compare's HUD reads today).
+- **OVL-4's gesture p95 (overlay owner, a check observation).** In the final gate's full tools-check, the L1 wheel burst failed once: 48 exact draws, gesture p95 3.90 ms, while the exact-render average was 0.40 ms (`stats.p95Ms` 2.80) and no blit was needed. The overlay checks re-run alone on the same build passed twice (p95 1.00 and 0.50 ms), and the private build of the same sources passed. A p95 over about 48 frames is its 3rd-highest sample, so one scheduling hiccup on SwiftShader decides it. Suggested: judge the exact path on more frames (a longer burst), or on the D3 policy itself (the EMA stayed under 3 ms, so blit mode was rightly not entered).

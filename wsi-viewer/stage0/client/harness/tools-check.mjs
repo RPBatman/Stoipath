@@ -103,6 +103,103 @@ if (runIntegrator) {
   } finally {
     await ctx.close();
   }
+
+  // Phase A review (2026-11-02) integrator checks: main.ts behaviour the module checks do not reach.
+  const stopsOf = (page) => page.evaluate(() => [...document.querySelectorAll('#railTools button')].filter((b) => b.tabIndex === 0 && b.getClientRects().length > 0).map((b) => b.dataset.cmd ?? b.id));
+  // I-3: the tool rail's one Tab stop is the pressed tool, at every rail density (presets in the rail at 1440 and 1920,
+  // out of it at ≤ 1366), and follows a tool change.
+  for (const vp of [helpers.VIEWPORTS.desktop, { name: 'desktop-1366', width: 1366, height: 768, dsf: 1, coarse: false }, helpers.VIEWPORTS['desktop-wide']]) {
+    const { ctx: c3, page: p3, errors: e3 } = await helpers.newPage(browser, vp);
+    try {
+      await p3.goto(helpers.shellUrl(port), { waitUntil: 'load' });
+      await helpers.waitForShell(p3);
+      await helpers.settle(p3, { sharp: false, quietMs: 200 });
+      const s0 = await stopsOf(p3);
+      await p3.focus('#view');
+      await p3.keyboard.press('p');
+      await p3.waitForTimeout(150);
+      const s1 = await stopsOf(p3);
+      // Tab from the canvas into the rail lands on the pressed tool (the readout and the Library switchers come first)
+      await p3.focus('#view');
+      let landed = null;
+      for (let i = 0; i < 6 && landed === null; i++) {
+        await p3.keyboard.press('Tab');
+        landed = await p3.evaluate(() => (document.activeElement?.closest('#railTools') ? document.activeElement.dataset.cmd ?? document.activeElement.id : null));
+      }
+      check(tag, s0.length === 1 && s0[0] === 'tool:select' && s1.length === 1 && s1[0] === 'tool:polygon' && landed === 'tool:polygon', `I-3 ${helpers.vpTag(vp)}: the tool rail's one Tab stop is the pressed tool (${s0.join(', ')} at load; ${s1.join(', ')} after P; Tab from the canvas lands on ${landed})`);
+      check(tag, e3.length === 0, `I-3 ${helpers.vpTag(vp)}: no console or page error (${e3.length})`);
+    } catch (e) {
+      check(tag, false, `I-3 ${helpers.vpTag(vp)} threw: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      await c3.close();
+    }
+  }
+  // I-4: a failed in-place open leaves no stale slide identity; the next open restores everything.
+  {
+    const { ctx: c4, page: p4, errors: e4 } = await helpers.newPage(browser, vp);
+    try {
+      await p4.goto(helpers.shellUrl(port), { waitUntil: 'load' });
+      await helpers.waitForShell(p4);
+      await helpers.settle(p4, { sharp: false, quietMs: 200 });
+      await p4.evaluate(() => window.__shell.panels.show('cohort'));
+      await p4.evaluate(() => window.__shell.openSlide({ kind: 'manifest', url: 'missing/manifest.json' }, { view: 'A', reason: 'library' }).catch(() => null));
+      await p4.waitForFunction(() => !document.getElementById('plate').hidden, null, { timeout: 15_000, polling: 50 });
+      await p4.waitForTimeout(300);
+      const f = await p4.evaluate(() => ({
+        title: document.title,
+        idName: document.getElementById('idName').textContent,
+        hudId: document.getElementById('hudId').textContent,
+        nav: !document.getElementById('navigator').hidden,
+        sharp: document.getElementById('stripSharpLabel').textContent,
+        tiles: document.getElementById('chipTiles').textContent,
+        canvas: document.querySelector('#paneA > canvas:not(.overlay-layer)')?.getAttribute('aria-label') ?? '',
+        selected: document.querySelectorAll('#tp-cohort [role="option"][aria-selected="true"]').length,
+        openIn: [...document.querySelectorAll('#tp-cohort [role="option"]')].filter((o) => (o.getAttribute('aria-label') ?? '').includes('open in view A')).length,
+      }));
+      check(
+        tag,
+        f.title.startsWith('No slide open') && f.idName === 'No slide open' && f.hudId === 'No slide open' && !f.nav && f.sharp === 'No slide open' && f.tiles === 'Tiles –' && f.canvas.startsWith('Slide canvas, no slide open') && f.selected === 0 && f.openIn === 0,
+        `I-4: after a failed open nothing names the disposed slide (title "${f.title}", identity "${f.idName}", HUD "${f.hudId}", navigator ${f.nav ? 'shown' : 'hidden'}, strip "${f.sharp}", "${f.tiles}", Cohort aria-selected ${f.selected}, "open in view A" ${f.openIn}; canvas "${f.canvas.slice(0, 60)}…")`,
+      );
+      await p4.evaluate(() => window.__shell.openSlide({ kind: 'catalogue', id: 'camelyon16.tumor_014.r36864_66560' }, { view: 'A', reason: 'library' }));
+      await helpers.settle(p4, { sharp: false, quietMs: 300 });
+      const r = await p4.evaluate(() => ({ title: document.title, nav: !document.getElementById('navigator').hidden, plate: !document.getElementById('plate').hidden, sharp: document.getElementById('stripSharpLabel').textContent, selected: document.querySelectorAll('#tp-cohort [role="option"][aria-selected="true"]').length }));
+      check(tag, r.title.startsWith('tumor_014') && r.nav && !r.plate && r.sharp !== 'No slide open' && r.selected === 1, `I-4: the next open restores the identity ("${r.title}"), the navigator, the strip ("${r.sharp}") and the Cohort selection (${r.selected}); plate ${r.plate ? 'shown' : 'hidden'}`);
+      const unexpected = e4.filter((x) => !/Failed to load resource|404/.test(x));
+      check(tag, unexpected.length === 0, `I-4: no page error beyond the failed manifest request (${unexpected.length}${unexpected.length ? ': ' + unexpected.slice(0, 3).join(' | ') : ''})`);
+    } catch (e) {
+      check(tag, false, `I-4 threw: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      await c4.close();
+    }
+  }
+  // I-5: in compare, canvas B is named like canvas A (slide, stain, magnification, counts) and, focused, speaks its
+  // own settle sentence (TOOLS.md §9 SC 4.1.2 / 4.1.3).
+  {
+    const vw = helpers.VIEWPORTS['desktop-wide'];
+    const { ctx: c5, page: p5, errors: e5 } = await helpers.newPage(browser, vw);
+    try {
+      await p5.goto(helpers.shellUrl(port), { waitUntil: 'load' });
+      await helpers.waitForShell(p5);
+      await helpers.settle(p5, { sharp: false, quietMs: 200 });
+      await p5.evaluate(() => window.__shell.run('compare:with:openslide.CMU-1-Small-Region'));
+      await p5.waitForFunction(() => window.__shell.tools.compare?.().state === 'on' && !window.__shell.tools.compare().busy, null, { timeout: 30_000, polling: 50 });
+      await helpers.settle(p5, { sharp: false, quietMs: 400 });
+      await p5.focus('#viewB');
+      await p5.keyboard.press('Minus');
+      const ok = await p5
+        .waitForFunction(() => /^B: about .+ micrometres per pixel\. CMU-1-Small-Region, H and E\./.test(window.__shell.polite().trim()), null, { timeout: 6000, polling: 50 })
+        .then(() => true, () => false);
+      const r = await p5.evaluate(() => ({ b: document.getElementById('viewB')?.getAttribute('aria-label') ?? '', polite: window.__shell.polite().trim() }));
+      check(tag, /^Slide canvas B, OpenSlide test data CMU-1-Small-Region, H and E, about .+ times\. \d+ annotations?, \d+ overlays? shown\./.test(r.b), `I-5 ${helpers.vpTag(vw)}: canvas B's accessible name carries its slide, stain, magnification and counts ("${r.b.slice(0, 110)}…")`);
+      check(tag, ok, `I-5: with view B focused, a zoom in B is spoken at settle as B's sentence ("${r.polite}")`);
+      check(tag, e5.length === 0, `I-5: no console or page error (${e5.length}${e5.length ? ': ' + e5.slice(0, 3).join(' | ') : ''})`);
+    } catch (e) {
+      check(tag, false, `I-5 threw: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      await c5.close();
+    }
+  }
 }
 
 // ------------------------------------------------------------------ module checks

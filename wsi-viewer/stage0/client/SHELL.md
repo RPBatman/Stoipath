@@ -237,7 +237,7 @@ The single 133 ms frame is a SwiftShader stall of the kind seen in the A/B runs 
 - `color-contrast` on text over the WebGL canvas and the HUD backdrop, which axe cannot sample. contrast-check.py covers the HUD backdrop over H&E.
 - `aria-valid-attr-value` for `aria-controls` pointing at the hidden palette, dialogs and tab panel.
 
-**6. Screenshots of the real slide** in `design/screens/integrated/shots/` (JPEG q90, 4:4:4), re-taken after the review fixes and each one reviewed:
+**6. Screenshots of the real slide** in `design/screens/integrated/shots/` (JPEG q90, 4:4:4), re-taken after the review fixes and each one reviewed. (Phase A Wave 4 retook every `shell-*` name below on the Phase A shell, JPEG q85, and added the Phase A states: "Phase A · Wave 4" below.)
 - `shell-3840x2160`, `shell-1920x1080`, `shell-1440x900`, `shell-1024x1366-coarse`, `shell-390x844-coarse`, `shell-360x740-coarse` (six-target bottom bar);
 - `shell-1920x1080-measure` (two measurements, Measurements tab, one-line tool line), `-palette` (typed zoom "20"), `-keymap` (the "Not in this build" rows), `-engine` (with the link-estimate row);
 - `shell-1440x900-engine-drawer` (`?engine=1`; the navigator and readout step left, navigator capped above the central zone), `shell-1440x900-keymap` (the same with the keymap);
@@ -446,11 +446,88 @@ Every placement commits on the up-event (SC 2.5.2); zero-size shapes are discard
 **Shared-file changes in Wave 4.**
 - `src/shell/measure.ts` deleted; main.ts drops the Stage-0 tools, the Measurements list and its rows (`panel:meas`, `tool:draw`, `tool:area`), keeps `measure:place` (↵) and `measure:pan` (Space) as keymap rows for every drawing tool, and mirrors `compareChanged` into the rail Compare button's `aria-pressed`.
 - `shell.html`: the Measurements tab and panel are removed (Context: Inspector · Annotations · Slide · Engine); the About note names each slide's own licence.
-- `shell.css`: the five-tab compaction and the Measurements rows go; pane A's readout stands above its scale bar while the Library drawer covers pane A in compare (F6).
+- `shell.css`: the five-tab compaction and the Measurements rows go; pane A's readout stands above its scale bar while the Library drawer covers pane A in compare (F6); on short touch landscapes the rail drops its Compare button (F14).
+- `palette.ts`: rows whose label holds every query word come first, one heading per group (F13: "annotations list" ran "Measure area" before).
 - `panels.ts`: `DockTab` loses `meas`. `contracts.ts`: one comment.
 - `harness/shell-check.mjs`: TOOLS.md §11.3's edit (F3). `harness/tools-check.mjs`: `--checks DIR` (F9).
 
-GATES_PLACEHOLDER
+**Gates on the final Wave 4 build** (`npm run build`, build `2026-11-02T01:31:00Z`; TOOLS.md §11.4):
+- `npx tsc --noEmit -p tsconfig.json`: clean.
+- `node harness/run.mjs --label wave4-integrator` (`harness/results/2026-11-02T01-31-25-862Z-wave4-integrator.json`) beside the Wave 2 run. The measurement page's sources are unchanged since Wave 0 (`index.html`, `src/main.ts`, `src/viewer.ts`, `src/decode-pool.ts`, `run.mjs`, `check-metrics.mjs`), so the differences are run-to-run noise on SwiftShader:
+
+| | Wave 2 | Wave 4 |
+|---|---|---|
+| frames | 788 | 779 |
+| frame ms p50 / p95 / max | 16.7 / 50.1 / 83.3 | 16.7 / 50.1 / 83.3 |
+| frame ms during gestures p50 / p95 | 49.9 / 66.6 | 50 / 66.7 |
+| dropped frames % | 44.97 | 43.69 |
+| upload ms/frame p95 | 3.9 | 3.5 |
+| gestures (n / completed / timed out) | 11 / 11 / 0 | 11 / 11 / 0 |
+| zoom-in TTS p50 / max ms | 213 / 283 | 247 / 350 |
+| zoom-in sharp-after-settle p95 ms | 0 | 0 |
+| zoom-in max blur max ms | 266.6 | 333.3 |
+| blank frames after base | 0 | 0 |
+| tiles received / errors | 255 / 0 | 255 / 0 |
+| texture layers | 160 (viewport) | 160 (viewport) |
+
+  The TTS lies inside the earlier builds' spread (163–347 ms p50 across the A/B, review and Wave 0 runs). `node harness/check-metrics.mjs`: 20 `ok`, 0 `FAIL`, "all metric checks passed".
+- `node harness/shell-check.mjs`: 190 `ok`, 0 `FAIL`, "all shell checks passed", with TOOLS.md §11.3's edit (F3): the measurement row count and section 4b run on the Annotations list. Frame cost at 1440 × 900 is unchanged: drag 207 frames, LayoutCount 25 / RecalcStyleCount 63 (index.html 0 / 1); wheel 39 frames, 36 / 36; phone drag LayoutCount 2 / RecalcStyleCount 63.
+- `node harness/tools-check.mjs`: 568 `ok`, 19 `FAIL` over 587 checks (the integrator gate and eight module files). The integrator gate gives 4 `ok`: I-1 isolation (index.html's chunks are `index.html` and the shared `viewer` chunk; the 16-module graph of `src/main.ts` reaches nothing under `src/shell/`), I-2 116 commands, 64 with key bindings, no conflict and no console error. Per module: core 46/46, draw-tools 106/106, layers 57/57, compare 73/73, share 76/76, annotations 63/72, library 92/93, overlay 51/60. axe-core ran 71 times inside the module checks, 0 violations. The 19 failures are the three stale check assumptions already filed (TOOLS-QUESTIONS 2026-11-01 Wave 2 integrator, draw-tools D3, layers LQ2): ANN-6 and ANN-7 assume no Brush row and no Select drag on a selected body, LIB-2 reads the polite region after the spoken twin, and OVL-2, OVL-3 and OVL-5 assume no default-visible CAMELYON16 layer. Each owner's fix, applied to a scratch copy and run on the same build with `--checks`: annotations 72/72, library 93/93, overlay 60/60. The owned files are unchanged (TOOLS.md §15.15 F9).
+- `node harness/unit.mjs`: 1,082 `ok`, 0 `FAIL` in 10 files. `python3 -m unittest discover stage0/tools/tests`: 49 tests OK; `build_catalogue.py --check`: up to date (5 slides, 6 overlays).
+- axe-core 4.10.3, WCAG 2.2 AA (a scratch runner over the final build): **0 violations in 50 runs** and 0 console or page errors. The runs covered 1920 × 1080, 1440 × 900, 1024 × 1366 coarse (iPad UA) and 390 × 844 coarse (phone UA), each in: rest, palette, keymap, Library Cohort, Slides tray (after a switch to CMU-1-Small-Region), Layers with the demo heatmap, Annotations with a worked set (rectangle, ellipse, polygon, two points, a keyboard measurement and, on desktop, a brush region), the Inspector with a selection, the class menu, a polygon in progress, and compare (open on desktop, with the Layers and Annotations drawers over the panes too; the refusal on the tablet and phone); a measurement in progress on desktop. Module checks ran axe 71 more times inside tools-check: 0 violations.
+- design-system `layout-check.mjs` (T1, Z1, S1, A1, A2, A3; the http copy, which opens a panel from `?libpanel=` and runs commands from `?lcrun=`) at the nine SHELL.md viewports (390 × 844 c, 1024 × 1366 c, 1280 × 800, 1366 × 768, 1366 × 1024 c, 1440 × 900, 1600 × 900, 1920 × 1080, 3840 × 2160) in six states: rest, Library Cohort, Layers with the demo heatmap, Annotations, compare, compare with the Layers drawer. **49 of 54 runs pass; 5 fail A1 only, under a coarse pointer, in two module-owned places** (TOOLS-QUESTIONS 2026-11-02 Wave 4): compare's Sync items `lock` / `none` are 44 × 40 at 1024 c and 1366 c (4 runs), and the Wave 2 annotations finding, the export-coordinates items (90 × 40, 87 × 40) and the drop zone (301 × 35) at 1366 c (1 run). With each owner's suggested CSS in a scratch copy of the tree, the same states pass at 1024 c and 1366 c. No Z1 intrusion, no S1 sheet over 40 %, no T1 clip and no A2 / A3 finding anywhere. The rail fits 1366 × 768 (17 targets, 688 px of 688) and, since F14, a 1133 × 744 coarse iPad mini (13 targets, 664 px of 664; before F14 694 px of content in 664).
+- Screenshots, all reviewed, in `design/screens/integrated/shots/` (JPEG q85, 4:4:4), every one retaken from this build: the Phase A states `-library`, `-slides`, `-layers-demo`, `-annotations`, `-inspector`, `-classmenu`, `-drawing`, `-compare` at 1920 × 1080 and 1440 × 900 and, as sheets (`-…-sheet`), at 1024 × 1366 coarse and 390 × 844 coarse (where `-compare` shows the refusal); `-snapshot` and `-snapshot-image` (the downloaded PNG with its burn-in and footer) at 1920 and 390; and the earlier names on the Phase A shell (`shell-1920x1080`, `-measure`, `-palette`, `-keymap`, `-engine`; `shell-1440x900`, `-engine-drawer`, `-keymap`; `shell-1024x1366-coarse`, `-keymap`; `shell-390x844-coarse`, `-measure-nav`, `-palette`, `-sheet`; `shell-3840x2160`; `shell-360x740-coarse`). Fixed after review: the screenshot script left the brush region selected while picking the next class, which reclassified it (a script error, not a product one); on phones a refusal or result is spoken but shown only while a tool is active, and echoing it with Select failed Z1, so it stays as it was (F15). Filed for owners: the Layers row's `reference` tag stretched to the licence link's 44 px under a coarse pointer, and the Annotations toolsrow's key caps on touch screens.
+
+## Phase A review fixes (integrator, 2026-11-02)
+
+Two reviews of the Wave 4 build, an engine lens and a pathologist / accessibility lens, raised 15 issues (3 high, 8 medium, 4 low). All 15 are fixed. Each was reproduced before its fix, and none was wrong. The judgement calls are TOOLS.md §15.16 R1–R16. The contract changes are two optional members (TOOLS-QUESTIONS.md, 2026-11-02 Phase A review fixes). `index.html` and `src/main.ts` are unchanged.
+
+**Phase A review fixes**
+1. **High · every disposed engine stayed in memory (engine).** The Event Timing `PerformanceObserver` in `Metrics` was never disconnected. A live observer is a GC root, and it held each old engine: canvas, GL context, tile cache and frame log. `Metrics.dispose()` (additive) disconnects it, and `Viewer.dispose()` calls it and drops the upload queue. Over 10 switches: `WebGL2RenderingContext` heap nodes went 5 → 14 before and stay 4 → 4 after; the snapshot went 15.8 → 57.3 MB before and 11.3 → 12.3 MB after (R1).
+2. **High · navigator listeners kept every slide's engine.** Each `NavigatorView` added a ResizeObserver and a click listener to the persistent `#navThumb` (11 click listeners after 10 switches). `dispose()` removes both, and main.ts disposes the old navigator on view A's `slideClosing`: 1 listener, 4 ResizeObservers (R2).
+3. **Medium · CORE-2 and CMP-4 could not see the leak.** `usedSize` excludes ArrayBuffer backing stores and Blink objects. Both checks now measure `used + backing + embedder` and count `WebGL2RenderingContext` heap nodes (helpers `heapUsage`, `heapCensus`) (R3). CORE-2 on the final build: heap 11.2 → 11.8 MB over 9 more switches (JS 3.6 → 4.2, backing 5.3 → 5.5), WebGL2RenderingContext nodes 4 → 4. CMP-4: after 3 more open / close cycles, nodes 5 → 5 and heap 17.3 → 17.3 MB.
+4. **Medium · QuPath import of a whole-source export imported nothing.** The `auto` rule required every coordinate to be off the pyramid. It now picks the reading that lands more features (a tie keeps pyramid coordinates). A feature off a region is skipped as "outside this region". A new `Import coordinates` control (Auto · This pyramid · Source slide) overrides the rule, and the report says which reading was used (R4).
+5. **Low · one quota error stopped all saving and gave the wrong reason.** `QuotaExceededError` and `DataCloneError` now fail only that write: storage stays available, the slide says "Not saved (browser storage is full)…", and other slides still save. A write's size is recorded only once it commits (R5).
+6. **High · FR-R11 marker missing when the demo heatmap was shown only in compare pane B.** Pane B now has its own marker line (`#hudMarkerB`, under its label in the bottom-right HUD column, since the compare bar and the navigator hold its top edge), rendered by layers for view B's slide (R6).
+7. **Medium · after a failed open the UI still named the disposed slide.** The top bar, title, HUD, navigator (hidden), strip and canvas name now say "No slide open", and the Cohort and tray drop the selected row. The next open restores everything. A ref that fails before anything closed keeps its slide and gets a notice, not the plate (R7).
+8. **Medium · choosing the next class reclassified the shape just drawn.** With a drawing tool active, a selection that exists only because that tool just committed it keeps its class: "Class: Stroma for the next shape · A2 stays Tumor". With Select, or after the user chooses the selection, the pick reclassifies as before (R8).
+9. **Medium · fly-to put wide features under the drawer.** Fly-to (the Annotations list and Inspector, and layers' legend) fits 60 % of the span no drawer covers and centres it there, through `ShellEnv.visibleInsets` (R9). At 1440 the fitted box spans 266–894 px of 56–1104; before, 59 px were hidden.
+10. **Medium · the phone class menu entered the central zone.** On phones it is a bottom sheet (base.css `.sheet`): two columns of 44 px rows above the bottom bar, 390 × 197 px (R10).
+11. **Medium · canvas B was anonymous and silent.** Canvas B's name carries its slide, stain, magnification and counts. With B focused, its settle sentence ("B: about 4.8 times, 2.09 micrometres per pixel. CMU-1-Small-Region, H and E. Tool: Select.") is spoken (R11).
+12. **Low · the list hint lost its key caps on touch.** The keyboard sentence is hidden whole under a coarse pointer, and "Tap an item to fly to it and select it." is shown instead (R12).
+13. **Low · the rail's Tab stop was a zoom preset.** The one Tab stop is the pressed tool at 1440, 1366 and 1920, and it follows tool changes (R13).
+14. **Low · polygons recorded the closing key as their input.** `stoipath.input` is the first vertex's modality (R15).
+15. **Low · import errors set no `aria-invalid`.** A refused or partly skipped import marks the Import button and the drop zone `aria-invalid`, described by the report, until the next clean import (R14).
+
+Also applied, from the Wave 4 notes filed for module owners (R16): the owners' fixes to ANN-6, ANN-7, LIB-2 and OVL-2/3/5, so the gate is green on the owned check files themselves; 44 px coarse targets for compare's Sync items, the Annotations coordinates controls and the drop zone; toolsrow key caps hidden on touch; the Layers reference tag aligned beside its 44 px licence link; the Brush size slider following `brush:larger` / `brush:smaller`.
+
+**New checks.** tools-check integrator gate: I-3 (rail Tab stop, 3 viewports), I-4 (failed open and recovery), I-5 (canvas B name and sentence). core CORE-5b (quota). layers "LAY marker B". annotations: ANN-4 (whole-source import, override, aria-invalid), ANN-5 (commit selection, then a list choice), ANN-6 (the uncovered span and a wide feature), ANN-7 (touch hint, phone sheet). draw-tools DRW-3 (input modality). Unit: interop (majority rule, "outside this region", the whole-source case) and annotations (`writeRefusal`).
+
+**Gates on the final build** (`npm run build`, build `2026-11-02T02:58:01Z`; TOOLS.md §11.4):
+- `npx tsc --noEmit -p tsconfig.json`: clean.
+- `node harness/run.mjs --label review-fixes` (`harness/results/2026-11-02T02-58-27-523Z-review-fixes.json`) beside the Wave 4 run. `index.html` and `src/main.ts` are unchanged. The engine's only change is the additive `dispose()` path (R1), which the measurement page never runs, so the differences are run-to-run noise on SwiftShader:
+
+| | Wave 4 | Review fixes |
+|---|---|---|
+| frames | 779 | 779 |
+| frame ms p50 / p95 / max | 16.7 / 50.1 / 83.3 | 16.7 / 50.1 / 66.8 |
+| frame ms during gestures p50 / p95 | 50 / 66.7 | 50 / 66.7 |
+| dropped frames % | 43.69 | 44.07 |
+| upload ms/frame p95 | 3.5 | 3.6 |
+| gestures (n / completed / timed out) | 11 / 11 / 0 | 11 / 11 / 0 |
+| zoom-in TTS p50 / max ms | 247 / 350 | 280 / 317 |
+| zoom-in sharp-after-settle p95 ms | 0 | 0 |
+| blank frames after base | 0 | 0 |
+| tiles received / errors | 255 / 0 | 262 / 0 |
+| texture layers | 160 | 160 |
+
+  The TTS lies inside the earlier builds' spread (163–347 ms p50). `node harness/check-metrics.mjs`: 20 `ok`, "all metric checks passed".
+- `node harness/shell-check.mjs`: 190 `ok`, 0 `FAIL`, "all shell checks passed". Frame cost at 1440 × 900: drag 205 frames, LayoutCount 25 / RecalcStyleCount 63; wheel 38 frames, 34 / 35.
+- `node harness/tools-check.mjs`: **623 `ok`, 1 `FAIL` over 624 checks.** The integrator gate is 16/16 (I-1 isolation, I-2 registry, and the new I-3, I-4, I-5). Per module: annotations 81/81, compare 79/79, core 50/50, draw-tools 108/108, layers 61/61, library 93/93, share 76/76, overlay 59/60. The 19 Wave 4 failures are gone, now that the owners' check fixes are applied (R16). The one failure is a timing outlier in OVL-4's L1 wheel burst: 48 exact draws, 3 of them ≥ 3.9 ms against a 3 ms p95 budget, while the exact-render average was 0.40 ms and no blit was needed. The overlay code is unchanged. The overlay checks re-run twice on the same build give 60/60 and 60/60 (L1 wheel burst p95 1.00 and 0.50 ms), and the full run on the private build of the same sources passed 624/624. A p95 over about 48 frames is decided by its top 3 samples, so a scheduling hiccup on SwiftShader can tip it; the overlay owner may want to judge on `stats.p95Ms` or on more frames (note in TOOLS-QUESTIONS). axe-core ran 73 times inside the module checks: 0 violations.
+- `node harness/unit.mjs`: 1,090 `ok`, 0 `FAIL` in 10 files. `python3 -m unittest discover stage0/tools/tests`: 49 tests OK; `build_catalogue.py --check`: up to date.
+- axe-core 4.10.3, WCAG 2.2 AA (Wave 4's scratch runner, plus the new states compare with the heatmap in B, failed open and import report): **0 violations in 60 runs**, and no console or page error beyond the failed-open state's own 404, across 1920 × 1080, 1440 × 900, 1024 × 1366 coarse and 390 × 844 coarse.
+- design-system `layout-check.mjs` (T1, Z1, S1, A1, A2, A3; Wave 4's http copy) at the nine SHELL.md viewports in seven states: rest, Library Cohort, Layers with the demo heatmap, Annotations, compare, compare with the Layers drawer, and the class menu open. **63 of 63 runs pass.** Wave 4's five coarse A1 failures are fixed (compare Sync items, the Annotations coordinates items and drop zone), and the phone class menu is a transient sheet, so it no longer intrudes on Z1.
+- Screenshots, each reviewed, in `design/screens/integrated/shots/` (JPEG q85, 4:4:4), retaken from this build where the fixes changed what is seen: `shell-1920x1080-annotations` (Import coordinates; the brush region keeps its class when the next class is picked, with no script workaround now), `shell-1440x900-annotations`, `shell-1024x1366-coarse-annotations-sheet` and `shell-390x844-coarse-annotations-sheet` (no key caps on touch), `shell-390x844-coarse-classmenu` (the bottom sheet), `shell-1024x1366-coarse-layers-demo-sheet` (the reference tag beside the 44 px licence link). New: `shell-1920x1080-compare-marker-b` (the FR-R11 line in pane B's HUD), `shell-1920x1080-import-report` (a whole-source QuPath file: 4 imported, 1 "outside this region", "Read as source-slide coordinates (Auto)"), `shell-1440x900-open-failed` ("No slide open" everywhere, no Cohort row selected). The other Wave 4 screenshots are unchanged by these fixes.
 
 ## Known limitations
 

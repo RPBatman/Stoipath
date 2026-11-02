@@ -67,14 +67,18 @@
      segmented items inside a 44 px control, and the licence chip is a link */
   #tp-layers .segmented__item { min-height: var(--target); }
   #tp-layers .layer-row__provenance a.chip { min-height: var(--target); min-width: var(--target); justify-content: center; }
+  /* the reference tag beside the 44 px licence link keeps its own height (Wave 4 screenshot review) */
+  #tp-layers .layer-row__provenance { align-items: center; }
 }
 
-/* ---- #hudMarker (pane A's HUD, under the identity line) ------------------------------------------------------------ */
+/* ---- #hudMarker (pane A's HUD, under the identity line) and #hudMarkerB (pane B's, under its label) ------------- */
 /* The FR-R11 marker over the HUD backdrop: the HUD's own text tokens (base.css .hud__item, .hud__secondary). */
 /* Two lines (note, then the marker), the box as wide as the wider line; the HUD column caps it at 25 % of the canvas. */
-#hudMarker { flex-direction: column; align-items: flex-start; gap: var(--space-1); font-family: var(--font-ui); font-size: var(--text-xs); color: var(--grey-91); white-space: normal; max-width: 100%; }
-#hudMarker[hidden], #hudMarker .hud-marker__note[hidden] { display: none; }
-#hudMarker .marker-notvalidated { color: var(--grey-95); border-color: var(--grey-83); }
+#hudMarker, #hudMarkerB { flex-direction: column; align-items: flex-start; gap: var(--space-1); font-family: var(--font-ui); font-size: var(--text-xs); color: var(--grey-91); white-space: normal; max-width: 100%; }
+#hudMarker[hidden], #hudMarker .hud-marker__note[hidden], #hudMarkerB[hidden], #hudMarkerB .hud-marker__note[hidden] { display: none; }
+#hudMarker .marker-notvalidated, #hudMarkerB .marker-notvalidated { color: var(--grey-95); border-color: var(--grey-83); }
+/* pane B's HUD column is the bottom-right one: its lines align right, as the label and the readout do */
+#hudMarkerB { align-items: flex-end; }
 /* Phones: the HUD column is 48 % wide, where the two parts wrapped to four lines and reached the central zone
    (layout-check Z1 at 390 coarse); the marker may span the canvas width instead, as two lines in the top band. */
 @media (max-width: 599px) {

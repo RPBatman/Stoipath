@@ -49,10 +49,41 @@ export interface Resolved {
 }
 
 export class Actions {
+  /**
+   * The current selection was made by a drawing tool's commit (draw-tools DT3 selects every committed feature), not by
+   * the user: "{slideKey}|{sorted ids}", else null. Phase A review: picking the class for the next shape must not
+   * reclassify the shape just drawn, so pickClass reclassifies only a selection the user made, or any selection
+   * while the Select tool is active. Kept by index.ts from the bus (annotationCreated, then annotationSelected).
+   */
+  private commitSelection: string | null = null;
+  private lastCreated: string | null = null;
+
   constructor(
     private readonly shell: ShellApi,
     private readonly service: AnnotationsService,
   ) {}
+
+  /** Bus: a feature (or several) was just created by an edit. A commit selects it in the same task (DT3). */
+  noteCreated(slideKey: string, ids: readonly string[]): void {
+    const sig = `${slideKey}|${[...ids].sort().join(',')}`;
+    this.lastCreated = sig;
+    queueMicrotask(() => {
+      if (this.lastCreated === sig) this.lastCreated = null;
+    });
+  }
+
+  /** Bus: the selection changed. It is a commit's selection iff it is exactly what was created just before. */
+  noteSelected(slideKey: string, ids: readonly string[]): void {
+    const sig = `${slideKey}|${[...ids].sort().join(',')}`;
+    this.commitSelection = ids.length > 0 && sig === this.lastCreated ? sig : null;
+    this.lastCreated = null;
+  }
+
+  /** The selection is a drawing tool's commit and the user has not chosen it (see `commitSelection`). */
+  private selectionIsCommit(st: Store | null): boolean {
+    if (st === null || this.commitSelection === null) return false;
+    return this.commitSelection === `${st.slideKey}|${[...st.selection].sort().join(',')}`;
+  }
 
   /** The view the actions act on: the focused one when it shows a slide, else A. */
   viewId(): ViewId {
@@ -142,25 +173,36 @@ export class Actions {
     return this.store()?.remove(ids, inputOf(source)) ?? 0;
   }
 
+  /** A selection the user made (list, Inspector): it is theirs now, even when it equals a commit's selection. */
   select(ids: readonly string[], source: CommandSource): void {
+    this.commitSelection = null;
     this.store()?.select(ids, inputOf(source));
   }
 
   /**
    * Q then a digit, a class-menu item or a class chip: the active class becomes `name`; editable selected annotations
-   * of another class are reclassified in one undo step ("A1, A2 → Stroma", the store's sentence).
+   * of another class are reclassified in one undo step ("A1, A2 → Stroma", the store's sentence). Phase A review
+   * (§15.16 R8): a selection that only exists because a drawing tool just committed it is not reclassified while a
+   * drawing tool is active ("draw a Tumor region, press Q 2 to draw Stroma next" keeps the region Tumor); with the
+   * Select tool, or a selection the user made (list, click, Inspector), the pick reclassifies as before (AN9).
    */
   pickClass(name: string, source: CommandSource): void {
     const classes = this.service.classes;
     if (classes.get(name) === undefined) return;
     const st = this.store();
-    const targets = this.selected(st).filter((r) => r.editable && classNameOf(r.feature) !== name && kindOfAnnotation(r.feature) !== 'measurement');
+    const sel = this.selected(st);
+    const targets = sel.filter((r) => r.editable && classNameOf(r.feature) !== name && kindOfAnnotation(r.feature) !== 'measurement');
+    const keepCommit = this.shell.tools.active !== 'select' && this.selectionIsCommit(st);
     classes.setActive(name, source);
-    if (st !== null && targets.length > 0) {
+    if (st !== null && targets.length > 0 && !keepCommit) {
       const input = inputOf(source);
       st.transaction(() => {
         for (const r of targets) st.update(r.feature.id, { className: name }, input);
       });
+    } else if (keepCommit && targets.length > 0) {
+      const labels = targets.map((r) => r.feature.properties.stoipath.label);
+      const was = classNameOf(targets[0]!.feature);
+      this.say(`Class: ${name} for the next shape · ${labels.length === 1 ? `${labels[0]} stays ${was ?? 'unclassified'}` : `${labels.length} just drawn keep their class`}`);
     } else this.say(`Class: ${name}`);
   }
 
@@ -201,7 +243,11 @@ export class Actions {
     return b;
   }
 
-  /** Fly so the box fills 60 % of the viewport (a point keeps the scale, at most POINT_FLY_UM_PER_PX). */
+  /**
+   * Fly so the box fills 60 % of the part of the viewport no drawer covers (a point keeps the scale, at most
+   * POINT_FLY_UM_PER_PX), centred in that part (Phase A review: at 1080–1599 px the Context drawer the list sits in
+   * covered the right of a wide feature). The insets are read on the command (ShellEnv.visibleInsets).
+   */
   flyToBox(box: Box): void {
     const v = this.view();
     const eng = v?.viewer ?? null;
@@ -211,12 +257,16 @@ export class Actions {
     const s = eng.snapshot;
     const cssW = s.cssW > 0 ? s.cssW : s.viewW / s.renderDpr;
     const cssH = s.cssH > 0 ? s.cssH : s.viewH / s.renderDpr;
+    const ins = this.shell.env.visibleInsets?.(v.id) ?? { left: 0, right: 0 };
+    const visW = Math.max(1, cssW - ins.left - ins.right);
     const w = box.maxX - box.minX;
     const h = box.maxY - box.minY;
     let scale = sample.scale_um_per_px;
-    if (w > 0 || h > 0) scale = Math.max((w * mpp) / (FLY_FIT * cssW), (h * mpp) / (FLY_FIT * cssH));
+    if (w > 0 || h > 0) scale = Math.max((w * mpp) / (FLY_FIT * visW), (h * mpp) / (FLY_FIT * cssH));
     else scale = Math.min(scale, POINT_FLY_UM_PER_PX);
-    v.flyTo([((box.minX + box.maxX) / 2) * mpp, ((box.minY + box.maxY) / 2) * mpp], scale, this.shell.env.reducedMotion());
+    // the box centre goes to the uncovered span's centre: the camera centre moves by half the inset difference
+    const shiftUm = ((ins.left - ins.right) / 2) * scale;
+    v.flyTo([((box.minX + box.maxX) / 2) * mpp - shiftUm, ((box.minY + box.maxY) / 2) * mpp], scale, this.shell.env.reducedMotion());
   }
 
   flyToIds(ids: readonly string[]): void {

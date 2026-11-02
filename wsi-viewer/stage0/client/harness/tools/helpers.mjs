@@ -300,6 +300,64 @@ export async function pinch(cdp, cx, cy, { steps = 12, spread = 8 } = {}) {
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
 }
 
+// ------------------------------------------------------------------ memory (CORE-2, CMP-4; Phase A review, engine lens)
+
+/**
+ * Heap after two forced collections, in bytes. `Runtime.getHeapUsage().usedSize` alone leaves out ArrayBuffer backing
+ * stores and embedder (Blink) objects, which is where an engine's large allocations live (frame log and tile-cache
+ * typed arrays, the WebGL wrapper, the canvas): a retained engine grew `total` by about 4.5 MB per switch while
+ * `used` grew by 0.1 MB. `total` = used + backingStorageSize + embedderHeapUsedSize (the fields this Chromium reports).
+ */
+export async function heapUsage(cdp) {
+  await cdp.send('HeapProfiler.enable');
+  await cdp.send('HeapProfiler.collectGarbage');
+  await new Promise((ok) => setTimeout(ok, 100));
+  await cdp.send('HeapProfiler.collectGarbage');
+  const h = await cdp.send('Runtime.getHeapUsage');
+  const used = h.usedSize ?? 0;
+  const backing = h.backingStorageSize ?? 0;
+  const embedder = h.embedderHeapUsedSize ?? 0;
+  return { used, backing, embedder, total: used + backing + embedder };
+}
+
+/**
+ * A heap snapshot census: the number of `object` / `native` nodes whose name is one of `names` (or starts with it and a
+ * space), and the snapshot's total self size in bytes. A retained engine shows as one more `WebGL2RenderingContext`
+ * node per switch (the context wrapper behind its canvas), whatever its JS heap share.
+ */
+export async function heapCensus(cdp, names = ['WebGL2RenderingContext']) {
+  await cdp.send('HeapProfiler.enable');
+  await cdp.send('HeapProfiler.collectGarbage');
+  await cdp.send('HeapProfiler.collectGarbage');
+  const chunks = [];
+  const on = (p) => chunks.push(p.chunk);
+  cdp.on('HeapProfiler.addHeapSnapshotChunk', on);
+  try {
+    await cdp.send('HeapProfiler.takeHeapSnapshot', { reportProgress: false });
+  } finally {
+    cdp.off('HeapProfiler.addHeapSnapshotChunk', on);
+  }
+  const snap = JSON.parse(chunks.join(''));
+  const f = snap.snapshot.meta.node_fields;
+  const nf = f.length;
+  const iName = f.indexOf('name');
+  const iType = f.indexOf('type');
+  const iSelf = f.indexOf('self_size');
+  const types = snap.snapshot.meta.node_types[0];
+  const counts = {};
+  for (const n of names) counts[n] = 0;
+  let selfBytes = 0;
+  const nodes = snap.nodes;
+  for (let i = 0; i < nodes.length; i += nf) {
+    selfBytes += nodes[i + iSelf];
+    const t = types[nodes[i + iType]];
+    if (t !== 'object' && t !== 'native') continue;
+    const name = snap.strings[nodes[i + iName]];
+    for (const n of names) if (name === n || name.startsWith(n + ' ')) counts[n]++;
+  }
+  return { counts, selfBytes };
+}
+
 // ------------------------------------------------------------------ frame cost (TOOLS.md §5.4, rule 2)
 
 export async function perfMetrics(cdp) {

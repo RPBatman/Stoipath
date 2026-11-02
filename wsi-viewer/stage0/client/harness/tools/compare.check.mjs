@@ -44,7 +44,7 @@ const r2 = (x) => Math.round(x * 100) / 100;
 
 export async function run(ctx) {
   const { browser, check, viewports, helpers, url } = ctx;
-  const { newPage, waitForShell, settle, axe, drag, frameCost, frameCostChecks, INSTRUMENT, LIVE_COUNTERS, vpTag } = helpers;
+  const { newPage, waitForShell, settle, axe, drag, frameCost, frameCostChecks, INSTRUMENT, LIVE_COUNTERS, vpTag, heapUsage, heapCensus } = helpers;
 
   // ------------------------------------------------------------------ is the module installed?
   {
@@ -433,10 +433,14 @@ export async function run(ctx) {
   {
     const vp = viewports['desktop-wide'];
     const what = `CMP-4 ${vpTag(vp)}`;
-    const { ctx: c, page, errors } = await open(vp);
+    const { ctx: c, page, cdp, errors } = await open(vp);
     await guard(what, async () => {
       const live0 = await page.evaluate(() => ({ ...window.__live, cssW: window.__shell.tools.compare().cameras.A.cssW }));
-      for (const how of ['C key', 'Close button']) {
+      // Memory after each close (Phase A review, engine lens): live counters alone missed a retained engine per cycle
+      // (heap incl. backing stores grew about 4.5 MB per open / close). Measured after the 1st and the last close.
+      const MB = 1024 * 1024;
+      const mem = [];
+      for (const how of ['C key', 'Close button', 'C key', 'Close button']) {
         await page.focus('#view');
         await page.keyboard.press('c');
         await waitOn(page, TUMOR);
@@ -461,6 +465,17 @@ export async function run(ctx) {
         check(TAG, on.contexts === 2 && off.contexts === 1 && off.workers === live0.workers, `CMP-4 close by ${how} frees view B: live contexts ${on.contexts} → ${off.contexts}, live workers ${on.workers} → ${off.workers} == pane A's pool ${live0.workers}`);
         check(TAG, on.cssW < live0.cssW && off.cssW === off.area && off.cssW === live0.cssW && off.canvasesB === 0 && !off.cls, `CMP-4 close by ${how}: pane A's cssW ${live0.cssW} → ${on.cssW} → ${off.cssW} (canvas area ${off.area}), no engine canvas in pane B, .compare-on removed`);
         if (how === 'Close button') check(TAG, off.focus === 'view' && off.notice === 'Compare closed', `CMP-4 the bar's Close button hands the focus to view A's canvas (#${off.focus}); notice "${off.notice}"`);
+        mem.push(mem.length === 0 || mem.length === 3 ? { heap: await heapUsage(cdp), census: await heapCensus(cdp, ['WebGL2RenderingContext']) } : null);
+      }
+      {
+        const a = mem[0];
+        const b = mem[3];
+        const mb = (x) => (x / MB).toFixed(1);
+        check(
+          TAG,
+          b.census.counts.WebGL2RenderingContext <= a.census.counts.WebGL2RenderingContext && b.heap.total - a.heap.total <= 6 * MB,
+          `CMP-4: closing frees view B's engine: after 3 more open / close cycles WebGL2RenderingContext heap nodes ${a.census.counts.WebGL2RenderingContext} → ${b.census.counts.WebGL2RenderingContext}, heap incl. backing stores ${mb(a.heap.total)} → ${mb(b.heap.total)} MB (Δ ${mb(b.heap.total - a.heap.total)} ≤ 6 MB; backing ${mb(a.heap.backing)} → ${mb(b.heap.backing)})`,
+        );
       }
       check(TAG, errors.length === 0, `CMP-4: no console or page error (${errors.length}${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''})`);
     });

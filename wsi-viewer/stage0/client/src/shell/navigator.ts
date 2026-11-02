@@ -21,6 +21,10 @@ export class NavigatorView {
   private readonly bottom: TransformSlot;
   private readonly left: TransformSlot;
   private readonly right: TransformSlot;
+  /** Kept so dispose() can detach from the persistent #navThumb: an old view's click closure holds its engine. */
+  private ro: ResizeObserver | null = null;
+  private readonly onClick: (e: MouseEvent) => void;
+  private disposed = false;
 
   constructor(
     private readonly pyramid: Pyramid,
@@ -55,22 +59,34 @@ export class NavigatorView {
       }
     }
     if (typeof ResizeObserver !== 'undefined') {
-      new ResizeObserver((entries) => {
+      this.ro = new ResizeObserver((entries) => {
         for (const e of entries) {
           this.thumbW = e.contentRect.width;
           this.thumbH = e.contentRect.height;
           this.dirty = true;
         }
-      }).observe(thumb);
+      });
+      this.ro.observe(thumb);
     }
-    thumb.addEventListener('click', (e) => {
+    this.onClick = (e: MouseEvent): void => {
       if (e.target instanceof HTMLElement && e.target.closest('button') !== null) return;
       const r = thumb.getBoundingClientRect(); // one read per click, outside the frame loop
       if (r.width <= 0 || r.height <= 0) return;
       const fx = (e.clientX - r.left) / r.width;
       const fy = (e.clientY - r.top) / r.height;
       onRecentre(Math.min(1, Math.max(0, fx)) * pyramid.width, Math.min(1, Math.max(0, fy)) * pyramid.height);
-    });
+    };
+    thumb.addEventListener('click', this.onClick);
+  }
+
+  /** Detach from the persistent thumbnail element (Phase A review: one NavigatorView per opened slide used to stay
+   *  attached, and each click closure kept its slide's disposed engine reachable). Idempotent. */
+  dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.ro?.disconnect();
+    this.ro = null;
+    this.thumb.removeEventListener('click', this.onClick);
   }
 
   markDirty(): void {

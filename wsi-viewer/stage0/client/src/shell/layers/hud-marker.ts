@@ -1,8 +1,10 @@
 /**
- * layers · the FR-R11 marker line of pane A's HUD (`#hudMarker`, in `.hud--tl` under the identity line; TOOLS.md §4.2,
- * §6.7; ux-copy hud.marker): `"Demo overlay — not a model output · "` + the fixed marker span whenever a layer with a
- * marker is visible on view A's slide. Written at rest only (index.ts calls `render` from `shell.atRest`); every
- * write is skipped when the content would not change, so a render that changes nothing touches no DOM.
+ * layers · the FR-R11 marker line of a pane's HUD (TOOLS.md §4.2, §6.7; ux-copy hud.marker): `#hudMarker` in pane A's
+ * `.hud--tl` under the identity line, and `#hudMarkerB` in pane B's `.hud--br` under its `.panelabel` (Phase A review:
+ * a marker layer shown only in pane B was otherwise unmarked on screen). Each shows `"Demo overlay — not a model
+ * output · "` + the fixed marker span whenever a layer with a marker is visible on that pane's slide. Written at rest
+ * only (index.ts calls `render` from `shell.atRest`); every write is skipped when the content would not change, so a
+ * render that changes nothing touches no DOM.
  */
 import { h } from '../dom';
 import { MARKER_TEXT } from './text';

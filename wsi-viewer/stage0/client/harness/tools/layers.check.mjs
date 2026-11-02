@@ -490,6 +490,48 @@ export async function run(ctx) {
     }
   });
 
+  // ------------------------------------------------------------------ extension (Phase A review): the FR-R11 marker per pane
+  // With view A on a slide without a visible marker layer and the demo heatmap shown only in compare pane B, the screen
+  // must still carry the marker: pane B's own HUD line (#hudMarkerB), not pane A's.
+  await guard('LAY marker B', async () => {
+    const vp = viewports['desktop-wide'];
+    const { ctx: c, page, errors } = await open(vp);
+    try {
+      await page.evaluate((id) => window.__shell.openSlide({ kind: 'catalogue', id }, { view: 'A', reason: 'library' }), SMALL);
+      await settle(page, { sharp: false, quietMs: 200 });
+      await page.evaluate((id) => window.__shell.run(`compare:with:${id}`), TUMOR);
+      await page.waitForFunction(() => window.__shell.tools.compare?.().state === 'on' && !window.__shell.tools.compare().busy, null, { timeout: 30_000, polling: 50 });
+      await settle(page, { sharp: false, quietMs: 300 });
+      await page.click('#viewB');
+      await page.keyboard.press('Shift+H');
+      await waitReady(page, TUMOR, DEMO);
+      await page.waitForFunction(() => window.__shell.tools.layers().hudMarkerB?.shown === true, null, { timeout: 5000, polling: 50 }).catch(() => {});
+      const r = await page.evaluate(() => {
+        const vis = (e) => e !== null && e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden';
+        const b = document.getElementById('hudMarkerB');
+        const pb = document.getElementById('paneB').getBoundingClientRect();
+        const br = b?.getBoundingClientRect();
+        return {
+          a: vis(document.getElementById('hudMarker')),
+          b: vis(b),
+          text: b?.textContent ?? '',
+          inB: br !== undefined && br.left >= pb.left && br.right <= pb.right + 1,
+          markers: [...document.querySelectorAll('.marker-notvalidated')].filter(vis).length,
+          state: window.__shell.state().views.find((v) => v.id === 'B')?.overlays ?? null,
+        };
+      });
+      check(TAG, !r.a && r.b && r.inB && r.markers === 1 && r.text.includes(DEMO_NOTE) && r.text.includes(MARKER), `LAY marker B ${vpTag(vp)}: the demo heatmap shown only in pane B puts the FR-R11 marker in pane B's HUD (#hudMarkerB ${r.b ? 'shown' : 'hidden'} inside pane B: ${r.inB}; pane A's ${r.a ? 'shown' : 'hidden'}; ${r.markers} visible .marker-notvalidated; "${r.text}")`);
+      await page.keyboard.press('Shift+H'); // back to Outline: still a marker layer, still shown
+      await page.evaluate((id) => window.__shell.tools.layers().test.update(id, { visible: false }, 'camelyon16.tumor_014.r36864_66560'), DEMO);
+      await page.waitForFunction(() => window.__shell.tools.layers().hudMarkerB?.shown === false, null, { timeout: 5000, polling: 50 }).catch(() => {});
+      const off = await page.evaluate(() => ({ b: !document.getElementById('hudMarkerB').hidden }));
+      check(TAG, !off.b, `LAY marker B: hiding the demo layer of pane B's slide hides pane B's marker line (${off.b ? 'still shown' : 'hidden'})`);
+      await finish(page, errors, `LAY marker B ${vpTag(vp)} (compare, heatmap in B)`);
+    } finally {
+      await c.close();
+    }
+  });
+
   await guard('LAY phone', async () => {
     const vp = viewports.phone;
     const { ctx: c, page, errors } = await open(vp);

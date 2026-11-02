@@ -37,6 +37,18 @@
 #tp-ann .dropzone:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 #tp-ann .ann-report.is-error { color: var(--color-text); }
 #tp-ann .ann-status { padding-top: 0; }
+/* The list hint's keyboard sentence goes whole under a coarse pointer, the touch sentence otherwise (Phase A review;
+   library.css hides its .lib-keys note the same way). shell.css hides `.note .key` on coarse, which alone left
+   "… moves through the list · flies to the item" without its keys. */
+#tp-ann .ann-hint .ann-touch { display: none; }
+@media (pointer: coarse) {
+  #tp-ann .ann-hint .ann-keys { display: none; }
+  #tp-ann .ann-hint .ann-touch { display: inline; }
+  /* 44 px targets (layout-check A1 at 1366 × 1024 coarse, the Wave 2 finding) for the coordinates controls and the
+     drop zone; the toolsrow's key caps go on touch, as library (§15.9 LB12) and share (§15.14 SH1) hide theirs. */
+  #tp-ann .segmented__item, #tp-ann .dropzone { min-height: var(--target); }
+  #tp-ann .toolsrow .key { display: none; }
+}
 #tp-ann .ann-empty { padding: var(--space-6) var(--space-6); }
 
 /* ---- Inspector selection section (#inspSelection) --------------------------------------------------------------- */

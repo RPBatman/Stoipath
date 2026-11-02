@@ -360,10 +360,14 @@ export function install(shell: ShellApi): void {
     const s = eng.snapshot;
     const cssW = s.cssW > 0 ? s.cssW : s.viewW / s.renderDpr;
     const cssH = s.cssH > 0 ? s.cssH : s.viewH / s.renderDpr;
+    // fit into the span no drawer covers (the Layers tab is in the Library drawer over the pane's left; Phase A review)
+    const ins = shell.env.visibleInsets?.(v.id) ?? { left: 0, right: 0 };
+    const visW = Math.max(1, cssW - ins.left - ins.right);
     const w = box.maxX - box.minX;
     const hh = box.maxY - box.minY;
-    const scale = w > 0 || hh > 0 ? Math.max((w * mpp) / (FLY_FIT * cssW), (hh * mpp) / (FLY_FIT * cssH)) : sample.scale_um_per_px;
-    v.flyTo([((box.minX + box.maxX) / 2) * mpp, ((box.minY + box.maxY) / 2) * mpp], scale, shell.env.reducedMotion());
+    const scale = w > 0 || hh > 0 ? Math.max((w * mpp) / (FLY_FIT * visW), (hh * mpp) / (FLY_FIT * cssH)) : sample.scale_um_per_px;
+    const shiftUm = ((ins.left - ins.right) / 2) * scale;
+    v.flyTo([((box.minX + box.maxX) / 2) * mpp - shiftUm, ((box.minY + box.maxY) / 2) * mpp], scale, shell.env.reducedMotion());
   };
 
   // ---- commands
@@ -480,6 +484,9 @@ export function install(shell: ShellApi): void {
   };
   const panel = new LayersPanel(root, model);
   const hud = new HudMarker(document.getElementById('hudMarker'));
+  // Pane B's marker (Phase A review): the FR-R11 text must be on screen for every pane that shows a marker layer, not
+  // only for view A's slide (the snapshot already burns it in per pane).
+  const hudB = new HudMarker(document.getElementById('hudMarkerB'));
   let panelStale = true;
   let lastCount: number | null = -1;
   let renderedKey: string | null | undefined;
@@ -493,16 +500,23 @@ export function install(shell: ShellApi): void {
       shell.panels.setCount('layers', n);
     }
     for (const k of reg.slides()) for (const l of reg.list(k)) layerCmds.ensure(l.id, l.kind === 'annotations' ? 'My annotations' : l.title, l.kindLabel);
-    // HUD marker: pane A's slide
-    const keyA = shell.primary.slide?.key ?? viewKey.A;
-    const notes: string[] = [];
-    let on = false;
-    for (const l of reg.topDown(keyA)) {
-      if (!l.visible || l.marker === null) continue;
-      on = true;
-      if (l.note !== null && !notes.includes(l.note)) notes.push(l.note);
-    }
-    hud.render(on, notes);
+    // HUD markers: one per pane, each for its own view's slide (view B only while it shows a slide)
+    const markerOf = (key: string | null): { on: boolean; notes: string[] } => {
+      const notes: string[] = [];
+      let on = false;
+      if (key === null) return { on, notes };
+      for (const l of reg.topDown(key)) {
+        if (!l.visible || l.marker === null) continue;
+        on = true;
+        if (l.note !== null && !notes.includes(l.note)) notes.push(l.note);
+      }
+      return { on, notes };
+    };
+    const mA = markerOf(shell.primary.slide?.key ?? viewKey.A);
+    hud.render(mA.on, mA.notes);
+    const keyB = shell.views().find((v) => v.id === 'B')?.slide?.key ?? viewKey.B;
+    const mB = markerOf(keyB);
+    hudB.render(mB.on, mB.notes);
     if (shell.panels.isShown('layers')) {
       panel.render();
       panelStale = false;
@@ -583,6 +597,7 @@ export function install(shell: ShellApi): void {
       selected: reg.selected,
       allHidden: reg.allHidden,
       hudMarker: { shown: hud.shown, text: hud.textContent, renders: hud.renders },
+      hudMarkerB: { shown: hudB.shown, text: hudB.textContent, renders: hudB.renders },
       commands: layerCmds.registered(),
       renders: { panel: panel.renders },
       test: {

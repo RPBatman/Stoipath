@@ -6,8 +6,12 @@
  * Export writes interop's text for the store (QuPath dialect, `color` per the class table, pretty) in the chosen
  * coordinates: `This pyramid` (level-0 px of the loaded pyramid) or `Source slide` (the region offset added, so the
  * file opens on the source scan in QuPath; only when the slide is a region). File name `{name}.{region|source}.geojson`.
- * Import reads a `.geojson` / `.json` file with `coordinates: 'auto'` (a source-level0 file is detected) and appends;
- * the report is the notice "Imported {n} annotations from {file}" + " ({m} skipped: {reason})", or interop's refusal.
+ * Import reads a `.geojson` / `.json` file and appends. Its coordinates are `Auto` by default (the file's declaration,
+ * else interop's majority rule, TOOLS.md §6.4); on a region slide an `Import coordinates` control (Auto | This pyramid |
+ * Source slide) overrides it (Phase A review), and the report beside the drop zone says which reading was used. The
+ * notice is "Imported {n} annotations from {file}" + " ({m} skipped: {reason})", or interop's refusal. A refused or
+ * partly skipped import marks the Import button and the drop zone `aria-invalid` and points them at the report
+ * (SC 3.3.1); the next clean import, or the list rendering for another slide, clears it.
  */
 import type { CommandSource, CoordinateSpace, ExportOptions } from '../contracts';
 import { h } from '../dom';
@@ -37,15 +41,29 @@ export function exportFileName(name: string, coords: CoordinateSpace, isRegion: 
   return `${safe}.${coords === 'pyramid-level0' && isRegion ? 'region' : 'source'}.geojson`;
 }
 
+/** How an import reads coordinates: interop's `auto`, or an explicit space (region slides only). Session state. */
+export type ImportCoords = 'auto' | CoordinateSpace;
+
+/** The report's second sentence on a region slide: which reading the import used. */
+export function readingSentence(space: CoordinateSpace, choice: ImportCoords): string {
+  return `Read as ${space === 'source-level0' ? 'source-slide' : 'this pyramid’s'} coordinates${choice === 'auto' ? ' (Auto)' : ''}; Import coordinates changes this.`;
+}
+
 export class ImportExport {
   readonly input: HTMLInputElement;
-  /** The footer pieces list.ts places: buttons row, coordinates control, drop zone, import report. */
+  /** The footer pieces list.ts places: buttons row, coordinates controls, drop zone, import report. */
   readonly actionsRow: HTMLElement;
   readonly coordsGroup: HTMLElement;
+  /** Import coordinates (Auto | This pyramid | Source slide), only on a region slide (Phase A review). */
+  readonly importCoordsGroup: HTMLElement;
   readonly dropzone: HTMLElement;
   readonly report: HTMLElement;
+  private readonly importBtn: HTMLButtonElement;
   private coords: CoordinateSpace;
+  private importCoords: ImportCoords = 'auto';
   private lastReport = '';
+  /** The slide the report belongs to; the report and the invalid state are cleared when the list shows another. */
+  private reportSlide: string | null = null;
 
   constructor(
     private readonly actions: Actions,
@@ -59,13 +77,10 @@ export class ImportExport {
       this.input.value = '';
       if (f !== undefined) void this.importFile(f, 'pointer');
     });
-    this.actionsRow = h(
-      'div',
-      { class: 'footer-actions ann-io' },
-      h('button', { class: 'btn btn--sm btn--secondary', type: 'button', 'data-cmd': 'import:geojson' }, icon('i-upload'), 'Import GeoJSON…'),
-      h('button', { class: 'btn btn--sm btn--secondary', type: 'button', 'data-cmd': 'export:geojson' }, icon('i-download'), 'Export GeoJSON (QuPath)'),
-    );
+    this.importBtn = h('button', { class: 'btn btn--sm btn--secondary', type: 'button', 'data-cmd': 'import:geojson' }, icon('i-upload'), 'Import GeoJSON…');
+    this.actionsRow = h('div', { class: 'footer-actions ann-io' }, this.importBtn, h('button', { class: 'btn btn--sm btn--secondary', type: 'button', 'data-cmd': 'export:geojson' }, icon('i-download'), 'Export GeoJSON (QuPath)'));
     this.coordsGroup = h('div', { class: 'ann-coords', hidden: '' });
+    this.importCoordsGroup = h('div', { class: 'ann-coords ann-coords--import', hidden: '' });
     this.dropzone = h('div', { class: 'dropzone', role: 'button', tabindex: '0', 'aria-describedby': 'annImportReport', text: DROP_TEXT });
     this.report = h('p', { class: 'note ann-report', id: 'annImportReport', hidden: '' });
     this.dropzone.addEventListener('click', () => this.browse());
@@ -118,9 +133,11 @@ export class ImportExport {
       this.finish(`Could not read ${file.name} (${e instanceof Error ? e.message : String(e)}); nothing imported`, true);
       return;
     }
-    const r = st.importJson(text, { coordinates: 'auto', mode: 'append', maxFeatures: MAX_IMPORT_FEATURES }, source === 'test' ? 'command' : 'file');
-    if (r.refused !== null) this.finish(r.refused, true);
-    else this.finish(importSentence(r.added, file.name, r.skipped, r.reasons), false);
+    const region = this.actions.slide()?.regionOffset != null;
+    const choice: ImportCoords = region ? this.importCoords : 'auto';
+    const r = st.importJson(text, { coordinates: choice, mode: 'append', maxFeatures: MAX_IMPORT_FEATURES }, source === 'test' ? 'command' : 'file');
+    if (r.refused !== null) this.finish(r.refused, true, null, true);
+    else this.finish(importSentence(r.added, file.name, r.skipped, r.reasons), false, region ? readingSentence(r.coordinates, choice) : null, r.skipped > 0);
   }
 
   /** The command `export:geojson`: download the store in the chosen coordinates. */
@@ -150,12 +167,25 @@ export class ImportExport {
     return { name, text };
   }
 
-  /** Coordinates control (only for a region slide): a segmented radiogroup This pyramid | Source slide. */
+  /**
+   * The coordinates controls (only for a region slide): Export coordinates This pyramid | Source slide, and Import
+   * coordinates Auto | This pyramid | Source slide. Also drops the import report and its invalid marks when the list
+   * now shows another slide than the one they were about. Called at rest by list.ts's render.
+   */
   renderCoords(): void {
     const slide = this.actions.slide();
+    const key = slide?.key ?? null;
+    if (this.reportSlide !== null && key !== this.reportSlide) {
+      this.reportSlide = null;
+      this.lastReport = '';
+      if (!this.report.hidden) this.report.hidden = true;
+      this.setInvalid(false);
+    }
     const show = slide !== null && slide.regionOffset !== null;
     if (this.coordsGroup.hidden === show) this.coordsGroup.hidden = !show;
+    if (this.importCoordsGroup.hidden === show) this.importCoordsGroup.hidden = !show;
     if (!show) return;
+    this.renderImportCoords();
     if (this.coordsGroup.childElementCount === 0) {
       const mk = (space: CoordinateSpace, label: string): HTMLButtonElement => {
         const b = h('button', { class: 'segmented__item', type: 'button', role: 'radio', 'data-coords': space, text: label });
@@ -178,6 +208,44 @@ export class ImportExport {
     }
   }
 
+  private renderImportCoords(): void {
+    if (this.importCoordsGroup.childElementCount === 0) {
+      const opts: [ImportCoords, string][] = [
+        ['auto', 'Auto'],
+        ['pyramid-level0', 'This pyramid'],
+        ['source-level0', 'Source slide'],
+      ];
+      const seg = h(
+        'div',
+        { class: 'segmented', role: 'radiogroup', 'aria-labelledby': 'annImportCoordsLabel', 'aria-describedby': 'annImportCoordsNote' },
+        ...opts.map(([v, label]) => {
+          const b = h('button', { class: 'segmented__item', type: 'button', role: 'radio', 'data-import-coords': v, text: label });
+          b.addEventListener('click', () => this.setImportCoords(v, true));
+          return b;
+        }),
+      );
+      seg.addEventListener('keydown', (e) => {
+        const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+        if (step === 0) return;
+        e.preventDefault();
+        const i = opts.findIndex(([v]) => v === this.importCoords);
+        const next = opts[(i + step + opts.length) % opts.length];
+        if (next !== undefined) this.setImportCoords(next[0], true);
+      });
+      this.importCoordsGroup.append(
+        h('span', { class: 'field__label', id: 'annImportCoordsLabel', text: 'Import coordinates' }),
+        seg,
+        h('span', { class: 'visually-hidden', id: 'annImportCoordsNote', text: 'Auto reads a file’s own declaration, else the reading that places more of its annotations on this region.' }),
+      );
+    }
+    for (const b of Array.from(this.importCoordsGroup.querySelectorAll<HTMLElement>('[data-import-coords]'))) {
+      const on = b.dataset['importCoords'] === this.importCoords;
+      if (b.getAttribute('aria-checked') !== String(on)) b.setAttribute('aria-checked', String(on));
+      const ti = on ? '0' : '-1';
+      if (b.getAttribute('tabindex') !== ti) b.setAttribute('tabindex', ti);
+    }
+  }
+
   private setCoords(space: CoordinateSpace, focus: boolean): void {
     this.coords = space;
     this.prefs.set(COORDS_PREF, space);
@@ -185,8 +253,29 @@ export class ImportExport {
     if (focus) this.coordsGroup.querySelector<HTMLElement>(`[data-coords="${space}"]`)?.focus();
   }
 
-  private finish(text: string, refused: boolean): void {
-    this.lastReport = text;
+  private setImportCoords(v: ImportCoords, focus: boolean): void {
+    this.importCoords = v;
+    this.renderImportCoords();
+    if (focus) this.importCoordsGroup.querySelector<HTMLElement>(`[data-import-coords="${v}"]`)?.focus();
+  }
+
+  /** SC 3.3.1: the Import button and the drop zone are marked invalid and described by the report. */
+  private setInvalid(on: boolean): void {
+    for (const el of [this.importBtn, this.dropzone]) {
+      if (on) {
+        if (el.getAttribute('aria-invalid') !== 'true') el.setAttribute('aria-invalid', 'true');
+        if (el.getAttribute('aria-describedby') !== 'annImportReport') el.setAttribute('aria-describedby', 'annImportReport');
+      } else {
+        if (el.hasAttribute('aria-invalid')) el.removeAttribute('aria-invalid');
+        // the drop zone always points at the report (its result is read after a drop); the button only while invalid
+        if (el === this.importBtn && el.hasAttribute('aria-describedby')) el.removeAttribute('aria-describedby');
+      }
+    }
+  }
+
+  private finish(text: string, refused: boolean, reading: string | null = null, invalid = refused): void {
+    this.lastReport = reading === null ? text : `${text}. ${reading}`;
+    this.reportSlide = this.actions.slide()?.key ?? null;
     if (refused) this.actions.refuse(text);
     else this.actions.say(text, 8000);
     // the report stays beside the drop zone (SC 3.3.1: the error is identified in text next to the control)
@@ -194,6 +283,7 @@ export class ImportExport {
       if (this.report.textContent !== this.lastReport) this.report.textContent = this.lastReport;
       this.report.hidden = false;
       this.report.classList.toggle('is-error', refused);
+      this.setInvalid(invalid);
     });
   }
 }

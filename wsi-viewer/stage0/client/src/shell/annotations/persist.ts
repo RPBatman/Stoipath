@@ -111,6 +111,16 @@ export interface PersisterDeps {
   now?: () => string;
 }
 
+/**
+ * The `{reason}` of the §6.5 error line for a write the browser refused while storage stays available (core's
+ * `lastWriteError`; Phase A review): a full quota says so, anything else is the generic refusal.
+ */
+export function writeRefusal(lastWriteError: string | null): string {
+  if (lastWriteError !== null && lastWriteError.startsWith('QuotaExceededError')) return 'browser storage is full';
+  if (lastWriteError !== null && lastWriteError.startsWith('DataCloneError')) return 'the browser could not store this data';
+  return 'the browser refused the write';
+}
+
 const NOT_SAVED: ReadonlySet<PersistenceState> = new Set<PersistenceState>(['memory-only', 'over-cap', 'error']);
 
 export class Persister implements StorePersistence {
@@ -241,7 +251,7 @@ export class Persister implements StorePersistence {
     if (this.deps.index.totalExcept(key) + bytes > TOTAL_CAP) return this.settle(this.make('over-cap', bytes, null, 'total'));
     this.set(this.make('saving', bytes, this.st.savedAt));
     const ok = await storage.put('annotations', key, text);
-    if (!ok) return this.settle(storage.available ? this.make('error', 0, null, 'the browser refused the write') : this.make('memory-only', 0, null));
+    if (!ok) return this.settle(storage.available ? this.make('error', 0, null, writeRefusal(storage.lastWriteError ?? null)) : this.make('memory-only', 0, null));
     this.stored = true;
     const savedAt = this.now();
     await this.deps.index.set(key, { bytes, counters: { A: this.store.counters.A, M: this.store.counters.M }, fingerprint: this.store.fingerprint, savedAt });

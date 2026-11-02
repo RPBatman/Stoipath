@@ -191,7 +191,7 @@ export function createShell(deps: ShellHostDeps): ShellCoreHandle {
       hintRefreshes: tools.hintRefreshes,
       routers: { A: { ...tools.router('A')?.stats, owned: tools.router('A')?.owned ?? null }, B: { ...tools.router('B')?.stats, owned: tools.router('B')?.owned ?? null } },
     },
-    storage: { available: storage.available, reason: storage.reason, notices: storageNotices },
+    storage: { available: storage.available, reason: storage.reason, lastWriteError: storage.lastWriteError, notices: storageNotices },
     rest: { queued: rest.length, settled: rest.settled },
     services: Object.keys(services),
     listeners: { viewChanged: bus.listenerCount('viewChanged'), viewSettled: bus.listenerCount('viewSettled'), slideOpened: bus.listenerCount('slideOpened') },

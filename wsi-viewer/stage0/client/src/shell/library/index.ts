@@ -221,6 +221,9 @@ export function install(shell: ShellApi): void {
   });
   shell.bus.on('slideOpenFailed', ({ view }) => {
     pending[view] = null;
+    // the view may have lost its slide (core closes the old one before the new engine starts): the Cohort and the tray
+    // drop its aria-selected row and "open in view A" at the next rest (Phase A review)
+    schedule();
   });
   shell.bus.on('slideClosing', ({ view, slide }) => {
     openCam[view] = null;

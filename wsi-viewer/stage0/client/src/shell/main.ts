@@ -28,7 +28,7 @@ import type { CommandSource, CompareState, Disposer, EngineInstance, KeyBinding,
 import { createShell, type CoreDebugRegistry } from './core/shell';
 import { $, $$, AttrSlot, TextSlot, h, isTextInput, keycaps } from './dom';
 import { slideFacts, spokenStain } from './facts';
-import { PRESETS, formatMagnification, logZoomForUmPerPx, parseTypedZoom, spokenMagnification } from './format';
+import { PRESETS, formatMagnification, logZoomForUmPerPx, magnificationOf, parseTypedZoom, spokenMagnification, umPerCssPx } from './format';
 import { HudView } from './hud';
 import { NavigatorView } from './navigator';
 import { exposeOverlayDebug } from './overlay/debug';
@@ -92,7 +92,32 @@ const env: ShellEnv = {
   isWide: () => isWide,
   // The media query is cached; the data-motion attribute (design system demos, tests) is a DOM read, never per frame.
   reducedMotion: () => reducedMq || document.documentElement.dataset['motion'] === 'reduce',
+  visibleInsets: (view) => coveredInsets(view),
 };
+
+/**
+ * ShellEnv.visibleInsets (Phase A review): the part of a pane an open drawer lies over, from the drawers' boxes (the
+ * rule compare's availability uses, §15.13 CP5). Layout reads, on commands only.
+ */
+function coveredInsets(view: ViewId): { left: number; right: number } {
+  const pane = document.getElementById(view === 'B' ? 'paneB' : 'paneA');
+  if (pane === null) return { left: 0, right: 0 };
+  const r = pane.getBoundingClientRect();
+  if (r.width <= 0 || r.height <= 0) return { left: 0, right: 0 };
+  let left = r.left;
+  let right = r.right;
+  for (const id of ['lib', 'dock']) {
+    const el = document.getElementById(id);
+    if (el === null) continue;
+    const d = el.getBoundingClientRect();
+    if (d.width <= 0 || d.height <= 0 || d.right <= left || d.left >= right || d.bottom <= r.top || d.top >= r.bottom) continue;
+    if (d.left <= left + 1) left = Math.max(left, d.right);
+    else if (d.right >= right - 1) right = Math.min(right, d.left);
+  }
+  // a drawer wider than the pane leaves a quarter of it, so a fly never targets an empty span
+  if (right - left < r.width / 4) return { left: 0, right: 0 };
+  return { left: Math.max(0, left - r.left), right: Math.max(0, r.right - right) };
+}
 motionMq.addEventListener('change', () => {
   reducedMq = motionMq.matches;
 });
@@ -427,6 +452,7 @@ function zoomToUmPerPx(s: number, label: string): void {
 function syncToolButtons(tool: ToolId): void {
   app.dataset['tool'] = tool;
   for (const b of $$<HTMLElement>('[data-cmd^="tool:"][aria-pressed]')) b.setAttribute('aria-pressed', String(b.dataset['cmd'] === `tool:${tool}`));
+  syncRailStop();
   notices.render();
 }
 coarseMq.addEventListener('change', () => {
@@ -454,8 +480,19 @@ phoneMq.addEventListener('change', () => {
   syncNavPressed();
   nav?.markDirty();
   refreshToolbars();
+  syncClassMenuSheet();
 });
 syncNavPressed();
+/**
+ * Phones present the class picker as a bottom sheet (base.css `.sheet`, two columns of 44 px rows; shell.css), so it
+ * stays out of the canvas's central zone as a transient layer (Phase A review: eight 44 px items in a popover reached
+ * the middle of the slide at 390 × 844, layout-check Z1). On the media query only; role="menu" and the keys stay.
+ */
+function syncClassMenuSheet(): void {
+  const m = document.getElementById('classMenu');
+  if (m !== null && m.classList.contains('sheet') !== isPhone) m.classList.toggle('sheet', isPhone);
+}
+syncClassMenuSheet();
 
 function panView(dirX: number, dirY: number, fraction: number): void {
   const v = focusedEngine();
@@ -803,6 +840,23 @@ for (const g of $$<HTMLElement>('.rail [role="toolbar"]')) toolbarRefreshers.pus
 /** Re-pick each toolbar's Tab stop (a control appeared or a media query hid one). Never per frame. */
 function refreshToolbars(): void {
   for (const r of toolbarRefreshers) r();
+  syncRailStop();
+}
+/**
+ * The tool rail's one Tab stop is the pressed tool (Phase A review, SC 2.4.3): Tab into the rail lands on the active
+ * tool, never on a zoom preset (where Enter would jump the magnification) or on Select while another tool is pressed.
+ * Left alone while the focus is inside the toolbar (the roving keys own it then). On tool changes, registry changes and
+ * media-query changes only; reads rendered state, never per frame.
+ */
+function syncRailStop(): void {
+  const bar = document.getElementById('railTools');
+  if (bar === null || bar.contains(document.activeElement)) return;
+  const pressed = $$<HTMLElement>('[data-cmd^="tool:"][aria-pressed="true"]', bar).find((b) => !b.hidden && b.getClientRects().length > 0);
+  if (pressed === undefined) return;
+  for (const b of $$<HTMLElement>('button', bar)) {
+    const ti = b === pressed ? 0 : -1;
+    if (b.tabIndex !== ti) b.tabIndex = ti;
+  }
 }
 railMq.addEventListener('change', refreshToolbars);
 /**
@@ -862,7 +916,7 @@ for (const p of PRESETS) {
   presetGroup.append(
     h(
       'button',
-      { class: 'tool tool--text', type: 'button', 'data-cmd': `mag:${p.mag}`, 'data-um': String(p.um), 'aria-pressed': 'false', 'aria-label': `Jump to ${p.mag} times, ${p.um.toFixed(2)} micrometres per pixel, derived (${p.key})`, title: `${formatMagnification(p.mag)} · ${p.key}` },
+      { class: 'tool tool--text', type: 'button', tabindex: '-1', 'data-cmd': `mag:${p.mag}`, 'data-um': String(p.um), 'aria-pressed': 'false', 'aria-label': `Jump to ${p.mag} times, ${p.um.toFixed(2)} micrometres per pixel, derived (${p.key})`, title: `${formatMagnification(p.mag)} · ${p.key}` },
       formatMagnification(p.mag),
     ),
   );
@@ -1083,6 +1137,7 @@ function onSlideOpenedA(slide: SlideContext): void {
   // HUD and navigator of this slide; the canvas is a new element per slide (D1), so its name slot is too
   hud = new HudView(p.mpp, { magVal: $('magVal'), magLine: $('magLine'), scaleLabel: $('scaleLabel'), scaleFill: $('scaleFill'), scaleEnd: $('scaleEnd'), pos: $('hudPos') });
   $('navTiles').replaceChildren();
+  nav?.dispose(); // the previous slide's listeners on the persistent #navThumb would keep its engine alive
   nav = new NavigatorView(p, $('navThumb'), $('navTiles'), { top: $('navTop'), bottom: $('navBottom'), left: $('navLeft'), right: $('navRight') }, (wx, wy) => {
     v.commands.flyTo(wx, wy, v.snapshot.logZoom, 'nav', reduced());
   });
@@ -1093,14 +1148,51 @@ function onSlideOpenedA(slide: SlideContext): void {
   prevLogZoom = null;
   lastSlow = -1e9;
   $('plate').hidden = true;
+  if (openFailedA) {
+    // back from the "No slide open" state (showOpenFailure): the navigator and the strip follow the new slide again
+    openFailedA = false;
+    $('navigator').hidden = false;
+    paintSharp();
+  }
 }
 
-/** A slide failed to open in view A (startup or a switch): the plate with the reason and Retry (a reload, D1). */
+/** View A has no slide since a failed open (cleared by the next onSlideOpenedA). */
+let openFailedA = false;
+const NO_SLIDE = 'No slide open';
+/**
+ * A slide failed to open in view A (startup or a switch): the plate with the reason and Retry (a reload, D1). The
+ * previous slide is already disposed (core closes it before starting the new engine), so nothing on screen may still
+ * name it (Phase A review): identity, title, HUD, navigator, strip and the canvas name say "No slide open" until the
+ * next open. A ref that failed before anything closed (core §15.4 C3: the open slide is untouched) keeps its slide and
+ * gets the notice only, never a plate over a working slide.
+ */
 function showOpenFailure(msg: string): void {
+  const stillOpen = shellRef?.primary.slide ?? null;
+  if (stillOpen !== null) {
+    notices.refuse(`This slide could not be opened (${msg}); ${stillOpen.identity.name} stays open`, true);
+    return;
+  }
+  notices.persistent('engine', `This slide could not be opened (${msg})`);
   $('plateText').textContent = `${msg}. Check the manifest URL (?manifest=) and that the tile server is reachable, then retry.`;
   $('plate').hidden = false;
-  notices.persistent('engine', `This slide could not be opened (${msg})`);
   live.assertive(`This slide could not be opened. ${msg}`);
+  openFailedA = true;
+  $('idName').textContent = NO_SLIDE;
+  $('idCohort').textContent = '';
+  for (const id of ['idStain', 'idLic']) $(id).hidden = true;
+  $('idTitle').textContent = '';
+  $('hudId').textContent = NO_SLIDE;
+  $('hudCoh').textContent = '';
+  $('navLabel').textContent = NO_SLIDE;
+  $('navTiles').replaceChildren();
+  $('navigator').hidden = true;
+  document.title = `${NO_SLIDE} · Stoipath Viewer (RUO)`;
+  for (const el of sharpEls) el.classList.remove('indicator--sharp', 'indicator--sharpening', 'indicator--soft', 'indicator--offline', 'is-quiet');
+  stripSharpLabel.set(NO_SLIDE);
+  hudSharpLabel.set(NO_SLIDE);
+  stripSharpAria.set(`Sharpness: ${NO_SLIDE}. Open details`);
+  chipTiles.set('Tiles –');
+  shellRef?.primary.canvas?.setAttribute('aria-label', `Slide canvas, no slide open: this slide could not be opened (${msg}). Open the Library to choose a slide.`);
 }
 
 // ------------------------------------------------------------------ per-frame hook (inside each engine's rAF loop)
@@ -1138,7 +1230,8 @@ function syncGesturing(): void {
 }
 
 /** State transitions only (gesture start, settle, a fill finishing): classes, the visible label, tileSettled. */
-function renderSharp(s: FrameSnapshot): void {
+/** The strip and HUD indicators from the sharpness machine's state (on its transitions, and after a failed open). */
+function paintSharp(): void {
   const st = sharp.state;
   for (const el of sharpEls) {
     el.classList.toggle('indicator--sharp', st === 'sharp');
@@ -1149,22 +1242,28 @@ function renderSharp(s: FrameSnapshot): void {
   }
   stripSharpLabel.set(sharp.label);
   hudSharpLabel.set(sharp.label);
+}
+
+function renderSharp(s: FrameSnapshot): void {
+  const st = sharp.state;
+  paintSharp();
   shellRef?.bus.emit('tileSettled', { view: 'A', sharp: st === 'sharp', label: sharp.label, ntfPct: (1 - s.stats.sharpFraction) * 100, deficitOct: s.stats.blurArea });
 }
 
 /** "{n} annotations, {m} overlays shown" for the canvas name (TOOLS.md §9), from the services present; at rest only. */
-function canvasCounts(): string {
+function canvasCounts(view: ViewId = 'A'): string {
   const sh = shellRef;
   if (sh === null) return '';
-  const st = sh.service('annotations')?.current('A') ?? null;
+  const st = sh.service('annotations')?.current(view) ?? null;
   const layers = sh.service('layers');
+  const key = sh.view(view)?.slide?.key;
   const parts: string[] = [];
   if (st !== null) {
     const n = st.all().length;
     parts.push(`${n} ${n === 1 ? 'annotation' : 'annotations'}`);
   }
-  if (layers !== null) {
-    const m = layers.list().filter((l) => l.visible && l.kind !== 'annotations').length;
+  if (layers !== null && key !== undefined) {
+    const m = layers.list(key).filter((l) => l.visible && l.kind !== 'annotations').length;
     parts.push(`${m} ${m === 1 ? 'overlay' : 'overlays'} shown`);
   }
   return parts.length === 0 ? '' : ` ${parts.join(', ')}.`;
@@ -1180,7 +1279,10 @@ function onEngineFrame(view: ViewId, s: FrameSnapshot): void {
     settledBy[view] = s.settled;
     syncGesturing();
   }
-  if (view !== 'A') return;
+  if (view !== 'A') {
+    onEngineFrameB(s);
+    return;
+  }
   const sh = shellRef;
   const v = sh?.primary.viewer ?? null;
   if (sh === null || v === null || hud === null) return;
@@ -1253,9 +1355,36 @@ function onEngineFrame(view: ViewId, s: FrameSnapshot): void {
     }
   }
 
-  // ---- polite live region: command results, then the strip's spoken twin (ux-copy §14), at settle, ≤ 1 per 500 ms
-  if (gesturing) return;
+  // ---- polite live region: command results, then the strip's spoken twin (ux-copy §14), at settle, ≤ 1 per 500 ms.
+  // In compare the focused view's frames drive it (view B's sentence comes from onEngineFrameB).
+  if (gesturing || sh.focusedView().id !== 'A') return;
   const sentence = `${sharp.label}. About ${spokenMagnification(hud.mag)}, ${Number.isFinite(hud.s) ? hud.s.toFixed(2) : '–'} micrometres per pixel. ${identity?.name ?? 'slide'}${identity?.stain ? `, ${spokenStain(identity.stain)}` : ''}. Tool: ${TOOL_NAME[sh.tools.active]}.`;
+  polite.tick(s.now, sentence);
+}
+
+/** View B's canvas name slot (a new canvas per slide, D1), built on B's slideOpened. */
+let canvasAriaB: AttrSlot | null = null;
+let lastSlowB = -1e9;
+/**
+ * View B's settled frames (compare; Phase A review, §9 SC 4.1.2 / 4.1.3): canvas B's accessible name carries its slide,
+ * stain, magnification and counts as canvas A's does, and while B is the focused view its settle sentence is spoken
+ * through the same polite region. Arithmetic on B's snapshot only (no layout read); writes are write-on-change and
+ * happen at rest, throttled to 4 Hz like view A's.
+ */
+function onEngineFrameB(s: FrameSnapshot): void {
+  const sh = shellRef;
+  if (sh === null || !s.settled) return;
+  const slide = sh.view('B')?.slide ?? null;
+  if (slide === null) return;
+  const umpp = slide.mpp === null ? NaN : umPerCssPx(slide.mpp, s.k, s.renderDpr);
+  const mag = magnificationOf(umpp);
+  const id = slide.identity;
+  if (s.now - lastSlowB >= 250) {
+    lastSlowB = s.now;
+    canvasAriaB?.set(`Slide canvas B, ${id.cohort ?? ''} ${id.name}, ${spokenStain(id.stain)}, about ${spokenMagnification(mag)}.${canvasCounts('B')} Arrow keys pan, plus and minus zoom, question mark lists every shortcut.`.replace(/\s+,/g, ','));
+  }
+  if (gesturing || sh.focusedView().id !== 'B') return;
+  const sentence = `B: about ${spokenMagnification(mag)}, ${Number.isFinite(umpp) ? umpp.toFixed(2) : '–'} micrometres per pixel. ${id.name}${id.stain ? `, ${spokenStain(id.stain)}` : ''}. Tool: ${TOOL_NAME[sh.tools.active]}.`;
   polite.tick(s.now, sentence);
 }
 
@@ -1359,14 +1488,24 @@ async function boot(): Promise<void> {
   shell.bus.on('compareChanged', ({ state }) => syncComparePressed(state));
   shell.bus.on('slideOpened', ({ view, slide }) => {
     if (view === 'A') onSlideOpenedA(slide);
+    else {
+      const c = shell.view('B')?.canvas ?? null;
+      canvasAriaB = c === null ? null : new AttrSlot(c, 'aria-label');
+      lastSlowB = -1e9;
+    }
   });
   shell.bus.on('slideClosing', ({ view }) => {
     if (view === 'A') {
       offResize?.();
       offResize = null;
+      // Phase A review (engine lens): the old slide's navigator listeners and canvas slot reach its disposed engine.
+      nav?.dispose();
+      nav = null;
+      canvasAria = null;
     } else {
       settledBy.B = true; // the engine of B goes away: its last frame may have been a moving one
       syncGesturing();
+      canvasAriaB = null;
     }
   });
   shell.bus.on('slideOpenFailed', ({ view, error }) => {

@@ -229,6 +229,10 @@ export async function run(ctx) {
       await showPanel(page, 'cohort');
       const before = await page.evaluate(() => {
         window.__marker = 'library-lib2';
+        // every polite write from here on: the strip's spoken twin may follow the open sentence before settle() returns
+        // (TOOLS-QUESTIONS 2026-11-02 Wave 4, library LIB-2)
+        window.__politeWrites = [];
+        new MutationObserver(() => window.__politeWrites.push(document.getElementById('livePolite').textContent.trim())).observe(document.getElementById('livePolite'), { childList: true, characterData: true, subtree: true });
         return { nav: performance.getEntriesByType('navigation').length, title: document.getElementById('idTitle')?.textContent ?? '', navSrc: [...document.querySelectorAll('#navTiles img')].map((i) => i.getAttribute('src')).join(','), facts: document.getElementById('slideFacts')?.textContent ?? '' };
       });
       const t0 = Date.now();
@@ -251,8 +255,8 @@ export async function run(ctx) {
       check(TAG, after.nav === before.nav && after.marker === 'library-lib2' && after.views === 1, `LIB-2 a click on CMU-1 switches in place in ${ms} ms (navigation entries ${before.nav} → ${after.nav}, window.__marker kept, ${after.views} canvas#view)`);
       check(TAG, after.docTitle.startsWith('CMU-1') && after.idName === 'CMU-1' && after.title !== before.title, `LIB-2 identity "${after.idName}", document.title "${after.docTitle}", top bar title "${after.title}" (was "${before.title}")`);
       check(TAG, after.navSrc.includes('samples/CMU-1/tiles/') && after.navSrc !== before.navSrc && after.facts.includes('CMU-1') && after.facts !== before.facts, `LIB-2 the navigator image (${after.navSrc.split('/').slice(-4).join('/')}) and the Slide facts follow the switch`);
-      const spoke = await waitPolite(page, 'CMU-1 opened. OpenSlide test data, H and E.');
-      check(TAG, spoke, `LIB-2 the polite sentence "CMU-1 opened. OpenSlide test data, H and E." (${await page.evaluate(() => window.__shell.polite())})`);
+      const spoke = await page.waitForFunction(() => window.__politeWrites.includes('CMU-1 opened. OpenSlide test data, H and E.'), null, { timeout: 6000, polling: 30 }).then(() => true, () => false);
+      check(TAG, spoke, `LIB-2 the polite sentence "CMU-1 opened. OpenSlide test data, H and E." (writes: ${JSON.stringify(await page.evaluate(() => window.__politeWrites))})`);
       check(TAG, after.ws[0] === CMU1 && after.ws[1] === TUMOR && JSON.stringify(after.selected) === JSON.stringify([CMU1]), `LIB-2 working set ${after.ws.join(', ')} (CMU-1 first); the Cohort marks CMU-1 selected`);
       await showPanel(page, 'slides');
       const tray = await page.evaluate(() => ({

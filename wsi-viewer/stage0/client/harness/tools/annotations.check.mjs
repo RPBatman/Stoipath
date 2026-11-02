@@ -325,6 +325,47 @@ export async function run(ctx) {
         await c2.close();
       }
     }
+    // Phase A review: a QuPath export of the whole source slide (no stoipath member) with one annotation elsewhere on the
+    // scan imports the in-window ones under Auto; the import coordinates control overrides Auto; a refused or partly
+    // skipped import marks the Import button and the drop zone aria-invalid (SC 3.3.1) until a clean import.
+    {
+      const feat = (ring, name) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [ring] }, properties: { objectType: 'annotation', name, classification: { name: 'Tumor', color: [200, 0, 0] } } });
+      const sq = (x, y, w) => [[x, y], [x + w, y], [x + w, y + w], [x, y + w], [x, y]];
+      const whole = { type: 'FeatureCollection', features: [...Array.from({ length: 4 }, (_, i) => feat(sq(TUMOR.offset[0] + 2000 + i * 1500, TUMOR.offset[1] + 3000, 600), `in ${i}`)), feat(sq(60000, 120000, 500), 'far away')] };
+      const wholePath = join(dir, 'tumor_014-whole-source.geojson');
+      writeFileSync(wholePath, JSON.stringify(whole));
+      const badPath = join(dir, 'not-json.geojson');
+      writeFileSync(badPath, 'not json at all');
+      const { ctx: c3, page: p3, errors: e3 } = await open(vp);
+      try {
+        await showPanel(p3, 'annotations');
+        const inv = () => A(p3, () => {
+          const b = document.querySelector('#tp-ann [data-cmd="import:geojson"]');
+          const z = document.querySelector('#tp-ann .dropzone');
+          return { btn: b?.getAttribute('aria-invalid') ?? null, zone: z?.getAttribute('aria-invalid') ?? null, btnDesc: b?.getAttribute('aria-describedby') ?? null, report: document.getElementById('annImportReport')?.textContent ?? '', count: window.__shell.tools.annotations().count };
+        });
+        await p3.setInputFiles('#annImportFile', wholePath);
+        const n1 = await waitNotice(p3, 'Imported 4 annotations from tumor_014-whole-source.geojson (1 skipped: outside this region)');
+        await settle(p3, { sharp: false, quietMs: 150 });
+        const r1 = await inv();
+        check(TAG, n1 && r1.count === 4 && r1.report.includes('Read as source-slide coordinates (Auto)') && r1.btn === 'true' && r1.zone === 'true' && r1.btnDesc === 'annImportReport', `ANN-4: a whole-source QuPath file with one feature off the region imports 4 under Auto ("${r1.report}"); the skip marks Import and the drop zone aria-invalid (${r1.btn}, ${r1.zone})`);
+        await p3.click('#tp-ann [data-import-coords="pyramid-level0"]');
+        const chk = await A(p3, () => document.querySelector('#tp-ann [data-import-coords="pyramid-level0"]')?.getAttribute('aria-checked'));
+        await p3.setInputFiles('#annImportFile', files.pyramid.path);
+        await waitNotice(p3, `Imported 4 annotations from ${files.pyramid.name}`);
+        await settle(p3, { sharp: false, quietMs: 150 });
+        const r2 = await inv();
+        check(TAG, chk === 'true' && r2.count === 8 && r2.report.includes('Read as this pyramid’s coordinates;') && !r2.report.includes('(Auto)') && r2.btn === null && r2.zone === null, `ANN-4: Import coordinates "This pyramid" (aria-checked ${chk}) reads the next file as pyramid coordinates ("${r2.report}"); a clean import clears aria-invalid (${r2.btn}, ${r2.zone})`);
+        await p3.setInputFiles('#annImportFile', badPath);
+        await waitNotice(p3, 'Not a GeoJSON file: the text is not valid JSON; nothing imported');
+        await settle(p3, { sharp: false, quietMs: 150 });
+        const r3 = await inv();
+        check(TAG, r3.btn === 'true' && r3.zone === 'true' && r3.report.startsWith('Not a GeoJSON file') && r3.count === 8, `ANN-4: a refused import marks Import and the drop zone aria-invalid (${r3.btn}, ${r3.zone}) with the report "${r3.report}"`);
+        await finish(p3, e3, `ANN-4 ${vpTag(vp)} import refused (aria-invalid)`);
+      } finally {
+        await c3.close();
+      }
+    }
   });
 
   // ------------------------------------------------------------------ ANN-5 classes
@@ -376,6 +417,27 @@ export async function run(ctx) {
       await settle(page, { sharp: false, quietMs: 100 });
       const f2 = await A(page, () => ({ active: window.__shell.tools.annotations().activeClass, checked: document.querySelector('#tp-ann .classes [role="radio"][aria-checked="true"]')?.dataset.class, focus: document.activeElement?.dataset.class }));
       check(TAG, f0 === 'Stroma' && f1.cls === 'Lymphocytes' && f1.checked === 'false' && f1.tabStops === 1 && f2.active === 'Lymphocytes' && f2.checked === 'Lymphocytes' && f2.focus === 'Lymphocytes', `ANN-5: radiogroup: → moves focus ${f0} → ${f1.cls} without checking (aria-checked ${f1.checked}, ${f1.tabStops} Tab stop), Space checks it (active ${f2.active}, checked ${f2.checked}, focus ${f2.focus})`);
+      // Phase A review: picking the next shape's class keeps the shape just drawn (a drawing tool's auto-selection)
+      await page.focus('#view');
+      await page.keyboard.press('t');
+      await page.keyboard.press('Enter');
+      await settle(page, { sharp: false, quietMs: 150 });
+      const pt = await state(page);
+      const a2 = pt.all.find((a) => a.properties.stoipath.label === 'A2');
+      const d2 = pt.undoDepth;
+      await page.focus('#view');
+      await page.keyboard.press('q');
+      await page.keyboard.press('2');
+      const kept = await waitNotice(page, 'Class: Stroma for the next shape · A2 stays Lymphocytes');
+      const s3 = await state(page);
+      check(TAG, a2 !== undefined && kept && s3.all.find((a) => a.id === a2.id)?.properties.classification?.name === 'Lymphocytes' && s3.undoDepth === d2 && s3.activeClass === 'Stroma', `ANN-5: with the Point tool, q 2 right after placing A2 sets the class for the next shape only (A2 stays ${s3.all.find((a) => a.id === a2?.id)?.properties.classification?.name}, depth ${d2} → ${s3.undoDepth}, active ${s3.activeClass})`);
+      // choosing A2 in the list makes it the user's selection: the pick reclassifies it again
+      await page.click(`#annList [data-id="${a2?.id}"]`);
+      await page.focus('#view');
+      await page.keyboard.press('q');
+      await page.keyboard.press('4');
+      const re = await waitNotice(page, 'A2 → Necrosis');
+      check(TAG, re, 'ANN-5: after choosing A2 in the list, q 4 reclassifies it ("A2 → Necrosis")');
       await page.focus('#view');
       await page.keyboard.press('q');
       await finish(page, errors, `ANN-5 ${vpTag(vp)} class menu open`);
@@ -400,7 +462,12 @@ export async function run(ctx) {
         await settle(page, { sharp: false, quietMs: 100 });
         await showPanel(page, 'annotations');
         await page.focus('#tp-ann [data-cmd="deleteSelected"]');
-        await page.keyboard.press('Tab');
+        // the Brush size row (§15.7 AN10) sits between Delete and the list once tool:brush is registered (TOOLS-QUESTIONS
+        // 2026-11-02 Wave 4: draw-tools D3 finding)
+        for (let i = 0; i < 4; i++) {
+          await page.keyboard.press('Tab');
+          if (await A(page, () => document.activeElement?.closest('#annList') !== null)) break;
+        }
         const t0 = await A(page, () => ({ role: document.activeElement?.getAttribute('role'), id: document.activeElement?.dataset.id }));
         await page.keyboard.press('ArrowDown');
         const t1 = await A(page, () => document.activeElement?.dataset.id);
@@ -425,12 +492,46 @@ export async function run(ctx) {
         await settle(page, { sharp: false, quietMs: 100 });
         const sel = await A(page, () => ({ sel: window.__shell.tools.annotations().selection, aria: document.activeElement?.getAttribute('aria-selected'), focus: document.activeElement?.dataset.id }));
         check(TAG, inside && !cam.animating && elapsed < (reduced ? 1000 : 3000) && same(sel.sel, [ids[1]]) && sel.aria === 'true', `ANN-6: Space flies to A2 (camera centre (${cam.cx.toFixed(0)}, ${cam.cy.toFixed(0)}) inside its bbox after ${elapsed} ms${reduced ? ', instant under reduced motion' : ', eased'}) and selects it (aria-selected ${sel.aria})`);
-        const fit = await A(page, ([b, mppx]) => {
-          const sm = window.__shell.tools.core().test.sample('A');
-          const cv = document.getElementById('view');
-          return Math.max(((b.maxX - b.minX) * mppx) / sm.scale_um_per_px / cv.clientWidth, ((b.maxY - b.minY) * mppx) / sm.scale_um_per_px / cv.clientHeight);
-        }, [box, mpp]);
-        check(TAG, Math.abs(fit - 0.6) < 0.02, `ANN-6: fly-to fits the bbox to ${(fit * 100).toFixed(1)} % of the viewport (60 %)`);
+        // Phase A review: the fit and the centre are those of the span no drawer covers (at 1440 the Context drawer
+        // holding the list lies over the canvas's right edge)
+        const flyGeom = (b) =>
+          A(page, ([bb, mppx]) => {
+            const sm = window.__shell.tools.core().test.sample('A');
+            const cv = document.getElementById('view');
+            const pr = document.getElementById('paneA').getBoundingClientRect();
+            let l = pr.left;
+            let r = pr.right;
+            for (const id of ['lib', 'dock']) {
+              const d = document.getElementById(id)?.getBoundingClientRect();
+              if (!d || d.width <= 0 || d.height <= 0 || d.right <= l || d.left >= r || d.bottom <= pr.top || d.top >= pr.bottom) continue;
+              if (d.left <= l + 1) l = Math.max(l, d.right);
+              else if (d.right >= r - 1) r = Math.min(r, d.left);
+            }
+            const s = window.__stage0.state();
+            const k = sm.scale_um_per_px / mppx; // level-0 px per CSS px
+            const sx = (x) => pr.left + cv.clientWidth / 2 + (x - s.cx) / k;
+            return {
+              fit: Math.max(((bb.maxX - bb.minX) * mppx) / sm.scale_um_per_px / (r - l), ((bb.maxY - bb.minY) * mppx) / sm.scale_um_per_px / cv.clientHeight),
+              centreX: sx((bb.minX + bb.maxX) / 2),
+              spanCentre: (l + r) / 2,
+              left: sx(bb.minX),
+              right: sx(bb.maxX),
+              span: [l, r],
+            };
+          }, [b, mpp]);
+        const g = await flyGeom(box);
+        check(TAG, Math.abs(g.fit - 0.6) < 0.02 && Math.abs(g.centreX - g.spanCentre) <= 2, `ANN-6: fly-to fits the bbox to ${(g.fit * 100).toFixed(1)} % of the uncovered span ${g.span.map((x) => x.toFixed(0)).join('–')} (60 %) and centres it there (bbox centre x ${g.centreX.toFixed(1)}, span centre ${g.spanCentre.toFixed(1)})`);
+        if (reduced) {
+          // a wide feature (width-limited fit) lands wholly inside the uncovered span, none of it under the drawer
+          const [wide] = await create(page, [{ kind: 'rect', geometry: poly(rectRing(2000, 9000, 9000, 1200)), shape: { type: 'rect', x: 2000, y: 9000, w: 9000, h: 1200 }, input: 'command' }]);
+          await A(page, (id) => window.__shell.tools.annotations().flyTo([id]), wide);
+          await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+          const gw = await flyGeom({ minX: 2000, minY: 9000, maxX: 11000, maxY: 10200 });
+          check(TAG, gw.left >= gw.span[0] - 1 && gw.right <= gw.span[1] + 1 && Math.abs(gw.fit - 0.6) < 0.02, `ANN-6 ${vpTag(vp)}: a wide feature flies wholly into the uncovered span (bbox ${gw.left.toFixed(0)}–${gw.right.toFixed(0)} within ${gw.span.map((x) => x.toFixed(0)).join('–')}, ${(gw.fit * 100).toFixed(1)} %)`);
+          await A(page, (id) => window.__shell.tools.annotations().remove([id]), wide);
+          await page.focus(`#annList [data-id="${ids[1]}"]`);
+          await settle(page, { sharp: false, quietMs: 100 });
+        }
         await page.keyboard.press('Delete');
         await settle(page, { sharp: false, quietMs: 100 });
         const d = await A(page, () => ({ ids: window.__shell.tools.annotations().all.map((a) => a.id), focus: document.activeElement?.dataset.id ?? document.activeElement?.id, notice: window.__shell.notice() }));
@@ -474,6 +575,8 @@ export async function run(ctx) {
       // frame cost with annotations drawn (TOOLS.md rule 2, §5.4): a 1 s drag over them
       await cdp.send('Performance.enable');
       await settle(page, { sharp: false, quietMs: 200 });
+      // the drag starts inside the selected A1, which draw-tools' Select would move rather than pan (TOOLS-QUESTIONS Wave 4)
+      await A(page, () => window.__shell.tools.annotations().select([]));
       const box = await page.locator('#view').boundingBox();
       const r = await frameCost(page, cdp, () => drag(page, box));
       frameCostChecks(check, TAG, `ANN-7 ${vpTag(vp)}: 1 s drag with 3 annotations drawn and both panels built`, r);
@@ -491,16 +594,23 @@ export async function run(ctx) {
         { kind: 'point', geometry: { type: 'Point', coordinates: [7000, 7300] }, className: 'Stroma', input: 'command' },
       ]);
       await showPanel(page, 'annotations');
-      const sheet = await A(page, () => ({ open: window.__shell.host().context?.open ?? null, rows: document.querySelectorAll('#annList [role="option"]').length }));
+      const sheet = await A(page, () => ({ open: window.__shell.host().context?.open ?? null, rows: document.querySelectorAll('#annList [role="option"]').length, hint: document.querySelector('#tp-ann .ann-hint')?.innerText ?? '' }));
       check(TAG, sheet.rows === 2, `ANN-7 ${vpTag(vp)}: the sheet shows the Annotations tab with ${sheet.rows} rows`);
+      // Phase A review: under a coarse pointer the keyboard sentence goes whole (no key-less "moves through the list")
+      check(TAG, sheet.hint.includes('(FR-A2).') && !sheet.hint.includes('moves through the list') && sheet.hint.includes('Tap an item to fly to it'), `ANN-7 ${vpTag(vp)}: the list hint reads whole on touch ("${sheet.hint}")`);
       await axe(page, check, TAG, `ANN-7 ${vpTag(vp)}: Annotations sheet: axe-core WCAG 2.2 AA`);
       await A(page, (id) => window.__shell.tools.annotations().select([id]), ids[0]);
       await showPanel(page, 'inspector');
       await axe(page, check, TAG, `ANN-7 ${vpTag(vp)}: Inspector sheet with a selection: axe-core WCAG 2.2 AA`);
       await A(page, () => window.__shell.run('class:pick'));
       await page.waitForTimeout(150);
-      const menu = await A(page, () => !document.getElementById('classMenu').hidden);
-      check(TAG, menu, 'ANN-7: the class menu opens on the phone');
+      const menu = await A(page, () => {
+        const m = document.getElementById('classMenu');
+        const r = m.getBoundingClientRect();
+        return { shown: !m.hidden, sheet: m.classList.contains('sheet'), w: r.width, bottom: r.bottom, h: r.height, vh: innerHeight, vw: innerWidth };
+      });
+      // Phase A review: on phones the picker is a bottom sheet (full width, above the bottom bar, ≤ 40 % of the height)
+      check(TAG, menu.shown && menu.sheet && menu.w >= menu.vw - 1 && menu.h <= menu.vh * 0.4 + 1 && menu.bottom >= menu.vh * 0.85, `ANN-7: the class menu opens on the phone as a bottom sheet (${Math.round(menu.w)} × ${Math.round(menu.h)} px, bottom ${Math.round(menu.bottom)} of ${menu.vh})`);
       await axe(page, check, TAG, `ANN-7 ${vpTag(vp)}: class menu open: axe-core WCAG 2.2 AA`);
       check(TAG, errors.length === 0, `ANN-7 ${vpTag(vp)}: no console or page error (${errors.length}${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''})`);
     } finally {
