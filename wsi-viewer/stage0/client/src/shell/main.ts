@@ -174,7 +174,7 @@ const PERSISTENT_RANK: Record<string, number> = { engine: 0, view: 100 };
 const toolLineEl = $('toolLine');
 /**
  * NoticeSink (contracts §11): one notice at a time in the strip (and on phones, which have no strip, on the HUD tool
- * line while a transient notice lasts). A transient command result outranks every persistent notice; persistent notices are
+ * line while a tool is active). A transient command result outranks every persistent notice; persistent notices are
  * owned by a key (`engine`, `view`, a module's own) and ranked engine → modules (in first-use order) → view.
  *
  * The HUD tool line is written here too (TOOLS.md §4.2; TOOLS-QUESTIONS core Q2): it shows the active tool's hint()
@@ -236,12 +236,11 @@ class Notices implements NoticeSink {
     if (sh === null) return;
     const id = sh.tools.active;
     const t = sh.tools.get(id);
-    // Phones have no strip (base.css): a transient result is echoed on the HUD tool line while it lasts, whatever the
-    // tool, so a refusal or a result (compare refused, snapshot saved) is seen, not only spoken (TOOLS.md §15.15 F15).
-    const echo = isPhone && this.transientText !== '';
-    const show = echo || (t !== undefined && id !== 'select');
+    const show = t !== undefined && id !== 'select';
     if (toolLineEl.hidden === show) toolLineEl.hidden = !show;
-    if (show) this.toolLine.set(echo ? this.transientText : (t?.hint() ?? ''));
+    // Phones have no strip (base.css): transient results are echoed on the HUD tool line while a tool is active (not
+    // with Select: a multi-line echo enters the central zone of a short canvas, TOOLS.md §15.15 F15).
+    if (show) this.toolLine.set(isPhone && this.transientText !== '' ? this.transientText : t.hint());
   }
 }
 const notices = new Notices();
