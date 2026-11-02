@@ -21,7 +21,7 @@ export function restoreFocus(opener: HTMLElement | null, fallback: () => void): 
 }
 
 /** Context dock tab ids (`data-tab`): the PanelIds of the Context dock plus the legacy Measurements tab (Wave 4 folds it into Annotations). */
-export type DockTab = 'inspector' | 'ann' | 'meas' | 'slide' | 'engine' | 'cohort' | 'slides' | 'layers';
+export type DockTab = 'inspector' | 'ann' | 'slide' | 'engine' | 'cohort' | 'slides' | 'layers';
 
 /** One dock: an <aside class="dock"> with a role="tablist" of `data-tab` tabs whose tabpanels it shows one at a time. */
 export class Dock {

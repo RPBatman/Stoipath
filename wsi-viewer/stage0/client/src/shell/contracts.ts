@@ -988,7 +988,7 @@ export interface TokenResolver {
 export type OverlayFactory = (canvas: HTMLCanvasElement, view: () => EngineInstance | null, tokens: TokenResolver, env: ShellEnv) => OverlaySurface;
 
 // =====================================================================================================================
-// 7. Tools (pointer routing generalises src/shell/measure.ts; touch is always the camera's, handoff §4.2)
+// 7. Tools (pointer routing generalises the Stage-0 measure tool, src/shell/measure.ts until Wave 4; touch is always the camera's, handoff §4.2)
 // =====================================================================================================================
 
 export type ToolId = 'select' | 'measure' | 'point' | 'rect' | 'ellipse' | 'polygon' | 'brush';

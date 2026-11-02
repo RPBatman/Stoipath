@@ -1,0 +1,9 @@
+/*
+ * share · #shareActions, the Inspector's View section (TOOLS.md §4.2, §4.3). The buttons are the design system's
+ * .btn .btn--sm .btn--secondary with a .key hint (design/screens/final/research-annotation.html line 1181). The one
+ * rule the system lacks is the research final's coarse-pointer rule that hides keyboard hints on buttons
+ * (research-annotation.html line 562: `.footer-actions .key, .btn .key { display: none !important; }`), scoped here.
+ */
+@media (pointer: coarse) {
+  #shareActions .btn .key { display: none; }
+}

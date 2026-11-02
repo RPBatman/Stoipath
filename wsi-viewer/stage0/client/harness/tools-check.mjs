@@ -12,9 +12,11 @@
 //   I-2  the shell opens on the built site at 1440 × 900 with no console or page error, and the command registry
 //        reports no binding conflict (TOOLS.md §5.5 conflicts()).
 //
-// Usage: node harness/tools-check.mjs [--only <module>|integrator] [--headed] [--out FILE] [--dist DIR] [--axe PATH]
-//   --dist DIR  a private build (served as /client/dist/), e.g. npx vite build --outDir <scratch>/dist --emptyOutDir
-//   --axe PATH  axe-core's axe.min.js (else $AXE_CORE, or axe-core resolved from the client / the global npm root)
+// Usage: node harness/tools-check.mjs [--only <module>|integrator] [--headed] [--out FILE] [--dist DIR] [--axe PATH] [--checks DIR]
+//   --dist DIR    a private build (served as /client/dist/), e.g. npx vite build --outDir <scratch>/dist --emptyOutDir
+//   --axe PATH    axe-core's axe.min.js (else $AXE_CORE, or axe-core resolved from the client / the global npm root)
+//   --checks DIR  read the <module>.check.mjs files from DIR instead of harness/tools (Wave 4: the integrator verifies a
+//                 fix it proposes to a check's owner on a scratch copy, without editing the owned file; TOOLS.md §15.15)
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
@@ -43,7 +45,7 @@ const check = (tag, ok, msg) => {
   return Boolean(ok);
 };
 
-const toolsDir = resolve(here, 'tools');
+const toolsDir = args.checks ? resolve(args.checks) : resolve(here, 'tools');
 const moduleFiles = readdirSync(toolsDir)
   .filter((f) => f.endsWith('.check.mjs'))
   .sort()
@@ -136,7 +138,7 @@ server.close();
 const resultsDir = resolve(here, 'results');
 mkdirSync(resultsDir, { recursive: true });
 const out = args.out ? resolve(args.out) : resolve(resultsDir, `tools-check-${new Date().toISOString().replace(/[:.]/g, '-')}.json`);
-writeFileSync(out, JSON.stringify({ dist, seconds: Math.round((Date.now() - started) / 1000), modules: moduleFiles.map((f) => f.replace(/\.check\.mjs$/, '')), moduleCounts, failures, checks }, null, 1));
+writeFileSync(out, JSON.stringify({ dist, checksDir: toolsDir, seconds: Math.round((Date.now() - started) / 1000), modules: moduleFiles.map((f) => f.replace(/\.check\.mjs$/, '')), moduleCounts, failures, checks }, null, 1));
 const nModule = Object.values(moduleCounts).reduce((a, b) => a + b, 0);
 console.log(`\ntools-check: ${moduleFiles.length} module check file(s), ${nModule} module checks; ${checks.length - nModule} integrator checks; wrote ${out}`);
 console.log(failures === 0 ? 'all tools checks passed' : `${failures} tools check(s) FAILED`);

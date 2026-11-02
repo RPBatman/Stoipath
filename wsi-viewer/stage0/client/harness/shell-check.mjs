@@ -9,8 +9,9 @@
 //   3. the navigator rectangle lies within the thumbnail and equals the state's viewport (phone: after O shows it);
 //   4. click-click and keyboard measurements (Enter, ArrowRight = 10 % of the viewport, Enter) within 1 %; on the phone
 //      also touch tap-tap; the result is spoken in the polite region; HUD text over the canvas does not block it;
-//      desktop: Fly to / Delete / Ctrl+Z with focus in the Measurements list keep focus on a rendered row button
-//      (WCAG 2.4.3) and the arrow keys there do not pan the slide;
+//      desktop: Space (fly to) / Delete / Ctrl+Z with focus on a measurement row of the Annotations list keep focus on a
+//      rendered row (WCAG 2.4.3) and the arrow keys there do not pan the slide (TOOLS.md §11.3: measurements are a group
+//      of the Annotations list since Wave 4, D7);
 //   5. no console error or page error;
 //   6. frame cost during a scripted 1 s drag AND a wheel burst: zero layout-reading DOM calls (getBoundingClientRect,
 //      offset*/client*/scroll*, getComputedStyle, innerText; counted by wrapping them); zero redundant DOM writes
@@ -299,8 +300,14 @@ for (const vp of VIEWPORTS) {
     rec.clickClick = { expectedUm: +expUm.toFixed(2), measuredUm: lastM ? +lastM.um.toFixed(2) : null, n: meas.length, cameraUnmoved: camStill };
     check(tag, meas.length === 1 && lastM !== undefined && Math.abs(lastM.um - expUm) / expUm < 0.01, `click-click measurement ${lastM ? lastM.um.toFixed(2) : '–'} µm == ${expUm.toFixed(2)} µm within 1 % (${meas.length} recorded)`);
     check(tag, camStill, 'the clicks did not move the camera (the tool owns the pointer)');
-    const listed = await page.evaluate(() => document.querySelectorAll('#measList [data-id]').length);
-    check(tag, listed === 1, `the Measurements list shows ${listed} row(s)`);
+    // The Annotations list renders while it is shown (TOOLS.md §15.7 AN8): show it, count, and put the Context panel back.
+    const ctxBefore = await page.evaluate(() => window.__shell.host().context);
+    await page.evaluate(() => window.__shell.panels.show('annotations'));
+    await page.waitForFunction(() => document.querySelectorAll('#annList [data-kind="measurement"]').length > 0, null, { timeout: 3000, polling: 50 }).catch(() => {});
+    const listed = await page.evaluate(() => document.querySelectorAll('#annList [data-kind="measurement"]').length);
+    check(tag, listed === 1, `the Annotations list shows ${listed} measurement row(s)`);
+    await page.evaluate(({ open, tab }) => (open ? window.__shell.panels.show(tab) : window.__shell.run('dock')), ctxBefore);
+    await page.waitForTimeout(150);
     await page.waitForFunction(() => /^Measured M1 · /.test(document.getElementById('livePolite').textContent), null, { timeout: 5000, polling: 50 }).catch(() => {});
     const spoken = await page.evaluate(() => document.getElementById('livePolite').textContent);
     check(tag, /^Measured M1 · /.test(spoken), `the result is spoken in the polite region at settle ("${spoken}")`);
@@ -320,34 +327,34 @@ for (const vp of VIEWPORTS) {
     rec.keyboard = { expectedUm: +kPlan.toFixed(2), measuredUm: kM ? +kM.um.toFixed(2) : null };
     check(tag, meas2.length === 2 && kM !== undefined && Math.abs(kM.um - kExp) / kExp < 0.01 && Math.abs(kM.um - kPlan) / kPlan < 0.01, `keyboard measurement ${kM ? kM.um.toFixed(2) : '–'} µm == centre travel ${kExp.toFixed(2)} µm == 10 % of the viewport ${kPlan.toFixed(2)} µm within 1 %`);
     if (!vp.coarse) {
-      // ---- 4b: the Measurements list keeps keyboard focus across its re-render (WCAG 2.4.3) ----
+      // ---- 4b: the Annotations list keeps keyboard focus on its measurement rows across a re-render (WCAG 2.4.3) ----
       await page.keyboard.press('Control+k');
-      await page.keyboard.type('measurements list');
+      await page.keyboard.type('annotations list');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(250);
-      const where = () => page.evaluate(() => { const a = document.activeElement; const row = a?.closest?.('#measList [data-id]'); return a === document.body ? 'body' : `${a.id ? '#' + a.id : a.tagName.toLowerCase()}${a.dataset?.act ? '[' + a.dataset.act + ']' : ''}${row ? ' M' + row.dataset.id : ''}${a.isConnected ? '' : ' (detached)'}`; });
-      await page.focus('#measList [data-id="1"] button[data-act="fly"]');
-      await page.keyboard.press('Enter');
+      const where = () => page.evaluate(() => { const a = document.activeElement; const row = a?.closest?.('#annList [role="option"]'); return a === document.body ? 'body' : `${row === a ? 'option' : a.id ? '#' + a.id : a.tagName.toLowerCase()}${row ? ' ' + row.dataset.label : ''}${a.isConnected ? '' : ' (detached)'}`; });
+      await page.focus('#annList [data-kind="measurement"][data-label="M1"]');
+      await page.keyboard.press('Space');
       await settle();
       const fFly = await where();
-      check(tag, fFly === 'button[fly] M1', `Enter on Fly to M1: focus stays on that button (${fFly})`);
+      check(tag, fFly === 'option M1', `Space on M1 (fly to and select): focus stays on its row (${fFly})`);
       await page.waitForTimeout(400);
       const c0 = await page.evaluate(() => window.__stage0.state());
       await page.keyboard.press('ArrowLeft');
       await page.waitForTimeout(400);
       const c1 = await page.evaluate(() => window.__stage0.state());
       check(tag, Math.hypot(c1.cx - c0.cx, c1.cy - c0.cy) < 2, `ArrowLeft with focus in the list does not pan the slide (${Math.hypot(c1.cx - c0.cx, c1.cy - c0.cy).toFixed(2)} level-0 px)`);
-      await page.focus('#measList [data-id="1"] button[data-act="del"]');
-      await page.keyboard.press('Enter');
+      await page.focus('#annList [data-kind="measurement"][data-label="M1"]');
+      await page.keyboard.press('Delete');
       await page.waitForTimeout(150);
       const fDel = await where();
       const nDel = await page.evaluate(() => window.__shell.measurements().length);
-      check(tag, fDel === 'button[del] M2' && nDel === 1, `Enter on Delete M1 (of 2): focus moves to the next row's Delete (${fDel}; ${nDel} left)`);
+      check(tag, fDel === 'option M2' && nDel === 1, `Del on M1 (of 2): focus moves to the next row (${fDel}; ${nDel} left)`);
       await page.keyboard.press('Control+z');
       await page.waitForTimeout(150);
       const fUndo = await where();
       const nUndo = await page.evaluate(() => window.__shell.measurements().map((m) => m.id).join(','));
-      check(tag, fUndo === 'button[del] M2' && nUndo === '1,2', `Ctrl+Z in the list restores M1 and focus stays on M2's Delete (${fUndo}; ids ${nUndo})`);
+      check(tag, fUndo === 'option M2' && nUndo === '1,2', `Ctrl+Z in the list restores M1 and focus stays on M2's row (${fUndo}; ids ${nUndo})`);
       // ---- 10: redo says what it changed (strip notice and polite region), mirroring undo ----
       const redoBy = async (how) => {
         await page.evaluate(() => document.getElementById('livePolite').replaceChildren());

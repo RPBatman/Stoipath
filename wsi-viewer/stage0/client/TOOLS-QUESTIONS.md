@@ -332,3 +332,238 @@ So the sentence is spoken, first, but by the time the check reads the region the
 - the drop zone (301 × 35).
 
 The coarse minimum is 44 px. At 1024 × 1366 coarse the same controls pass only through the spacing exception. Every other page and viewport passes (35 of 36 runs: rest, Slides, Cohort and Annotations at the 9 SHELL.md viewports). This is the case library met with its fields (§15.9 LB12). Suggested fix in `annotations.css`: under `@media (pointer: coarse)`, give `#tp-ann .segmented__item` and `#tp-ann .dropzone` `min-height: var(--target)`.
+
+---
+
+## 2026-11-01 · Wave 3 (draw-tools builder): two optional contract points, two check-file findings for annotations, Wave 4 notes
+
+draw-tools is in `src/shell/draw-tools/` (`index.ts`, `select.ts`, `measure.ts`, `point.ts`, `box.ts`, `polygon.ts`, `brush.ts`, `trace.ts`, `hints.ts`, plus `common.ts` and `edit.ts`). At install it registers the seven ToolControllers on core's ToolHost and 16 commands, all in group Annotate:
+- `tool:select|point|rect|ellipse|polygon|brush|measure` (V T X E P F M);
+- `tool:freehand`, a hidden alias;
+- `tool:area` (⇧M), with the §8 sentence;
+- `polygon:close`, `brush:larger`, `brush:smaller`;
+- `selection:move:left|right|up|down`.
+
+It exposes `window.__shell.tools['draw-tools']()`. The judgement calls are TOOLS.md §15.11 DT1–DT14. Nothing below widens a type.
+
+**D1 · Optional, for overlay / the integrator: no variable-width stroke in `OverlayPainter` (contracts §6; TOOLS.md D17).** The brush preview should show the painted band. `PreviewStyle.width` has three fixed widths and fills are even-odd, so a filled band would show holes where a stroke crosses itself. draw-tools draws the band's two offset outlines with round caps, plus the brush circle (§15.11 DT7). That is exact for ordinary strokes, and the committed region is always exact. If wanted later: `OverlayPainter.band(points: readonly Position[], radiiWorld: ArrayLike<number>, style)`, drawn as round-capped segments with a nonzero fill. That is also how stoi-draw would draw it.
+
+**D2 · Optional, for annotations / the integrator: no way to hide one feature while Select edits it.** During a move, a vertex edit or a resize, the edited geometry is the tool preview, and the store's source keeps drawing the unchanged feature underneath until the commit (§15.11 DT10). It reads correctly in the screenshots, but a live edit would be cleaner. One way: the store's `StoreSource.style()` could skip an id that a module names, e.g. a `ToolHost`-level `editing: string | null` or an annotations-service call. No change is asked for Phase A.
+
+**D3 · For annotations (check owner): ANN-6 and ANN-7 assume a build without draw-tools.** On my private build of the current tree, `tools-check --only annotations` passes 63 of 72. On the same tree built without `draw-tools/` it passes 72 of 72. Built with draw-tools and without `layers/`, it fails the same 9. Two behaviours that the spec asks for cause the difference:
+- **ANN-6.** Once `tool:brush` is registered, annotations shows its own Brush size row (§15.7 AN10), so `#annBrush` sits between the toolsrow's Delete button and `#annList`. The check focuses `[data-cmd="deleteSelected"]` and presses Tab once, which lands on `#annBrush`; the later ANN-6 assertions cascade from that. Suggested fix: press Tab until `document.activeElement.closest('#annList')`, or focus `#annBrush` first when it is visible.
+- **ANN-7** (frame-cost drag). The drag starts at the canvas centre, which at fit is (7680, 7680), inside the selected polygon A1. draw-tools' Select moves a selected feature when a drag starts on its body (§6.6), so the camera never moves and `whileMoving` is 0. Suggested fix: `select([])` (or Esc twice) before the frame-cost drag, or start the drag off A1.
+
+Also for annotations: the Brush size slider reads `brush.radius` only when it is built. `brush:larger` / `brush:smaller` write the pref, so the slider shows a stale value until it is rebuilt. Suggested fix: in `render()`, set `value` and `aria-valuetext` from the pref when they differ.
+
+**D4 · For the integrator (Wave 4).**
+- Because draw-tools registers `select` and `measure`, main.ts no longer registers `StageSelectTool` / `StageMeasureTool` (W1). The Stage-0 rows `tool:select` / `tool:measure` and the fallbacks `tool:draw` and `tool:area` step aside too (J2).
+- `measure:place` (↵) and `measure:pan` (Space) still register from main.ts. `measure:place` calls `tools.get('measure').placeAtCentre()`, which draw-tools' Measure implements.
+- `src/shell/measure.ts` can be deleted in Wave 4 with no other change: no module imports it.
+- shell-check on my build: 190 ok, 0 FAIL ("all shell checks passed"), the measurement section included (DRW-6).
+
+**D5 · TOOLS.md §4 row.** Please add three files:
+- `src/shell/draw-tools/common.ts`: the tool base, the module's env and preview drawing;
+- `src/shell/draw-tools/edit.ts`: pure geometry edits;
+- `harness/unit/draw-tools.test.mjs`: 65 assertions on edit.ts, the trace's planning and tracing, and the §6.6 / §8 sentences (as annotations A6, library L1).
+
+**D6 · Observations (no action asked of draw-tools' neighbours beyond what is said).**
+- **Engine backlog, as core Q6.** After an eased arrow-key pan, `__stage0.state().cameraAnimating` turns false while the presented camera (`viewer.snapshot`) still trails the logical one by about 1 CSS px for a few frames. Measured at logZoom −1.5: cx 12503.03 presented against 12500.29 logical, converging over about 3 frames. Tools place at the presented centre, which is what the user saw. draw-tools treats a crosshair move within the 4 CSS px click slop as "not panned" (§15.11 DT2, DT8).
+- **Overlay and library on the integrated tree.** On my build with the in-progress layers module, OVL-2, OVL-3 and OVL-5 fail. They fail the same way on the tree built without draw-tools (50 ok, 10 FAIL). Their hits name a CAMELYON16 feature (`f5049586-…`), the reference layer that layers now shows by default. Built with draw-tools and without `layers/`, overlay passes 59 of 60; the one failure is OVL-3, the `visible === 4` finding of the Wave 2 integrator notes. LIB-2 is the polite-region finding of the Wave 2 integrator notes. core passes 46 of 46 and the integrator gate 4 of 4 on my build.
+- **Running the checks.** axe-core is not installed in the client. Earlier waves used `scratchpad/axe/node_modules/axe-core/axe.min.js` (4.10.3) through `--axe`.
+
+---
+
+## 2026-11-01 · Wave 3 (layers builder): files, one generator decision, notes for overlay, share, draw-tools and the gate
+
+layers is in `src/shell/layers/` (`index.ts`, `registry.ts`, `panel.ts`, `vector-layer.ts`, `raster-layer.ts`, `hud-marker.ts`, `commands.ts`, `layers.css`, plus a new `text.ts`). It provides `layers` synchronously, claims the Layers panel, owns `#hudMarker`, registers `overlays` H, `heat` ⇧H, `opacity.down` `,`, `opacity.up` `.` and `layer:<id>` (one per layer id met, palette only), and exposes `window.__shell.tools.layers()` through core's DebugRegistry. The judgement calls are TOOLS.md §15.12 LA1–LA17. Nothing below widens a type; no contract change is asked.
+
+**LQ1 · Files beyond §4's layers row (as annotations A6, overlay O-Q3, library L1).** `src/shell/layers/text.ts` (fixed strings and pure formatting) and `harness/unit/layers.test.mjs` (94 assertions on the registry, the strings and both file parsers). Please add both to §4.
+
+**LQ2 · For the overlay check owner: three OVL checks assume no default-visible layer (draw-tools D3 saw the same).** With layers installed, tumor_014 opens with the real CAMELYON16 layer (`camelyon16-expert`, z 200) visible (owner decision 5). On my build overlay.check passes 51 of 60:
+- OVL-2 (4 checks): the measured column crosses the reference outlines at fit and at logZoom −4, so the summed stroke reads 3.5–7.3 device px.
+- OVL-3 (1): `visible === 4` counts 7, the Wave 2 finding plus the reference layer.
+- OVL-5 (4): the probe point (7680, 7680) lies inside the real Tumor outline R1 (`f5049586-…`), which the hit test rightly returns.
+
+The behaviour each one tests holds. Suggested fix in `overlay.check.mjs` (overlay-owned; I did not edit it): in `openPage`, after `waitForShell`, hide the shell's own layers so only the test sources are drawn:
+
+```js
+await r.page.evaluate(() => { const L = window.__shell.tools.layers?.(); if (L) for (const [k, ls] of Object.entries(L.slides)) for (const l of ls) L.test.update(l.id, { visible: false }, k); });
+```
+
+With exactly that statement in a scratch copy, overlay.check passes 60 of 60 on my build, OVL-3 included, because the store's two sources follow the hidden `my-annotations` row. A narrower alternative: `sources: ['ovl5']` in OVL-5's `hitTest` queries and hiding `camelyon16-expert` alone for OVL-2.
+
+**LQ3 · For share (Wave 3): what the registry gives the snapshot and the link.**
+- Marker line (SHR-2): `layers.list(slideKey).some((l) => l.visible && l.marker !== null)`; the note is `l.note` ("Demo overlay — not a model output"). `marker` is a getter derived from `origin` and `provenance.regulatoryStatus` (FR-R11), so read it, never copy it.
+- `list()` includes the "My annotations" row (`kind: 'annotations'`, id `my-annotations`); core's codec therefore writes `my-annotations~v~100` into `l=`, which round-trips (SHR-4).
+- `#hudMarker` is two lines (note, then the marker chip); its `textContent` is exactly `Demo overlay — not a model output · Not validated for diagnostic use on this viewer`.
+
+**LQ4 · For draw-tools (Wave 3): the reference source is hit-testable.** Hits on source `camelyon16-expert` carry the reference features' UUIDs; they are not in the store, so treat them as read-only (§15.7 AN13: "Read-only layer: Copy to my annotations to edit it"). Its style has `handles: 'none'`, also when selected. `H` hides the store's sources too (LA1) but never the tool preview or the crosshair.
+
+**LQ5 · Decision for the integrator: `origin` in the demo grids (layers Wave 1 Q2, answered "may").** I left `build_demo_heatmap.py` unchanged (TOOLS.md §15.12 LA16): writing `"origin": "demo"` changes the bytes of all five grids, and the catalogue records each overlay's `bytes`, so `data/catalogue.json` (library's) would have to be rebuilt in a wave where library is not building. The module already reads the file's `origin` when present. If you want it, it is a two-line generator change plus `python3 stage0/tools/build_catalogue.py` afterwards; I can make it on request.
+
+**LQ6 · Running layers.check.mjs.** LAY-1 reads the CAMELYON16 XML test-side: `STOIPATH_CAMELYON16_XML=/path/to/tumor_014.xml`, else the check downloads it with `curl` (S3 was reachable from this sandbox) and verifies it against the sha256 the layer records. Without either it reports a FAIL with the reason, never a pass. axe-core as for every module (`--axe`).
+
+**Verification (private builds, nothing written to `client/dist`).**
+- Snapshot build: `npx vite build --outDir <scratch>/phase-a/layers/dist-snap`, from a copy of `client/` without the Wave 3 modules other builders were still writing (draw-tools did not typecheck at the time), served with `--dist`.
+  - `tools-check --only layers`: 57 of 57 pass (LAY-1…5, the slide switch, reload and phone extensions, axe-core 4.10.3 with 0 violations in 6 states).
+  - Every other module on the same build: integrator 4/4, core 47/47, annotations 72/72, library 92/93 (LIB-2, the Wave 2 polite-region finding), overlay 51/60 (LQ2).
+  - `shell-check`: 190 ok, 0 FAIL.
+  - Design-system `layout-check` (http copy, Layers tab open, with and without the demo heatmap shown): T1, Z1, S1, A1, A2 and A3 pass at 390c, 1024c, 1280, 1366, 1366c, 1440, 1600, 1920 and 3840.
+- Live build of the current tree (draw-tools installed, compare and share not yet present): `tsc` clean; layers 57/57, the integrator gate 4/4 (104 commands, no conflict) and draw-tools 106/106.
+- Unit and Python tests: `unit.mjs --only layers` 94 ok; `test_overlay_tools` 28 OK and `test_catalogue` 21 OK; `build_catalogue.py --check` reports the catalogue up to date.
+
+---
+
+## 2026-11-02 · Wave 3 (compare builder): one file, two integrator requests, one engine bug, two observations for core and library
+
+compare is in `src/shell/compare/` (`index.ts`, `controller.ts`, `sync.ts`, `bar.ts`, `pane-hud.ts`, `compare.css`). At install it provides `compare` and builds the compare bar. It registers `compare:side` (C) and `compare:with:<id>` for each catalogued slide, plus `compare:swap`, `compare:close`, `compare:realign`, `sync:lock` and `sync:none`, all in group "Layers and compare". It exposes `window.__shell.tools.compare()`. The judgement calls are TOOLS.md §15.13 CP1–CP11. Nothing below widens a type.
+
+**C1 · Test file beyond §4's compare row.** `harness/unit/compare.test.mjs` tests the pure parts, sync.ts and the §6.9 strings, with 52 assertions (as annotations A6, library L1 and draw-tools D5). Please add it to §4.
+
+**C2 · For main.ts: the rail's `[data-cmd="compare:side"]` is a toggle that nobody presses.** The markup gives it `aria-pressed="false"`, and §4.2 does not give compare that button, so it still reads "not pressed" while compare is on (SC 4.1.2). Please mirror `compareChanged` into its `aria-pressed` (true unless the state is `off`), as main.ts does with `toolChanged` for the tool buttons.
+
+**C3 · Engine bug (viewer.ts `detectDeviceClass`, integrator-owned): an iPad's own UA is classed as a phone.** The UA "Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) … Mobile/15E148 Safari/604.1" (helpers.mjs `IPAD_UA`, and real iPads with "Request Desktop Website" off) matches the phone rule `/Mobi/` before the tablet rule `/iPad|Tablet|Silk|Android/` is tested. Such an iPad therefore also gets the phone texture budget (112 layers instead of 192). Compare names the tablet's reason for this UA itself (CP4), so CMP-5 passes either way. Suggested fix: test `/iPad|Tablet|Silk/`, and Android without "Mobile", before the phone rule.
+
+**C4 · Observation for core and library (no change asked of compare): the follower reports settled frames during a synced gesture.**
+- A view moved by `ViewHandle.flyTo(…, true)` (= `commands.jumpTo`) has `s.moved` and `s.settled` on the same frame. So on every synced frame of a drag in A, core emits `viewSettled` for view B and runs `rest.tick()`. The rest queue still waits, because A is moving.
+- library's coverage handler therefore marks view B's viewport on each such frame when B is at ≥ 5×. Cells a synced pan passes over count as seen.
+- share's URL upkeep re-arms its debounce on every such frame.
+- The frame-cost checks still pass (CMP-6: 0 layout reads, 0 redundant writes, LayoutCount 26 for 160 frames).
+- Suggested for core: emit `viewSettled` for a view only once no open view is moving. The settle that follows the leader's gesture then covers both panes.
+
+**C5 · For the integrator: where the compare bar sits.** The Wave 0 note asks for the bar to be positioned with `right:`, following the research final, where the navigator lives in pane A. In this shell the navigator is at the canvas area's top-right, which in compare is pane B's corner, so a bar at `right: inset` would lie under it. compare.css anchors the bar left of the navigator (`right: navigator + 2 × inset`) in two rows (CP1). In the drawer, palette and dialog states its rules carry `.compare-on`, so they outrank shell.css's `#compareBar { right: dock + inset }` at equal order and keep the bar clear of the navigator there too. If you prefer the research final's arrangement instead (the navigator over pane A while compare is on), say so; the bar's CSS is one block.
+
+**C6 · For the integrator (shell.css): pane HUDs collide when a drawer covers most of a pane in compare (1080–1599 px).** Measured at 1440 × 900:
+- Context drawer open over pane B: pane B shows 355 px. `#magBoxB` (932–1092) overlapped `#scalebarB` (761–973). compare owns those items, so compare.css lifts pane B's label and readout above the scale-bar and position lines in that state (CP6).
+- Library drawer open over pane A: pane A's `#scalebar` (404–616) and `#magBox` (575–735) overlap by 41 px. Those are main.ts's items. The same lift for `#paneA #magBox` under `.compare-on.lib-open` at 1080–1599 would fix it, as would moving pane A's readout above its scale bar there.
+
+**C7 · Wiring notes (nothing to do).**
+- core's codec restores compare as `open()` → `B.flyTo()` → `setSync(mode, 'surface')`. compare's `setSync('lock')` always captures from the current cameras, and `open()` never rejects (a refusal resolves).
+- A link with `b=`, `bx/by/bu`, `sy=lock` and `so=` reopens compare on the same cameras, and `toFragment(current())` gives back the same fragment byte for byte (probe).
+- library's Compare row actions call `compare.open(ref, 'compare')`. On phones and tablets that call shows the refusal and creates no canvas (CMP-5).
+- `]` / `[` with pane B focused step view B, and compare re-captures the lock and says "Compare · {A} with {B}" (CP8).
+
+**Verification (private build of the current tree, with draw-tools, layers and share installed).**
+- `tools-check --only compare`: 73 of 73 (CMP-1…6). These include axe-core 4.10.3 with 0 violations and no console error in the 8 states it scans: 1920 with the same slide and with another slide; the phone, iPad and 1280 refusals; and 1440 with the dock closed, the Context drawer open, and both drawers open.
+- The same build passes the integrator gate 4 of 4 (no binding conflict), core 46 of 46, library 92 of 93 (LIB-2 is the Wave 2 polite-region finding; its "Compare … with view A" row actions pass) and `shell-check` 190 ok, 0 FAIL.
+- `unit.mjs --only compare`: 52 ok. `tsc` is clean. Nothing was written to `client/dist`, and `index.html` and `src/main.ts` are untouched.
+
+---
+
+## 2026-11-02 · Wave 3 (share builder): files, the URL upkeep and reloads, one engine observation
+
+share is in `src/shell/share/`:
+- `index.ts`, `snapshot.ts`, `burn-in.ts`, `link.ts`, `share.css`;
+- plus a new `text.ts`.
+
+It provides `share` synchronously, registers `snapshot` (⇧S) and `copylink` (group Navigate), claims the Inspector and fills `#shareActions`. It keeps the address bar's fragment current and exposes `window.__shell.tools.share()` through core's DebugRegistry. The judgement calls are TOOLS.md §15.14 SH1–SH12. Nothing below widens a type, and no contract change is asked.
+
+**S1 · Files beyond §4's share row** (as annotations A6, library L1, draw-tools D5, layers LQ1). Please add both to §4:
+- `src/shell/share/text.ts`: the fixed strings and pure formatting;
+- `harness/unit/share.test.mjs`: 90 assertions on the strings, footer line 2, the file name, the burn-in plan and the painter.
+
+**S2 · For main.ts and the gate: nothing to wire.**
+- The ⇧S binding (`{ key: 's', shift: true, scope: 'window' }`) does not conflict: lower-case `s` stays pan down. I-2 reports no conflict.
+- The rail's `[data-cmd="snapshot"]` button appears by itself (Wave 0 rule). The bookmark refusal now ends "; Copy view link shares this view" (J10), because `copylink` is registered.
+- The Inspector's "View · snapshot · link" sub-head shows once `#shareActions` has children (shell.css `:has`).
+
+**S3 · For every check owner: a reload now restores the view from the fragment (D13).**
+- From the startup open on, `location.hash` carries the compact State Document. It is rewritten 1 s after each settle, at the next rest after a slide switch or a compare change, and 1 s after a layer change.
+- So `page.reload()` lands on the same slide, camera, layers, selection and compare, not on fit. A fresh `page.goto(url())` is unchanged.
+- On my build the three checks that reload still pass: ANN-3, LIB-4 "after a reload" and layers' "LAY reload". The fragment carries the same layer state the preferences restore, and LB3 makes the restored camera "not a look".
+- A future check that expects fit after a reload should `goto` the URL without a fragment instead.
+
+**S4 · Contract readings (no change asked).**
+- `BurnInRecord.strings` holds the §6.10 lines as stated. On a narrow pane the marker line is laid out as two HUD items, but recorded as one string. The RUO string is shrunk to fit, never split.
+- `scaleBars[].devicePx` is the drawn integer length, `round(bar.px × dpr)`.
+- `SnapshotOptions.views` defaults to `'all'` while view B is open, else `'focused'`.
+- The service shows its own notices for success, refusal and failure, and rejects with a `SnapshotError` whose message is that text. The `snapshot` command swallows the rejection.
+
+**S5 · Observation for the engine / core (no action needed for Phase A).**
+- The engine reports `snapshot.settled` (and core runs `atRest` and `viewSettled`) while the presented camera is still converging on the logical one. These are frames with `moved` true after the settle; measured at the end of an eased `zoomin`: k 0.106443 at the first settled frame against 0.106771 three frames later. This is the effect draw-tools D6 measured for arrow pans.
+- `atRest` also runs at once when a command started an eased move in the same task, because core's rest flag only changes on the next frame.
+- share captures only a frame that is settled, drawn and `!moved` (§15.14 SH5). Any module that reads "the settled camera" in `viewSettled` or `atRest` sees the pre-convergence value.
+- Suggested for the engine backlog: report `settled` only once the presented camera equals the logical one.
+
+**S6 · Running share.check.mjs.**
+- It needs compare for SHR-3 and the compare half of SHR-4. It drives compare through contract ids only: `compare:with:<id>`, `sync:none`, `compare:close`, and `tools.compare().state`. Without compare those two checks FAIL with the reason, never pass.
+- The too-large refusal opens a 4700 × 520 DSF 2 page (canvas 8488 device px wide).
+- It reads the PNG independently: chunks in Node, pixels with `createImageBitmap`. It reads the engine canvas in the same frame through a `drawImage` wrapper (init script), not through the module.
+- axe-core as for every module (`--axe`).
+
+**S7 · Answer to compare C4 (share's part).** The upkeep's debounce is O(1) and allocation-free per `viewSettled`: each event moves a due time, and one timer re-arms itself for what is left. A synced drag therefore costs share one `performance.now()` per frame and no timer churn. The write still waits for `atRest`, so nothing is written while the leader moves; SHR-3, SHR-4 and SHR-5 pass with it. core's suggested change (`viewSettled` only once no view moves) would remove even that.
+
+**Verification (private build `npx vite build --outDir <scratch>/phase-a/share/dist`, nothing written to `client/dist` or `harness/results`).**
+- `npx tsc --noEmit -p tsconfig.json` is clean.
+- `node harness/unit.mjs --only share`: 90 ok. All ten unit files: 1,079 ok, 0 FAIL.
+- `tools-check --only share`: 76 of 76 pass. That covers SHR-1 at 1440 × 900 and DSF 2, SHR-2, SHR-3 and SHR-4 with the in-tree compare, SHR-5 with a frame-cost drag, and the rest, crosshair, too-large, phone and copy-failure extensions. axe-core 4.10.3 reports 0 violations in every state opened.
+- The full `tools-check` on the same build: 568 ok, 19 FAIL, all 19 already filed before share. Per module:
+  - integrator gate 4/4 (117 commands, no conflict, I-1 isolation holds);
+  - core 46/46, compare 73/73, draw-tools 106/106, layers 57/57 and share 76/76;
+  - annotations 63/72: ANN-6 and ANN-7, the draw-tools D3 finding;
+  - library 92/93: LIB-2, the Wave 2 polite-region finding;
+  - overlay 51/60: OVL-2, OVL-3 and OVL-5, the layers LQ2 finding.
+- `shell-check --dist`: 190 ok, 0 FAIL.
+- The design-system `layout-check` (http copy, Inspector with the View section open) passes T1, Z1, S1, A1, A2 and A3 at 390c, 1024c, 1280, 1366, 1366c, 1440, 1600, 1920 and 3840.
+
+---
+
+## 2026-11-02 · Wave 4 (integrator): answers to Wave 3, the final gate, three check fixes for their owners
+
+**Installed.** main.ts installs all eight feature modules in the §5.1 order (geometry, interop, annotations, layers, draw-tools, library, compare, share); every Wave 3 module passed its own checks on the integrated build. `src/shell/measure.ts` is deleted, the Measurements tab is gone (measurements are the Annotations list's Measurements group), and shell-check's one edit is in (TOOLS.md §11.3). The judgement calls are TOOLS.md §15.15 F1–F12. No contract type changed in Wave 4; contracts.ts has one comment edit.
+
+### draw-tools (Wave 3)
+
+**D1, D2 · Left for Phase B** (F11). The outline brush preview and the edit-over-unchanged drawing read correctly in every Wave 4 screenshot.
+
+**D3 · Forwarded to annotations** (below, with the fix verified on the integrated build). The stale Brush size slider is forwarded too (below).
+
+**D4 · Done** (F1). main.ts registers no Stage-0 tool and no `tool:select`, `tool:measure`, `tool:draw` or `tool:area` row. `measure:place` (↵) and `measure:pan` (Space) stay as keymap rows, worded for every drawing tool; `measure:place` still calls your Measure tool's `placeAtCentre()`.
+
+**D5 · Added to TOOLS.md §4.** **D6 · Noted** for the engine backlog (F7).
+
+### layers (Wave 3)
+
+**LQ1 · Added to TOOLS.md §4.** **LQ2 · Forwarded to overlay** (below; your statement, verified). **LQ3, LQ4 · Noted** (share and draw-tools use them as you describe). **LQ5 · Decided: no `origin` in the grids** (F8). **LQ6 · Noted.** The gate's LAY-1 downloaded the XML and verified it against the recorded sha256.
+
+### compare (Wave 3)
+
+**C1 · Added to TOOLS.md §4.** **C2 · Done** (F4): `[data-cmd="compare:side"]` mirrors `compareChanged`. **C3 · Not fixed in Phase A** (F5): viewer.ts is in the measurement page's chunk graph and the owner measures on 2–3 November; filed for the engine backlog with your suggested order of tests. **C4 · Not taken in Phase A** (F7); for the core owner. **C5 · Your arrangement is kept** (CP1): the navigator stays at the canvas area's top-right, and the bar sits left of it. **C6 · Done for pane A** (F6, shell.css), with the lift you gave pane B. **C7 · Noted.**
+
+### share (Wave 3)
+
+**S1 · Added to TOOLS.md §4.** **S2 · Confirmed** on the integrated build: no conflict, the bookmark refusal ends "; Copy view link shares this view", and the View sub-head shows. **S3 · Noted** (S3 holds: ANN-3, LIB-4 and LAY's reload pass). **S4 · Accepted.** **S5 · Not taken in Phase A** (F7). **S6, S7 · Noted.**
+
+### For three check owners: stale assumptions in the gate (owned files, not edited)
+
+On the integrated build the full tools-check fails 19 checks, in three owners' files. The behaviour each one tests holds. Each fix below was applied to a scratch copy of the check file and run against the same build with `tools-check --checks <dir>` (TOOLS.md §15.15 F9); the owned files are unchanged.
+
+**annotations · ANN-6 (8 FAILs) and ANN-7 (1 FAIL): the draw-tools D3 finding.** With 72 of 72 after the change below.
+- **ANN-6.** Once `tool:brush` is registered, the Brush size row (§15.7 AN10) sits between the toolsrow's Delete and `#annList`, so one Tab from Delete lands on the slider and the rest of ANN-6 cascades. Replace the single `await page.keyboard.press('Tab');` after `page.focus('#tp-ann [data-cmd="deleteSelected"]')` with:
+  ```js
+  for (let i = 0; i < 4; i++) { await page.keyboard.press('Tab'); if (await A(page, () => document.activeElement?.closest('#annList') !== null)) break; }
+  ```
+- **ANN-7.** The frame-cost drag starts at the canvas centre, inside the selected A1, and draw-tools' Select moves a selected body under the pointer (§6.6), so the camera never moves (0 mutations while moving). Before `const box = await page.locator('#view').boundingBox();` in the frame-cost block, add `await A(page, () => window.__shell.tools.annotations().select([]));`.
+- **A product point for you (not a check):** the Brush size slider reads `brush.radius` only when it is built, so after `brush:larger` / `brush:smaller` (which write the pref) it shows a stale value until the panel is rebuilt. Measured at 1920 × 1080 with the Annotations tab open: two `brush:larger` runs say "Brush radius 20 px" and store 20, and the slider still reads 12. Suggested fix in `list.ts` `render()`: set the slider's `value` and `aria-valuetext` from the pref when they differ.
+
+**library · LIB-2 (1 FAIL): the Wave 2 polite-region finding.** With 93 of 93 after the change below. The region speaks "CMU-1 opened. OpenSlide test data, H and E." first; by the time the check reads it after `settle()`, the strip's spoken twin has followed. Record every write from before the click instead: in the `before` evaluate of LIB-2, after `window.__marker = 'library-lib2';`, add
+```js
+window.__politeWrites = [];
+new MutationObserver(() => window.__politeWrites.push(document.getElementById('livePolite').textContent.trim())).observe(document.getElementById('livePolite'), { childList: true, characterData: true, subtree: true });
+```
+and replace the `waitPolite(page, 'CMU-1 opened. …')` call with `page.waitForFunction(() => window.__politeWrites.includes('CMU-1 opened. OpenSlide test data, H and E.'), null, { timeout: 6000, polling: 30 })` (resolving to true, rejecting to false), printing `__politeWrites` in the message.
+
+**overlay · OVL-2 (4 FAILs), OVL-3 (1 FAIL) and OVL-5 (4 FAILs): the layers LQ2 finding, which includes the Wave 2 OVL-3 note.** With 60 of 60 after the change below. tumor_014 opens with the real CAMELYON16 layer shown (owner decision 5), so the measured column crosses its outlines (OVL-2), 7 layers are visible instead of the check's 4 (OVL-3), and the probe point lies inside the real Tumor outline R1, which the hit test rightly returns (OVL-5). In `openPage`, after `await waitForShell(r.page);`, hide the shell's own layers so that only the check's sources draw:
+```js
+await r.page.evaluate(() => { const L = window.__shell.tools.layers?.(); if (L) for (const [k, ls] of Object.entries(L.slides)) for (const l of ls) L.test.update(l.id, { visible: false }, k); });
+```
+This is layers' LQ2 statement, unchanged. The store's two sources follow the hidden `my-annotations` row, so OVL-3 counts exactly its four layers.
+
+### Wave 4 screenshot review: two cosmetic points for module owners (no failure, nothing changed)
+
+Every Wave 4 screenshot (50 states at 1920 × 1080, 1440 × 900, 1024 × 1366 coarse, 390 × 844 coarse, plus 3840 and 360) was reviewed. Two points sit in module-owned CSS:
+- **layers (layers.css), under a coarse pointer:** in the CAMELYON16 row's provenance line the licence link grows to its 44 px target and the `reference` state-tag beside it stretches to the same height with its text at the top (1024 × 1366 coarse, Layers sheet). Suggested: `align-items: center` on that provenance row (or `align-self: center` on its `.state-tag`).
+- **annotations (annotations.css), under a coarse pointer:** the toolsrow's Undo, Redo and Delete buttons still show their `Ctrl Z`, `Ctrl Y` and `⌫` key caps on phones and tablets, where library (§15.9 LB12) and share (§15.14 SH1) hide keyboard hints. Suggested: `@media (pointer: coarse) { #tp-ann .toolsrow .key { display: none; } }`, keeping each button's name equal to its visible label.
+
+The tablet screenshots also show the engine bug of compare C3 in practice: the iPad UA gets the phone texture budget ("Tiles 21/112" in the strip). It is deferred with the reason in TOOLS.md §15.15 F5.

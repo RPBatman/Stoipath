@@ -203,7 +203,7 @@
           </div>
           <div class="rail__divider" aria-hidden="true"></div>
           <div class="rail__set">
-            <button class="tool" type="button" data-cmd="dock" aria-pressed="false" aria-label="Context panel: slide, measurements, engine (K)" title="Context panel · K"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__key" aria-hidden="true">K</span></button>
+            <button class="tool" type="button" data-cmd="dock" aria-pressed="false" aria-label="Context panel: slide, engine (K)" title="Context panel · K"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__key" aria-hidden="true">K</span></button>
             <button class="tool" type="button" data-cmd="keymap" aria-label="Keyboard shortcuts (?)" title="Shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg><span class="tool__key" aria-hidden="true">?</span></button>
           </div>
         </div>
@@ -233,16 +233,16 @@
       </aside>
 
       <!-- D. Context dock (docked ≥ 1600, drawer 1080–1599, in-flow sheet ≤ 1079): Inspector · Annotations · Slide · Engine
-           (TOOLS.md D10; Measurements until Wave 4 folds it into Annotations). Module tabs appear as modules claim them. -->
+           (TOOLS.md D10; measurements are a group of the Annotations list since Wave 4, D7). Module tabs appear as modules
+           claim them. -->
       <aside class="dock region" id="dock" aria-label="Context">
-        <div class="dock__head"><span class="title">Context</span><span class="meta" id="dockMeta">slide · measurements · engine</span>
+        <div class="dock__head"><span class="title">Context</span><span class="meta" id="dockMeta">slide · engine</span>
           <span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" type="button" aria-pressed="false" data-sheetdock="lib">Library</button><button class="segmented__item" type="button" aria-pressed="true" data-sheetdock="ctx">Context</button></span>
           <button class="btn btn--sm btn--icon btn--ghost" type="button" id="dockClose" aria-label="Close panel (K)"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-close"/></svg></button>
         </div>
         <div class="dock__tabs tabs tabs--fill" role="tablist" aria-label="Context panels" id="dockTabs">
           <button class="tab" role="tab" type="button" id="tab-inspector" data-tab="inspector" data-label="inspector" aria-selected="false" aria-controls="tp-inspector" tabindex="-1" hidden>Inspector</button>
           <button class="tab" role="tab" type="button" id="tab-ann" data-tab="ann" data-label="annotations" aria-selected="false" aria-controls="tp-ann" tabindex="-1" hidden>Annotations <span class="count" hidden></span></button>
-          <button class="tab" role="tab" type="button" id="tab-meas" data-tab="meas" data-label="measurements" aria-selected="false" aria-controls="tp-meas" tabindex="-1">Measurements <span class="count" id="measCount">0</span></button>
           <button class="tab" role="tab" type="button" id="tab-slide" data-tab="slide" data-label="slide" aria-selected="true" aria-controls="tp-slide">Slide</button>
           <button class="tab" role="tab" type="button" id="tab-engine" data-tab="engine" data-label="engine" aria-selected="false" aria-controls="tp-engine" tabindex="-1">Engine</button>
         </div>
@@ -260,14 +260,6 @@
             <div class="sub"><span class="title">Slide</span><span class="meta">from the manifest</span></div>
             <dl class="kv" id="slideFacts"></dl>
             <p class="note" id="slideNote"></p>
-          </section>
-
-          <section class="tabpanel" role="tabpanel" id="tp-meas" aria-labelledby="tab-meas" tabindex="0" data-live="annotations:measurement">
-            <div class="sub"><span class="title">Measurements</span><span class="meta">length · µm from MPP</span></div>
-            <div class="dock-actions"><button class="btn btn--sm btn--secondary" type="button" data-cmd="tool:measure">Measure <kbd class="key">M</kbd></button></div>
-            <ul class="list meas-list" id="measList" aria-label="Measurements on this slide"></ul>
-            <p class="note" id="measEmpty">No measurements yet. Press <kbd class="key">M</kbd>, then click two points on the slide or drag between them; or press <kbd class="key">Enter</kbd> to place a point at the centre crosshair, pan with the arrow keys and press <kbd class="key">Enter</kbd> again.</p>
-            <p class="note">Length = level-0 pixel distance × the manifest's MPP, independent of zoom and display. The overlay is a Stage-0 stand-in for the product's GPU annotation layer (SHELL.md).</p>
           </section>
 
           <section class="tabpanel" role="tabpanel" id="tp-engine" aria-labelledby="tab-engine" tabindex="0" data-live="telemetry:quality">
@@ -371,7 +363,7 @@
             <div><span class="badge badge--ruo">RUO</span></div>
             <p class="label-text">For Research Use Only. Not for use in diagnostic procedures.</p>
             <dl class="kv" id="aboutFacts"></dl>
-            <p class="note">Stage-0 prototype shell: the real tile engine (WebGL2, decode workers, scheduler) inside the designed research workspace. No PHI: the slide is a public, de-identified CC0 challenge image.</p>
+            <p class="note">Stage-0 prototype shell: the real tile engine (WebGL2, decode workers, scheduler) inside the designed research workspace. No PHI: every slide in the Library is public, de-identified research data under its own licence (Context → Slide).</p>
           </div>
         </div>
       </div>

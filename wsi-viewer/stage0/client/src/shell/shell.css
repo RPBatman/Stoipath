@@ -4,7 +4,7 @@
    by src/shell/main.ts). This file holds only what the system leaves to the page,
    following design/screens/final/research-annotation.html where it already solved
    it (dock internals, top-bar search ladder, bottom bar, reserved HUD widths), plus
-   the Stage-0 engine specifics (real canvas, measure overlay, transform-only scale
+   the Stage-0 engine specifics (real canvas, overlay canvases, transform-only scale
    bar and navigator rectangle). No transitions on anything over the canvas (P2).
    ========================================================================== */
 
@@ -125,16 +125,11 @@
 .dock__head .title { flex: 0 0 auto; }
 .dock__head .meta { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
 .dock .tabs .tab { padding: 0 var(--space-3); font-size: var(--text-xs); gap: 3px; flex: 1 1 0; justify-content: center; min-width: max-content; }
-/* Every tab stays reachable: equal widths while they fit, a scrolling strip when they do not (five tabs at 320 px in
-   Waves 2–3, while the Measurements tab sits beside Annotations). */
+/* Every tab stays reachable: equal widths while they fit, a scrolling strip when they do not (a narrow drawer). The
+   Context dock has four tabs since Wave 4 (Inspector · Annotations · Slide · Engine; Measurements folded into
+   Annotations, D7, TOOLS.md D10), so the Waves 2–3 five-tab compaction is gone. */
 .dock .tabs { overflow-x: auto; scrollbar-width: none; }
-/* Five visible tabs (Inspector · Annotations · Measurements · Slide · Engine, Waves 2–3) with their counts fit the 320 px
-   docked column and the 1280 px drawer (305 px): 2 px side padding, a 2 px label–count gap and a narrower count pill
-   (measured: 300 px of tabs; Wave 2 screenshot review, where 4 px padding clipped "Engine" by 7 px at 1920). */
 .dock .tabs .tab .count { font-size: 9px; padding: 0 4px; }
-.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab { padding: 0 var(--space-1); gap: var(--space-1); }
-.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab .count { padding: 0 3px; }
-.dock .tabs:has(> .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden]) ~ .tab:not([hidden])) .tab[aria-selected="true"]::after { left: var(--space-1); right: var(--space-1); }
 .dock__body { display: flex; flex-direction: column; }
 .tabpanel { display: none; padding: 0 0 var(--space-6); }
 .tabpanel.is-active { display: block; }
@@ -154,9 +149,6 @@
 pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var(--space-4); background: var(--color-surface--1); border: 1px solid var(--color-border); border-radius: var(--radius-2); font: var(--text-xs)/1.5 var(--font-mono); color: var(--color-text); overflow: auto; max-height: 240px; white-space: pre-wrap; overflow-wrap: anywhere; }
 pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 .dock .section > summary { min-height: var(--target); }
-.meas-list .meas-row { gap: var(--space-3); padding: var(--space-1) var(--space-3) var(--space-1) var(--space-5); }
-.meas-row__name { font-family: var(--font-mono); font-weight: var(--weight-semibold); min-width: 3ch; }
-.meas-row__len { flex: 1 1 auto; min-width: 0; }
 
 /* ---- Palette rows (research final's row layout; placement is base.css .palette-layer) ---- */
 .palette__item { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; cursor: pointer; }
@@ -214,6 +206,17 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
 }
 @media (min-width: 1080px) and (max-width: 1599px) {
   .app.shell { --lib-w: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
+}
+/* Compare with the Library open (TOOLS.md §15.15 F6; TOOLS-QUESTIONS compare C6): the drawer leaves pane A less width
+   than its scale bar plus its readout (measured at 1440: 355 px, #scalebar 404–616 over #magBox 575–735; 1280 and 1600
+   docked overlap too, 1920 docked does not). Pane A's readout then stands above its scale-bar and position lines, as
+   compare.css lifts pane B's under the Context drawer (§15.13 CP6): the bottom-left stack is 58 px tall (scale bar 35 +
+   gap 4 + position 19, measured), plus one gap. */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell.compare-on.lib-open #paneA #magBox { margin-bottom: calc(58px + var(--space-2)); }
+}
+@media (min-width: 1600px) and (max-width: 1799px) {
+  .app.shell.compare-on.lib-open.dock-open #paneA #magBox { margin-bottom: calc(58px + var(--space-2)); }
 }
 @media (min-width: 3200px) { .app.shell { --lib-w: 340px; } }
 
@@ -317,17 +320,18 @@ pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
   .shell .rail .tool--secondary { display: none; }   /* 44 px tools: Rectangle and Ellipse stay in the palette and keys */
   .shell .navigator__label .nav-hint { display: none; }   /* "O hide" is a keyboard hint; Nav in the bottom bar toggles it */
   .tool.tool--text { height: var(--target); }
-  .meas-list .meas-row { min-height: var(--target); }
   .note .key { display: none; }
 }
 @media (max-height: 760px) and (min-width: 1080px) {
   .rail { gap: 0; }
   .rail__group.presets { gap: 0; }
 }
-/* Short touch landscapes (iPad mini 1133 × 744): 44 px targets overflow the rail by one button; the rail's keyboard
-   map button goes (the top bar's ? button is the same command). */
+/* Short touch landscapes (iPad mini 1133 × 744): 44 px targets overflow the rail; the rail's keyboard map button goes
+   (the top bar's ? button is the same command), and since Phase A Wave 4 the Compare button too (TOOLS.md §15.15 F14:
+   with every Phase A tool the rail measured 694 px of content in 664 px, the Context button half under the edge).
+   Compare refuses tablets anyway (§6.9); C and the palette still give its reason. */
 @media (max-height: 760px) and (min-width: 1080px) and (pointer: coarse) {
-  .rail [data-cmd="keymap"] { display: none; }
+  .rail [data-cmd="keymap"], .rail [data-cmd="compare:side"] { display: none; }
 }
 @media print {
   .overlay-layer { display: none; }

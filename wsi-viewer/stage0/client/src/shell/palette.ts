@@ -225,6 +225,34 @@ function matches(c: Command, q: string): boolean {
     .filter((t) => t !== '')
     .every((t) => hay.includes(t));
 }
+/** Every query word is in the row's own label (not only in its meta, group, id or keys). */
+function labelMatches(c: Command, q: string): boolean {
+  const hay = c.label.toLowerCase();
+  return q
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((t) => t !== '')
+    .every((t) => hay.includes(t));
+}
+/**
+ * Rows whose label holds every query word come first (TOOLS.md §15.15 F13): "annotations list" finds the Annotations
+ * list before "Measure area", whose meta mentions the list. A group keeps one heading: groups with such a row lead,
+ * and inside a group those rows lead; otherwise the registry's order (group rank, then registration) stays.
+ */
+function rank(rows: Command[], q: string): Command[] {
+  if (q === '') return rows;
+  const tier = rows.map((c) => (labelMatches(c, q) ? 0 : 1));
+  const groupTier = new Map<string, number>();
+  const groupFirst = new Map<string, number>();
+  rows.forEach((c, i) => {
+    groupTier.set(c.group, Math.min(groupTier.get(c.group) ?? 1, tier[i] ?? 1));
+    if (!groupFirst.has(c.group)) groupFirst.set(c.group, i);
+  });
+  return rows
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => (groupTier.get(a.c.group) ?? 1) - (groupTier.get(b.c.group) ?? 1) || (groupFirst.get(a.c.group) ?? 0) - (groupFirst.get(b.c.group) ?? 0) || (tier[a.i] ?? 1) - (tier[b.i] ?? 1) || a.i - b.i)
+    .map((x) => x.c);
+}
 
 export class Palette {
   private items: Command[] = [];
@@ -334,7 +362,7 @@ export class Palette {
     const q = this.input.value.trim();
     const all = this.registry().filter((c) => c.keymapOnly !== true);
     const dyn = this.dynamic(q);
-    this.items = [...dyn, ...all.filter((c) => matches(c, q))];
+    this.items = [...dyn, ...rank(all.filter((c) => matches(c, q)), q)];
     this.index = 0;
     this.list.replaceChildren();
     if (this.items.length === 0) {

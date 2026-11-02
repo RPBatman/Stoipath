@@ -7,13 +7,13 @@
  * the overlay canvases are written; no layout reads in the frame hook (sizes come from ResizeObservers); class / aria /
  * chip / dock writes happen at gesture start, at settle, or on user commands.
  *
- * Phase A (TOOLS.md §5.1, §12.3), Wave 2: this file builds what core's createShell() takes from the integrator
+ * Phase A (TOOLS.md §5.1, §12.3), Wave 4: this file builds what core's createShell() takes from the integrator
  * (contracts §12 ShellHostDeps): the ShellEnv, the NoticeSink, the LiveRegions, the CommandRegistry (palette.ts), the
  * PanelHost (panels.ts), the overlay factory and token resolver (overlay/), the window key router on the registry
  * (TOOLS.md §5.5) and `onEngineFrame` (HUD, navigator, sharpness of view A). It installs the feature modules found under
- * ./<module>/index.ts in the §5.1 order, registers the Stage-0 Select and Measure tools and the "not in this build"
- * rows a module did not take (TOOLS.md §15.1 J2), then calls core.start(), which opens the first slide in view A. Every
- * later slide switch is in place (D1): what this file builds per slide is rebuilt on `slideOpened`.
+ * ./<module>/index.ts in the §5.1 order (every tool, measurements included, is draw-tools'; D7), registers the
+ * "not in this build" rows no module took (TOOLS.md §15.1 J2), then calls core.start(), which opens the first slide in
+ * view A. Every later slide switch is in place (D1): what this file builds per slide is rebuilt on `slideOpened`.
  *
  * URL parameters pass through to the engine (manifest, dpr, layers, workers, label, network, cache, path);
  * ?engine=1 (or ?overlay=1) opens the Engine section of the Context panel.
@@ -24,13 +24,12 @@ import './shell.css';
 import type { DeviceInfo, Metrics } from '../metrics';
 import type { OverlayLive } from '../overlay';
 import { detectDeviceClass, startViewer, type FrameSnapshot, type ViewerButtonHandlers, type ViewerUi } from '../viewer';
-import type { AnnotationStore, CommandSource, Disposer, EngineInstance, KeyBinding, LiveRegions, NoticeSink, PanelId, ShellApi, ShellCommand, ShellEnv, ShellModule, SlideContext, ToolId, ViewId } from './contracts';
+import type { CommandSource, CompareState, Disposer, EngineInstance, KeyBinding, LiveRegions, NoticeSink, PanelId, ShellApi, ShellCommand, ShellEnv, ShellModule, SlideContext, ToolId, ViewId } from './contracts';
 import { createShell, type CoreDebugRegistry } from './core/shell';
 import { $, $$, AttrSlot, TextSlot, h, isTextInput, keycaps } from './dom';
 import { slideFacts, spokenStain } from './facts';
-import { PRESETS, formatLengthUm, formatMagnification, logZoomForUmPerPx, parseTypedZoom, spokenLength, spokenMagnification } from './format';
+import { PRESETS, formatMagnification, logZoomForUmPerPx, parseTypedZoom, spokenMagnification } from './format';
 import { HudView } from './hud';
-import { StageMeasureTool, StageSelectTool } from './measure';
 import { NavigatorView } from './navigator';
 import { exposeOverlayDebug } from './overlay/debug';
 import { createOverlaySurface } from './overlay/surface';
@@ -175,7 +174,7 @@ const PERSISTENT_RANK: Record<string, number> = { engine: 0, view: 100 };
 const toolLineEl = $('toolLine');
 /**
  * NoticeSink (contracts §11): one notice at a time in the strip (and on phones, which have no strip, on the HUD tool
- * line while a tool is active). A transient command result outranks every persistent notice; persistent notices are
+ * line while a transient notice lasts). A transient command result outranks every persistent notice; persistent notices are
  * owned by a key (`engine`, `view`, a module's own) and ranked engine → modules (in first-use order) → view.
  *
  * The HUD tool line is written here too (TOOLS.md §4.2; TOOLS-QUESTIONS core Q2): it shows the active tool's hint()
@@ -237,10 +236,12 @@ class Notices implements NoticeSink {
     if (sh === null) return;
     const id = sh.tools.active;
     const t = sh.tools.get(id);
-    const show = t !== undefined && id !== 'select';
+    // Phones have no strip (base.css): a transient result is echoed on the HUD tool line while it lasts, whatever the
+    // tool, so a refusal or a result (compare refused, snapshot saved) is seen, not only spoken (TOOLS.md §15.15 F15).
+    const echo = isPhone && this.transientText !== '';
+    const show = echo || (t !== undefined && id !== 'select');
     if (toolLineEl.hidden === show) toolLineEl.hidden = !show;
-    // Phones have no strip (base.css): transient results are echoed on the HUD tool line while a tool is active.
-    if (show) this.toolLine.set(isPhone && this.transientText !== '' ? this.transientText : t.hint());
+    if (show) this.toolLine.set(echo ? this.transientText : (t?.hint() ?? ''));
   }
 }
 const notices = new Notices();
@@ -423,24 +424,6 @@ function zoomToUmPerPx(s: number, label: string): void {
   notices.transient(`${label} · ${s.toFixed(2)} µm/px (derived)`, 4000, false);
 }
 
-/** ux-copy hud.measure intro, touch wording under a coarse pointer (no keyboard, no Esc). */
-function measureIntro(): string {
-  return isCoarse
-    ? 'Measure: tap two points · pinch or drag moves the slide · Select cancels'
-    : 'Measure: click two points or drag; Enter places a point at the centre (arrow keys pan); Esc cancels';
-}
-
-/**
- * A Stage-0 tool command (rail, bottom bar, palette, key): activate it on core's ToolHost (toolChanged mirrors the
- * pressed buttons), say what it does, and send focus to the slide (the next input goes there).
- */
-function chooseTool(next: 'select' | 'measure', source: CommandSource): void {
-  const sh = shellRef;
-  if (sh === null || sh.tools.get(next) === undefined) return;
-  sh.tools.activate(next, source);
-  notices.transient(next === 'measure' ? measureIntro() : 'Select / pan');
-  focusCanvas();
-}
 /** toolChanged: pressed state of every tool button, the canvas cursor (`data-tool`), the HUD tool line. On commands only. */
 function syncToolButtons(tool: ToolId): void {
   app.dataset['tool'] = tool;
@@ -495,9 +478,8 @@ function openAbout(opener: HTMLElement): void {
   palette.close(false);
   dialogs.toggle(aboutDlg, opener);
 }
-function showContextTab(tab: 'meas' | 'slide' | 'engine'): void {
-  if (tab === 'meas') ctxDock.show('meas', true);
-  else panels.show(tab, true, registry.source);
+function showContextTab(tab: 'slide' | 'engine'): void {
+  panels.show(tab, true, registry.source);
 }
 function toggleContext(): void {
   if (ctxDock.isOpen) panels.close('ctx', registry.source);
@@ -634,12 +616,11 @@ const shellCommands: ShellCommand[] = [
   },
   { id: 'zoom:type', owner: OWNER, group: 'Navigate', label: 'Type a zoom (× or µm/px)', meta: 'Enter on the magnification readout', keys: [['↵']], run: () => openTypedZoom() },
   { id: 'nav', owner: OWNER, group: 'Navigate', label: 'Navigator on / off', keys: [['O']], bindings: [w('o')], run: toggleNav },
-  // Annotate: the Esc cascade is the shell's; the Stage-0 tool rows are registered after the modules (stageToolRows)
+  // Annotate: the Esc cascade is the shell's; the tools are draw-tools' (the centre-crosshair rows: centreRows)
   { id: 'cancel', owner: OWNER, group: 'Annotate', label: 'Cancel the shape in progress · clear the selection · leave the tool · close the top-most panel', keys: [['Esc']], keymapOnly: true, bindings: [w('Escape')], run: () => void escape() },
   // Panels and help
   { id: 'dock', owner: OWNER, group: 'Panels and help', label: 'Show / hide the Context panel', keys: [['K']], bindings: [w('k')], run: toggleContext },
   { id: 'panel:slide', owner: OWNER, group: 'Panels and help', label: 'Slide facts', meta: 'size, levels, MPP, tiles, source, licence', run: () => showContextTab('slide') },
-  { id: 'panel:meas', owner: OWNER, group: 'Panels and help', label: 'Measurements list', meta: 'fly to, delete', run: () => showContextTab('meas') },
   { id: 'panel:engine', owner: OWNER, group: 'Panels and help', label: 'Engine: frame time, sharpness, resident tiles', meta: 'and the measurement-protocol controls', run: () => showContextTab('engine') },
   { id: 'palette', owner: OWNER, group: 'Panels and help', label: 'Command palette', keys: [[MOD, 'K']], bindings: [w('k', { mod: true })], run: () => openPalette(keyOpener()) },
   { id: 'keymap', owner: OWNER, group: 'Panels and help', label: 'Keyboard shortcuts', keys: [['?'], [MOD, '/']], bindings: [w('?'), w('/', { mod: true })], run: () => openKeymap(keyOpener()) },
@@ -684,21 +665,18 @@ const shellCommands: ShellCommand[] = [
 for (const c of shellCommands) registry.register(c);
 
 /**
- * The Stage-0 tool rows (map B subset) for the StageSelectTool / StageMeasureTool (measure.ts). draw-tools provides
- * `tool:select` and `tool:measure` from Wave 3 (TOOLS.md §6.6), so these are registered after the modules' install,
- * like the fallbacks below: an installed module's command wins and nothing conflicts (§15.1 J2). `undo`, `redo` and
- * `deleteSelected` are the annotation store's (annotations, §6.5): measurements are committed into it (D7, Wave 2).
+ * The centre-crosshair rows (TOOLS.md D18, §8 `Enter` and `Space` held). Every tool, Select and Measure included, is
+ * draw-tools' since Wave 4 (`src/shell/measure.ts` is gone; D7); these two rows describe keys that are not commands
+ * (Enter reaches the active tool's onKey first, toolKey below; Space held is core's router state). The ids are the
+ * Stage-0 ones. Registered after the modules' install by the J2 rule (§15.1), like the fallbacks below.
  */
-const stageToolRows: ShellCommand[] = [
-  { id: 'tool:select', owner: OWNER, group: 'Annotate', label: 'Select / pan', keys: [['V']], bindings: [w('v')], run: () => chooseTool('select', registry.source) },
-  { id: 'tool:measure', owner: OWNER, group: 'Annotate', label: 'Measure length (two clicks, a drag, or Enter twice)', keys: [['M']], bindings: [w('m')], run: () => chooseTool('measure', registry.source) },
+const centreRows: ShellCommand[] = [
   {
     id: 'measure:place',
     owner: OWNER,
     group: 'Annotate',
     label: 'Place a measurement point at the viewport centre',
-    meta: 'measure tool; arrow keys pan between the points',
-    // Enter on the slide reaches the active tool first (toolKey below); this row is the palette's and the keymap's.
+    meta: 'Enter places at the centre crosshair with every drawing tool; arrow keys pan between the points; Enter twice closes a polygon',
     keys: [['↵']],
     run: () => {
       const sh = shellRef;
@@ -708,7 +686,7 @@ const stageToolRows: ShellCommand[] = [
       sh.tools.get('measure')?.placeAtCentre(sh.focusedView());
     },
   },
-  { id: 'measure:pan', owner: OWNER, group: 'Annotate', label: 'Pan with the pointer while measuring (hold)', keys: [['Space']], keymapOnly: true },
+  { id: 'measure:pan', owner: OWNER, group: 'Annotate', label: 'Pan with the pointer while a drawing tool is active (hold)', keys: [['Space']], keymapOnly: true },
 ];
 
 /**
@@ -726,15 +704,12 @@ function registerFallbacks(): void {
     const keys = free.length === all.length ? cmd.keys : free.map((b) => [...(b.mod === true ? [MOD] : []), ...(b.shift === true ? ['⇧'] : []), b.key.length === 1 ? b.key.toUpperCase() : b.key]);
     registry.register({ ...cmd, bindings: free, ...(keys !== undefined ? { keys } : {}) });
   };
-  for (const c of stageToolRows) fallback(c);
+  for (const c of centreRows) fallback(c);
   // A palette row for every claimed panel whose module registered none (library registers panel:cohort / panel:slides).
   const panelLabel: Partial<Record<PanelId, string>> = { cohort: 'Cohort (Library)', slides: 'Slides in this set (Library)', layers: 'Layers (Library)', inspector: 'Inspector', annotations: 'Annotations list' };
   for (const [id, label] of Object.entries(panelLabel) as [PanelId, string][]) {
     if (panels.isClaimed(id)) fallback({ id: `panel:${id}`, owner: OWNER, group: 'Panels and help', label, run: () => panels.show(id, true, registry.source) });
   }
-  const nib = (what: string): string => `${what} is not part of this Stage-0 build; Measure (M) is the only drawing tool.`;
-  fallback({ id: 'tool:draw', owner: OWNER, group: 'Not in this build', label: 'Point, rectangle, ellipse, polygon, brush', meta: 'measure only in this build', keys: [['T'], ['X'], ['E'], ['P'], ['F']], bindings: ['t', 'x', 'e', 'p', 'f'].map((k) => w(k)), notInBuild: true, run: () => refuse(nib('Drawing')) });
-  fallback({ id: 'tool:area', owner: OWNER, group: 'Not in this build', label: 'Measure area', meta: 'M measures length', keys: [['⇧', 'M']], bindings: [w('m', { shift: true })], notInBuild: true, run: () => refuse('Area measurement is not part of this Stage-0 build; M measures length') });
   const copyLink = (): string => (registry.get('copylink') !== undefined ? '; Copy view link shares this view' : '');
   const demo = (): string => (registry.get('heat') !== undefined ? ': the demo heatmap is not a model' : '');
   const rows: [string, string, KeyBinding[], () => string][] = [
@@ -1119,7 +1094,6 @@ function onSlideOpenedA(slide: SlideContext): void {
   prevLogZoom = null;
   lastSlow = -1e9;
   $('plate').hidden = true;
-  scheduleMeasurements();
 }
 
 /** A slide failed to open in view A (startup or a switch): the plate with the reason and Retry (a reload, D1). */
@@ -1129,104 +1103,6 @@ function showOpenFailure(msg: string): void {
   notices.persistent('engine', `This slide could not be opened (${msg})`);
   live.assertive(`This slide could not be opened. ${msg}`);
 }
-
-// ------------------------------------------------------------------ measurements list (Context → Measurements, until Wave 4)
-/**
- * The legacy Measurements tab, now a view of the annotation store's measurements (D7): rows are `M{n}` (the store's
- * label numbers, MeasurementCompat ids), Fly to selects and flies, Delete removes through the store (undoable with
- * the store's Ctrl+Z). Rendered at rest only (§5.4), once per batch of store changes. Wave 4 folds it into the
- * Annotations tab (the shell-check edit of TOOLS.md §11.3).
- */
-const measList = $('measList');
-const measCount = new TextSlot($('measCount'));
-const measEmpty = $('measEmpty');
-let measQueued = false;
-let offMeasStore: Disposer | null = null;
-function measStore(): AnnotationStore | null {
-  return shellRef?.service('annotations')?.current('A') ?? null;
-}
-function scheduleMeasurements(): void {
-  if (measQueued || shellRef === null) return;
-  measQueued = true;
-  shellRef.atRest(() => {
-    measQueued = false;
-    renderMeasurements();
-  });
-}
-/** Follow view A's store: re-render the list on its changes (subscribed when a slide opens, dropped when it closes). */
-function watchMeasurementStore(): void {
-  offMeasStore?.();
-  offMeasStore = measStore()?.subscribe(() => scheduleMeasurements()) ?? null;
-}
-
-/**
- * Focus a row's button after a re-render (WCAG 2.4.3): the row with `id`, else the row now at `index` (the one that
- * slid into a deleted row's place, or the new last row), else the Measurements tab when the list is empty. The list is
- * re-rendered with replaceChildren(), so a button held from before the change is detached and cannot take focus.
- */
-function focusMeasurement(id: string, act: string, index: number): void {
-  const row = measList.querySelector<HTMLElement>(`[data-id="${id}"]`) ?? measList.children[Math.min(index, measList.children.length - 1)] ?? null;
-  (row?.querySelector<HTMLElement>(`button[data-act="${act}"]`) ?? $('tab-meas')).focus();
-}
-
-function renderMeasurements(): void {
-  const st = measStore();
-  const items = shellRef?.service('annotations')?.measurementsCompat() ?? [];
-  // Keep a keyboard user's place across the re-render (select, delete, undo / redo with focus in the list).
-  const a = document.activeElement;
-  const btn = a instanceof HTMLElement && measList.contains(a) ? a.closest<HTMLElement>('button[data-act]') : null;
-  const focusedRow = btn?.closest<HTMLElement>('[data-id]') ?? null;
-  const restore = btn != null && focusedRow !== null ? { id: focusedRow.dataset['id'] ?? '', act: btn.dataset['act'] ?? 'fly', index: Array.prototype.indexOf.call(measList.children, focusedRow) as number } : null;
-  measList.replaceChildren();
-  measCount.set(String(items.length));
-  if (measEmpty.hidden !== items.length > 0) measEmpty.hidden = items.length > 0;
-  for (const it of items) {
-    const uuid = st?.byLabel(`M${it.id}`)?.id;
-    const sel = uuid !== undefined && st !== null && st.selection.has(uuid);
-    const len = formatLengthUm(it.um);
-    const row = h(
-      'li',
-      { class: sel ? 'list__item meas-row is-selected' : 'list__item meas-row', 'data-id': String(it.id), 'data-um': it.um.toFixed(3) },
-      h('span', { class: 'meas-row__name', text: `M${it.id}` }),
-      h('span', { class: 'meas-row__len num', text: len }),
-      h('button', { class: 'btn btn--sm btn--secondary', type: 'button', 'data-act': 'fly', 'aria-label': `Fly to measurement M${it.id}, ${spokenLength(it.um)}` }, 'Fly to'),
-      h('button', { class: 'btn btn--sm btn--ghost', type: 'button', 'data-act': 'del', 'aria-label': `Delete measurement M${it.id}` }, 'Delete'),
-    );
-    if (sel) row.setAttribute('aria-current', 'true');
-    measList.append(row);
-  }
-  if (restore !== null) focusMeasurement(restore.id, restore.act, restore.index);
-}
-measList.addEventListener('click', (e) => {
-  const btn = e.target instanceof Element ? e.target.closest<HTMLElement>('button[data-act]') : null;
-  const row = btn?.closest<HTMLElement>('[data-id]');
-  const sh = shellRef;
-  const st = measStore();
-  const v = sh?.primary.viewer ?? null;
-  if (btn == null || row == null || sh === null || st === null || v === null) return;
-  const mid = row.dataset['id'] ?? '';
-  const f = st.byLabel(`M${mid}`);
-  if (f === undefined || f.geometry.type !== 'LineString') return;
-  const input = (e as MouseEvent).detail > 0 ? 'mouse' : 'keyboard';
-  const index = Array.prototype.indexOf.call(row.parentElement?.children ?? [], row) as number;
-  // The change re-renders the list at rest (row and btn are detached after it). renderMeasurements() keeps focus when
-  // the button had it; the focus below (also at rest) covers browsers that do not focus a clicked button (Safari).
-  if (btn.dataset['act'] === 'del') {
-    st.remove([f.id], input); // the store says "Deleted M1 · Ctrl+Z to undo"
-    sh.atRest(() => focusMeasurement(mid, 'del', index)); // the neighbour that took its place, else the previous row, else the tab
-    return;
-  }
-  const [p, q] = f.geometry.coordinates;
-  if (p === undefined || q === undefined) return;
-  st.select([f.id], input);
-  const s = v.snapshot;
-  const span = Math.max(Math.abs(q[0] - p[0]), Math.abs(q[1] - p[1]), 1);
-  const lz = Math.min(s.maxLogZoom, Math.max(s.minLogZoom, Math.log2((0.6 * Math.min(s.viewW, s.viewH)) / span)));
-  v.commands.flyTo((p[0] + q[0]) / 2, (p[1] + q[1]) / 2, lz, 'nav', reduced());
-  const um = sh.service('annotations')?.measurementsCompat().find((m) => String(m.id) === mid)?.um;
-  notices.transient(`Flew to M${mid}${um !== undefined ? ` · ${formatLengthUm(um)}` : ''}`);
-  sh.atRest(() => focusMeasurement(mid, 'fly', index));
-});
 
 // ------------------------------------------------------------------ per-frame hook (inside each engine's rAF loop)
 const sharp = new SharpnessMachine();
@@ -1461,14 +1337,12 @@ const modules = import.meta.glob<ShellModule>('./*/index.ts', { eager: true });
 const installed: string[] = [];
 
 /**
- * The Stage-0 Select and Measure tools (measure.ts) when no module registered a tool of that id (draw-tools does from
- * Wave 3): core's ToolHost needs a `select` tool to return to, and Measure keeps the shell's measurement path.
+ * The rail's Compare button is a toggle (TOOLS-QUESTIONS compare C2): its pressed state mirrors `compareChanged`, as
+ * the tool buttons mirror `toolChanged` (SC 4.1.2). On the event only, never per frame.
  */
-function registerStageTools(): void {
-  if (shell.tools.get('select') === undefined) shell.tools.register(new StageSelectTool());
-  if (shell.tools.get('measure') === undefined) {
-    shell.tools.register(new StageMeasureTool({ annotations: () => shell.service('annotations'), notice: (t) => notices.transient(t), coarse: () => isCoarse }));
-  }
+function syncComparePressed(state: CompareState): void {
+  const on = String(state !== 'off');
+  for (const b of $$<HTMLElement>('[data-cmd="compare:side"][aria-pressed]')) if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on);
 }
 
 async function boot(): Promise<void> {
@@ -1478,19 +1352,17 @@ async function boot(): Promise<void> {
     await core.install(m);
     installed.push(m.name);
   }
-  registerStageTools();
+  // Every tool is draw-tools' (Wave 4: the Stage-0 measure.ts is gone). core's ToolHost returns to `select`.
+  if (shell.tools.get('select') === undefined || shell.tools.get('measure') === undefined) console.error('draw-tools is not installed: the shell has no Select or Measure tool');
   registerFallbacks(); // after the module installs (TOOLS.md §5.1), so an installed module always wins
-  // Listeners after the modules' own: annotations has attached its store when the Measurements list subscribes.
+  // Listeners after the modules' own (TOOLS.md §5.1).
   shell.bus.on('toolChanged', ({ tool }) => syncToolButtons(tool));
+  shell.bus.on('compareChanged', ({ state }) => syncComparePressed(state));
   shell.bus.on('slideOpened', ({ view, slide }) => {
-    if (view !== 'A') return;
-    onSlideOpenedA(slide);
-    watchMeasurementStore();
+    if (view === 'A') onSlideOpenedA(slide);
   });
   shell.bus.on('slideClosing', ({ view }) => {
     if (view === 'A') {
-      offMeasStore?.();
-      offMeasStore = null;
       offResize?.();
       offResize = null;
     } else {
