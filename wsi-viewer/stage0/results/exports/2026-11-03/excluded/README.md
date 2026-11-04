@@ -9,3 +9,11 @@ Never edited; moved here so the summariser does not pool them (protocol §4 "dis
 | `2026-11-03_ZFold7_Chrome156_home-wifi_cold_run4.json` | Duplicate of run3: same page session (startedAt 04:44:07.963Z, sha256 prefix 1ed0807e00e3), exported again after a second press of the path. |
 
 All nine uploads carried the placeholder label `DEVICE_BROWSER_home-wifi_cold`; device and browser were taken from each export's own userAgent and GPU string (ASUS laptop: Windows, Qualcomm Adreno X2-90, DPR 2; Galaxy Z Fold7: Android, Adreno 830, DPR 2.625, classified tablet by the viewer). Files were renamed to the protocol's file-name convention; their contents are unchanged.
+
+## OpenSeadragon comparator (tuned, WebGL drawer), ASUS laptop, Edge 156
+
+| File | Reason |
+|---|---|
+| `2026-11-03_ASUSLaptop_Edge156_home-wifi_warm_osd-tuned-webgl_run2-duplicate.json` | Duplicate: same page session as warm run2 (startedAt 04:52:16.689Z), exported again after a second press of the path. |
+
+The second and third uploads were labelled cold but found 428 and 441 tiles in the HTTP cache on their first fetch (`cacheHitsOnFirstFetch`), so they were filed as warm runs (reloads). Only the first upload (startedAt 04:50:09.772Z, 0 first-fetch cache hits) is a valid cold run.
