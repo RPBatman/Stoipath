@@ -8,9 +8,9 @@
  * of N"); pointers are JSON Pointers into the file (0-based). Each finding names the studio stage whose "Fix" button
  * goes to it (stageFor).
  */
-import type { AnswerKeySpec, AuthorStage, CompiledKey, DraftNoteString, KeyFeature, LintFinding, LintRuleId, LintSeverity, MarkGeometry, ScoringService, ViewLogEntry, ZoomGate } from '../contracts';
-import type { Box, PointGeometry, PolygonGeometry, Position, SlideEntry, VectorLayerFile } from '../../shell/contracts';
-import { childPointer, pointerSegments, showPointer, type FactsDocument, type SchemaIssue } from './parse';
+import type { AnswerKeySpec, AuthorStage, CandidateId, CompiledKey, CompiledTarget, DraftNoteString, FactsFile, KeyFeature, LintFinding, LintPass, LintRuleId, LintSeverity, MarkGeometry, RegionItem, ScoringService, ViewLogEntry, ZoomGate } from '../contracts';
+import type { Box, MultiPolygonGeometry, PointGeometry, PolygonGeometry, Position, SlideEntry, VectorLayerFile } from '../../shell/contracts';
+import { childPointer, pointerSegments, showPointer, type SchemaIssue } from './parse';
 
 // =====================================================================================================================
 // Inputs
@@ -50,8 +50,8 @@ export interface RuleInput {
   slides: ReadonlyMap<string, SlideInfo>;
   keys: ReadonlyMap<string, KeyInfo>;
   scoring: ScoringService | null;
-  /** The module's facts file, when the context can give it (LEARN-QUESTIONS F-Q3; null today). */
-  facts: FactsDocument | null;
+  /** The module's facts file (LintContext.facts), or null when there is none or the context cannot read it. */
+  facts: FactsFile | null;
 }
 
 export type Rule = (input: RuleInput) => LintFinding[];
@@ -435,7 +435,7 @@ export function correctCandidates(input: RuleInput, itemIndex: number): string[]
     const id = str(rec(c)['id']);
     if (id === null) continue;
     try {
-      const s = input.scoring.scoreRegion(it as never, key.compiled, { kind: 'candidate', candidate: id as never }, views, slide.mpp);
+      const s = input.scoring.scoreRegion(it as unknown as RegionItem, key.compiled, { kind: 'candidate', candidate: id as CandidateId }, views, slide.mpp);
       if (s.score >= points - 1e-9) out.push(id);
     } catch {
       /* an unscorable candidate is simply not correct */
@@ -462,8 +462,8 @@ export const candidateGate: Rule = (input) => {
     const gScale = num(gate['scale_um_per_px']);
     const label = str(gate['label']) ?? `${gScale ?? '?'} µm/px`;
     const itemSlide = str(it['slide']);
-    const slide = input.slides.get(itemSlide ?? '');
-    if (gScale === null || slide === undefined || slide.mpp === null) return;
+    const mpp = input.slides.get(itemSlide ?? '')?.mpp ?? null;
+    if (gScale === null || mpp === null) return;
     arr(it['candidates']).forEach((c, j) => {
       const cand = rec(c);
       const v = rec(cand['view']);
@@ -478,7 +478,7 @@ export const candidateGate: Rule = (input) => {
       };
       if (v['slide'] !== itemSlide || scale > gScale) return fail();
       if (input.scoring === null) return;
-      const entry: ViewLogEntry = { t: 0, rect: viewRect(center, scale, slide.mpp), scale_um_per_px: scale, sharp: true };
+      const entry: ViewLogEntry = { t: 0, rect: viewRect(center, scale, mpp), scale_um_per_px: scale, sharp: true };
       // The scale was checked exactly above; the gate call is asked only whether the view shows the geometry.
       const g: ZoomGate = { scale_um_per_px: Math.max(gScale, scale), label, unmetFactor: num(gate['unmetFactor']) ?? 0.5 };
       try {
@@ -513,6 +513,43 @@ export const rubricPassable: Rule = ({ file }) => {
   return out;
 };
 
+/** Bounding box of polygon geometries (level-0 px). */
+function boundsOf(gs: readonly (PolygonGeometry | MultiPolygonGeometry)[]): Box {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const g of gs) {
+    const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+    for (const poly of polys) {
+      for (const ring of poly) {
+        for (const p of ring) {
+          if (p[0] < minX) minX = p[0];
+          if (p[0] > maxX) maxX = p[0];
+          if (p[1] < minY) minY = p[1];
+          if (p[1] > maxY) maxY = p[1];
+        }
+      }
+    }
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * What a learner must not be shown before an item: every target of its key, and every related feature with `credit`
+ * (owner default 2026-11-04, LEARN-QUESTIONS A-F-Q2: a point on one is a correct answer too). A credited related
+ * feature is wrapped as a target with no subtraction, so the scoring service measures it the same way.
+ */
+export function answerRegions(key: KeyInfo): CompiledTarget[] {
+  const out: CompiledTarget[] = [...(key.compiled?.targets ?? [])];
+  const credited = new Set(arr(key.spec.related).filter((r) => rec(r)['credit'] === true).map((r) => str(rec(r)['id'])));
+  for (const r of key.compiled?.related ?? []) {
+    if (!credited.has(r.id) || r.include.length === 0) continue;
+    out.push({ id: r.id, label: r.id, include: r.include, subtract: [], bbox: boundsOf(r.include), area_um2: 0 });
+  }
+  return out;
+}
+
 export const tourShowsKey: Rule = (input) => {
   const out: LintFinding[] = [];
   const { file, scoring } = input;
@@ -531,15 +568,15 @@ export const tourShowsKey: Rule = (input) => {
     out.push(warn('tour-shows-key', ptr, `Step ${stepIndex + 1} shows the answer of ${itemId} before it is asked`));
   };
   const inside = (p: Position, key: KeyInfo, mpp: number): boolean =>
-    (key.compiled?.targets ?? []).some((t) => {
+    answerRegions(key).some((t) => {
       try {
         return scoring.pointMetric(p, t, mpp).inside;
       } catch {
         return false;
       }
     });
-  const overlaps = (g: PolygonGeometry | { type: 'MultiPolygon'; coordinates: Position[][][] }, key: KeyInfo): boolean =>
-    (key.compiled?.targets ?? []).some((t) => {
+  const overlaps = (g: PolygonGeometry | MultiPolygonGeometry, key: KeyInfo): boolean =>
+    answerRegions(key).some((t) => {
       try {
         return scoring.iou(g, t).intersection_px2 > 0;
       } catch {
@@ -565,7 +602,7 @@ export const tourShowsKey: Rule = (input) => {
           if (hs === undefined || hs['slide'] !== keySlide) return;
           const m = asMark(hs['geometry']);
           if (m === null) return;
-          const hit = m.kind === 'point' ? inside((m.geometry as PointGeometry).coordinates, key, mpp) : overlaps(m.geometry as PolygonGeometry, key);
+          const hit = m.kind === 'point' ? inside((m.geometry as PointGeometry).coordinates, key, mpp) : overlaps(m.geometry as PolygonGeometry | MultiPolygonGeometry, key);
           if (hit) flag(j, itemId, `/steps/${j}/highlights/${h}`);
         });
       }
@@ -582,8 +619,8 @@ export const tourShowsKey: Rule = (input) => {
   return out;
 };
 
-/** `review-recorded` with the facts file (LEARN-QUESTIONS F-Q3: lint passes null until LintContext can read it). */
-export function reviewRecorded(file: Record<string, unknown>, facts: FactsDocument | null): LintFinding[] {
+/** `review-recorded`, given the module's facts file (null when the context has none: then reviewer and date only). */
+export function reviewRecorded(file: Record<string, unknown>, facts: FactsFile | null): LintFinding[] {
   const review = rec(rec(file['metadata'])['review']);
   const p = '/metadata/review';
   if (review['status'] === 'draft') return [warn('review-recorded', p, `Draft: learners will see "${DRAFT_NOTE}"`)];
@@ -670,8 +707,111 @@ export const textLength: Rule = ({ file }) => {
   return out;
 };
 
+// =====================================================================================================================
+// Passing rows (LintReport.passed; LEARN-QUESTIONS A-F-Q4). New strings (LEARN.md §8.3: the studio's other text is N).
+// =====================================================================================================================
+
+const PASS_TEXT: Readonly<Record<LintRuleId, string>> = {
+  schema: 'The file matches the module schema',
+  'ids-unique': 'Every id is unique',
+  'refs-resolve': 'Every reference names something that exists',
+  'first-step-open': 'The first step is an Open tour step',
+  'phase-order': 'The phases never go backwards',
+  'item-once': 'Every item is asked in exactly one step',
+  'reveal-after-item': 'Every reveal step comes after the items it lists',
+  'slide-catalogue': 'Every slide is in the slide catalogue',
+  'slide-licence': "Every slide's licence matches the catalogue",
+  'slide-fingerprint': 'Every slide was captured on the catalogue build',
+  'key-resolves': 'Every answer key resolves to its features',
+  'key-version': "Every reference key matches its layer's version",
+  'mcq-one-correct': 'Every multiple-choice item has exactly one correct option',
+  'multi-has-correct': 'Every select-all item has at least one correct option',
+  'region-alternative': 'Every region item has a keyboard or text alternative',
+  'candidate-scores': 'Candidates that score as correct: {list}',
+  'candidate-gate': "Every candidate's Fly there meets its gate",
+  'rubric-passable': 'Every text rubric can be passed',
+  'tour-shows-key': 'No step shows an answer before it is asked',
+  'review-recorded': 'Reviewed by {reviewer} on {date}',
+  'no-phi': 'No text looks like patient information',
+  'colour-only': 'No text relies on colour alone',
+  'text-length': 'Every text fits the task card',
+};
+
+/** The studio stage a rule's passing row belongs to (where its subject is edited). */
+const RULE_STAGE: Readonly<Record<LintRuleId, AuthorStage>> = {
+  schema: 'publish',
+  'ids-unique': 'publish',
+  'refs-resolve': 'publish',
+  'first-step-open': 'edit',
+  'phase-order': 'edit',
+  'item-once': 'edit',
+  'reveal-after-item': 'edit',
+  'slide-catalogue': 'collect',
+  'slide-licence': 'collect',
+  'slide-fingerprint': 'collect',
+  'key-resolves': 'items',
+  'key-version': 'items',
+  'mcq-one-correct': 'items',
+  'multi-has-correct': 'items',
+  'region-alternative': 'items',
+  'candidate-scores': 'items',
+  'candidate-gate': 'items',
+  'rubric-passable': 'items',
+  'tour-shows-key': 'edit',
+  'review-recorded': 'collect',
+  'no-phi': 'publish',
+  'colour-only': 'publish',
+  'text-length': 'publish',
+};
+
+/** Whether a rule could check everything it covers (a rule that could not run has no passing row). */
+function couldRun(rule: LintRuleId, input: RuleInput): boolean {
+  const slides = [...input.slides.values()];
+  const regionItems = items(input.file).filter((it) => it['kind'] === 'region');
+  const keyOf = (it: Record<string, unknown>): KeyInfo | undefined => input.keys.get(str(it['key']) ?? '');
+  const mppOf = (ref: unknown): number | null => input.slides.get(str(ref) ?? '')?.mpp ?? null;
+  switch (rule) {
+    case 'slide-catalogue':
+      return input.catalogueLoaded;
+    case 'slide-licence':
+    case 'slide-fingerprint':
+      return slides.length > 0 && slides.every((x) => x.entry !== null);
+    case 'key-resolves':
+      return [...input.keys.values()].every((k) => k.features !== null);
+    case 'key-version':
+      return [...input.keys.values()].every((k) => rec(k.spec.source)['kind'] !== 'reference-layer' || k.layer !== null);
+    case 'candidate-gate':
+      return input.scoring !== null && regionItems.every((it) => !isRecord(it['gate']) || mppOf(it['slide']) !== null);
+    case 'tour-shows-key':
+      return input.scoring !== null && regionItems.every((it) => keyOf(it)?.compiled != null && mppOf(keyOf(it)?.spec.slide) !== null);
+    default:
+      return true;
+  }
+}
+
+/** The passing rows of one rule, given its findings. `candidate-scores` passes per region item. */
+export function passRows(rule: LintRuleId, input: RuleInput, findings: readonly LintFinding[]): LintPass[] {
+  const row = (path: string, message: string): LintPass => ({ rule, path, message, stage: RULE_STAGE[rule] });
+  if (rule === 'candidate-scores') {
+    const out: LintPass[] = [];
+    items(input.file).forEach((it, i) => {
+      if (it['kind'] !== 'region' || arr(it['candidates']).length === 0) return;
+      const ok = correctCandidates(input, i);
+      if (ok !== null && ok.length > 0) out.push(row(`/items/${i}/candidates`, PASS_TEXT[rule].replace('{list}', ok.join(', '))));
+    });
+    return out;
+  }
+  if (findings.length > 0 || !couldRun(rule, input)) return [];
+  if (rule === 'review-recorded') {
+    const review = rec(rec(input.file['metadata'])['review']);
+    if (review['status'] !== 'reviewed') return [];
+    return [row('/metadata/review', PASS_TEXT[rule].replace('{reviewer}', String(review['reviewer'])).replace('{date}', String(review['date'])))];
+  }
+  return [row('', PASS_TEXT[rule])];
+}
+
 /** Every rule, in LintRuleId order (the order findings are reported in). */
-export const RULES: readonly (readonly [LintRuleId | 'mcq-one-correct', Rule])[] = [
+export const RULES: readonly (readonly [LintRuleId, Rule])[] = [
   ['schema', schema],
   ['ids-unique', idsUnique],
   ['refs-resolve', refsResolve],

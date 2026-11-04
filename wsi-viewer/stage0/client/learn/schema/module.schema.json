@@ -322,7 +322,11 @@
             "properties": {
               "id": { "$ref": "#/$defs/LocalId" },
               "include": { "$ref": "#/$defs/FeatureSelector" },
-              "feedback": { "$ref": "#/$defs/Text" }
+              "feedback": { "$ref": "#/$defs/Text" },
+              "credit": {
+                "description": "Owner default 2026-11-04 (pending owner): a POINT mark inside these features, or within pointTolerance_um of their outline, is correct (feedback correct-related with this entry's feedback, which names the item's target); their area also counts as inside for partialInside.",
+                "type": "boolean"
+              }
             }
           }
         }
@@ -491,7 +495,17 @@
           "required": ["iouFull", "pointTolerance_um"],
           "properties": {
             "iouFull": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-            "pointTolerance_um": { "type": "number", "minimum": 0, "maximum": 500 }
+            "pointTolerance_um": { "type": "number", "minimum": 0, "maximum": 500 },
+            "partialInside": {
+              "description": "Owner default 2026-11-04 (pending owner): an outline below iouFull earns points x factor (then x the gate factor) when at least `fraction` of its own area lies inside the target or a related feature with credit (feedback partial-inside, correct false). Absent: no partial credit.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["fraction", "factor"],
+              "properties": {
+                "fraction": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+                "factor": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 }
+              }
+            }
           }
         },
         "gate": {
@@ -669,6 +683,7 @@
           "properties": {
             "kind": { "const": "iou" },
             "target": { "type": "string" },
+            "inside": { "type": "number", "minimum": 0, "maximum": 1 },
             "iou": { "type": "number", "minimum": 0, "maximum": 1 },
             "intersection_px2": { "type": "number", "minimum": 0 },
             "mark_px2": { "type": "number", "minimum": 0 },

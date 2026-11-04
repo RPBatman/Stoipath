@@ -72,7 +72,7 @@ export default defineConfig({
     // nothing under src/shell/ (TOOLS.md §10).
     manifest: true,
     // Two pages: index.html (the measurement page, the default) and shell.html (Stoipath Viewer (RUO) shell).
-    rollupOptions: { input: { index: resolve(__dirname, 'index.html'), shell: resolve(__dirname, 'shell.html') } },
+    rollupOptions: { input: { index: resolve(__dirname, 'index.html'), shell: resolve(__dirname, 'shell.html'), learn: resolve(__dirname, 'learn.html') } },
   },
   worker: { format: 'es' },
 });

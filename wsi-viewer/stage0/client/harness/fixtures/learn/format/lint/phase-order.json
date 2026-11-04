@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/2/phase",
+      "value": "open"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "phase-order",
+      "severity": "error",
+      "path": "/steps/2/phase",
+      "message": "Step 3 goes back from Screen to Open"
+    }
+  ],
+  "alsoAllowed": []
+}

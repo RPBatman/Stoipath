@@ -17,8 +17,9 @@
  *
  * No DOM, no network, no state.
  */
-import type { CourseFile, ModuleFile, ParseResult, ResultsFile } from '../contracts';
-// @ts-ignore -- tsconfig.json has no resolveJsonModule; Vite and esbuild import JSON natively (LEARN-QUESTIONS F-Q5).
+import type { CourseFile, FactsFile, ModuleFile, ParseResult, ResultsFile } from '../contracts';
+// Vite and esbuild import JSON natively; the shared tsconfig cannot type it (LEARN-QUESTIONS A-F-Q5).
+// @ts-ignore: JSON import, no resolveJsonModule in the shared tsconfig
 import schemaDocument from '../../../learn/schema/module.schema.json';
 
 /** A schema node: a boolean schema or an object of keywords. */
@@ -599,16 +600,9 @@ export function parseResults(json: unknown): ParseResult<ResultsFile> {
   return parseAs<ResultsFile>(json, REF.results);
 }
 
-/** A facts file (`$defs/FactsFile`); contracts.ts has no FactsFile type yet (LEARN-QUESTIONS F-Q3), so this is minimal. */
-export interface FactsDocument {
-  schema: 'stoipath.learn.facts/1';
-  module: string;
-  version: string;
-  facts: { id: string; pointer: string; quote: string; basis: string; status: 'pending' | 'confirmed' | 'changed'; reviewer?: string; date?: string; note?: string }[];
-}
-
-export function parseFacts(json: unknown): ParseResult<FactsDocument> {
-  return parseAs<FactsDocument>(json, REF.facts);
+/** A facts file (`$defs/FactsFile`, contracts §8 FactsFile). */
+export function parseFacts(json: unknown): ParseResult<FactsFile> {
+  return parseAs<FactsFile>(json, REF.facts);
 }
 
 // =====================================================================================================================

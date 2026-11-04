@@ -1,0 +1,23 @@
+{
+  "note": "Fly there lands at 20× but nowhere near B",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/candidates/1/view/center_um",
+      "value": [
+        1000,
+        1000
+      ]
+    }
+  ],
+  "expect": [
+    {
+      "rule": "candidate-gate",
+      "severity": "error",
+      "path": "/items/0/candidates/1/view",
+      "message": "Candidate B: Fly there does not meet the 20× gate"
+    }
+  ],
+  "alsoAllowed": []
+}

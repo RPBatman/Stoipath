@@ -1,0 +1,22 @@
+{
+  "note": "the reference layer is found through the catalogue entry, so key-resolves fails too",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/slides/0/catalogueId",
+      "value": "camelyon16.tumor_999.r0_0"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "slide-catalogue",
+      "severity": "error",
+      "path": "/slides/0/catalogueId",
+      "message": "camelyon16.tumor_999.r0_0 is not in the slide catalogue"
+    }
+  ],
+  "alsoAllowed": [
+    "key-resolves"
+  ]
+}

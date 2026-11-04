@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/8/text",
+      "value": "Dr Hartley signed this case out."
+    }
+  ],
+  "expect": [
+    {
+      "rule": "no-phi",
+      "severity": "warning",
+      "path": "/steps/8/text",
+      "message": "/steps/8/text looks like patient information (a doctor's name)"
+    }
+  ],
+  "alsoAllowed": []
+}

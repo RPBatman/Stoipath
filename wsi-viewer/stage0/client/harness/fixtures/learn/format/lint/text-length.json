@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/2/stem",
+      "value": "Measure the greatest dimension of the largest deposit with the measure tool, then decide which of the size categories below it belongs to, remembering that the categories are defined by the greatest dimension of the deposit and not by its area, and that a deposit is measured from edge to edge across its widest part."
+    }
+  ],
+  "expect": [
+    {
+      "rule": "text-length",
+      "severity": "warning",
+      "path": "/items/2/stem",
+      "message": "/items/2/stem is long for the task card (317 characters)"
+    }
+  ],
+  "alsoAllowed": []
+}

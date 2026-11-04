@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/items/1/options/0/feedback",
+      "value": "The red area is a follicle."
+    }
+  ],
+  "expect": [
+    {
+      "rule": "colour-only",
+      "severity": "warning",
+      "path": "/items/1/options/0/feedback",
+      "message": "/items/1/options/0/feedback may rely on colour alone"
+    }
+  ],
+  "alsoAllowed": []
+}

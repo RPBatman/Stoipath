@@ -1,0 +1,20 @@
+{
+  "note": "Fly there lands at 10×",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/candidates/0/view/scale_um_per_px",
+      "value": 1
+    }
+  ],
+  "expect": [
+    {
+      "rule": "candidate-gate",
+      "severity": "error",
+      "path": "/items/0/candidates/0/view",
+      "message": "Candidate A: Fly there does not meet the 20× gate"
+    }
+  ],
+  "alsoAllowed": []
+}

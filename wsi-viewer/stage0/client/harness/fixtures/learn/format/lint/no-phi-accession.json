@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/1/explanation",
+      "value": "As in case S-26-01234, tumour cells lodge in the subcapsular sinus."
+    }
+  ],
+  "expect": [
+    {
+      "rule": "no-phi",
+      "severity": "error",
+      "path": "/items/1/explanation",
+      "message": "/items/1/explanation looks like patient information (accession-like number)"
+    }
+  ],
+  "alsoAllowed": []
+}

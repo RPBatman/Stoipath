@@ -1,0 +1,24 @@
+{
+  "note": "a blank reviewer passes the schema (minLength 1) but not lint",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/metadata/review",
+      "value": {
+        "status": "reviewed",
+        "reviewer": " ",
+        "date": "2026-11-04"
+      }
+    }
+  ],
+  "expect": [
+    {
+      "rule": "review-recorded",
+      "severity": "error",
+      "path": "/metadata/review",
+      "message": "Reviewed, but the reviewer's name or the review date is missing"
+    }
+  ],
+  "alsoAllowed": []
+}

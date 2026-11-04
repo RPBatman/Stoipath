@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/0/phase",
+      "value": "screen"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "first-step-open",
+      "severity": "error",
+      "path": "/steps/0",
+      "message": "The first step must be an Open tour step"
+    }
+  ],
+  "alsoAllowed": []
+}

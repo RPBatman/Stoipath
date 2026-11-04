@@ -1,0 +1,13 @@
+{
+  "note": "a step edit changes no item",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/1/text",
+      "value": "Look over the whole region first."
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": []
+}

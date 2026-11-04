@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/answerKeys/0/source/version",
+      "value": "deadbeef"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "key-version",
+      "severity": "error",
+      "path": "/answerKeys/0/source/version",
+      "message": "Key camelyon16-reference was written for version deadbeef of camelyon16-expert; the slide has d94db5bb"
+    }
+  ],
+  "alsoAllowed": []
+}

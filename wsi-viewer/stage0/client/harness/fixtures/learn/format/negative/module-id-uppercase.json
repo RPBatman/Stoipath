@@ -1,0 +1,15 @@
+{
+  "note": "module id \"SLN\"",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/id",
+      "value": "SLN"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/id"
+  }
+}

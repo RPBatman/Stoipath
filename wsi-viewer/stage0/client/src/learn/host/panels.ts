@@ -22,7 +22,7 @@ export class StudioTabs {
   private readonly tabs: HTMLElement[];
   private readonly cbs: ((tab: StudioTab) => void)[] = [];
   constructor(
-    private readonly tablist: HTMLElement,
+    tablist: HTMLElement,
     private readonly panels: Record<StudioTab, HTMLElement>,
   ) {
     this.tabs = $$<HTMLElement>('[role="tab"]', tablist);

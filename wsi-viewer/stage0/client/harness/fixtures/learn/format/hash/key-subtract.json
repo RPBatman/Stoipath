@@ -1,0 +1,14 @@
+{
+  "note": "a key edit changes the item scored against it",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "remove",
+      "path": "/answerKeys/0/targets/0/subtract"
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": [
+    "q-region"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "note": "option feedback is part of the item",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/items/3/options/0/feedback",
+      "value": "Yes: cohesion favours carcinoma."
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": [
+    "q-features"
+  ]
+}

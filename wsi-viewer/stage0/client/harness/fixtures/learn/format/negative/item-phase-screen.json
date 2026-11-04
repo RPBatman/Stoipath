@@ -1,0 +1,15 @@
+{
+  "note": "item step with phase screen",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/3/phase",
+      "value": "screen"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/steps/3/phase"
+  }
+}

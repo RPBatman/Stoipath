@@ -1,0 +1,14 @@
+{
+  "note": "the base itself: \"pink\" in candidate C is a stain colour, so a warning only (LEARN.md §7.1)",
+  "base": "base.module.json",
+  "patch": [],
+  "expect": [
+    {
+      "rule": "colour-only",
+      "severity": "warning",
+      "path": "/items/0/candidates/2/description",
+      "message": "/items/0/candidates/2/description may rely on colour alone"
+    }
+  ],
+  "alsoAllowed": []
+}

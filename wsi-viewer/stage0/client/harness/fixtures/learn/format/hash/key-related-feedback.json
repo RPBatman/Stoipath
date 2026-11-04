@@ -1,0 +1,15 @@
+{
+  "note": "related feedback is part of the key",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/answerKeys/0/related/0/feedback",
+      "value": "That is tumour too."
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": [
+    "q-region"
+  ]
+}

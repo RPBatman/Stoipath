@@ -1,0 +1,15 @@
+{
+  "note": "an item edit changes only that item",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/1/stem",
+      "value": "Where do lymph-borne tumour cells usually lodge first?"
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": [
+    "q-sinus"
+  ]
+}

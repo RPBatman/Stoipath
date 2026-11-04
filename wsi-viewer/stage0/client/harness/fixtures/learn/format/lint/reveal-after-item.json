@@ -1,0 +1,31 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/steps/3",
+      "value": {
+        "id": "early",
+        "kind": "reveal",
+        "phase": "decide",
+        "title": "Too early",
+        "items": [
+          "q-region"
+        ],
+        "text": "This reveal comes before the question.",
+        "view": null,
+        "transition": "cut"
+      }
+    }
+  ],
+  "expect": [
+    {
+      "rule": "reveal-after-item",
+      "severity": "error",
+      "path": "/steps/3/items/0",
+      "message": "Reveal step 4 lists q-region before it is asked"
+    }
+  ],
+  "alsoAllowed": []
+}

@@ -1,0 +1,15 @@
+{
+  "note": "tour step with phase decide",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/1/phase",
+      "value": "decide"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/steps/1/phase"
+  }
+}

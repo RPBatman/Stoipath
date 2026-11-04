@@ -1,0 +1,517 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "format-inline-key",
+  "version": "1.2.0",
+  "metadata": {
+    "title": "Format fixture: inline key",
+    "summary": "A synthetic module on CMU-1-Small-Region that exercises the parts of the format the case does not use.",
+    "audience": [
+      "undergraduate",
+      "cme"
+    ],
+    "objectives": [
+      "Exercise inline keys, select-all items, polygon hotspots and the expert view."
+    ],
+    "tags": {
+      "organ": [
+        "none"
+      ],
+      "stain": [
+        "H&E"
+      ],
+      "difficulty": 1
+    },
+    "authors": [
+      {
+        "name": "Stoipath Learn L1 build (AI-assisted draft)",
+        "role": "author",
+        "affiliation": "Stoipath"
+      }
+    ],
+    "review": {
+      "status": "reviewed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04",
+      "notes": "Synthetic fixture; no teaching content."
+    },
+    "language": "en",
+    "estimatedMinutes": 2.5,
+    "created": "2026-11-04",
+    "updated": "2026-11-04",
+    "textLicence": {
+      "id": "CC-BY-4.0",
+      "text": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "slides": [
+    {
+      "ref": "cmu",
+      "catalogueId": "openslide.CMU-1-Small-Region",
+      "label": "CMU-1-Small-Region · H&E",
+      "stain": "H&E",
+      "dataset": "OpenSlide test data",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "fingerprint": "2220x2967@0.499@0,0@ed92d5a9f2e8",
+      "attribution": "OpenSlide test data (CC0)."
+    }
+  ],
+  "case": {
+    "vignette": {
+      "text": "A synthetic exercise on a public test slide.",
+      "synthetic": true,
+      "source": "Format fixture"
+    },
+    "slides": [
+      "cmu"
+    ],
+    "expertView": {
+      "view": {
+        "slide": "cmu",
+        "center_um": [
+          499.0,
+          499.0
+        ],
+        "scale_um_per_px": 2
+      },
+      "text": "The square and its hole.",
+      "keys": [
+        "square"
+      ],
+      "unlockAfter": [
+        "q-square"
+      ]
+    }
+  },
+  "hotspots": [
+    {
+      "id": "hs-corner",
+      "slide": "cmu",
+      "label": "Lower corner",
+      "sub": "2× · fly there",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                1800,
+                2500
+              ],
+              [
+                2100,
+                2500
+              ],
+              [
+                2100,
+                2900
+              ],
+              [
+                1800,
+                2900
+              ],
+              [
+                1800,
+                2500
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                100,
+                2600
+              ],
+              [
+                300,
+                2600
+              ],
+              [
+                300,
+                2900
+              ],
+              [
+                100,
+                2600
+              ]
+            ]
+          ]
+        ]
+      },
+      "view": {
+        "slide": "cmu",
+        "center_um": [
+          973.05,
+          1347.3
+        ],
+        "scale_um_per_px": 2,
+        "capturedFrom": "#st=1&s=openslide.CMU-1-Small-Region&x=973.05&y=1347.3&u=2"
+      }
+    },
+    {
+      "id": "hs-dot",
+      "slide": "cmu",
+      "label": "A dot",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2000,
+          200
+        ]
+      }
+    }
+  ],
+  "answerKeys": [
+    {
+      "id": "square",
+      "slide": "cmu",
+      "label": "Fixture square",
+      "source": {
+        "kind": "inline",
+        "features": [
+          {
+            "id": "sq",
+            "className": "Target",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    500,
+                    500
+                  ],
+                  [
+                    1500,
+                    500
+                  ],
+                  [
+                    1500,
+                    1500
+                  ],
+                  [
+                    500,
+                    1500
+                  ],
+                  [
+                    500,
+                    500
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "id": "hole",
+            "className": "Hole",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    900,
+                    900
+                  ],
+                  [
+                    1100,
+                    900
+                  ],
+                  [
+                    1100,
+                    1100
+                  ],
+                  [
+                    900,
+                    1100
+                  ],
+                  [
+                    900,
+                    900
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "id": "side",
+            "geometry": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                [
+                  [
+                    [
+                      1700,
+                      600
+                    ],
+                    [
+                      1800,
+                      600
+                    ],
+                    [
+                      1800,
+                      700
+                    ],
+                    [
+                      1700,
+                      700
+                    ],
+                    [
+                      1700,
+                      600
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "targets": [
+        {
+          "id": "square-t",
+          "label": "The square",
+          "include": {
+            "className": "Target"
+          },
+          "subtract": {
+            "ids": [
+              "hole"
+            ]
+          }
+        }
+      ],
+      "related": [
+        {
+          "id": "side-r",
+          "include": {
+            "ids": [
+              "side"
+            ]
+          },
+          "feedback": "That is the small side square."
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "q-square",
+      "kind": "region",
+      "title": "Find the square",
+      "stem": "Mark the square on this slide.",
+      "hint": "It is near the top left.",
+      "points": 2,
+      "explanation": "The square is the outlined area near the top left.",
+      "slide": "cmu",
+      "key": "square",
+      "accept": [
+        "point",
+        "polygon",
+        "rect"
+      ],
+      "scoring": {
+        "iouFull": 0.6,
+        "pointTolerance_um": 25
+      },
+      "gate": {
+        "scale_um_per_px": 1,
+        "label": "10×",
+        "unmetFactor": 0.25
+      },
+      "candidatesTitle": "Mark the square without a pointer",
+      "candidates": [
+        {
+          "id": "A",
+          "description": "Near the top left",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              700,
+              700
+            ]
+          },
+          "view": {
+            "slide": "cmu",
+            "center_um": [
+              349.3,
+              349.3
+            ],
+            "scale_um_per_px": 1
+          }
+        },
+        {
+          "id": "B",
+          "description": "A box near the lower right",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  1900,
+                  2600
+                ],
+                [
+                  2000,
+                  2600
+                ],
+                [
+                  2000,
+                  2700
+                ],
+                [
+                  1900,
+                  2700
+                ],
+                [
+                  1900,
+                  2600
+                ]
+              ]
+            ]
+          },
+          "view": {
+            "slide": "cmu",
+            "center_um": [
+              973.05,
+              1322.35
+            ],
+            "scale_um_per_px": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "q-shapes",
+      "kind": "multi",
+      "title": "Shapes",
+      "stem": "Which shapes are on this slide? Select all that apply.",
+      "points": 1,
+      "scoring": "all-or-nothing",
+      "options": [
+        {
+          "id": "A",
+          "text": "A square",
+          "correct": true,
+          "fly": {
+            "slide": "cmu",
+            "center_um": [
+              499.0,
+              499.0
+            ],
+            "scale_um_per_px": 2
+          }
+        },
+        {
+          "id": "B",
+          "text": "A circle",
+          "correct": false,
+          "feedback": "There is no circle."
+        },
+        {
+          "id": "C",
+          "text": "A small square",
+          "correct": true
+        }
+      ],
+      "explanation": "The fixture has two squares."
+    }
+  ],
+  "steps": [
+    {
+      "id": "open",
+      "kind": "tour",
+      "phase": "open",
+      "title": "Start",
+      "text": "This fixture has no teaching content. {cmd:step:next} moves on.",
+      "view": {
+        "kind": "fit",
+        "slide": "cmu"
+      },
+      "transition": "cut",
+      "tools": [
+        "select"
+      ]
+    },
+    {
+      "id": "look",
+      "kind": "tour",
+      "phase": "screen",
+      "title": "Look around",
+      "text": "Here are two highlighted areas.",
+      "view": {
+        "kind": "view",
+        "slide": "cmu",
+        "center_um": [
+          973.05,
+          1347.3
+        ],
+        "scale_um_per_px": 2
+      },
+      "transition": "fly",
+      "highlights": [
+        "hs-corner",
+        "hs-dot"
+      ],
+      "dwellMs": 4000
+    },
+    {
+      "id": "ask",
+      "kind": "item",
+      "phase": "decide",
+      "title": "The square",
+      "item": "q-square",
+      "view": null,
+      "tools": [
+        "select",
+        "point",
+        "polygon",
+        "rect"
+      ]
+    },
+    {
+      "id": "shapes",
+      "kind": "item",
+      "phase": "decide",
+      "title": "Shapes",
+      "item": "q-shapes",
+      "view": {
+        "kind": "fit",
+        "slide": "cmu"
+      }
+    },
+    {
+      "id": "show",
+      "kind": "reveal",
+      "phase": "complete",
+      "title": "The answer",
+      "items": [
+        "q-square"
+      ],
+      "text": "The dashed outline is the square.",
+      "view": {
+        "kind": "key"
+      },
+      "transition": "fly",
+      "showExpert": true,
+      "highlights": [
+        "hs-dot"
+      ],
+      "tools": [
+        "select",
+        "measure"
+      ]
+    }
+  ],
+  "extensions": {
+    "org.example.note": {
+      "zeta": 1,
+      "alpha": [
+        1,
+        2
+      ]
+    }
+  }
+}

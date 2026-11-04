@@ -1,0 +1,19 @@
+{
+  "note": "region item without candidates or rubric",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/candidates",
+      "value": []
+    },
+    {
+      "op": "remove",
+      "path": "/items/0/textRubric"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/items/0"
+  }
+}

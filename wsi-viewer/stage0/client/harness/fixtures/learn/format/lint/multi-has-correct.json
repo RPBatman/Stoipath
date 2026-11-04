@@ -1,0 +1,30 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/3/options/0/correct",
+      "value": false
+    },
+    {
+      "op": "replace",
+      "path": "/items/3/options/1/correct",
+      "value": false
+    },
+    {
+      "op": "replace",
+      "path": "/items/3/options/2/correct",
+      "value": false
+    }
+  ],
+  "expect": [
+    {
+      "rule": "multi-has-correct",
+      "severity": "error",
+      "path": "/items/3/options",
+      "message": "Item q-features needs at least one correct option"
+    }
+  ],
+  "alsoAllowed": []
+}

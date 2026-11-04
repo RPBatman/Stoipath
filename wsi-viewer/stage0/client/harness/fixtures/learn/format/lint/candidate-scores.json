@@ -1,0 +1,31 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/candidates/2/geometry/coordinates",
+      "value": [
+        13000,
+        13000
+      ]
+    },
+    {
+      "op": "replace",
+      "path": "/items/0/candidates/2/view/center_um",
+      "value": [
+        3160.22,
+        3160.22
+      ]
+    }
+  ],
+  "expect": [
+    {
+      "rule": "candidate-scores",
+      "severity": "error",
+      "path": "/items/0/candidates",
+      "message": "No candidate of q-region scores as correct"
+    }
+  ],
+  "alsoAllowed": []
+}

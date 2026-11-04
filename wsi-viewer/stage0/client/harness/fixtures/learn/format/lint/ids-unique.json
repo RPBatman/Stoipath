@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/1/id",
+      "value": "open"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "ids-unique",
+      "severity": "error",
+      "path": "/steps/1/id",
+      "message": "Duplicate id open"
+    }
+  ],
+  "alsoAllowed": []
+}

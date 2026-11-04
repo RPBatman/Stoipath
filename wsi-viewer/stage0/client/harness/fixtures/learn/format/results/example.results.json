@@ -1,0 +1,97 @@
+{
+  "schema": "stoipath.learn.results/1",
+  "product": "learn",
+  "labelString": "For educational use. Not a medical device. Contains no protected health information.",
+  "build": "2026-11-04T10:00:00Z",
+  "exportedAt": "2026-11-04T10:30:00Z",
+  "module": {
+    "id": "sln-find-metastasis",
+    "version": "0.1.0",
+    "contentHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "title": "Sentinel lymph node: find the metastasis",
+    "review": {
+      "status": "draft"
+    }
+  },
+  "course": {
+    "id": "stage0-l1",
+    "title": "Stoipath Learn · sample course"
+  },
+  "attempt": {
+    "startedAt": "2026-11-04T10:00:00Z",
+    "completedAt": "2026-11-04T10:29:00Z",
+    "stepsReached": 10,
+    "steps": 10
+  },
+  "items": [
+    {
+      "itemId": "q-region",
+      "title": "Region marking",
+      "kind": "region",
+      "points": 1,
+      "score": 0.5,
+      "correct": true,
+      "rule": "region-point",
+      "modality": "keyboard",
+      "inputDevice": "keyboard",
+      "confidence": "fairly-sure",
+      "gateMet": false,
+      "metric": {
+        "kind": "point",
+        "inside": true,
+        "distance_um": 0,
+        "inHole": false,
+        "target": "largest-deposit"
+      },
+      "answer": {
+        "kind": "candidate",
+        "candidate": "C"
+      },
+      "state": "revealed",
+      "committedAt": "2026-11-04T10:10:00Z",
+      "revealedAt": "2026-11-04T10:11:00Z"
+    },
+    {
+      "itemId": "q-features",
+      "title": "Tumour cells or lymphocytes?",
+      "kind": "multi",
+      "points": 1,
+      "score": 0.33,
+      "correct": false,
+      "rule": "multi-partial",
+      "modality": "pointer",
+      "inputDevice": "mouse",
+      "confidence": null,
+      "gateMet": null,
+      "metric": {
+        "kind": "choice",
+        "selected": [
+          "A",
+          "B",
+          "D"
+        ],
+        "correct": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "answer": {
+        "kind": "choice",
+        "selected": [
+          "A",
+          "B",
+          "D"
+        ]
+      },
+      "state": "revealed",
+      "committedAt": "2026-11-04T10:20:00Z",
+      "revealedAt": "2026-11-04T10:21:00Z"
+    }
+  ],
+  "total": {
+    "score": 0.83,
+    "points": 2
+  },
+  "privacy": "Created in your browser. Nothing in this file was sent anywhere; it contains no learner identifier."
+}

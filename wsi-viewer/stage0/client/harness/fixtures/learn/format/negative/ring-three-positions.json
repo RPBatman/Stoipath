@@ -1,0 +1,33 @@
+{
+  "note": "a three-position ring",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/hotspots/0/geometry",
+      "value": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              13000,
+              13000
+            ],
+            [
+              13200,
+              13000
+            ],
+            [
+              13000,
+              13000
+            ]
+          ]
+        ]
+      }
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/hotspots/0/geometry/coordinates/0"
+  }
+}

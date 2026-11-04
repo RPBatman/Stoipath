@@ -1,0 +1,26 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/5/item",
+      "value": "q-sinus"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "item-once",
+      "severity": "error",
+      "path": "/items/1",
+      "message": "Item q-sinus is used 2 times"
+    },
+    {
+      "rule": "item-once",
+      "severity": "error",
+      "path": "/items/2",
+      "message": "Item q-size is used 0 times"
+    }
+  ],
+  "alsoAllowed": []
+}
