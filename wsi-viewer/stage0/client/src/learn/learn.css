@@ -1,0 +1,300 @@
+/*
+ * Stoipath Learn page CSS (Learn integrator; LEARN.md §4.5). Design-system classes first (tokens.css, base.css, imported
+ * by src/learn/main.ts); what the system lacks is copied from design/screens/final/education-module.html ("final",
+ * line numbers cited) or from src/shell/shell.css ("shell.css", the rules the read-only HUD and navigator helpers
+ * assume), scoped under `.app.learn`, tokens only. Module CSS (player.css, items.css …) is each module's own.
+ * Dark chrome only in L1 (owner default, LEARN.md §15.1).
+ */
+
+/* --- App frame: the context bar row (final 27–35, 79–83) ------------------------------------------------------------ */
+.app.learn {
+  --ctx-h: 0px;
+  --layout-rail: 64px;
+  --cta-h: 56px;
+  grid-template-columns: var(--layout-rail) minmax(0, 1fr) var(--layout-dock);
+  grid-template-rows: var(--layout-topbar) var(--ctx-h) minmax(0, 1fr) var(--layout-strip);
+  grid-template-areas: "topbar topbar topbar" "ctx ctx ctx" "rail canvas dock" "strip strip strip";
+}
+@media (min-width: 3200px) { .app.learn { --layout-rail: 80px; --cta-h: 64px; } }
+/* ≥ 1600 px the task card is docked; K folds it (shell.css 184–185, the same rule for the Learn dock) */
+@media (min-width: 1600px) {
+  .app.learn:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
+  .app.learn:not(.dock-open) #dock { display: none; }
+}
+
+/* --- Top bar (final 87–92) ------------------------------------------------------------------------------------------ */
+.learn .learn-identity { min-width: 0; align-items: baseline; }
+.learn .learn-identity .title { font-weight: var(--weight-semibold); }
+.learn .learn-step { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.learn .topbar__slot-mode .btn--icon { color: var(--color-text-secondary); width: var(--target-control); height: var(--target-control); }
+.learn .topbar__slot-mode { margin-left: 0; }
+
+/* --- Step rail (final 111–141) -------------------------------------------------------------------------------------- */
+.learn .flowrail { padding: var(--space-3) 0; gap: 0; align-items: stretch; }
+.learn .flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0 var(--space-2); margin: 0; }
+.learn .flow li, .learn .flow__link { list-style: none; }
+.learn .phase { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 56px; padding: var(--space-2) 2px; border-radius: var(--radius-2); color: var(--color-text-secondary); text-align: center; cursor: pointer; background: transparent; border: 0; font: inherit; }
+.learn .phase:hover { background: var(--color-row-hover); color: var(--color-text); }
+.learn .phase:focus-visible { box-shadow: var(--focus-shadow); outline: none; }
+.learn .phase__num { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center; font: 700 11px/1 var(--font-mono); flex: 0 0 auto; }
+.learn .flowrail .phase { width: 100%; min-width: var(--target); }
+.learn .phase__text { display: block; min-width: 0; }
+.learn .phase__label { display: block; font-size: var(--text-2xs); line-height: 1.1; font-weight: var(--weight-medium); }
+.learn .phase__sub { display: block; font-size: 9px; line-height: 1.1; color: var(--color-text-secondary); }
+.learn .phase.is-done .phase__num { background: var(--color-text-secondary); border-color: transparent; color: var(--color-surface-0); }
+.learn .phase.is-done .phase__num::before { content: "\2713"; }
+.learn .phase.is-done .phase__num span { display: none; }
+.learn .phase.is-current, .learn .phase[aria-current="step"] { background: var(--color-control-selected); color: var(--color-text); }
+.learn .phase.is-current::before { content: ""; position: absolute; left: -4px; top: 18%; height: 64%; width: 2px; border-radius: 1px; background: var(--color-control-selected-indicator); }
+.learn .phase.is-current .phase__num { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
+.learn .phase.is-locked, .learn .phase.is-locked:hover { color: var(--color-text-secondary); background: transparent; cursor: default; }
+.learn .phase.is-locked .phase__num { border-style: dashed; }
+.learn .flow__link { width: 1px; height: 6px; background: var(--color-border-strong); margin: 0 auto; }
+.learn .rail__tools { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); padding: var(--space-2) 0; }
+.learn .rail__tools .tool { width: var(--target); height: var(--target); }
+.learn .rail__h { font-size: 9px; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); text-align: center; padding: var(--space-2) 2px 2px; line-height: 1.15; }
+.learn .rail .tool[hidden] { display: none; }
+.learn[data-alltools="1"] .rail__h { display: none; }
+@media (min-width: 3200px) { .learn .phase { min-height: 64px; } .learn .phase__label { font-size: var(--text-xs); } .learn .phase__sub { font-size: var(--text-2xs); } }
+/* The rail scrolls on short screens instead of squashing (base.css rail rule; shell.css 106) */
+.learn .rail { scrollbar-width: none; }
+
+/* --- Bottom flow bar (final 143–153) -------------------------------------------------------------------------------- */
+.learn .flowbar { justify-content: flex-start; gap: var(--space-2); padding: 0 var(--space-3); overflow-x: auto; scrollbar-width: none; }
+.learn .flow--h { flex-direction: row; align-items: center; gap: var(--space-1); padding: 0; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.learn .flowbar .flow__link { display: none; }
+.learn .flowbar .phase { flex: 0 0 auto; min-width: var(--target); min-height: var(--target); flex-direction: row; gap: var(--space-3); padding: 0 var(--space-4); text-align: left; }
+.learn .flowbar .phase.is-current::before { left: 50%; top: auto; bottom: -4px; height: 2px; width: 60%; transform: translateX(-50%); }
+.learn .flowbar .phase__text { display: flex; flex-direction: column; gap: 1px; }
+.learn .flowbar .phase__label { font-size: var(--text-xs); }
+.learn .flowbar__divider { width: 1px; height: 32px; background: var(--color-border); margin: 0 var(--space-2); flex: 0 0 auto; }
+.learn .flowbar .tool { width: var(--target); height: var(--target); flex: 0 0 auto; }
+.learn .flowbar__tools { display: flex; gap: var(--space-1); align-items: center; flex: 0 0 auto; }
+.learn .flowbar__tools .tool[hidden] { display: none; }
+.learn .flowbar__end { margin-left: auto; display: flex; gap: var(--space-2); align-items: center; flex: 0 0 auto; }
+
+/* --- Context bar (final 155–161) ------------------------------------------------------------------------------------ */
+.learn .ctxbar { display: none; grid-area: ctx; align-items: center; gap: var(--space-4); padding: 0 var(--space-5); background: var(--color-surface-0); border-bottom: 1px solid var(--color-border); z-index: var(--z-bars); contain: layout paint style; min-width: 0; }
+.learn .ctxbar__step { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); white-space: nowrap; }
+.learn .ctxbar__stem { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--weight-medium); }
+.learn .ctxbar .btn { flex: 0 0 auto; }
+.learn .ctxbar .btn--sm { min-height: max(28px, var(--target-control)); }
+.learn .ctxbar .btn[hidden], .learn .ctxbar .chip[hidden] { display: none; }
+
+/* --- Task card (final 164–193) -------------------------------------------------------------------------------------- */
+.learn .taskdock { position: relative; }
+.learn .task { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.learn .task[hidden] { display: none; }
+.learn .task:focus { outline: none; }
+.learn .task__head { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4) var(--space-5) var(--space-3); border-bottom: 1px solid var(--color-border); }
+.learn .task__meta { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+.learn .task__title { font-size: var(--text-2xl); font-weight: var(--weight-semibold); line-height: var(--leading-tight); }
+.learn .task__title:focus { outline: none; }
+.learn .task__title:focus-visible { box-shadow: var(--focus-shadow); border-radius: var(--radius-1); }
+.learn .task__peekstem { display: none; font-size: var(--font-size-body); color: var(--color-text); line-height: var(--leading-body); margin: 0; }
+.learn .task__status { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.learn .task__status:empty { display: none; }
+.learn .task__body { flex: 0 1 auto; min-height: 0; overflow: auto; padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+.learn .task__cta { flex: 0 0 auto; padding: var(--space-4) var(--space-5); border-top: 1px solid var(--color-border); display: flex; flex-direction: column; gap: var(--space-3); background: var(--color-surface-0); }
+.learn .btn--cta { width: 100%; min-height: var(--cta-h); font-size: var(--text-xl); }
+.learn .btn--cta .key { margin-left: var(--space-3); }
+.learn .task__secondary { display: flex; gap: var(--space-3); justify-content: space-between; flex-wrap: wrap; }
+.learn .task__secondary .btn { flex: 1 1 auto; }
+.learn .cta-note { font-size: var(--text-xs); color: var(--color-text-secondary); text-align: center; margin: 0; }
+.learn .task__grab { display: none; }
+.learn .sheet-toggle { display: none; }
+.learn .task__peekbar { display: none; align-items: center; gap: var(--space-3); padding: var(--space-1) var(--space-4) var(--space-4); }
+.learn .task__peekbar .task__peekstem { display: block; flex: 1 1 auto; min-width: 0; font-size: var(--text-md); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.learn .task__peekbar .btn--primary { flex: 0 0 auto; min-height: 44px; font-size: var(--text-lg); padding: 0 var(--space-4); }
+.learn .task__peekbar .btn--primary .key { display: none; }
+.learn .task__peekbar .sheet-toggle { flex: 0 0 auto; }
+.learn .task__peekbar .btn[hidden] { display: none; }
+/* Integrator rows around #taskCard (new; LEARN.md §5.2): the draft chip above the card, the peek bar's text stack */
+.learn .taskdock__head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5) 0; min-height: 0; }
+.learn .taskdock__head:not(:has(.chip:not([hidden]))) .sheet-toggle { margin-left: auto; }
+.learn .taskdock__head .sheet-toggle { margin-left: auto; }
+.learn .task__peekstack { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.learn .learn-draft { white-space: nowrap; }
+.learn .learn-draft[hidden] { display: none; }
+/* Empty head row (no draft chip, not a sheet): no space */
+.learn .taskdock__head:not(:has(:not([hidden]):not(.sheet-toggle))) { padding: 0; }
+@media (min-width: 1080px) { .learn .taskdock__head .sheet-toggle { display: none; } }
+/* Studio dock tabs (Task · Annotations · Inspector; studio mode only, LEARN.md §7) */
+.learn .dock__tabs[hidden] { display: none; }
+.learn .dock .tabs .tab { padding: 0 var(--space-3); font-size: var(--text-xs); gap: 3px; flex: 1 1 0; justify-content: center; min-width: max-content; }   /* shell.css 127 */
+.learn .dock .tabs .tab .count { font-size: 9px; padding: 0 4px; }   /* shell.css 132 */
+.learn .learn-studio-panel { flex: 1 1 auto; min-height: 0; overflow: auto; display: block; padding: 0 0 var(--space-6); }
+.learn .learn-studio-panel[hidden] { display: none; }
+
+/* --- Canvas panes (shell.css 13–28) --------------------------------------------------------------------------------- */
+.learn .panes { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.learn .pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.learn #paneB { display: none; }   /* no compare in Learn (LEARN.md D4); pane B exists for core's second view host only */
+.learn .pane .hud__item:empty { display: none; }
+.learn .pane > .canvas { touch-action: none; -webkit-user-select: none; user-select: none; }
+.learn .pane > canvas:not(.overlay-layer) { cursor: grab; outline: none; }
+.learn .pane > canvas:not(.overlay-layer):active { cursor: grabbing; }
+.learn:not([data-tool="select"]) .pane > canvas:not(.overlay-layer) { cursor: crosshair; }
+.learn .pane > canvas:not(.overlay-layer):focus-visible { box-shadow: none; outline: 2px solid var(--grey-95); outline-offset: -3px; border-radius: 0; z-index: 1; }
+.learn .overlay-layer { pointer-events: none; z-index: 2; }
+
+/* --- HUD (shell.css 31–57; final 346–356) --------------------------------------------------------------------------- */
+.learn .hud { z-index: var(--z-hud); }
+.learn .hud__item { pointer-events: none; }
+.learn .hud .hud__item { font-family: var(--font-mono); }
+.learn .hud__learnslide { font-family: var(--font-ui); font-weight: var(--weight-semibold); }   /* final 347 */
+.learn .hud__learnslide .hud__secondary { margin-left: 4px; font-weight: var(--weight-regular, 400); }
+.learn .hud__position { background: var(--color-hud-backdrop); min-width: 22ch; }   /* final 349; shell.css 43 */
+.learn .hud__motion { font-family: var(--font-ui); font-size: var(--text-xs); }   /* final 350; shown by the integrator under reduced motion */
+.learn .hud__motion[hidden] { display: none; }
+.learn .hud__gate { display: inline-flex; align-items: center; gap: 2px; font-family: var(--font-ui); font-size: var(--text-xs); }   /* final 353–356 */
+.learn .hud__gate[hidden] { display: none; }
+.learn .hud__gate .key { margin-left: 2px; }
+.learn .magnification__value, .learn .magnification .zoom-input { pointer-events: auto; }
+.learn .magnification__value { display: inline-flex; align-items: baseline; justify-content: flex-end; min-width: 5.4ch; min-height: var(--target-control); background: none; color: inherit; border: 0; cursor: text; font-variant-numeric: tabular-nums lining-nums; }
+.learn .magnification__value .tilde { margin-right: 1px; }
+.learn .magnification__line2 { min-width: 20ch; text-align: right; }
+.learn .magnification input.zoom-input { width: 6ch; }
+.learn .magnification .zoom-input[hidden] { display: none; }
+.learn .hud__toolline { font-family: var(--font-ui); font-size: var(--text-xs); white-space: normal; max-width: 100%; color: var(--grey-91); }
+.learn .hud__toolline[hidden] { display: none; }
+.learn .hud .hud__sharp .indicator__glyph { width: 9px; height: 9px; }
+.learn .scalebar { min-width: calc(200px + 2 * var(--space-3)); }
+.learn .scalebar .scalebar__bar { width: 200px; background: transparent; box-shadow: none; margin-bottom: 6px; }
+.learn .scalebar .scalebar__bar::after { display: none; }
+.learn .scalebar__fill { position: absolute; left: 0; top: 0; width: 200px; height: 4px; background: var(--grey-95); box-shadow: 0 1px 0 rgba(0,0,0,.8), 0 -1px 0 rgba(0,0,0,.8); transform-origin: 0 0; transform: scaleX(0.6); }
+.learn .scalebar__end { position: absolute; left: 0; top: -4px; width: 2px; height: 12px; background: var(--grey-95); box-shadow: 0 0 0 1px rgba(0,0,0,.8); transform: translateX(118px); }
+.learn .scalebar__label { min-width: 7ch; }
+
+/* --- Navigator (shell.css 62–75) ------------------------------------------------------------------------------------ */
+.app.learn > .nav-host { grid-area: canvas; position: relative; z-index: var(--z-navigator); pointer-events: none; overflow: hidden; contain: layout paint style; min-width: 0; min-height: 0; }
+.learn .nav-host .navigator { pointer-events: auto; max-width: calc(25% - var(--layout-hud-inset)); }
+.learn .navigator { width: var(--layout-navigator); }
+.learn .navigator[hidden] { display: none; }
+.learn .navigator__thumb { aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; }
+.learn .nav-tiles { position: absolute; inset: 0; }
+.learn .nav-tiles img { position: absolute; display: block; max-width: none; image-rendering: auto; -webkit-user-drag: none; user-select: none; }
+.learn .navigator__viewport { inset: 0; border: 0; box-shadow: none; }
+.learn .nav-edge { position: absolute; left: 0; top: 0; background: var(--color-canvas-viewport); transform-origin: 0 0; }
+.learn .nav-edge--h { width: 1px; height: 2px; box-shadow: 0 1px 0 rgba(0,0,0,.7), 0 -1px 0 rgba(0,0,0,.7); }
+.learn .nav-edge--v { width: 2px; height: 1px; box-shadow: 1px 0 0 rgba(0,0,0,.7), -1px 0 0 rgba(0,0,0,.7); }
+.app.learn.nav-hidden .navigator { display: none; }
+.learn .navigator__label .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.learn .navigator__label .nav-hint { flex: 0 0 auto; white-space: nowrap; }
+/* The navigator steps left of an open drawer (1080–1599; final 505) */
+@media (min-width: 1080px) and (max-width: 1599px) { .app.learn.dock-open .nav-host .navigator { right: calc(var(--layout-dock) + var(--layout-hud-inset)); } }
+
+/* --- Palette, keymap, About, strip, toasts (shell.css 154–181; final 384–404) ---------------------------------------- */
+.learn .palette__item { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; cursor: pointer; }
+.learn .palette__item .lbl { grid-column: 1; grid-row: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.learn .palette__item .meta { grid-column: 1; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); margin: 0; }
+.learn .palette__item .meta:empty { display: none; }
+.learn .palette__item .keys { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+.learn .palette__empty { padding: var(--space-5); }
+.learn .pal-count { margin-left: auto; }
+.learn .modal-layer .dialog__body { gap: var(--space-4); }
+.learn .keymap { grid-template-columns: 1fr; gap: var(--space-5); }
+.learn .keymap__h { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-bottom: var(--space-2); font-weight: var(--weight-semibold); }
+.learn .keymap__row { align-items: flex-start; min-height: 24px; padding: 2px 0; }
+.learn .keymap__keys { flex: 0 0 132px; align-items: center; flex-wrap: wrap; }
+.learn .keymap__or { color: var(--color-text-secondary); font-size: var(--text-2xs); padding: 0 2px; }
+.learn .keymap__what { flex: 1 1 auto; min-width: 0; }
+.learn .about { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--text-sm); }   /* final 400 */
+.learn .about .label-text { font-size: var(--text-md); color: var(--color-text); line-height: 1.5; margin: 0; }
+.learn .about .kv { padding: 0; }
+.learn .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-1) var(--space-4); font-size: var(--text-sm); padding: var(--space-3) var(--space-5); }   /* shell.css 140–142 */
+.learn .kv dt { color: var(--color-text-secondary); }
+.learn .kv dd { min-width: 0; overflow-wrap: anywhere; margin: 0; }
+.learn .note { padding: var(--space-3) 0 0; font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5; }
+.learn .note .key { vertical-align: baseline; }
+.learn .strip .learn-strip-hint { white-space: nowrap; }
+.learn .toast-stack { right: var(--space-4); bottom: calc(var(--layout-strip) + var(--space-4)); pointer-events: none; }   /* final 403–406 */
+.learn .toast { pointer-events: auto; }
+@media (min-width: 1600px) { .learn .toast-stack { width: calc(var(--layout-dock) - 2 * var(--space-4)); } .learn .toast-stack .toast { width: 100%; } }
+.learn .learn-cand { display: flex; flex-direction: column; }
+.learn .learn-cand__body { flex: 1 1 auto; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
+
+/* --- Plates ---------------------------------------------------------------------------------------------------------- */
+.learn .plate__card[role="status"] .plate__glyph { background: var(--color-surface-2); color: var(--color-text); }
+.learn .plate__actions[hidden] { display: none; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+   Responsive collapse (final 497–577; principles §7 order), on top of base.css
+   ------------------------------------------------------------------------------------------------------------------- */
+/* Laptop and tablet landscape (1080–1599): task card → drawer (closed by default); the context bar keeps the step */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.learn { --ctx-h: 40px; --layout-dock: 340px; }
+  .app.learn, .app.learn.dock-open, .app.learn:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; grid-template-areas: "topbar topbar topbar" "ctx ctx ctx" "rail canvas canvas" "strip strip strip"; }
+  .app.learn .dock { display: none; }
+  .app.learn.dock-open .dock { display: flex; position: absolute; top: calc(var(--layout-topbar) + var(--ctx-h)); right: 0; bottom: var(--layout-strip); height: auto; width: var(--layout-dock); z-index: var(--z-drawer); box-shadow: var(--shadow-3); }
+  .app.learn.dock-open .toast-stack { right: calc(var(--layout-dock) + var(--space-4)); }
+  .learn .ctxbar { display: flex; }
+  .learn .flowrail .phase__sub { display: none; }
+  .learn .phase { min-height: 48px; }
+  .learn .rail__h { display: none; }
+  .learn .modal-layer { top: calc(var(--layout-topbar) + var(--ctx-h)); }
+  .learn .palette-layer { top: calc(var(--layout-topbar) + var(--ctx-h)); max-height: calc(100% - var(--layout-topbar) - var(--ctx-h) - var(--layout-strip)); }
+}
+@media (min-width: 1080px) and (max-width: 1599px) and (pointer: coarse) { .app.learn { --ctx-h: 52px; } }
+/* Tablet portrait (600–1079): step rail → bottom flow bar; task card → bottom sheet that peeks and expands to ≤ 40 % */
+@media (min-width: 600px) and (max-width: 1079px) {
+  .app.learn, .app.learn.dock-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-bottombar) var(--layout-strip); grid-template-areas: "topbar" "canvas" "sheet" "bottombar" "strip"; }
+  .learn .rail, .learn .ctxbar { display: none !important; }
+  .learn .bottombar { display: flex; }
+  .app.learn .dock { display: none; }
+  .app.learn.dock-open:not(.palette-open) .dock { display: flex; position: absolute; left: 0; right: 0; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
+  .app.learn.dock-open.sheet-peek .dock { max-height: none; }
+  .learn .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
+  .learn .sheet-toggle { display: inline-flex; }
+  .learn .task__head { padding-top: var(--space-3); }
+  .learn .task__body { flex: 1 1 auto; }
+  .app.learn.sheet-peek .task__body, .app.learn.sheet-peek .task__secondary, .app.learn.sheet-peek .cta-note { display: none; }
+  .app.learn.sheet-peek .task__peekstem { display: block; }
+  .app.learn.sheet-peek .taskdock__head .sheet-toggle .icon { transform: rotate(180deg); }
+  .learn .task__cta { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+  .learn .btn--cta { min-height: 52px; }
+  .learn .hud { max-width: 40%; }
+  .app.learn.dock-open .hud--bl, .app.learn.dock-open .hud--br { bottom: calc(var(--sheet-h, 196px) + var(--layout-hud-inset)); }
+  .app.learn.dock-open .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--sheet-h, 196px) + var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
+  .app.learn.dock-open.palette-open .hud--bl, .app.learn.dock-open.palette-open .hud--br { bottom: var(--layout-hud-inset); }
+}
+/* Phone (≤ 599): compact flow bar; sheet peek bar; strip hidden (sharpness joins the HUD with a label) */
+@media (max-width: 599px) {
+  .app.learn, .app.learn.dock-open { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--layout-topbar) minmax(0, 1fr) auto var(--layout-bottombar); grid-template-areas: "topbar" "canvas" "sheet" "bottombar"; }
+  .learn .rail, .learn .ctxbar, .learn .strip { display: none !important; }
+  .learn .bottombar { display: flex; }
+  .app.learn .dock { display: none; }
+  .app.learn.dock-open:not(.palette-open) .dock { display: flex; position: absolute; left: 0; right: 0; bottom: var(--layout-bottombar); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
+  .app.learn.dock-open.sheet-peek .dock { max-height: none; }
+  .learn .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
+  .learn .sheet-toggle { display: inline-flex; }
+  .learn .task__body { flex: 1 1 auto; }
+  .app.learn.sheet-peek .taskdock__head, .app.learn.sheet-peek .dock__tabs, .app.learn.sheet-peek #taskCard, .app.learn.sheet-peek .learn-studio-panel { display: none; }
+  .app.learn.sheet-peek .task__peekbar { display: flex; }
+  .app.learn.sheet-peek .task__peekbar .sheet-toggle .icon { transform: rotate(180deg); }
+  .learn .task__title { font-size: var(--text-xl); }
+  .learn .flow--h > li { flex: 0 0 auto; }
+  .learn .task__head { padding: var(--space-3) var(--space-4) var(--space-2); }
+  .learn .task__body { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+  .learn .task__cta { padding: var(--space-3) var(--space-4); }
+  .learn .btn--cta { min-height: 52px; font-size: var(--text-lg); }
+  .learn .flowbar .phase { min-width: var(--target); padding: 0 var(--space-2); }
+  .learn .flowbar .phase:not(.is-current) .phase__text { display: none; }
+  .learn .flowbar .phase.is-current .phase__num { display: none; }
+  .learn .flowbar .phase__sub { display: none; }
+  .learn .flowbar .tool--drawing, .learn .flowbar .tool--phone-hide, .learn .flowbar__divider { display: none !important; }
+  .learn .flowbar { gap: 2px; padding: 0 var(--space-2); }
+  .learn .topbar__slot-mode #keymapBtn { display: none; }
+  .learn .hud { max-width: 48%; }
+  .app.learn.dock-open .hud--bl, .app.learn.dock-open .hud--br { bottom: calc(var(--sheet-h, 176px) + var(--layout-hud-inset)); }
+  .app.learn.dock-open .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--sheet-h, 176px) + var(--layout-bottombar) + var(--space-4)); }
+  .app.learn.dock-open.palette-open .hud--bl, .app.learn.dock-open.palette-open .hud--br { bottom: var(--layout-hud-inset); }
+}
+/* Tablet portrait keeps the integrator rows of the sheet (the card's own head stays visible in its peek; final 523–525) */
+@media (min-width: 600px) and (max-width: 1079px) {
+  .app.learn.sheet-peek .learn-studio-panel { display: none; }
+}
+/* Short viewports: fewer sub-labels (final 580) */
+@media (max-height: 760px) { .learn .phase { min-height: 48px; } .learn .flowrail .phase__sub { display: none; } }
+/* While a gesture is in progress nothing in the chrome animates (P2; final 600) */
+.app.learn.is-gesturing .dock__resizer { pointer-events: none; }
