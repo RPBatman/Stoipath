@@ -52,7 +52,7 @@ export class RubricForm {
     const input = h('input', { class: 'input', id, name: f.id, type: 'text', autocomplete: 'off', spellcheck: 'false', maxlength: String(TEXT_MAX) });
     input.value = value;
     this.controls.set(f.id, input);
-    return h('div', { class: 'field' }, label, input);
+    return h('div', { class: 'field learn-rubric__wide' }, label, input);
   }
 
   /** Every field's value (trimmed; empty fields left out). */

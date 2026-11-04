@@ -22,3 +22,6 @@ wsi-viewer/stage0/data/samples/
 # Benchmark TLS pairs are generated locally (see docs/verification/artifacts/*/TLS-KEYS.md)
 wsi-viewer/docs/verification/artifacts/*/key.pem
 wsi-viewer/docs/verification/artifacts/*/cert.pem
+
+# Learn build rig output (a build product, like client/dist)
+wsi-viewer/stage0/client/rig-dist/

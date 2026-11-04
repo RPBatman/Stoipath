@@ -29,6 +29,10 @@ import { cardHead, noticeAlert, savedAlert } from './mcq';
 import { TEXT } from './text';
 
 const pct = (x: number): string => String(Math.round(x * 100));
+/** `hidden` written on change only. */
+const hide = (el: HTMLElement, on: boolean): void => {
+  if (el.hidden !== on) el.hidden = on;
+};
 
 /** The D15 rule line (LEARN.md §5.5; the case-1 wording for a credited related area, judgement call J-ITM1). Pure. */
 export function ruleLine(item: RegionItem, key: AnswerKeySpec | undefined): string {
@@ -145,12 +149,12 @@ export class RegionCard implements CardView {
     const st = e.state(id);
     const r = e.response(id);
     const l = e.live(id);
-    this.root.dataset['state'] = st;
+    if (this.root.dataset['state'] !== st) this.root.dataset['state'] = st;
     this.renderKeys();
     // gatebox (§6.4): over the learner's own mark, never the key
     if (this.gatebox !== null && this.gateGlyph !== null && this.gateStatus !== null) {
       const g = e.gateView(id);
-      this.gatebox.classList.toggle('is-met', g.met);
+      if (this.gatebox.classList.contains('is-met') !== g.met) this.gatebox.classList.toggle('is-met', g.met);
       if (this.gateGlyph.textContent !== g.glyph) this.gateGlyph.textContent = g.glyph;
       if (this.gateStatus.textContent !== g.text) this.gateStatus.textContent = g.text;
     }
@@ -164,16 +168,17 @@ export class RegionCard implements CardView {
       } else this.markText.replaceChildren(h('b', { text }));
     }
     const awaiting = st === 'awaiting';
-    // the teal "Your mark" swatch only beside a mark that is on the slide (the store draws it in --ann-5)
-    this.markSwatch.hidden = this.engine.draftMark(id) === null;
-    this.markHint.hidden = !awaiting;
-    this.clearBtn.hidden = !(awaiting && isMark);
-    this.altBtn.hidden = st === 'revealed' || st === 'reveal-waiting';
+    // the teal "Your mark" swatch only beside a mark drawn on the slide in --ann-5 (the store's draft, or reveal's frozen copy)
+    const ans = r?.answer ?? null;
+    hide(this.markSwatch, !(e.draftMark(id) !== null || (st === 'revealed' && ans !== null && ans.kind !== 'text' && ans.kind !== 'choice')));
+    hide(this.markHint, !awaiting);
+    hide(this.clearBtn, !(awaiting && isMark));
+    hide(this.altBtn, st === 'revealed' || st === 'reveal-waiting');
     this.confidence.set(r?.confidence ?? null, !awaiting);
     // gate warning (§6.4): after the first commit while unmet, until the gate is met or the answer is committed
     const showWarn = awaiting && l.gateWarning && this.item.gate !== null && e.gateView(id).met === false;
     if (showWarn && this.warn.hidden) this.renderWarning();
-    this.warn.hidden = !showWarn;
+    hide(this.warn, !showWarn);
     this.renderStatus(st);
     this.renderAfter(st);
   }
@@ -237,7 +242,7 @@ export class RegionCard implements CardView {
     const key = `${revealed}|${label}|${area}|${l.keyShown}|${expert}`;
     if (key === this.afterKey) return;
     this.afterKey = key;
-    this.after.hidden = !revealed;
+    hide(this.after, !revealed);
     if (!revealed) {
       this.after.replaceChildren();
       return;

@@ -172,7 +172,7 @@ export const TEXT = {
   flying: (l: string, desc: string, mag: string): string => `Flying to region ${l}, ${desc}, at ${mag}.`,
   flyingSheet: (l: string): string => ` The list closed so the slide is visible; Shift Enter reopens it on region ${l}.`,
   commitCand: (l: string): string => `Commit ${l} as my mark`,
-  commitCandNone: 'Commit the chosen region as my mark', // N (no region chosen yet)
+  commitCandNone: 'Commit a region as my mark', // N (no region chosen yet)
   chooseRegion: 'Choose a region first: the arrow keys move between them.', // N
   commitText: 'Commit my text answer',
   cancel: 'Cancel',

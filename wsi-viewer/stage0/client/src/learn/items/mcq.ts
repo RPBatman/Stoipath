@@ -164,7 +164,7 @@ export class ChoiceCard implements CardView {
       if (input.checked !== on) input.checked = on;
       if (input.disabled !== locked) input.disabled = locked;
     }
-    this.root.dataset['state'] = st;
+    if (this.root.dataset['state'] !== st) this.root.dataset['state'] = st;
     this.confidence.set(r?.confidence ?? null, locked);
     // options after reveal: glyph + text, never colour alone
     const revealed = st === 'revealed';
@@ -175,13 +175,13 @@ export class ChoiceCard implements CardView {
       if (label === undefined || mark === undefined || note === undefined) continue;
       const correct = revealed && o.correct;
       const wrongPick = revealed && !o.correct && sel.has(o.id);
-      label.classList.toggle('is-correct', correct);
-      label.classList.toggle('is-incorrect', wrongPick);
+      if (label.classList.contains('is-correct') !== correct) label.classList.toggle('is-correct', correct);
+      if (label.classList.contains('is-incorrect') !== wrongPick) label.classList.toggle('is-incorrect', wrongPick);
       const t = correct ? TEXT.correctMark : wrongPick ? TEXT.yourChoice : '';
       if (mark.textContent !== t) mark.textContent = t;
       const fb = revealed && o.feedback !== undefined && o.feedback !== '' ? o.feedback : '';
       if (note.textContent !== fb) note.textContent = fb;
-      note.hidden = fb === '';
+      if (note.hidden !== (fb === '')) note.hidden = fb === '';
     }
     if (this.measureText !== null) {
       const len = this.engine.measurement(this.item);

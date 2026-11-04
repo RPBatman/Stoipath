@@ -1,0 +1,82 @@
+/*
+ * player · page CSS the design system lacks (LEARN.md §4.5). Copied from design/screens/final/education-module.html,
+ * lines cited, scoped under the player's own root `#taskCard.learn-player` (the task card's contents, LEARN.md §4.2).
+ * Tokens only. Everything else is base.css: .btn*, .progress-bar, .progress-ring*, .dot*, .key, .stack*, .text-*,
+ * and the integrator's learn.css: .task__head / __meta / __title / __status / __body / __cta / __secondary, .btn--cta,
+ * .cta-note.
+ */
+
+/* final 195–203 · the tour player. No captions button in L1 (no audio, D19): the final's own four-column phone grid
+   (line 563) is the grid at every width. */
+#taskCard.learn-player .player { display: grid; grid-template-columns: auto auto 1fr auto; grid-template-rows: auto auto; align-items: center; gap: var(--space-2) var(--space-3); padding: var(--space-3) var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+#taskCard.learn-player .player__btn { width: var(--target); height: var(--target); display: inline-grid; place-items: center; border-radius: var(--radius-2); color: var(--color-text); position: relative; }
+#taskCard.learn-player .player__btn:hover { background: var(--color-control-bg-hover); }
+#taskCard.learn-player .player__btn:focus-visible { box-shadow: var(--focus-shadow); }
+#taskCard.learn-player .player__btn--play { background: var(--color-control-bg); }
+#taskCard.learn-player .player__btn[aria-pressed="true"] { background: var(--color-control-selected); }
+#taskCard.learn-player .player__btn .tool__key { right: 1px; bottom: 0; }
+#taskCard.learn-player .player__time { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+#taskCard.learn-player .player__track { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--color-border); position: relative; overflow: hidden; }
+#taskCard.learn-player .player__track span { position: absolute; left: 0; top: 0; bottom: 0; width: var(--value, 30%); background: var(--color-text); }
+
+/* final 206–207 · the step text */
+#taskCard.learn-player .caption { padding: var(--space-3) var(--space-4); border-left: 2px solid var(--color-border-strong); font-size: var(--font-size-body); line-height: var(--leading-body); }
+#taskCard.learn-player .caption__now { color: var(--color-text); margin: 0; }
+#taskCard.learn-player .learn-cmd { white-space: nowrap; }
+#taskCard.learn-player .learn-cmd .key { margin: 0 1px; }
+
+/* final 233–238 · vignette and readiness */
+#taskCard.learn-player .vignette { font-size: var(--font-size-body); line-height: var(--leading-body); margin: 0; }
+#taskCard.learn-player .vignette dt { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-top: var(--space-3); }
+#taskCard.learn-player .vignette dt:first-child { margin-top: 0; }
+#taskCard.learn-player .vignette dd { margin: 2px 0 0; }
+#taskCard.learn-player .ready { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--text-sm); padding: var(--space-3) var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+#taskCard.learn-player .ready .dot { margin: 0; }
+#taskCard.learn-player .ready .num { color: var(--color-text-secondary); }
+
+/* final 245–250 · hotspots (a list of buttons; the number pill reads --ann-1, as the slide's hotspot source) */
+#taskCard.learn-player .hotspots { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+#taskCard.learn-player .hotspots > li { list-style: none; }
+#taskCard.learn-player .hotspot { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--space-3); align-items: center; width: 100%; min-height: var(--target); padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-2); text-align: left; color: var(--color-text); background: transparent; }
+#taskCard.learn-player .hotspot:hover { background: var(--color-row-hover); }
+#taskCard.learn-player .hotspot:focus-visible { box-shadow: var(--focus-shadow); }
+/* final 248, with the final's literal #111 / rgba(0,0,0,.7) replaced by the dark grey token (tokens only, §4.5) */
+#taskCard.learn-player .hotspot__n { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 700 11px/1 var(--font-mono); background: var(--ann-1); color: var(--grey-12); box-shadow: 0 0 0 1px var(--grey-12); }
+#taskCard.learn-player .hotspot__t { font-size: var(--text-sm); }
+#taskCard.learn-player .hotspot__t small { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+
+/* final 255–258 · the score card (summary; reveal step rows) */
+#taskCard.learn-player .scorecard { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+#taskCard.learn-player .scorecard dl { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); font-size: var(--text-sm); margin: 0; }
+#taskCard.learn-player .scorecard dt { color: var(--color-text-secondary); }
+#taskCard.learn-player .scorecard dd { font-family: var(--font-mono); text-align: right; margin: 0; }
+#taskCard.learn-player .scorecard--plain { padding: 0; border: 0; background: none; grid-template-columns: 1fr; }
+
+/* final 265–266 · the locked reveal step's note */
+#taskCard.learn-player .lock-note { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-text); border-radius: var(--radius-2); }
+#taskCard.learn-player .lock-note .glyph { font: 700 var(--text-sm)/1 var(--font-mono); }
+
+/* final 280–281 · the course line */
+#taskCard.learn-player .progress-line { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--text-sm); }
+#taskCard.learn-player .progress-line .progress-bar { grid-column: 1 / -1; }
+#taskCard.learn-player .progress-line[hidden] { display: none; }
+
+/* final 292–293 · the tour's key row */
+#taskCard.learn-player .kbd-row { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: var(--text-xs); color: var(--color-text-secondary); }
+#taskCard.learn-player .kbd-row span { display: inline-flex; align-items: center; gap: var(--space-2); }
+
+/* New (N), tokens only: the refusal line under the title, the summary's item rows */
+#taskCard.learn-player .learn-player__status { margin: 0; }
+#taskCard.learn-player .learn-player__refusal { margin: 0; font-size: var(--text-sm); color: var(--color-text); }
+#taskCard.learn-player .learn-player__refusal .key { margin: 0 2px; }
+#taskCard.learn-player .learn-summary__items { display: flex; flex-direction: column; gap: 1px; margin: 0; padding: 0; list-style: none; }
+#taskCard.learn-player .learn-summary__item { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-divider); }
+#taskCard.learn-player .learn-summary__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); font-size: var(--text-sm); }
+#taskCard.learn-player .learn-summary__title { font-weight: var(--weight-medium); min-width: 0; }
+#taskCard.learn-player .learn-summary__score { font-family: var(--font-mono); white-space: nowrap; }
+#taskCard.learn-player .learn-summary__facts { display: grid; grid-template-columns: auto 1fr; gap: 0 var(--space-3); margin: 0; font-size: var(--text-xs); }
+#taskCard.learn-player .learn-summary__facts dt { color: var(--color-text-secondary); }
+#taskCard.learn-player .learn-summary__facts dd { margin: 0; }
+#taskCard.learn-player .learn-summary__status { margin: 0; }
+#taskCard.learn-player .learn-player__answers dd { margin: 0; }
+#taskCard.learn-player .task__cta .cta-note[hidden], #taskCard.learn-player .task__secondary[hidden] { display: none; }

@@ -63,4 +63,11 @@
 .learn-cands .learn-cands__notice[hidden] { display: none; }
 .learn-cands .learn-rubric { display: flex; flex-direction: column; gap: var(--space-4); }
 .learn-cands .learn-rubric__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.learn-cands .learn-rubric__wide { grid-column: 1 / -1; }
 @media (max-width: 599px) { .learn-cands .learn-rubric__grid { grid-template-columns: minmax(0, 1fr); } }
+.learn-cands .dialog__footer { flex-wrap: wrap; }
+.learn-cands .learn-cands__commit { flex: 1 1 12rem; min-width: 0; white-space: normal; height: auto; padding-top: var(--space-2); padding-bottom: var(--space-2); line-height: var(--leading-tight); }
+/* the tabs and the footer stay put; only the open tab's panel scrolls (a ≤ 40 vh sheet below 1080 px) */
+.learn-cands > .tabs, .learn-cands > .dialog__footer, .learn-cands > .learn-cands__notice { flex: 0 0 auto; }
+.learn-cands > .learn-cands__panel { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.learn-item .option__feedback { white-space: nowrap; }

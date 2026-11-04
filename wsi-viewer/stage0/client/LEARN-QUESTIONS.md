@@ -446,3 +446,75 @@ rank the `preview` notice above `engine`.
 - Owner defaults that touch reveal (already in §15.1, default pending owner): Q14 `Reveal now` after 15 s (the item
   card's timer; reveal's key and drawing do not wait for sharp pixels, so it works) and Q15 / D25 (answers readable in
   the public files; reveal still requests the layer only when the learner reveals, ITM-8).
+
+## 2026-11-04 · items (Wave L2): contract questions, and how the service behaves for player, reveal and the integrator
+
+Filed by the items builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`: the module
+(`src/learn/items/`; tests `harness/unit/learn-items.test.mjs`, `harness/learn/items.check.mjs`, fixtures
+`harness/fixtures/learn/items/`) implements contracts §10 `ItemsService` as written. It reads the open module and the
+item's state from the `player` service (`module`, `progress`) and writes only through `player.update()`.
+
+**I-Q1 · The rule line's wording (request, optional field, later wave).** D15 states the scoring rule on the card before
+answering. Items builds it from the item and its key; for a key with a `credit` related entry it uses §5.5's case-1
+words verbatim (`a point on any tumour focus (or within 50 µm of one)`, `… lies at least 90 % on tumour …`), and the
+§8.2 strings it must show are case-1 wording too (`Revealed · on a tumour focus …`, `… (Exclusion: non-tumour tissue
+within the deposit) …`). A module about something other than tumour would read wrong. Proposal (contracts §2 and the
+schema, additive): `RegionItem.ruleText?: string` (the card shows it instead of the built line) and
+`KeyRelated.label?: string` (the noun for the related area, `tumour focus`). Not needed for L1's one case.
+
+**I-Q2 · What items needs from the player (conventions; please confirm, player builder).**
+- `update(mutate)` is synchronous: `player.progress` holds the mutated copy when it returns (items reads it at once).
+- The player renders the CTA from `items.primaryAction(itemId)` again after every `update()` (at rest), and updates the
+  CTA element in place, so `focusPrimary()` focus survives the re-render.
+- `focusPrimary()` focuses the visible primary action: the card's `.btn--cta` when the card is open, else the context
+  bar's (1080–1599 drawer closed) or the peek bar's (phone sheet peeking). Items calls it after a keyboard-made mark.
+- `mount(itemId, el)` receives an element inside `#taskCard .task__body`; the player disposes it before showing the next
+  step. The secondary row's `Change answer` is shown only while `items.state(id) === 'committed'` and calls
+  `items.reopen(id, source)`. N on an item whose state is not `revealed` is the player's refusal (ITM-9:
+  `Answer this item first: commit, then reveal (U).`); items exposes `state()` for it.
+- The context bar's secondary (`Mark without a pointer ⇧↵`) calls `items.openAlternatives(id, null)`.
+- `show(view, 'fly', source)` is what items calls for `Fly there` and `View my mark at 20×` (instant under reduced
+  motion is the player's rule).
+
+**I-Q3 · `Hide key` (agrees with reveal's R-Q3).** The card's `Hide key` / `Show key` button calls
+`reveal.showItem(id, false | true)`, the contract's one switch, so the learner's frozen mark hides with the key. Items
+would use R-Q3's `parts` parameter (`{key: false}`) the moment it lands.
+
+**I-N1 · How the service behaves.**
+- **State** lives in `player.progress.items[id]` (contracts ItemResponse); `reveal-waiting` only in memory, so it reads
+  `committed` after a reload. Every transition calls `player.update()` and emits its event: `itemPresented` (each
+  mount), `markChanged`, `gateChanged` (when met or the finest scale over the mark changes), `itemCommitted`,
+  `itemReopened`, `revealWaiting`, `itemAnswered` (at reveal, D10; `iou` only for an outline).
+- **Primary action**: awaiting `Commit answer ↵` → committed `Reveal U` → reveal-waiting `Reveal U` disabled →
+  revealed `Next step N` (`player.next`); keycaps from the registry (`item:reveal`, `step:next`).
+- **Marks** (D16): an accepted `annotationCreated` (cause `edit`, `undo` or `redo`) on the item's slide while the
+  item is mounted and not revealed becomes `draftMarkId`; the previous mark is removed (`store.remove(…, 'command')`,
+  right after the store's create commits); an edit or delete of the draft mark while committed reopens the item
+  (`Answer unlocked…`). At commit the geometry is copied into `answer`; at reveal the annotation is deleted in one
+  store transaction, then `reveal.showItem(id, true)`. A keyboard-made mark (Point Enter, or Enter closing a polygon)
+  moves focus to the primary action and says `Polygon closed. Commit answer has focus…` / `Point placed. …`.
+- **The gate log** (§6.4) records each `viewSettled` of view A while a region item is mounted and not revealed (also
+  while committed: the score is final at reveal), with the uncovered rect (`ShellEnv.visibleInsets`, read at settle)
+  and the hold-until-sharp rule; ≤ 500 entries. The view the item opened on is not logged (J-ITM2).
+- **Reveal**: a choice item reveals at once (`scoring.scoreChoice`); a region item first asks `reveal.revealable('A')`
+  and otherwise waits for `reveal.whenSharp` (the card sentence, said once assertively; `Reveal now` after 15 s; Esc
+  through a `host.keys.scope(document.body)` handler during the wait, and Change answer, abort it), then
+  `reveal.key()`, `scoring.scoreRegion(item, key, answer, views, mpp)`, freeze, one assertive sentence.
+- **Candidates panel**: `host.dialogs.setTitle('candidates', candidatesTitle ?? 'Mark without a pointer')`, then `open`,
+  then items moves focus to the chosen (or first) region radio, because the dialog's default focus would land on the
+  `Candidate regions` tab. `reveal.showCandidates(id)` on open, `(null)` on close (an observer on `#candPanel`'s
+  `hidden`) and on unmount.
+- **`__learn.tools.items()`**: the current item and every item's state, the current response, the gate status,
+  `scheduled`, the panel, what items said (polite and assertive, newest last), `lastCommit`, `lastReveal` (item,
+  answer, views, mpp, the compiled key and the score: ITM-5 re-scores through `__learn.tools.scoring()` with it).
+
+**I-N2 · Judgement calls (items; logged in LEARN.md §15.4).** J-ITM1 … J-ITM14 there.
+
+**I-N3 · The private build and the check (for the Learn integrator at wiring).** As reveal's R-N3: a scratch Vite
+config (`learn.html` only) whose plugin replaces `src/learn/main.ts`'s module glob with the real format · scoring ·
+progress · items and scratch stand-ins for reveal, player and course (the course reads `client/learn/examples/`; it
+also ran with the real reveal module, `RIG_REAL=reveal`). `items.check.mjs` reads only contract-level things: the bus
+log, `__learn.tools.items()` / `.scoring()` / `.annotations()`, `#taskCard .task__cta .btn--cta`, the card
+`#taskCard [data-item-id]`, `#candPanel` / `#candBody`, the overlay layers by z (frozen mark 310, letters 450), the
+live regions and `__shell.notice()`. It opens the case on the default course (`?label=learn-check`, no fragment), so
+on the wired build it needs `data/learn/` (content) and the real course to open the case first.

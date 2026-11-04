@@ -1022,6 +1022,45 @@ that touches them is a **default pending owner**.
   F23's basis says "70–950 µm from the main outline", but the small foci come within 11–20 µm of it. The phrase
   "separate tumour foci" (F23, F25) is flagged for the owner's review (S-Q4b); the scoring is unchanged.
 
+### 15.4 Judgement-call log (items, Wave L2, 2026-11-04)
+
+The owner defaults Q1 (the gate over the learner's own mark), Q2 (rule (b), the Exclusion), Q3 (rule (a)), Q9
+(confidence stays), Q11 (the results file keeps the learner's mark geometry: the committed `answer` is that copy) and Q14
+(`Reveal now` after 15 s) are implemented in `src/learn/items` as §5.5, §6.4 and §6.5 state; each call below that touches
+them is a **default pending owner**. Contract notes are in LEARN-QUESTIONS.md (items, I-Q1 … I-N3).
+
+- **J-ITM1 · The rule line** (D15) is built from the item and its key. With a `credit` related entry it uses §5.5's
+  case-1 words verbatim (`a point on any tumour focus …`, `… lies at least 90 % on tumour earns half credit`), as the §8.2
+  feedback strings do; a later format field could phrase it per module (I-Q1).
+- **J-ITM2 · The view the item opens on is not logged** (§6.4: each `viewSettled` while the item is current). For case 1,
+  step 3's 20× view of the lymphoid tissue is centred on P7 (candidate B), so logging it would make a mark at P7 "met"
+  and ITM-8 could not show that the deposit's 20× view does not count for it. `View my mark at 20×` logs the current
+  view when the camera is already there (no settle would follow). Default pending owner (Q1).
+- **J-ITM3 · The log runs until reveal**, also while committed: the score is final at reveal (D10), so a learner who
+  commits and then views the mark at 20× before `U` meets the gate.
+- **J-ITM4 · Only region items wait for sharp pixels** (D8 is about the key drawn over pixels); MCQ and multi reveal
+  at once.
+- **J-ITM5 · Confidence is on every item kind** and read-only once committed (ux-copy: "Change your mark or confidence,
+  then commit again"). Default pending owner (Q9).
+- **J-ITM6 · Calibration** says `partly right` for part credit of a wrong answer (§8.2 has right | wrong).
+- **J-ITM7 · One mark per item** (D16): the previous mark is removed right after the store's create commits, as its own
+  undo step; an undo that brings it back makes it the mark again ("newest wins" for undo and redo creations too).
+- **J-ITM8 · Sentences.** A keyboard-made mark says §5.5's sentence; a pointer-made one says
+  `Your mark · point. Commit answer when you are ready.` (N) in place of the store's `Created A1 · Point · Stroma`, so
+  learners never hear a class name (D17). After reveal the strip shows the feedback title and the store's
+  `Deleted …` sentence for the removed mark is not spoken.
+- **J-ITM9 · One answer per item.** Committing a candidate or a text answer removes a drawn draft mark; `Change answer`
+  keeps a candidate or text answer (the card re-commits it) and re-copies a drawn mark at the next commit.
+- **J-ITM10 · The wait** (§6.5): the CTA is `Reveal U`, disabled; `Reveal now` with its sentence appears in the card
+  after 15 s; Esc (a body key scope held only during the wait) and Change answer abort it. Default pending owner (Q14).
+- **J-ITM11 · ↵ inside a choice item's options commits** (the hint `Keys A–D choose · ↵ commit`); it never reveals.
+  A–H and 1–8 inside the item are consumed even when the item has no such option, so A and D never pan from there.
+- **J-ITM12 · Gatebox for a mark never seen sharp**: `Not met yet · view your mark at 20×` (N).
+- **J-ITM13 · The multi-select card states its rule** before answering (`Scored: each correct choice earns its share of
+  the point and each wrong choice takes one share away.`, N), as D15 does for region items.
+- **J-ITM14 · The panel's gate warning** shows only after a candidate commit raised it, with its own `Commit anyway`;
+  the card's warning has `View my mark at 20×` and `Commit anyway`. The help sentence names the item's gate label.
+
 ---
 
 ## 16. Open questions for the owner

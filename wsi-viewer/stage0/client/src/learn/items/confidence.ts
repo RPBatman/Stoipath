@@ -83,15 +83,17 @@ export class ConfidenceGroup {
 
   /** Checked states, the one Tab stop (the checked option, else the first), the read-only state. */
   private sync(): void {
+    // write on change only (the shell's rule): update() runs at rest after every transition
     const stop = this.value ?? CONFIDENCE[0]?.id;
     for (const b of this.buttons) {
-      const on = b.dataset['confidence'] === this.value;
-      b.setAttribute('aria-checked', String(on));
-      b.tabIndex = b.dataset['confidence'] === stop ? 0 : -1;
-      if (this.locked) b.setAttribute('aria-disabled', 'true');
-      else b.removeAttribute('aria-disabled');
+      const on = String(b.dataset['confidence'] === this.value);
+      if (b.getAttribute('aria-checked') !== on) b.setAttribute('aria-checked', on);
+      const ti = b.dataset['confidence'] === stop ? 0 : -1;
+      if (b.tabIndex !== ti) b.tabIndex = ti;
+      if (this.locked && b.getAttribute('aria-disabled') !== 'true') b.setAttribute('aria-disabled', 'true');
+      else if (!this.locked && b.hasAttribute('aria-disabled')) b.removeAttribute('aria-disabled');
     }
-    this.root.classList.toggle('is-locked', this.locked);
+    if (this.root.classList.contains('is-locked') !== this.locked) this.root.classList.toggle('is-locked', this.locked);
   }
 
   get label(): string {

@@ -167,7 +167,7 @@ export class CandidatesPanel {
       b.tabIndex = on ? 0 : -1;
       if (on && focus) b.focus();
     }
-    for (const [t, p] of this.panels) p.hidden = t !== tab;
+    for (const [t, p] of this.panels) if (p.hidden !== (t !== tab)) p.hidden = t !== tab;
     this.update();
   }
 
@@ -199,12 +199,19 @@ export class CandidatesPanel {
     }
     const out: HTMLElement[] = [];
     const g = this.item.gate;
-    if (l.panelTab === 'candidates' && l.gateWarning && g !== null && this.engine.gateView(this.itemId).met === false) {
+    if (l.panelTab === 'candidates' && l.gateWarning && l.warnFrom === 'panel' && g !== null && this.engine.gateView(this.itemId).met === false) {
       const [a, b] = TEXT.gateWarn(g.label);
-      out.push(h('div', { class: 'alert alert--neutral' }, h('span', { class: 'alert__glyph', 'aria-hidden': 'true', text: '!' }), h('div', {}, a, ...keycaps(this.engine.keys('mag:20', ['5'])), b)));
+      // the same two ways out as the card's warning: fly there first (the rows' Fly there meets the gate), or commit anyway
+      const anyway = h('button', { class: 'btn btn--sm btn--secondary', type: 'button', text: TEXT.commitAnyway });
+      anyway.addEventListener('click', (e) => this.commit(sourceOfEvent(e)));
+      out.push(h('div', { class: 'alert alert--neutral' }, h('span', { class: 'alert__glyph', 'aria-hidden': 'true', text: '!' }), h('div', { class: 'stack stack--tight' }, h('div', {}, a, ...keycaps(this.engine.keys('mag:20', ['5'])), b), h('div', {}, anyway))));
     } else if (l.notice !== null && l.notice.kind === 'refusal') out.push(noticeAlert(l.notice.text));
-    this.notice.replaceChildren(...out);
-    this.notice.hidden = out.length === 0;
+    const nsig = out.map((x) => x.textContent).join('|');
+    if (this.notice.dataset['sig'] !== nsig) {
+      this.notice.dataset['sig'] = nsig;
+      this.notice.replaceChildren(...out);
+    }
+    if (this.notice.hidden !== (out.length === 0)) this.notice.hidden = out.length === 0;
   }
 
   dispose(): void {

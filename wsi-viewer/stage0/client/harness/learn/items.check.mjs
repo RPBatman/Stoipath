@@ -122,13 +122,21 @@ export async function run(ctx) {
     await H.settle(page);
   };
   const clientOf = (page, x, y) => page.evaluate(([px, py]) => window.__shell.tools.overlay().test.worldToClient('A', px, py), [x, y]);
+  /** Click a world point; refuses (throws) when chrome (the navigator, a HUD item, a dialog) lies over it. */
   const clickWorld = async (page, x, y) => {
     const [cx, cy] = await clientOf(page, x, y);
+    const hit = await page.evaluate(([px, py]) => {
+      const el = document.elementFromPoint(px, py);
+      return el instanceof HTMLCanvasElement && el.closest('#paneA') !== null ? 'canvas' : (el?.id || el?.className || String(el));
+    }, [cx, cy]);
+    if (hit !== 'canvas') throw new Error(`clickWorld(${x}, ${y}): (${Math.round(cx)}, ${Math.round(cy)}) is covered by ${hit}`);
     await page.mouse.click(cx, cy);
   };
   const marks = (page) => page.evaluate(() => (window.__learn.tools.annotations().all ?? []).filter((a) => a.properties?.stoipath?.kind !== 'measurement'));
   const layers = (page) => page.evaluate(() => window.__shell.tools.overlay().A.layers);
   const cta = '#taskCard .task__cta .btn--cta';
+  /** What the card and the engine say now (failure messages). */
+  const why = (page, id) => page.evaluate((s) => { const v = window.__learn.tools.items(); const el = document.querySelector(s); return `[card ${el?.dataset.state ?? 'none'}, engine ${v.current}:${v.states?.[v.current]}, scheduled ${v.scheduled}, status "${(el?.querySelector('.learn-item__status')?.textContent ?? '').slice(0, 60)}"]`; }, CARD(id));
   const ctaText = (page) => text(page, cta);
   const geojsonRequests = (reqs) => reqs.filter((r) => LAYER_RE.test(r.url)).length;
   const noErrors = (errors, what) => ok(errors.length === 0, `${what}: no console or page error (${errors.length}${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''})`);
@@ -207,6 +215,24 @@ export async function run(ctx) {
         ok(g === X.gateNoMark, `ITM-8: no mark, the deposit at 20× settled: the gatebox still reads "${g}"`);
       }
       await H.axe(page, check, TAG, 'axe: region item awaiting (1440)');
+      // rule 3 (no frame cost during gestures): a 1 s drag on the region item writes nothing in the card or the HUD chip
+      {
+        await page.evaluate(() => {
+          const W = (window.__itemsDrag = { down: false, during: 0, after: 0 });
+          window.addEventListener('pointerdown', () => (W.down = true), true);
+          window.addEventListener('pointerup', () => (W.down = false), true);
+          const mo = new MutationObserver((list) => {
+            if (W.down) W.during += list.length;
+            else W.after += list.length;
+          });
+          for (const el of [document.getElementById('taskCard'), document.getElementById('hudGate')]) if (el) mo.observe(el, { childList: true, subtree: true, characterData: true, attributes: true });
+        });
+        const box = await page.locator('#view').boundingBox();
+        await H.drag(page, { x: box.x + box.width * 0.25, y: box.y + box.height * 0.25, width: box.width * 0.4, height: box.height * 0.4 });
+        await H.settle(page);
+        const d = await page.evaluate(() => window.__itemsDrag);
+        ok(d.during === 0, `no frame cost: 0 mutations in #taskCard and the HUD gate chip during a 1 s drag on the region item (${d.during}; ${d.after} at rest after it)`);
+      }
       // a mark at P7 (outside), then the deposit at 20×: the status names the finest view over the MARK
       await page.evaluate(() => window.__shell.setTool('point'));
       await jumpTo(page, CASE.P7[0], CASE.P7[1], CASE.P7_scale);
@@ -250,13 +276,14 @@ export async function run(ctx) {
       const committed = await waitEvent(page, 'itemCommitted', t0).catch(() => null);
       ok(committed?.itemId === 'q-region' && committed.modality === 'pointer', `ITM-3: the CTA commits (itemCommitted ${JSON.stringify(committed)})`);
       ok(await said(page, 'polite', X.saved), `ITM-3: the polite region says "${X.saved}"`);
-      ok((await ctaText(page))?.startsWith('Reveal') === true && (await text(page, `${CARD('q-region')} .learn-item__saved`))?.startsWith('Answer saved.') === true, `committed: the CTA reads "${await ctaText(page)}" and the card "Answer saved. Press U to reveal…"`);
+      await waitText(page, `${CARD('q-region')} .learn-item__saved`, 'Answer saved.', 5000);
+      ok((await ctaText(page))?.startsWith('Reveal') === true && (await text(page, `${CARD('q-region')} .learn-item__saved`))?.includes('Answer saved. Press U to reveal.') === true, `committed: the CTA reads "${await ctaText(page)}" and the card "Answer saved. Press U to reveal…" ${await why(page, 'q-region')}`);
       t0 = await since(page);
       await page.keyboard.press('u');
       const answered = await waitEvent(page, 'itemAnswered', t0).catch(() => null);
       ok(answered?.itemId === 'q-region' && answered.modality === 'pointer' && answered.gateMet === true && answered.score === 1 && answered.points === 1, `ITM-3: itemAnswered {modality: pointer, gateMet: true, score: 1} (${JSON.stringify(answered)})`);
       await waitText(page, `${CARD('q-region')} .feedback__title`, X.revealedInside);
-      ok((await text(page, `${CARD('q-region')} .feedback__title`)) === X.revealedInside, `ITM-3: the feedback title reads "${await text(page, `${CARD('q-region')} .feedback__title`)}"`);
+      ok((await text(page, `${CARD('q-region')} .feedback__title`)) === X.revealedInside, `ITM-3: the feedback title reads "${await text(page, `${CARD('q-region')} .feedback__title`)}" ${await why(page, 'q-region')}`);
       ok(geojsonRequests(reqs) === 1, `ITM-8: the reference layer is fetched only after U (${geojsonRequests(reqs)} request)`);
       await page.waitForTimeout(400);
       {
@@ -380,6 +407,8 @@ export async function run(ctx) {
     const { c, page, errors, reqs } = await boot(desktop, { reduced: false });
     try {
       ok(await toStep(page, S.region), 'ITM-4 setup: the region item');
+      // the navigator sits over the deposit's top-right corner at fit: hide it (O) so all four clicks reach the slide
+      if (await page.evaluate(() => !document.getElementById('navigator').hidden)) await page.evaluate(() => window.__learn.test.run('nav'));
       await fit(page);
       await page.evaluate(() => window.__shell.setTool('polygon'));
       for (const [x, y] of CASE.R1_corners) {

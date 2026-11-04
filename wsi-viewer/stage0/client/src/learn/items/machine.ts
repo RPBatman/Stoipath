@@ -57,7 +57,7 @@ import type {
 import { CandidatesPanel } from './candidates';
 import { choiceFeedback, regionFeedback, type FeedbackView } from './feedback';
 import { GateLog, appendView, gateStatus, viewRect, type GateStatus, type GateSubjectKind } from './gate-log';
-import { answerMark, candidateMark, deviceOfSource, inputOfAnnotation, markCentre, markKindOf, markOf, markSummary, modalityOfInput, newestAccepted } from './marks';
+import { acceptPhrase, answerMark, candidateMark, deviceOfSource, inputOfAnnotation, markArea_um2, markCentre, markKindOf, markOf, markSummary, modalityOfInput, newestAccepted } from './marks';
 import { McqCard } from './mcq';
 import { MultiCard } from './multi';
 import { RegionCard } from './region';
@@ -124,6 +124,8 @@ export interface ItemLive {
   notice: { kind: 'refusal' | 'saved' | 'unlocked' | 'info'; text: string } | null;
   /** The gate warning was shown in this session and the gate is still unmet. */
   gateWarning: boolean;
+  /** Where the warning was raised: the card's commit, or the panel's (a candidate). */
+  warnFrom: 'card' | 'panel' | null;
   candidate: CandidateId | null;
   panelTab: 'candidates' | 'text';
   text: Record<string, string>;
@@ -219,11 +221,13 @@ export class ItemsEngine implements ItemsService {
   response(itemId: string): ItemResponse | null {
     return this.player()?.progress?.items[itemId] ?? null;
   }
+  /** Per-item transient state, keyed by module and item (item ids repeat across modules). */
   live(itemId: string): ItemLive {
-    let l = this.lives.get(itemId);
+    const k = `${this.file()?.id ?? ''}::${itemId}`;
+    let l = this.lives.get(k);
     if (l === undefined) {
-      l = { waiting: null, notice: null, gateWarning: false, candidate: null, panelTab: 'candidates', text: {}, choiceDevice: 'keyboard', key: null, keyShown: true, lastGate: null };
-      this.lives.set(itemId, l);
+      l = { waiting: null, notice: null, gateWarning: false, warnFrom: null, candidate: null, panelTab: 'candidates', text: {}, choiceDevice: 'keyboard', key: null, keyShown: true, lastGate: null };
+      this.lives.set(k, l);
     }
     return l;
   }
@@ -262,7 +266,7 @@ export class ItemsEngine implements ItemsService {
 
   // ------------------------------------------------------------------------------------------------- state
   state(itemId: string): ItemState {
-    if (this.lives.get(itemId)?.waiting != null) return 'reveal-waiting';
+    if (this.lives.get(`${this.file()?.id ?? ''}::${itemId}`)?.waiting != null) return 'reveal-waiting';
     return this.response(itemId)?.state ?? 'awaiting';
   }
 
@@ -403,7 +407,11 @@ export class ItemsEngine implements ItemsService {
     if (e !== null) this.appendViews(cur.itemId, this.log.settled(e, this.learn.host.sharpness('A').state === 'sharp'));
     this.schedule();
   }
-  /** The view in front of the learner when the item appears counts too (a settled view; no new settle needed). */
+  /**
+   * Log the settled view in front of the learner now (no new settle will come): "View my mark at 20×" when the camera
+   * is there already. §6.4 logs `viewSettled` events while the item is current; the view the item opened on is not one
+   * of them (it settled before the item appeared), so it is not logged at mount (ITM-8).
+   */
   private logCurrentView(): void {
     const cur = this.logging();
     const s = this.shell.primary.sample();
@@ -460,7 +468,7 @@ export class ItemsEngine implements ItemsService {
     const a = newestAccepted(e.ids, (id) => store.get(id), item.accept);
     if (a === null) {
       const k = markKindOf(store.get(e.ids[e.ids.length - 1] ?? ''));
-      if (k !== null && e.cause === 'edit') this.sayPolite(TEXT.wrongKind(item.accept.length === 1 && item.accept[0] === 'point' ? 'a point' : 'a point or an outline'));
+      if (k !== null && e.cause === 'edit') this.sayPolite(TEXT.wrongKind(acceptPhrase(item.accept)));
       return;
     }
     const prev = this.response(itemId)?.draftMarkId ?? null;
@@ -533,17 +541,13 @@ export class ItemsEngine implements ItemsService {
     }
     const ans = this.response(itemId)?.answer ?? null;
     if (ans !== null && ans.kind === 'mark') {
-      const m = ans.mark;
-      return [TEXT.yourMark, KIND_WORD[m.kind]].join(' · ');
+      const area = markArea_um2(ans.mark, mpp);
+      return [TEXT.yourMark, KIND_WORD[ans.mark.kind], ...(area !== null ? [formatArea(area)] : [])].join(' · ');
     }
     if (ans !== null && ans.kind === 'candidate') return `${TEXT.yourMark} · ${TEXT.markCandidate(ans.candidate)}`;
     if (ans !== null && ans.kind === 'text') return `${TEXT.yourAnswer} · ${TEXT.markText}`;
     return TEXT.noMark;
   }
-  hasAnswer(itemId: string): boolean {
-    return this.draftMark(itemId) !== null || ((this.response(itemId)?.answer ?? null) !== null && this.response(itemId)?.answer?.kind !== 'choice');
-  }
-
   // ------------------------------------------------------------------------------------------------- the card actions
   /** Choice items: choose (mcq) or toggle / set (multi) an option. */
   chooseOption(itemId: string, letter: OptionId, on: boolean | 'toggle', device: InputModality, speak: boolean): boolean {
@@ -612,8 +616,13 @@ export class ItemsEngine implements ItemsService {
     const mpp = this.mppOf(item);
     if (mpp === null) return;
     const c = markCentre(sub.mark);
-    this.flyTo(item.slide, [c[0] * mpp, c[1] * mpp], item.gate.scale_um_per_px, source);
-    this.sayPolite(TEXT.flyingToMark(item.gate.label));
+    const target: [number, number] = [c[0] * mpp, c[1] * mpp];
+    const s = this.shell.primary.sample();
+    // the camera is there already (no settle will follow the fly): the view in front of the learner is the one asked for
+    const there = s !== null && !s.moving && Math.abs(Math.log2(s.scale_um_per_px / item.gate.scale_um_per_px)) < 0.01 && Math.hypot(s.center_um[0] - target[0], s.center_um[1] - target[1]) < s.scale_um_per_px;
+    this.flyTo(item.slide, target, item.gate.scale_um_per_px, source);
+    if (there) this.logCurrentView();
+    this.sayPolite(TEXT.flyingToMark(item.gate.label), false);
   }
   flyTo(slide: string, center_um: [number, number], scale: number, source: CommandSource): void {
     const p = this.player();
@@ -694,7 +703,8 @@ export class ItemsEngine implements ItemsService {
           l.gateWarning = true;
           l.notice = null;
           const text = TEXT.gateWarnSpoken(item.gate.label);
-          this.sayPolite(text);
+          l.warnFrom = override !== null ? 'panel' : 'card';
+          this.sayPolite(text, false);
           this.schedule();
           return { ok: false, reason: 'gate-warning', text };
         }
@@ -942,6 +952,7 @@ export class ItemsEngine implements ItemsService {
       }, 0);
     }
     void key;
+    this.schedule();
   }
 
   /** Feedback of a revealed item (null before reveal). */
@@ -1063,6 +1074,13 @@ export class ItemsEngine implements ItemsService {
     this.log.drop();
     const l = this.live(itemId);
     l.lastGate = null;
+    // a fresh response (first visit, or after Start again) starts without the last session's transient lines
+    const r0 = this.response(itemId);
+    if (r0 !== null && r0.state === 'awaiting' && !r0.gateWarned) {
+      l.gateWarning = false;
+      l.warnFrom = null;
+      l.notice = null;
+    }
     this.emit('itemPresented', { itemId, kind: item.kind });
     // after the player finished rendering its card (it called mount): first presentation, the view in front of the
     // learner, the revealed sources and the key's area when the item was revealed before (a reload, ⇧N back)
@@ -1070,7 +1088,6 @@ export class ItemsEngine implements ItemsService {
       if (this.mounted !== m) return;
       if (this.response(itemId)?.presentedAt == null) this.save(itemId, (r) => (r.presentedAt = nowIso()));
       if (item.kind === 'region') {
-        this.logCurrentView();
         this.syncGate(itemId);
         if (this.state(itemId) === 'revealed') {
           const rv = this.revealer();
@@ -1141,6 +1158,7 @@ export class ItemsEngine implements ItemsService {
       draftMarkId: cur === null ? null : (this.response(cur)?.draftMarkId ?? null),
       gate: cur === null ? null : { ...this.gateView(cur), result: g },
       holding: this.log.holding,
+      scheduled: this.scheduled,
       panel: this.panel === null ? null : { itemId: this.panel.itemId, open: this.panelOpen(), tab: this.live(this.panel.itemId).panelTab, candidate: this.live(this.panel.itemId).candidate },
       waiting: cur === null ? null : (this.live(cur).waiting === null ? null : { pendingTiles: this.live(cur).waiting?.pendingTiles, revealNowShown: this.live(cur).waiting?.revealNowShown }),
       said: { polite: [...this.said.polite], assertive: [...this.said.assertive] },
