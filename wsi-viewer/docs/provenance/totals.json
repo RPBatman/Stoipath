@@ -1,39 +1,39 @@
 {
- "generated_at": "2026-11-01T16:50:34Z",
- "as_of": "2026-11-01",
+ "generated_at": "2026-11-04T06:58:16Z",
+ "as_of": "2026-11-04",
  "inputs": {
-  "transcript_files": 169,
-  "transcript_lines": 35009,
-  "unique_assistant_messages": 3502,
+  "transcript_files": 217,
+  "transcript_lines": 53085,
+  "unique_assistant_messages": 8177,
   "sessions": 1,
-  "workflows": 67,
-  "duplicate_lines_same_message": 10828,
+  "workflows": 75,
+  "duplicate_lines_same_message": 16042,
   "duplicate_messages_across_runs": 0,
   "duplicate_messages_across_files": 72,
   "cache_write_unsplit_tokens": 0,
   "synthetic_with_usage": 0
  },
  "runs": {
-  "total": 168,
+  "total": 213,
   "by_kind": {
    "main": 1,
-   "workflow-agent": 160,
+   "workflow-agent": 205,
    "direct-subagent": 7
   },
   "outcomes": {
-   "in_progress": 4,
-   "result": 126,
-   "killed": 4,
+   "in_progress": 5,
+   "result": 167,
+   "killed": 7,
    "error": 34
   }
  },
  "tokens": {
-  "in": 84618,
-  "out": 13466988,
-  "in_plus_out": 13551606,
-  "cache_write": 95441488,
-  "cache_read": 806580271,
-  "all_kinds": 915573365
+  "in": 94122,
+  "out": 20560527,
+  "in_plus_out": 20654649,
+  "cache_write": 125737973,
+  "cache_read": 2418518273,
+  "all_kinds": 2564910895
  },
  "by_model": {
   "claude-fable-5-1": {
@@ -47,17 +47,17 @@
    "cost_usd": 1932.45
   },
   "claude-opus-5-5": {
-   "in": 1116,
-   "out": 1029497,
-   "cw": 5474537,
-   "cw5m": 4591042,
-   "cw1h": 883495,
-   "cr": 144257505,
-   "messages": 542,
-   "cost_usd": 79.47
+   "in": 10620,
+   "out": 8123036,
+   "cw": 35771022,
+   "cw5m": 30277721,
+   "cw1h": 5493301,
+   "cr": 1756195507,
+   "messages": 5217,
+   "cost_usd": 709.08
   }
  },
- "cost_usd_total": 2011.92,
+ "cost_usd_total": 2641.53,
  "unpriced_models": [],
  "phases": {
   "planning": {
@@ -80,22 +80,23 @@
    "workflow_count": 33
   },
   "verification": {
-   "runs": 24,
+   "runs": 29,
    "outcomes": {
-    "result": 11,
-    "error": 13
+    "result": 15,
+    "error": 13,
+    "in_progress": 1
    },
-   "tokens_in": 10450,
-   "tokens_out": 1134248,
-   "tokens_cache_write": 7728544,
-   "tokens_cache_read": 66284869,
-   "api_messages": 350,
-   "cost_usd": 169.99,
+   "tokens_in": 11358,
+   "tokens_out": 1617537,
+   "tokens_cache_write": 9833608,
+   "tokens_cache_read": 185316338,
+   "api_messages": 802,
+   "cost_usd": 214.0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:48Z",
-   "last_end": "2026-10-25T13:42:58Z",
-   "agent_wall_clock_h": 6.67,
-   "workflow_count": 15
+   "last_end": "2026-11-04T06:57:01Z",
+   "agent_wall_clock_h": 8.75,
+   "workflow_count": 18
   },
   "prototype": {
    "runs": 12,
@@ -136,38 +137,36 @@
   "shell": {
    "runs": 2,
    "outcomes": {
-    "killed": 1,
-    "in_progress": 1
+    "killed": 2
    },
-   "tokens_in": 426,
-   "tokens_out": 364694,
-   "tokens_cache_write": 2532137,
-   "tokens_cache_read": 74467485,
-   "api_messages": 207,
-   "cost_usd": 34.85,
+   "tokens_in": 428,
+   "tokens_out": 368698,
+   "tokens_cache_write": 2532412,
+   "tokens_cache_read": 75037580,
+   "api_messages": 208,
+   "cost_usd": 35.05,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:04:01Z",
-   "last_end": "2026-11-01T16:50:01Z",
-   "agent_wall_clock_h": 0.99,
+   "last_end": "2026-11-01T16:52:30Z",
+   "agent_wall_clock_h": 1.03,
    "workflow_count": 2
   },
   "dissemination": {
-   "runs": 6,
+   "runs": 7,
    "outcomes": {
-    "result": 3,
-    "killed": 1,
-    "in_progress": 2
+    "result": 6,
+    "killed": 1
    },
-   "tokens_in": 528,
-   "tokens_out": 277298,
-   "tokens_cache_write": 1006976,
-   "tokens_cache_read": 23643425,
-   "api_messages": 142,
-   "cost_usd": 17.75,
+   "tokens_in": 792,
+   "tokens_out": 460062,
+   "tokens_cache_write": 1491228,
+   "tokens_cache_read": 63065788,
+   "api_messages": 274,
+   "cost_usd": 31.71,
    "has_unpriced": false,
    "first_start": "2026-10-25T15:15:29Z",
-   "last_end": "2026-11-01T16:50:30Z",
-   "agent_wall_clock_h": 0.94,
+   "last_end": "2026-11-01T17:23:21Z",
+   "agent_wall_clock_h": 1.55,
    "workflow_count": 2
   },
   "main-session": {
@@ -175,17 +174,36 @@
    "outcomes": {
     "in_progress": 1
    },
-   "tokens_in": 5952,
-   "tokens_out": 447124,
-   "tokens_cache_write": 3551249,
-   "tokens_cache_read": 143980036,
-   "api_messages": 374,
-   "cost_usd": 114.2,
+   "tokens_in": 6498,
+   "tokens_out": 681358,
+   "tokens_cache_write": 8161055,
+   "tokens_cache_read": 266029198,
+   "api_messages": 605,
+   "cost_usd": 180.18,
    "has_unpriced": false,
    "first_start": "2026-10-24T14:47:08Z",
-   "last_end": "2026-11-01T16:49:17Z",
-   "agent_wall_clock_h": 194.04,
+   "last_end": "2026-11-04T06:56:01Z",
+   "agent_wall_clock_h": 256.15,
    "workflow_count": 0
+  },
+  "other": {
+   "runs": 39,
+   "outcomes": {
+    "result": 34,
+    "killed": 2,
+    "in_progress": 3
+   },
+   "tokens_in": 7784,
+   "tokens_out": 6189248,
+   "tokens_cache_write": 23097088,
+   "tokens_cache_read": 1330864913,
+   "api_messages": 3859,
+   "cost_usd": 505.47,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:52:57Z",
+   "last_end": "2026-11-04T06:56:06Z",
+   "agent_wall_clock_h": 22.86,
+   "workflow_count": 8
   }
  },
  "workflows": {
@@ -485,6 +503,27 @@
    "harness_total_tokens": 63024,
    "harness_duration_s": 9.9
   },
+  "wf_3bc5346d-9f6": {
+   "runs": 2,
+   "outcomes": {
+    "killed": 2
+   },
+   "tokens_in": 500,
+   "tokens_out": 435220,
+   "tokens_cache_write": 1319588,
+   "tokens_cache_read": 58423500,
+   "api_messages": 243,
+   "cost_usd": 26.99,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T17:12:08Z",
+   "last_end": "2026-11-01T17:47:36Z",
+   "agent_wall_clock_h": 1.15,
+   "workflow_name": "samples-corpus",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 618733,
+   "harness_duration_s": 1384.5
+  },
   "wf_3ea4071f-681": {
    "runs": 2,
    "outcomes": {
@@ -592,6 +631,27 @@
    "harness_total_tokens": 2533053,
    "harness_duration_s": 8127.6
   },
+  "wf_4909ef62-cfb": {
+   "runs": 3,
+   "outcomes": {
+    "result": 3
+   },
+   "tokens_in": 480,
+   "tokens_out": 375413,
+   "tokens_cache_write": 1022549,
+   "tokens_cache_read": 59831217,
+   "api_messages": 239,
+   "cost_usd": 24.59,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:31:54Z",
+   "last_end": "2026-11-01T17:23:21Z",
+   "agent_wall_clock_h": 1.22,
+   "workflow_name": "tsp-prep",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 1065170,
+   "harness_duration_s": 3089.5
+  },
   "wf_4bb421a9-ae8": {
    "runs": 2,
    "outcomes": {
@@ -633,6 +693,27 @@
    "status": "completed",
    "harness_total_tokens": 481929,
    "harness_duration_s": 818.7
+  },
+  "wf_527f90c1-fdc": {
+   "runs": 19,
+   "outcomes": {
+    "result": 19
+   },
+   "tokens_in": 4564,
+   "tokens_out": 3261447,
+   "tokens_cache_write": 11459437,
+   "tokens_cache_read": 863031155,
+   "api_messages": 2266,
+   "cost_usd": 295.15,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T19:21:59Z",
+   "last_end": "2026-11-02T03:56:31Z",
+   "agent_wall_clock_h": 12.17,
+   "workflow_name": "phase-a-tools",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 9690145,
+   "harness_duration_s": 30874.4
   },
   "wf_57970b00-23a": {
    "runs": 3,
@@ -676,6 +757,27 @@
    "status": "completed",
    "harness_total_tokens": 343995,
    "harness_duration_s": 705.4
+  },
+  "wf_598d5cac-3bf": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 166,
+   "tokens_out": 271847,
+   "tokens_cache_write": 1631771,
+   "tokens_cache_read": 27032807,
+   "api_messages": 83,
+   "cost_usd": 19.0,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T03:33:06Z",
+   "last_end": "2026-11-04T04:16:17Z",
+   "agent_wall_clock_h": 0.72,
+   "workflow_name": "learn-spec",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 635850,
+   "harness_duration_s": 2594.0
   },
   "wf_601c64ae-391": {
    "runs": 12,
@@ -1078,6 +1180,27 @@
    "harness_total_tokens": 260953,
    "harness_duration_s": 2458.5
   },
+  "wf_adce8a09-963": {
+   "runs": 1,
+   "outcomes": {
+    "killed": 1
+   },
+   "tokens_in": 278,
+   "tokens_out": 192697,
+   "tokens_cache_write": 1605985,
+   "tokens_cache_read": 52814761,
+   "api_messages": 134,
+   "cost_usd": 22.45,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:17:34Z",
+   "last_end": "2026-11-01T16:52:30Z",
+   "agent_wall_clock_h": 0.58,
+   "workflow_name": "integrate-shell",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 518571,
+   "harness_duration_s": 2096.2
+  },
   "wf_b1ac0171-b71": {
    "runs": 2,
    "outcomes": {
@@ -1225,6 +1348,27 @@
    "harness_total_tokens": 827335,
    "harness_duration_s": 5150.1
   },
+  "wf_d09c7814-7ee": {
+   "runs": 6,
+   "outcomes": {
+    "result": 6
+   },
+   "tokens_in": 994,
+   "tokens_out": 613156,
+   "tokens_cache_write": 2168948,
+   "tokens_cache_read": 132824749,
+   "api_messages": 496,
+   "cost_usd": 49.68,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:52:57Z",
+   "last_end": "2026-11-01T19:20:41Z",
+   "agent_wall_clock_h": 2.85,
+   "workflow_name": "review-shell",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 2211644,
+   "harness_duration_s": 8865.7
+  },
   "wf_d216cdb8-2bb": {
    "runs": 2,
    "outcomes": {
@@ -1266,6 +1410,27 @@
    "status": "completed",
    "harness_total_tokens": 650480,
    "harness_duration_s": 933.0
+  },
+  "wf_d726a9be-dd5": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 110,
+   "tokens_out": 207446,
+   "tokens_cache_write": 970173,
+   "tokens_cache_read": 16211636,
+   "api_messages": 55,
+   "cost_usd": 12.24,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T17:59:27Z",
+   "last_end": "2026-11-01T18:32:29Z",
+   "agent_wall_clock_h": 0.55,
+   "workflow_name": "shell-tools-spec",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 514533,
+   "harness_duration_s": 1985.3
   },
   "wf_dbcd9af8-b88": {
    "runs": 2,
@@ -1561,40 +1726,61 @@
    "harness_total_tokens": 0,
    "harness_duration_s": 3.0
   },
-  "wf_4909ef62-cfb": {
-   "runs": 2,
+  "wf_0f63ba88-ee5": {
+   "runs": 7,
    "outcomes": {
-    "in_progress": 2
+    "result": 6,
+    "in_progress": 1
    },
-   "tokens_in": 216,
-   "tokens_out": 192649,
-   "tokens_cache_write": 538297,
-   "tokens_cache_read": 20408854,
-   "api_messages": 107,
-   "cost_usd": 10.63,
+   "tokens_in": 1104,
+   "tokens_out": 666749,
+   "tokens_cache_write": 2338667,
+   "tokens_cache_read": 124965702,
+   "api_messages": 546,
+   "cost_usd": 50.03,
    "has_unpriced": false,
-   "first_start": "2026-11-01T16:31:54Z",
-   "last_end": "2026-11-01T16:50:30Z",
-   "agent_wall_clock_h": 0.61,
+   "first_start": "2026-11-04T05:04:13Z",
+   "last_end": "2026-11-04T06:57:01Z",
+   "agent_wall_clock_h": 2.81,
    "workflow_name": null,
    "stage": null,
    "status": "running (no workflow record yet)"
   },
-  "wf_adce8a09-963": {
+  "wf_148d6e0b-e06": {
+   "runs": 7,
+   "outcomes": {
+    "result": 5,
+    "in_progress": 2
+   },
+   "tokens_in": 1242,
+   "tokens_out": 1209843,
+   "tokens_cache_write": 5184582,
+   "tokens_cache_read": 226915625,
+   "api_messages": 616,
+   "cost_usd": 95.51,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T04:18:09Z",
+   "last_end": "2026-11-04T06:56:06Z",
+   "agent_wall_clock_h": 4.65,
+   "workflow_name": null,
+   "stage": null,
+   "status": "running (no workflow record yet)"
+  },
+  "wf_81e8fa28-c04": {
    "runs": 1,
    "outcomes": {
     "in_progress": 1
    },
-   "tokens_in": 276,
-   "tokens_out": 188693,
-   "tokens_cache_write": 1605710,
-   "tokens_cache_read": 52244666,
-   "api_messages": 133,
-   "cost_usd": 22.25,
+   "tokens_in": 12,
+   "tokens_out": 6829,
+   "tokens_cache_write": 128986,
+   "tokens_cache_read": 491208,
+   "api_messages": 6,
+   "cost_usd": 0.88,
    "has_unpriced": false,
-   "first_start": "2026-11-01T16:17:34Z",
-   "last_end": "2026-11-01T16:50:01Z",
-   "agent_wall_clock_h": 0.54,
+   "first_start": "2026-11-04T06:53:49Z",
+   "last_end": "2026-11-04T06:55:30Z",
+   "agent_wall_clock_h": 0.03,
    "workflow_name": null,
    "stage": null,
    "status": "running (no workflow record yet)"
@@ -1602,31 +1788,35 @@
  },
  "wall_clock": {
   "first": "2026-10-24T14:47:08Z",
-  "last": "2026-11-01T16:50:30Z",
-  "span_h": 194.1,
-  "span_days": 8.09,
-  "agent_active_union_h": 18.6,
-  "agent_wall_clock_sum_h": 54.5,
+  "last": "2026-11-04T06:57:01Z",
+  "span_h": 256.2,
+  "span_days": 10.67,
+  "agent_active_union_h": 33.1,
+  "agent_wall_clock_sum_h": 80.1,
   "agent_active_dates": [
    "2026-10-24",
    "2026-10-25",
    "2026-10-26",
-   "2026-11-01"
+   "2026-11-01",
+   "2026-11-02",
+   "2026-11-04"
   ]
  },
  "days": {
   "first_research_note_commit": "2026-10-24T18:30:11+00:00",
-  "to_date": "2026-11-01",
-  "elapsed_days": 8,
-  "calendar_days_inclusive": 9
+  "to_date": "2026-11-04",
+  "elapsed_days": 11,
+  "calendar_days_inclusive": 12
  },
  "owner_messages": {
-  "count": 38,
+  "count": 50,
   "per_day": {
    "2026-10-24": 15,
    "2026-10-25": 12,
    "2026-10-26": 2,
-   "2026-11-01": 9
+   "2026-11-01": 14,
+   "2026-11-03": 1,
+   "2026-11-04": 6
   },
   "timestamps": [
    "2026-10-24T14:47:08.550Z",
@@ -1666,7 +1856,19 @@
    "2026-11-01T16:01:28.128Z",
    "2026-11-01T16:16:38.833Z",
    "2026-11-01T16:16:52.489Z",
-   "2026-11-01T16:34:01.943Z"
+   "2026-11-01T16:34:01.943Z",
+   "2026-11-01T17:21:16.587Z",
+   "2026-11-01T17:51:35.472Z",
+   "2026-11-01T17:55:02.115Z",
+   "2026-11-01T17:58:04.371Z",
+   "2026-11-01T18:19:50.114Z",
+   "2026-11-03T17:21:44.583Z",
+   "2026-11-04T02:43:25.911Z",
+   "2026-11-04T03:31:10.631Z",
+   "2026-11-04T04:12:28.019Z",
+   "2026-11-04T04:49:39.012Z",
+   "2026-11-04T04:53:43.563Z",
+   "2026-11-04T04:58:40.273Z"
   ],
   "slash_commands": {
    "count": 5,
@@ -1682,8 +1884,8 @@
  },
  "harness_cost_state": {
   "note": "Claude Code's own running total for the session (last cost-state record in the main transcript); it includes model calls made inside tools (e.g. web search / fetch on Haiku 5.5) and any call whose response was never written to a transcript, so it is the upper reference and the ledger the lower bound",
-  "record_written_after": "2026-11-01T14:16:31Z",
-  "total_cost_usd": 2011.32,
+  "record_written_after": "2026-11-04T02:44:57Z",
+  "total_cost_usd": 2519.98,
   "ledger_same_cutoff": {
    "claude-fable-5-1": {
     "output": 12437491,
@@ -1692,10 +1894,10 @@
     "cost_usd": 1932.45
    },
    "claude-opus-5-5": {
-    "output": 362959,
-    "cache_write": 1704016,
-    "cache_read": 24983613,
-    "cost_usd": 22.18
+    "output": 5855245,
+    "cache_write": 26031552,
+    "cache_read": 1342222871,
+    "cost_usd": 530.85
    }
   },
   "models": {
@@ -1708,20 +1910,20 @@
     "cost_usd": 1980.61
    },
    "claude-haiku-5-5": {
-    "input": 10827019,
-    "output": 812411,
+    "input": 10839487,
+    "output": 813414,
     "cache_write": 0,
     "cache_read": 0,
-    "web_search_requests": 699,
-    "cost_usd": 8.48
+    "web_search_requests": 700,
+    "cost_usd": 8.49
    },
    "claude-opus-5-5": {
-    "input": 1310,
-    "output": 363049,
-    "cache_write": 1704864,
-    "cache_read": 25163557,
+    "input": 8930,
+    "output": 5855327,
+    "cache_write": 26031769,
+    "cache_read": 1342294241,
     "web_search_requests": 0,
-    "cost_usd": 22.23
+    "cost_usd": 530.88
    }
   }
  },
