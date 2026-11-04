@@ -328,3 +328,121 @@ things follow:
   call. The learner-facing phrase "three small separate tumour foci" (F23 in `/case/expertView/text`, F25 in the
   related feedback) should be confirmed or reworded in the owner's review.
 No scoring change follows: the rules and the §6 numbers stand either way.
+
+## 2026-11-04 · reveal (Wave L2): contract questions, and how the service behaves for items, player and the studio
+
+Filed by the reveal builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`: the module
+(`src/learn/reveal/`; tests `harness/unit/learn-reveal.test.mjs`, `harness/learn/reveal.check.mjs`, fixtures
+`harness/fixtures/learn/reveal/`) implements contracts §10 `RevealService` as written. It reads the open module and the
+learner's answers from the `player` service (`module`, `progress`), which exists in learner and preview mode.
+
+**R-Q1 · In the studio reveal has no module to read (request, for Wave L3).** The studio installs reveal but not the
+player (LEARN.md §3), and item-editor's `Show the answer key` previews the key "through `reveal`" (§7 step 4). With no
+player, `key()` rejects (`No module is open, so there is no answer key to show`) and `showItem` draws nothing.
+Proposal (contracts §10, additive):
+
+```ts
+/** Where reveal reads the open module and the answers when no `player` is installed (the studio's key preview). */
+export interface RevealContext {
+  module(): LoadedModule | null;
+  /** null: no learner answers (the studio): `showItem` then draws the item's key as soon as it is compiled. */
+  progress(): ModuleProgress | null;
+}
+export interface RevealService {
+  // …
+  /** Additive: the studio attaches its draft (url `draft:<id>`); the player's module is used otherwise. */
+  attach(ctx: RevealContext): Disposer;
+}
+```
+
+**R-Q2 · Label pills on point features (Phase A request, additive; overlay owner).** §5.4 wants hotspot numbers (`1`,
+`2`…) and candidate letters (`A`–`F`) as pills. The Phase A overlay draws `FeatureStyle.label` only on shapes at least
+`LABEL_MIN_CSS` (24 CSS px) across on screen (`src/shell/overlay/vector.ts` `drawLabels`), so a Point never gets one,
+and the pill would sit on the dot. Reveal already sets `label` on both sources' styles. Proposal for the Phase A
+integrator: in `drawLabels`, for `KIND_POINT` draw the pill beside the dot (offset `POINT_RADIUS_CSS + 4` CSS px right)
+whatever its size. Until then the letters and numbers are in the candidate rows and the hotspot list only (text, so
+WCAG is met), and on the slide the four candidates are four unlabelled chalk dots (looked at in the private build).
+
+**R-Q3 · `Hide key` also hides the learner's mark (wording, or an additive parameter).** `showItem(itemId, on)` is the
+one switch for an item's key target, related features and frozen mark, so `Hide key` → `showItem(id, false)` hides the
+mark too. If the mark should stay for comparison while the key is hidden, proposal:
+`showItem(itemId: string, on: boolean, parts?: { key?: boolean; mark?: boolean })` (absent = both).
+
+**R-N1 · How the service behaves (for items, player and course).**
+- `key(keyId)` compiles a key of the player's open module. The reference layer is fetched once per absolute URL (a
+  promise cache; two calls, or two concurrent calls, make one request, RVL-1), never before something asks (ITM-8).
+  Order of checks, each an Error with one clause worded like the lint rule for the same fault: the key and its slide
+  exist; the slide is the catalogue's build (`Key {id}: {ref} was captured on a different build of the slide`, before
+  any request); the catalogue entry lists the layer; the request (`Key {id}: the reference layer {layer} could not be
+  loaded ({reason})`, same origin only); the file's own `stoipath.slide.fingerprint` (`Key {id}: {layer} belongs to a
+  different build of {ref}`, the comparison compileKey cannot make, S-Q2); the pinned version (`Key {id} was written for
+  version {v} of {layer}; the slide has {v′}`); then `scoring.compileKey`. A failed request is not cached.
+- `revealable('A')` is `{ok: true}` iff a slide is open and `host.sharpness` says settled and `sharp`; otherwise
+  `{ok: false, pendingTiles, label}`. `whenSharp(view, signal)` resolves (through `atRest`) at once when revealable,
+  else at the next Sharp `tileSettled` of the view (or a `viewSettled` whose snapshot is Sharp); an abort (Esc, Change
+  answer) rejects with an `AbortError`; its listeners are removed either way. The waiting sentence, the assertive
+  sentence and the 15 s `Reveal now` are the item card's; `key()` and `showItem()` never require sharp pixels, so
+  `Reveal now` works (RVL-2).
+- `showItem(id, true)`: the item's key target (its include outline and its subtracted Exclusion outlines, `--ann-3`
+  dashed) and related features (`--ann-6` dashed thin) are drawn only once the player's progress says the item is
+  revealed (`state: 'revealed'`, or `revealedAt` / `score` set, LEARN.md §5.5 step 4), so a call before U draws no answer
+  and fetches nothing. Its frozen mark (the response's copy of the geometry, or the chosen candidate's) is drawn whenever
+  the item has an answer: a committed candidate (which has no annotation in the store) can be shown that way (§5.4
+  "item committed or revealed"). When the item names no `target`, the target its score names is drawn. A revealed
+  item whose key is not compiled yet (a reload on a reveal step) is compiled on demand; a failure gives one refusal.
+- Reveal re-derives its sources on `stepShown`, `itemCommitted`, `itemAnswered`, `itemReopened`, `moduleLoaded` and
+  `slideOpened` (A), never per frame; every feature belongs to its module slide and is drawn only while that slide is
+  open. Another module (url + content hash) resets the shown items, hotspots and candidates and turns the expert view off.
+- `showCandidates(id)` draws the letters only while the candidates panel is open: reveal observes `#candPanel`'s
+  `hidden` attribute (read only), so Esc and the close button remove them too. Items should still call
+  `showCandidates(null)` when its item unmounts.
+- `showHotspots(ids)` numbers them in the order given (`1`, `2`…; see R-Q2).
+- `expert(on, source)`: refused with `The expert's view unlocks after you reveal {item title}.` (or `This module has no
+  expert view.`) and returns false; on: emits `expertViewChanged {on: true}`, flies through `player.show(view, 'fly')`,
+  draws every feature of the listed keys (Tumor `--ann-8` solid, Exclusion `--ann-8` dashed). It turns itself off (with
+  the event) when the module changes or an `unlockAfter` item is no longer revealed (Start again).
+- `toggleHidden()` returns the new state (true = hidden): a mask over the six sources, so the second press restores
+  exactly the previous set; it outlives step changes until pressed again. Strip `All overlays hidden · H shows them` /
+  `Overlays shown`, spoken `Overlays hidden.` / `Overlays shown.` (ux-copy §14).
+- Sources on view A's overlay (stable across slide switches): `learn-expert` 200, `learn-hotspots` 220,
+  `learn-related` 235, `learn-key` 240, `learn-mark` 310, `learn-candidates` 450; none hit-testable; `style()` returns
+  shared frozen objects; `version()` bumps only when a feature set changes.
+- `__learn.tools.reveal()`: state, the six sources (ids, labels, styles, counts, point positions), key fetch counts,
+  `service`, and `keyFor(loadedModule, keyId)` (RVL-1's fixtures through the same loader and cache).
+
+**R-N2 · With ⇧E on, the expert view is drawn under the key (observation, for the owner).** By §5.4's z order the key
+(240, dashed yellow over a solid dark halo) covers the expert outlines (200, chalk) where they coincide, so on the
+largest deposit the expert view looks like the revealed key; only the three small foci change (looked at in the private
+build). If the expert view should read as the CAMELYON16 reference, either the key and related sources of the keys in
+`expertView.keys` step aside while ⇧E is on, or the expert view goes above the key. Implemented as specified.
+
+**R-N3 · The private build and the check (for the Learn integrator at wiring).** I built with the client's own
+`vite.config.ts` plus one plugin (scratch only) that replaces `src/learn/main.ts`'s module glob with format · scoring ·
+progress · reveal and scratch stand-ins for player, items and course, so the siblings' in-progress code could not
+affect it. `reveal.check.mjs` drives the page only through what LEARN.md specifies, so it should run unchanged on the
+wired build: `__learn.test.run('step:next' | 'item:alternatives' | 'item:reveal' | 'fit')`, `__learn.test.card(true)`,
+keyboard ⇧E and H on `#view`, the bus events `stepShown {stepId: 'find'}`, `itemCommitted`, `revealWaiting`,
+`itemAnswered`, `expertViewChanged`; in `#candBody` a `.candidate` row per candidate containing its description, a
+`label` (the radio) and a `Fly there` button, then a button named `Commit C as my mark…` (and `Commit anyway…` after a
+gate warning); in `#taskCard` the waiting sentence, a `Reveal now` button after 15 s with its sentence, and one button
+named exactly `Hide key` or `Show key` with `aria-pressed`. One heads-up from running `integrator.check.mjs` on that
+build: once a course module opens a slide in preview mode, LI-4's read of `__shell.notice()` right after
+`__learn.ready` got `Opening the slide…` (the engine's persistent notice, cleared at the next settled frame) instead of
+`Preview · progress is not kept`; the L1 build passed because nothing opened. LI-4 may need to wait for the slide, or
+rank the `preview` notice above `engine`.
+
+**R-N4 · Judgement calls (reveal; please log them in LEARN.md §15 beside the scoring log).**
+- J-R1 · Key refusals are one clause each, worded like the lint rule for the same fault (R-N1); the catalogue-build check
+  runs before any request.
+- J-R2 · A key is drawn only once progress says the item is revealed, and reveal redraws on `itemAnswered`, so a call
+  order between items' "freeze" and `showItem` cannot leak or lose the key.
+- J-R3 · The candidate letters follow the panel's `hidden` attribute (observed, read only).
+- J-R4 · `H` (`learn:overlays`) is in the registry's `Annotate` group (the keymap's `Mark and measure`, where ux-copy
+  lists `Hide / show overlays`); `⇧E` (`expert:toggle`) is in `The flow (Learn)`. The studio gets `H` only.
+- J-R5 · The expert view turns off by itself on a module change or a Start again that reopens an unlocking item.
+- J-R6 · A key that cannot be loaded while drawing gives one refusal; redraws do not retry, `key()` does.
+- J-R7 · N strings: `Expert's view on` / `Expert's view off` (strip), `Expert's view shown. {expertView.text}` /
+  `Expert's view hidden.` (polite), `This module has no expert view.`, `The expert's view could not be shown ({reason}).`
+- Owner defaults that touch reveal (already in §15.1, default pending owner): Q14 `Reveal now` after 15 s (the item
+  card's timer; reveal's key and drawing do not wait for sharp pixels, so it works) and Q15 / D25 (answers readable in
+  the public files; reveal still requests the layer only when the learner reveals, ITM-8).
