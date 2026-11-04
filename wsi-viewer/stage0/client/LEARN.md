@@ -1,6 +1,6 @@
 # Stoipath Learn · L1: build specification
 
-**Status:** specification for builders, 2026-11-04. Nothing in it is built yet. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
+**Status:** specification for builders, 2026-11-04. **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
 
 **Why:** on 2026-11-04 the owner wrote: *"Lets start on the learning components/modules builds."* Education is one of the project's three pillars (plan 12 §5). L1 is the first usable slice of **Stoipath Learn**: a module format, a learner player, the signature region-marking item, a course shell, a minimal author studio and one real case on CAMELYON16 tumor_014.
 
@@ -48,17 +48,17 @@ Not needed first: LTI, telemetry, the Rust engine, any server. L1 is static file
 | D12 | **Learners see the module's slide label, never the catalogue title or the manifest stain line.** | Both name the diagnosis for tumor_014: "Sentinel lymph node with breast-carcinoma macrometastasis…". The top bar, HUD, `document.title` and canvas name use `ModuleSlide.label` (`tumor_014 · H&E`), the dataset and the licence (LI-10). | The Phase A identity (W9): answers the size item before it is asked. |
 | D13 | **The first case's vignette restates published dataset facts only.** `synthetic: false`; no invented age or history. | CAMELYON16 publishes no clinical record per slide. An invented history adds claims nobody can verify, and the design's own vignette is synthetic. | The design's synthetic 62-year-old vignette. |
 | D14 | **IoU is computed by a raster in Learn's `scoring` module** (cell-centre sampling, ≤ 2048 cells on the long side; §6.3.3). | Phase A's GeometryService has no IoU: it offers point-in-polygon, distance and areas, but `iou` is not in `geometry/index.ts`. Raster IoU is deterministic, holds holes and self-intersecting freehand marks (even-odd) and needs no dependency. Its error is bounded and tested (SCR-1, SCR-2): 0.567 against 0.5676 analytic on the real key. Its signature matches the plan's `geometry.iou`, so it can move to the geometry service later. | Exact polygon clipping (Greiner–Hormann / Martinez): a dependency, or a large hand-written algorithm with degenerate cases. Asking Phase A for `GeometryService.iou` now: puts a new algorithm into a gated module. |
-| D15 | **Region scoring.** A point counts when it is inside the target (union of include minus subtract) or within `pointTolerance_um` of its outline. An outline counts when IoU ≥ `iouFull`. The best target counts. A wrong mark on a `related` feature, or in a subtracted hole, gets its own feedback. The rule is stated on the card **before** answering. | FR-E3 names point-in-polygon, IoU threshold, nearest distance and zoom-gated credit. US-E1 sets IoU ≥ 0.5. Stating the rule first is fair: an outline drawn inside the deposit is not an outline of it (§6.3, example R3). | IoU only: punishes a correct point. "Overlap with the mark's own area": not in FR-E3 (owner question Q2). |
+| D15 | **Region scoring** (owner defaults of 2026-11-04, default pending owner, §15.1). A point counts when it is inside the target (union of include minus subtract) or within `pointTolerance_um` of its outline, **and also** when it is inside, or within the tolerance of, a `related` feature marked `credit` (rule (a): on the case's point item any CAMELYON16 Tumor focus counts; the feedback then names the largest deposit). An outline counts when IoU ≥ `iouFull`. **Rule (b):** an outline below that whose area lies at least `partialInside.fraction` (0.90) inside the target or a credited feature earns `partialInside.factor` (half) of the points, feedback `Correct location; the outline covers only part of the deposit`. A point inside a subtracted hole (an Exclusion area) earns nothing, and the feedback says the expert excluded that area. The best target counts. The rule is stated on the card **before** answering. | FR-E3 names point-in-polygon, IoU threshold, nearest distance and zoom-gated credit. US-E1 sets IoU ≥ 0.5. A point item tests finding the metastasis, which any focus shows; an outline that lies on tumour found the deposit without outlining it, so it earns part of the credit (§6.3, R3, R4). Stating the rule first is fair. | IoU only: punishes a correct point and a correct location. Full credit for any outline on tumour: a 0.25 mm² square inside a 3.3 mm² deposit would count as its outline (R4). One target per focus with best-target scoring: the reveal and the key's area would follow a 0.05 mm focus, and an exact outline of one would score full (LEARN-QUESTIONS A-F-Q2). |
 | D16 | **Learner marks are annotations created by draw-tools in the learner store.** One per region item: a new mark replaces the previous one. At commit the item copies the geometry into its response. At reveal it deletes the annotation in one store transaction, and the `reveal` module draws the frozen copy. | Reuse (D2), persistence across reload for free, and the store never fills up across modules on the same slide. | A Learn ToolController: needs a new `ToolId` and copies draw-tools. Keeping marks in the store after reveal: they show in later modules on the same slide. |
 | D17 | **In learner mode the active class is set to `Stroma`** (`--ann-5` teal) once, at install. | The design draws "Your mark" teal. The learner never sees class names: the class picker is dropped (D20) and the Annotations list is not shown. | A new class through `ClassRegistry.ensure`: its palette slot is not predictable (TOOLS.md §6.4). |
 | D18 | **Confidence is recorded but there is no review queue.** The hint reads "(recorded with your answer, not part of your score)". | Spaced retrieval is v1 (FR-E6). ux-copy's "(feeds your review queue, not your grade)" would be untrue in L1. | Dropping confidence: the design and plan 12 v0.9 want it, and it costs little. |
 | D19 | **There is no audio in L1.** "Play tour" (Space) auto-advances tour steps after a dwell (default 5 s + 60 ms per character of text, at most 30 s; `dwellMs` overrides it). It is off by default, pauses on any learner input on the slide, and stops before an item or reveal step. | WCAG 2.2.1 and 2.2.2: moving content must be pausable and is better not started automatically. ux-copy's "Play narration" would promise audio that does not exist. | Autoplay on: fights the learner's own navigation. |
-| D20 | **The Learn integrator's command registry filters Phase A registrations per mode.** It wraps `palette.ts`'s `Registry`. In learner mode it drops `class:*` (Q, Q+digits), `import:geojson` and `export:geojson`. The studio keeps all of them. | No Learn keymap row exists for them, and a class menu without markup would open nothing. The filter is integrator code, so no Phase A module changes. | Leaving `Q` live: a key that does nothing visible. |
+| D20 | **The Learn integrator's command registry filters Phase A registrations per mode.** It wraps `palette.ts`'s `Registry`. In learner and preview mode it drops `class:*` (Q, Q+digits), `import:geojson`, `export:geojson` and `tool:area` (⇧M, whose refusal names the Annotations list learners never see; §15.2 J-I3). The studio keeps all of them. | No Learn keymap row exists for them, and a class menu without markup would open nothing. The filter is integrator code, so no Phase A module changes. | Leaving `Q` live: a key that does nothing visible. |
 | D21 | **Module text may contain `{cmd:<commandId>}`**, rendered as the command's keycaps from the registry and spoken as "shortcut …". | ux-copy tone rule 7: shortcuts are rendered from the registry, never typed into a sentence. The orientation module needs to name keys. | Key names in text: drift when bindings change. |
 | D22 | **`learn.html` carries `<meta http-equiv="Content-Security-Policy" content="connect-src 'self'; form-action 'none'; base-uri 'self'">`.** LI-5 asserts that every request is a same-origin GET. | "No data leaves the browser" is then enforced by the browser, not only promised. Tiles, the catalogue, modules and overlays are all same-origin. | A promise in About only. |
-| D23 | **The course has a second, non-clinical module:** "Using the slide viewer" on CMU-1-Small-Region. | The course shell's ordering, completion and next-module flow need ≥ 2 real entries, and an orientation tour suits every audience. It contains no clinical claims. | Fixtures only: the deployed course would be a list of one. |
+| D23 | **The course has a second, non-clinical module:** "Using the slide viewer" on CMU-1-Small-Region. Owner default (2026-11-04, pending): it is the course's **second** entry, after the case (Appendix B; §15.1, §15.2 J-I6). | The course shell's ordering, completion and next-module flow need ≥ 2 real entries, and an orientation tour suits every audience. It contains no clinical claims. | Fixtures only: the deployed course would be a list of one. |
 | D24 | **Tests.** `harness/learn-check.mjs` (integrator) runs `harness/learn/<module>.check.mjs`. `harness/unit.mjs` already finds `harness/unit/learn-<module>.test.mjs`. `stage0/tools/tests/test_learn_schema.py` validates every `data/learn` file with `jsonschema` 4.26 (installed). | Exclusive ownership extends to tests, as in TOOLS.md D20, and no new dependency is added. | Extending tools-check: that file is the Phase A integrator's. |
-| D25 | **Answers are not secret in L1.** The module file and the overlay file are public static files. The key layer is only *fetched* at reveal, and nothing on screen shows it before reveal (ITM-8). | L1 is formative practice. Secure exam mode needs a server (FR-E8 exam mode, v1). | Obfuscation: fake security. |
+| D25 | **Answers are not secret in L1.** The module file and the overlay file are public static files. The key layer is only *fetched* at reveal, and nothing on screen shows it before reveal (ITM-8). Owner default (2026-11-04, pending): answers readable in the public module and overlay files are acceptable for formative L1. | L1 is formative practice. Secure exam mode needs a server (FR-E8 exam mode, v1). | Obfuscation: fake security. |
 | D26 | **Publishing a module means:** export the file from the studio, commit it to `stage0/data/learn/modules/` with its facts file, add it to a course file, and deploy (§14). There is no server. | The scope says "no server". The repo history is the review trail. | — |
 
 **Changes to the orchestrator's scope, with reasons:**
@@ -273,7 +273,7 @@ Use design-system classes first. `base.css` already has `.item-card*`, `.option*
   - **Reveal:** each option gets `✓ correct` / `✕ your choice` text and `.is-correct` / `.is-incorrect`. The feedback is `Correct · {L} · 1 / 1` or `Incorrect · you chose {L} · 0 / 1`; multi shows `{score} / {points}`. Then the explanation and per-option feedback follow.
 - **Region items.** `item-card__meta` reads `Item {n} of {total} · Region marking` · `{points} point`. The card has:
   - the stem;
-  - the rule line (D15), e.g. `Scored: a point inside the outline (or within 50 µm of it), or an outline overlapping it by IoU 0.50 or more.`;
+  - the rule line (D15), e.g. `Scored: a point on any tumour focus (or within 50 µm of one), or an outline of the largest deposit with IoU 0.50 or more; an outline that lies at least 90 % on tumour earns half credit.`;
   - the gatebox (`Zoom to at least 20× to earn full credit` plus its status, §6.4);
   - the mark row: `Your mark · {kind} · {area}`, or `No mark yet` / `Draw with P, F or T, or press Shift+Enter to mark without a pointer`, with keycaps; plus `Clear`;
   - `Mark without a pointer ⇧↵`;
@@ -332,7 +332,7 @@ It never contains a name, an email, a user id, a device id or a time zone. `resu
 
 ## 6. Scoring rules, with worked examples on the real key
 
-All numbers below were computed on `data/overlays/camelyon16.tumor_014.r36864_66560/camelyon16-expert.geojson` at mpp 0.243094 µm/px, with the §6.3.3 raster (a Python prototype of the same algorithm). Builders' tests (SCR-*, CNT-2) reproduce them.
+All numbers below were computed on `data/overlays/camelyon16.tumor_014.r36864_66560/camelyon16-expert.geojson` at mpp 0.243094 µm/px, with the §6.3.3 raster (a Python prototype of the same algorithm; the rule (b) inside fractions by the integrator's extension of it, 2026-11-04). **Recomputed 2026-11-04 by the `scoring` module itself** (`src/learn/scoring`, Node 22; distances by Phase A `distanceToGeometry`, centroids by Phase A `centroid`, area-weighted), with the owner defaults applied; every IoU, inside fraction and area matched the prototype. The point rows P3–P6 and candidate D's distance were corrected (see §6.3.1 and §6.3.4; a second, independent Python check agrees). The pinned numbers live in `harness/fixtures/learn/scoring/case1.json`. Builders' tests (SCR-*, CNT-2) reproduce them.
 
 ### 6.1 MCQ (`mcq`)
 
@@ -356,37 +356,45 @@ Examples for q-features, where C = {A, B, C}:
 
 The key target T = (union of `include`) minus (union of `subtract`). Each polygon is even-odd with its holes, and a MultiPolygon is the union of its polygons. For case 1, T = 'Annotation 3' minus the six Exclusion polygons, all of which lie inside it. Its outline area is 3.362 mm² and its net area 3.291 mm². Its greatest dimension is 2.66 mm (maximum Feret of the convex hull); the minimum Feret is 1.94 mm and the bbox 2.61 × 2.22 mm.
 
+The credited area U = T ∪ (the include features of every `related` entry with `credit: true`). For case 1, U = T ∪ 'Annotation 4–6' (the three small Tumor foci). Rule (a) uses U for points, rule (b) for outlines (owner defaults of 2026-11-04, default pending owner; contracts `KeyRelated.credit`, `RegionScoring.partialInside`).
+
 **6.3.1 Point marks.**
-- **Correct** iff the point is inside T, or `distanceToGeometry(p, include outline) × mpp ≤ pointTolerance_um`.
-- **In a hole:** a point inside a subtracted feature measures its distance to that hole's boundary instead (`inHole: true`).
-- **Boundary:** a point on the outline is inside (geometry's boundary-inclusive rule).
+- **Correct** iff the point is inside T, or (outside every hole) `distanceToGeometry(p, include outline) × mpp ≤ pointTolerance_um`.
+- **Rule (a), a credited related feature:** otherwise correct iff the point is inside a `credit` related feature or within `pointTolerance_um` of its outline. The metric still refers to T (distance to T, `target` = T's id); `ItemScore.related` names the feature and the feedback is `correct-related`, whose sentence is the related entry's `feedback` (it names the largest deposit). Without `credit`, the same hit is wrong with `wrong-related` (the pre-default rule).
+- **In a hole:** a point strictly inside a subtracted feature measures its distance to that hole's boundary instead (`inHole: true`). It earns nothing at any distance from the hole's edge (owner default 2026-11-04, default pending owner; feedback `wrong-hole`: the expert excluded that area).
+- **Boundary:** a point on the outline is inside (geometry's boundary-inclusive rule). That includes a hole's edge, which is part of T's outline.
 
 | # | Point (level-0 px) | Metric | Result (tolerance 50 µm) |
 |---|---|---|---|
 | P1 | candidate C (7168, 5120) | inside, 459 µm from the edge | correct |
 | P2 | hotspot `hs-edge` (11264, 5632) | inside, 33 µm from the edge | correct |
-| P3 | 40 µm right of the outline's rightmost vertex (11908.5, 5805.2) | outside, 39.4 µm | correct (within tolerance) |
-| P4 | 80 µm right of that vertex | outside, 79.3 µm | wrong |
-| P5 | centroid of small focus 'Annotation 6' (11041.8, 6592.2) | outside, 70.4 µm; hits `related: small-foci` | wrong, related feedback |
-| P6 | centroid of Exclusion 'Annotation 8' (7359.2, 3441.0) | in a hole, 51.8 µm from the hole's edge | wrong, hole feedback |
+| P3 | 40 µm right of the outline's rightmost vertex (11911.6, 5845.8): (12076.1, 5845.8) | outside, 40.0 µm (the nearest outline is the vertical edge at x = 11911.6) | correct (within tolerance) |
+| P4 | 80 µm right of that vertex: (12240.7, 5845.8) | outside, 80.0 µm | wrong |
+| P5 | area centroid of small focus 'Annotation 6' (11044.6, 6624.0) | outside T, 64.8 µm; inside the credited `related: small-foci` | **correct** by rule (a): feedback `correct-related` (the small-foci sentence, which names the largest deposit) |
+| P6 | area centroid of Exclusion 'Annotation 8' (7369.7, 3457.1) | in a hole, 56.0 µm from the hole's edge | wrong (`wrong-hole`): the expert excluded that area |
 | P7 | candidate B (13088, 13088) | outside, 1,439 µm | wrong |
 
-**6.3.2 Outline marks** (polygon, brush, rect, ellipse). Correct iff IoU(mark, T) ≥ `iouFull`. The best target counts when the item names none.
+Corrections of 2026-11-04 (scoring): the draft placed P3 at the vertex (11908.5, 5805.2), which is not the rightmost (that gives 39.4 µm and 79.3 µm). It also took P5 and P6 as vertex means, (11041.8, 6592.2) at 70.4 µm and (7359.2, 3441.0) at 51.8 µm. Every result is unchanged.
 
-| # | Mark | IoU | Result (iouFull 0.50) |
-|---|---|---|---|
-| R1 | rectangle = bbox of the deposit outline (2.61 × 2.22 mm, 5.80 mm²) | 0.567 (analytic 0.5676) | correct |
-| R2 | 64-gon ellipse inscribed in that bbox (4.55 mm²) | 0.691 | correct |
-| R3 | 1 mm × 1 mm square centred on candidate C (0.907 mm² of it in T) | 0.268 | wrong. Feedback: `Your outline covers part of the deposit (IoU 0.27); an outline needs IoU 0.50 or more. A single point on the deposit would have counted.` |
+**6.3.2 Outline marks** (polygon, brush, rect, ellipse). Correct iff IoU(mark, T) ≥ `iouFull`. The best target counts when the item names none. **Rule (b)** (owner default, pending): otherwise, with `partialInside` set, the mark earns `points × partialInside.factor` iff its inside fraction |mark ∩ U| / |mark| ≥ `partialInside.fraction` (by the same raster; reported as the iou metric's `inside`), with `correct: false` and feedback `partial-inside`. When most of the inside area lies on a credited related feature rather than T, `ItemScore.related` names it and the card adds its sentence. Otherwise the outline is wrong: `wrong-related` (with `related`) when more of it lies on a related feature than on T, else `wrong`. Rule (a) is for points only; an outline of a small focus earns rule (b)'s part credit (R6), not full credit (LEARN-QUESTIONS A-F-Q2).
+
+| # | Mark | IoU | Inside U | Result (iouFull 0.50; partialInside 0.90 → ½) |
+|---|---|---|---|---|
+| R1 | rectangle = bbox of the deposit outline (2.61 × 2.22 mm, 5.80 mm²) | 0.567 (analytic 0.5676) | 0.569 | correct |
+| R2 | 64-gon ellipse inscribed in that bbox (4.55 mm²) | 0.691 | 0.706 | correct |
+| R3 | 1 mm × 1 mm square centred on candidate C (0.907 mm² of it in T) | 0.268 | 0.908 | **half credit** (rule (b)). Feedback: `Correct location; the outline covers only part of the deposit (IoU 0.27).` |
+| R4 | 0.5 mm × 0.5 mm square centred on candidate C (0.248 mm² in T) | 0.075 | 0.992 | half credit (rule (b)) |
+| R5 | 1.5 mm × 1.5 mm square centred on candidate C (1.867 mm² in T) | 0.508 | 0.830 | correct (IoU ≥ 0.50) |
+| R6 | the outline of small focus 'Annotation 6' itself | 0.000 | 1.000 | half credit (rule (b)); `related: small-foci`, so the card adds its sentence naming the largest deposit |
 
 **6.3.3 The raster** (`scoring/raster.ts`).
 1. **Grid:** cell = max(longer side of bbox(mark) ∪ bbox(T) / `maxCells` (default 2048), 0.25 px). Case 1 R1 gives a cell of 5.24 px = 1.27 µm.
 2. **Rows:** for each row y = minY + (r + 0.5)·cell, build the even-odd crossing spans of each polygon. Take the union of include spans minus subtract spans, then intersect with the mark spans. Count cell centres in the spans arithmetically, not per cell.
 3. **Areas:** a, b and i are the mark, target and intersection counts × cell². IoU = i / (a + b − i).
-4. **Speed:** use an active-edge table sorted by ymin. Budget ≤ 150 ms for the real key in Node (SCR-8). It runs at commit-lint and reveal, never in a frame.
+4. **Speed:** use an active-edge table sorted by ymin. Budget ≤ 150 ms for the real key in Node (SCR-8). It runs at commit-lint and reveal, never in a frame. Measured 2026-11-04: `iou(R1)` takes 6 ms on the first call and 4 ms median in Node 22.22, and 5 ms in the headless Chromium of the harness; `compileKey` on the real key takes 5–26 ms.
 5. **Error:** the boundary-band bound is perimeter × cell / 2. For T (perimeter 14.8 mm) that is ≤ 0.6 % of its area; the measured gap was 0.0002 IoU.
 
-**6.3.4 Candidates.** A candidate answer is scored as a mark with the candidate's geometry, through the same function. `scoreRegion(item, key, {kind: 'candidate', candidate: 'C'})` therefore deep-equals the score of a drawn point at (7168, 5120), except for the answer field (SCR-6, AC-A4). For case 1: C is correct and A, B and D are wrong, at 522, 1,439 and 784 µm outside.
+**6.3.4 Candidates.** A candidate answer is scored as a mark with the candidate's geometry, through the same function. `scoreRegion(item, key, {kind: 'candidate', candidate: 'C'})` therefore deep-equals the score of a drawn point at (7168, 5120), except for the answer field (SCR-6, AC-A4). For case 1: C is correct and A, B and D are wrong, at 522, 1,439 and 820 µm outside (D's 784 µm in the draft was a miscalculation, corrected 2026-11-04). None is within 50 µm of a small focus (the nearest is D, 862 µm away), so rule (a) changes none of them.
 
 **6.3.5 Text answers.** Each field is scored in turn:
 - a `choice` field is correct iff the chosen option is in `correct`;
@@ -403,7 +411,7 @@ The answer is correct iff every `required` field is correct and at least `passMi
 - **When a view counts as sharp.** If `host.sharpness('A').state` is `sharp` at that settle, the entry gets `sharp: true`. Otherwise it is held until a `tileSettled {sharp: true}` with no camera movement in between. Movement drops it: an unsharp entry is kept with `sharp: false`. Cap: 500 entries.
 - **Met** iff some entry has `sharp: true`, `scale_um_per_px ≤ gate.scale_um_per_px × 1.01`, and a rect that intersects the subject. A point must lie in the rect. A polygon must have overlapping bboxes and either a vertex in the rect, the rect centre inside the polygon, or crossing edges.
 - **The subject** is the mark, or the candidate's geometry. For a text answer it is the target, evaluated at reveal only; the gatebox then reads `Checked when you reveal: view the area you describe at 20× or more.`
-- **Score.** Not correct → 0. Correct with the gate met, or no gate → `points`. Correct with the gate unmet → `points × unmetFactor`: `0.5 / 1`, feedback `Correct region, but you never viewed it at 20×: half credit by the gate rule stated on the card.`
+- **Score.** Wrong → 0. Correct (`correct` or `correct-related`) with the gate met, or no gate → `points`. Correct with the gate unmet → `points × unmetFactor`: `0.5 / 1`, feedback `Correct region, but you never viewed it at 20×: half credit by the gate rule stated on the card.` (`FeedbackKind` `half-gate`; for a rule (a) point `ItemScore.related` still names the feature, so the card can add its sentence). Rule (b) partial → `points × partialInside.factor × gate factor`: 0.5 / 1 with the gate met, 0.25 / 1 without (both rules are on the card; §15.2 J-I5).
 - **Gatebox status, before commit:**
   - `Not met yet · place a mark, then view it at 20×` (no mark);
   - `Not met yet · highest magnification over your mark so far: {mag}` (the finest sharp settled scale over the mark, as `formatMagnification`);
@@ -426,7 +434,7 @@ Worked example: P1 placed at fit (≈ 2.2×) and committed without zooming gives
 
 ### 6.6 Scores and rounding
 
-Item scores round to 2 decimals; the total is their sum. `correct` is false for partial multi answers. A text answer is never discounted for modality: its gate is checked against the target (NFR-A5).
+Item scores round to 2 decimals; the total is their sum. `correct` is false for partial multi answers and for rule (b) outlines. A text answer is never discounted for modality: its gate is checked against the target (NFR-A5).
 
 ---
 
@@ -564,7 +572,9 @@ ux-copy §13.1–§13.6 strings as quoted in §5 and §6, with these deviations:
 - `Revealed · inside the outline · {score} / {points}`;
 - `Revealed · {d} µm from the outline · {score} / {points}`;
 - `Your point is inside the outline.` / `Your point is {d} µm from the outline; points within {t} µm count.`;
-- `Your point is inside an area the reference marks as non-tumour (Exclusion) within the deposit.`;
+- `Your point is inside an area the expert excluded from the outline (Exclusion: non-tumour tissue within the deposit), so it does not count.` (owner default: the feedback says the expert excluded that area);
+- rule (a): `Revealed · on a tumour focus · {score} / {points}`, then the related entry's sentence (it names the largest deposit);
+- rule (b): `Revealed · IoU {pct} % · {score} / {points}` and `Correct location; the outline covers only part of the deposit (IoU {iou}).`;
 - the R3 outline sentence (§6.3.2);
 - the related feedback comes from the module.
 
@@ -653,7 +663,7 @@ All checks run on a built site (`client/dist/learn.html?label=learn-check` or a 
 Every check also asserts **no console or page errors** and **0 axe-core WCAG 2.2 AA violations** (`helpers.axe`) in the states it opens. It also asserts no request to another origin and no non-GET request.
 
 Test hooks (integrator):
-- `window.__learn = { mode, product, tools: {<name>: () => view}, bus: { log(): {name, payload}[] }, test: {…} }`;
+- `window.__learn = { mode, product, ready, tools: {<name>: () => view}, bus: { log(): {name, payload}[] }, host(), test: {…} }` (`tools` merges the Learn modules' debug views and the shell's: `core`, `overlay`, `annotations`, `draw-tools`; `host()` is the integrator's read-only state; `test` has `openSlide`, `storagePut` / `storageGet`, `draftGet` / `draftPut`, `setGate`, `plate`, `toast`, `card`, `run`);
 - `window.__shell = { tools, sharpness(), hud(), polite(), notice(), state() }`, so the Phase A helpers (`settle`, `frameCost`, `readOverlayPixel`) work unchanged;
 - `window.__stage0` (view A, as in the shell).
 
@@ -663,6 +673,7 @@ Test hooks (integrator):
   - the `index.html` and `shell.html` entries' static and dynamic import graphs contain no module under `src/learn/`;
   - the `learn.html` graph contains nothing from `src/shell/{layers,compare,share}/` and nothing from `src/shell/library/` except `catalogue.ts`;
   - `src/main.ts` and `src/shell/main.ts` sha256 equal the values recorded in LEARN-QUESTIONS.md at Wave L1 start.
+- **LI-1b Shell styles (Wave L1).** With `--ref-dist` (a build from before Learn, e.g. a copy of the L0 `client/dist`), `shell.html`'s computed styles (30 properties of every element) equal the reference build's at 1440 × 900, 1920 × 1080 and 390 × 844: a shared CSS chunk changes nothing in the research shell (§15.2 J-I1).
 - **LI-2 Phase A gates.** `run.mjs` + `check-metrics.mjs` (20 ok), `shell-check.mjs`, `tools-check.mjs`, `unit.mjs` and `python3 -m unittest discover stage0/tools/tests` all pass on the same build. The runner shells out to them, or the integrator runs them and records the result in the gate JSON.
 - **LI-3 Opens.** At 1440 × 900:
   - the badge text is `LEARN`, its name is `label.badge.aria.learn`, and the label string is real text (`role="note"`);
@@ -701,9 +712,9 @@ Test hooks (integrator):
 ### 11.2 scoring (SCR-n; unit `learn-scoring.test.mjs`)
 
 - **SCR-1 Raster.** Two 100 px squares overlapping by half → IoU 1/3 (± 1e-9). Two discs of r = 1000 px at d = 1000 → analytic IoU within 0.5 %. Translating both by (0.37, 0.61) px changes IoU < 1e-3. A bow-tie mark uses even-odd. A MultiPolygon and a polygon with a hole are exact on axis-aligned shapes.
-- **SCR-2 Real key.** `compileKey` on the reference file + Appendix A's key gives a target area of 3.291 mm² (± 0.5 %). R1 0.567, R2 0.691, R3 0.268 (each ± 0.005).
-- **SCR-3 Points.** P1–P7 give exactly the results and distances of §6.3.1 (± 0.5 µm), including `inHole` for P6 and `related: 'small-foci'` for P5.
-- **SCR-4 Gate.** On view-log fixtures:
+- **SCR-2 Real key.** `compileKey` on the reference file + Appendix A's key gives a target area of 3.291 mm² (± 0.5 %). IoU R1 0.567, R2 0.691, R3 0.268, R4 0.075, R5 0.508 (each ± 0.005). Rule (b): inside fractions R1 0.569, R2 0.706, R3 0.908, R4 0.992, R5 0.830, R6 1.000 (each ± 0.005; the iou metric's `inside`); R1, R2 and R5 score 1 / 1 (`correct`), R3, R4 and R6 score 0.5 / 1 (`partial-inside`, `correct: false`), R6 with `related: 'small-foci'`, all with a gate-meeting log.
+- **SCR-3 Points.** P1–P7 give exactly the results and distances of §6.3.1 (± 0.5 µm), including `inHole` (and `wrong-hole`) for P6, and for P5 a correct score by rule (a): `feedback: 'correct-related'`, `related: 'small-foci'`, 1 / 1 with a gate-meeting log. With `credit` removed from the fixture's related entry, P5 is wrong with `wrong-related` (the pre-default rule still works).
+- **SCR-4 Gate.** On view-log fixtures (and a rule (b) outline with the gate unmet scores 0.25 / 1):
   - no views → not met, factor 0.5;
   - a sharp entry at 0.5 µm/px intersecting the mark → met;
   - the same entry with `sharp: false` → not met;
@@ -776,11 +787,11 @@ Test hooks (integrator):
 
 ### 11.7 course (CRS-n)
 
-- **CRS-1 Default course.** It loads from `data/learn/courses/stage0-l1.course.json`, resolved through the catalogue URL. The outline lists `Using the slide viewer` and `Sentinel lymph node: find the metastasis` with `not started` and `{n} min`. `Module 1 of 2`.
-- **CRS-2 Completion.** Completing the orientation module (4 steps + summary) makes the outline say `done` with `✓`, `Modules · 1 of 2 done`, and progress `aria-valuenow="50"`. The second module is the initial one on reload.
+- **CRS-1 Default course.** It loads from `data/learn/courses/stage0-l1.course.json`, resolved through the catalogue URL. The outline lists `Sentinel lymph node: find the metastasis` and `Using the slide viewer` (in that order, owner default; Appendix B) with `not started` and `{n} min`. `Module 1 of 2`.
+- **CRS-2 Completion.** Completing the orientation module (opened from the outline; 4 steps + summary) makes the outline say `done` with `✓`, `Modules · 1 of 2 done`, and progress `aria-valuenow="50"`. The case, not yet completed, is the initial one on reload.
 - **CRS-3 Unlock.** A fixture course with `unlock: after-previous` shows the second module `locked`. Activating it shows `Not yet` and opens nothing.
 - **CRS-4 Initial module.** A reachable `#m=` wins. An unknown `#m=` opens the first module and shows `This link names a module that is not in this course; opened {title} instead` **N**.
-- **CRS-5 Next module in place.** `Next module` from the orientation summary opens the case: the slide switches in place (CORE-1 conditions: no navigation entry, one `canvas#view`) and the URL fragment updates.
+- **CRS-5 Next module in place.** `Next module` from the case's summary opens the orientation module: the slide switches in place from tumor_014 to CMU-1-Small-Region (CORE-1 conditions: no navigation entry, one `canvas#view`) and the URL fragment updates. The orientation summary, the last entry, offers `Back to the course`.
 - **CRS-6 Other origin.** `?course=https://example.org/x.json` is refused with the notice and the default course is used. `?course=../../client/harness/fixtures/learn/course/two.course.json` loads.
 
 ### 11.8 studio (STU-n) and item-editor (IED-n)
@@ -830,7 +841,7 @@ Test hooks (integrator):
   8. Complete · Compare with the reference outline (reveal step);
   9. Complete · At the edge of the deposit (tour);
   10. summary.
-- **Facts.** Every factual statement the learner reads is listed below. "Basis" is what the statement rests on. Locations were checked by the spec author on the published tiles (levels 2–3) and by computing on the reference outline, not by a pathologist. Please mark each `confirmed` or `changed` in the facts file; set `review` to `reviewed` with your name and date when none is pending (lint `review-recorded`).
+- **Facts.** Every factual statement the learner reads is listed below (26 since the owner defaults of 2026-11-04; all `pending`). "Basis" is what the statement rests on. Locations were checked by the spec author on the published tiles (levels 2–3) and by computing on the reference outline, not by a pathologist. Please mark each `confirmed` or `changed` in the facts file; set `review` to `reviewed` with your name and date when none is pending (lint `review-recorded`).
 
 | Id | Where (JSON Pointer) | Statement (verbatim) | Basis |
 |---|---|---|---|
@@ -858,7 +869,8 @@ Test hooks (integrator):
 | F22 | `/steps/7/text` | The smaller outlined areas inside it are marked Exclusion: non-tumour tissue inside a tumour outline, by the dataset's convention. | CAMELYON16 ASAP group `Exclusion`; all six lie inside 'Annotation 3' (computed). |
 | F23 | `/case/expertView/text` | three small separate tumour foci | 'Annotation 4–6', greatest dimensions 0.05, 0.07 and 0.15 mm, 70–950 µm from the main outline. |
 | F24 | `/steps/8/text` | The carcinoma cells are larger than the lymphocytes, with more cytoplasm and larger nuclei, and they lie together in cohesive sheets. | View (2738.2, 1369.1) µm at 20×, 33 µm inside the right edge; `tiles/2/5_2.jpg` shows tumour cells left, lymphocytes right. |
-| F25 | `/answerKeys/0/related/0/feedback` | That is tumour too: one of three small separate foci in the CAMELYON16 outline. | As F23. |
+| F25 | `/answerKeys/0/related/0/feedback` | That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. | As F23 (owner default rule (a), 2026-11-04: a point on any Tumor focus counts). |
+| F26 | `/answerKeys/0/related/0/feedback` | The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. | As F6 (added 2026-11-04 so the feedback names the largest deposit, owner default rule (a)). |
 
 The orientation module has no clinical statements. It states only the product convention "20× means 0.50 µm per pixel" (SHELL.md derivation).
 
@@ -888,7 +900,7 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
 | 2. Copy: content | `data/learn/courses/stage0-l1.course.json`, `data/learn/modules/{sln-find-metastasis.module.json, sln-find-metastasis.facts.json, viewer-orientation.module.json}`, and optionally `client/learn/schema/module.schema.json` (for authors). |
 | 3. Already published (required, not copied) | `data/catalogue.json`, `data/overlays/camelyon16.tumor_014.r36864_66560/camelyon16-expert.geojson`, `data/manifest.json` + `data/tiles/**`, `data/samples/CMU-1-Small-Region/**`, each checked byte-identical to this tree (the fingerprint and key version depend on them). |
 | 4. Do not copy | `client/dist/index.html` and its entry chunk (frozen until the measurement freeze). `client/dist/shell.html` and its graph are not redeployed by Learn: the published shell keeps its own assets. |
-| 5. After the copy | Open `…/client/dist/learn.html`: the course opens on `Using the slide viewer`; the case shows the draft chip; `⇧↵` lists four candidates. Check that `…/client/dist/index.html` still names its old chunk. Rollback: delete `learn.html` (nothing else references the new files). |
+| 5. After the copy | Open `…/client/dist/learn.html`: the course opens on `Sentinel lymph node: find the metastasis` (the orientation tour is its second entry); the case shows the draft chip; `⇧↵` lists four candidates. Check that `…/client/dist/index.html` still names its old chunk. Rollback: delete `learn.html` (nothing else references the new files). |
 
 ---
 
@@ -911,11 +923,111 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
 | Curated collections with PCME tags, faceted browser, licence registry with consent and withdrawal; structure-label toggle layers | v0.7 | FR-E1 |
 | CVD remap LUT on the slide and author CVD simulation | v0.7 | NFR-A4, FR-V8 |
 | Compare H&E with IHC; snapshot with a Learn footer; bookmarks; rotation; focus mode | compare needs a paired public IHC; snapshot needs a product-aware share burn-in; the rest are later builds | design; D4 |
-| Light chrome theme for Learn | owner decision (design-handoff H19, DS-1) | — |
+| Light chrome theme for Learn | a later release (owner default 2026-11-04, pending: L1 ships dark chrome only) | design-handoff H19, DS-1 |
+
+
+### 15.1 Owner defaults (2026-11-04): each one is a "default pending owner"
+
+The owner has not answered §16 yet. On 2026-11-04 the orchestrator passed these defaults on; the build follows them,
+and every one stays open until the owner confirms or changes it. Nothing here marks the module `reviewed`: only the
+owner can (D11).
+
+| §16 | Default (pending owner) | Where it is applied |
+|---|---|---|
+| Q1 | The zoom gate as D7 specifies: full credit needs a settled, sharp view at ≥ 20× of what the learner marked. | D7, §6.4 (unchanged) |
+| Q2 | A point counts inside a Tumor polygon or within 50 µm of it; an outline counts at IoU ≥ 0.50. **(b)** An outline whose area lies ≥ 90 % inside Tumor polygons but has IoU < 0.50 earns half credit, feedback `Correct location; the outline covers only part of the deposit`. A point inside an Exclusion area earns no credit, and the feedback says the expert excluded that area. | D15, §5.5 rule line, §6.3.2 (R3 now half credit; R4–R6 added), §6.4, §8.2, SCR-2, SCR-4; contracts `RegionScoring.partialInside`, iou metric `inside`, `FeedbackKind` `partial-inside`; Appendix A `scoring.partialInside` |
+| Q3 | **(a)** Any CAMELYON16 Tumor focus counts for full credit on the "find the metastasis" point item; the feedback then names the largest deposit. | D15, §6.3 (U), §6.3.1 (P5 now correct), §8.2, SCR-3, F25–F26; contracts `KeyRelated.credit`, `FeedbackKind` `correct-related`; Appendix A `related[0].credit`, stem, explanation |
+| Q4 | Every clinical statement stays `draft` and is listed in §12 for the owner's review; claims conservative and standard. | §12 (F1–F26, all pending), D11 |
+| Q5 | Module text licence CC BY 4.0. | Appendix A `metadata.textLicence`; About's Licence row |
+| Q6 | Authorship "Stoipath Learn L1 build (AI-assisted draft)" until the owner signs. | Appendix A `metadata.authors` (unchanged) |
+| Q7 | Wave L0's additive Phase A change is approved (its defaults leave the research shell unchanged). | §4.3; landed 2026-11-04 (Phase A gate green; LI-1b) |
+| Q8 | Learn ships dark chrome only in L1; the light theme comes later. | `learn.html` `data-theme="dark"`, `learn.css`; §15 table |
+| Q9 | Confidence ratings stay (recorded, not scored). | D18 (unchanged) |
+| Q10 | The "Using the slide viewer" tour stays, as the course's **second** entry. | D23, Appendix B order, CRS-1/2/5, §14 step 5 (J-I6) |
+| Q11 | The learner's results file includes their own mark geometry. | §5.7, `$defs/ResultsFile` (unchanged) |
+| Q12 | The draft note reads `Draft — pending pathologist review`. | D11, contracts `DraftNoteString` (unchanged) |
+| Q13 | (No default given.) Publish after the TSP abstract; the measurement page stays frozen either way. | §1, §14 |
+| Q14 | `Reveal now` after 15 s of non-sharp pixels. | D8, §6.5 (unchanged) |
+| Q15 | Answers readable in the public module and overlay files are acceptable for formative L1. | D25 |
+
+### 15.2 Judgement-call log (Learn integrator, Wave L1, 2026-11-04)
+
+- **J-I1 · Shared chunks with the shell.** A third entry makes Rollup put the code and CSS Learn shares with the shell
+  (tokens, base, the Phase A core and the four installed modules) into a common chunk (`_sharpness-*.js` + `.css`), so
+  `shell.html` now loads two CSS files. Its behaviour is unchanged: LI-1b compares the computed styles of every element
+  of `shell.html` (30 properties × 522 elements at 1440, 1920 and 390) with the pre-Learn build and finds none that
+  differ; shell-check and tools-check stay green. `index.html` still imports only its entry and the viewer chunk.
+- **J-I2 · Host contract additions** (contracts §12, marked "Additive (Wave L1 integrator)"): `LearnHost.plate()` with
+  `LearnPlate` (the §8.1 plates, plus `empty` for a build without a course or studio module), `LearnHost.toast()` (the
+  locked-phase toast), `DialogHost.setTitle()` (the candidates panel's title lives in integrator markup). Answers to
+  the format builder: `PartialInside`, `KeyRelated.credit`, `LintReport.passed` / `LintPass`, `Fact` / `FactsFile`,
+  `LintContext.facts?` (LEARN-QUESTIONS.md). §14's two types now re-export the shell contracts' (L0 landed).
+- **J-I3 · D20 also drops `tool:area` (⇧M)** in learner and preview mode: draw-tools' refusal sentence tells the user
+  that the Annotations list shows the area, and learners have no Annotations list.
+- **J-I4 · Rule (a) as `KeyRelated.credit`, not one target per focus** (A-F-Q2): the reveal, the key row's area and
+  the outline rule stay on the largest deposit.
+- **J-I5 · Rule (b) and the gate multiply.** A partial outline earns `points × 0.5`, then the gate rule applies as to
+  every answer (0.25 / 1 unviewed at 20×). Both rules are stated on the card before answering. The owner may prefer
+  half credit regardless of the gate: a one-line change in scoring.
+- **J-I6 · "Stays as the second course entry"** is read literally: the orientation tour is listed second, after the
+  case (Appendix B), so a learner arrives on the case. If the owner meant "keep it" (it was first), swap the two
+  entries of `stage0-l1.course.json` and CRS-2 / CRS-5 swap back; nothing else depends on the order.
+- **J-I7 · The draft chip is the integrator's,** in a row above `#taskCard`, in the context bar and in the phone peek
+  bar (`LearnHost.setDraftNote`), so the player does not render a second one (LEARN-QUESTIONS host conventions 5).
+- **J-I8 · Sheets are in-flow** at ≤ 1079 px (the shell's rule): the task card takes the grid's sheet row, so the
+  canvas and its bottom HUD yield height instead of being covered; the peek bar is a phone pattern (tablet portrait
+  shows the card's own head), as in the design final.
+- **J-I9 · `mag:20` is the 20× preset's id** (the shell's), the one §9 calls `zoom:20`; the gate chip's keycap is read
+  from it.
+- **J-I10 · An empty build shows a plate, not a blank canvas.** Without the course module (Wave L1) the learner page
+  says `Nothing to open yet` and keeps the viewer, keymap and About working; `__learn.test.openSlide()` opens a slide
+  for the integrator's checks.
+- **J-I11 · The studio's storage notice** names the draft (`…your draft stays until you close the page. Export the
+  module file to keep it.`), not progress.
+- **J-I12 · Toasts are spoken through the polite region only** (no `role="status"` on the toast), so each is said once.
+- **J-I13 · LI-5's network guard** records `sendBeacon`, `WebSocket`, `EventSource` and any fetch or XHR with a body or
+  a method other than GET / HEAD; the CSP is what blocks other origins.
+
+### 15.3 Judgement-call log (scoring, Wave L1, 2026-11-04)
+
+The owner defaults Q2 (rule (b)) and Q3 (rule (a)) are implemented in `src/learn/scoring` as §6 states. Each call below
+that touches them is a **default pending owner**.
+
+- **J-S1 · An Exclusion is absolute** (Q2, default pending owner). A point strictly inside a subtracted feature earns
+  nothing at any distance from the hole's edge (`wrong-hole`), even within `pointTolerance_um`, and rule (a) is not
+  consulted. A point exactly on a hole's edge is on T's outline, so it counts as inside.
+- **J-S2 · Rule (a) is for points; outlines get rule (b) or nothing** (Q3, default pending owner). This matches A-F-Q2.
+  A wrong outline that lies mostly on a related feature reports `wrong-related` with `related`, so the card can still
+  say "that is tumour too".
+- **J-S3 · Feedback under an unmet gate.** `correct` and `correct-related` become `half-gate`, and `related` stays set.
+  `partial-inside` stays `partial-inside`, and `gate.met: false` tells the card to add the gate sentence.
+- **J-S4 · The best target.** For a point, a target that makes it correct wins (inside first, then the nearest);
+  otherwise the nearest. For an outline, the highest IoU wins, then the higher inside fraction. For a text answer the
+  gate is met when a view of any target meets it. Case 1 has one target, so none of this changes its numbers.
+- **J-S5 · What compileKey refuses** (contracts: "refuses a fingerprint mismatch"). It refuses a fingerprint without a
+  size and mpp, any feature outside the slide that fingerprint names, a non-polygon feature, and a target that selects
+  no feature. Comparing the layer file's own fingerprint with the module slide's is the caller's job (lint and reveal
+  do it), since compileKey receives only one fingerprint (LEARN-QUESTIONS S-Q2).
+- **J-S6 · Rule (a)'s flag on the compiled key.** `CompiledRelated` has no `credit` field, so compileKey sets one on
+  each compiled related entry and only scoring reads it (`isCredited`). A `CompiledKey` built by hand without it gets
+  the pre-default rule. Requested as `CompiledRelated.credit` (LEARN-QUESTIONS S-Q1).
+- **J-S7 · Geometry imports.** Scoring imports `src/shell/geometry/hit.ts`, not the geometry index. The index
+  re-exports `units.ts`, which reaches `src/shell/format.ts`, and SCR-9 allows `src/shell/geometry/**` only.
+- **J-S8 · Keywords** are matched on NFKC, lower-cased, whitespace-collapsed text with Unicode-aware word boundaries
+  (`\b` alone treats `µ` or `é` as non-letters). A space in a keyword matches any run of whitespace.
+- **J-S9 · A null gate still reports `bestScale_um_per_px`**, the finest sharp view over the subject, so the summary
+  can show magnification. Its `factor` is 1 and `required` is false.
+- **J-S10 · §6 corrections.** P3, P4, P5, P6 and candidate D were recomputed (§6.3.1, §6.3.4). Every pass/fail result
+  is unchanged. §12 F10's basis still says "784 µm outside"; the real distance is 820 µm (LEARN-QUESTIONS S-Q4).
+  F23's basis says "70–950 µm from the main outline", but the small foci come within 11–20 µm of it. The phrase
+  "separate tumour foci" (F23, F25) is flagged for the owner's review (S-Q4b); the scoring is unchanged.
 
 ---
 
 ## 16. Open questions for the owner
+
+The owner's defaults of 2026-11-04 (§15.1) answer each of these provisionally; every one stays open until the owner
+confirms or changes it.
 
 1. **Gate over your mark (D7).** Is "full credit needs a sharp 20× view of what you marked" the rule you want? The design's "viewed the focus" leaks the lesion's location.
 2. **Region scoring (D15, §6.3).** Are a 50 µm point tolerance and IoU ≥ 0.50 for outlines right? Should a small outline drawn inside the deposit count (example R3, IoU 0.27, scores 0)? The alternative is "most of your outline lies on tumour". Should a point inside an Exclusion area within the deposit count (P6)?
@@ -935,7 +1047,7 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
 
 ---
 
-## Appendix A. `stage0/data/learn/modules/sln-find-metastasis.module.json` (as specified; validated against the schema)
+## Appendix A. `stage0/data/learn/modules/sln-find-metastasis.module.json` (as specified; validated against the schema before the owner defaults of 2026-11-04, which add `textLicence`, `related[0].credit`, `scoring.partialInside` and change the q-region stem, explanation, candidates title and related feedback; the format module's schema adds the two new fields, LEARN-QUESTIONS A-F-Q1/Q2)
 
 ```json
 {
@@ -954,6 +1066,7 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
     "tags": { "organ": ["lymph node"], "stain": ["H&E"], "difficulty": 2, "topics": ["sentinel lymph node", "breast cancer", "metastasis", "size category"] },
     "authors": [{ "name": "Stoipath Learn L1 build (AI-assisted draft)", "role": "author" }],
     "review": { "status": "draft", "notes": "Teaching text drafted for the owner's review; every factual statement is listed in stage0/client/LEARN.md §12." },
+    "textLicence": { "id": "CC-BY-4.0", "text": "Creative Commons Attribution 4.0 International", "url": "https://creativecommons.org/licenses/by/4.0/" },
     "language": "en",
     "estimatedMinutes": 15,
     "created": "2026-11-04",
@@ -998,7 +1111,7 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
         { "id": "largest-deposit", "label": "Largest deposit", "include": { "ids": ["f5049586-cbdd-54a7-a198-8aadd4f15d8a"] }, "subtract": { "className": "Exclusion" } }
       ],
       "related": [
-        { "id": "small-foci", "include": { "ids": ["a23671ad-a137-5b55-bc87-8fa11f1c993a", "ce4d072d-cf26-53c6-a4af-8fb4eb5ecd5a", "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"] }, "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline. This item asks for the largest deposit." }
+        { "id": "small-foci", "include": { "ids": ["a23671ad-a137-5b55-bc87-8fa11f1c993a", "ce4d072d-cf26-53c6-a4af-8fb4eb5ecd5a", "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"] }, "credit": true, "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region." }
       ]
     }
   ],
@@ -1007,16 +1120,16 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
       "id": "q-region",
       "kind": "region",
       "title": "Region marking",
-      "stem": "Mark the largest metastatic deposit in this region: outline it, or place one point on it.",
+      "stem": "Find the metastatic carcinoma in this region: place one point on tumour, or outline the largest deposit.",
       "points": 1,
-      "explanation": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. A point counts when it falls inside the reference outline or within 50 µm of it; an outline counts when its overlap with the reference outline (IoU) is 0.50 or more. Full credit also needs a view of your mark at 20× or more.",
+      "explanation": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. A point counts when it falls on any outlined tumour focus or within 50 µm of one. An outline counts when its overlap with the outline of the largest deposit (IoU) is 0.50 or more, and earns half credit when at least 90 % of it lies on tumour. Full credit also needs a view of your mark at 20× or more.",
       "slide": "he",
       "key": "camelyon16-reference",
       "target": "largest-deposit",
       "accept": ["point", "polygon", "brush", "rect", "ellipse"],
-      "scoring": { "iouFull": 0.5, "pointTolerance_um": 50 },
+      "scoring": { "iouFull": 0.5, "pointTolerance_um": 50, "partialInside": { "fraction": 0.9, "factor": 0.5 } },
       "gate": { "scale_um_per_px": 0.5, "label": "20×", "unmetFactor": 0.5 },
-      "candidatesTitle": "Mark the largest deposit without a pointer",
+      "candidatesTitle": "Mark the metastasis without a pointer",
       "candidates": [
         { "id": "A", "description": "Upper border: round clear spaces between bands of dark lymphoid tissue", "geometry": { "type": "Point", "coordinates": [9300, 1000] }, "view": { "slide": "he", "center_um": [2260.77, 243.09], "scale_um_per_px": 0.5 } },
         { "id": "B", "description": "Lower right corner: dense, dark-staining lymphoid tissue", "geometry": { "type": "Point", "coordinates": [13088, 13088] }, "view": { "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 } },
@@ -1097,11 +1210,11 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
   "schema": "stoipath.learn.course/1",
   "id": "stage0-l1",
   "title": "Stoipath Learn · sample course",
-  "summary": "Two short modules on public slides: how the viewer works, then a sentinel lymph node case.",
+  "summary": "Two short modules on public slides: a sentinel lymph node case, then how the viewer works.",
   "audience": ["medical-student", "resident"],
   "modules": [
-    { "id": "viewer-orientation", "url": "../modules/viewer-orientation.module.json", "title": "Using the slide viewer", "estimatedMinutes": 3, "unlock": "always" },
-    { "id": "sln-find-metastasis", "url": "../modules/sln-find-metastasis.module.json", "title": "Sentinel lymph node: find the metastasis", "estimatedMinutes": 15, "unlock": "always" }
+    { "id": "sln-find-metastasis", "url": "../modules/sln-find-metastasis.module.json", "title": "Sentinel lymph node: find the metastasis", "estimatedMinutes": 15, "unlock": "always" },
+    { "id": "viewer-orientation", "url": "../modules/viewer-orientation.module.json", "title": "Using the slide viewer", "estimatedMinutes": 3, "unlock": "always" }
   ]
 }
 ```

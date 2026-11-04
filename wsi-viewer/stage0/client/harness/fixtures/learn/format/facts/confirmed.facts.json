@@ -222,8 +222,17 @@
     {
       "id": "F25",
       "pointer": "/answerKeys/0/related/0/feedback",
-      "quote": "That is tumour too: one of three small separate foci in the CAMELYON16 outline.",
-      "basis": "As F23.",
+      "quote": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts.",
+      "basis": "As F23 (owner default rule (a), 2026-11-04: a point on any Tumor focus counts).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F26",
+      "pointer": "/answerKeys/0/related/0/feedback",
+      "quote": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region.",
+      "basis": "As F6 (added 2026-11-04 so the feedback names the largest deposit, owner default rule (a)).",
       "status": "confirmed",
       "reviewer": "Format fixture reviewer",
       "date": "2026-11-04"

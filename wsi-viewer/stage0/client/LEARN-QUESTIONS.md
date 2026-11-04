@@ -177,3 +177,154 @@ additions of this wave are marked "Additive (Wave L1 integrator)" in `src/learn/
    every view exposed on `learn.debug` and every Phase A view (`core`, `overlay`, `annotations`, `draw-tools`).
    `window.__shell` has the Phase A helpers' fields (`sharpness()`, `hud()`, `polite()`, `notice()`, `state()`, `tools`,
    `openSlide`, `run`), so `harness/tools/helpers.mjs`'s `settle`, `frameCost` and `readOverlayPixel` work unchanged.
+
+**Note for format and content (2026-11-04, integrator).** LEARN.md Appendix A and B now carry the owner defaults:
+`metadata.textLicence` (CC BY 4.0), `answerKeys[0].related[0].credit: true` with a feedback sentence that names the
+largest deposit (F25, F26), `items[0].scoring.partialInside: { fraction: 0.9, factor: 0.5 }`, a new q-region stem,
+explanation and `candidatesTitle`, and the course order case → orientation (J-I6). `client/learn/examples/` was left as
+it was, because the format tests validate it against the schema: format, please bring the two examples in line with
+Appendix A / B in the same change that adds `credit` and `partialInside` to the schema; content builds
+`data/learn/` from Appendix A / B (and §12's facts, now F1–F26).
+
+**Format, reply to the note above (2026-11-04).** Done in the same change as the schema fields: `credit` (on
+`$defs/AnswerKeySpec` related entries), `scoring.partialInside` `{ fraction, factor }` and the iou metric's `inside`
+(results file) are in `module.schema.json`; `client/learn/examples/sln-find-metastasis.module.json` is Appendix A
+verbatim, `stage0-l1.course.json` is Appendix B (case, then orientation), and `sln-find-metastasis.facts.json` lists
+F1–F26 (F25's quote as §12 now has it, F26 added, both `pending`; every quote is verbatim at its pointer). The example
+lints with 0 errors; its warnings are `review-recorded` (draft) and `colour-only` ("pink" in candidate C). Lint
+returns `passed` rows (A-F-Q4), asks `LintContext.facts` when present (A-F-Q3), and `tour-shows-key` treats credited
+related features like targets (A-F-Q2). One observation for progress (not a format change): PRG-4's
+`/name|email|user|device|ip/i` key test would match the ResultsFile's required `inputDevice` key, so that check needs
+an exception for `inputDevice` (or the regex anchored to whole keys).
+
+## 2026-11-04 · progress (Wave L1): how the stores behave, for player, items, course and studio
+
+Filed by the progress builder. No contract change is requested; everything below works within contracts §6, §7 and
+§9 as written. These are the conventions the L2 builders can rely on, plus the progress judgement calls
+(`src/learn/progress/`; tests `harness/unit/learn-progress.test.mjs`, `harness/learn/progress.check.mjs`).
+
+**P-N1 · `course(courseId)` lists modules that have a record.** A module with no record has no entry, and the course
+reads it as `not-started`. An entry's `stepIndex` is 0-based and `steps` is the module's stepCount
+(`steps.length + 1`, the summary included), so the outline line is `in progress · step {stepIndex + 1} of {steps}`
+(PRG-2: stepIndex 4 of 10 gives "step 5 of 10"). Status: `completed` iff `completedAt` is set; `in-progress` once a step
+after the first is reached or an item leaves `awaiting`; otherwise `not-started`. That includes a record just created
+by `load()` (PRG-5: after Start again the module reopens and reads `not-started`). The course record is rewritten only
+when an entry's status, step, score or points change. An entry whose module record is gone is dropped.
+
+**P-N2 · `load()` writes only when there is something to keep.** A brand-new record is written by the first `save()`,
+so opening a module writes nothing. A reconciled record (new version or hash, cleared items, normalised states) is
+written back once, debounced. `courseId` is the one passed in, else the stored one (a module opened with `?module=`
+still counts towards the course it was started in).
+
+**P-N3 · The reconcile notice is the caller's to show.** `load()` returns `report.text`, and the player shows it (and
+passes `report` on in `moduleLoaded`); progress shows no notice itself. Wording: the §5.6 sentence verbatim for two or
+more items. For exactly one item it uses the singular: `This module was updated; your answer to 1 changed item was
+cleared.` (judgement call). A stored record that cannot be read gives a fresh record and the text `Your saved place in
+this module could not be read; it starts again from the beginning.` (N).
+
+**P-N4 · Reconcile re-locks after a structural change** (judgement call). When an item was cleared or added, steps
+after the first unrevealed item's step are locked again (`maxStepIndex` and `stepIndex` clamped to that step) and
+`completedAt` is cleared. A learner is then never past a question that is open again. Ordinary resumes are untouched.
+
+**P-N5 · `save(p)`: hand over a fresh copy each time** (the player's `update(mutate)` copies, mutates and saves).
+Progress stamps `updatedAt`. On write, `reveal-waiting` is stored as `committed`, and each item's `views` keeps its
+newest 500 entries. Loading also normalises a committed response that has no answer back to `awaiting`. The debounce
+is 800 ms after the last save, with a 5 s ceiling (judgement call), so a learner who never pauses is still saved. The
+write starts through `shell.atRest` (PRG-1: the put lands after a drag ends, never during it). Progress flushes on
+`pagehide` and on `visibilitychange` to hidden. `player.close()` should `await progress.flush()`.
+
+**P-N6 · Status lines and speech.** `status.text` is the §8.4 line. `idle` (no write yet) reuses the Open card's note
+`Your place is saved in this browser after every step.`; `saving` is TOOLS.md AN4's `Saving in this browser…`;
+`{time}` is local `hh:mm`. Speech follows AN4: `memory-only` is shown, not spoken (core already speaks the storage
+notice once; PRG-3 counts it once), and `error` is spoken politely when it starts and again on recovery. `progressSaved`
+is emitted at rest after each module write.
+
+**P-N7 · Results.** `results()` builds the file from the in-memory record, so it works without storage and before the
+debounced write. The summary (player) names the download `stoipath-learn_{moduleId}_{yyyymmdd-hhmmss}.results.json`
+(local time in the file name only; every time inside the file is UTC `…Z`) and emits `resultsExported`. `gateMet` is
+null for an item with no gate. Text answers are cut to the schema's 500 characters. As the format builder noted,
+PRG-4's key test exempts `inputDevice` (an input KIND such as `mouse`, not an identifier) as well as `title`.
+
+**P-N8 · DraftStore.** Provided only where `LearnHost.draftStorage` exists (studio, preview), so
+`learn.service('drafts')` is null on the learner page. `readOnly` is true in a preview; there `put` and `remove`
+resolve false. Ids must match the `?preview=` rule `^[A-Za-z0-9_-]{1,64}$`. `put` resolves false when the write did not
+reach storage, but the draft stays in memory for the session (`get` and `list` still see it). `list()` puts the most
+recently updated first. The store emits nothing: the studio owns autosave and `draftSaved`.
+
+## 2026-11-04 · scoring (Wave L1): contract questions and how the service behaves
+
+Filed by the scoring builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`; the module implements
+the contract as written and says below where it carries more.
+
+**S-Q1 · `CompiledRelated` has no `credit` (request).** `scoreRegion(item, key, …)` sees only the compiled key, so it
+cannot see `KeyRelated.credit` (rule (a), owner default 2026-11-04, default pending owner). Until the type carries it,
+`compileKey` sets `credit: boolean` on each compiled related entry as scoring's own data, and only scoring reads it
+(`isCredited(r)`). A `CompiledKey` built by hand without the flag (such as the format test's stand-in) gets the
+pre-default rule (`wrong-related`). Proposal, contracts §5:
+
+```ts
+export interface CompiledRelated {
+  id: string;
+  include: readonly (PolygonGeometry | MultiPolygonGeometry)[];
+  feedback: string;
+  /** Copied from KeyRelated.credit (absent = false): rule (a) points, rule (b) inside area. */
+  credit?: boolean;
+}
+```
+
+No other module needs to change: reveal and lint already get keys from `scoring.compileKey`.
+
+**S-Q2 · "compileKey refuses a fingerprint mismatch" (information, wording).** compileKey receives one fingerprint,
+the module slide's. Against it, it can check that the fingerprint parses (`{w}x{h}@{mpp}@…`) and that every source
+feature lies inside the `w × h` px slide, which catches a key from another region or build. It refuses both, with a
+reason clause such as `feature … lies outside the 2220 × 2967 px slide of fingerprint …; the key was written for a
+different build of the slide`. Comparing the layer file's own `stoipath.slide.fingerprint` with the module slide's is
+the caller's job: format lint already does it, and reveal must do it too for RVL-1's fingerprint fixture. Suggested doc
+line for `ScoringService.compileKey`: "refuses a fingerprint that does not parse and geometry outside the slide it
+names; callers compare a layer's own fingerprint first". Its other refusals are a non-polygon or non-finite feature,
+and a target whose include selects no feature (`target {id} selects no feature`). An unmatched id inside a selector is
+not a refusal, since lint names each one.
+
+**S-Q3 · `ItemScore.related` doc (wording).** It says "KeyRelated.id hit by a wrong mark". Since the owner defaults it
+is also set for `correct-related` (a credited point), for `partial-inside` when most of the outline lies on a credited
+feature (R6), and for `half-gate` when the correct answer was a credited point. Suggested: "the KeyRelated.id the mark
+mostly hit, for any feedback".
+
+**S-N1 · Feedback conventions, for items and player** (LEARN.md §6.3, §6.4, §15.3):
+- **Points:** `correct`; `correct-related` (rule (a), `related` set); `wrong-hole` (strictly inside an Exclusion, at
+  any distance: no credit); `wrong-related` (a related entry without `credit`); `wrong`. The point metric always
+  refers to the target (P5 reports 64.8 µm from T).
+- **Outlines:** `correct` (IoU ≥ iouFull); `partial-inside` (rule (b): `correct: false`, score `points × factor ×
+  gate factor`, iou metric `inside`); `wrong-related` (more of the mark on a related feature than on T); `wrong`.
+- **Gate:** with the gate unmet, `correct` and `correct-related` become `half-gate` (`related` kept), while
+  `partial-inside` keeps its kind (check `score.gate.met`). Case 1 gives 0.5 / 1 for a correct answer and 0.25 / 1
+  for a partial one.
+- **Text:** rule `region-text`, rubric metric. The gate subject is the target: met when a sharp view at ≤ gate × 1.01
+  intersects T, and a view wholly inside an Exclusion does not count.
+- **Choice:** `correct` / `partial` (multi partial above 0) / `wrong`. The gate is `{required: false, met: true,
+  bestScale_um_per_px: null, factor: 1}`.
+- **Shape:** every `ItemScore` is plain JSON and its metric validates against `$defs/ScoreMetric` (unit-tested).
+  Candidates deep-equal the drawn mark (SCR-6).
+
+**S-N2 · `__learn.tools.scoring()`** returns the frozen service itself (ITM-5 calls `.scoreRegion` on it). The module
+also exports its pure helpers (`rectHitsSubject`, `pointMetric`, `isCredited`, `parseFingerprint`, `round2` …) for
+tests. Learn modules still use the service only, since modules never import each other.
+
+**S-Q4 · A number for content (information).** LEARN.md §12 F10's basis, and the `basis` of F10 in
+`client/learn/examples/sln-find-metastasis.facts.json` (and the data/learn copy, when it exists), say candidate D at
+(6400, 13900) is "784 µm outside". By Phase A `distanceToGeometry` and an independent Python check it is 819.8 µm
+(820). The learner never reads this sentence, and D stays wrong. LEARN.md §6.3.4 is corrected; §12 and the facts
+files are not mine. The §6.3.1 point table was also recomputed: P3 and P4 are 40.0 and 80.0 µm right of the true
+rightmost vertex (11911.6, 5845.8), and P5 and P6 are at area centroids, 64.8 and 56.0 µm. Every result is unchanged.
+
+**S-Q4b · For the owner's §12 review (F23, F25; medical content, information).** F23's basis says the three small
+Tumor foci 'Annotation 4–6' lie "70–950 µm from the main outline". Measured on the reference outline (Phase A
+`distanceToGeometry`, checked in Python), none overlaps 'Annotation 3', and their nearest vertices are only 15, 20 and
+11 µm from it. Their area centroids are 28, 48 and 65 µm from it, and their areas are 830, 2,424 and 5,185 µm². Two
+things follow:
+- With the 50 µm point tolerance, most of foci 4 and 5 already counts through T itself. Rule (a) matters mainly for
+  focus 6 (P5).
+- Whether CAMELYON16 drew these as foci separate from the deposit, or as fragments at its edge, is a pathologist's
+  call. The learner-facing phrase "three small separate tumour foci" (F23 in `/case/expertView/text`, F25 in the
+  related feedback) should be confirmed or reworded in the owner's review.
+No scoring change follows: the rules and the §6 numbers stand either way.

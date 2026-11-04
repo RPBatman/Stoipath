@@ -111,7 +111,6 @@
 .learn .task__peekbar .btn[hidden] { display: none; }
 /* Integrator rows around #taskCard (new; LEARN.md §5.2): the draft chip above the card, the peek bar's text stack */
 .learn .taskdock__head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5) 0; min-height: 0; }
-.learn .taskdock__head:not(:has(.chip:not([hidden]))) .sheet-toggle { margin-left: auto; }
 .learn .taskdock__head .sheet-toggle { margin-left: auto; }
 .learn .task__peekstack { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .learn .learn-draft { white-space: nowrap; }
@@ -181,8 +180,11 @@
 .app.learn.nav-hidden .navigator { display: none; }
 .learn .navigator__label .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .learn .navigator__label .nav-hint { flex: 0 0 auto; white-space: nowrap; }
-/* The navigator steps left of an open drawer (1080–1599; final 505) */
-@media (min-width: 1080px) and (max-width: 1599px) { .app.learn.dock-open .nav-host .navigator { right: calc(var(--layout-dock) + var(--layout-hud-inset)); } }
+/* Docked width with the card folded: the palette and dialogs use the empty dock column over the canvas edge (shell.css 270–276) */
+@media (min-width: 1600px) {
+  .app.learn:not(.dock-open):is(.palette-open, .dialog-open) .nav-host .navigator,
+  .app.learn:not(.dock-open):is(.palette-open, .dialog-open) #paneA > .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+}
 
 /* --- Palette, keymap, About, strip, toasts (shell.css 154–181; final 384–404) ---------------------------------------- */
 .learn .palette__item { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; cursor: pointer; }
@@ -226,8 +228,17 @@
   .app.learn { --ctx-h: 40px; --layout-dock: 340px; }
   .app.learn, .app.learn.dock-open, .app.learn:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; grid-template-areas: "topbar topbar topbar" "ctx ctx ctx" "rail canvas canvas" "strip strip strip"; }
   .app.learn .dock { display: none; }
-  .app.learn.dock-open .dock { display: flex; position: absolute; top: calc(var(--layout-topbar) + var(--ctx-h)); right: 0; bottom: var(--layout-strip); height: auto; width: var(--layout-dock); z-index: var(--z-drawer); box-shadow: var(--shadow-3); }
+  /* grid-area: auto: an absolute item keeping a named area that this grid lacks resolves its insets against the wrong
+     lines (shell.css 254, the same fix) */
+  .app.learn.dock-open .dock { display: flex; grid-area: auto; position: absolute; top: calc(var(--layout-topbar) + var(--ctx-h)); right: 0; bottom: var(--layout-strip); height: auto; width: var(--layout-dock); z-index: var(--z-drawer); box-shadow: var(--shadow-3); }
   .app.learn.dock-open .toast-stack { right: calc(var(--layout-dock) + var(--space-4)); }
+  /* The drawer, the palette and the dock-column dialogs cover the right column: the navigator and the bottom-right
+     readout (magnification, the zoom-gate chip) step left of it (shell.css 255–261, SC 2.4.11). */
+  .app.learn:is(.dock-open, .palette-open, .dialog-open) .nav-host .navigator,
+  .app.learn:is(.dock-open, .palette-open, .dialog-open) #paneA > .hud--br { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.learn:is(.dock-open, .palette-open, .dialog-open) {
+    --layout-navigator: min(180px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--ctx-h) + var(--layout-strip)) - var(--layout-hud-inset) - 36px) * var(--nav-ar, 1)));
+  }
   .learn .ctxbar { display: flex; }
   .learn .flowrail .phase__sub { display: none; }
   .learn .phase { min-height: 48px; }
@@ -242,21 +253,21 @@
   .learn .rail, .learn .ctxbar { display: none !important; }
   .learn .bottombar { display: flex; }
   .app.learn .dock { display: none; }
-  .app.learn.dock-open:not(.palette-open) .dock { display: flex; position: absolute; left: 0; right: 0; bottom: calc(var(--layout-bottombar) + var(--layout-strip)); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
-  .app.learn.dock-open.sheet-peek .dock { max-height: none; }
+  /* The sheet is the grid's in-flow "sheet" row, so the canvas yields height instead of being covered (shell.css
+     286–291; handoff §5.1 "the bottom HUD lifts above an open sheet"); expanded it is ≤ 40 % (--layout-sheet-max). */
+  .app.learn.dock-open:not(.palette-open) .dock { display: flex; grid-area: sheet; position: relative; inset: auto; width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail); }
   .learn .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
   .learn .sheet-toggle { display: inline-flex; }
   .learn .task__head { padding-top: var(--space-3); }
   .learn .task__body { flex: 1 1 auto; }
   .app.learn.sheet-peek .task__body, .app.learn.sheet-peek .task__secondary, .app.learn.sheet-peek .cta-note { display: none; }
   .app.learn.sheet-peek .task__peekstem { display: block; }
-  .app.learn.sheet-peek .taskdock__head .sheet-toggle .icon { transform: rotate(180deg); }
+  .app.learn:not(.sheet-peek) .sheet-toggle .icon { transform: rotate(180deg); }   /* up = expand (peek), down = collapse */
   .learn .task__cta { padding-top: var(--space-3); padding-bottom: var(--space-3); }
   .learn .btn--cta { min-height: 52px; }
   .learn .hud { max-width: 40%; }
-  .app.learn.dock-open .hud--bl, .app.learn.dock-open .hud--br { bottom: calc(var(--sheet-h, 196px) + var(--layout-hud-inset)); }
-  .app.learn.dock-open .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--sheet-h, 196px) + var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
-  .app.learn.dock-open.palette-open .hud--bl, .app.learn.dock-open.palette-open .hud--br { bottom: var(--layout-hud-inset); }
+  .app.learn .toast-stack { left: var(--space-4); right: var(--space-4); }
+  .app.learn.dialog-open .dock { display: none; }   /* a dialog sheet takes the bottom (base.css ≤ 1079), the card waits */
 }
 /* Phone (≤ 599): compact flow bar; sheet peek bar; strip hidden (sharpness joins the HUD with a label) */
 @media (max-width: 599px) {
@@ -264,14 +275,13 @@
   .learn .rail, .learn .ctxbar, .learn .strip { display: none !important; }
   .learn .bottombar { display: flex; }
   .app.learn .dock { display: none; }
-  .app.learn.dock-open:not(.palette-open) .dock { display: flex; position: absolute; left: 0; right: 0; bottom: var(--layout-bottombar); width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: var(--shadow-4); z-index: var(--z-sheet); }
-  .app.learn.dock-open.sheet-peek .dock { max-height: none; }
+  .app.learn.dock-open:not(.palette-open) .dock { display: flex; grid-area: sheet; position: relative; inset: auto; width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail); }
   .learn .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
   .learn .sheet-toggle { display: inline-flex; }
   .learn .task__body { flex: 1 1 auto; }
   .app.learn.sheet-peek .taskdock__head, .app.learn.sheet-peek .dock__tabs, .app.learn.sheet-peek #taskCard, .app.learn.sheet-peek .learn-studio-panel { display: none; }
   .app.learn.sheet-peek .task__peekbar { display: flex; }
-  .app.learn.sheet-peek .task__peekbar .sheet-toggle .icon { transform: rotate(180deg); }
+  .app.learn:not(.sheet-peek) .sheet-toggle .icon { transform: rotate(180deg); }
   .learn .task__title { font-size: var(--text-xl); }
   .learn .flow--h > li { flex: 0 0 auto; }
   .learn .task__head { padding: var(--space-3) var(--space-4) var(--space-2); }
@@ -286,9 +296,8 @@
   .learn .flowbar { gap: 2px; padding: 0 var(--space-2); }
   .learn .topbar__slot-mode #keymapBtn { display: none; }
   .learn .hud { max-width: 48%; }
-  .app.learn.dock-open .hud--bl, .app.learn.dock-open .hud--br { bottom: calc(var(--sheet-h, 176px) + var(--layout-hud-inset)); }
-  .app.learn.dock-open .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--sheet-h, 176px) + var(--layout-bottombar) + var(--space-4)); }
-  .app.learn.dock-open.palette-open .hud--bl, .app.learn.dock-open.palette-open .hud--br { bottom: var(--layout-hud-inset); }
+  .app.learn .toast-stack { left: var(--space-4); right: var(--space-4); bottom: calc(var(--layout-bottombar) + var(--space-4)); }
+  .app.learn.dialog-open .dock { display: none; }
 }
 /* Tablet portrait keeps the integrator rows of the sheet (the card's own head stays visible in its peek; final 523–525) */
 @media (min-width: 600px) and (max-width: 1079px) {

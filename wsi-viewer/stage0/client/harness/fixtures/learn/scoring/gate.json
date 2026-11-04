@@ -1,0 +1,469 @@
+{
+ "about": "SCR-4 view-log fixtures (LEARN.md §6.4, D7). A view given as {centre, scale} is the uncovered rect of the nominal 1384 × 820 CSS px canvas (the 1440 × 900 desktop, as lint's candidate-gate) at that scale on tumor_014 (mpp 0.243094); {rect} is literal (level-0 px). Subjects: {point}, {polygon} (one ring, closed by the test) or {target: true} (Appendix A's largest-deposit). Cases with `synthetic: true` use no key.",
+ "gate": {
+  "scale_um_per_px": 0.5,
+  "label": "20×",
+  "unmetFactor": 0.5
+ },
+ "canvas": [
+  1384,
+  820
+ ],
+ "cases": [
+  {
+   "id": "no views",
+   "subject": {
+    "point": [
+     7168,
+     5120
+    ]
+   },
+   "views": [],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": null
+   }
+  },
+  {
+   "id": "sharp 0.5 µm/px view over the mark",
+   "subject": {
+    "point": [
+     7168,
+     5120
+    ]
+   },
+   "views": [
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.5
+   }
+  },
+  {
+   "id": "the same view, not sharp",
+   "subject": {
+    "point": [
+     7168,
+     5120
+    ]
+   },
+   "views": [
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.5,
+     "sharp": false
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": null
+   }
+  },
+  {
+   "id": "scale 0.505 (gate × 1.01)",
+   "subject": {
+    "point": [
+     7168,
+     5120
+    ]
+   },
+   "views": [
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.505,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.505
+   }
+  },
+  {
+   "id": "scale 0.51",
+   "subject": {
+    "point": [
+     7168,
+     5120
+    ]
+   },
+   "views": [
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.51,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": 0.51
+   }
+  },
+  {
+   "id": "a 20× view of the deposit that misses the mark (P7): no leak",
+   "subject": {
+    "point": [
+     13088,
+     13088
+    ]
+   },
+   "views": [
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.5,
+     "sharp": true
+    },
+    {
+     "centre": [
+      11264,
+      5632
+     ],
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": null
+   }
+  },
+  {
+   "id": "finest sharp view over the mark is reported",
+   "subject": {
+    "point": [
+     13088,
+     13088
+    ]
+   },
+   "views": [
+    {
+     "centre": [
+      7680,
+      7680
+     ],
+     "scale": 4,
+     "sharp": true
+    },
+    {
+     "centre": [
+      13088,
+      13088
+     ],
+     "scale": 1,
+     "sharp": true
+    },
+    {
+     "centre": [
+      13088,
+      13088
+     ],
+     "scale": 0.25,
+     "sharp": false
+    },
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": 1
+   }
+  },
+  {
+   "id": "text answer: a 20× view of the target",
+   "subject": {
+    "target": true
+   },
+   "views": [
+    {
+     "centre": [
+      7168,
+      5120
+     ],
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.5
+   }
+  },
+  {
+   "id": "text answer: a 20× view away from the target",
+   "subject": {
+    "target": true
+   },
+   "views": [
+    {
+     "centre": [
+      13088,
+      13088
+     ],
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": null
+   }
+  },
+  {
+   "id": "text answer: a view wholly inside an Exclusion shows no tumour",
+   "subject": {
+    "target": true
+   },
+   "views": [
+    {
+     "rect": {
+      "minX": 7359,
+      "minY": 3447,
+      "maxX": 7379,
+      "maxY": 3467
+     },
+     "scale": 0.05,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": null
+   }
+  },
+  {
+   "id": "polygon: an edge crosses the rect (no vertex inside, centre outside)",
+   "synthetic": true,
+   "subject": {
+    "polygon": [
+     [
+      -1000,
+      450
+     ],
+     [
+      1000,
+      450
+     ],
+     [
+      1000,
+      460
+     ],
+     [
+      -1000,
+      460
+     ]
+    ]
+   },
+   "views": [
+    {
+     "rect": {
+      "minX": 400,
+      "minY": 400,
+      "maxX": 600,
+      "maxY": 600
+     },
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.5
+   }
+  },
+  {
+   "id": "polygon: the rect lies inside it",
+   "synthetic": true,
+   "subject": {
+    "polygon": [
+     [
+      0,
+      0
+     ],
+     [
+      1000,
+      0
+     ],
+     [
+      1000,
+      1000
+     ],
+     [
+      0,
+      1000
+     ]
+    ]
+   },
+   "views": [
+    {
+     "rect": {
+      "minX": 400,
+      "minY": 400,
+      "maxX": 600,
+      "maxY": 600
+     },
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.5
+   }
+  },
+  {
+   "id": "polygon: it lies inside the rect",
+   "synthetic": true,
+   "subject": {
+    "polygon": [
+     [
+      450,
+      450
+     ],
+     [
+      550,
+      450
+     ],
+     [
+      550,
+      550
+     ],
+     [
+      450,
+      550
+     ]
+    ]
+   },
+   "views": [
+    {
+     "rect": {
+      "minX": 400,
+      "minY": 400,
+      "maxX": 600,
+      "maxY": 600
+     },
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.5
+   }
+  },
+  {
+   "id": "polygon: L-shape whose bbox overlaps the rect but whose area does not",
+   "synthetic": true,
+   "subject": {
+    "polygon": [
+     [
+      0,
+      0
+     ],
+     [
+      1000,
+      0
+     ],
+     [
+      1000,
+      100
+     ],
+     [
+      100,
+      100
+     ],
+     [
+      100,
+      1000
+     ],
+     [
+      0,
+      1000
+     ]
+    ]
+   },
+   "views": [
+    {
+     "rect": {
+      "minX": 400,
+      "minY": 400,
+      "maxX": 600,
+      "maxY": 600
+     },
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": false,
+    "factor": 0.5,
+    "best": null
+   }
+  },
+  {
+   "id": "point on the rect's border counts (closed)",
+   "synthetic": true,
+   "subject": {
+    "point": [
+     600,
+     500
+    ]
+   },
+   "views": [
+    {
+     "rect": {
+      "minX": 400,
+      "minY": 400,
+      "maxX": 600,
+      "maxY": 600
+     },
+     "scale": 0.5,
+     "sharp": true
+    }
+   ],
+   "expect": {
+    "met": true,
+    "factor": 1,
+    "best": 0.5
+   }
+  }
+ ]
+}

@@ -37,10 +37,13 @@ export function resolveSameOrigin(raw: string, base: string, origin: string): Re
   } catch {
     return { ok: false, error: `"${s.slice(0, 80)}" is not a valid address.` };
   }
-  if ((u.protocol !== 'http:' && u.protocol !== 'https:') || u.origin !== origin || u.username !== '' || u.password !== '') {
+  if ((u.protocol !== 'http:' && u.protocol !== 'https:') || u.origin !== origin) {
+    return { ok: false, error: `${u.href} is not on this site; Learn opens files from this site only.` };
+  }
+  if (u.username !== '' || u.password !== '') {
     u.username = '';
     u.password = '';
-    return { ok: false, error: `${u.href} is not on this site; Learn opens files from this site only.` };
+    return { ok: false, error: `${u.href} was given with a user name or password; Learn opens files from this site without credentials.` };
   }
   u.hash = '';
   return { ok: true, url: u.href };

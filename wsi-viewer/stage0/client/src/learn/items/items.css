@@ -1,0 +1,66 @@
+/*
+ * items · page CSS the design system lacks (LEARN.md §4.5). Copied from design/screens/final/education-module.html,
+ * lines cited, scoped under the items' own roots: `.learn-item` (the item card, a <form> the player hands items the
+ * body of) and `.learn-cands` (the candidates panel's contents in #candBody). Tokens only. Everything else is
+ * base.css: .item-card*, .option*, .candidate*, .alert*, .btn*, .field, .tabs, .swatch*, .mark-row comes from the final.
+ */
+
+/* final 212, 214 */
+.learn-item.item-card { background: var(--color-surface-1); }
+.learn-item .item-card__stem { font-size: var(--text-xl); }
+
+/* final 215–219 · the gatebox */
+.learn-item .gatebox { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-2); font-size: var(--text-sm); }
+.learn-item .gatebox .glyph { font: 700 var(--text-sm)/1 var(--font-mono); width: 20px; height: 20px; display: grid; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; }
+.learn-item .gatebox.is-met { border-style: solid; }
+.learn-item .gatebox.is-met .glyph { background: var(--color-text); color: var(--color-surface-0); border-color: transparent; }
+.learn-item .gatebox small { grid-column: 2; color: var(--color-text-secondary); font-size: var(--text-xs); }
+
+/* final 220–223 · the mark row */
+.learn-item .mark-row { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+.learn-item .mark-row .flex-1 { min-width: 0; }
+.learn-item .mark-row .btn { flex: 0 0 auto; }
+.learn-item .mark-row .swatch { width: 14px; height: 14px; }
+/* the swatch tokens (final 1038, 1051, 1076 set them inline): "Your mark" --ann-5, the key --ann-3, a measurement --ann-8 */
+.learn-item .learn-swatch--mark { --swatch: var(--ann-5); }
+.learn-item .learn-swatch--key { --swatch: var(--ann-3); }
+.learn-item .learn-swatch--measure { --swatch: var(--ann-8); }
+
+/* final 224–226 · confidence; final 564 (≤ 599 px: two columns) */
+.learn-item .confidence { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+.learn-item .confidence .opt { min-height: var(--target); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); display: inline-flex; align-items: center; justify-content: center; font-size: var(--text-sm); padding: 0 var(--space-2); text-align: center; color: var(--color-text); background: transparent; font-family: inherit; cursor: pointer; }
+.learn-item .confidence .opt[aria-checked="true"] { border-color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-text); background: var(--color-control-selected); }
+.learn-item .learn-confidence.is-locked .opt { cursor: default; }
+.learn-item .learn-confidence.is-locked .opt[aria-checked="false"] { color: var(--color-text-secondary); }
+@media (max-width: 599px) { .learn-item .confidence { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* final 227–230 · feedback */
+.learn-item .feedback { display: flex; gap: var(--space-4); padding: var(--space-4); border-radius: var(--radius-3); border: 1px solid var(--color-border-strong); background: var(--color-surface-1); }
+.learn-item .feedback__glyph { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-text); display: grid; place-items: center; font: 700 14px/1 var(--font-mono); flex: 0 0 auto; }
+.learn-item .feedback__title { font-weight: var(--weight-semibold); }
+.learn-item .feedback .score { display: block; margin-top: var(--space-2); font-family: var(--font-ui); font-size: var(--text-sm); }
+.learn-item .feedback__body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+
+/* final 231–232 · candidate rows (the panel uses base.css .candidate / .candidate__radio; the letter box size) */
+.learn-cands .candidate__letter { width: 26px; height: 26px; }
+
+/* N · layout of the parts this module adds (tokens only) */
+.learn-item .learn-item__options { border: 0; margin: 0; padding: 0; min-width: 0; }
+.learn-item .option__body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.learn-item .option__note { color: var(--color-text-secondary); }
+.learn-item .option__note[hidden] { display: none; }
+.learn-item .learn-item__rule { margin: 0; }
+.learn-item .learn-item__status:empty { display: none; }
+.learn-item .learn-item__status, .learn-item .learn-item__after { display: flex; flex-direction: column; gap: var(--space-3); }
+.learn-item .learn-item__after[hidden], .learn-item .learn-item__warn[hidden], .learn-item [hidden] { display: none; }
+.learn-item .learn-item__warn-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.learn-item .learn-item__explain { margin: 0; line-height: var(--leading-body); }
+.learn-item .learn-item__mark-hint .key, .learn-item .item-card__hint .key { margin: 0 1px; }
+.learn-cands { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+.learn-cands .learn-cands__panel[hidden] { display: none; }
+.learn-cands .learn-cands__list { border: 0; margin: 0; padding: 0; min-width: 0; }
+.learn-cands .learn-cands__notice { padding: 0 var(--space-6); }
+.learn-cands .learn-cands__notice[hidden] { display: none; }
+.learn-cands .learn-rubric { display: flex; flex-direction: column; gap: var(--space-4); }
+.learn-cands .learn-rubric__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+@media (max-width: 599px) { .learn-cands .learn-rubric__grid { grid-template-columns: minmax(0, 1fr); } }

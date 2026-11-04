@@ -39,6 +39,11 @@
       "status": "draft",
       "notes": "Format fixture: a copy of the draft case (LEARN.md Appendix A) with the owner defaults of 2026-11-04 (partialInside, credited small foci). Not learner content."
     },
+    "textLicence": {
+      "id": "CC-BY-4.0",
+      "text": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
     "language": "en",
     "estimatedMinutes": 15,
     "created": "2026-11-04",
@@ -164,8 +169,8 @@
               "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"
             ]
           },
-          "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline. This item asks for the largest deposit.",
-          "credit": true
+          "credit": true,
+          "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region."
         }
       ]
     }
@@ -175,9 +180,9 @@
       "id": "q-region",
       "kind": "region",
       "title": "Region marking",
-      "stem": "Mark the largest metastatic deposit in this region: outline it, or place one point on it.",
+      "stem": "Find the metastatic carcinoma in this region: place one point on tumour, or outline the largest deposit.",
       "points": 1,
-      "explanation": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. A point counts when it falls inside the reference outline or within 50 µm of it; an outline counts when its overlap with the reference outline (IoU) is 0.50 or more. Full credit also needs a view of your mark at 20× or more.",
+      "explanation": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. A point counts when it falls on any outlined tumour focus or within 50 µm of one. An outline counts when its overlap with the outline of the largest deposit (IoU) is 0.50 or more, and earns half credit when at least 90 % of it lies on tumour. Full credit also needs a view of your mark at 20× or more.",
       "slide": "he",
       "key": "camelyon16-reference",
       "target": "largest-deposit",
@@ -201,7 +206,7 @@
         "label": "20×",
         "unmetFactor": 0.5
       },
-      "candidatesTitle": "Mark the largest deposit without a pointer",
+      "candidatesTitle": "Mark the metastasis without a pointer",
       "candidates": [
         {
           "id": "A",

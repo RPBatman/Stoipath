@@ -1,0 +1,230 @@
+{
+ "about": "LEARN.md §6.1 and §6.2 examples (SCR-5) on Appendix A's q-sinus (MCQ) and q-features (multi, partial; C = {A, B, C}). `allOrNothing` re-scores q-features with scoring 'all-or-nothing'.",
+ "mcq": {
+  "id": "q-sinus",
+  "kind": "mcq",
+  "title": "Lymphatic route",
+  "stem": "Tumour cells that reach a lymph node through its afferent lymphatics usually lodge first in which compartment?",
+  "points": 1,
+  "options": [
+   {
+    "id": "A",
+    "text": "The germinal centres of the follicles",
+    "correct": false
+   },
+   {
+    "id": "B",
+    "text": "The subcapsular (marginal) sinus",
+    "correct": true
+   },
+   {
+    "id": "C",
+    "text": "The medullary cords",
+    "correct": false
+   },
+   {
+    "id": "D",
+    "text": "The hilar fat",
+    "correct": false
+   }
+  ],
+  "explanation": "Afferent lymphatics open into the subcapsular sinus under the capsule, so lymph-borne tumour cells usually lodge there first and can then spread into the rest of the node. This region is a window inside the node, so the capsule may not be visible here."
+ },
+ "multi": {
+  "id": "q-features",
+  "kind": "multi",
+  "title": "Tumour cells or lymphocytes?",
+  "stem": "At 20×, which features favour metastatic carcinoma over the surrounding lymphocytes? Select all that apply.",
+  "points": 1,
+  "scoring": "partial",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cells lying together in cohesive sheets or clusters",
+    "correct": true
+   },
+   {
+    "id": "B",
+    "text": "Nuclei larger than those of the lymphocytes",
+    "correct": true
+   },
+   {
+    "id": "C",
+    "text": "More abundant cytoplasm",
+    "correct": true
+   },
+   {
+    "id": "D",
+    "text": "Small, round, dark nuclei with very little cytoplasm",
+    "correct": false,
+    "feedback": "This describes the lymphocytes."
+   }
+  ],
+  "explanation": "Carcinoma cells are larger than lymphocytes, with more cytoplasm and larger nuclei, and they hold together in cohesive groups. Sinus histiocytes also have abundant cytoplasm, so cohesion and nuclear features matter; when the distinction is uncertain, immunohistochemistry for cytokeratin is commonly used to confirm epithelial tumour cells in a lymph node."
+ },
+ "cases": [
+  {
+   "item": "mcq",
+   "selected": [
+    "B"
+   ],
+   "expect": {
+    "score": 1,
+    "correct": true,
+    "feedback": "correct",
+    "rule": "mcq"
+   }
+  },
+  {
+   "item": "mcq",
+   "selected": [
+    "A"
+   ],
+   "expect": {
+    "score": 0,
+    "correct": false,
+    "feedback": "wrong",
+    "rule": "mcq"
+   }
+  },
+  {
+   "item": "mcq",
+   "selected": [],
+   "expect": {
+    "score": 0,
+    "correct": false,
+    "feedback": "wrong",
+    "rule": "mcq"
+   }
+  },
+  {
+   "item": "mcq",
+   "selected": [
+    "B",
+    "C"
+   ],
+   "expect": {
+    "score": 0,
+    "correct": false,
+    "feedback": "wrong",
+    "rule": "mcq"
+   }
+  },
+  {
+   "item": "multi",
+   "selected": [
+    "A",
+    "B",
+    "C"
+   ],
+   "expect": {
+    "score": 1,
+    "correct": true,
+    "feedback": "correct",
+    "rule": "multi-partial"
+   }
+  },
+  {
+   "item": "multi",
+   "selected": [
+    "A",
+    "B",
+    "D"
+   ],
+   "expect": {
+    "score": 0.33,
+    "correct": false,
+    "feedback": "partial",
+    "rule": "multi-partial"
+   }
+  },
+  {
+   "item": "multi",
+   "selected": [
+    "A",
+    "D"
+   ],
+   "expect": {
+    "score": 0,
+    "correct": false,
+    "feedback": "wrong",
+    "rule": "multi-partial"
+   }
+  },
+  {
+   "item": "multi",
+   "selected": [
+    "A",
+    "B"
+   ],
+   "expect": {
+    "score": 0.67,
+    "correct": false,
+    "feedback": "partial",
+    "rule": "multi-partial"
+   }
+  },
+  {
+   "item": "multi",
+   "selected": [
+    "C",
+    "B",
+    "A",
+    "A"
+   ],
+   "expect": {
+    "score": 1,
+    "correct": true,
+    "feedback": "correct",
+    "rule": "multi-partial",
+    "metricSelected": [
+     "A",
+     "B",
+     "C"
+    ]
+   }
+  },
+  {
+   "item": "allOrNothing",
+   "selected": [
+    "A",
+    "B",
+    "C"
+   ],
+   "expect": {
+    "score": 1,
+    "correct": true,
+    "feedback": "correct",
+    "rule": "multi-all-or-nothing"
+   }
+  },
+  {
+   "item": "allOrNothing",
+   "selected": [
+    "A",
+    "B"
+   ],
+   "expect": {
+    "score": 0,
+    "correct": false,
+    "feedback": "wrong",
+    "rule": "multi-all-or-nothing"
+   }
+  },
+  {
+   "item": "allOrNothing",
+   "selected": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "expect": {
+    "score": 0,
+    "correct": false,
+    "feedback": "wrong",
+    "rule": "multi-all-or-nothing"
+   }
+  }
+ ]
+}
