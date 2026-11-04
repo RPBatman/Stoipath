@@ -360,8 +360,15 @@
       "additionalProperties": false,
       "required": ["options"],
       "properties": {
-        "id": true, "title": true, "stem": true, "points": true, "explanation": true, "hint": true,
+        "id": true,
         "kind": { "const": "mcq" },
+        "title": true, "stem": true, "hint": true, "points": true,
+        "measureHint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["slide"],
+          "properties": { "slide": { "$ref": "#/$defs/SlideRef" } }
+        },
         "options": {
           "type": "array",
           "minItems": 2,
@@ -371,12 +378,7 @@
           "minContains": 1,
           "maxContains": 1
         },
-        "measureHint": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["slide"],
-          "properties": { "slide": { "$ref": "#/$defs/SlideRef" } }
-        }
+        "explanation": true
       }
     },
     "MultiItem": {
@@ -385,8 +387,10 @@
       "additionalProperties": false,
       "required": ["options", "scoring"],
       "properties": {
-        "id": true, "title": true, "stem": true, "points": true, "explanation": true, "hint": true,
+        "id": true,
         "kind": { "const": "multi" },
+        "title": true, "stem": true, "hint": true, "points": true,
+        "scoring": { "enum": ["all-or-nothing", "partial"] },
         "options": {
           "type": "array",
           "minItems": 2,
@@ -395,7 +399,7 @@
           "contains": { "type": "object", "properties": { "correct": { "const": true } }, "required": ["correct"] },
           "minContains": 1
         },
-        "scoring": { "enum": ["all-or-nothing", "partial"] }
+        "explanation": true
       }
     },
     "Candidate": {
@@ -474,8 +478,9 @@
       "additionalProperties": false,
       "required": ["slide", "key", "accept", "scoring", "gate", "candidates"],
       "properties": {
-        "id": true, "title": true, "stem": true, "points": true, "explanation": true, "hint": true,
+        "id": true,
         "kind": { "const": "region" },
+        "title": true, "stem": true, "hint": true, "points": true, "explanation": true,
         "slide": { "$ref": "#/$defs/SlideRef" },
         "key": { "$ref": "#/$defs/LocalId" },
         "target": { "$ref": "#/$defs/LocalId" },
@@ -504,9 +509,9 @@
             }
           ]
         },
+        "candidatesTitle": { "$ref": "#/$defs/ShortText" },
         "candidates": { "type": "array", "maxItems": 6, "items": { "$ref": "#/$defs/Candidate" } },
-        "textRubric": { "$ref": "#/$defs/TextRubric" },
-        "candidatesTitle": { "$ref": "#/$defs/ShortText" }
+        "textRubric": { "$ref": "#/$defs/TextRubric" }
       }
     },
     "Item": {
@@ -529,14 +534,16 @@
       "additionalProperties": false,
       "required": ["text", "view", "transition"],
       "properties": {
-        "id": true, "title": true, "tools": true,
+        "id": true,
         "kind": { "const": "tour" },
         "phase": { "enum": ["open", "screen", "examine", "complete"] },
+        "title": true,
         "text": { "$ref": "#/$defs/Text" },
         "view": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/TourView" }] },
         "transition": { "enum": ["fly", "cut"] },
         "highlights": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
-        "dwellMs": { "type": "integer", "minimum": 2000, "maximum": 120000 }
+        "dwellMs": { "type": "integer", "minimum": 2000, "maximum": 120000 },
+        "tools": true
       }
     },
     "ItemStep": {
@@ -545,11 +552,13 @@
       "additionalProperties": false,
       "required": ["item", "view"],
       "properties": {
-        "id": true, "title": true, "tools": true,
+        "id": true,
         "kind": { "const": "item" },
         "phase": { "const": "decide" },
+        "title": true,
         "item": { "$ref": "#/$defs/LocalId" },
-        "view": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/TourView" }] }
+        "view": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/TourView" }] },
+        "tools": true
       }
     },
     "RevealStep": {
@@ -558,9 +567,10 @@
       "additionalProperties": false,
       "required": ["items", "text", "view", "transition"],
       "properties": {
-        "id": true, "title": true, "tools": true,
+        "id": true,
         "kind": { "const": "reveal" },
         "phase": { "enum": ["decide", "complete"] },
+        "title": true,
         "items": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
         "text": { "$ref": "#/$defs/Text" },
         "view": {
@@ -572,7 +582,8 @@
         },
         "transition": { "enum": ["fly", "cut"] },
         "showExpert": { "type": "boolean" },
-        "highlights": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } }
+        "highlights": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
+        "tools": true
       }
     },
     "Step": {

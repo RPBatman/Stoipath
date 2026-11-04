@@ -272,8 +272,18 @@ export interface KeyTarget {
 export interface KeyRelated {
   id: string;
   include: FeatureSelector;
-  /** Shown when a wrong mark hits these features ("That is tumour too: a small separate focus…"). */
+  /**
+   * Shown when a mark hits these features ("That is tumour too: a small separate focus…"). With `credit`, the sentence
+   * also names the item's target ("The largest deposit is the large pale area in the centre of this region.").
+   */
   feedback: string;
+  /**
+   * Additive (Wave L1, owner default 2026-11-04, LEARN.md §6.3; default pending owner): these features are the thing
+   * being looked for too. A POINT mark inside them, or within `pointTolerance_um` of their outline, is correct (full
+   * credit, feedback `correct-related` with this entry's `feedback`); their area also counts as "inside" for
+   * `RegionScoring.partialInside`. Absent or false: a mark on them is wrong (`wrong-related`), as before.
+   */
+  credit?: boolean;
 }
 
 // =====================================================================================================================
@@ -355,6 +365,20 @@ export interface RegionScoring {
   iouFull: number;
   /** Point marks: correct iff inside the target or within this many µm of its outline (0–500). */
   pointTolerance_um: number;
+  /**
+   * Additive (Wave L1, owner default 2026-11-04, LEARN.md §6.3.2; default pending owner): an outline mark below `iouFull`
+   * earns `points × factor` (then × the gate factor) when at least `fraction` of the mark's own area lies inside the
+   * target or a `credit` related feature (feedback `partial-inside`, `correct: false`). Absent: no partial credit.
+   */
+  partialInside?: PartialInside;
+}
+
+/** LEARN.md §6.3.2 rule (b): the case-1 values are `{ fraction: 0.9, factor: 0.5 }`. */
+export interface PartialInside {
+  /** 0 < x ≤ 1: share of the mark's area that must lie inside the target (or a credited related feature). */
+  fraction: number;
+  /** 0 < x < 1: share of the item's points earned. */
+  factor: number;
 }
 
 /**
@@ -575,12 +599,21 @@ export interface CompiledRelated {
 
 export type ScoreMetric =
   | { kind: 'choice'; selected: OptionId[]; correct: OptionId[] }
-  | ({ kind: 'iou'; target: string } & IouResult)
+  /**
+   * `inside` (additive, Wave L1): share 0–1 of the mark's area inside the target or a credited related feature
+   * (LEARN.md §6.3.2 rule (b)); present whenever the item has `scoring.partialInside`.
+   */
+  | ({ kind: 'iou'; target: string; inside?: number } & IouResult)
   | ({ kind: 'point' } & PointMetric)
   | { kind: 'rubric'; correctFields: string[]; requiredMissing: string[]; passMin: number };
 
-/** Which feedback sentence the item card shows (LEARN.md §8.2). */
-export type FeedbackKind = 'correct' | 'half-gate' | 'partial' | 'wrong' | 'wrong-related' | 'wrong-hole';
+/**
+ * Which feedback sentence the item card shows (LEARN.md §8.2). Additive (Wave L1, owner defaults 2026-11-04):
+ * `correct-related` = a point on a `credit` related feature (full credit; the related feedback names the target);
+ * `partial-inside` = an outline below `iouFull` that lies at least `partialInside.fraction` inside ("Correct location;
+ * the outline covers only part of the deposit").
+ */
+export type FeedbackKind = 'correct' | 'correct-related' | 'half-gate' | 'partial' | 'partial-inside' | 'wrong' | 'wrong-related' | 'wrong-hole';
 
 export interface ItemScore {
   itemId: string;
@@ -814,10 +847,24 @@ export interface LintFinding {
 
 export interface LintReport {
   findings: LintFinding[];
+  /**
+   * Additive (Wave L1, LEARN-QUESTIONS F-Q4): the rules that ran and passed, one row each, for the studio's Publish
+   * checks list (`pass` rows) and IED-3 (`candidate-scores` passes with `Candidates that score as correct: C`).
+   */
+  passed: LintPass[];
   errors: number;
   warnings: number;
   /** errors === 0: export and preview are allowed (warnings never block). */
   ok: boolean;
+}
+
+/** A rule that ran and found nothing (LEARN-QUESTIONS F-Q4). */
+export interface LintPass {
+  rule: LintRuleId;
+  /** JSON Pointer of what was checked (`` for the whole file). */
+  path: string;
+  message: string;
+  stage: AuthorStage;
 }
 
 export interface LintContext {
@@ -825,6 +872,37 @@ export interface LintContext {
   /** The catalogue overlay file of a module slide (reference keys), or null when unavailable. */
   referenceLayer(slideRef: string, layerId: string): Promise<VectorLayerFile | null>;
   scoring: ScoringService;
+  /**
+   * Additive (Wave L1, LEARN-QUESTIONS F-Q3): the module's facts file (`data/learn/modules/<id>.facts.json`), or null
+   * when there is none. Absent (a context that cannot read files, the studio before L3): `review-recorded` checks the
+   * reviewer and date only, and the python test enforces "reviewed ⇒ no pending fact" for committed modules.
+   */
+  facts?(moduleId: string): Promise<FactsFile | null>;
+}
+
+/** `<id>.facts.json` (JSON Schema $defs/FactsFile): every factual statement a learner reads, for the owner's review (LEARN.md §12). */
+export interface FactsFile {
+  schema: 'stoipath.learn.facts/1';
+  /** ModuleFile.id. */
+  module: string;
+  /** ModuleFile.version the facts were listed for. */
+  version: Semver;
+  facts: Fact[];
+}
+
+export interface Fact {
+  /** `F1`, `F2`… (LEARN.md §12). */
+  id: string;
+  /** JSON Pointer into the module file where `quote` occurs verbatim (CNT-4). */
+  pointer: string;
+  quote: string;
+  /** What the statement rests on. */
+  basis: string;
+  /** Only a human reviewer sets `confirmed` or `changed`. */
+  status: 'pending' | 'confirmed' | 'changed';
+  reviewer?: string;
+  date?: IsoDate;
+  note?: string;
 }
 
 export interface ModuleFormatService {
@@ -1132,7 +1210,24 @@ export interface DialogHost {
   isOpen(id: LearnDialogId): boolean;
   /** The candidates panel's body element (items renders into it). */
   readonly candidatesRoot: HTMLElement;
+  /**
+   * Additive (Wave L1 integrator): the dialog's title in its header (integrator markup); items sets the candidates
+   * panel's to `candidatesTitle` or `Mark without a pointer` before opening it. The dialog's name follows it.
+   */
+  setTitle(id: LearnDialogId, text: string): void;
 }
+
+/**
+ * Additive (Wave L1 integrator): the canvas plates of LEARN.md §8.1 (one at a time; `null` hides it). `opening` is a
+ * status; the others are alerts with a Retry button (a reload). Shown by the course and player modules.
+ */
+export type LearnPlate =
+  | { kind: 'opening'; title: string }
+  | { kind: 'course-failed'; reason: string }
+  | { kind: 'module-failed'; title: string; reason: string }
+  | { kind: 'fingerprint'; title: string; slide: string }
+  /** The integrator's own: this build has no course player (learner, preview) or no author studio (studio) installed. */
+  | { kind: 'empty'; what: 'course' | 'studio' };
 
 /**
  * Focus-scoped keys (LEARN.md §9): while focus is inside `el`, `handler` sees keydown before the registry; true =
@@ -1164,6 +1259,13 @@ export interface LearnHost {
   readonly draftStorage: KeyValueStore | null;
   /** history.replaceState of the Learn fragment (`#m=<id>&s=<n>`), at rest only. */
   setFragment(fields: { m: string | null; s: number | null }): void;
+  /** Additive (Wave L1 integrator): show or hide the canvas plate (LEARN.md §8.1). */
+  plate(p: LearnPlate | null): void;
+  /**
+   * Additive (Wave L1 integrator): a transient toast (`.toast-stack`, about 4 s), spoken once politely at settle as
+   * "{title}. {text}" (ux-copy §13.1 `Not yet` / `Finish the current phase first; …`). Never during a gesture.
+   */
+  toast(title: string, text: string): void;
 }
 
 export interface LearnParams {
@@ -1217,19 +1319,10 @@ export interface LearnModule {
 }
 
 // =====================================================================================================================
-// 14. Requested Phase A additions (Wave L0; LEARN.md §4.3). Written here as types so Learn code can name them; the
-//     Phase A integrator adds the same fields to src/shell/contracts.ts, after which these aliases are re-pointed there.
+// 14. Phase A additions of Wave L0 (LEARN.md §4.3). Landed 2026-11-04 in src/shell/contracts.ts (C1); re-pointed here
+//     by the Learn integrator at Wave L1 start, so Learn code keeps naming them from this file. Learn's namespaces:
+//     learner `stoipath-learn` / `stoipath.learn.v1.`, studio `stoipath-learn-studio` / `stoipath.learn-studio.v1.`,
+//     preview `stoipath-learn-preview` / `stoipath.learn-preview.v1.` (LEARN.md D5).
 // =====================================================================================================================
 
-/** Requested `ShellHostDeps.storage` (optional; the default keeps the research shell's database and prefix). */
-export interface ShellStorageNamespace {
-  /** IndexedDB database name: `stoipath-learn`, `stoipath-learn-studio`, `stoipath-learn-preview` (default `stoipath-shell`). */
-  dbName: string;
-  /** localStorage prefix: `stoipath.learn.v1.` / `stoipath.learn-studio.v1.` (default `stoipath.shell.v1.`). */
-  prefsPrefix: string;
-  /** The persistent notice when storage is unavailable (default core's STORAGE_UNAVAILABLE_TEXT). */
-  unavailableText: string;
-}
-
-/** Requested `ShellHostDeps.product` and the widened `ShellApi.product` (default `viewer-ruo`). */
-export type ShellProduct = 'viewer-ruo' | 'learn';
+export type { ShellProduct, ShellStorageNamespace } from '../shell/contracts';

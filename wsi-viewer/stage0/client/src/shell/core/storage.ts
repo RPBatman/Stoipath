@@ -12,6 +12,10 @@
  * that fills the quota no longer stops every later write of other slides, coverage, views and the working set, and
  * the caller can say why ("Not saved (browser storage is full)", TOOLS.md §6.5 `error`) instead of "blocks storage".
  * A write's size is recorded only once its transaction completes.
+ *
+ * Wave L0 (LEARN.md §4.3 C2, 2026-11-04, additive): `StorageOptions.dbName` names another database for another page on
+ * the same origin (Stoipath Learn: `stoipath-learn`, `stoipath-learn-studio`, `stoipath-learn-preview`). The version and
+ * the object stores are the same; omitted, the database is `stoipath-shell`, as before.
  */
 import type { KeyValueStore, StoreName } from '../contracts';
 import { STORAGE_OPEN_TIMEOUT_MS } from './env';
@@ -23,6 +27,8 @@ export const STORE_NAMES: readonly StoreName[] = ['annotations', 'coverage', 'vi
 export const STORAGE_UNAVAILABLE_TEXT = 'This browser does not allow saving here; annotations and viewed state stay until you close the page. Export GeoJSON to keep annotations.';
 
 export interface CoreKeyValueStore extends KeyValueStore {
+  /** The database this store opens (StorageOptions.dbName, default DB_NAME). */
+  readonly dbName: string;
   /** Why storage became unavailable (null while available). */
   readonly reason: string | null;
   /** Why the most recent write that failed without making storage unavailable failed (null after a write succeeds). */
@@ -32,6 +38,8 @@ export interface CoreKeyValueStore extends KeyValueStore {
 }
 
 export interface StorageOptions {
+  /** The database to open (default DB_NAME, `stoipath-shell`); same version and object stores (Wave L0, LEARN.md §4.3 C2). */
+  dbName?: string;
   /** The IndexedDB factory (default globalThis.indexedDB; null = none). Tests pass a fake or null. */
   idb?: IDBFactory | null;
   /** Called once, when storage first turns out to be unavailable. */
@@ -62,6 +70,7 @@ function describe(e: unknown): string {
 }
 
 export function createKeyValueStore(opts: StorageOptions = {}): CoreKeyValueStore {
+  const dbName = opts.dbName ?? DB_NAME;
   let factory: IDBFactory | null;
   try {
     factory = opts.idb !== undefined ? opts.idb : typeof indexedDB !== 'undefined' ? indexedDB : null;
@@ -111,7 +120,7 @@ export function createKeyValueStore(opts: StorageOptions = {}): CoreKeyValueStor
     let req: IDBOpenDBRequest;
     try {
       if (factory === null) throw new Error('IndexedDB is not available in this browser');
-      req = factory.open(DB_NAME, DB_VERSION);
+      req = factory.open(dbName, DB_VERSION);
     } catch (e) {
       finish(null, e);
       return;
@@ -191,6 +200,7 @@ export function createKeyValueStore(opts: StorageOptions = {}): CoreKeyValueStor
   }
 
   return {
+    dbName,
     get available() {
       return available;
     },

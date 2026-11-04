@@ -1,5 +1,6 @@
-// core acceptance checks CORE-1…6 (TOOLS.md §6.1), run by harness/tools-check.mjs (`--only core`). CORE-7 is the unit
-// test harness/unit/core.test.mjs. Every page is a fresh browser context (fresh IndexedDB) on the built site; each
+// core acceptance checks CORE-1…6 and CORE-8 (TOOLS.md §6.1), run by harness/tools-check.mjs (`--only core`). CORE-7 is
+// the unit test harness/unit/core.test.mjs. CORE-8 (Wave L0, LEARN.md §4.3) asserts that the research shell, which passes
+// no product or storage namespace, keeps `viewer-ruo`, the `stoipath-shell` database and the `stoipath.shell.v1.` prefix. Every page is a fresh browser context (fresh IndexedDB) on the built site; each
 // check also asserts no console / page error and 0 axe-core WCAG 2.2 AA violations in the state it opened.
 //
 // Hooks used (contract level only): window.__shell.openSlide (integrator test hook, else core's debug test hook),
@@ -400,6 +401,34 @@ export async function run(ctx) {
       check(TAG, errors.length === 0, `CORE-5b: no console or page error (${errors.length}${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''})`);
     } catch (e) {
       check(TAG, false, `CORE-5b threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+    } finally {
+      await c.close();
+    }
+  }
+
+  // ------------------------------------------------------------------ CORE-8 Wave L0 defaults (LEARN.md §4.3 C1–C3)
+  // shell.html's main.ts passes neither ShellHostDeps.product nor .storage: one write through core's store and one through
+  // its prefs must land in the research shell's database and prefix, and nothing named for Learn may appear.
+  {
+    const vp = viewports.desktop;
+    const { ctx: c, page, errors } = await newPage(browser, vp);
+    try {
+      await page.goto(url(), { waitUntil: 'load' });
+      await waitForShell(page);
+      await settle(page, { sharp: false });
+      const r = await page.evaluate(async () => {
+        const core = window.__shell.tools.core();
+        const put = await core.test.storage.put('session', 'core8.check', 1);
+        core.test.prefs.set('core8.check', 1);
+        const dbs = typeof indexedDB.databases === 'function' ? (await indexedDB.databases()).map((d) => d.name) : null;
+        return { product: core.product, st: core.storage, put, dbs, keys: Object.keys(localStorage).sort() };
+      });
+      check(TAG, r.product === 'viewer-ruo' && r.st.dbName === 'stoipath-shell' && r.st.prefsPrefix === 'stoipath.shell.v1.', `CORE-8 ${vpTag(vp)}: the research shell is product ${r.product}, database ${r.st.dbName}, prefs prefix ${r.st.prefsPrefix}`);
+      check(TAG, r.put === true && Array.isArray(r.dbs) && r.dbs.includes('stoipath-shell') && !r.dbs.some((n) => /learn/.test(n ?? '')), `CORE-8: a write lands in stoipath-shell and no Learn database exists (databases: ${JSON.stringify(r.dbs)})`);
+      check(TAG, r.keys.includes('stoipath.shell.v1.core8.check') && !r.keys.some((k) => /learn/.test(k)), `CORE-8: prefs are written under stoipath.shell.v1. and no Learn key exists (keys: ${r.keys.join(', ')})`);
+      check(TAG, errors.length === 0, `CORE-8: no console or page error (${errors.length}${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''})`);
+    } catch (e) {
+      check(TAG, false, `CORE-8 threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
     } finally {
       await c.close();
     }

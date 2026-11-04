@@ -12,6 +12,11 @@
  *  - view B is closed when compare emits `compareChanged` with state 'off' (contracts have no close call; Q1);
  *  - `ToolContext.refreshHint()` re-renders the NoticeSink with `notices.persistent('tool', null)` (Q2);
  *  - `(shell.debug as CoreDebugRegistry).views` is the record to publish as `window.__shell.tools` (Q3).
+ *
+ * Wave L0 (LEARN.md §4.3 C3, 2026-11-04, additive): `ShellHostDeps.product` and `ShellHostDeps.storage` let a second
+ * page (Stoipath Learn, `learn.html`) declare its product and open its own database, prefs prefix and storage notice.
+ * Both are optional; `hostDefaults()` fills what a page leaves out with today's values, so shell.html and src/shell/main.ts
+ * (which pass neither) keep `viewer-ruo`, `stoipath-shell`, `stoipath.shell.v1.` and STORAGE_UNAVAILABLE_TEXT.
  */
 import type {
   CatalogueService,
@@ -21,7 +26,9 @@ import type {
   ShellEvents,
   ShellHostDeps,
   ShellModule,
+  ShellProduct,
   ShellServices,
+  ShellStorageNamespace,
   SlideRef,
   ToolController,
   ToolId,
@@ -34,9 +41,9 @@ import { createDebugRegistry, type CoreDebugRegistry } from './debug';
 import { CATALOGUE_WAIT_MS, isSlideTarget, withTimeout } from './env';
 import { createPassiveUi } from './passive-ui';
 import { PaneRouter } from './pointer';
-import { createPrefs } from './prefs';
+import { PREFS_PREFIX, createPrefs } from './prefs';
 import { createViewStateCodec, PARTIAL_LINK_TEXT, slideRefOf, unknownSlideText, type DecodeResult } from './state-url';
-import { STORAGE_UNAVAILABLE_TEXT, createKeyValueStore } from './storage';
+import { DB_NAME, STORAGE_UNAVAILABLE_TEXT, createKeyValueStore } from './storage';
 import { CoreToolHost } from './tools';
 import { CoreView, RestQueue, type ResolvedRef, type ViewCore } from './views';
 
@@ -46,21 +53,42 @@ export type { CoreDebugRegistry } from './debug';
 /** Notice key of the storage notice (TOOLS.md §6.1 "Storage"). */
 export const STORAGE_NOTICE_KEY = 'storage';
 
+/** The product a page is when its deps name none: the research shell (Wave L0, LEARN.md §4.3 C3). */
+export const DEFAULT_PRODUCT: ShellProduct = 'viewer-ruo';
+
+/**
+ * Wave L0 (LEARN.md §4.3 C3): the product and storage namespace a page runs with. What `deps` leaves out keeps the
+ * research shell's values (TOOLS.md D6, §6.1). Pure, so harness/unit/core.test.mjs pins the defaults.
+ */
+export function hostDefaults(deps: Pick<ShellHostDeps, 'product' | 'storage'>): { product: ShellProduct; storage: ShellStorageNamespace } {
+  const ns = deps.storage;
+  return {
+    product: deps.product ?? DEFAULT_PRODUCT,
+    storage: {
+      dbName: ns?.dbName ?? DB_NAME,
+      prefsPrefix: ns?.prefsPrefix ?? PREFS_PREFIX,
+      unavailableText: ns?.unavailableText ?? STORAGE_UNAVAILABLE_TEXT,
+    },
+  };
+}
+
 export function createShell(deps: ShellHostDeps): ShellCoreHandle {
   const report = (where: string, error: unknown): void => console.error(`[shell] ${where} failed`, error);
   const bus = createBus<ShellEvents>();
   const debug: CoreDebugRegistry = createDebugRegistry();
-  const prefs = createPrefs();
+  const { product, storage: namespace } = hostDefaults(deps);
+  const prefs = createPrefs(undefined, namespace.prefsPrefix);
   const services: Partial<ShellServices> = {};
   let storageNotices = 0;
   const storage = createKeyValueStore({
+    dbName: namespace.dbName,
     // Shown (persistent, ranked with the module notices) and spoken once. Deferred: a refused open is reported
     // synchronously, and createShell must not call into the integrator's notices before it has returned.
     onUnavailable: (reason) =>
       queueMicrotask(() => {
         storageNotices++;
-        deps.notices.persistent(STORAGE_NOTICE_KEY, STORAGE_UNAVAILABLE_TEXT);
-        deps.live.polite(STORAGE_UNAVAILABLE_TEXT);
+        deps.notices.persistent(STORAGE_NOTICE_KEY, namespace.unavailableText);
+        deps.live.polite(namespace.unavailableText);
         console.warn(`[shell storage] browser storage unavailable (${reason}); working in memory`);
       }),
   });
@@ -148,7 +176,7 @@ export function createShell(deps: ShellHostDeps): ShellCoreHandle {
 
   const shell: ShellApi = {
     contract: 1,
-    product: 'viewer-ruo',
+    product,
     env: deps.env,
     bus,
     commands: deps.commands,
@@ -182,6 +210,7 @@ export function createShell(deps: ShellHostDeps): ShellCoreHandle {
   // ------------------------------------------------------------------ debug view (window.__shell.tools.core())
   debug.expose('core', () => ({
     contract: shell.contract,
+    product: shell.product,
     focused: shell.focusedView().id,
     views: [views.A.debugState(), views.B.debugState()],
     tools: {
@@ -191,7 +220,7 @@ export function createShell(deps: ShellHostDeps): ShellCoreHandle {
       hintRefreshes: tools.hintRefreshes,
       routers: { A: { ...tools.router('A')?.stats, owned: tools.router('A')?.owned ?? null }, B: { ...tools.router('B')?.stats, owned: tools.router('B')?.owned ?? null } },
     },
-    storage: { available: storage.available, reason: storage.reason, lastWriteError: storage.lastWriteError, notices: storageNotices },
+    storage: { available: storage.available, reason: storage.reason, lastWriteError: storage.lastWriteError, notices: storageNotices, dbName: storage.dbName, prefsPrefix: namespace.prefsPrefix },
     rest: { queued: rest.length, settled: rest.settled },
     services: Object.keys(services),
     listeners: { viewChanged: bus.listenerCount('viewChanged'), viewSettled: bus.listenerCount('viewSettled'), slideOpened: bus.listenerCount('slideOpened') },

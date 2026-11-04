@@ -605,3 +605,39 @@ Two reviews of the Wave 4 build (engine lens; pathologist and accessibility lens
 - **A tie under `auto`** (one feature lands either way, e.g. one feature in the window and one at a raw position that also lies inside it) keeps pyramid coordinates; the report says so and Import coordinates overrides it. A file-level heuristic beyond counting features would guess.
 - **View B has no sharpness machine**, so its settle sentence has no Sharp / Sharpening word. A per-view machine is a Phase B change to main.ts (it would run on B's frames, which only compare's HUD reads today).
 - **OVL-4's gesture p95 (overlay owner, a check observation).** In the final gate's full tools-check, the L1 wheel burst failed once: 48 exact draws, gesture p95 3.90 ms, while the exact-render average was 0.40 ms (`stats.p95Ms` 2.80) and no blit was needed. The overlay checks re-run alone on the same build passed twice (p95 1.00 and 0.50 ms), and the private build of the same sources passed. A p95 over about 48 frames is its 3rd-highest sample, so one scheduling hiccup on SwiftShader decides it. Suggested: judge the exact path on more frames (a longer burst), or on the D3 policy itself (the EMA stayed under 3 ms, so blit mode was rightly not entered).
+
+## 2026-11-04 · Wave L0 (Phase A integrator): the Learn product and storage namespace (LEARN.md §4.3 C1–C4)
+
+The additive Phase A change Stoipath Learn needs before Wave L1 (LEARN.md §1, §4.3, D5). Judgement calls: TOOLS.md §15.17 L0-1…L0-7. Owner approval (LEARN.md §16 Q7) is a default pending owner (L0-6).
+
+### Contract (contracts.ts, additive and optional; `contract` stays 1)
+
+- **`export type ShellProduct = 'viewer-ruo' | 'learn'`.** `ShellApi.product` is now `ShellProduct` (was the literal `'viewer-ruo'`; no Phase A code narrows on it).
+- **`export interface ShellStorageNamespace { dbName: string; prefsPrefix: string; unavailableText: string }`**, the shape of learn contracts §14.
+- **`ShellHostDeps.product?: ShellProduct`** and **`ShellHostDeps.storage?: ShellStorageNamespace`**. Omitted: `viewer-ruo`; database `stoipath-shell`, prefix `stoipath.shell.v1.`, notice `STORAGE_UNAVAILABLE_TEXT` (TOOLS.md §6.1).
+
+### core (what changed)
+
+- `storage.ts`: `StorageOptions.dbName?: string` (default `DB_NAME`, `stoipath-shell`); version 1 and the four object stores are unchanged in every namespace. `CoreKeyValueStore.dbName` reports the database opened.
+- `shell.ts`: `export function hostDefaults(deps)` resolves `product` and the namespace field by field (pure; `DEFAULT_PRODUCT = 'viewer-ruo'`). `createShell` uses it for `ShellApi.product`, `createKeyValueStore({ dbName })`, `createPrefs(undefined, prefsPrefix)` and the storage notice (persistent and spoken once, as before). The debug view `tools.core()` gains `product`, `storage.dbName` and `storage.prefsPrefix`.
+- `prefs.ts`: unchanged (it already took a prefix).
+- Tests: `harness/unit/core.test.mjs` group `L0 namespace` (13 assertions: the defaults, a namespace opens the named database for each of `stoipath-learn`, `-studio`, `-preview`, prefix separation); `harness/tools/core.check.mjs` **CORE-8** (the built research shell reports and writes `viewer-ruo` / `stoipath-shell` / `stoipath.shell.v1.`, and no Learn database or key exists).
+
+### Not changed (sha256 at the end of Wave L0, for LEARN.md LI-1)
+
+| File | sha256 |
+|---|---|
+| `index.html` | `537a55ea20d77a800afd877c3dc673997bc0b7d3a1c70820180ead96186a93e9` |
+| `src/main.ts` | `eaeb9c0797a2b00e9f404d2ac4cdff4e51bb740c350b4933459efc8a4f46ebad` |
+| `shell.html` | `f75786a3af73b0535a1e6232ffb4f9a474469b5198a7860127198df55fff5b88` |
+| `src/shell/main.ts` | `d5a2dc7ebb7a8ccb2f2df1c71492656d49e78d8eb47279bd935113c20a933556` |
+
+### For the Learn integrator (Wave L1)
+
+- Re-point learn contracts §14: `export type { ShellProduct, ShellStorageNamespace } from '../shell/contracts';` (same names and shape, so no Learn type changes).
+- `src/learn/main.ts` passes `product: 'learn'` and, per mode, `storage: { dbName: 'stoipath-learn' | 'stoipath-learn-studio' | 'stoipath-learn-preview', prefsPrefix: 'stoipath.learn.v1.' | 'stoipath.learn-studio.v1.' | 'stoipath.learn-preview.v1.', unavailableText: <LEARN.md §8.1 storage text> }` (LEARN.md D5). Deleting the preview database at start (D3) is integrator code before `createShell`; core only opens the name it is given.
+- LI-3 / LI-4 can read `tools.core().product`, `.storage.dbName` and `.storage.prefsPrefix` from core's debug view.
+
+### For the annotations owner (comment only, not changed)
+
+- `src/shell/annotations/persist.ts`'s header says it stores in "IndexedDB `stoipath-shell`". It writes through `shell.storage`, so on a namespaced page it writes to that page's database; the comment could say "the shell's database (`stoipath-shell` in the research shell)".

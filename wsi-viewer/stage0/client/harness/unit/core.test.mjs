@@ -1,6 +1,8 @@
 // core unit tests (TOOLS.md §6.1 CORE-7; run by harness/unit.mjs): bus order and catch, the state codec's round trip
 // at the stated precision, rejection of javascript: / data: / foreign manifests in m=, atRest ordering, plus the other
-// pure parts of core (tap classifier, storage fallback, prefs, engine params, share URL, slide fingerprint).
+// pure parts of core (tap classifier, storage fallback, prefs, engine params, share URL, slide fingerprint), and the
+// Wave L0 defaults (LEARN.md §4.3 C4): without a namespace core opens `stoipath-shell` and prefixes `stoipath.shell.v1.`;
+// a namespace opens the named database.
 export default async function (t) {
   const bus = await t.load('src/shell/core/bus.ts');
   const su = await t.load('src/shell/core/state-url.ts');
@@ -9,6 +11,7 @@ export default async function (t) {
   const env = await t.load('src/shell/core/env.ts');
   const storage = await t.load('src/shell/core/storage.ts');
   const prefs = await t.load('src/shell/core/prefs.ts');
+  const shellCore = await t.load('src/shell/core/shell.ts');
 
   // ------------------------------------------------------------------ CORE-7 bus
   t.group('CORE-7 bus');
@@ -324,6 +327,68 @@ export default async function (t) {
     q.set('class', 'Stroma');
     t.eq(q.get('class', 'Tumor'), 'Stroma', 'a throwing localStorage falls back to memory for the session');
     t.eq(prefs.createPrefs(null).get('x', 1), 1, 'no localStorage at all: fallbacks');
+  }
+
+  // ------------------------------------------------------------------ Wave L0 product and storage namespace (LEARN.md §4.3 C4)
+  t.group('L0 namespace');
+  {
+    const SHELL_TEXT = 'This browser does not allow saving here; annotations and viewed state stay until you close the page. Export GeoJSON to keep annotations.';
+    const LEARN = { dbName: 'stoipath-learn', prefsPrefix: 'stoipath.learn.v1.', unavailableText: 'This browser does not allow saving here; your progress stays until you close the page. Export your results to keep them.' };
+    const research = shellCore.hostDefaults({});
+    t.eq(research, { product: 'viewer-ruo', storage: { dbName: 'stoipath-shell', prefsPrefix: 'stoipath.shell.v1.', unavailableText: SHELL_TEXT } }, 'deps without product or storage (shell.html, src/shell/main.ts) keep viewer-ruo, stoipath-shell, stoipath.shell.v1. and the §6.1 notice');
+    t.eq([shellCore.DEFAULT_PRODUCT, storage.DB_NAME, storage.DB_VERSION, prefs.PREFS_PREFIX, shellCore.STORAGE_UNAVAILABLE_TEXT], ['viewer-ruo', 'stoipath-shell', 1, 'stoipath.shell.v1.', SHELL_TEXT], 'the default constants are unchanged');
+    t.eq(shellCore.hostDefaults({ product: 'learn', storage: LEARN }), { product: 'learn', storage: LEARN }, 'a page that names its product and namespace gets exactly them');
+    t.eq(shellCore.hostDefaults({ product: 'learn' }).storage, research.storage, 'product and storage are independent: a product alone does not move storage');
+    t.eq(shellCore.hostDefaults({ storage: LEARN }).product, 'viewer-ruo', 'and a namespace alone does not change the product');
+
+    /** An IndexedDB factory that records open(name, version) and the stores created, then opens. */
+    const fakeIdb = () => {
+      const opened = [];
+      const created = [];
+      const factory = {
+        open(name, version) {
+          opened.push([name, version]);
+          const stores = new Set();
+          const db = { objectStoreNames: { contains: (n) => stores.has(n) }, createObjectStore: (n) => { stores.add(n); created.push(n); }, close() {}, onversionchange: null };
+          const req = {};
+          setTimeout(() => {
+            req.result = db;
+            req.onupgradeneeded?.();
+            req.onsuccess?.();
+          }, 0);
+          return req;
+        },
+      };
+      return { opened, created, factory };
+    };
+    const stores = ['annotations', 'coverage', 'views', 'session'];
+    const a = fakeIdb();
+    const kvA = storage.createKeyValueStore({ idb: a.factory });
+    t.ok((await kvA.ready) === true && kvA.available === true, 'no dbName: the store opens');
+    t.eq([a.opened, kvA.dbName, a.created], [[['stoipath-shell', 1]], 'stoipath-shell', stores], 'no dbName: it opens stoipath-shell v1 with the four object stores (TOOLS.md §6.1)');
+    const b = fakeIdb();
+    const kvB = storage.createKeyValueStore({ idb: b.factory, dbName: research.storage.dbName });
+    await kvB.ready;
+    t.eq([b.opened, kvB.dbName], [[['stoipath-shell', 1]], 'stoipath-shell'], 'what createShell passes for the default deps opens stoipath-shell');
+    for (const name of ['stoipath-learn', 'stoipath-learn-studio', 'stoipath-learn-preview']) {
+      const c = fakeIdb();
+      const kvC = storage.createKeyValueStore({ idb: c.factory, dbName: name });
+      const ok = await kvC.ready;
+      t.eq([ok, c.opened, kvC.dbName, c.created], [true, [[name, 1]], name, stores], `a namespace opens the named database (${name}) at the same version, with the same object stores, and never stoipath-shell`);
+    }
+    let why = '';
+    const kvD = storage.createKeyValueStore({ idb: null, dbName: 'stoipath-learn', onUnavailable: (r) => (why = r) });
+    t.ok((await kvD.ready) === false && kvD.available === false && /not available/.test(why) && kvD.dbName === 'stoipath-learn', 'a namespaced store without IndexedDB degrades to memory the same way');
+
+    const mem = new Map();
+    const fake = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+    const shellPrefs = prefs.createPrefs(fake, research.storage.prefsPrefix);
+    const undefPrefs = prefs.createPrefs(fake, undefined);
+    const learnPrefs = prefs.createPrefs(fake, LEARN.prefsPrefix);
+    shellPrefs.set('class', 'Tumor');
+    learnPrefs.set('class', 'Stroma');
+    t.eq([...mem.keys()].sort(), ['stoipath.learn.v1.class', 'stoipath.shell.v1.class'], 'the default prefix is stoipath.shell.v1.; a namespace writes under its own prefix');
+    t.eq([undefPrefs.get('class', null), prefs.createPrefs(fake, LEARN.prefsPrefix).get('class', null)], ['Tumor', 'Stroma'], 'an undefined prefix is the default one, and each prefix reads only its own keys');
   }
 
   // ------------------------------------------------------------------ engine params, slide identity

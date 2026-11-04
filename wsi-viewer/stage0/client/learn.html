@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-product="learn">
+  <head>
+    <meta charset="utf-8" />
+    <!-- LEARN.md D22: nothing leaves the browser. Every fetch (tiles, catalogue, modules, overlays) is same-origin. -->
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self'; form-action 'none'; base-uri 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#303030" />
+    <title>Course · Stoipath Learn</title>
+    <!--
+      Stoipath Learn L1 (LEARN.md): the learner (learn.html), the author studio (?studio=1) and a learner preview of a
+      draft (?preview=<draftId>) on one page, around the real Stage-0 engine and the Phase A core (src/learn/main.ts,
+      Learn integrator). Markup follows design/screens/final/education-module.html; strings are design/handoff/ux-copy.md's
+      (LEARN.md §8). The integrator writes every container; a Learn module owns only the CONTENTS of its elements
+      (LEARN.md §4.2). Dark chrome only in L1 (owner default, LEARN.md §15.1).
+    -->
+  </head>
+  <body>
+    <!-- Icon sprite (paths from shell.html / design finals; i-up, i-all and i-card drawn for this page) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+        <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+        <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+        <symbol id="i-zoomin" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></symbol>
+        <symbol id="i-zoomout" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M7.5 10.5h6"/></symbol>
+        <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><rect x="12" y="11" width="6" height="5"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+        <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+        <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+        <symbol id="i-rect" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14"/></symbol>
+        <symbol id="i-ellipse" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6.5"/></symbol>
+        <symbol id="i-polygon" viewBox="0 0 24 24"><path d="M6 4l12 3 2 10-8 4-7-6z"/></symbol>
+        <symbol id="i-brush" viewBox="0 0 24 24"><path d="M4 16c3-8 6 2 9-4s4 6 7 0"/><circle cx="20" cy="12" r="1.6"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></symbol>
+        <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10 10a3 3 0 004 4M2 12s4-7 10-7c2 0 4 .6 5.5 1.5M22 12s-4 7-10 7c-2 0-4-.6-5.5-1.5"/></symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 19h16"/></symbol>
+        <symbol id="i-export" viewBox="0 0 24 24"><path d="M4 16v4h16v-4M12 4v11M8 8l4-4 4 4"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
+        <symbol id="i-ann" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/></symbol>
+        <symbol id="i-inspect" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M8 11h6M11 8v6"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+        <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+        <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l12 8-12 8z"/></symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h3v16H7zM14 4h3v16h-3z"/></symbol>
+        <symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14M19 5l-9 7 9 7z"/></symbol>
+        <symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14M5 5l9 7-9 7z"/></symbol>
+        <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+        <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M14 4v16M16.5 8h2M16.5 11h2"/></symbol>
+        <symbol id="i-all" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#view">Skip to slide</a>
+
+    <!-- Regions per principles §3.1 and the Learn final (A top bar · context bar · B canvas · C step rail · D task card ·
+         E strip · F navigator). DOM (= Tab) order (LEARN.md §10 SC 2.4.3; handoff §4.6): top bar → context bar → canvas
+         → rail → task card → strip → navigator; grid areas keep the visual positions. -->
+    <div class="app learn" id="app" data-product="learn" data-mode="learner" data-tool="select">
+
+      <!-- A. Top bar: the LEARN badge (opens About), the label string as real text, module title and step, help -->
+      <header class="topbar region" aria-label="Top bar">
+        <div class="topbar__slot-badge">
+          <button class="badge badge--learn" id="badge" type="button" data-testid="badge" aria-haspopup="dialog" aria-controls="aboutDlg"
+                  aria-label="Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About">LEARN</button>
+          <span class="topbar__label" id="labelString" role="note" data-testid="topbar-label">For educational use. Not a medical device. Contains no protected health information.</span>
+        </div>
+        <div class="topbar__identity learn-identity" role="group" aria-label="Module">
+          <span class="title" id="learnTitle">Course</span>
+          <span class="meta learn-step" id="learnStep" hidden></span>
+        </div>
+        <div class="topbar__slot-mode">
+          <button class="btn btn--icon btn--ghost" id="keymapBtn" type="button" aria-haspopup="dialog" aria-controls="keymapDlg" aria-label="Keyboard map, shortcut ?" aria-keyshortcuts="?" title="Keyboard map · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg></button>
+          <button class="btn btn--icon btn--ghost" id="paletteBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="paletteLayer" aria-label="Command palette, shortcut Control K" aria-keyshortcuts="Control+K" title="Commands · Ctrl K"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
+          <button class="btn btn--icon btn--ghost" id="aboutBtn" type="button" aria-haspopup="dialog" aria-controls="aboutDlg" aria-label="About this build and the product label" title="About"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></button>
+        </div>
+      </header>
+
+      <!-- Context bar (1080–1599 px): the step, its stem and its one action while the task card is a closed drawer
+           (integrator; filled from TaskCardHost.setContext, LEARN.md §5.2). -->
+      <div class="ctxbar" id="ctxbar" role="region" aria-label="Current step">
+        <span class="ctxbar__step" id="ctxStep"></span>
+        <span class="chip learn-draft" data-draft-note hidden>Draft — pending pathologist review</span>
+        <span class="ctxbar__stem" id="ctxStem"></span>
+        <button class="btn btn--sm btn--secondary" type="button" id="ctxAlt" hidden></button>
+        <button class="btn btn--sm btn--secondary" type="button" id="ctxCard" data-cmd="card:toggle" aria-expanded="false" aria-controls="dock">Task card <kbd class="key">K</kbd></button>
+        <button class="btn btn--sm btn--primary" type="button" id="ctxCta" hidden></button>
+      </div>
+
+      <!-- B. Canvas area: pane A (the engine canvas, replaced on every slide switch, sits before #overlayA), its HUD and
+           the plates. Pane B exists for core's two view hosts and is never shown in Learn (no compare, LEARN.md D4). -->
+      <div class="canvas-area region" id="canvasArea" role="main" aria-label="Slide canvas area">
+        <div class="panes" id="panes">
+          <div class="pane pane--a" id="paneA" data-view="A">
+            <canvas id="view" class="canvas" tabindex="0" role="application" aria-roledescription="slide canvas"
+                    aria-label="Slide canvas, no slide open yet. Question mark lists every shortcut." aria-describedby="livePolite"></canvas>
+            <canvas id="overlayA" class="canvas overlay-layer" aria-hidden="true"></canvas>
+
+            <div class="hud hud--tl">
+              <div class="hud__item hud__learnslide" id="hudIdentity"><span id="hudId">No slide open</span><span class="hud__secondary" id="hudCoh"></span></div>
+              <span class="hud__item hud__sharp indicator indicator--sharpening" id="hudSharp"><span class="indicator__glyph" aria-hidden="true"></span><span class="indicator__label" id="hudSharpLabel">Sharpening…</span></span>
+              <span class="hud__item hud__motion" id="hudMotion" hidden>Reduced motion · fly-to jumps</span>
+              <div class="hud__item hud__toolline" id="toolLine" hidden><span id="toolLineText"></span></div>
+            </div>
+            <div class="hud hud--bl">
+              <div class="hud__item scalebar" id="scalebar" data-testid="scalebar">
+                <span class="scalebar__bar" aria-hidden="true"><span class="scalebar__fill" id="scaleFill"></span><span class="scalebar__end" id="scaleEnd"></span></span>
+                <span class="scalebar__label" id="scaleLabel" data-testid="scalebar-label">–</span>
+              </div>
+              <div class="hud__item hud__position" id="hudPos" data-testid="position">x – mm · y – mm</div>
+            </div>
+            <div class="hud hud--br">
+              <!-- LearnHudHost.setGate (items writes the text at rest; the integrator appends the 20× preset keycap) -->
+              <span class="hud__item hud__gate" id="hudGate" hidden><span id="hudGateText"></span></span>
+              <div class="hud__item magnification" id="magBox">
+                <button id="magBtn" class="magnification__value" type="button" data-testid="mag-value"
+                        aria-label="Magnification, derived from the scan. Press Enter to type a zoom (times or micrometres per pixel)"><span class="tilde" aria-hidden="true">~</span><span id="magVal">–</span></button>
+                <input class="zoom-input" id="zoomInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" hidden
+                       aria-label="Type a zoom: a magnification such as 20 or a pixel size such as 0.5 µm">
+                <span class="magnification__line2" id="magLine" data-testid="mag-line2">– µm/px · derived</span>
+              </div>
+            </div>
+          </div>
+          <div class="pane pane--b" id="paneB" data-view="B">
+            <canvas id="overlayB" class="canvas overlay-layer" aria-hidden="true"></canvas>
+          </div>
+        </div>
+
+        <!-- Plates (LearnHost.plate; LEARN.md §8.1): never a blank canvas without a sentence -->
+        <div class="plate" id="plate" hidden>
+          <div class="plate__card" id="plateCard" role="alert">
+            <span class="plate__glyph" id="plateGlyph" aria-hidden="true">!</span>
+            <span class="plate__title" id="plateTitle"></span>
+            <span class="plate__text" id="plateText"></span>
+            <div class="plate__actions" id="plateActions" hidden><button class="btn btn--primary" type="button" id="plateRetry">Retry</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C. Step rail: the phases (PhaseRailHost.render) and the tools this step discloses (PhaseRailHost.setTools).
+           Tool buttons run their registered commands ([data-cmd]); a button is shown iff its command is registered. -->
+      <nav class="rail flowrail region" aria-label="Task steps and tools">
+        <ol class="flow" id="phaseRail" aria-label="Steps"></ol>
+        <div class="rail__divider" aria-hidden="true"></div>
+        <div class="rail__h" id="toolsH">Tools for this step</div>
+        <div class="rail__tools" id="railTools" role="toolbar" aria-orientation="vertical" aria-labelledby="toolsH">
+          <button class="tool" type="button" data-cmd="tool:select" data-tool-id="select" aria-pressed="true" aria-label="Select or pan, shortcut V" title="Select / pan · V"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg><span class="tool__key" aria-hidden="true">V</span></button>
+          <button class="tool" type="button" data-cmd="tool:point" data-tool-id="point" aria-pressed="false" aria-label="Point marker, shortcut T" title="Point · T" hidden><svg class="icon" aria-hidden="true"><use href="#i-point"/></svg><span class="tool__key" aria-hidden="true">T</span></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:polygon" data-tool-id="polygon" aria-pressed="false" aria-label="Polygon, click to place points, Enter closes, shortcut P" title="Polygon · P" hidden><svg class="icon" aria-hidden="true"><use href="#i-polygon"/></svg><span class="tool__key" aria-hidden="true">P</span></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:brush" data-tool-id="brush" aria-pressed="false" aria-label="Freehand brush with pen pressure, shortcut F" title="Brush · F" hidden><svg class="icon" aria-hidden="true"><use href="#i-brush"/></svg><span class="tool__key" aria-hidden="true">F</span></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:rect" data-tool-id="rect" aria-pressed="false" aria-label="Rectangle, drag or click two corners, shortcut X" title="Rectangle · X" hidden><svg class="icon" aria-hidden="true"><use href="#i-rect"/></svg><span class="tool__key" aria-hidden="true">X</span></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:ellipse" data-tool-id="ellipse" aria-pressed="false" aria-label="Ellipse, drag or click two corners, shortcut E" title="Ellipse · E" hidden><svg class="icon" aria-hidden="true"><use href="#i-ellipse"/></svg><span class="tool__key" aria-hidden="true">E</span></button>
+          <button class="tool" type="button" data-cmd="tool:measure" data-tool-id="measure" aria-pressed="false" aria-label="Measure length in micrometres, two clicks, shortcut M" title="Measure · M" hidden><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg><span class="tool__key" aria-hidden="true">M</span></button>
+          <button class="tool" type="button" id="classBtnSlot" data-studio-only hidden></button>
+          <button class="tool" type="button" data-cmd="fit" aria-label="Fit whole slide, shortcut 0" title="Fit slide · 0"><svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="tool__key" aria-hidden="true">0</span></button>
+          <button class="tool" type="button" data-cmd="nav" aria-pressed="true" aria-label="Navigator, shortcut O" title="Navigator · O"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg><span class="tool__key" aria-hidden="true">O</span></button>
+        </div>
+        <div class="rail__spacer"></div>
+        <div class="rail__tools" role="group" aria-label="Rail options">
+          <button class="tool" type="button" id="allToolsBtn" aria-pressed="false" aria-label="Show all tools" title="Show all tools"><svg class="icon" aria-hidden="true"><use href="#i-all"/></svg></button>
+          <button class="tool" type="button" data-cmd="keymap" aria-label="Keyboard map, shortcut ?" title="Keyboard map · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg><span class="tool__key" aria-hidden="true">?</span></button>
+        </div>
+      </nav>
+
+      <!-- D. Task card (docked ≥ 1600 px, drawer 1080–1599, bottom sheet ≤ 1079; TaskCardHost). #taskCard's CONTENTS
+           are the player's (learner, preview) or the studio's (studio mode; LEARN.md §4.2). The peek bar, the grab
+           handle, the draft chip row and the studio's tabs are the integrator's. -->
+      <aside class="dock taskdock region" id="dock" aria-label="Task card">
+        <div class="task__grab" aria-hidden="true"></div>
+        <div class="task__peekbar" id="peekBar">
+          <div class="task__peekstack">
+            <span class="chip learn-draft learn-draft--peek" data-draft-note hidden>Draft — pending pathologist review</span>
+            <p class="task__peekstem" id="peekStem"></p>
+          </div>
+          <button class="btn btn--primary" type="button" id="peekCta" hidden></button>
+          <button class="btn btn--icon btn--ghost sheet-toggle" type="button" id="peekToggle" aria-expanded="false" aria-controls="taskCard" aria-label="Expand the task card"><svg class="icon" aria-hidden="true"><use href="#i-up"/></svg></button>
+        </div>
+        <div class="taskdock__head" id="taskHead">
+          <span class="chip learn-draft" data-draft-note hidden>Draft — pending pathologist review</span>
+          <button class="btn btn--icon btn--ghost sheet-toggle" type="button" id="sheetToggle" aria-expanded="true" aria-controls="taskCard" aria-label="Collapse the task card"><svg class="icon" aria-hidden="true"><use href="#i-up"/></svg></button>
+        </div>
+        <div class="dock__tabs tabs tabs--fill" role="tablist" aria-label="Studio panels" id="studioTabs" hidden></div>
+        <section class="task" id="taskCard" aria-label="Task card" tabindex="-1"></section>
+      </aside>
+
+      <!-- Bottom flow bar (≤ 1079 px): the phases and the step's tools in one bar (twins of the rail's) -->
+      <nav class="bottombar flowbar" aria-label="Task steps and tools (touch)">
+        <ol class="flow flow--h" id="flowBar" aria-label="Steps"></ol>
+        <span class="flowbar__divider" aria-hidden="true"></span>
+        <span class="flowbar__tools" id="flowTools" role="group" aria-label="Tools for this step">
+          <button class="tool" type="button" data-cmd="tool:select" data-tool-id="select" aria-pressed="true" aria-label="Select or pan"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg></button>
+          <button class="tool" type="button" data-cmd="tool:point" data-tool-id="point" aria-pressed="false" aria-label="Point marker" hidden><svg class="icon" aria-hidden="true"><use href="#i-point"/></svg></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:polygon" data-tool-id="polygon" aria-pressed="false" aria-label="Polygon" hidden><svg class="icon" aria-hidden="true"><use href="#i-polygon"/></svg></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:brush" data-tool-id="brush" aria-pressed="false" aria-label="Freehand brush" hidden><svg class="icon" aria-hidden="true"><use href="#i-brush"/></svg></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:rect" data-tool-id="rect" aria-pressed="false" aria-label="Rectangle" hidden><svg class="icon" aria-hidden="true"><use href="#i-rect"/></svg></button>
+          <button class="tool tool--drawing" type="button" data-cmd="tool:ellipse" data-tool-id="ellipse" aria-pressed="false" aria-label="Ellipse" hidden><svg class="icon" aria-hidden="true"><use href="#i-ellipse"/></svg></button>
+          <button class="tool" type="button" data-cmd="tool:measure" data-tool-id="measure" aria-pressed="false" aria-label="Measure" hidden><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg></button>
+        </span>
+        <span class="flowbar__end">
+          <button class="tool tool--phone-hide" type="button" data-cmd="palette" aria-label="Commands"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
+          <button class="tool" type="button" data-cmd="nav" aria-pressed="false" aria-label="Overview"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg></button>
+        </span>
+      </nav>
+
+      <!-- E. Status strip: the polite live region's visual twin -->
+      <footer class="strip region" aria-label="Status">
+        <span class="indicator indicator--sharpening" id="stripSharp" data-testid="strip-indicator"><span class="indicator__glyph" aria-hidden="true"></span><span class="indicator__label" id="stripSharpLabel">Sharpening…</span></span>
+        <span class="strip__notice" id="stripNotice" data-testid="strip-notice"></span>
+        <div class="strip__group strip__group--end">
+          <span class="text-xs text-secondary learn-strip-hint" id="stripHint"><kbd class="key">?</kbd> keys · <kbd class="key" data-mod>Ctrl</kbd><kbd class="key">K</kbd> commands</span>
+        </div>
+      </footer>
+
+      <!-- F. Navigator (after the strip in the DOM = Tab order; drawn over the canvas cell by its host). The pyramid's
+           top level as <img>, the viewport rectangle by transform only, pan buttons (SC 2.5.7). -->
+      <div class="nav-host" id="navHost">
+        <aside class="navigator" id="navigator" aria-label="Slide overview" hidden>
+          <div class="navigator__thumb" id="navThumb" title="Click to recentre">
+            <div class="nav-tiles" id="navTiles" aria-hidden="true"></div>
+            <span class="navigator__viewport" aria-hidden="true"><span class="nav-edge nav-edge--h" id="navTop"></span><span class="nav-edge nav-edge--h" id="navBottom"></span><span class="nav-edge nav-edge--v" id="navLeft"></span><span class="nav-edge nav-edge--v" id="navRight"></span></span>
+            <div class="navigator__pan" role="group" aria-label="Pan"><button class="up" type="button" aria-label="Pan up" data-pan="0,-1">↑</button><button class="left" type="button" aria-label="Pan left" data-pan="-1,0">←</button><button class="right" type="button" aria-label="Pan right" data-pan="1,0">→</button><button class="down" type="button" aria-label="Pan down" data-pan="0,1">↓</button></div>
+          </div>
+          <div class="navigator__label"><span class="mono" id="navLabel">slide</span><span class="text-xs nav-hint"><kbd class="key">O</kbd> hides</span></div>
+        </aside>
+      </div>
+
+      <!-- Command palette (base.css .palette-layer: over the task-card column ≥ 1080 px, the in-flow sheet row below) -->
+      <div class="palette-layer" id="paletteLayer" hidden>
+        <div class="palette" role="dialog" aria-label="Command palette">
+          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Type a command, step, candidate, layer or setting…" aria-label="Search commands, steps and zoom levels" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
+          <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
+          <div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span class="pal-count" id="palCount"></span></div>
+        </div>
+      </div>
+
+      <!-- Dialog layer in the task-card column (.modal-layer--dock): keymap, About and the candidates panel; all
+           non-modal (aria-modal="false"), so the slide keeps its keys; Esc closes; focus returns to the opener. -->
+      <div class="modal-layer modal-layer--dock" id="modalLayer" hidden>
+        <div class="dialog" id="keymapDlg" role="dialog" aria-modal="false" aria-labelledby="keymapTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="keymapTitle">Keyboard map · Stoipath Learn</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close, Escape"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="dialog__body" tabindex="0" role="region" aria-label="Keyboard shortcuts">
+            <input class="input" type="search" id="keymapFilter" placeholder="Filter keys or commands" aria-label="Filter the keyboard map" autocomplete="off" spellcheck="false">
+            <div class="keymap" id="keymapList"></div>
+            <p class="note" id="keymapNote"></p>
+          </div>
+        </div>
+        <div class="dialog" id="aboutDlg" role="dialog" aria-modal="false" aria-labelledby="aboutTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="aboutTitle">About this build</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close, Escape"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="dialog__body about" tabindex="0" role="region" aria-label="About this build">
+            <div><span class="badge badge--learn">LEARN</span></div>
+            <p class="label-text" id="aboutLabel">For educational use. Not a medical device. Contains no protected health information.</p>
+            <dl class="kv" id="aboutFacts"></dl>
+          </div>
+        </div>
+        <!-- Candidates panel (items owns #candBody; the integrator the header; DialogHost.setTitle sets #candTitle) -->
+        <div class="dialog learn-cand" id="candPanel" role="dialog" aria-modal="false" aria-labelledby="candTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="candTitle">Mark without a pointer</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close, Escape"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="learn-cand__body" id="candBody"></div>
+        </div>
+      </div>
+
+      <div class="toast-stack" id="toasts" aria-live="off"></div>
+      <div class="live-region" id="livePolite" aria-live="polite" aria-atomic="true"></div>
+      <div class="live-region" id="liveAssertive" aria-live="assertive" aria-atomic="true"></div>
+    </div>
+
+    <!-- Studio mode only (cloned before the Phase A annotations module installs, so learners never get these elements;
+         LEARN.md §4.2: #tp-ann and #inspSelection are studio dock tabs, detached in learner and preview mode). -->
+    <template id="studioDockTpl">
+      <button class="tab" role="tab" type="button" id="tab-task" data-studio-tab="task" aria-selected="true" aria-controls="taskCard">Task</button>
+      <button class="tab" role="tab" type="button" id="tab-ann" data-studio-tab="annotations" aria-selected="false" aria-controls="tp-ann" tabindex="-1">Annotations <span class="count" hidden></span></button>
+      <button class="tab" role="tab" type="button" id="tab-inspector" data-studio-tab="inspector" aria-selected="false" aria-controls="tp-inspector" tabindex="-1">Inspector</button>
+    </template>
+    <template id="studioPanelsTpl">
+      <section class="tabpanel learn-studio-panel" role="tabpanel" id="tp-ann" aria-labelledby="tab-ann" tabindex="0" hidden></section>
+      <section class="tabpanel learn-studio-panel" role="tabpanel" id="tp-inspector" aria-labelledby="tab-inspector" tabindex="0" hidden><div id="inspSelection"></div></section>
+    </template>
+    <template id="studioClassTpl">
+      <button class="tool" type="button" id="classBtn" data-cmd="class:pick" aria-haspopup="menu" aria-controls="classMenu" aria-expanded="false" aria-label="Class picker (Q)" title="Class · Q" hidden><span class="swatch swatch--lg class-swatch" aria-hidden="true"></span><span class="tool__key" aria-hidden="true">Q</span></button>
+      <div class="menu class-menu" id="classMenu" role="menu" aria-label="Annotation class" hidden></div>
+    </template>
+
+    <script type="module" src="/src/learn/main.ts"></script>
+  </body>
+</html>

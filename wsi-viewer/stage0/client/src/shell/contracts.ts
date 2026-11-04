@@ -1248,7 +1248,10 @@ export interface CommandRegistry {
 
 export type StoreName = 'annotations' | 'coverage' | 'views' | 'session';
 
-/** IndexedDB key-value wrapper (database "stoipath-shell"); every call resolves, failures degrade to memory. */
+/**
+ * IndexedDB key-value wrapper (database "stoipath-shell", or `ShellHostDeps.storage.dbName` on another page); every call
+ * resolves, failures degrade to memory.
+ */
 export interface KeyValueStore {
   readonly available: boolean;
   /**
@@ -1264,7 +1267,7 @@ export interface KeyValueStore {
   usage(): Promise<{ bytes: number; quota: number | null }>;
 }
 
-/** localStorage prefs under "stoipath.shell.v1." (small, synchronous, try/catch wrapped). */
+/** localStorage prefs under "stoipath.shell.v1." (or `ShellHostDeps.storage.prefsPrefix`; small, synchronous, try/catch wrapped). */
 export interface PrefsStore {
   get<T>(key: string, fallback: T): T;
   set<T>(key: string, value: T): void;
@@ -1319,10 +1322,32 @@ export interface OpenSlideOptions {
   view_state?: ViewStateView;
 }
 
+/**
+ * Which product a page is (FR-R0 draws the product boundary at the build artefact: one page and entry per product, never
+ * a runtime flag). Additive (Wave L0, LEARN.md §4.3 C1, 2026-11-04): `learn` is the Stoipath Learn page (`learn.html`).
+ */
+export type ShellProduct = 'viewer-ruo' | 'learn';
+
+/**
+ * Where a page's browser storage lives. Additive (Wave L0, LEARN.md §4.3 C1, 2026-11-04): a second page on the same
+ * origin passes its own namespace, so its data and the research shell's never share a database or a prefix (LEARN.md D5).
+ * Omitted, core uses the research shell's: database `stoipath-shell`, prefix `stoipath.shell.v1.` and the TOOLS.md §6.1
+ * notice. The database version and object stores are the same in every namespace (§6.1).
+ */
+export interface ShellStorageNamespace {
+  /** IndexedDB database name (default `stoipath-shell`). */
+  dbName: string;
+  /** localStorage key prefix of the PrefsStore (default `stoipath.shell.v1.`). */
+  prefsPrefix: string;
+  /** The persistent notice, also spoken once, when browser storage is unavailable (default core's STORAGE_UNAVAILABLE_TEXT). */
+  unavailableText: string;
+}
+
 export interface ShellApi {
   /** Contract version of this file. */
   readonly contract: 1;
-  readonly product: 'viewer-ruo';
+  /** `ShellHostDeps.product`, default `viewer-ruo` (Wave L0 widened the type additively; the research shell is unchanged). */
+  readonly product: ShellProduct;
   readonly env: ShellEnv;
   readonly bus: EventBus<ShellEvents>;
   readonly commands: CommandRegistry;
@@ -1409,4 +1434,8 @@ export interface ShellHostDeps {
   live: LiveRegions;
   /** Called for every engine frame of every view before module hooks (HUD, navigator, sharpness: main.ts). */
   onEngineFrame: (view: ViewId, s: FrameSnapshot) => void;
+  /** Additive, optional (Wave L0, LEARN.md §4.3 C1): the product this page is; default `viewer-ruo`. */
+  product?: ShellProduct;
+  /** Additive, optional (Wave L0, LEARN.md §4.3 C1): this page's storage namespace; default the research shell's. */
+  storage?: ShellStorageNamespace;
 }
