@@ -1,0 +1,11 @@
+{
+  "schema": "stoipath.learn.course/1",
+  "id": "stage0-l1",
+  "title": "Stoipath Learn · sample course",
+  "summary": "Two short modules on public slides: how the viewer works, then a sentinel lymph node case.",
+  "audience": ["medical-student", "resident"],
+  "modules": [
+    { "id": "viewer-orientation", "url": "../modules/viewer-orientation.module.json", "title": "Using the slide viewer", "estimatedMinutes": 3, "unlock": "always" },
+    { "id": "sln-find-metastasis", "url": "../modules/sln-find-metastasis.module.json", "title": "Sentinel lymph node: find the metastasis", "estimatedMinutes": 15, "unlock": "always" }
+  ]
+}
