@@ -1,0 +1,25 @@
+{
+  "schema": "stoipath.learn.course/1",
+  "id": "course-fixture-two",
+  "title": "Course fixture · two modules",
+  "summary": "Two short fixture tours on CMU-1-Small-Region (CRS-6: a same-origin ?course= loads).",
+  "audience": [
+    "medical-student"
+  ],
+  "modules": [
+    {
+      "id": "course-fixture-a",
+      "url": "course-fixture-a.module.json",
+      "title": "Fixture tour A",
+      "estimatedMinutes": 2,
+      "unlock": "always"
+    },
+    {
+      "id": "course-fixture-b",
+      "url": "course-fixture-b.module.json",
+      "title": "Fixture tour B",
+      "estimatedMinutes": 4,
+      "unlock": "always"
+    }
+  ]
+}

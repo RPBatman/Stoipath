@@ -1,0 +1,83 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "course-fixture-stale",
+  "version": "0.1.0",
+  "metadata": {
+    "title": "Fixture on another build",
+    "summary": "Names CMU-1-Small-Region with a fingerprint of another build, so the course refuses it.",
+    "audience": [
+      "medical-student"
+    ],
+    "objectives": [
+      "Move through a two-step tour (course module test fixture)."
+    ],
+    "tags": {
+      "organ": [
+        "none"
+      ],
+      "stain": [
+        "H&E"
+      ],
+      "difficulty": 1,
+      "topics": [
+        "test fixture"
+      ]
+    },
+    "authors": [
+      {
+        "name": "Stoipath Learn L1 build (AI-assisted draft)",
+        "role": "author"
+      }
+    ],
+    "review": {
+      "status": "draft",
+      "notes": "Course module test fixture; interface text only, no clinical teaching text."
+    },
+    "language": "en",
+    "estimatedMinutes": 2,
+    "created": "2026-11-04",
+    "updated": "2026-11-04"
+  },
+  "slides": [
+    {
+      "ref": "cmu",
+      "catalogueId": "openslide.CMU-1-Small-Region",
+      "label": "CMU-1-Small-Region · H&E",
+      "stain": "H&E",
+      "dataset": "OpenSlide test data",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "fingerprint": "2220x2967@0.499@0,0@000000000000"
+    }
+  ],
+  "items": [],
+  "steps": [
+    {
+      "id": "open",
+      "kind": "tour",
+      "phase": "open",
+      "title": "Start",
+      "text": "A course fixture with two steps. {cmd:step:next} moves on.",
+      "view": {
+        "kind": "fit",
+        "slide": "cmu"
+      },
+      "transition": "cut"
+    },
+    {
+      "id": "done",
+      "kind": "tour",
+      "phase": "complete",
+      "title": "Done",
+      "text": "The end of this fixture.",
+      "view": {
+        "kind": "fit",
+        "slide": "cmu"
+      },
+      "transition": "cut"
+    }
+  ]
+}

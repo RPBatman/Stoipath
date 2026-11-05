@@ -15,6 +15,7 @@
 //   flow D (1440, reduced motion)   PLY-7 fragment, the case by keyboard
 //   flow E (1440, reduced motion)   PLY-8 summary + export + Start again · Next module · PLY-10 orientation · PLY-9
 //   flow F (1440)                   PLY-9 a reviewed module (served by a route) shows no draft chip
+//   flow H (1440)                   §5.1 step 5: a slide of another build refuses the module (plate, moduleLoadFailed)
 //   flow G (390 × 844 coarse)       the Open card and a tour step as a bottom sheet: peek bar, axe
 // Every page: no console or page error, every request same-origin GET with no body, axe-core WCAG 2.2 AA 0 violations
 // in the states it opens.
@@ -55,19 +56,23 @@ const LIVE_LOG = () => {
 /** Mutations inside the task card and the rail while a gesture runs (`#app.is-gesturing`), PLY-2 / PLY-11. */
 const GESTURE_MUTATIONS = () => {
   const L = (window.__gestMut = { n: 0, kinds: [], on: true });
-  const app = document.getElementById('app');
-  const mo = new MutationObserver((list) => {
-    if (!L.on || !app.classList.contains('is-gesturing')) return;
-    for (const m of list) {
-      const t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
-      if (t !== null && t.closest('#taskCard, #phaseRail, #flowBar') !== null) {
-        L.n++;
-        if (L.kinds.length < 8) L.kinds.push(`${m.type}${m.attributeName ? '@' + m.attributeName : ''} ${t.tagName.toLowerCase()}.${String(t.className).split(' ')[0]}`);
+  const watch = () => {
+    const app = document.getElementById('app');
+    const mo = new MutationObserver((list) => {
+      if (!L.on || app === null || !app.classList.contains('is-gesturing')) return;
+      for (const m of list) {
+        const t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
+        if (t !== null && t.closest('#taskCard, #phaseRail, #flowBar') !== null) {
+          L.n++;
+          if (L.kinds.length < 8) L.kinds.push(`${m.type}${m.attributeName ? '@' + m.attributeName : ''} ${t.tagName.toLowerCase()}.${String(t.className).split(' ')[0]}`);
+        }
       }
-    }
-  });
-  mo.observe(document.body, { subtree: true, childList: true, attributes: true, characterData: true });
-  window.__gestMo = mo;
+    });
+    mo.observe(document.body, { subtree: true, childList: true, attributes: true, characterData: true });
+    window.__gestMo = mo;
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
 };
 
 export async function run(ctx) {
@@ -229,7 +234,9 @@ export async function run(ctx) {
       ok(s0?.source === 'keyboard' && s0.stepIndex === 0, `PLY-2: ⇧N goes back to step 1 (${JSON.stringify(s0)})`);
       {
         const n0 = (await events(page, 'stepShown')).length;
-        await page.click('#phaseRail [data-phase="decide"]');
+        // aria-disabled stays in the Tab order (§5.2 "Locked phases"): activate it by the keyboard, as a learner can
+        await page.focus('#phaseRail [data-phase="decide"]');
+        await page.keyboard.press('Enter');
         await page.waitForTimeout(300);
         const hv = await hostView(page);
         const n1 = (await events(page, 'stepShown')).length;
@@ -454,7 +461,8 @@ export async function run(ctx) {
       const h1 = await page.evaluate(() => history.length);
       ok(h1 === h0, `PLY-7: history.length is unchanged across ${S.compare} step changes (${h0} → ${h1}; replaceState only)`);
       ok(await draftShown(page), 'PLY-9: the draft chip shows on step 8 (the reveal step)');
-      // reload with #s=6 (≤ maxStepIndex 7): it opens step 7
+      // the place is saved (800 ms debounce; the strip's "Saved in this browser"), then reload with #s=6 (≤ maxStepIndex 7)
+      await page.evaluate(() => window.__learn.tools.progress().flush());
       await page.evaluate(() => history.replaceState(history.state, '', `${location.pathname}${location.search}#m=sln-find-metastasis&s=6`));
       await page.reload({ waitUntil: 'load' });
       await H.waitForLearn(page);
@@ -531,7 +539,7 @@ export async function run(ctx) {
         const ev = await waitEvent(page, 'resultsExported', t0, 5000).catch(() => null);
         const parsed = await page.evaluate((j) => window.__learn.tools.format().parseResults(j).ok, body);
         ok(/^stoipath-learn_sln-find-metastasis_\d{8}-\d{6}\.results\.json$/.test(name), `§5.7: Export results downloads "${name}"`);
-        ok(parsed && body.total?.score === 4 && body.total.points === 4 && body.review?.status === 'draft' && body.labelString === 'For educational use. Not a medical device. Contains no protected health information.', `§5.7: the file parses as a ResultsFile, total ${JSON.stringify(body.total)}, review ${body.review?.status}, label string verbatim`);
+        ok(parsed && body.total?.score === 4 && body.total.points === 4 && body.module?.review?.status === 'draft' && body.labelString === 'For educational use. Not a medical device. Contains no protected health information.', `§5.7: the file parses as a ResultsFile, total ${JSON.stringify(body.total)}, review ${body.module?.review?.status}, label string verbatim`);
         ok(ev?.moduleId === 'sln-find-metastasis' && ev.bytes > 0 && ev.bytes === readFileSync(await dl.path()).length, `§5.7: resultsExported ${JSON.stringify(ev)}`);
       }
       // Start again: the first press only arms it, and it disarms after 5 s
@@ -583,7 +591,9 @@ export async function run(ctx) {
       ok(bar === '100', `§5.2: the course progress bar reads ${bar} with both modules done`);
       // Start again, twice within 5 s: the module opens at step 1 with its record cleared
       await page.click('#phaseRail [data-phase="complete"]');
-      await waitStep(page, 4).catch(() => null);
+      await waitStep(page, 3).catch(() => null);
+      ok(((await lastStep(page))?.stepIndex ?? -1) === 3, `§5.2: a reached phase's button goes to its first step (step ${((await lastStep(page))?.stepIndex ?? -2) + 1})`);
+      await press(page, 'n', 4);
       await page.waitForFunction(() => document.querySelector('#taskCard button[data-action="start-again"]') !== null, null, { timeout: 10_000 });
       await page.click('#taskCard button[data-action="start-again"]');
       t0 = await since(page);
@@ -620,6 +630,30 @@ export async function run(ctx) {
       ok(false, `flow F threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
     }
     await finish(r, 'flow F');
+  }
+
+  // ============================================================================================== flow H · §5.1 step 5 refusal
+  {
+    const other = JSON.parse(JSON.stringify(ORIENT));
+    other.slides[0].fingerprint = '2220x2967@0.499@0,0@000000000000';
+    const routes = [['**/learn/examples/viewer-orientation.module.json', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(other) })]];
+    const r = await H.newPage(browser, V.desktop, { initScripts: [H.NET_GUARD] });
+    r.reqs = H.recordRequests(r.page, origin);
+    for (const [p, h] of routes) await r.page.route(p, h);
+    const { page } = r;
+    try {
+      await page.goto(url({ label: 'learn-check', module: '../learn/examples/viewer-orientation.module.json' }), { waitUntil: 'load' });
+      await H.waitForLearn(page);
+      const hv = await hostView(page);
+      const failed = (await events(page, 'moduleLoadFailed')).at(-1);
+      const plateText = await text(page, '#plateText');
+      const want = 'Using the slide viewer was written for a different build of CMU-1-Small-Region · H&E; it was not opened.';
+      ok(hv.plate?.kind === 'fingerprint' && plateText === want && failed?.error === want, `§5.1 step 5: a slide of another build refuses the module with the plate "${plateText}" and moduleLoadFailed`);
+      ok((await events(page, 'stepShown')).length === 0 && (await player(page)).module === null && hv.slide === null, '§5.1 step 5: … and nothing opens (no step, no module, no slide)');
+    } catch (e) {
+      ok(false, `flow H threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+    }
+    await finish(r, 'flow H');
   }
 
   // ============================================================================================== flow G · 390 × 844 phone

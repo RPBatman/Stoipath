@@ -518,3 +518,149 @@ log, `__learn.tools.items()` / `.scoring()` / `.annotations()`, `#taskCard .task
 `#taskCard [data-item-id]`, `#candPanel` / `#candBody`, the overlay layers by z (frozen mark 310, letters 450), the
 live regions and `__shell.notice()`. It opens the case on the default course (`?label=learn-check`, no fragment), so
 on the wired build it needs `data/learn/` (content) and the real course to open the case first.
+
+## 2026-11-04 · player (Wave L2): contract notes, and how the service behaves for items, reveal, course and the integrator
+
+Filed by the player builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`: the module
+(`src/learn/player/`; tests `harness/unit/learn-player.test.mjs`, `harness/learn/player.check.mjs`) implements contracts
+§10 `PlayerService` as written. Judgement calls are logged in LEARN.md §15.5 (J-PLY1 … J-PLY20).
+
+**P-Q1 · How `open()` reports a refusal (convention; please confirm, course builder and integrator).** `open()` returns
+`Promise<void>`, but the course must know when a module was not opened (§5.1 step 5: "the course outline then marks the
+module `locked` with that reason"). The player shows the plate first (`fingerprint`, or `module-failed` with the
+reason), emits `moduleLoadFailed {url, error}`, and then **rejects** with a `PlayerOpenError` (`name:
+'PlayerOpenError'`, `code: 'fingerprint' | 'catalogue' | 'slide' | 'progress'`, `message` = the sentence, e.g. `Sentinel
+lymph node: find the metastasis was written for a different build of tumor_014 · H&E; it was not opened.`). The course
+should `catch` it in `openModule` (resolve false; lock the module on `code === 'fingerprint'`), so the integrator's boot
+never sees it (its own catch would replace the plate with `course-failed`). Suggested doc line for
+`PlayerService.open`: "rejects after showing the plate when the module cannot be opened (`PlayerOpenError.code`)". No
+type change is needed: the course reads `(e as { code?: string }).code`.
+
+**P-N1 · The I-Q2 conventions, as implemented (items builder).** All six hold:
+- `update(mutate)` is synchronous: it deep-copies `progress`, mutates the copy, sets `player.progress` to it and calls
+  `progress.save(copy)`; the CTA, the secondary row, the context bar and the rail are re-rendered at rest (coalesced).
+- The CTA element is kept and updated in place (`aria-disabled`, not `disabled`, while an action waits, so a focused CTA
+  keeps focus through `Reveal U` disabled → enabled).
+- `focusPrimary()`: the card's `.btn--cta` when the card is open; else the context bar's `#ctxCta` (drawer closed) or the
+  peek bar's `#peekCta` (sheet peeking); false when none is visible and enabled.
+- `mount(itemId, el)`: `el` is a `<div class="learn-player__item">` inside `#taskCard .task__body`; the disposer runs
+  before the next step renders.
+- `Change answer` is shown while `items.state(id)` is `committed` **or `reveal-waiting`** (§6.5: Change answer aborts the
+  wait) and calls `items.reopen(id, source)`; N on an item not `revealed` is refused with
+  `Answer this item first: commit, then reveal (U).` (U a keycap in `#taskCard .task__status`, plain in the strip).
+- The context bar's secondary on a region item is `Mark without a pointer ⇧↵` → `items.openAlternatives(id, null)`;
+  `show(view, 'fly', source)` flies (instant under reduced motion) and opens the slide in place when it is another one.
+
+**P-N2 · What the player asks of reveal (reveal builder).** On every step render: `showHotspots(step.highlights)` for a
+tour or reveal step with highlights, else `showHotspots(null)`. On an unlocked reveal step: `showItem(id, true)` for
+each listed item, `expert(true, 'surface')` when the step has `showExpert`, then `revealShown`; when that step is left
+(before the next body mounts, so an item step's own `showItem(id, true)` at its mount wins): `showItem(id, false)`. A
+`key` view awaits `reveal.key(item.key)` and fits the item's target (or the first) to 60 % of the uncovered viewport
+(`ShellEnv.visibleInsets`). `close()` turns hotspots and shown items off.
+
+**P-N3 · What the player asks of the course (course builder).**
+- The Open card calls `course.mountOutline(el)` with a `<div class="learn-player__outline">` in the card body (only
+  when the module was opened with a `courseId` equal to `course.course.file.id`), disposed on the next step.
+- The course line (`{course title}`, `Module {n} of {total}`, the `Course progress` bar with `aria-valuenow` = done /
+  total in %, `aria-valuetext` `{done} of {total} modules done`) reads `course.course` and `course.status(id)`; it is
+  updated in place on `courseProgressChanged`, so the course should emit it whenever a status changes (CRS-2: 50).
+- `Next module N` (the summary's CTA, and N there) appears iff `course.nextModule(id)` is not null; it calls
+  `course.openModule(next, 'next-module')`. `Back to the course` (the last entry) goes to the module's Open card, where
+  the outline is (J-PLY5); a module opened without a course ends with `Back to the start` (N).
+- `moduleCompleted {moduleId, score, points}` is emitted once, when the summary is first reached (`completedAt` set).
+- `open(module, {courseId, reason, step})`: `step` is honoured (clamped to `maxStepIndex`); `#s=` only on the first open of
+  the session and only for the module `#m=` names (or any, without `#m=`).
+
+**P-N4 · For the integrator (wiring and the checks).**
+- `#taskCard` gets the class `learn-player` (the scope of `player.css`) and the host-convention skeleton
+  (`.task__head` with `.task__meta`, `h2.task__title#learnStepTitle[tabindex=-1]` and `.task__status`; `.task__body`
+  with `data-kind` = `open` | `tour` | `item` | `reveal` | `reveal-locked` | `summary`; `.task__cta`). Buttons carry
+  `data-action` (`primary`, `prev`, `skip`, `change`, `tour-prev`, `tour-play`, `tour-next`, `expert`, `export-results`,
+  `start-again`); hotspot rows `data-hotspot`; `{cmd:}` keycaps `.learn-cmd[data-cmd-id]`; summary rows
+  `[data-result-item]` (never `data-item-id`, which is items').
+- `stepShown` is emitted when the card has rendered (at rest), with the source of the command that changed the step
+  (`surface` for an open and for autoplay); `moduleLoaded` after the module's slide opened.
+- `window.__learn.tools.player()`: module, step, `maxStepIndex`, `completedAt`, `playing`, the running dwell, the card's
+  texts, the rail rows, what the player said (`said`), `lastShow`, `lastRefusal`, `lastExport`, `report`.
+- The private rig (scratch, not in the tree) builds the three pages as `vite.config.ts` does and swaps only
+  `src/learn/main.ts`'s module glob for the real format, scoring, progress, reveal, items and player modules plus a
+  course stand-in that reads `client/learn/examples/` (data/learn does not exist yet). `player.check.mjs` reads only
+  contract-level things and should run unchanged on the wired build once data/learn and the course module are in.
+
+**P-N5 · An observation for progress (not a player change).** PLY-7 first failed on the rig: after reaching step 8 the
+check reloaded at once and the page opened on step 4. The last debounced write (800 ms) had not landed, and the
+`pagehide` flush of an IndexedDB put does not finish while the page unloads. The check now waits for
+`__learn.tools.progress().flush()` before the reload, as a learner waits for "Saved in this browser". If a reload in the
+first 800 ms after a step change should keep that step, progress could also keep the newest record in
+`sessionStorage` on `pagehide` (synchronous) and prefer it on the next load.
+
+## 2026-11-04 · course (Wave L2): contract notes, and how the service behaves for player, content and the integrator
+
+Filed by the course builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`: the module
+(`src/learn/course/`; tests `harness/unit/learn-course.test.mjs`, `harness/learn/course.check.mjs`, fixtures
+`harness/fixtures/learn/course/`) implements contracts §10 `CourseService` as written. Judgement calls are logged in
+LEARN.md §15.6 (J-CRS1 … J-CRS12).
+
+**C-Q1 · Ownership of the unit test (request, LEARN.md §4).** §4's table gives the course `harness/learn/course.check.mjs`
+and its fixtures but no `harness/unit/learn-course.test.mjs`, which every other feature module owns. I created that file
+(126 assertions: the pure routing and outline model, and the service against the real format service over a fake fetch
+with stand-in progress, player, drafts, catalogue and plates). Please add it to the course row of §4.
+
+**C-A1 · P-Q1 confirmed (player builder).** `openModule` catches `player.open()`'s rejection and resolves false. A
+`PlayerOpenError` with `code` `fingerprint` or `catalogue` locks the module for the session with the error's sentence
+(read as `(e as { code?: unknown }).code`, no import); `slide` and `progress` do not lock (a slide that failed to open
+may open next time). The plate is the player's in that case.
+
+**C-A2 · P-N3 followed (player builder).** No `step` is passed to `player.open()` (the player applies `#s=` on arrival
+itself). `courseProgressChanged {courseId, completed, total}` is emitted once the course loaded and whenever any
+module's status changes (not only the completed count). `nextModule(id)` is the next entry that is not locked, else
+null. `status(id)` is synchronous and current: the open module's status comes from `player.progress` (no wait for the
+800 ms debounced write), the others from `progress.course()`, re-read on every `moduleLoaded`.
+
+**C-N1 · How the service behaves.**
+- **`load()`** (idempotent) reads, in this order: preview mode → the draft `?preview=<id>` from `drafts.get()`, parsed
+  with `format.parseModule`, hashed with `format.contentHash` / `itemHash`, as a `LoadedModule` at `draft:<id>`;
+  `?module=` → that file through `format.load()` (`courseId: null`); else `?course=` or the default course,
+  `catalogue.resolve('learn/courses/stage0-l1.course.json')` after `catalogue.ready` (D6; with no catalogue URL,
+  `../../data/learn/courses/stage0-l1.course.json` beside the page). It emits `courseLoaded`, reads the course record and
+  resolves the `LoadedCourse`, or null for the other two sources. Failures put the §8.1 plate up with one clause of
+  reason (`course-failed` `HTTP 404 Not Found`; `module-failed` `{file name}` / `Draft {id}`) and emit
+  `moduleLoadFailed` for module sources.
+- **Status.** `locked` = refused this session, or `unlock: after-previous` while the previous entry is not completed (by
+  progress, whatever its own lock; the first entry has no previous). Otherwise P-N1's rule. An id the course does not
+  list reads `locked`.
+- **`initialModule()`**: `#m=` when the course lists it and it is not locked, else the first module not completed (all
+  completed → the first not locked). An unknown `#m=` gives `This link names a module that is not in this course; opened
+  {title} instead` (CRS-4), a locked one `This link names a module that is still locked; opened {title} instead` (N),
+  as a transient notice (spoken politely) once that module has opened. `?module=` and preview: their one module.
+- **`openModule(id, reason)`**: opens run one after another; the module already open resolves true at once. A locked
+  module gives the toast `Not yet` / `Complete {previous title} first.` (or the refusal's sentence) and fetches nothing.
+  While nothing is open the plate `Opening {entry title}…` goes up. The module file is fetched once per session (same
+  origin, through `format.load`); a read failure (HTTP, network) is not cached and does not lock. A file whose id is not
+  the entry's, a file that is not a valid module, a slide the catalogue lacks and a slide of another build (§5.1 step 5)
+  lock the module with the reason. The catalogue build is checked BEFORE `player.open()` (whose own check closes the open
+  module first), so a refusal while a module is open is a notice (`{title} could not be opened ({reason}).` or the
+  fingerprint sentence) and the learner stays where they are; with nothing open it is the plate (`fingerprint` or
+  `module-failed`). Then `player.open(module, {courseId, reason})`.
+- **The outline** (`mountOutline(el)`): `<details class="section more learn-course" open>` with `<summary>Modules · {done}
+  of {total} done</summary>` and `<ol class="outline" role="list" aria-label="Modules in this course">`; one `<li>` per
+  entry: the open module's row is `div.outline__row.is-current[aria-current=step]`, the others native
+  `button.outline__row[data-module-id][data-status]` (a locked one stays in the Tab order and answers `Not yet`). Each
+  row: `.n` (number, or `✓` when done, `aria-hidden`), `.outline__title`, `.outline__state` (`done` · `in progress · step
+  {n} of {m}` · `not started` · `locked` · `locked · {reason}`), `.meta` (`{n} min`). Re-rendered at rest on
+  `moduleLoaded`, `stepShown` and `moduleCompleted`, only when the model changed; focus stays on the same row.
+- **`window.__learn.tools.course()`**: kind, course (id, title, url), the URL it read, the entries (href, status, line,
+  lock, next), current, done / total, the initial pick and its notice, refused modules, the course record, every open
+  (id, reason, ok, why, in place), what it said, fetch counts and the number of mounted outlines.
+
+**C-N2 · For content and the integrator (wiring and the checks).**
+- `course.check.mjs` needs `stage0/data/learn/` (the content module). Until it exists a builder may set
+  `LEARN_DATA_STANDIN=<dir>` (courses/ and modules/ copied from `client/learn/examples`): requests under `/data/learn/`
+  are then answered from that directory. The integrator runs it without the variable. Its fixtures
+  (`harness/fixtures/learn/course/`: two fixture tours on CMU-1-Small-Region and the courses `two`, `locked`, `refused`)
+  are validated by the check itself with python jsonschema; they are not module content and the format tests do not
+  read them.
+- On a build with the course installed and no `data/learn`, the default course 404s: the integrator's checks then see
+  the browser's `Failed to load resource … 404` console line and the course plate (14 LI FAIL lines on my private build,
+  all from that). With the content stand-in served at `data/learn/` (a scratch server root), all 114 integrator checks
+  pass on the same private build, and so do `player.check.mjs` (109) and `course.check.mjs` (95).

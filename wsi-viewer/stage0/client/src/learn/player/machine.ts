@@ -187,6 +187,9 @@ export function openTarget(file: ModuleFile, i: number): { slide: string; view: 
   return { slide: first, view: { kind: 'fit', slide: first } };
 }
 
+/** The opening step sentence waits this long, so a sentence the page queued while the module opened is spoken first. */
+export const OPENING_SENTENCE_DELAY_MS = 1000;
+
 const nowIso = (d: Date = new Date()): string => d.toISOString().replace(/\.\d{3}Z$/, 'Z');
 const errText = (e: unknown): string => (e instanceof Error && e.message !== '' ? e.message : String(e));
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
@@ -232,12 +235,18 @@ export class Player implements PlayerService {
   private pendingNotice: string | null = null;
   /** A sentence to say before the next open's first step sentence (Start again). */
   private carryNotice: string | null = null;
+  /** The next render is the first after an open: its step sentence waits (OPENING_SENTENCE_DELAY_MS). */
+  private openingRender = false;
+  private sayToken = 0;
   private lastReport: ReconcileReport | null = null;
   private armedUntil = 0;
   private armTimer = 0;
   private statusTimer = 0;
   private railSig = '';
   private toolsSig = '';
+  /** What the context bar and the top bar last got (the host writes them unconditionally: no redundant DOM write). */
+  private ctxSig = '';
+  private topSig = '';
   private shownItems: string[] = [];
   // ---------------------------------------------------------------- read by the debug view
   readonly said: string[] = [];
@@ -362,6 +371,8 @@ export class Player implements PlayerService {
     this.frag.reset();
     this.railSig = '';
     this.toolsSig = '';
+    this.ctxSig = '';
+    this.topSig = '';
     if (loaded.progress.stepIndex !== index) {
       const c = clone(loaded.progress);
       c.stepIndex = index;
@@ -381,6 +392,7 @@ export class Player implements PlayerService {
     if (token !== this.openToken) return;
     host.plate(null);
     this.card.mount(host.taskCard.root);
+    this.openingRender = true;
     this.learn.bus.emit('moduleLoaded', {
       moduleId: file.id,
       version: file.version,
@@ -395,6 +407,12 @@ export class Player implements PlayerService {
 
   private fail(module: LoadedModule, code: PlayerOpenError['code'], text: string, plate: Parameters<LearnHost['plate']>[0]): never {
     this.host.plate(plate);
+    // the previous module's card does not stay behind the plate
+    this.host.taskCard.setContext(null);
+    this.host.taskCard.root.replaceChildren();
+    this.host.rail.render([], () => {});
+    this.ctxSig = '';
+    this.railSig = '';
     this.lastOpenError = text;
     this.learn.bus.emit('moduleLoadFailed', { url: module.url, error: text });
     throw new PlayerOpenError(code, text);
@@ -1101,7 +1119,14 @@ export class Player implements PlayerService {
     this.pendingNotice = null;
     if (notice !== null) this.shell.notices.transient(notice, 10_000, false);
     const sentence = TEXT.stepSentence(i + 1, count, s?.title ?? TEXT.summaryTitle, stem);
-    this.say(notice !== null ? `${notice} ${sentence}` : sentence);
+    const spoken = notice !== null ? `${notice} ${sentence}` : sentence;
+    const token = ++this.sayToken;
+    if (this.openingRender) {
+      // The page's own sentences queued while the module opened (core's storage notice, PRG-3) are heard first: the
+      // polite region keeps only the newest unspoken sentence of 500 ms, so the opening step waits a little (J-PLY12).
+      this.openingRender = false;
+      window.setTimeout(() => this.shell.atRest(() => token === this.sayToken && this.say(spoken)), OPENING_SENTENCE_DELAY_MS);
+    } else this.say(spoken);
 
     this.learn.bus.emit('stepShown', { moduleId: file.id, stepIndex: i, stepId: s?.id ?? 'summary', kind, phase: phaseAt(file, i), source });
     if (s !== null && s.kind === 'reveal' && this.shownItems.length > 0) this.learn.bus.emit('revealShown', { moduleId: file.id, itemIds: [...s.items], stepIndex: i });
@@ -1122,7 +1147,12 @@ export class Player implements PlayerService {
     this.card.setAction(this.action());
     this.card.setNote(this.note());
     this.card.setSecondary(this.secondaryDefs());
-    this.host.taskCard.setContext(this.contextState());
+    const ctx = this.contextState();
+    const csig = ctx === null ? '' : JSON.stringify([ctx.step, ctx.stem, ctx.primary?.label, ctx.primary?.key, ctx.primary?.disabled, ctx.secondary?.label, ctx.secondary?.key]);
+    if (csig !== this.ctxSig) {
+      this.ctxSig = csig;
+      this.host.taskCard.setContext(ctx);
+    }
     const phases = phaseStates(file, i, p.maxStepIndex, this.revealed);
     const sig = JSON.stringify(phases);
     if (sig !== this.railSig) {
@@ -1136,7 +1166,11 @@ export class Player implements PlayerService {
       this.toolsSig = tsig;
       this.host.rail.setTools(tools);
     }
-    this.host.topbar.setStep(`${TEXT.stepOf(i + 1, stepCount(file))} · ${s?.title ?? TEXT.summaryTitle}`);
+    const top = `${TEXT.stepOf(i + 1, stepCount(file))} · ${s?.title ?? TEXT.summaryTitle}`;
+    if (top !== this.topSig) {
+      this.topSig = top;
+      this.host.topbar.setStep(top);
+    }
     if (this.body.kind === 'tour') this.body.view.setPlaying(this.isPlaying);
   }
 

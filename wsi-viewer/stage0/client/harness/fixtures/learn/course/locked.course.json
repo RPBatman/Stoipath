@@ -1,0 +1,25 @@
+{
+  "schema": "stoipath.learn.course/1",
+  "id": "course-fixture-locked",
+  "title": "Course fixture · after-previous",
+  "summary": "The second module opens only after the first is completed (CRS-3).",
+  "audience": [
+    "medical-student"
+  ],
+  "modules": [
+    {
+      "id": "course-fixture-a",
+      "url": "course-fixture-a.module.json",
+      "title": "Fixture tour A",
+      "estimatedMinutes": 2,
+      "unlock": "always"
+    },
+    {
+      "id": "course-fixture-b",
+      "url": "course-fixture-b.module.json",
+      "title": "Fixture tour B",
+      "estimatedMinutes": 2,
+      "unlock": "after-previous"
+    }
+  ]
+}

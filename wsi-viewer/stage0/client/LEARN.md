@@ -1061,6 +1061,67 @@ them is a **default pending owner**. Contract notes are in LEARN-QUESTIONS.md (i
 - **J-ITM14 · The panel's gate warning** shows only after a candidate commit raised it, with its own `Commit anyway`;
   the card's warning has `View my mark at 20×` and `Commit anyway`. The help sentence names the item's gate label.
 
+### 15.5 Judgement-call log (player, Wave L2, 2026-11-04)
+
+The owner defaults that touch the player are Q10 (the orientation tour is the course's second entry: the case's summary
+offers `Next module N`, the tour's summary `Back to the course`), Q11 (the exported results file keeps the learner's
+mark geometry; progress builds it, the summary downloads it) and Q12 (the draft note; the chip is the integrator's,
+J-I7). Each call below that touches them is a **default pending owner**. Contract notes are in LEARN-QUESTIONS.md
+(player, P-Q1 … P-N5).
+
+- **J-PLY1 · Focus on a step change** (§10 SC 2.4.3) moves to the step title only when the change came from inside the
+  task card, the context bar or the peek bar (CTA, secondary row, tour player, hotspot row) and the card is open. N and
+  ⇧N pressed on the slide leave focus on the slide, so the arrows keep panning (they do not pan inside the dock); the
+  step is announced politely either way. Opening a module never moves focus.
+- **J-PLY2 · Skip to the question is also on the Open card** (secondary row) when the module asks an item, so the
+  locked-phase toast's `Skip to the question is in the card` (ux-copy §13.1) is true there. Where the card offers no Skip
+  (an item step, a module without items) the toast reads `Finish the current phase first.` (N).
+- **J-PLY3 · A phase without steps is left out of the rail**: the orientation tour asks nothing, so its rail is Open ·
+  Screen · Examine · Complete (a ticked Decide would be untrue). The case has all five (PLY-1).
+- **J-PLY4 · A reached phase's button goes to the phase's first step**; the current phase's does nothing; a locked one
+  shows the toast and moves nothing (PLY-2).
+- **J-PLY5 · `Back to the course` opens the module's Open card**, where the course outline is: L1 has no course page of
+  its own. A module opened without a course (`?module=`) ends with `Back to the start` (N). Default pending owner (Q10).
+- **J-PLY6 · N on the summary runs the CTA** (`Next module N`); at the last entry, where the CTA has no key, N says
+  `This is the last step of the module.` (N). ⇧N on step 1 says `This is the first step of the module.` (N).
+- **J-PLY7 · The Open card's `Slides` line** writes the module's licence id verbatim (`tumor_014 · H&E · CAMELYON16 ·
+  CC0-1.0`, as the HUD does); PLY-1's `… · CC0` is its prefix.
+- **J-PLY8 · Card meta and CTA words** (ux-copy §13.1): `Open the case` (`Open` without a case), `Guided tour`,
+  `Practice · not graded` on items (L1 posts no grade; the score is the learner's own), `Complete` on reveal steps and the
+  summary. The Open CTA of a module without a case is `Start the tour N` (N). Choice items' CTA note is
+  `You can change your answer until you reveal.` (N); the §5.2 polygon sentence is kept for region items.
+- **J-PLY9 · `#s=`** applies on the first open of the session only, to the module `#m=` names (or any module without
+  `#m=`), clamped to the stored `maxStepIndex` (a link never unlocks a step; PLY-7).
+- **J-PLY10 · `moduleCompleted` fires once**, when the summary is first reached and `completedAt` is set; revisiting the
+  summary does not repeat it.
+- **J-PLY11 · Autoplay** (D19): `Playing the tour.`, `End of the tour. The next step is a question.` and
+  `End of the tour.` are N (ux-copy's `Playing narration. Captions on.` promises audio). A pointerdown or wheel on pane
+  A and the pan and zoom commands pause it (`Paused.`); N and ⇧N do not (a step change is not input on the slide);
+  reaching a non-tour step stops it silently. A test hook's command (`source: 'test'`) does not pause it.
+- **J-PLY12 · One polite write per step**: a reconcile notice (`This module was updated; …`, §5.6) or Start again's
+  `Your answers were cleared. The module starts again.` (N) is spoken ahead of the step sentence, in the same write (the
+  polite region keeps only the newest sentence of 500 ms), and the reconcile notice also shows in the strip. The first
+  step sentence after a module opens waits 1 s, so a sentence the page queued while it opened (core's storage notice,
+  PRG-3) is heard first rather than replaced.
+- **J-PLY13 · The hotspot list is `<ul role="list">` of `<li><button>`**: the design's `<button role="listitem">` would
+  take the button role away. The tour's key row stays `aria-hidden`, as in the design (the keymap is where keys are
+  read).
+- **J-PLY14 · `Change answer` shows while committed and while reveal-waiting** (§6.5: it aborts the wait).
+- **J-PLY15 · The CTA is `aria-disabled` while its action waits** (reveal-waiting), never `disabled`, so a focused CTA
+  keeps focus.
+- **J-PLY16 · Leaving a reveal step hides its items' keys and frozen marks** (§5.4: the key target shows on the item step
+  and the reveal steps that list it); the hide runs before the next body mounts, so an item step that shows the same
+  item again wins.
+- **J-PLY17 · `{cmd:id}`** renders the first chord of the command's keys; a command without keys renders its label and
+  an unknown id its bare text, so no raw `{cmd:` reaches a learner (PLY-10). The spoken form names the keys (`plus`,
+  `minus`, `Shift arrow keys`).
+- **J-PLY18 · The summary shows the zoom gate only for gated items** (choice items have none) and a `Total` / `Items`
+  pair beside the ring (N). A reveal step lists `{title} · {score} / {points}` for each item it reveals (N).
+- **J-PLY19 · Rendering is at rest**: a step change updates the state and the progress record at once and renders the
+  card at the next rest, so N pressed during a drag or a fly renders when the camera stops (PLY-2, PLY-11).
+- **J-PLY20 · `open()` rejects with `PlayerOpenError {code}` after showing the plate** (LEARN-QUESTIONS P-Q1), so the
+  course can mark a fingerprint refusal `locked`.
+
 ---
 
 ## 16. Open questions for the owner
