@@ -1,0 +1,106 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "viewer-orientation",
+  "version": "0.1.0",
+  "metadata": {
+    "title": "Using the slide viewer",
+    "summary": "A short tour of moving around a whole-slide image: zoom, pan, fit and the overview. Nothing here is scored.",
+    "audience": ["undergraduate", "medical-student", "resident", "cme"],
+    "objectives": ["Zoom, pan and fit a whole-slide image with the keyboard or a pointer."],
+    "tags": {
+      "organ": ["none"],
+      "stain": ["H&E"],
+      "difficulty": 1,
+      "topics": ["viewer skills"]
+    },
+    "authors": [
+      {
+        "name": "Stoipath Learn L1 build (AI-assisted draft)",
+        "role": "author"
+      }
+    ],
+    "review": {
+      "status": "draft",
+      "notes": "Interface instructions only; no clinical teaching text."
+    },
+    "language": "en",
+    "estimatedMinutes": 3,
+    "created": "2026-11-04",
+    "updated": "2026-11-04",
+    "textLicence": {
+      "id": "CC-BY-4.0",
+      "text": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "slides": [
+    {
+      "ref": "cmu",
+      "catalogueId": "openslide.CMU-1-Small-Region",
+      "label": "CMU-1-Small-Region · H&E",
+      "stain": "H&E",
+      "dataset": "OpenSlide test data",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "fingerprint": "2220x2967@0.499@0,0@ed92d5a9f2e8"
+    }
+  ],
+  "items": [],
+  "steps": [
+    {
+      "id": "open",
+      "kind": "tour",
+      "phase": "open",
+      "title": "How this viewer works",
+      "text": "This short tour shows how to move around a slide. Nothing here is scored; {cmd:step:next} moves to the next step.",
+      "view": {
+        "kind": "fit",
+        "slide": "cmu"
+      },
+      "transition": "cut"
+    },
+    {
+      "id": "zoom",
+      "kind": "tour",
+      "phase": "screen",
+      "title": "Zoom and pan",
+      "text": "Zoom with {cmd:zoomin} and {cmd:zoomout}, the mouse wheel or a pinch; pan with the arrow keys or by dragging. {cmd:fit} shows the whole slide again.",
+      "view": {
+        "kind": "view",
+        "slide": "cmu",
+        "center_um": [554, 740],
+        "scale_um_per_px": 2
+      },
+      "transition": "fly"
+    },
+    {
+      "id": "mag",
+      "kind": "tour",
+      "phase": "examine",
+      "title": "Magnification is derived",
+      "text": "The readout in the corner is derived from micrometres per screen pixel: 20× means 0.50 µm per pixel. The overview, {cmd:nav}, shows where you are on the slide.",
+      "view": {
+        "kind": "view",
+        "slide": "cmu",
+        "center_um": [554, 740],
+        "scale_um_per_px": 0.5
+      },
+      "transition": "fly"
+    },
+    {
+      "id": "done",
+      "kind": "tour",
+      "phase": "complete",
+      "title": "Ready",
+      "text": "That is all you need for the case modules.",
+      "view": {
+        "kind": "fit",
+        "slide": "cmu"
+      },
+      "transition": "fly"
+    }
+  ]
+}
