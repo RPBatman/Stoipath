@@ -2,13 +2,15 @@
  * Decode worker: fetch a tile, decode it with createImageBitmap, build the half-size mip, transfer both back.
  * 04 F5 ("fetch → Blob → createImageBitmap() in a Worker → postMessage (transfer)"), A §2 "Decode pipeline".
  * Cancellation follows 04 F4: abort only when fewer than CANCEL_BYTES_FRACTION of the bytes have arrived.
+ * A request still in flight after TILE_PROGRESS_AFTER_MS reports progress (headers, more bytes) at most every
+ * TILE_PROGRESS_EVERY_MS, so the page's watchdog does not abort a slow request that is still receiving (IOS-FIX.md).
  */
-import { CANCEL_BYTES_FRACTION, CANCEL_KEEP_UNKNOWN_BYTES } from './constants';
-import type { FetchRequest, WorkerRequest, WorkerResponse } from './decode-messages';
+import { CANCEL_BYTES_FRACTION, CANCEL_KEEP_UNKNOWN_BYTES, TILE_PROGRESS_AFTER_MS, TILE_PROGRESS_EVERY_MS } from './constants';
+import type { FetchRequest, WorkerMessage, WorkerRequest } from './decode-messages';
 
 interface WorkerScope {
   onmessage: ((ev: MessageEvent<WorkerRequest>) => void) | null;
-  postMessage(message: WorkerResponse, transfer: Transferable[]): void;
+  postMessage(message: WorkerMessage, transfer: Transferable[]): void;
 }
 interface RequestInitWithPriority extends RequestInit {
   priority?: 'high' | 'low' | 'auto';
@@ -95,11 +97,19 @@ async function handleFetch(req: FetchRequest): Promise<void> {
   inflight.set(req.key, progress);
   const tStart = performance.now();
   let cancelledLate = false;
+  let lastNote = tStart;
+  // Sign of life for the page's watchdog; nothing is posted for a request that answers within TILE_PROGRESS_AFTER_MS.
+  const noteProgress = (t: number): void => {
+    if (t - tStart < TILE_PROGRESS_AFTER_MS || t - lastNote < TILE_PROGRESS_EVERY_MS) return;
+    lastNote = t;
+    scope.postMessage({ type: 'progress', key: req.key, seq: req.seq }, []);
+  };
   try {
     const init: RequestInitWithPriority = { signal: controller.signal, priority: req.tier <= 0 ? 'high' : 'low' };
     const res = await fetch(req.url, init);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const tHeaders = performance.now();
+    noteProgress(tHeaders);
     const cacheControl = res.headers.get('cache-control');
     progress.total = Number(res.headers.get('content-length') ?? 0) || 0;
     const chunks: Uint8Array[] = [];
@@ -111,6 +121,7 @@ async function handleFetch(req: FetchRequest): Promise<void> {
         if (value !== undefined) {
           chunks.push(value);
           progress.received += value.byteLength;
+          noteProgress(performance.now());
         }
       }
     } else {

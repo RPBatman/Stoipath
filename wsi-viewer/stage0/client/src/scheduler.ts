@@ -14,9 +14,10 @@
  *    arrival evict another wanted tile, which was then re-fetched: an endless churn even with the camera still;
  *  - per-host concurrency 6 on HTTP/1.1, higher when h2/h3 was negotiated;
  *  - failure handling (IOS-FIX.md, 2026-11-08; inert while every request is answered): a request watchdog aborts a
- *    request still in flight TILE_WATCHDOG_MS after dispatch (doubling per timeout of the same tile) and fails it like
- *    an error, so it is re-dispatched; pinned-base and warm-base tiles, which gate "ready" and the scripted path, are
- *    retried indefinitely with a capped backoff (other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS); the last
+ *    request that has shown no progress for TILE_WATCHDOG_MS (doubling per timeout of the same tile; progress is the
+ *    dispatch, then each progress note the worker posts for a slow request: headers or more body bytes) and fails it
+ *    like an error, so it is re-dispatched; pinned-base and warm-base tiles, which gate "ready" and the scripted path,
+ *    are retried indefinitely with a capped backoff (other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS); the last
  *    failure and the error / timeout counts are kept for the measurement page's status line.
  * The wanted set is rebuilt every frame from the camera, so the heap is cleared and refilled (typed arrays, no GC).
  */
@@ -114,7 +115,10 @@ class PriorityHeap {
 
 interface Inflight {
   tier: number;
+  /** Dispatch time (shifted past a page pause). viewer.ts reads it for the shell's host hook. */
   startedAt: number;
+  /** Dispatch time, then the time of the worker's latest progress note (the watchdog's clock; IOS-FIX.md). */
+  aliveAt: number;
   lastWanted: number;
   cancelled: boolean;
 }
@@ -211,7 +215,7 @@ export class Scheduler {
   focusY = 0;
   /** Called for each tile that arrives, after bookkeeping. */
   onTile: ((msg: WorkerResponse) => void) | null = null;
-  /** The last tile failure ("tile L/x_y: message", "tile L/x_y: no answer after 12 s"), null until one happens. */
+  /** The last tile failure ("tile L/x_y: message", "tile L/x_y: no progress for 12 s"), null until one happens. */
   lastFailure: string | null = null;
   /** Watchdog timeouts per tile (the limit doubles with each); cleared when the tile arrives. */
   private readonly timeoutsByKey = new Map<number, number>();
@@ -228,6 +232,10 @@ export class Scheduler {
     const h2 = protocol === 'h2' || protocol === 'h3' || protocol.startsWith('h3');
     this.maxInflight = h2 ? CONCURRENCY_H2 : CONCURRENCY_H1;
     this.prefetchSlots = Math.max(PREFETCH_SLOTS_MIN, Math.floor(this.maxInflight * PREFETCH_SLOT_FRACTION));
+    pool.onProgress = (key) => {
+      const rec = this.inflight.get(key);
+      if (rec !== undefined) rec.aliveAt = performance.now();
+    };
   }
 
   get inflightCount(): number {
@@ -292,21 +300,25 @@ export class Scheduler {
   }
 
   /**
-   * Request watchdog (IOS-FIX.md): give up on in-flight requests older than their limit. A pause of the page (no
-   * update() for over a second: hidden tab, locked phone, debugger) is not counted against requests in flight.
+   * Request watchdog (IOS-FIX.md): give up on in-flight requests that have shown no progress (dispatch, or the
+   * worker's latest progress note) for their limit. A slow request still receiving bytes is kept. A pause of the page
+   * (no update() for over a second: hidden tab, locked phone, debugger) is not counted against requests in flight.
    */
   private watchdog(now: number): void {
     const gap = this.lastUpdateAt < 0 ? 0 : now - this.lastUpdateAt;
     this.lastUpdateAt = now;
     if (this.inflight.size === 0) return;
     if (gap > 1000) {
-      for (const rec of this.inflight.values()) rec.startedAt += gap;
+      for (const rec of this.inflight.values()) {
+        rec.startedAt += gap;
+        rec.aliveAt = Math.min(rec.aliveAt + gap, now);
+      }
       return;
     }
     for (const [key, rec] of this.inflight) {
       const n = this.timeoutsByKey.size > 0 ? (this.timeoutsByKey.get(key) ?? 0) : 0;
       const limit = Math.min(TILE_WATCHDOG_MAX_MS, TILE_WATCHDOG_MS * 2 ** n);
-      if (now - rec.startedAt <= limit) continue;
+      if (now - rec.aliveAt <= limit) continue;
       this.inflight.delete(key);
       this.pool.abandon(key);
       this.counters.timeouts++;
@@ -314,7 +326,7 @@ export class Scheduler {
       this.timeoutsByKey.set(key, n + 1);
       const f = this.failed.get(key);
       this.failed.set(key, { at: now, attempts: (f?.attempts ?? 0) + 1 });
-      this.lastFailure = `tile ${keyLevel(key)}/${keyX(key)}_${keyY(key)}: no answer after ${(limit / 1000).toFixed(0)} s (retrying)`;
+      this.lastFailure = `tile ${keyLevel(key)}/${keyX(key)}_${keyY(key)}: no progress for ${(limit / 1000).toFixed(0)} s (retrying)`;
       console.warn('[tiles] timed out', keyLevel(key), keyX(key), keyY(key), `${limit} ms`);
     }
   }
@@ -515,7 +527,7 @@ export class Scheduler {
       else this.counters.requestsBase++;
       if (tier >= 0) room--;
       this.counters.requestedByKind[kind] = (this.counters.requestedByKind[kind] ?? 0) + 1;
-      this.inflight.set(key, { tier, startedAt: now, lastWanted: frame, cancelled: false });
+      this.inflight.set(key, { tier, startedAt: now, aliveAt: now, lastWanted: frame, cancelled: false });
       this.pool.request(key, this.pyr.tileUrl(keyLevel(key), keyX(key), keyY(key)), tier, kind);
     }
     if (held) this.counters.prefetchHeldFrames++;

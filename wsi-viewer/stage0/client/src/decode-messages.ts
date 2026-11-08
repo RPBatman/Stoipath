@@ -64,3 +64,17 @@ export interface ErrorResponse {
   seq?: number | undefined;
 }
 export type WorkerResponse = TileResponse | ErrorResponse;
+/**
+ * Sign of life for a slow request (IOS-FIX.md): the worker posts one when the response headers or more body bytes
+ * arrive, but only for a request in flight longer than TILE_PROGRESS_AFTER_MS and at most every
+ * TILE_PROGRESS_EVERY_MS, so a request that answers in time sends none. The pool consumes it (the scheduler's
+ * watchdog then counts from it instead of from dispatch); it is never passed to the pool's TileHandler.
+ */
+export interface ProgressNote {
+  type: 'progress';
+  key: number;
+  /** FetchRequest.seq echoed. */
+  seq?: number | undefined;
+}
+/** Everything a decode worker posts to the page. */
+export type WorkerMessage = WorkerResponse | ProgressNote;

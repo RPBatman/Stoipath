@@ -101,6 +101,15 @@ export const FAILED_MAX_ATTEMPTS = 3;
 export const TILE_WATCHDOG_MS = 12_000;
 export const TILE_WATCHDOG_MAX_MS = 48_000;
 /**
+ * The watchdog limits the time without progress, not the time since dispatch (2026-11-08 review): a decode worker
+ * reports progress (response headers, more body bytes) for a request in flight longer than TILE_PROGRESS_AFTER_MS, at
+ * most every TILE_PROGRESS_EVERY_MS, and the watchdog's clock restarts at each report. A request that answers within
+ * TILE_PROGRESS_AFTER_MS (every request on the measured links) sends no report. A slow link whose bytes keep
+ * arriving is never aborted; a request with no response or no new bytes for the limit still is.
+ */
+export const TILE_PROGRESS_AFTER_MS = 4000;
+export const TILE_PROGRESS_EVERY_MS = 2000;
+/**
  * Pinned-base and warm-base tiles gate "ready" and the scripted path, so they are never given up after
  * FAILED_MAX_ATTEMPTS (IOS-FIX.md): they are retried indefinitely, FAILED_RETRY_MS after the first failure and then
  * with the wait doubling per failure up to this cap. Other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS.

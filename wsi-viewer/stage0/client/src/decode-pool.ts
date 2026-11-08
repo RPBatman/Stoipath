@@ -6,14 +6,18 @@
  *  - every dispatch carries a sequence number the worker echoes; abandon() (the scheduler's request watchdog) forgets a
  *    request and force-aborts it in its worker, and a late answer to it is dropped (its bitmaps closed) rather than
  *    taken for the re-dispatched request; the re-dispatch avoids the worker that timed out when there is another;
+ *  - a worker's progress note for a slow request (decode-messages.ts ProgressNote) goes to onProgress, so the watchdog
+ *    counts the time without progress rather than the time since dispatch; it is never passed to the TileHandler;
  *  - a 'tile' answer whose bitmap arrived null (WebKit can deliver a transferred ImageBitmap as null when it cannot
  *    re-create it) is turned into an error, so the tile is retried instead of throwing in the frame loop;
  *  - worker error events are passed to onError (the measurement page shows them) as well as logged; the worker is
  *    then skipped by request() while another is alive (every handler in decode-worker.ts catches its own errors, so
- *    an error event means the script failed to load or evaluate). Its pending requests are left to the watchdog.
+ *    an error event means the script failed to load or evaluate). Its pending requests are failed at once with a
+ *    (not aborted) error, so the scheduler retries them on a live worker under its retry rules instead of waiting for
+ *    the watchdog; a late answer to one of them, should that worker still be running, is dropped as stale.
  */
 import { WORKERS_MAX, WORKERS_MIN } from './constants';
-import type { WorkerRequest, WorkerResponse } from './decode-messages';
+import type { WorkerMessage, WorkerRequest, WorkerResponse } from './decode-messages';
 
 export type TileHandler = (msg: WorkerResponse) => void;
 
@@ -28,6 +32,8 @@ export function chooseWorkerCount(hardwareConcurrency: number | undefined, overr
 interface Owner {
   worker: number;
   seq: number;
+  tier: number;
+  kind: number;
 }
 
 export class DecodePool {
@@ -44,6 +50,8 @@ export class DecodePool {
   staleDropped = 0;
   /** Worker error events (script failed to load, uncaught exception in the worker), after console.error. */
   onError: ((message: string) => void) | null = null;
+  /** A worker reported progress (headers or body bytes) on a slow request that is still current (the scheduler's watchdog). */
+  onProgress: ((key: number) => void) | null = null;
 
   constructor(size: number, onMessage: TileHandler) {
     this.size = size;
@@ -51,9 +59,15 @@ export class DecodePool {
     this.dead = new Uint8Array(size);
     for (let i = 0; i < size; i++) {
       const w = new Worker(new URL('./decode-worker.ts', import.meta.url), { type: 'module', name: `decode-${i}` });
-      w.onmessage = (ev: MessageEvent<WorkerResponse>) => {
-        let msg = ev.data;
-        const o = this.owner.get(msg.key);
+      w.onmessage = (ev: MessageEvent<WorkerMessage>) => {
+        const data = ev.data;
+        const o = this.owner.get(data.key);
+        if (data.type === 'progress') {
+          // Only for the request this worker currently holds; a note for an abandoned one means nothing.
+          if (o !== undefined && o.worker === i && o.seq === data.seq) this.onProgress?.(data.key);
+          return;
+        }
+        let msg: WorkerResponse = data;
         if (msg.seq !== undefined && (o === undefined || o.seq !== msg.seq)) {
           // The answer to a request the watchdog abandoned: the tile was re-requested (or is no longer wanted).
           this.staleDropped++;
@@ -77,8 +91,26 @@ export class DecodePool {
         console.error('[decode-worker]', e.message);
         this.dead[i] = 1;
         this.onError?.(`decode worker ${i}: ${e.message || 'failed to load or crashed'}`);
+        this.failPending(i, onMessage);
       };
       this.workers.push(w);
+    }
+  }
+
+  /**
+   * Worker `i` raised an error event: fail every request it holds now (an error, not an abort, so the scheduler counts
+   * it and retries the tile; request() already avoids the dead worker while another is alive). Each one is also
+   * force-cancelled in case the worker is still running, and its answer, if one comes, is dropped as stale.
+   */
+  private failPending(i: number, onMessage: TileHandler): void {
+    const failed: Array<[number, Owner]> = [];
+    for (const [key, o] of this.owner) if (o.worker === i) failed.push([key, o]);
+    this.load[i] = 0;
+    for (const [key, o] of failed) {
+      this.owner.delete(key);
+      const cancel: WorkerRequest = { type: 'cancel', key, force: true, seq: o.seq };
+      this.workers[i]?.postMessage(cancel);
+      onMessage({ type: 'error', key, tier: o.tier, kind: o.kind, aborted: false, message: `decode worker ${i} failed`, seq: o.seq });
     }
   }
 
@@ -111,7 +143,7 @@ export class DecodePool {
     }
     this.load[best] = (this.load[best] ?? 0) + 1;
     const seq = ++this.seq;
-    this.owner.set(key, { worker: best, seq });
+    this.owner.set(key, { worker: best, seq, tier, kind });
     const msg: WorkerRequest = { type: 'fetch', key, url, tier, kind, seq };
     this.workers[best]?.postMessage(msg);
   }

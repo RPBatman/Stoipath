@@ -27,8 +27,10 @@ The measurement freeze for the abstract has passed, so the branch source was fix
 - **What is measured, and how.** Policy constants keep their values. Metric definitions, the scripted path, the
   tile request order in normal operation, the upload budgets and the export schema fields are all unchanged.
   `schema` is still `stoipath-stage0-export/2` and `format` is still `stoipath-stage0-metrics/1`.
-- **Behaviour when nothing fails.** The watchdog fires only for a request still in flight 12 s after dispatch. The
-  extended retry applies only after a failure. The `try/catch` around the frame body changes nothing while nothing
+- **Behaviour when nothing fails.** The watchdog fires only for a request that has shown no progress for 12 s: no
+  answer within 12 s of dispatch, and no response headers or new body bytes reported in the last 12 s. A decode
+  worker reports progress only for a request still in flight after 4 s, so a request answered sooner (every request
+  on the measured links) sends no extra message. The extended retry applies only after a failure. The `try/catch` around the frame body changes nothing while nothing
   throws. The headless before/after runs on loopback are under Evidence.
 - **The research shell (`shell.html`) and Learn (`learn.html`)** use the same engine. They get the watchdog, the
   retry policy, the frame-loop guard and the worker-error handling, but not the measurement page's status text,
@@ -41,9 +43,9 @@ The measurement freeze for the abstract has passed, so the branch source was fix
 |---|---|---|
 | Layout | `index.html`, `src/overlay.ts` | `#status`, a new error line `#errline` and `#hud` sit in one fixed top stack (status first), so the status is never under the HUD. The panel lists its buttons first (Run and Export outlined). The device block is a collapsible `<details>` ("Device, build and slide"), open by default when the window is at least 700×600 CSS px. Safe-area insets are applied on all sides. A **Panel** button (bottom right) shows the overlay whenever it is hidden. |
 | Status | `src/viewer.ts` (`measurementStatus`) | While the pinned base loads, the status reads `loading base n/21`, plus `(errors k, timeouts t) — last: tile L/x_y: <message>` once a tile has failed. After a context restore it says `ready (after a WebGL context loss: …use a fresh tab for a valid run)` once the base is back. The device block is redrawn after a restore, so it shows the new layer count. |
-| Watchdog | `src/scheduler.ts`, `src/decode-pool.ts`, `src/decode-worker.ts`, `src/decode-messages.ts` | A request in flight longer than `TILE_WATCHDOG_MS` (12 s, doubling per timeout of the same tile, capped at `TILE_WATCHDOG_MAX_MS` = 48 s) is force-aborted in its worker, counted in `tiles.timeouts`, failed like an error and re-dispatched, preferably to another worker. A page pause of more than 1 s (hidden tab, locked phone) is not counted against requests in flight. Each dispatch carries a sequence number that the worker echoes, so a late answer to an abandoned request is dropped and its bitmaps are closed. |
+| Watchdog | `src/scheduler.ts`, `src/decode-pool.ts`, `src/decode-worker.ts`, `src/decode-messages.ts` | A request with no progress for `TILE_WATCHDOG_MS` (12 s, doubling per timeout of the same tile, capped at `TILE_WATCHDOG_MAX_MS` = 48 s) is force-aborted in its worker, counted in `tiles.timeouts`, failed like an error and re-dispatched, preferably to another worker. A page pause of more than 1 s (hidden tab, locked phone) is not counted against requests in flight. Each dispatch carries a sequence number that the worker echoes, so a late answer to an abandoned request is dropped and its bitmaps are closed. Progress is the dispatch, then each progress note from the worker: for a request in flight longer than `TILE_PROGRESS_AFTER_MS` (4 s), the worker posts one when the headers or more body bytes arrive, at most every `TILE_PROGRESS_EVERY_MS` (2 s). A slow link that keeps delivering bytes is therefore not aborted (review repair, below). |
 | Retry | `src/scheduler.ts` | Pinned-base and warm-base tiles gate `ready` and the scripted path, so they are retried indefinitely: 2 s after the first failure, then with the wait doubling up to `BASE_RETRY_MAX_MS` (5 s). Visible, partner, intent and ring tiles keep the old policy (`FAILED_RETRY_MS` 2 s, `FAILED_MAX_ATTEMPTS` 3). |
-| Bad answers | `src/decode-pool.ts` | A `tile` answer whose bitmap arrived `null` is turned into an error and retried instead of throwing in the frame loop. WebKit can deliver a transferred ImageBitmap as null. A worker that raises an `error` event (failed to load or evaluate) is skipped by new requests while another worker is alive. |
+| Bad answers | `src/decode-pool.ts` | A `tile` answer whose bitmap arrived `null` is turned into an error and retried instead of throwing in the frame loop. WebKit can deliver a transferred ImageBitmap as null. A worker that raises an `error` event (failed to load or evaluate) is skipped by new requests while another worker is alive. The requests it already held are failed at once (an error, not an abort) and retried on a live worker under the retry rules, instead of waiting for the watchdog (review repair, below). |
 | Errors | `src/viewer.ts`, `src/main.ts` | The frame body runs in `try/catch` and the loop always re-arms. The first exception goes into `summary.notes`, and each one is shown on the error line (`frame loop error (×n): …`). Decode-worker error events, `window` `error` events and unhandled rejections go to the error line too. `error: WebGL2 is not available` gains a hint about Lockdown Mode and iOS 15. |
 | Context loss | `src/viewer.ts` | The halved texture-layer hint is no longer written to `sessionStorage` when the context was lost while the page was hidden (an app switch or screen lock, not a memory signal). Later loads in the tab keep the full array. |
 | Wake lock | `src/viewer.ts` (`wakeLockDuringPath`) | While the scripted path runs, the page holds `navigator.wakeLock.request('screen')` where it exists (feature-detected; failures ignored). It is re-requested on return to the page and released when the path ends. |
@@ -54,7 +56,8 @@ The measurement freeze for the abstract has passed, so the branch source was fix
   builds with this fix. Exports without the field are instrument 1.
 - `summary.tiles.timeouts`: requests the watchdog gave up on. It is 0 whenever every request was answered, and it is
   not included in `tiles.errors`.
-- `constants` also lists `TILE_WATCHDOG_MS`, `TILE_WATCHDOG_MAX_MS` and `BASE_RETRY_MAX_MS` (additive).
+- `constants` also lists `TILE_WATCHDOG_MS`, `TILE_WATCHDOG_MAX_MS`, `BASE_RETRY_MAX_MS`, `TILE_PROGRESS_AFTER_MS` and
+  `TILE_PROGRESS_EVERY_MS` (additive).
 - **Build id** (`build` in the export and in the panel, now shown as `build <id> (instrument 2)`). Its meaning is
   unchanged: the UTC time of `npm run build` (`vite.config.ts`). It identifies one build, not a protocol version. The
   build measured for the abstract is the one deployed on 2026-10-25 (build id `2026-10-25T16:53:04Z`).
@@ -81,7 +84,7 @@ injects one simulated WebKit behaviour. "Before" is the branch tip without this 
 | S04: one base fetch never settles | no `ready`; the path ran only after a 30 s base wait (50 s, note "base not resident") | watchdog at 12 s, `ready` at 14 s, path done 20 s; with `&path=1` the path auto-starts at 14 s |
 | S05: 6 s network drop at load | 63 errors (21 × 3), base dropped for good, blank fit view; 74 s run on no base | base retried with backoff, `ready` at 7.6 s, path done 21 s; status showed `loading base 0/21 (errors 21) — last: tile 3/0_3: TypeError: Load failed` |
 | S06: one base tile never decodes (permanent) | `starting renderer…` under the HUD, no reason given | the status names the tile and the WebKit error (`loading base 20/21 (errors n) — last: tile 3/1_2: InvalidStateError: …`) and keeps retrying every 5 s; Run anyway finishes (58 s, "base not resident" note). A tile that can never decode cannot be fixed by retrying. |
-| S08: one decode worker dead | (frozen build: never ready) | error line shows the worker error; its requests time out and go to live workers; `ready` at 14 s, path done |
+| S08: one decode worker dead | (frozen build: never ready) | error line shows the worker error; its requests time out and go to live workers; `ready` at 14 s, path done (after the review repair below: its requests fail at once and are retried on live workers, `ready` at 2.3 s) |
 | S09: first tile bitmap arrives null | frame loop dead (TypeError), never ready, path never ran | converted to a tile error and retried; `ready` at 2.3 s, path done |
 | S19: one texSubImage3D throws mid-path | loop dead, path stuck at 4/37 | loop continues, red line `frame loop error: SecurityError: …`, path done 20 s |
 | S17: context loss while backgrounded | status stuck at `WebGL context restored…`; hint `56` stored, warm reload in the tab at 56 layers | `ready (after a WebGL context loss: …use a fresh tab…)`; no hint stored; warm reload at 112 layers |
@@ -108,6 +111,37 @@ are within run-to-run noise:
 | tier-0 / prefetch requests | 30–41 (34.5) / 158–168 (162) | 26–38 (31.5) / 160–174 (163.5) |
 | tiles received | 278–289 (282) | 271–297 (280.5) |
 | pinned base resident at, ms | 311–396 (346) | 286–366 (328.5) |
+
+## Review repair (2026-11-08)
+
+A review of this fix raised two low-severity issues. Both are repaired.
+
+1. **The watchdog limited the time since dispatch, not the time without progress.** On a link where every tile
+   takes longer than 12 s, it aborted healthy requests that were still downloading and threw away their bytes. The
+   watchdog is now a stall detector. A decode worker posts a progress note (`ProgressNote` in
+   `src/decode-messages.ts`) when the response headers or more body bytes arrive. It does this only for a request in
+   flight longer than `TILE_PROGRESS_AFTER_MS` (4 s), and at most every `TILE_PROGRESS_EVERY_MS` (2 s). The scheduler
+   restarts the request's watchdog clock at each note. A request answered within 4 s sends no note, which covers
+   every request on the measured links (the slowest cellular fetch was 1335 ms). The status line now says
+   `no progress for 12 s` instead of `no answer after 12 s`.
+2. **A decode worker that failed to load left its requests to the watchdog.** Requests sent to it before its error
+   event fired each waited 12 s, which held `ready` back. The pool now fails those requests at once with an error
+   (not an abort), so the scheduler retries them on a live worker under its retry rules.
+
+Evidence comes from the same reproduction harness and iPhone 15 Pro emulation as above. "Before" is the build of
+this fix ahead of the repair. Two new scenarios model a slow but healthy link whose bytes keep arriving:
+
+| Scenario | Before | After |
+|---|---|---|
+| R-trickle-20s: headers at once, each body trickles in over 20 s | `ready` 54.3 s; 103 timeouts; 25 tiles received | `ready` 40.4 s; 0 timeouts; 85 tiles received |
+| R-ttfb6-trickle-14s: headers after 6 s, body over 14 s more | `ready` 54.2 s; 58 timeouts; 25 tiles received | `ready` 40.4 s; 0 timeouts; 60 tiles received |
+| S08: decode-1 of 3 throws during module evaluation | `ready` 14.2 s; 5 timeouts, 0 errors | `ready` 2.3 s; 0 timeouts, 5 errors (`decode worker 1 failed`), retried at once |
+| S04: one base fetch never settles | `ready` 14.3 s; 1 timeout | `ready` 14.2 s; 1 timeout (still caught) |
+
+One case does not change. R-slow-13s delays every response, headers included, by 13 s. Before the 13 s are up it
+cannot be told apart from S04's hang, so it still times out (`ready` 40.4 s, 55 timeouts). It models no byte
+arriving for 13 s on any request, which is more than ten times the slowest fetch the owner measured. The other
+scenarios rerun on the repaired build give the same outcomes as before.
 
 ## Deployment note
 
