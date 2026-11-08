@@ -103,6 +103,7 @@ export function regionFeedback(item: RegionItem, score: ItemScore, relatedText: 
     title = TEXT.iouTitle(pct, s, p);
     said = TEXT.saidIou(pct, s, p);
     if (fb === 'partial-inside') {
+      said = `${said} ${TEXT.saidPartial}`;
       lines.push(TEXT.partialText(m.iou.toFixed(2)));
       if (!score.gate.met) lines.push(TEXT.partialGate(gateLabel));
     } else lines.push(TEXT.iouText(pct, String(Math.round(item.scoring.iouFull * 100))));

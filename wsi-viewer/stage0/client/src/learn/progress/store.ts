@@ -16,6 +16,14 @@
  * when it recovers, as TOOLS.md §15.7 AN4 does: `memory-only` is shown, not spoken, because core already speaks the
  * storage notice once and a second sentence would replace it in the polite region.
  *
+ * Two tabs (review fix, 2026-11-08): a write MERGES with what is stored instead of replacing it, so a stale second tab
+ * cannot take back progress the first one made. Before each put the stored record is read (in the same chain job) and
+ * `mergeStored` keeps the larger `maxStepIndex`, the earliest `startedAt` / `completedAt`, every response another tab
+ * revealed, and every response this tab did not change since its last write (another tab may have); a response this
+ * tab changed is written as this tab has it (unless the stored one is revealed: a reveal is final). `stepIndex` is
+ * this tab's. A Start again in one tab deletes the record; a stale tab that writes after it re-creates its own record
+ * (there is nothing stored to merge with), which is the one case a second tab can still undo.
+ *
  * No DOM. The bus event `progressSaved` is emitted at rest after each module write.
  */
 import type { EventBus, KeyValueStore, LiveRegions } from '../../shell/contracts';
@@ -63,6 +71,35 @@ const IDLE: ProgressSaveStatus = Object.freeze({ state: 'idle', savedAt: null, t
 const MEMORY: ProgressSaveStatus = Object.freeze({ state: 'memory-only', savedAt: null, text: STATUS_TEXT.memory }) as ProgressSaveStatus;
 const SAVING = (savedAt: string | null): ProgressSaveStatus => ({ state: 'saving', savedAt, text: STATUS_TEXT.saving });
 
+const earliest = (a: string | null, b: string | null): string | null => (a === null ? b : b === null ? a : a <= b ? a : b);
+
+/**
+ * Merge this tab's record (`ours`, stored form) with the record another tab may have written (`stored`, whatever the
+ * storage returned). `mine` = the item ids this tab changed since its last write. A stored record of another module
+ * build (contentHash) or an unreadable one is ignored: ours was reconciled against the build that is open.
+ */
+export function mergeStored(ours: ModuleProgress, stored: unknown, mine: ReadonlySet<string>): ModuleProgress {
+  if (!isObject(stored) || stored['schema'] !== PROGRESS_SCHEMA || stored['moduleId'] !== ours.moduleId || stored['contentHash'] !== ours.contentHash || !isObject(stored['items'])) return ours;
+  const s = stored as unknown as ModuleProgress;
+  const items: ModuleProgress['items'] = {};
+  for (const [id, o] of Object.entries(ours.items)) {
+    const t = (s.items as Record<string, unknown>)[id];
+    const theirs = isObject(t) && t['itemId'] === id && t['itemHash'] === o.itemHash ? (t as unknown as ModuleProgress['items'][string]) : null;
+    if (theirs === null) items[id] = o;
+    else if (theirs.state === 'revealed' && theirs.revealedAt !== null && o.state !== 'revealed') items[id] = theirs;
+    else if (!mine.has(id)) items[id] = theirs;
+    else items[id] = o;
+  }
+  const maxStep = typeof s.maxStepIndex === 'number' && Number.isFinite(s.maxStepIndex) ? Math.max(ours.maxStepIndex, Math.floor(s.maxStepIndex)) : ours.maxStepIndex;
+  return {
+    ...ours,
+    maxStepIndex: maxStep,
+    startedAt: earliest(ours.startedAt, typeof s.startedAt === 'string' ? s.startedAt : null) ?? ours.startedAt,
+    completedAt: earliest(ours.completedAt, typeof s.completedAt === 'string' ? s.completedAt : null),
+    items,
+  };
+}
+
 /** The stored form: `reveal-waiting` never persisted (contracts §6), view logs capped at 500 (newest kept). */
 export function storedForm(p: ModuleProgress): ModuleProgress {
   const items: ModuleProgress['items'] = {};
@@ -87,6 +124,10 @@ export class LearnProgressStore implements ProgressStore {
   /** Bumped by reset(): a write queued before it is dropped. */
   private readonly gen = new Map<string, number>();
   private readonly dirty = new Set<string>();
+  /** Per module, the item ids this tab changed since its last write (mergeStored's `mine`). */
+  private readonly changed = new Map<string, Set<string>>();
+  /** Per module and item, the JSON this tab last had (the player may mutate its objects in place). */
+  private readonly seen = new Map<string, Map<string, string>>();
   private readonly courses = new Map<string, CourseProgress>();
   private timer: unknown = null;
   private firstDirtyAt: number | null = null;
@@ -118,6 +159,7 @@ export class LearnProgressStore implements ProgressStore {
     const r = reconcile(stored, module, courseId, this.now());
     this.meta.set(id, { steps: stepCountOf(module.file), points: totalPoints(module.file) });
     this.records.set(id, r.progress);
+    this.seen.set(id, new Map(Object.entries(r.progress.items).map(([iid, x]) => [iid, JSON.stringify(x)])));
     if (r.changed) this.markDirty(id);
     if (!this.storage.available) this.st = MEMORY;
     return { progress: cloneJson(r.progress), report: r.report };
@@ -127,6 +169,15 @@ export class LearnProgressStore implements ProgressStore {
     if (!isObject(progress) || progress.schema !== PROGRESS_SCHEMA || typeof progress.moduleId !== 'string' || !isObject(progress.items)) {
       console.error('[learn progress] save() was given something that is not a stoipath.learn.progress/1 record; ignored');
       return;
+    }
+    let mine = this.changed.get(progress.moduleId);
+    if (mine === undefined) this.changed.set(progress.moduleId, (mine = new Set()));
+    let seen = this.seen.get(progress.moduleId);
+    if (seen === undefined) this.seen.set(progress.moduleId, (seen = new Map()));
+    for (const [iid, r] of Object.entries(progress.items)) {
+      const j = JSON.stringify(r);
+      if (seen.get(iid) !== j) mine.add(iid);
+      seen.set(iid, j);
     }
     this.records.set(progress.moduleId, { ...progress, updatedAt: isoSeconds(this.now()) });
     this.markDirty(progress.moduleId);
@@ -138,6 +189,8 @@ export class LearnProgressStore implements ProgressStore {
 
   async reset(moduleId: string): Promise<void> {
     this.dirty.delete(moduleId);
+    this.changed.delete(moduleId);
+    this.seen.delete(moduleId);
     this.gen.set(moduleId, (this.gen.get(moduleId) ?? 0) + 1);
     const mem = this.records.get(moduleId);
     this.records.delete(moduleId);
@@ -226,7 +279,18 @@ export class LearnProgressStore implements ProgressStore {
     const rec = this.records.get(id);
     if (rec === undefined) return;
     if (this.storage.available) this.st = SAVING(this.st.savedAt);
-    const ok = await this.storage.put(STORE, progressKey(id), storedForm(rec));
+    const mine = this.changed.get(id) ?? new Set<string>();
+    this.changed.set(id, new Set());
+    let out = storedForm(rec);
+    if (this.storage.available) {
+      out = mergeStored(out, await this.storage.get<unknown>(STORE, progressKey(id)), mine);
+      if ((this.gen.get(id) ?? 0) !== g) return;
+    }
+    const ok = await this.storage.put(STORE, progressKey(id), out);
+    if (!ok) {
+      const now = this.changed.get(id);
+      for (const iid of mine) now?.add(iid);
+    }
     this.puts++;
     this.note('put', progressKey(id), ok);
     this.settle(ok, id);

@@ -55,6 +55,8 @@ export const TEXT = {
   /** N: a module without a case (the orientation tour). */
   startTour: 'Start the tour',
   savedNote: 'Your place is saved in this browser after every step.',
+  /** N (review fix 2026-11-08): the preview keeps nothing, so the Open card does not promise it. */
+  previewNote: 'Preview: your answers are not kept.',
 
   // ---------------------------------------------------------------- tour card (ux-copy §13.3; D19 deviations)
   tourPlayer: 'Tour player',
@@ -91,6 +93,8 @@ export const TEXT = {
   /** N: a locked reveal step's CTA goes back to the item. */
   backTo: (title: string): string => `Back to ${title}`,
   expertShow: "Show the expert's view",
+  /** N (review fix 2026-11-08): the expert view's legend, in words (SC 1.4.1). */
+  expertLegend: 'Expert’s view (white lines): solid outlines tumour, dashed outlines the areas the dataset excludes. The dashed yellow line over it is the answer key.',
   /** N: one row per listed item. */
   revealItemsAria: 'Your answers',
 

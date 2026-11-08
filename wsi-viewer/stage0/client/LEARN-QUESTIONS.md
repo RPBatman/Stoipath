@@ -791,3 +791,284 @@ earlier FAIL lines were the course builder's rig, not the content.
 numbers: learn-check (integrator LI-1 … LI-10 and LI-I, 325 checks; content, course, items, player, progress, reveal
 checks) and the Phase A gates (run.mjs + check-metrics, shell-check, tools-check, unit, python) on the same build.
 
+
+## 2026-11-08 · item-editor (Wave L3): contract questions, and how the service behaves for the studio and the integrator
+
+Filed by the item-editor builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`: the module
+(`src/learn/item-editor/`; checks `harness/learn/item-editor.check.mjs`; unit `harness/unit/learn-item-editor.test.mjs`,
+see IE-Q1) implements contracts §9 `ItemEditorService` as written.
+
+**IE-Q1 · A unit test file outside the ownership row (request, as course's C-Q1).** LEARN.md §4 lists only
+`harness/learn/item-editor.check.mjs` for this module. The pure parts (ids, letters, the inline key of a selection,
+candidate geometry and Fly there views, rubric ids, the gate preset, renaming, and the per-item lint rows over the REAL
+format lint and scoring on Appendix A) are tested in `harness/unit/learn-item-editor.test.mjs` (62 assertions; found by
+`unit.mjs` as every `learn-<module>.test.mjs`). Please add it to the item-editor row of §4.
+
+**IE-Q2 · `Show the answer key` needs reveal's `attach` (A-R-Q1), and the studio's attached module must follow edits
+(request, for reveal and the studio).** The editor calls `reveal.key(item.key)` and, when it resolves,
+`reveal.showItem(itemId, true)` (`aria-pressed="true"`); a rejection is shown and spoken as `The answer key cannot be
+shown ({reason}).` and the button stays unpressed. In this tree reveal has no `attach` yet, so the preview refuses with
+reveal's own reason (`No module is open, so there is no answer key to show`); the check asserts that honest refusal
+when `attach` is absent and the drawn key when it is present. Two things for the wiring: (1) contracts §10 says the
+STUDIO attaches its draft (`url: draft:<id>`); the editor does not attach (two attaches would compete). (2) Reveal
+caches compiled keys per module content hash, so the studio's `RevealContext.module()` must return a LoadedModule whose
+`contentHash` changes when the draft changes (the editor's test harness hashes the draft text for this); otherwise a
+key edited after a first preview is drawn from the stale cache. The editor re-runs `showItem` after a key change while
+the preview is on.
+
+**IE-N1 · How `mount()` uses the context (for the studio).** `ctx.update(mutate, label)` is assumed to apply `mutate`
+synchronously to `ctx.draft.module`: the editor re-reads `ctx.draft` (every access, so a getter is fine) right after.
+Labels are short imperative phrases (`Edit the stem`, `Add option D`, `Use the reference layer camelyon16-expert as the
+answer key` …), one per user action (text fields: one per input event), so they can name undo steps. The editor writes
+DOM only in answer to the author's own input or at rest (`shell.atRest`), never per frame. `mount()` replaces the
+element's children and the disposer removes them; dispose also turns a key preview off. Structural changes the editor
+makes outside the item: answer keys (`module.answerKeys`; an inline or reference key it replaced is dropped when no
+item and no expert view uses it) and, on an id rename, every reference to the item (item steps, reveal steps,
+`case.expertView.unlockAfter`). The studio should re-mount the editor after it changes the item itself (undo, import).
+
+**IE-N2 · The per-item lint strip (for the studio's Publish list).** At rest, 300 ms after the last change, the editor
+runs `format.lint` on a copy of the draft with its own LintContext (the catalogue service, `scoring`, and the slide's
+catalogue vector layers fetched same-origin, one request per URL, cached) and shows THIS item's rows: each finding whose
+pointer is inside `/items/{i}` (or inside its answer key for `key-resolves` / `key-version`; `tour-shows-key` by the
+item id in its message), then one passing row per rule that ran clean for it, errors first. `candidate-scores` uses
+lint's own passed row (`Candidates that score as correct: C`, A-F-Q4), and is `not checked yet (fix the errors above
+first)` while the item has a schema error (lint skips scoring a broken item). Schema findings are said in words
+(`/items/3/candidates/0/description: must not be empty` → `Candidate A description: must not be empty`); the pointer is
+kept on the row for `aria-invalid` + `aria-describedby` on the matching field (SC 3.3.1). The studio's own lint of the
+whole draft is unchanged; nothing here uses `draft.lastLint`, whose indices can lag an edit.
+
+**IE-N3 · Debug view and test harness (for the integrator).** `__learn.tools['item-editor']()` →
+`{ kinds, sessions: [{itemId, rows, lintRuns, lintError}], layerFetches, service, test }`. `test` is a test-only
+stand-in for the studio's side of the contract: `begin(module)` (an in-memory draft), `create(kind)` (the item plus an
+item step), `mount(itemId)` (into `#taskCard`, whose previous children are kept and put back by `unmount()`; it opens
+the task card and, when reveal has `attach`, attaches the draft), `module()`, `log()` (update labels). The check uses it
+so it does not depend on the studio's screens; STU-5 ("Fix opens the item editor on that item") stays the studio's.
+If the real studio re-renders `#taskCard` while the check runs, the check would need the studio's Items stage instead.
+
+**IE-N4 · Judgement calls (please log them in LEARN.md §15 beside the other builders').**
+- J-IED1 · **Rule (b) is off for a new region item** (default pending owner, owner default Q2 (b)): contracts §9 names
+  the studio defaults (points 1, gate 20×, IoU 0.5). The region editor offers `Half credit for an outline that lies
+  mostly on the target` (`scoring.partialInside`, 90 % / 50 % when turned on, both editable); the case keeps its own.
+- J-IED2 · **The reference key** is `{dataset}-reference` / `{dataset} reference outline` (Appendix A's
+  `camelyon16-reference`, `CAMELYON16 reference outline`), source `{layer, version}` with the version read from the
+  fetched file's `provenance.version` (refused for another build of the slide or no version), one target
+  `{slug(class)}` = `{className: Tumor}` minus `{className: Exclusion}` (IED-2's "Tumor minus Exclusion"). When a key of
+  that id already reads the same layer (an imported module such as Appendix A), it is REUSED: the version is re-pinned
+  and a target with these classes is added if missing, so its id-based target and its credited `related` entry stay.
+  `related` entries (and `credit`) are not editable in the L1 editor: they come from the module file.
+- J-IED3 · **The inline key** is `key-{itemId}` with every selected region (polygon, brush, rectangle, ellipse) as a
+  feature (`id` = annotation UUID, `className` = its class); its one target `outline` includes the non-`Exclusion`
+  features and subtracts the `Exclusion` ones. Points and measurements are left out (a key is made of areas).
+- J-IED4 · **A candidate's Fly there view** is centred on the point, or on the bounding-box centre of the polygon, at the
+  item's gate scale (else the current view's scale); a brush stroke of one part becomes a Polygon, one of several parts
+  is refused. Candidates are added in the order the Annotations selection lists them; letters follow the order.
+- J-IED5 · **Destructive buttons:** deleting a candidate or a rubric field needs a second press within 5 s (LEARN.md §7
+  step 3's rule for steps); removing a choice option is one press (an option is one line, an item keeps ≥ 2), and the
+  letters re-flow at once.
+- J-IED6 · **Rubric ids follow their text** (a slug made unique: `Position` → `position`, `> 2 mm` → `gt-2-mm`), and the
+  `correct` list follows a renamed option. `Correct fields needed` is not clamped to the number of fields, so an
+  impossible rubric shows as lint's `rubric-passable` error instead of being fixed silently (IED-4).
+- J-IED7 · **CSS:** `.checks*` (final 331–335, the studio's in §4.5) and `.mark-row` (final 220–223) are copied scoped
+  under `.learn-ied`, so the editor renders the same with or without the studio's stylesheet; `.cand-edit` (326–328)
+  is the editor's own. The accepted-kind checkboxes show the draw tool's keycap from the registry, `aria-hidden`, so
+  each box is named by its kind alone.
+- J-IED8 · **N strings** are in `src/learn/item-editor/text.ts` (LEARN.md §8.3: everything else in the studio is N);
+  §7's stage strings are verbatim.
+
+## 2026-11-08 · studio (Wave L3): contract notes, and how the studio behaves for item-editor, reveal and the integrator
+
+Filed by the studio builder. Nothing was fixed by widening a type in `src/learn/contracts.ts`: the module
+(`src/learn/studio/`; check `harness/learn/studio.check.mjs`; unit `harness/unit/learn-studio.test.mjs`, see STU-Q1)
+uses contracts §9 (`AuthorDraft`, `DraftStore`, `ItemEditorContext`, `ItemEditorService`), §10 (`RevealService.attach?`,
+`showHotspots`) and §12 (`LearnHost`) as written, and provides no service.
+
+**STU-Q1 · A unit test file outside the ownership row (request, as C-Q1 and IE-Q1).** LEARN.md §4 lists only
+`harness/learn/studio.check.mjs`. The pure parts (new drafts, the module id suggestion, slide records and slide-ref
+renames, the captured tour step, hotspots from a selection, the step operations and the phase rule, the checks list and
+the blocker, the LintContext against a stand-in catalogue, import parse, export name, preview address, strings) are in
+`harness/unit/learn-studio.test.mjs` (62 assertions; the committed case and a new draft are linted by the REAL format and
+scoring). Please add it to the studio row of §4.
+
+**STU-Q2 · The canvas under the draft list (request, low priority).** In the studio nothing opens a slide until a draft
+with a slide is open, so the canvas shows only the HUD's `No slide open` (and the canvas name `Slide canvas, no slide
+open yet.`). §8.1 wants no blank canvas without a sentence; a plate such as `{kind: 'empty', what: 'studio-slide'}`
+(`No slide open · Open a draft, or add a slide in Collect.`) would say it. That is a `LearnPlate` kind (integrator). The
+studio uses `{kind: 'opening', title: slide label}` while it opens a draft's slide, as the player does.
+
+**STU-N1 · The draft chip over the studio's dock tabs (observation, for the integrator).** With `setDraftNote(true)` at
+1440 × 900 the chip row `.taskdock__head` overlapped the `Task · Annotations · Inspector` tab row (looked at in the first
+smoke screenshot). The studio now calls `setDraftNote(false)`: a draft's review status is a read-only row of Collect
+(`Review · Draft` with `Only a reviewer can mark this module reviewed, in the module file.`), and the chip is the
+learner's (D11). If the integrator wants the chip in the studio, the row needs room above the tabs.
+
+**STU-N2 · Reveal's key preview in the studio (for reveal and item-editor; IE-Q2).** The studio attaches its open draft
+when `reveal.attach` exists: `RevealContext.module()` is the draft as a `LoadedModule` (`url: draft:<draftId>`, its
+`contentHash` and `itemHashes` from `format`), and `progress()` is null. The module is re-hashed 30 ms after every change
+(and after every lint), so its `contentHash` follows edits; it detaches on `All drafts` and when another draft opens.
+One race remains for reveal to close: `ctx.update(…)` followed in the same tick by `reveal.showItem` (the editor's
+re-run after a key edit) reads the previous `module()` until the hash resolves (a few ms). Reveal could read
+`module()` again after a microtask inside `key()`, or compare `module().file` by identity (the studio hands a new snapshot
+object per change). In this tree reveal has no `attach` yet, so the studio's hotspot preview of the focused step
+(`showHotspots(step.highlights)` on Record and Edit) draws nothing until it lands; nothing else depends on it.
+
+**STU-N3 · How the studio serves the item editor (IE-N1).** `ItemEditorContext.update(mutate, label)` applies `mutate`
+synchronously to the live `draft.module` (the `draft` getter returns the same object every time), stamps `updatedAt` and
+`metadata.updated`, schedules the 800 ms at-rest save (`draftSaved`) and the at-rest lint (`lintRan`), and redraws only the
+item rows (title and error count), so the editor keeps focus. A rename of the item by the editor is followed by position
+(the Items stage keeps it selected). The editor is re-mounted whenever the studio redraws the Items stage (a new or
+deleted item, `Fix`, a stage change). `selection()` is view A's annotation selection; `currentView()` is view A as a
+`ViewPoint` on a module slide (no `capturedFrom`), or null. Adding an item calls `itemEditor.create(kind, module)` and also
+appends its item step (so `item-once` holds); the per-item lint strip is the editor's (IE-N2).
+
+**STU-N4 · Test hooks (for the integrator).** `__learn.tools.studio()` → `{ stage, draftId, draft, drafts, lint
+{ok, errors, warnings, failing, passed}, linting, save {state, savedAt}, stats, itemEditor, mountedItem, revealAttached,
+openSlideRef, lastExport, lastPreview, test }`; `test` has `adoptModule(module, stage?)` (a draft from a module that may be
+incomplete, as STU-5 needs: a one-candidate region item does not pass `parseModule`), `open(draftId)`, `stage(stage)`,
+`lintNow()`, `flush()`, `newModule()` and `close()`. Every interactive control of the studio carries a stable `data-fk`
+(the check uses them; the studio uses them to put focus back after a redraw). LI-8's studio states are covered by
+`studio.check.mjs` flow D (the draft list and each stage with the Task and the Annotations tab, at 1440 × 900 and
+390 × 844 coarse); the integrator may move them into `integrator.check.mjs`.
+
+**STU-N5 · Judgement calls (please log them in LEARN.md §15 beside the other builders').**
+- J-STU1 · **A new module's defaults:** id `untitled-module` until a title is typed; review `draft`, read-only (D11; owner
+  default Q4/Q12, pending owner: only the owner marks a module reviewed, in the file); text licence CC BY 4.0 (owner
+  default Q5, pending owner); one empty author row (the `Stoipath Learn L1 build (AI-assisted draft)` line of Q6 is for
+  the committed case, not a default for authors); language `en`, difficulty 2, 10 minutes, no slides, items or steps.
+- J-STU2 · **The module id follows the title** while it still equals the suggestion of the previous title; an id typed by
+  hand stops following. The id field refuses a value outside the schema pattern in place (`aria-invalid` + the fix).
+- J-STU3 · **Slide refs are editable**; a rename updates every reference (the case names its slide 18 times). Removing a
+  slide that a step, hotspot, key or item names is refused with how many parts use it.
+- J-STU4 · **Capture** (⇧N) works on every stage while a draft and one of its slides are open; the step list shows on
+  Record and Edit. The centre is rounded to 0.01 µm (STU-2's tolerance; the export writes 2 decimals anyway), the scale
+  is kept exact. A tour step after a Decide step gets Complete (a tour step is never Decide).
+- J-STU5 · **No draft chip in the studio** (STU-N1).
+- J-STU6 · **Hotspots** go to the focused step when it is a tour or reveal step, else to the last such step; an item step
+  is refused (item steps have no `highlights`). Measurement lines and multipoints in the selection are skipped and
+  counted in the sentence.
+- J-STU7 · **Items and their steps:** adding an item appends its item step; deleting an item (second press) removes its
+  item step, its id from reveal steps (a reveal step left with no item is removed) and from `expertView.unlockAfter`.
+- J-STU8 · **Lint at rest** 600 ms after the last change and when a draft opens. Its errors show on the field at the
+  finding's pointer once that field was touched, and on every field after `Fix`; the local pattern checks (module id,
+  slide ref, language, minutes) refuse a value at once.
+- J-STU9 · **Publish:** the blocker sits above the checks list (with all 23 rules listed the first error can be far down;
+  looked at at 1440 × 900), then `Preview as learner`, the list (errors with `Fix`, warnings, passes), the import and the
+  note. Preview and Export are disabled while any error remains or a lint is running (§7.1: E blocks both). N on
+  Publish says `This is the last stage. Export the module file to publish it.`; Export itself has no key (ux-copy §13.7).
+- J-STU10 · **The task card opens at start** at 1080–1599 px (a drawer, closed by default for learners): the draft list
+  is the studio's first screen.
+- J-STU11 · **No facts file in the studio's LintContext** (contracts §8 allows it absent): a draft has none, and a
+  request per module without one would be a 404 in the console. The studio never sets `reviewed`; the python test
+  checks committed modules.
+- J-STU12 · **The open draft is remembered** in the studio's prefs (`stoipath.learn-studio.v1.studio.open`) and reopened
+  on reload, on the stage and with the step / item it had (STU-1).
+- J-STU13 · **The rail** shows all five stages reachable while a draft is open (authors move freely; each shows a count)
+  and locked without one (`Not yet` / `Open a draft or start a new module first.`).
+- J-STU14 · **Import** caps a file at 5 MB and uses the forward-reading parse (an unknown property is dropped with a
+  warning, as a learner's load does); an invalid file lists the parser's errors under the file input and the drop zone
+  (`aria-invalid` + `aria-describedby`) and makes no draft.
+- J-STU15 · **Camera choices per step kind** (Edit): tour `The captured view` / `The whole slide` (`Keep the learner’s view`
+  only when the step already has none); item adds `Keep the learner’s view`; reveal adds `Fit the answer key`.
+  `{cmd:…}` chips: `step:next`, `zoomin`, `zoomout`, `fit`, `pan.viewport`, `nav`, `mag:20`.
+- Owner defaults the studio touches (default pending owner, §15.1): Q4 / Q12 (draft review, never set by the studio),
+  Q5 (CC BY 4.0 for a new module's text), Q15 (an exported module file carries its answers, as the committed case does).
+
+## 2026-11-08 · Learn integrator (Wave L3): answers to item-editor and studio
+
+The studio and the item editor are wired: `src/learn/main.ts` installs them in studio mode through the module glob in
+the `STUDIO_ORDER` of LEARN.md §3 (format · scoring · progress · reveal · item-editor · studio), so no wiring code had
+to change; one `npm run build` (client/dist) runs STU-1 … STU-7, IED-1 … IED-4 and LI-8's studio states unchanged.
+Contract stays 1; the changes below are additive or doc lines (`npx tsc --noEmit -p tsconfig.json` clean).
+
+**A-IE-Q1 · Accepted.** `harness/unit/learn-item-editor.test.mjs` is in the item-editor row of LEARN.md §4.
+
+**A-IE-Q2 · Agreed on both points; reveal's half is not done in L3.** (1) The studio attaches, the editor never does
+(the studio does so in STU-N2). (2) The `contentHash` follows edits (the studio re-hashes 30 ms after a change). No
+reveal builder ran in Wave L3, so `RevealService.attach` is still absent and stays optional in the contracts. Until
+reveal implements it, `Show the answer key` refuses with reveal's own sentence (`The answer key cannot be shown (No
+module is open, so there is no answer key to show).`), which is honest, and the studio's hotspot preview draws nothing.
+STU-* and IED-* do not depend on it (the IED check asserts the refusal when `attach` is absent). The contract's
+`RevealContext.module()` doc line now says how reveal must read it (again on every call, cache keyed by `contentHash`,
+an entry stale when `module().file` is another object), which also closes STU-N2's race. Carried to reveal's next
+change (LEARN.md §15.2c J-I25); the integrator then makes `attach` required in the same change.
+
+**A-STU-Q1 · Accepted.** `harness/unit/learn-studio.test.mjs` is in the studio row of LEARN.md §4.
+
+**A-STU-Q2 · Accepted and done by the integrator.** `LearnPlate` `{kind: 'empty', what: 'studio-slide'}` (contracts
+§12, additive) reads `No slide open` · `Open a draft, or add a slide in Collect.` (`role="status"`). The integrator
+shows it itself at the studio's start when no slide is open and the studio has not put up its own `opening` plate; it
+goes at the next `slideOpened` like every `empty` plate, so the studio needs no change. LI-3 (studio) asserts it.
+
+**A-STU-N1 · Agreed: no draft chip in the studio.** Review status is a row of Collect; the chip is the learner's (D11).
+Logged as J-STU5. If a later wave wants the chip in the studio, the integrator gives it a row above the dock tabs.
+
+**A-STU-N2 · See A-IE-Q2.**
+
+**A-STU-N3 · Noted; matches IE-N1** (synchronous `update`, the same `draft` object per access, re-mount on a
+structural change). The two builders' notes agree, and IED-* and STU-* pass together on the wired build.
+
+**A-STU-N4 · LI-8's studio states stay in `studio.check.mjs` flow D** (tagged `LI-8`, run by `learn-check.mjs` with
+every module check): the draft list and each of the five stages with the Task and the Annotations tab, at 1440 × 900 and
+390 × 844 coarse. Moving them into `integrator.check.mjs` would copy the studio's own drivers (`data-fk` controls, the
+`test` hooks) into a second file; the integrator's check header names where they run.
+
+**A-IE-N1 … N4, A-STU-N5 · Logged.** The judgement calls are in LEARN.md §15.8 (item-editor, J-IED1 … J-IED8) and §15.9
+(studio, J-STU1 … J-STU15), as filed. The owner defaults they touch are marked "default pending owner" there.
+
+## 2026-11-08 · Learn integrator (Wave L4): final gate; notes carried to module owners
+
+No contract question was filed in Wave L4, and the contract stays 1. The final gate is green on one `npm run build`
+(LEARN.md §15.2d J-I32). The screenshot review found two defects in integrator files, both fixed. Neither changes a
+contract or a convention the modules rely on:
+- **J-I28.** On sheets (≤ 1079 px) an expanded sheet is now exactly `--layout-sheet-max` (40 vh) tall, and the peek
+  rows keep one height. A step change no longer resizes the canvas, which had cut the step's fly short. A module that
+  renders into `#taskCard` sees a body that scrolls inside a fixed-height sheet. Nothing to change on the module side.
+- **J-I29.** The phone flow bar scrolls the current phase into view after each `PhaseRail.render`.
+
+Seen in the L4 run and screenshots. These are in other modules' files, so they are not changed by the integrator and
+are carried to the next change of each module:
+- **items · I-N4 (new): ITM-8 is timing-dependent.** One full learn-check on the final build failed ITM-8's `a mark at
+  P7, then the deposit at 20×` (it read `Met · 20× over your mark`), and its HUD-chip companion with it. Three reruns of
+  the items check and a full rerun on the same build passed. The likely cause: when step 3's 20× view of P7 settles only
+  after the item step is current, `onSettled` logs it, which J-ITM2 means to avoid. Two fixes would do: skip a
+  `viewSettled` whose camera move started before the item mounted, or have the check wait for step 3's settle before it
+  presses N. This leaks nothing to learners: the view logged is one they saw sharp at 20×.
+- **items:** once a mark exists, the mark row still shows the `Draw with P, F or T, or press ⇧↵ …` hint under
+  `Your mark · point`.
+- **player (J-I23, still open):** on a revealed region item, the CTA note still reads the polygon sentence (`… until you
+  reveal.`), and the context bar still offers `Mark without a pointer ⇧↵`.
+- **studio (J-I26, still open):** the stage heading keeps a visible focus ring after the stage change moves focus to it.
+- **reveal (J-I25, still open):** `RevealService.attach` is not implemented. The integrator makes it required in the
+  same change that implements it.
+
+## 2026-11-08 · Learn integrator (review fixes): two additive contract changes, and what changed for each module
+
+The integrator applied the 24 review issues of 2026-11-08 itself, acting for every Learn module's files (LEARN.md
+§15.2e). The contract stays 1. Two additions, both optional, so no caller or test double has to change:
+
+- **`LearnHudHost.setGate(text, withKey?)`.** `withKey` false leaves out the 20× preset's keycap (default true). Items
+  passes false for the chips it writes at the gate's magnification already (`Zoom gate · place a mark first`,
+  `Zoom gate · {mag} · not over your mark yet`), where pressing `5` would not help.
+- **`RevealOutcome.reason` gains `'loading'`.** A second `U` while the item's answer key is still being fetched returns
+  `{ok: false, reason: 'loading', text: 'Loading the answer key…'}` (it used to return `waiting` with `0 tiles`).
+
+Behaviour other modules can rely on (no type change):
+- **progress:** `save()` still replaces the in-memory record, but each write merges with what is stored
+  (`mergeStored`, exported): another tab's larger `maxStepIndex`, its revealed responses and the responses this tab did
+  not change are kept.
+- **items:** a drawing tool gives way to Select at reveal and when the item leaves the card; a mark made while no region
+  item is open for marking is removed with a Learn sentence. The panel's gate warning is its own sentence
+  (`… or use Fly there on its row first.`).
+- **reveal:** `fetchJsonSameOrigin` aborts after 20 s (`KEY_FETCH_TIMEOUT_MS`; reason `no answer within 20 s`).
+- **scoring:** small outlines are counted on their own grid; an outline with no area is a point; negated keywords do not
+  count (`keywordMatches`).
+- **player:** Start again deletes the learner annotations on the module's open slide; the CTA note and the context bar's
+  alternative go once the item is revealed; the preview's Open card note is its own.
+- **host:** `ShellEnv.visibleInsets('A')` is cached (host/env.ts) and reads no layout when asked at a settle;
+  `LearnEnv.isShortLandscape()` is new (engine-ui: the navigator waits behind O there, as on a phone).
+- **harness:** `harness/learn/helpers.mjs` exports its own `axe` (it injects axe-core through the DevTools protocol,
+  since `learn.html`'s CSP refuses the inline script the Phase A helper adds), and no Learn check evaluates
+  `new Function` inside the page any more (item-editor's `waitRows` polls from Node).
+
+Closed by these fixes: I-N4 (the ITM-8 timing race: a settle whose camera move began before the item mounted is not
+logged), J-I23 / J-I30's player notes (the revealed item's CTA note and `Mark without a pointer`). Still open: J-I25
+(reveal's `attach`), J-I26 (the studio heading's focus ring), the mark row's long hint (items).

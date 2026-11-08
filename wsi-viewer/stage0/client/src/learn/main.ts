@@ -4,7 +4,7 @@
  * draft). The product is compiled into this entry (`product: 'learn'`, D1), never a runtime flag of the research shell.
  *
  * Boot, in order:
- *  1. the mode and its storage namespace (D5); the preview database is deleted first (D3);
+ *  1. the mode and its storage namespace (D5); the preview database is emptied first (D3; its stores are cleared);
  *  2. studio mode only: the Annotations / Inspector dock tabs and the class picker are added to the document, before
  *     the Phase A annotations module looks them up at install (learners never get them, LEARN.md §4.2);
  *  3. the host services core takes (env, notices, live regions, the registry with the D20 filter, the PanelHost, the
@@ -63,13 +63,58 @@ const namespace = NAMESPACES[mode];
 const { params: learnParams, refused } = parseParams(params, location.hash, document.baseURI, location.origin);
 const app = $('app');
 app.dataset['mode'] = mode;
-if (mode === 'preview') {
-  // D3: the preview's own database starts empty (progress is not kept); an open request waits for the delete.
-  try {
-    indexedDB.deleteDatabase(namespace.dbName);
-  } catch {
-    /* no IndexedDB: core reports storage unavailable */
-  }
+if (mode === 'preview') await clearPreviewDb(namespace.dbName);
+
+/**
+ * D3: the preview's own database starts empty (progress is not kept). Review fix (2026-11-08): its object stores are
+ * cleared through a connection of this page, not by deleting the database, since a delete closes the connection of
+ * a preview opened earlier in another tab, which then wrongly reported that the browser does not allow saving. A
+ * database that does not exist yet is not created here (the upgrade is aborted, so core creates it with its stores).
+ * Resolves within 2 s whatever happens; core then reports storage as it finds it.
+ */
+function clearPreviewDb(name: string): Promise<void> {
+  return new Promise<void>((resolve) => {
+    let done = false;
+    const finish = (db?: IDBDatabase): void => {
+      if (done) return;
+      done = true;
+      try {
+        db?.close();
+      } catch {
+        /* closed already */
+      }
+      resolve();
+    };
+    setTimeout(() => finish(), 2000);
+    let req: IDBOpenDBRequest;
+    try {
+      req = indexedDB.open(name);
+    } catch {
+      finish();
+      return;
+    }
+    req.onupgradeneeded = () => req.transaction?.abort();
+    req.onerror = () => finish();
+    req.onblocked = () => finish();
+    req.onsuccess = () => {
+      const db = req.result;
+      db.onversionchange = () => finish(db);
+      const stores = [...db.objectStoreNames];
+      if (stores.length === 0) {
+        finish(db);
+        return;
+      }
+      try {
+        const tx = db.transaction(stores, 'readwrite');
+        for (const s of stores) tx.objectStore(s).clear();
+        tx.oncomplete = () => finish(db);
+        tx.onerror = () => finish(db);
+        tx.onabort = () => finish(db);
+      } catch {
+        finish(db);
+      }
+    };
+  });
 }
 
 // ------------------------------------------------------------------ 2. studio-only elements
@@ -356,6 +401,9 @@ async function boot(): Promise<void> {
 
   if (mode === 'studio') {
     if (!installed.includes('studio')) plate.show({ kind: 'empty', what: 'studio' });
+    // STU-Q2: say why the canvas is empty under the draft list. The studio's own `opening` plate (a remembered draft
+    // being reopened) wins; the plate goes at the next slideOpened like every `empty` plate.
+    else if (shell.primary.slide === null && plate.current === null) plate.show({ kind: 'empty', what: 'studio-slide' });
   } else {
     const course = services.course ?? null;
     if (course === null) plate.show({ kind: 'empty', what: 'course' });

@@ -103,6 +103,22 @@ export class TaskCard implements TaskCardHost {
   }
 }
 
+/**
+ * Keep the current phase inside the flow bar's scroller (Wave L4, LEARN.md §15.2d J-I29). On a phone the studio's five
+ * stages and its tools need more than 390 px, and the list scrolls; without this the current stage's label was cut
+ * under the tools. Runs where `render` runs: at rest, once per phase change, never during a gesture. A hidden bar
+ * (≥ 1080 px) measures 0 wide and is left alone.
+ */
+function revealCurrent(bar: HTMLElement): void {
+  const cur = bar.querySelector<HTMLElement>('.phase.is-current');
+  if (cur === null || bar.scrollWidth <= bar.clientWidth) return;
+  const b = bar.getBoundingClientRect();
+  const r = cur.getBoundingClientRect();
+  if (b.width === 0) return;
+  if (r.right > b.right) bar.scrollLeft += Math.ceil(r.right - b.right) + 4;
+  else if (r.left < b.left) bar.scrollLeft -= Math.ceil(b.left - r.left) + 4;
+}
+
 /** The phase rail (vertical, region C) and the bottom flow bar (≤ 1079 px), rendered from the same data. */
 export class PhaseRail implements PhaseRailHost {
   private onActivate: ((id: PhaseState['id'], source: CommandSource) => void) | null = null;
@@ -160,6 +176,7 @@ export class PhaseRail implements PhaseRailHost {
     };
     rail.replaceChildren(...items(true));
     bar.replaceChildren(...items(false));
+    revealCurrent(bar);
   }
 
   setTools(tools: readonly ToolId[] | 'all'): void {
@@ -193,9 +210,11 @@ export class TopBar implements TopBarHost {
 export class LearnHud implements LearnHudHost {
   text: string | null = null;
   constructor(private readonly gateKey: () => string | null) {}
-  setGate(text: string | null): void {
-    if (text === this.text) return;
+  private withKey = true;
+  setGate(text: string | null, withKey = true): void {
+    if (text === this.text && withKey === this.withKey) return;
     this.text = text;
+    this.withKey = withKey;
     const chip = $('hudGate');
     const slot = $('hudGateText');
     if (text === null || text === '') {
@@ -203,7 +222,7 @@ export class LearnHud implements LearnHudHost {
       slot.textContent = '';
       return;
     }
-    const key = this.gateKey();
+    const key = withKey ? this.gateKey() : null;
     slot.replaceChildren(document.createTextNode(text), ...(key !== null ? [document.createTextNode(' '), ...keycaps([key])] : []));
     chip.hidden = false;
   }
@@ -221,6 +240,7 @@ export function plateText(p: LearnPlate): { title: string; text: string; status:
     case 'fingerprint':
       return { title: 'This module could not be opened', text: `${p.title} was written for a different build of ${p.slide}; it was not opened.`, status: false, retry: false };
     case 'empty':
+      if (p.what === 'studio-slide') return { title: 'No slide open', text: 'Open a draft, or add a slide in Collect.', status: true, retry: false };
       return p.what === 'course'
         ? { title: 'Nothing to open yet', text: 'This build has no course player yet, so no module was opened. The slide viewer, the keymap and About work.', status: true, retry: false }
         : { title: 'Nothing to open yet', text: 'This build has no author studio yet, so no draft was opened. The slide viewer, the keymap and About work.', status: true, retry: false };

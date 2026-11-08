@@ -812,6 +812,18 @@ export class Player implements PlayerService {
   }
   lastExport: { name: string; bytes: number } | null = null;
 
+  /**
+   * Review fix (2026-11-08): Start again also deletes every learner annotation on the module's open slide (marks and
+   * measurements) in one store transaction, so the reopened region item does not say `No mark yet` beside old dots.
+   * A module slide that is not open keeps its store until it opens (L1's modules use one slide each).
+   */
+  private clearLearnerAnnotations(m: LoadedModule): void {
+    const ann = this.shell.service('annotations')?.current('A') ?? null;
+    if (ann === null || !m.file.slides.some((s) => s.catalogueId === ann.slideKey)) return;
+    const ids = ann.all().map((a) => a.id);
+    if (ids.length > 0) ann.transaction(() => ann.remove(ids, 'command'));
+  }
+
   private async startAgain(source: CommandSource): Promise<void> {
     void source;
     const m = this.mod;
@@ -837,6 +849,7 @@ export class Player implements PlayerService {
     const courseId = this.courseId;
     if (store === null) return;
     this.stopPlay(null);
+    this.clearLearnerAnnotations(m);
     await store.reset(m.file.id);
     this.carryNotice = TEXT.cleared;
     await this.open(m, { courseId, reason: 'resume', step: 0 });
@@ -888,8 +901,12 @@ export class Player implements PlayerService {
     const m = this.mod;
     if (m === null) return null;
     const s = stepAt(m.file, this.idx);
-    if (this.idx === 0) return TEXT.savedNote;
-    if (s?.kind === 'item') return m.file.items.find((x) => x.id === s.item)?.kind === 'region' ? TEXT.itemNote : TEXT.choiceNote;
+    if (this.idx === 0) return this.learn.mode === 'preview' ? TEXT.previewNote : TEXT.savedNote;
+    if (s?.kind === 'item') {
+      // review fix (2026-11-08): once the item is revealed its answer is final, so the "until you reveal" note goes
+      if (this.items()?.state(s.item) === 'revealed') return null;
+      return m.file.items.find((x) => x.id === s.item)?.kind === 'region' ? TEXT.itemNote : TEXT.choiceNote;
+    }
     return null;
   }
 
@@ -927,7 +944,8 @@ export class Player implements PlayerService {
       step: `${TEXT.stepOf(i + 1, stepCount(file))} · ${phaseLabel(phaseAt(file, i))}`,
       stem: item !== undefined ? item.stem : (s?.title ?? TEXT.summaryTitle),
       primary: this.action(),
-      secondary: item?.kind === 'region' && it !== null ? { label: 'Mark without a pointer', key: this.keyOf('item:alternatives', '⇧↵'), run: () => void it.openAlternatives(item.id, null) } : null,
+      // review fix (2026-11-08): as the card's own button, offered only until the item is revealed (or waits for it)
+      secondary: item?.kind === 'region' && it !== null && it.state(item.id) !== 'revealed' && it.state(item.id) !== 'reveal-waiting' ? { label: 'Mark without a pointer', key: this.keyOf('item:alternatives', '⇧↵'), run: () => void it.openAlternatives(item.id, null) } : null,
     };
   }
 
@@ -1087,7 +1105,7 @@ export class Player implements PlayerService {
         lockedTitle,
         rows,
         cmd: this.cmd,
-        expert: ev === undefined || rv === null ? null : { on: rv.expertOn, key: this.keyOf('expert:toggle', '⇧E'), onToggle: (src) => void rv.expert('toggle', src) },
+        expert: ev === undefined || rv === null ? null : { on: rv.expertOn, key: this.keyOf('expert:toggle', '⇧E'), text: ev.text, onToggle: (src) => void rv.expert('toggle', src) },
       });
       this.card.setBody(view.nodes, lockedTitle === null ? 'reveal' : 'reveal-locked');
       this.body = { kind: 'reveal', view };

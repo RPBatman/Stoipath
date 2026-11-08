@@ -16,9 +16,12 @@
 //         hotspots, the revealed key, the frozen mark and the expert view drawn, plus the OVL-4 overlay budget;
 //   LI-7  (L2) layout-check T1, Z1, S1, A1–A3 (design/design-system/layout-check.mjs's in-page rules) at the five
 //         viewports with the task card at rest, open, and with the candidates panel open; canvas ≥ 70 %; context and
-//         peek bars;
-//   LI-8  (L2) axe-core 0 violations in the learner states of §11.0 at 1440 × 900 and 390 × 844 coarse (the studio
-//         states come with Wave L3);
+//         peek bars; (L4) on the tablet and phone sheets, expanded and peeking, with motion on, one canvas height across
+//         steps 1–4 and step 3's fly landing on its view (J-I28);
+//   LI-8  (L2) axe-core 0 violations in the learner states of §11.0 at 1440 × 900 and 390 × 844 coarse; (L3) the
+//         studio states (the draft list and each stage with the Task and the Annotations tab, both viewports) are run
+//         by harness/learn/studio.check.mjs flow D, whose lines are tagged `LI-8` (LEARN-QUESTIONS 2026-11-08 A-STU-N4);
+//         LI-3 here asserts the studio's `No slide open` plate (A-STU-Q2);
 //   LI-9  keymap (integrator and Phase A rows; (L2) the flow rows) and the ⇧D refusal;
 //   LI-10 (L2) no answer leaks in identity before q-size is revealed;
 //   LI-I  integrator extras: the D20 filter, task-card placement per viewport, K, Esc, insets, host hooks, axe.
@@ -180,6 +183,7 @@ export async function run(ctx) {
           coreProduct: core.product,
           conflicts: host.conflicts,
           commands: host.commands.length,
+          installed: host.modules ?? [],
         };
       });
       check(TAG, r.badge === 'LEARN' && r.badgeAria === H.LEARN_BADGE_ARIA, `LI-3 ${mode}: badge "${r.badge}" named "${r.badgeAria}"`);
@@ -187,6 +191,11 @@ export async function run(ctx) {
       check(TAG, r.title.endsWith(' · Stoipath Learn'), `LI-3 ${mode}: document.title "${r.title}" ends with " · Stoipath Learn"`);
       check(TAG, r.product === 'learn' && r.mode === mode && r.contract === 1 && r.coreProduct === 'learn', `LI-3 ${mode}: __learn.product "${r.product}", mode "${r.mode}", tools.core() contract ${r.contract} product "${r.coreProduct}"`);
       check(TAG, r.conflicts.length === 0, `LI-3 ${mode}: command registry conflicts() empty (${r.commands} commands; ${r.conflicts.join('; ') || 'none'})`);
+      if (mode === 'studio' && r.installed.includes('studio')) {
+        // Wave L3 (LEARN-QUESTIONS A-STU-Q2): the canvas under the draft list says why it is empty
+        const p = await page.evaluate(() => ({ hidden: document.getElementById('plate').hidden, title: document.getElementById('plateTitle').textContent, text: document.getElementById('plateText').textContent, role: document.getElementById('plateCard').getAttribute('role') }));
+        check(TAG, !p.hidden && p.title === 'No slide open' && p.text === 'Open a draft, or add a slide in Collect.' && p.role === 'status', `LI-3 studio: with no draft open the canvas plate says "${p.title} · ${p.text}" (role ${p.role})`);
+      }
       // a slide open as the player will open it, then the RUO scan and axe in both states
       await H.axe(page, check, TAG, `LI-3 ${mode} axe-core WCAG 2.2 AA (plate, no slide)`);
       await page.evaluate((id) => window.__learn.test.openSlide(id), H.TUMOR_014);
@@ -238,7 +247,9 @@ export async function run(ctx) {
       // a learner mark and a progress write ("a step is reached": the progress store's key in core's session store)
       await page.evaluate(async () => {
         const a = window.__shell.tools.annotations();
-        a.create({ kind: 'point', geometry: { type: 'Point', coordinates: [7168, 5120] }, input: 'mouse' });
+        // a measurement (review fix 2026-11-08: a point made while no region question is open is not kept, so the
+        // learner annotation this check stores is the kind every step may make)
+        a.create({ kind: 'measurement', geometry: { type: 'LineString', coordinates: [[7168, 5120], [7568, 5120]] }, className: null, input: 'mouse' });
         await a.flush();
         await window.__learn.test.storagePut('session', 'learn.progress/li-4-check', { schema: 'stoipath.learn.progress/1', moduleId: 'li-4-check', stepIndex: 1 });
       });
@@ -687,6 +698,8 @@ export async function run(ctx) {
     }
 
     // ---------------------------------------------------------------- LI-7 layout (layout-check T1, Z1, S1, A1–A3 at the five viewports)
+    // plus a phone in landscape (review fix 2026-11-08: at 844 × 390 the slide pane was 82 px tall)
+    const LANDSCAPE = { name: 'phone-landscape', width: 844, height: 390, dsf: 1, coarse: true, ua: H.PHONE_UA };
     {
       const lcPath = resolve(clientDir, '..', '..', 'design', 'design-system', 'layout-check.mjs');
       const lcSrc = existsSync(lcPath) ? readFileSync(lcPath, 'utf8') : '';
@@ -697,7 +710,10 @@ export async function run(ctx) {
         if (PAGE_SCRIPT === null) return;
         const r = await page.evaluate(`(${PAGE_SCRIPT})(${JSON.stringify({ coarse: vp.coarse, width: vp.width, height: vp.height })})`);
         const tb = r.topbar.filter((x) => !x.ok);
-        const zone = r.zone.filter((z) => !z.info);
+        // J-I35 (review fix 2026-11-08): on a landscape phone the dock dialog takes the drawer's place (a side panel as
+        // tall as the canvas); Z1 counts it as the transient drawer it replaces, as layout-check does for the dock
+        const asDrawer = (z) => vp === LANDSCAPE && /candPanel|keymapDialog|aboutDialog|dialog/.test(z.el);
+        const zone = r.zone.filter((z) => !z.info && !asDrawer(z));
         const sheets = r.sheets.filter((s) => !s.ok);
         const sharp = r.sharp.filter((s) => !s.ok);
         check(TAG, r.topbar.length >= 1 && tb.length === 0, `LI-7 ${H.vpTag(vp)} ${what}: T1 top bar slots never clip (${r.topbar.length} bar(s)${tb.length ? ': ' + tb.map((x) => x.problems.join('; ')).join(' | ') : ''})`);
@@ -707,7 +723,7 @@ export async function run(ctx) {
         check(TAG, r.targets.invisible.length === 0 && r.notes.length === 0, `LI-7 ${H.vpTag(vp)} ${what}: A2 no focusable control is invisible (${r.targets.invisible.map((x) => x.el).join(', ') || 'none'}; ${r.notes.join('; ') || 'pan buttons fine'})`);
         check(TAG, sharp.length === 0, `LI-7 ${H.vpTag(vp)} ${what}: A3 the settled sharpness label keeps opacity ≥ 0.5 (${r.sharp.map((s) => s.opacity).join(', ') || 'not quiet yet'})`);
       };
-      for (const vp of [H.VIEWPORTS.desktop, H.VIEWPORTS['desktop-wide'], H.VIEWPORTS['desktop-dsf2'], H.VIEWPORTS.tablet, H.VIEWPORTS.phone]) {
+      for (const vp of [H.VIEWPORTS.desktop, H.VIEWPORTS['desktop-wide'], H.VIEWPORTS['desktop-dsf2'], H.VIEWPORTS.tablet, H.VIEWPORTS.phone, LANDSCAPE]) {
         const { ctx: c, page, errors } = await open(vp, { reducedMotion: true });
         const D = driver(page);
         const t = H.vpTag(vp);
@@ -739,12 +755,62 @@ export async function run(ctx) {
           await H.settle(page, { sharp: true, quietMs: 300 });
           await page.waitForTimeout(1600);
           await layout(page, vp, 'region item, candidates panel open');
+          // review fix (2026-11-08): the panel shows draft teaching text, so a draft chip is on screen (hit-testable)
+          const chip = await page.evaluate(() => {
+            const seen = [];
+            for (const el of document.querySelectorAll('[data-draft-note]')) {
+              if (el.hidden || el.getClientRects().length === 0) continue;
+              const r = el.getBoundingClientRect();
+              const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+              if (hit !== null && (hit === el || el.contains(hit))) seen.push(el.closest('#candPanel') ? 'candPanel' : el.closest('#ctxbar') ? 'ctxbar' : el.closest('#peekBar') ? 'peekBar' : 'taskHead');
+            }
+            return seen;
+          });
+          check(TAG, chip.includes('candPanel'), `LI-7 ${t}: with the candidates panel open a draft chip is visible and hit-testable (${chip.join(', ') || 'none'})`);
           noErrors(errors, `LI-7 ${t}`);
           await guardOf(page);
         } catch (e) {
           check(TAG, false, `LI-7 ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
         } finally {
           await c.close();
+        }
+      }
+
+      // LI-7 sheets (Wave L4, LEARN.md §15.2d J-I28): on the in-flow sheets (tablet, phone), with motion on, a step change
+      // never resizes the canvas, so the tour's fly lands. The engine re-anchors the camera on a resize; a sheet whose
+      // height followed its content stopped the 20× lymphoid fly on the deposit (seen in the L4 tablet screenshot).
+      for (const vp of [H.VIEWPORTS.tablet, H.VIEWPORTS.phone]) {
+        for (const expanded of [true, false]) {
+          const { ctx: c, page, errors } = await open(vp, { reducedMotion: false });
+          const D = driver(page);
+          const t = `${H.vpTag(vp)} sheet ${expanded ? 'expanded' : 'peeking'}`;
+          try {
+            await page.goto(H.learnUrl(port), { waitUntil: 'load' });
+            await H.waitForLearn(page);
+            await H.waitForSlide(page);
+            await page.waitForFunction(() => window.__learn.bus.log().some((e) => e.name === 'stepShown'), null, { timeout: 30_000, polling: 100 });
+            await page.evaluate((o) => window.__learn.test.card(o), expanded);
+            await H.settle(page, { sharp: false, quietMs: 300 });
+            const cam = () => page.evaluate(() => ({ c: window.__shell.state().views[0].center_um, s: window.__shell.state().views[0].scale_um_per_px, h: Math.round(document.getElementById('view').getBoundingClientRect().height) }));
+            const heights = [(await cam()).h];
+            let landed = null;
+            for (const target of [STEP.survey, STEP.lymphoid, STEP.region]) {
+              await D.toStep(target);
+              await H.settle(page, { sharp: false, quietMs: 300 });
+              const v = await cam();
+              heights.push(v.h);
+              if (target === STEP.lymphoid) landed = v;
+            }
+            const want = [3181.61, 3181.61];
+            const ok = landed !== null && Math.hypot(landed.c[0] - want[0], landed.c[1] - want[1]) <= 0.5 * landed.s + 0.01 && Math.abs(Math.log2(landed.s / 0.5)) < 0.01;
+            check(TAG, new Set(heights).size === 1, `LI-7 ${t}: the canvas keeps one height across steps 1–4 (${heights.join(', ')} px)`);
+            check(TAG, ok, `LI-7 ${t}: step 3's fly lands on its view (${landed?.c.map((x) => x.toFixed(1)).join(', ')} µm at ${landed?.s.toFixed(3)} µm/px; want ${want.join(', ')} at 0.5)`);
+            noErrors(errors, `LI-7 ${t}`);
+          } catch (e) {
+            check(TAG, false, `LI-7 ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+          } finally {
+            await c.close();
+          }
         }
       }
     }
@@ -822,6 +888,187 @@ export async function run(ctx) {
         await c.close();
       }
     }
+    // ---------------------------------------------------------------- LI-R (review fixes 2026-11-08) Start again, the
+    // revealed item's chrome, and the expert's view text. Start again deletes every learner annotation on the module's
+    // slide (marks and measurements); the CTA note and the context bar's alternative go once the item is revealed; the
+    // reveal step shows what the expert's view draws while it is on.
+    {
+      const vp = H.VIEWPORTS.desktop;
+      const { ctx: c, page, errors } = await open(vp, { reducedMotion: true });
+      const D = driver(page);
+      const t = `${H.vpTag(vp)} review fixes`;
+      try {
+        await D.boot();
+        check(TAG, await D.toStep(STEP.region), `LI-R ${t}: the region item`);
+        await page.waitForSelector(CARD('q-region'), { timeout: 10_000 });
+        const before = await page.evaluate(() => ({ note: document.querySelector('#taskCard .cta-note')?.textContent ?? null, alt: !document.getElementById('ctxAlt').hidden }));
+        // the gate warning, followed literally: it names "View my mark at 20×" (it used to say "press 5", which zooms
+        // about the centre of the view, so the mark was usually out of it)
+        await page.evaluate(() => window.__shell.tools.annotations().create({ kind: 'point', geometry: { type: 'Point', coordinates: [7168, 5120] }, input: 'mouse' }));
+        await page.waitForFunction(() => window.__learn.tools.items().draftMarkId !== null, null, { timeout: 10_000, polling: 50 });
+        await page.click('#taskCard .task__cta .btn--cta');
+        await page.waitForSelector(`${CARD('q-region')} .learn-item__warn:not([hidden])`, { timeout: 10_000 });
+        const warnText = await page.evaluate((sel) => document.querySelector(sel)?.textContent ?? '', `${CARD('q-region')} .learn-item__warn`);
+        check(TAG, warnText.includes('or choose View my mark at 20× first') && !/press\s*5/.test(warnText), `LI-R ${t}: the gate warning names the button that flies to the mark ("${warnText.slice(0, 120)}…")`);
+        await page.getByRole('button', { name: 'View my mark at 20×' }).click();
+        await H.settle(page, { sharp: true, quietMs: 400 });
+        await page.waitForTimeout(500);
+        const g = await page.evaluate(() => window.__learn.tools.items().gate);
+        check(TAG, g?.met === true, `LI-R ${t}: following it, the gate is met over the mark (${g?.text})`);
+        const r1 = await D.regionByCandidateC();
+        check(TAG, r1.answered?.score === 1, `LI-R ${t}: q-region revealed by candidate C (${JSON.stringify(r1.answered)})`);
+        await H.settle(page, { sharp: false, quietMs: 300 });
+        const after = await page.evaluate(() => ({ note: document.querySelector('#taskCard .cta-note:not([hidden])')?.textContent ?? null, alt: !document.getElementById('ctxAlt').hidden, tool: window.__shell.tool() }));
+        check(TAG, before.note?.includes('until you reveal') === true && after.note === null, `LI-R ${t}: the CTA note "${before.note?.slice(0, 40)}…" goes once the item is revealed (${after.note})`);
+        check(TAG, after.tool === 'select', `LI-R ${t}: the tool is Select after the reveal (${after.tool})`);
+        check(TAG, before.alt === true && after.alt === false, `LI-R ${t}: the context bar offers "Mark without a pointer" only until the reveal (before ${before.alt}, after ${after.alt})`);
+        for (const [id, letters] of [['q-sinus', ['b']], ['q-size', ['c']], ['q-features', ['a', 'b', 'c']]]) {
+          await D.toStep(STEP[id === 'q-sinus' ? 'sinus' : id === 'q-size' ? 'size' : 'features']);
+          if (id === 'q-size') {
+            await page.evaluate(() => window.__shell.tools.annotations().create({ kind: 'measurement', geometry: { type: 'LineString', coordinates: [[6000, 5000], [9000, 5000]] }, className: null, input: 'mouse' }));
+            await page.waitForTimeout(300);
+          }
+          await D.answerChoice(id, letters);
+        }
+        const nAnn = await page.evaluate(() => window.__shell.tools.annotations().count);
+        check(TAG, nAnn === 1, `LI-R ${t}: the q-size measurement is kept in the store (${nAnn} annotation)`);
+        let t0 = await D.since();
+        check(TAG, await D.toStep(STEP.compare), `LI-R ${t}: the reveal step`);
+        await D.waitEvent('revealShown', t0, null, 10_000).catch(() => null);
+        t0 = await D.since();
+        await page.focus('#view');
+        await page.keyboard.press('Shift+KeyE');
+        await D.waitEvent('expertViewChanged', t0, { on: true }, 15_000).catch(() => null);
+        await H.settle(page, { sharp: false, quietMs: 300 });
+        const ex = await page.evaluate(() => { const n = document.querySelector('#taskCard [data-expert-note]'); return n === null || n.hidden ? null : n.textContent; });
+        check(TAG, ex !== null && ex.includes('The CAMELYON16 reference outlines in this region') && ex.includes('Expert’s view (white lines): solid outlines tumour, dashed outlines the areas the dataset excludes'), `LI-R ${t}: with ⇧E on, the reveal step shows the expert view's text and its legend ("${(ex ?? 'none').slice(0, 90)}…")`);
+        check(TAG, await D.toStep(STEP.summary), `LI-R ${t}: the summary`);
+        await page.waitForSelector('#taskCard button[data-action="start-again"]', { timeout: 10_000 });
+        t0 = await D.since();
+        await page.click('#taskCard button[data-action="start-again"]');
+        await page.waitForTimeout(200);
+        await page.click('#taskCard button[data-action="start-again"]');
+        await D.waitEvent('stepShown', t0, { stepIndex: 0 }, 20_000).catch(() => null);
+        await H.settle(page, { sharp: false, quietMs: 400 });
+        const cleared = await page.evaluate(() => ({ count: window.__shell.tools.annotations().count, states: window.__learn.tools.items().states }));
+        check(TAG, cleared.count === 0 && Object.values(cleared.states).every((x) => x === 'awaiting'), `LI-R ${t}: Start again leaves no learner annotation on the slide (${cleared.count}) and every item awaiting (${JSON.stringify(cleared.states)})`);
+        noErrors(errors, `LI-R ${t}`);
+        await guardOf(page);
+      } catch (e) {
+        check(TAG, false, `LI-R ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+      } finally {
+        await c.close();
+      }
+    }
+
+    // ---------------------------------------------------------------- LI-R2 (review fixes 2026-11-08, round 2) focus and
+    // the hidden tool. (1) After a keyboard mark the sentence says "Press Enter again to commit, or Escape to go back to
+    // the slide": with the drawer closed at 1440 the first Esc on #ctxCta returns focus to the slide and keeps the mark.
+    // (2) ↵ inside a choice item's options commits and hands focus to the primary action, not <body>. (3) A tool the
+    // step's rail does not disclose (Measure from q-size) gives way to Select on the step change; a disclosed one stays;
+    // Space then plays a tour.
+    {
+      const vp = H.VIEWPORTS.desktop;
+      const { ctx: c, page, errors } = await open(vp, { reducedMotion: true });
+      const D = driver(page);
+      const t = `${H.vpTag(vp)} review fixes 2`;
+      const tool = () => page.evaluate(() => window.__shell.tool());
+      try {
+        await D.boot();
+        check(TAG, await D.toStep(STEP.region), `LI-R2 ${t}: the region item`);
+        await page.waitForSelector(CARD('q-region'), { timeout: 10_000 });
+        await page.evaluate(() => window.__learn.test.card(false));
+        await H.settle(page, { sharp: false, quietMs: 200 });
+        await page.focus('#view');
+        await page.keyboard.press('t');
+        await page.keyboard.press('ArrowLeft');
+        await page.keyboard.press('Enter');
+        await page.waitForFunction(() => window.__learn.tools.items().draftMarkId !== null, null, { timeout: 10_000, polling: 50 });
+        await page.waitForFunction(() => document.activeElement?.id === 'ctxCta', null, { timeout: 3000, polling: 50 }).catch(() => null);
+        const handed = await page.evaluate(() => ({ focus: document.activeElement?.id ?? document.activeElement?.tagName, said: window.__learn.tools.items().said?.polite?.at(-1) ?? '' }));
+        check(TAG, handed.focus === 'ctxCta' && handed.said.includes('Escape to go back to the slide'), `LI-R2 ${t}: a keyboard point hands focus to the context bar's action and says so (#${handed.focus}; "${handed.said.slice(0, 60)}…")`);
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(150);
+        const back = await page.evaluate(() => ({ focus: document.activeElement?.id ?? document.activeElement?.tagName, canvas: document.activeElement instanceof HTMLCanvasElement, mark: window.__learn.tools.items().draftMarkId }));
+        check(TAG, back.canvas && back.mark !== null, `LI-R2 ${t}: one Esc on #ctxCta goes back to the slide and keeps the mark (focus #${back.focus}, mark ${back.mark})`);
+        await page.evaluate(() => window.__learn.test.card(true));
+        const rc = await D.regionByCandidateC(); // N past an unrevealed item is refused (D10)
+        check(TAG, rc.answered !== null, `LI-R2 ${t}: q-region revealed (${JSON.stringify(rc.answered)})`);
+        check(TAG, await D.toStep(STEP.sinus), `LI-R2 ${t}: q-sinus`);
+        await page.waitForSelector(`${CARD('q-sinus')} input`, { timeout: 10_000 });
+        await page.focus(`${CARD('q-sinus')} input`);
+        await page.keyboard.press('b');
+        let t0 = await D.since();
+        await page.keyboard.press('Enter');
+        const committed = await D.waitEvent('itemCommitted', t0, { itemId: 'q-sinus' }, 10_000).catch(() => null);
+        await page.waitForTimeout(150);
+        const f = await page.evaluate(() => ({ tag: document.activeElement?.tagName, cta: document.activeElement?.matches?.('#taskCard .task__cta .btn--cta') === true, label: document.activeElement?.textContent?.trim() ?? '' }));
+        check(TAG, committed !== null && f.cta, `LI-R2 ${t}: ↵ inside q-sinus's options commits and focus moves to the primary action (${f.tag} "${f.label}")`);
+        t0 = await D.since();
+        await page.keyboard.press('Enter');
+        await D.waitEvent('itemAnswered', t0, { itemId: 'q-sinus' }, 20_000).catch(() => null);
+        check(TAG, await D.toStep(STEP.size), `LI-R2 ${t}: q-size`);
+        await page.focus('#view');
+        await page.keyboard.press('m');
+        await page.waitForTimeout(100);
+        const onSize = await tool();
+        await D.answerChoice('q-size', ['c']);
+        check(TAG, await D.toStep(STEP.features), `LI-R2 ${t}: q-features (Measure disclosed)`);
+        const onFeatures = await tool();
+        check(TAG, onSize === 'measure' && onFeatures === 'measure', `LI-R2 ${t}: Measure stays on a step that discloses it (q-size ${onSize}, q-features ${onFeatures})`);
+        check(TAG, await D.toStep(STEP.open), `LI-R2 ${t}: back to step 1 (Select only)`);
+        const onOpen = await page.evaluate(() => ({ tool: window.__shell.tool(), rail: [...document.querySelectorAll('#railTools [data-cmd^="tool:"]')].filter((b) => !b.hidden).map((b) => `${b.dataset.cmd}:${b.getAttribute('aria-pressed')}`) }));
+        check(TAG, onOpen.tool === 'select' && onOpen.rail.join(',') === 'tool:select:true', `LI-R2 ${t}: on a step that does not disclose it, Measure gives way to Select (${onOpen.tool}; rail ${onOpen.rail.join(', ')})`);
+        await page.focus('#view');
+        await page.keyboard.press('Space');
+        await page.waitForTimeout(150);
+        const playing = await page.evaluate(() => window.__learn.tools.player().playing);
+        check(TAG, playing === true, `LI-R2 ${t}: Space on the slide plays the tour (${playing})`);
+        await page.keyboard.press('Space');
+        noErrors(errors, `LI-R2 ${t}`);
+        await guardOf(page);
+      } catch (e) {
+        check(TAG, false, `LI-R2 ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+      } finally {
+        await c.close();
+      }
+    }
+
+    // ---------------------------------------------------------------- LI-6 (review fix 2026-11-08) a region item awaiting
+    // The items engine logs every settled view while a region item is current; its visible rectangle used to read the
+    // pane's and the dock's boxes inside the engine's frame hook (3 getBoundingClientRect per settle). The insets are now
+    // cached by host/env.ts: a drag and a wheel burst with q-region awaiting, a mark placed and the candidates panel open
+    // read no layout.
+    for (const vp of [H.VIEWPORTS.desktop, H.VIEWPORTS['desktop-wide']]) {
+      const { ctx: c, page, cdp, errors } = await open(vp, { initScripts: [H.INSTRUMENT], reducedMotion: true });
+      const D = driver(page);
+      const t = `${H.vpTag(vp)} item awaiting`;
+      try {
+        await D.boot();
+        check(TAG, await D.toStep(STEP.region), `LI-6 ${t}: the region item`);
+        await page.waitForSelector(CARD('q-region'), { timeout: 10_000 });
+        await page.evaluate(() => window.__shell.tools.annotations().create({ kind: 'point', geometry: { type: 'Point', coordinates: [7168, 5120] }, input: 'mouse' }));
+        await page.waitForFunction(() => window.__learn.tools.items().draftMarkId !== null, null, { timeout: 10_000, polling: 50 });
+        await D.openPanel();
+        await H.settle(page, { sharp: false, quietMs: 400 });
+        const st = await page.evaluate(() => ({ state: window.__learn.tools.items().states?.['q-region'] ?? null, panel: !document.getElementById('candPanel').hidden }));
+        check(TAG, st.state === 'awaiting' && st.panel, `LI-6 ${t}: q-region awaiting with a mark and the candidates panel open (${JSON.stringify(st)})`);
+        await cdp.send('Performance.enable');
+        const box = await page.locator('#paneA').boundingBox();
+        const drag = { x: box.x + 40, y: box.y + 40, width: Math.min(box.width * 0.4, 500), height: box.height - 80 };
+        const dragR = await H.frameCost(page, cdp, () => H.drag(page, drag));
+        H.frameCostChecks(check, TAG, `LI-6 ${t} 1 s drag`, dragR);
+        await H.settle(page, { sharp: false, quietMs: 300 });
+        const wheelR = await H.frameCost(page, cdp, () => H.wheelBurst(page, drag));
+        H.frameCostChecks(check, TAG, `LI-6 ${t} wheel burst`, wheelR);
+        noErrors(errors, `LI-6 ${t}`);
+        await guardOf(page);
+      } catch (e) {
+        check(TAG, false, `LI-6 ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+      } finally {
+        await c.close();
+      }
+    }
     void FLOW_TAG;
   }
 
@@ -845,15 +1092,48 @@ export async function run(ctx) {
           }),
       );
       check(TAG, blocked.rejected && blocked.violation !== null && /connect-src/.test(blocked.violation), `LI-5 fetch('https://example.org/') rejects (${blocked.error ?? 'resolved!'}) and fires securitypolicyviolation (${blocked.violation})`);
+      // Review fix (2026-11-08): the policy blocks every other origin, not only connections (D22).
+      const others = await page.evaluate(
+        () =>
+          new Promise((done) => {
+            const seen = [];
+            const on = (e) => seen.push(`${e.effectiveDirective} ${e.blockedURI}`);
+            document.addEventListener('securitypolicyviolation', on);
+            const img = document.createElement('img');
+            img.alt = '';
+            img.src = 'https://img.example.org/x.png';
+            const script = document.createElement('script');
+            script.src = 'https://script.example.org/x.js';
+            const frame = document.createElement('iframe');
+            frame.title = 'csp probe';
+            frame.src = 'https://frame.example.org/';
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://style.example.org/x.css';
+            const box = document.createElement('div');
+            box.hidden = true;
+            box.append(img, script, frame, link);
+            document.body.append(box);
+            setTimeout(() => {
+              document.removeEventListener('securitypolicyviolation', on);
+              box.remove();
+              done(seen);
+            }, 800);
+          }),
+      );
+      for (const [what, dir] of [['img', 'img-src'], ['script', 'script-src'], ['iframe', 'frame-src'], ['stylesheet', 'style-src']]) {
+        const hit = others.find((v) => v.startsWith(dir) || v.startsWith(`${dir}-elem`));
+        check(TAG, hit !== undefined, `LI-5 a cross-origin ${what} fires securitypolicyviolation (${hit ?? 'none: ' + others.join(' | ')})`);
+      }
       await guardOf(page);
-      const unexpected = errors.filter((e) => !/Content Security Policy|example\.org|Failed to fetch/.test(e));
+      const unexpected = errors.filter((e) => !/Content Security Policy|example\.org|Failed to fetch|ERR_BLOCKED_BY_CSP/.test(e));
       check(TAG, unexpected.length === 0, `LI-5: no page error beyond the blocked fetch's CSP report (${unexpected.length}${unexpected.length ? ': ' + unexpected.slice(0, 2).join(' | ') : ''})`);
     } catch (e) {
       check(TAG, false, `LI-5 threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
     } finally {
       await c.close();
     }
-    const flat = allRequests.flat().filter((r) => r.url !== 'https://example.org/');
+    const flat = allRequests.flat().filter((r) => !/^https:\/\/([a-z]+\.)?example\.org\//.test(r.url));
     const foreign = flat.filter((r) => !r.same);
     const nonGet = flat.filter((r) => r.method !== 'GET');
     check(TAG, flat.length > 50 && foreign.length === 0 && nonGet.length === 0, `LI-5 across every page of these checks (${flat.length} requests): all same-origin (${foreign.length} other: ${foreign.slice(0, 2).map((r) => r.url).join(', ') || 'none'}) and GET (${nonGet.length} other: ${nonGet.slice(0, 2).map((r) => `${r.method} ${r.url}`).join(', ') || 'none'})`);

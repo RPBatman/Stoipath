@@ -47,6 +47,10 @@ export const REFUSALS = {
 } as const;
 
 /** Composite widgets, docks, dialogs and scrollable regions own the navigation keys (the shell's rule). */
+/** The Learn primary action: the card's CTA, the context bar's and the sheet peek's. */
+function isPrimaryAction(el: HTMLElement): boolean {
+  return el.id === 'ctxCta' || el.id === 'peekCta' || (el.dataset['action'] === 'primary' && el.closest('#taskCard') !== null);
+}
 const WIDGET_SELECTOR = '[role="toolbar"], [role="tablist"], [role="listbox"], [role="radiogroup"], [role="menu"], [role="tabpanel"], [role="region"], [role="slider"], .dialog, .dock, .task, pre.snippet';
 
 export interface CommandDeps {
@@ -74,6 +78,9 @@ export class LearnCommands implements KeyScopeHost {
   private readonly MOD: string;
   /** The last key the router handled, and how (tests). */
   lastKey: { key: string; how: string } | null = null;
+  /** The primary action that took focus from the slide by keyboard, until focus moves on (Esc returns to the slide). */
+  handoff: HTMLElement | null = null;
+  private lastInput: 'pointer' | 'keyboard' = 'keyboard';
 
   constructor(private readonly d: CommandDeps) {
     this.MOD = d.env.mod;
@@ -107,7 +114,19 @@ export class LearnCommands implements KeyScopeHost {
       if (this.palette.isOpen) this.palette.render();
       if (d.dialogs.isOpen('keymap')) this.renderKeymap(($('keymapFilter') as HTMLInputElement).value);
     });
-    d.rail.onToolsChanged = () => this.syncControls();
+    d.rail.onToolsChanged = () => {
+      this.syncControls();
+      this.dropHiddenTool();
+    };
+    // Esc after a keyboard handoff (review fix, round 2): remember a primary action that took focus from the slide by
+    // keyboard (a keyboard mark, or Enter on the slide), so Esc there goes back to the slide as the sentence says.
+    window.addEventListener('pointerdown', () => (this.lastInput = 'pointer'), true);
+    window.addEventListener('keydown', () => (this.lastInput = 'keyboard'), true);
+    document.addEventListener('focusin', (e) => {
+      const t = e.target;
+      const rel = e.relatedTarget;
+      this.handoff = this.lastInput === 'keyboard' && t instanceof HTMLElement && isPrimaryAction(t) && rel instanceof HTMLCanvasElement && this.onSlide(rel) ? t : null;
+    });
     d.env.onChange(() => this.refreshToolbars());
     $('keymapFilter').addEventListener('input', (e) => this.renderKeymap((e.target as HTMLInputElement).value));
     $('keymapNote').textContent =
@@ -270,6 +289,19 @@ export class LearnCommands implements KeyScopeHost {
   focusCanvas(): void {
     this.d.shell()?.focusCanvas();
   }
+  /**
+   * Review fix (2026-11-08, round 2): the rail shows only the tools a step discloses, so a tool it does not disclose
+   * (Measure from q-size, a drawing tool after "Show all tools" is turned off) does not stay active out of sight: on
+   * every step change, module open and "Show all tools" change it gives way to Select (then Space plays a tour, and a
+   * drag pans as the tour text says). A disclosed tool stays. Never per frame: setTools runs on step changes only.
+   */
+  private dropHiddenTool(): void {
+    const sh = this.d.shell();
+    if (sh === null) return;
+    const a = sh.tools.active;
+    if (a === 'select' || this.d.rail.disclosed(a) || sh.tools.get('select') === undefined) return;
+    sh.tools.activate('select', 'surface');
+  }
   keyOpener(): HTMLElement {
     if (this.clickOpener !== null) return this.clickOpener;
     const a = document.activeElement;
@@ -307,6 +339,14 @@ export class LearnCommands implements KeyScopeHost {
       return true;
     }
     if (d.dialogs.closeAny(true)) return true;
+    // a keyboard handoff to the primary action ("Press Enter again to commit, or Escape to go back to the slide"):
+    // the first Esc returns focus to the slide, keeping the mark, its selection and the tool
+    const a = document.activeElement;
+    if (this.handoff !== null && a === this.handoff && a.isConnected) {
+      this.handoff = null;
+      this.focusCanvas();
+      return true;
+    }
     const menu = document.getElementById('classMenu');
     if (menu !== null && menu.isConnected && !menu.hidden && d.registry.get('class:pick') !== undefined) {
       d.registry.run('class:pick', 'keyboard');

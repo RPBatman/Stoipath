@@ -63,6 +63,9 @@ export const TEXT = {
   gateNone: 'No zoom gate on this item: a correct answer earns full credit at any magnification.', // N
   /** HUD chip (`hud.gate`; the integrator appends the 20× preset's keycap). */
   hudGate: (now: string, label: string): string => `Zoom gate · now ${now} · need ≥ ${label}`,
+  /** Review fix (2026-11-08): at the gate's magnification already, the chip says what is missing (no keycap). N */
+  hudGateNoMark: 'Zoom gate · place a mark first',
+  hudGateNotOver: (now: string): string => `Zoom gate · ${now} · not over your mark yet`,
   yourMark: 'Your mark',
   yourAnswer: 'Your answer',
   markCandidate: (l: string): string => `candidate ${l}`, // N
@@ -78,9 +81,14 @@ export const TEXT = {
   alternatives: 'Mark without a pointer',
   markCleared: 'Mark cleared. Draw with P, F or T, or press Shift Enter to mark without a pointer.', // ux-copy §14
   noAnswer: 'Place a mark first. Draw with P, F or T, or press Shift Enter to mark without a pointer.', // §5.5 / ux-copy §14
-  /** The gate warning (§6.4; §8.2 deviation): the `5` is a keycap. */
-  gateWarn: (label: string): [string, string] => [`You have not viewed your mark at ${label} yet. Commit now for half credit if it is correct, or press `, ` to jump to ${label} first.`],
-  gateWarnSpoken: (label: string): string => `You have not viewed your mark at ${spokenGate(label)} yet. Commit now for half credit if it is correct, or press 5 to jump to ${spokenGate(label)} first.`,
+  /**
+   * The gate warning (§6.4; §8.2 deviation). Review fix (2026-11-08): it names the button that flies to the mark,
+   * not the `5` preset, which zooms about the centre of the view and so usually left the mark out of view.
+   */
+  gateWarn: (label: string): string => `You have not viewed your mark at ${label} yet. Commit now for half credit if it is correct, or choose View my mark at ${label} first.`,
+  gateWarnSpoken: (label: string): string => `You have not viewed your mark at ${spokenGate(label)} yet. Commit now for half credit if it is correct, or choose View my mark at ${spokenGate(label)} first.`,
+  /** The candidates panel's twin (its way to a 20× view is a row's Fly there). N */
+  gateWarnPanel: (label: string): string => `You have not viewed this region at ${label} yet. Commit now for half credit if it is correct, or use Fly there on its row first.`,
   viewMyMark: (label: string): string => `View my mark at ${label}`,
   commitAnyway: 'Commit anyway',
   flyingToMark: (label: string): string => `Flying to your mark at ${spokenGate(label)}.`, // N
@@ -103,6 +111,8 @@ export const TEXT = {
   notAwaiting: 'This answer is saved already. Change answer unlocks it until you reveal.', // N
   keyboardMark: (kind: MarkKind): string => `${kind === 'polygon' || kind === 'brush' ? 'Polygon closed' : kind === 'point' ? 'Point placed' : kind === 'rect' ? 'Rectangle drawn' : 'Ellipse drawn'}. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.`, // ux-copy §14 (polygon), §5.5 (point); N (rect, ellipse)
   pointerMark: (summary: string): string => `${summary}. Commit answer when you are ready.`, // N
+  /** Review fix (2026-11-08): a mark outside an open region question is not kept. N */
+  strayMark: 'Marks are kept only while a region question is open, so that mark was not kept.',
   wrongKind: (kinds: string): string => `This item takes ${kinds}; that annotation is not your mark.`, // N
 
   // ---------------------------------------------------------------- reveal (§5.5, §6.5; D8)
@@ -114,6 +124,8 @@ export const TEXT = {
   revealNow: 'Reveal now',
   revealNowNote: 'Pixels in view are still not sharp; the answer key will be drawn over a softer view.',
   waitCancelled: 'Reveal cancelled. Your answer is still saved; press U to reveal.', // N
+  /** Review fix (2026-11-08): said politely when the key takes a moment, and the answer to a second U meanwhile. N */
+  keyLoading: 'Loading the answer key…',
   keyFailed: (reason: string): string => `The answer key could not be loaded (${reason}). Your answer is still saved; press U to try again.`, // N
   noReveal: 'The answer key is not available in this build.', // N
 
@@ -130,7 +142,7 @@ export const TEXT = {
   rubricTitle: (k: number, m: number, s: string, p: string): string => `Revealed · rubric ${k} / ${m} · ${s} / ${p}`,
   pointInside: 'Your point is inside the outline.',
   pointNear: (d: string, t: string): string => `Your point is ${d} µm from the outline; points within ${t} µm count.`,
-  pointHole: 'Your point is inside an area the expert excluded from the outline (Exclusion: non-tumour tissue within the deposit), so it does not count.',
+  pointHole: 'Your point is inside an area the expert excluded from the outline (Exclusion: a non-tumour area such as a vessel lumen or space, which the dataset leaves out of the tumour outline), so it does not count.',
   iouText: (pct: string, full: string): string => `Your mark overlapped the outline by ${pct} % (IoU). An overlap of ${full} % or more earns full credit.`,
   partialText: (iou: string): string => `Correct location; the outline covers only part of the deposit (IoU ${iou}).`,
   halfGate: (label: string): string => `Correct region, but you never viewed it at ${label}: half credit by the gate rule stated on the card.`,
@@ -143,6 +155,8 @@ export const TEXT = {
   hideKey: 'Hide key',
   showKey: 'Show key',
   expert: "Show the expert's view",
+  /** N (review fix 2026-11-08): the expert view's legend, in words (SC 1.4.1). */
+  expertLegend: 'Expert’s view (white lines): solid outlines tumour, dashed outlines the areas the dataset excludes. The dashed yellow line over it is the answer key.',
 
   // ---------------------------------------------------------------- the one assertive sentence at reveal (§8.4)
   saidInside: (s: string, p: string): string => `Revealed. Your point is inside the outline. ${s} of ${p}.`,
@@ -150,6 +164,8 @@ export const TEXT = {
   saidHole: (s: string, p: string): string => `Revealed. Your point is inside an area the expert excluded. ${s} of ${p}.`, // N
   saidFocus: (s: string, p: string): string => `Revealed. Your point is on a tumour focus. ${s} of ${p}.`, // N
   saidIou: (pct: string, s: string, p: string): string => `Revealed. Your mark overlapped the outline by ${pct} percent. ${s} of ${p}.`,
+  /** Rule (b) (review fix 2026-11-08): the assertive sentence also says why the credit is partial. N */
+  saidPartial: 'Correct location; the outline covers only part of the deposit.',
   saidRubric: (k: number, m: number, s: string, p: string): string => `Revealed. Rubric ${k} of ${m}. ${s} of ${p}.`, // N
   saidChoice: (correct: boolean, partial: boolean, l: string, s: string, p: string): string =>
     correct ? `Revealed. Correct, ${l}. ${s} of ${p}.` : partial ? `Revealed. Partly correct, you chose ${l}. ${s} of ${p}.` : `Revealed. Incorrect, you chose ${l}. ${s} of ${p}.`, // N
@@ -176,7 +192,9 @@ export const TEXT = {
   chooseRegion: 'Choose a region first: the arrow keys move between them.', // N
   commitText: 'Commit my text answer',
   cancel: 'Cancel',
-  textHelp: 'Describe where it is. Scored against the author’s rubric; recorded as modality: text, never discounted.',
+  /** Review fix (2026-11-08): the zoom gate applies to a text answer too, so the help says so (was "never discounted"). */
+  textHelp: (label: string | null): string =>
+    label === null ? 'Describe where it is. Scored against the author’s rubric.' : `Describe where it is. Scored against the author’s rubric. Full credit also needs a view of that area at ${label} or more before you reveal.`,
   choosePlaceholder: 'Choose…', // N
   textEmpty: 'Fill in at least one part of the text answer first.', // N
   panelOpened: (title: string): string => `${title} panel opened beside the slide. Escape closes it; arrow keys still pan the slide.`, // ux-copy §14

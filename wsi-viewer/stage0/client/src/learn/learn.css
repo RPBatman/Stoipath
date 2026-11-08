@@ -221,6 +221,9 @@
 @media (min-width: 1600px) { .learn .toast-stack { width: calc(var(--layout-dock) - 2 * var(--space-4)); } .learn .toast-stack .toast { width: 100%; } }
 .learn .learn-cand { display: flex; flex-direction: column; }
 .learn .learn-cand__body { flex: 1 1 auto; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
+/* Review fix (2026-11-08): the candidates panel's own draft chip, under its title (the panel covers the card's) */
+.learn .learn-cand__draft { padding: var(--space-3) var(--space-6) 0; flex: 0 0 auto; }
+.learn .learn-cand__draft:not(:has(:not([hidden]))) { display: none; }
 
 /* --- Plates ---------------------------------------------------------------------------------------------------------- */
 .learn .plate__card[role="status"] .plate__glyph { background: var(--color-surface-2); color: var(--color-text); }
@@ -262,6 +265,11 @@
   /* The sheet is the grid's in-flow "sheet" row, so the canvas yields height instead of being covered (shell.css
      286–291; handoff §5.1 "the bottom HUD lifts above an open sheet"); expanded it is ≤ 40 % (--layout-sheet-max). */
   .app.learn.dock-open:not(.palette-open) .dock { display: flex; grid-area: sheet; position: relative; inset: auto; width: auto; height: auto; max-height: var(--layout-sheet-max); border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail); }
+  /* Wave L4 (LEARN.md §15.2d J-I28): an expanded sheet is exactly --layout-sheet-max tall and a peeking one keeps one
+     height, so a step change never resizes the canvas: the engine re-anchors the camera on a resize, which stopped the
+     step's fly where it was (the tour's 20× lymphoid view landed on the deposit). The body scrolls inside. */
+  .app.learn.dock-open:not(.palette-open):not(.sheet-peek) .dock { height: var(--layout-sheet-max); }
+  .app.learn.sheet-peek .task__peekstem { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: calc(2em * var(--leading-body)); }
   .learn .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
   .learn .sheet-toggle { display: inline-flex; }
   .learn .task__head { padding-top: var(--space-3); }
@@ -285,6 +293,9 @@
   .learn .task__grab { display: block; align-self: center; width: 36px; height: 4px; border-radius: 2px; background: var(--color-border-strong); margin: var(--space-2) auto 0; cursor: pointer; }
   .learn .sheet-toggle { display: inline-flex; }
   .learn .task__body { flex: 1 1 auto; }
+  /* Constant sheet heights (J-I28): expanded = --layout-sheet-max; the peek bar's stem always takes its two lines */
+  .app.learn.dock-open:not(.palette-open):not(.sheet-peek) .dock { height: var(--layout-sheet-max); }
+  .learn .task__peekbar .task__peekstem { min-height: calc(2em * 1.3); }
   .app.learn.sheet-peek .taskdock__head, .app.learn.sheet-peek .dock__tabs, .app.learn.sheet-peek #taskCard, .app.learn.sheet-peek .learn-studio-panel { display: none; }
   .app.learn.sheet-peek .task__peekbar { display: flex; }
   .app.learn:not(.sheet-peek) .sheet-toggle .icon { transform: rotate(180deg); }
@@ -308,6 +319,53 @@
 /* Tablet portrait keeps the integrator rows of the sheet (the card's own head stays visible in its peek; final 523–525) */
 @media (min-width: 600px) and (max-width: 1079px) {
   .app.learn.sheet-peek .learn-studio-panel { display: none; }
+}
+/* Phone or tablet in landscape (review fix 2026-11-08): at 844 × 390 the in-flow sheet, the flow bar and the strip
+   left pane A 82 px tall. On a short landscape screen the task card is a drawer from the right instead (over the canvas,
+   as at 1080–1599 px; peeking, it is only its head and CTA at the bottom right), the strip goes (the sharpness label
+   joins the HUD, as on a phone) and the bottom bar takes the touch-size row it needs, so the canvas keeps ≥ 70 % of the
+   height. The navigator and the bottom-right readout step left of the drawer. Dialogs stay bottom sheets (≤ 40 %). */
+@media (max-width: 1079px) and (max-height: 500px) and (orientation: landscape) {
+  .app.learn { --layout-bottombar: 56px; --learn-side: min(360px, 46vw); --layout-navigator: 112px; --layout-navigator-wide: 140px; }
+  .app.learn, .app.learn.dock-open { grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-bottombar); grid-template-areas: "topbar" "canvas" "bottombar"; }
+  .learn .strip { display: none !important; }
+  .learn .hud .hud__sharp { display: inline-flex; }   /* the sharpness label joins the HUD (base.css 1328, phone) */
+  /* the phone's HUD diet (base.css 1327 (6)) and its inset; the top-left items flow in rows, so on a 286 px canvas they
+     stay out of its central zone (layout-check Z1) */
+  .app.learn { --layout-hud-inset: 8px; }
+  .learn .hud__secondary, .learn .hud__position, .learn .magnification__line2 { display: none; }
+  .learn #paneA > .hud--tl { flex-direction: row; flex-wrap: wrap; align-items: flex-start; max-width: min(340px, 42%); }
+  /* the navigator waits behind O, as on a phone (base.css (5); engine-ui navBehindO) */
+  .app.learn .navigator { display: none; }
+  .app.learn.nav-open .navigator { display: block; }
+  /* the zoom-gate chip would sit in the canvas's central band here (above the magnification) or on the scale bar
+     (beside it); the region card's gatebox in the drawer says the same, so the chip waits for a taller screen */
+  .learn #paneA .hud__gate { display: none; }
+  .app.learn.dock-open:not(.palette-open) .dock,
+  .app.learn.dock-open:not(.palette-open):not(.sheet-peek) .dock { grid-area: auto; position: absolute; top: var(--layout-topbar); right: 0; bottom: var(--layout-bottombar); left: auto; width: var(--learn-side); height: auto; max-height: none; border-top: 0; border-left: 1px solid var(--color-border-strong); border-radius: 0; box-shadow: var(--shadow-3); z-index: var(--z-drawer); }
+  .app.learn.dock-open.sheet-peek:not(.palette-open) .dock { top: auto; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) 0 0 0; }
+  .app.learn.dock-open:not(.dialog-open) .nav-host .navigator,
+  .app.learn.dock-open:not(.dialog-open) #paneA > .hud--br { right: calc(var(--learn-side) + var(--layout-hud-inset)); }
+  .learn .modal-layer, .learn .modal-layer--dock { inset: var(--layout-topbar) 0 var(--layout-bottombar) 0; }
+  .app.learn .toast-stack { left: var(--space-4); right: calc(var(--learn-side) + var(--space-4)); bottom: calc(var(--layout-bottombar) + var(--space-4)); }
+  /* A dock dialog (the candidates panel, the keymap, About) takes the drawer's place: a panel from the right as tall as
+     the canvas, so the four regions and the commit button fit (a 40 % bottom sheet is 156 px here: one row). The drawer
+     waits under it. LI-7 counts it as the drawer it replaces (LEARN.md §15.2e J-I35). */
+  .app.learn.dock-open.dialog-open:not(.palette-open) .dock { display: none; }
+  .learn .modal-layer--dock { inset: var(--layout-topbar) 0 var(--layout-bottombar) auto; width: var(--learn-side); padding: 0; place-items: stretch; align-content: stretch; }
+  .learn .modal-layer--dock .dialog { width: 100%; height: 100%; max-height: none; border-radius: 0; border-top: 0; border-left: 1px solid var(--color-border-strong); }
+  .app.learn.dialog-open .nav-host .navigator, .app.learn.dialog-open #paneA > .hud--br { right: calc(var(--learn-side) + var(--layout-hud-inset)); }
+  /* the drawer's own rows are compact, so its body keeps room for the step (seen in the review-fix screenshots) */
+  .learn .task__grab { display: none; }
+  .learn .taskdock__head { padding: var(--space-2) var(--space-4) 0; }
+  .learn .task__head { padding: var(--space-2) var(--space-4) var(--space-1); }
+  .learn .task__title { font-size: var(--text-lg); }
+  .learn .task__body { padding: var(--space-2) var(--space-4); }
+  .learn .task__cta { padding: var(--space-2) var(--space-4); gap: var(--space-2); }
+  .learn .btn--cta { min-height: 44px; font-size: var(--text-md); }
+  .learn .modal-layer--dock .dialog__header { padding: var(--space-2) var(--space-5); }
+  .learn .modal-layer--dock .dialog__title { font-size: var(--text-md); }
+  .learn .learn-cand__draft { padding: var(--space-1) var(--space-5) 0; }
 }
 /* Short viewports: fewer sub-labels (final 580) */
 @media (max-height: 760px) { .learn .phase { min-height: 48px; } .learn .flowrail .phase__sub { display: none; } }

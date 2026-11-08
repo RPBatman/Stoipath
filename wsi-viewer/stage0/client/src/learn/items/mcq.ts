@@ -147,7 +147,10 @@ export class ChoiceCard implements CardView {
       return true; // consumed inside the item, so A / D never pan and 1–6 never zoom from here (LEARN.md §9)
     }
     if (e.key === 'Enter' && (t === this.root || (t instanceof HTMLInputElement && this.root.contains(t)))) {
-      this.engine.commit(this.item.id, 'keyboard');
+      const r = this.engine.commit(this.item.id, 'keyboard');
+      // Review fix (2026-11-08, round 2): committing locks the options (disabled), which drops the focused radio's focus
+      // to <body> (SC 2.4.3). Hand focus to the primary action (now Reveal), as the region item's keyboard path does.
+      if (r.ok) window.setTimeout(() => this.engine.player()?.focusPrimary(), 0);
       return true;
     }
     return false;

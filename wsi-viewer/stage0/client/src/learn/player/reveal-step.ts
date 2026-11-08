@@ -25,7 +25,7 @@ export interface RevealCardData {
   rows: readonly RevealRow[];
   cmd: CmdLookup;
   /** The case's expert view, when there is one. */
-  expert: { on: boolean; key: string; onToggle(source: CommandSource): void } | null;
+  expert: { on: boolean; key: string; text: string; onToggle(source: CommandSource): void } | null;
 }
 
 export interface RevealCardView {
@@ -52,10 +52,15 @@ export function revealStepBody(d: RevealCardData): RevealCardView {
     const ex = d.expert;
     const b = h('button', { class: 'btn btn--secondary btn--block', type: 'button', 'data-action': 'expert', 'aria-pressed': String(ex.on) }, ...labelWithKey(TEXT.expertShow, ex.key));
     b.addEventListener('click', (e) => ex.onToggle(sourceOfClick(e)));
+    // Review fix (2026-11-08): what the expert's view shows is on screen while it is on (it used to be spoken only),
+    // with a legend that names the two line styles in words (SC 1.4.1).
+    const note = h('div', { class: 'learn-player__expert text-sm', 'data-expert-note': '' }, h('p', { text: ex.text }), h('p', { class: 'text-secondary', text: TEXT.expertLegend }));
+    note.hidden = !ex.on;
     setExpert = (on) => {
       if (b.getAttribute('aria-pressed') !== String(on)) b.setAttribute('aria-pressed', String(on));
+      if (note.hidden !== !on) note.hidden = !on;
     };
-    nodes.push(b);
+    nodes.push(b, note);
   }
   return { nodes, setExpert };
 }

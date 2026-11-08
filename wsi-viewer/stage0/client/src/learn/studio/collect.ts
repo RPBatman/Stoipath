@@ -10,7 +10,8 @@
  */
 import type { CommandSource, SlideEntry } from '../../shell/contracts';
 import { h } from '../../shell/dom';
-import type { AuthorDraft, Audience, LicenceRef, ModuleFile, ModuleSlide, Person } from '../contracts';
+import type { LicenceRef } from '../../shell/contracts';
+import type { AuthorDraft, Audience, ModuleFile, ModuleSlide, Person } from '../contracts';
 import { button, checkboxGroup, confirmButton, moveButtons, segmented, selectField, setFieldError, textField, uid, type StageCtx } from './drafts-ui';
 import { AUDIENCES, TEXT } from './text';
 
@@ -427,6 +428,7 @@ function addSlide(ctx: StageCtx): HTMLElement {
       return;
     }
     const slide = slideFromEntry(e, ctx.module.slides.map((s) => s.ref));
+    ctx.focusAfterRender('slide:add');
     ctx.update((mm) => {
       mm.slides.push(slide);
       if (mm.metadata.tags.stain.length === 0) mm.metadata.tags.stain = [slide.stain];

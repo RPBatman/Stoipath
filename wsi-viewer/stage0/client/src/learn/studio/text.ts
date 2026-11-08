@@ -83,7 +83,7 @@ export const TEXT = {
   ctaExport: 'Export module file',
   allDrafts: 'All drafts',
   noteAddSlide: 'Add a slide first: a tour is recorded on one of the module’s slides.',
-  noteExportBlocked: 'Export is blocked until every error below is fixed.',
+  noteExportBlocked: 'Export is blocked until every error above is fixed.', // review fix 2026-11-08 (round 2): the checks list sits above the note
   noteExportChecking: 'Checking the module…',
   noteAutosave: 'Your draft is saved in this browser as you work.',
   lastStage: 'This is the last stage. Export the module file to publish it.',

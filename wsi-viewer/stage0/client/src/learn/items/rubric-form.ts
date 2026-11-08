@@ -4,7 +4,8 @@
  * One field per rubric field: a native `<select>` for a choice field (with an empty first choice, so nothing is
  * answered until the learner answers), an `<input>` for a keywords field; every field has a visible `<label>`. The
  * answer is `{kind: 'text', fields: {fieldId: value}}` (a choice field's value is the option id), recorded as
- * modality `text` and never discounted (NFR-A5): its gate is checked against the key target at reveal (§6.4).
+ * modality `text`; it is not discounted for its modality (NFR-A5), and the zoom gate applies to it as to every answer:
+ * the gate is checked against the key target at reveal (§6.4), and the help line says so (review fix 2026-11-08).
  * Pure DOM, no state of its own beyond the elements; the engine keeps the values between openings of the panel.
  */
 import { h } from '../../shell/dom';
@@ -21,12 +22,13 @@ export class RubricForm {
   constructor(
     idBase: string,
     rubric: TextRubric,
+    gateLabel: string | null,
     initial: Readonly<Record<string, string>>,
     private readonly onChange: (fields: Record<string, string>) => void,
     onSubmit: () => void,
   ) {
     this.root = h('form', { class: 'learn-rubric', novalidate: '' });
-    this.root.append(h('p', { class: 'text-sm text-secondary', text: TEXT.textHelp }));
+    this.root.append(h('p', { class: 'text-sm text-secondary', text: TEXT.textHelp(gateLabel) }));
     const grid = h('div', { class: 'learn-rubric__grid' });
     for (const f of rubric.fields) grid.append(this.field(idBase, f, initial[f.id] ?? ''));
     this.root.append(grid);

@@ -202,7 +202,7 @@ export async function run(ctx) {
         const rec = JSON.parse(stored.entries?.find(([k]) => k === PKEY)?.[1] ?? 'null');
         const crs = JSON.parse(stored.entries?.find(([k]) => k === CKEY)?.[1] ?? 'null');
         check(TAG, p1.length === 1 && p1[0].db === 'stoipath-learn' && p1[0].store === 'session', `PRG-1 page: five save() calls 100 ms apart produce one put (${p1.length}: ${p1.map((p) => `${p.db}/${p.store}/${p.key}`).join(', ')})`);
-        check(TAG, rec?.schema === 'stoipath.learn.progress/1' && rec.stepIndex === 4 && rec.moduleVersion === '0.1.0' && /^sha256:[0-9a-f]{64}$/.test(rec.contentHash), `PRG-1 page: the record in stoipath-learn / session is the last one saved (stepIndex ${rec?.stepIndex}, ${rec?.contentHash?.slice(0, 15)}…)`);
+        check(TAG, rec?.schema === 'stoipath.learn.progress/1' && rec.stepIndex === 4 && rec.moduleVersion === '0.1.1' && /^sha256:[0-9a-f]{64}$/.test(rec.contentHash), `PRG-1 page: the record in stoipath-learn / session is the last one saved (stepIndex ${rec?.stepIndex}, ${rec?.contentHash?.slice(0, 15)}…)`);
         check(TAG, crs?.modules?.[MODULE_ID]?.status === 'in-progress' && crs.modules[MODULE_ID].steps === 10, `PRG-1 page: the course record learn.course/stage0-l1 is derived and cached (${JSON.stringify(crs?.modules?.[MODULE_ID] ?? null)})`);
         const dbs = await H.idbNames(page);
         check(TAG, dbs.includes('stoipath-learn') && !dbs.includes('stoipath-shell'), `PRG-1 page: progress lives in the Learn database only (databases: ${dbs.join(', ')})`);

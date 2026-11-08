@@ -2,8 +2,10 @@
 <html lang="en" data-theme="dark" data-product="learn">
   <head>
     <meta charset="utf-8" />
-    <!-- LEARN.md D22: nothing leaves the browser. Every fetch (tiles, catalogue, modules, overlays) is same-origin. -->
-    <meta http-equiv="Content-Security-Policy" content="connect-src 'self'; form-action 'none'; base-uri 'self'" />
+    <!-- LEARN.md D22: nothing leaves the browser. Every fetch (tiles, catalogue, modules, overlays), script, style, image
+         and worker is same-origin; frames and plugins are refused (review fix 2026-11-08: the policy used to name
+         connect-src only, so images, scripts, frames and prefetches to another origin were not blocked). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#303030" />
     <title>Course · Stoipath Learn</title>
@@ -261,6 +263,9 @@
         <!-- Candidates panel (items owns #candBody; the integrator the header; DialogHost.setTitle sets #candTitle) -->
         <div class="dialog learn-cand" id="candPanel" role="dialog" aria-modal="false" aria-labelledby="candTitle" hidden>
           <div class="dialog__header"><h2 class="dialog__title" id="candTitle">Mark without a pointer</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close, Escape"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <!-- Review fix (2026-11-08): the panel covers the card's and the context bar's chips, and it shows draft teaching
+               text (candidate descriptions, the text answer's choices), so it carries its own draft chip. -->
+          <div class="learn-cand__draft"><span class="chip learn-draft" data-draft-note hidden>Draft — pending pathologist review</span></div>
           <div class="learn-cand__body" id="candBody"></div>
         </div>
       </div>

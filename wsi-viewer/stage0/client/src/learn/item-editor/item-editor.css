@@ -1,0 +1,79 @@
+/*
+ * item-editor · page CSS the design system lacks (LEARN.md §4.5). Scoped under the editor's own root `.learn-ied`
+ * (the element the studio hands to itemEditor.mount). Tokens only. Everything else is base.css: .field*, .input,
+ * .select, .segmented*, .btn*, .candidate__letter, .dot*, .swatch*, .grid-2, .stack, .row, .key, .visually-hidden.
+ *
+ * Copied from design/screens/final/education-module.html, lines cited:
+ *   .cand-edit                  326–328 (item-editor's own row in the §4.5 table)
+ *   .checks, .checks__row       331–335 (the studio's Publish list; the per-item lint strip uses the same rows, so a
+ *                               copy is scoped here and the editor does not depend on the studio's stylesheet)
+ *   .mark-row                   220–223 (the key row: swatch, summary, `Show the answer key`)
+ */
+
+.learn-ied { min-width: 0; }
+.learn-ied__title { font-size: var(--text-lg); font-weight: var(--weight-semibold); margin: 0; }
+.learn-ied__h { font-size: var(--text-sm); font-weight: var(--weight-semibold); margin: 0; display: flex; align-items: center; gap: var(--space-3); }
+.learn-ied__h .count { font-family: var(--font-mono); font-weight: var(--weight-regular); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.learn-ied__part, .learn-ied__key, .learn-ied__cands, .learn-ied__rubric, .learn-ied__lint { padding-top: var(--space-4); border-top: 1px solid var(--color-divider); }
+.learn-ied textarea.input { min-height: 64px; }
+.learn-ied .field__hint { margin: 0; }
+
+/* the inline note beside an action (a refusal or a confirmation, also spoken politely) */
+.learn-ied__note { margin: 0; color: var(--color-text-secondary); }
+.learn-ied__note.is-refusal { color: var(--color-text); }
+.learn-ied__note.is-refusal::before { content: "! "; font-family: var(--font-mono); font-weight: 700; }
+
+/* checkbox / radio rows: native inputs, 24 px targets (44 under coarse through --target) */
+.learn-ied__check { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); font-size: var(--text-sm); cursor: pointer; }
+.learn-ied__check input { width: 18px; height: 18px; margin: 0; accent-color: var(--color-text); flex: 0 0 auto; }
+.learn-ied__check .key { margin-left: var(--space-1); }
+.learn-ied__checks { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+.learn-ied__fieldset { border: 1px solid var(--color-border); border-radius: var(--radius-2); padding: var(--space-3) var(--space-4); margin: 0; min-width: 0; }
+.learn-ied__fieldset > legend { padding: 0 var(--space-2); }
+
+/* choice options: letter · text (+ feedback disclosure) · correct · remove */
+.learn-ied__opt { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto auto; gap: var(--space-2) var(--space-3); align-items: start; }
+.learn-ied__opt .candidate__letter { margin-top: 4px; }
+.learn-ied__opt > .learn-ied__more { grid-column: 2 / -1; }
+.learn-ied__correct { min-height: 32px; }
+.learn-ied__more > summary { cursor: pointer; color: var(--color-text-secondary); min-height: var(--target); display: flex; align-items: center; gap: var(--space-2); list-style: none; }
+.learn-ied__more > summary::-webkit-details-marker { display: none; }
+/* the disclosure chevron of base.css `.section > summary::before` (base 768–769), sized for a row */
+.learn-ied__more > summary::before { content: ""; width: 6px; height: 6px; border-right: 1.75px solid currentColor; border-bottom: 1.75px solid currentColor; transform: rotate(-45deg); transition: transform var(--motion-fast) var(--motion-ease); flex: 0 0 auto; }
+.learn-ied__more[open] > summary::before { transform: rotate(45deg); }
+.learn-ied__more > summary:hover { color: var(--color-text); }
+.learn-ied__more[open] > summary { margin-bottom: var(--space-2); }
+.learn-ied__glyph { font-family: var(--font-mono); font-size: var(--text-sm); line-height: 1; }
+
+/* final 220–223 · the key row */
+.learn-ied .mark-row { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+.learn-ied .mark-row .flex-1 { min-width: 0; flex: 1 1 auto; }
+.learn-ied .mark-row .btn { flex: 0 0 auto; }
+.learn-ied .mark-row .swatch { width: 14px; height: 14px; }
+.learn-ied .mark-row p { margin: 0; }
+/* "Answer key (dashed yellow)": the key token, as the items card's key swatch (final 1051) */
+.learn-ied__swatch-key { --swatch: var(--ann-3); }
+
+/* final 326–328 · candidate rows */
+.learn-ied .cand-edit { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-2) var(--space-3); align-items: start; }
+.learn-ied .cand-edit .input { min-height: 32px; }
+.learn-ied .cand-edit .candidate__letter { margin-top: 4px; }
+.learn-ied__rowbtns { gap: var(--space-1); }
+
+/* rubric option rows: text · correct · remove */
+.learn-ied__ropt { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--space-3); align-items: center; }
+
+/* final 331–335 · the per-item lint strip */
+.learn-ied .checks { display: flex; flex-direction: column; gap: 1px; }
+.learn-ied .checks__row { display: grid; grid-template-columns: 18px 1fr auto; gap: var(--space-3); align-items: center; min-height: 32px; font-size: var(--text-sm); }
+.learn-ied .checks__row .dot { margin: 0; }
+.learn-ied .checks__row .meta { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.learn-ied .checks__row.is-error .meta { color: var(--color-text); font-weight: var(--weight-semibold); }
+.learn-ied__lintsum { font-family: var(--font-mono); }
+
+@media (max-width: 599px) {
+  .learn-ied .grid-2 { grid-template-columns: minmax(0, 1fr); }
+  .learn-ied__opt { grid-template-columns: 24px minmax(0, 1fr) auto; }
+  .learn-ied__opt > .learn-ied__correct { grid-column: 2; grid-row: 2; }
+  .learn-ied__opt > .btn { grid-column: 3; grid-row: 1; }
+}

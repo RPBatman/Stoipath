@@ -57,8 +57,11 @@ export function layerVersion(layer: unknown): string | null {
   return typeof v === 'string' ? v : null;
 }
 
+/** Review fix (2026-11-08): a key request that has not answered in 20 s is aborted (the item says keyFailed). */
+export const KEY_FETCH_TIMEOUT_MS = 20_000;
+
 /** Same-origin JSON GET with one reason clause per failure (the browser default; the unit tests inject their own). */
-export function fetchJsonSameOrigin(fetchImpl: typeof fetch, pageUrl: string): (url: string) => Promise<unknown> {
+export function fetchJsonSameOrigin(fetchImpl: typeof fetch, pageUrl: string, timeoutMs = KEY_FETCH_TIMEOUT_MS): (url: string) => Promise<unknown> {
   return async (url: string): Promise<unknown> => {
     let abs: URL;
     try {
@@ -67,18 +70,25 @@ export function fetchJsonSameOrigin(fetchImpl: typeof fetch, pageUrl: string): (
       throw new Error(FETCH_TEXT.otherSite);
     }
     if (abs.origin !== new URL(pageUrl).origin || abs.username !== '' || abs.password !== '') throw new Error(FETCH_TEXT.otherSite);
-    let r: Response;
+    const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = ctl !== null ? setTimeout(() => ctl.abort(), timeoutMs) : null;
+    const timedOut = (): boolean => ctl !== null && ctl.signal.aborted;
     try {
-      r = await fetchImpl(abs.href, { method: 'GET', credentials: 'same-origin' });
-    } catch {
-      throw new Error(FETCH_TEXT.network);
-    }
-    if (new URL(r.url || abs.href).origin !== abs.origin) throw new Error(FETCH_TEXT.otherSite);
-    if (!r.ok) throw new Error(FETCH_TEXT.http(r.status));
-    try {
-      return (await r.json()) as unknown;
-    } catch {
-      throw new Error(FETCH_TEXT.notJson);
+      let r: Response;
+      try {
+        r = await fetchImpl(abs.href, ctl !== null ? { method: 'GET', credentials: 'same-origin', signal: ctl.signal } : { method: 'GET', credentials: 'same-origin' });
+      } catch {
+        throw new Error(timedOut() ? FETCH_TEXT.timeout(timeoutMs) : FETCH_TEXT.network);
+      }
+      if (new URL(r.url || abs.href).origin !== abs.origin) throw new Error(FETCH_TEXT.otherSite);
+      if (!r.ok) throw new Error(FETCH_TEXT.http(r.status));
+      try {
+        return (await r.json()) as unknown;
+      } catch {
+        throw new Error(timedOut() ? FETCH_TEXT.timeout(timeoutMs) : FETCH_TEXT.notJson);
+      }
+    } finally {
+      if (timer !== null) clearTimeout(timer);
     }
   };
 }

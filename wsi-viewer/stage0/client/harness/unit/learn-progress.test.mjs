@@ -198,6 +198,31 @@ export default async function (t) {
     P.createProgressStore({ storage, atRest: extra.atRest ?? ((cb) => cb()), bus: extra.bus ?? null, live: extra.live ?? null, labelString: LABEL, build: '2026-11-04T09:00:00Z', now: clock.now, timers: clock.timers });
   const putsOf = (st, key) => st.puts.filter((p) => p.key === key);
 
+  // ------------------------------------------------------------------------------------------------ two tabs (review fix)
+  // Review fix (2026-11-08): a write merges with the stored record, so a stale second tab cannot take back progress the
+  // first one made (maxStepIndex, a revealed response, a response it did not change).
+  t.group('two tabs (review fix)');
+  {
+    const st = fakeStorage();
+    const clock = fakeClock();
+    const a = mk(st, clock);
+    const b = mk(st, clock);
+    const { progress: pa } = await a.load(CASE, null);
+    const { progress: pb } = await b.load(CASE, null);
+    const q = ITEMS[1];
+    a.save({ ...pa, stepIndex: 3, maxStepIndex: 3, items: { ...pa.items, [q]: { ...pa.items[q], state: 'revealed', answer: { kind: 'choice', selected: ['B'] }, revealedAt: '2026-11-08T10:00:00Z', committedAt: '2026-11-08T09:59:00Z', score: { itemId: q, rule: 'mcq', points: 1, score: 1, correct: true, gate: { required: false, met: true, bestScale_um_per_px: null, factor: 1 }, metric: { kind: 'choice', selected: ['B'], correct: ['B'] }, feedback: 'correct' } } } });
+    await a.flush();
+    b.save({ ...pb, stepIndex: 1, maxStepIndex: 1 });
+    await b.flush();
+    const rec = st.data.session.get(KEY);
+    t.eq([rec.stepIndex, rec.maxStepIndex, rec.items[q].state, rec.items[q].score?.score], [1, 3, 'revealed', 1], 'a stale tab B writing step 1 keeps tab A\'s maxStepIndex 3 and its revealed item (B\'s own stepIndex is kept)');
+    b.save({ ...pb, stepIndex: 1, maxStepIndex: 1, items: { ...pb.items, [ITEMS[2]]: { ...pb.items[ITEMS[2]], state: 'committed', answer: { kind: 'choice', selected: ['C'] }, committedAt: '2026-11-08T10:01:00Z' } } });
+    await b.flush();
+    const rec2 = st.data.session.get(KEY);
+    t.eq([rec2.items[q].state, rec2.items[ITEMS[2]].state, rec2.items[ITEMS[2]].answer?.selected], ['revealed', 'committed', ['C']], 'what tab B itself changed is written; what it did not change stays as tab A wrote it');
+    t.eq(P.mergeStored(rec2, { ...rec2, contentHash: 'sha256:0' }, new Set()).maxStepIndex, rec2.maxStepIndex, 'a stored record of another module build is not merged');
+  }
+
   // ------------------------------------------------------------------------------------------------ module surface
   t.group('surface');
   t.eq(P.name, 'progress', 'the module is named progress');
@@ -245,7 +270,7 @@ export default async function (t) {
     const clk = fakeClock();
     const ps = mk(st, clk);
     const { progress: p, report } = await ps.load(CASE, null);
-    t.eq([p.schema, p.moduleId, p.moduleVersion, p.contentHash, p.courseId], ['stoipath.learn.progress/1', 'sln-find-metastasis', '0.1.0', CASE.contentHash, null], 'load creates a record: schema, module id, version, content hash, courseId null');
+    t.eq([p.schema, p.moduleId, p.moduleVersion, p.contentHash, p.courseId], ['stoipath.learn.progress/1', 'sln-find-metastasis', CASE.file.version, CASE.contentHash, null], 'load creates a record: schema, module id, version, content hash, courseId null');
     t.eq([p.stepIndex, p.maxStepIndex, p.startedAt, p.updatedAt, p.completedAt], [0, 0, '2026-11-04T10:00:00Z', '2026-11-04T10:00:00Z', null], 'at step 0 (Open), nothing reached, started now (UTC, …Z), not completed');
     t.eq(Object.keys(p.items), ITEMS, 'one response per item, in file order');
     t.ok(ITEMS.every((id) => p.items[id].state === 'awaiting' && p.items[id].itemHash === CASE.itemHashes[id] && p.items[id].answer === null && p.items[id].views.length === 0 && p.items[id].score === null), 'every response is awaiting, empty, stamped with the item hash of the loaded module');
@@ -547,7 +572,7 @@ export default async function (t) {
     const pr = F.parseResults(JSON.parse(JSON.stringify(r)));
     t.ok(pr.ok && pr.warnings.length === 0, `results() passes format.parseResults with no warning (${pr.ok ? 'ok' : pr.errors.join('; ')})`);
     t.eq([r.schema, r.product, r.labelString, r.build, r.exportedAt, r.privacy], ['stoipath.learn.results/1', 'learn', LABEL, '2026-11-04T09:00:00Z', '2026-11-04T10:30:00Z', 'Created in your browser. Nothing in this file was sent anywhere; it contains no learner identifier.'], 'header: schema, product, the label string verbatim, build, exportedAt in UTC to the second, the privacy sentence');
-    t.eq(r.module, { id: 'sln-find-metastasis', version: '0.1.0', contentHash: CASE.contentHash, title: 'Sentinel lymph node: find the metastasis', review: { status: 'draft', notes: CASE.file.metadata.review.notes } }, 'module: id, version, the computed content hash, title, review status draft');
+    t.eq(r.module, { id: 'sln-find-metastasis', version: CASE.file.version, contentHash: CASE.contentHash, title: 'Sentinel lymph node: find the metastasis', review: { status: 'draft', notes: CASE.file.metadata.review.notes } }, 'module: id, version, the computed content hash, title, review status draft');
     t.eq([r.course, r.attempt], [{ id: 'stage0-l1', title: 'Stoipath Learn · sample course' }, { startedAt: '2026-11-04T10:30:00Z', completedAt: '2026-11-04T10:29:00Z', stepsReached: 10, steps: 10 }], 'course and attempt (10 of 10 steps reached)');
     t.eq(r.items.map((i) => [i.itemId, i.score, i.correct, i.rule, i.modality, i.gateMet, i.confidence]), [['q-region', 1, true, 'region-point', 'pointer', true, 'fairly-sure'], ['q-sinus', 1, true, 'mcq', 'keyboard', null, null], ['q-size', 1, true, 'mcq', 'keyboard', null, null], ['q-features', 0.33, false, 'multi-partial', 'pointer', null, 'unsure']], 'per item: score, correct, rule, modality, gate (null when the item has none), confidence');
     t.eq(r.items[0].answer, { kind: 'mark', mark: { kind: 'point', geometry: { type: 'Point', coordinates: [7168.4, 5120.7] } } }, "the learner's own mark geometry is in the file (owner default Q11, pending)");

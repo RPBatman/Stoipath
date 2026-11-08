@@ -23,7 +23,7 @@ import { createProgressStore } from './store';
 export { createDraftStore, DRAFT_ID_RE, DRAFT_INDEX_KEY, draftKey, LearnDraftStore, readDraft, summaryOf } from './drafts';
 export { cloneJson, deriveEntry, freshProgress, freshResponse, isoSeconds, itemStepIndex, moduleStarted, readCourse, reconcile, round2, stepCountOf, totalPoints, VIEW_CAP } from './reconcile';
 export { buildResults, learnerResult, TEXT_FIELD_MAX } from './results';
-export { courseKey, createProgressStore, LearnProgressStore, progressKey, SAVE_DEBOUNCE_MS, SAVE_MAX_WAIT_MS, storedForm, type ProgressDeps, type Timers } from './store';
+export { courseKey, createProgressStore, LearnProgressStore, mergeStored, progressKey, SAVE_DEBOUNCE_MS, SAVE_MAX_WAIT_MS, storedForm, type ProgressDeps, type Timers } from './store';
 export { clockTime, PRIVACY_TEXT, reconcileText, STATUS_TEXT, UNREADABLE_TEXT, writeRefusal } from './text';
 
 export const name = 'progress';

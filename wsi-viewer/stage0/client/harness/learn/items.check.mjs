@@ -244,7 +244,7 @@ export async function run(ctx) {
         const g = await text(page, `${CARD('q-region')} .learn-item__gate-status`);
         const hud = await page.evaluate(() => window.__learn.host().gate);
         ok(g === X.gateBestP7, `ITM-8: a mark at P7, then the deposit at 20×: "${g}" (the finest view over the mark, not the deposit)`);
-        ok(typeof hud === 'string' && hud.startsWith('Zoom gate · now 20× · need ≥ 20×'), `HUD gate chip while unmet: "${hud}"`);
+        ok(hud === 'Zoom gate · 20× · not over your mark yet', `HUD gate chip while unmet at 20× with the mark out of view (review fix: no "now 20× · need ≥ 20×"): "${hud}"`);
       }
       ok(geojsonRequests(reqs) === 0, 'ITM-8: still no request for the reference layer');
 
@@ -296,6 +296,22 @@ export async function run(ctx) {
         ok((await ctaText(page))?.startsWith('Next step') === true, `revealed: the CTA reads "${await ctaText(page)}"`);
       }
       await H.axe(page, check, TAG, 'axe: region item revealed (1440)');
+      // review fix (2026-11-08): the reveal hands the slide back to Select, and a mark made after it is not kept
+      {
+        const tool = await page.evaluate(() => window.__shell.tool());
+        ok(tool === 'select', `ITM-12: after reveal the active tool is Select (${tool})`);
+        await clickWorld(page, CASE.C[0] + 200, CASE.C[1] + 200);
+        await page.evaluate(() => window.__shell.setTool('point'));
+        await clickWorld(page, CASE.C[0] + 300, CASE.C[1] + 300);
+        await clickWorld(page, CASE.C[0] + 400, CASE.C[1] + 300);
+        await page.waitForTimeout(500);
+        const ms = await marks(page);
+        ok(ms.length === 0, `ITM-12: clicks on the slide after reveal leave the store empty, even with Point chosen again (${ms.length})`);
+        ok(await said(page, 'polite', 'Marks are kept only while a region question is open, so that mark was not kept.'), 'ITM-12: and the polite region says why, naming no class (D17)');
+        const notices = await page.evaluate(() => window.__learn.tools.items().said.polite.join(' | '));
+        ok(!/Stroma/.test(notices), `ITM-12: no sentence of items names the class (${notices.slice(-160)})`);
+        await page.evaluate(() => window.__shell.setTool('select'));
+      }
 
       // ---------------------------------------------------------------- ITM-1 MCQ by keyboard
       ok(await toStep(page, S.sinus), 'setup: N reaches step 5, q-sinus');
@@ -475,7 +491,7 @@ export async function run(ctx) {
       const still = await page.evaluate(() => document.querySelector('#candBody input[value="C"]')?.checked === true && !document.getElementById('candPanel').hidden);
       ok(Math.abs(cam.center_um[0] - CASE.C_view.center_um[0]) < 1 && Math.abs(cam.center_um[1] - CASE.C_view.center_um[1]) < 1 && Math.abs(Math.log2(cam.scale_um_per_px / 0.5)) < 0.01, `ITM-5: Fly there puts the camera at 20× over C (${cam.center_um.map((v) => v.toFixed(1)).join(', ')} µm at ${cam.scale_um_per_px.toFixed(3)} µm/px)`);
       ok(still, 'ITM-5: the radio is still C and the panel stays open beside the slide');
-      ok(await said(page, 'polite', 'Flying to region C, Centre: sheets of large, pale cells with abundant pink cytoplasm, at 20 times.'), 'ITM-5: says "Flying to region C, …, at 20 times."');
+      ok(await said(page, 'polite', 'Flying to region C, Centre of the region, at 20 times.'), 'ITM-5: says "Flying to region C, …, at 20 times."');
       let reachedCommit = false;
       for (let i = 0; i < 12 && !reachedCommit; i++) {
         await page.keyboard.press('Tab');

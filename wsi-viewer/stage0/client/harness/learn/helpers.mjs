@@ -5,6 +5,23 @@
 //
 // Functions handed to page.addInitScript / page.evaluate are serialised: they must not close over anything here.
 export * from '../tools/helpers.mjs';
+import { readFileSync as readAxe } from 'node:fs';
+import { axe as phaseAAxe, axeSourcePath } from '../tools/helpers.mjs';
+
+let axeSrc;
+/**
+ * axe-core under learn.html's CSP (review fix 2026-11-08, D22: `script-src 'self'`): the Phase A helper injects axe with
+ * page.addScriptTag({content}), an inline script the policy refuses. Here it is evaluated through the DevTools
+ * protocol first (not subject to the page's CSP), so the Phase A helper finds window.axe and only runs it.
+ */
+export async function axe(page, check, tag, what) {
+  if (axeSrc === undefined) {
+    const p = axeSourcePath();
+    axeSrc = p === null ? null : readAxe(p, 'utf8');
+  }
+  if (axeSrc !== null && !(await page.evaluate(() => typeof window.axe !== 'undefined'))) await page.evaluate(axeSrc);
+  return phaseAAxe(page, check, tag, what);
+}
 
 /** `http://127.0.0.1:<port>/client/dist/learn.html?label=learn-check` plus `query` (string or record) and `hash`. */
 export function learnUrl(port, query = {}, hash = '') {
@@ -37,7 +54,7 @@ export const LEARN_LABEL = 'For educational use. Not a medical device. Contains 
 export const LEARN_BADGE_ARIA = 'Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About';
 export const RUO_PRODUCT = 'Stoipath Viewer (RUO)';
 export const RUO_LABEL = 'For Research Use Only';
-export const CSP = "connect-src 'self'; form-action 'none'; base-uri 'self'";
+export const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'self'";
 
 /**
  * Init script (LI-5): records every attempt to send data out of the page: navigator.sendBeacon, new WebSocket, fetch

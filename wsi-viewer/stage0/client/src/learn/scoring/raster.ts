@@ -300,10 +300,14 @@ export function cellSize(box: Box | null, maxCells: number = DEFAULT_MAX_CELLS):
   return Math.max(side / cells, MIN_CELL_PX);
 }
 
-/** Rasterise the regions on the §6.3.3 grid and count cell centres. */
-export function rasterCounts(regions: RasterRegions, maxCells: number = DEFAULT_MAX_CELLS): RasterCounts {
+/**
+ * Rasterise the regions on the §6.3.3 grid and count cell centres. `gridBox` (review fix 2026-11-08) replaces the
+ * grid's box: region.ts passes the mark's own bbox for a mark too small for the shared grid, so the mark, the
+ * intersection, `inside` and `related` are counted finely; `target` then counts only the part of T in that box.
+ */
+export function rasterCounts(regions: RasterRegions, maxCells: number = DEFAULT_MAX_CELLS, gridBox: Box | null = null): RasterCounts {
   const markBox = boundsOf(regions.mark);
-  const box = unionBox(markBox, boundsOf(regions.include));
+  const box = gridBox ?? unionBox(markBox, boundsOf(regions.include));
   const cell = cellSize(box, maxCells);
   const relatedSets = regions.related ?? [];
   const out: RasterCounts = {

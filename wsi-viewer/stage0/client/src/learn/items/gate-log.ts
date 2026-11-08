@@ -8,7 +8,8 @@
  *
  * Sharpness: an entry is `sharp` when the shell's Sharp state holds at that settle; otherwise it is HELD until a
  * `tileSettled {sharp: true}` arrives with no camera movement in between, and movement drops it to `sharp: false`
- * (kept, so the log still shows what was looked at). The log keeps its newest 500 entries.
+ * (kept, so the log still shows what was looked at). The log keeps 500 entries, evicting first the oldest that could
+ * not meet the gate (appendView).
  *
  * Pure: no DOM, no bus, no clock (the caller passes `t`). The engine (machine.ts) feeds it from the shell bus; the
  * viewChanged hook only flips a boolean here (O(1), TOOLS.md §5.4).
@@ -36,10 +37,23 @@ export function viewRect(center_um: readonly [number, number], scale_um_per_px: 
   return { minX: r2(cx - hw), minY: r2(cy - hh), maxX: r2(cx + hw), maxY: r2(cy + hh) };
 }
 
-/** Append one entry and keep the newest `cap` (a new array; the caller saves it). */
-export function appendView(views: readonly ViewLogEntry[], entry: ViewLogEntry, cap = VIEW_CAP): ViewLogEntry[] {
+/**
+ * Append one entry and keep at most `cap` (a new array; the caller saves it). Review fix (2026-11-08): over the cap,
+ * the oldest entry that could NOT meet the gate (not sharp, or coarser than `gateScale` × 1.01) goes first, so a
+ * learner who pans a lot after viewing the mark at 20× keeps the entries that earned the gate; only when every entry
+ * could meet it does the oldest go. Without a gate scale the oldest goes (the old rule).
+ */
+export function appendView(views: readonly ViewLogEntry[], entry: ViewLogEntry, cap = VIEW_CAP, gateScale: number | null = null): ViewLogEntry[] {
   const out = [...views, entry];
-  return out.length > cap ? out.slice(out.length - cap) : out;
+  while (out.length > cap) {
+    let i = 0;
+    if (gateScale !== null) {
+      const j = out.findIndex((v) => !(v.sharp && v.scale_um_per_px <= gateScale * 1.01));
+      if (j >= 0) i = j;
+    }
+    out.splice(i, 1);
+  }
+  return out;
 }
 
 /**

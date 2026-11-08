@@ -145,7 +145,7 @@ export default async function (t) {
     t.eq([p5s.feedback, p5.title, p5.lines[0], p5.said], ['correct-related', 'Revealed · on a tumour focus · 1 / 1', rel, 'Revealed. Your point is on a tumour focus. 1 of 1.'], 'P5 rule (a): "on a tumour focus" and the related sentence that names the largest deposit');
     t.eq(p5.calibration, 'You said Certain and were right.', 'calibration: "You said {confidence} and were right."');
     const p6 = I.regionFeedback(REGION, sc([7369.7, 3457.1]), null, 'unsure');
-    t.eq([p6.title, p6.lines[0], p6.calibration], ['Revealed · in an excluded area · 0 / 1', 'Your point is inside an area the expert excluded from the outline (Exclusion: non-tumour tissue within the deposit), so it does not count.', 'You said Unsure and were wrong.'], 'P6 in an Exclusion: no credit, the expert excluded that area (owner default)');
+    t.eq([p6.title, p6.lines[0], p6.calibration], ['Revealed · in an excluded area · 0 / 1', 'Your point is inside an area the expert excluded from the outline (Exclusion: a non-tumour area such as a vessel lumen or space, which the dataset leaves out of the tumour outline), so it does not count.', 'You said Unsure and were wrong.'], 'P6 in an Exclusion: no credit, the expert excluded that area (owner default)');
     const r1 = rect(1174.7, 1533.8, 11911.6, 10674.5);
     const r1s = S.scoreRegion(REGION, KEY, { kind: 'mark', mark: { kind: 'rect', geometry: r1 } }, [{ t: 1, rect: { minX: 0, minY: 0, maxX: 15360, maxY: 15360 }, scale_um_per_px: 19, sharp: true }], MPP);
     const r1f = I.regionFeedback(REGION, r1s, null, null);

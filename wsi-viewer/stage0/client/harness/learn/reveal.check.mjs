@@ -43,7 +43,7 @@ const WAIT_START = 'Reveal is waiting for sharp pixels.';
 const WAIT_PART = 'tiles in view have not settled (retrying). The key is only scored against the pixels you could actually see.';
 const NOW_SENTENCE = 'Pixels in view are still not sharp; the answer key will be drawn over a softer view.';
 const CANDIDATES = { A: [9300, 1000], B: [13088, 13088], C: [7168, 5120], D: [6400, 13900] };
-const C_DESC = 'Centre: sheets of large, pale cells with abundant pink cytoplasm';
+const C_DESC = 'Centre of the region'; // review fixes 2026-11-08: positional descriptions
 
 /** Init script: every text the assertive region announced (the integrator rewrites it per call). */
 const ASSERTIVE_LOG = () => {
@@ -322,7 +322,10 @@ export async function run(ctx) {
     await gotoItem(page);
     await focusCanvas(page);
     await page.keyboard.press('Shift+E');
-    await page.waitForTimeout(600);
+    // the strip is written at rest; under load that can take longer than a fixed 600 ms (one FAIL in the review-fix
+    // gate read "" there; three reruns passed), so wait for the sentence up to 3 s, then read it
+    await page.waitForFunction((t) => window.__shell.notice() === t, EXPERT_LOCKED, { timeout: 3000, polling: 50 }).catch(() => null);
+    await page.waitForTimeout(300);
     const refusal = await page.evaluate(() => window.__shell.notice());
     const ev0 = (await bus(page)).filter((e) => e.name === 'expertViewChanged');
     check(TAG, refusal === EXPERT_LOCKED && ev0.length === 0, `RVL-4: ⇧E before reveal says "${refusal}" and changes nothing (${ev0.length} expertViewChanged)`);

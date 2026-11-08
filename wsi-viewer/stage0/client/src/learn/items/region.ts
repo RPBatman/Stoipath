@@ -150,6 +150,11 @@ export class RegionCard implements CardView {
     const r = e.response(id);
     const l = e.live(id);
     if (this.root.dataset['state'] !== st) this.root.dataset['state'] = st;
+    const busy = e.isKeyLoading(id);
+    if ((this.root.getAttribute('aria-busy') === 'true') !== busy) {
+      if (busy) this.root.setAttribute('aria-busy', 'true');
+      else this.root.removeAttribute('aria-busy');
+    }
     this.renderKeys();
     // gatebox (§6.4): over the learner's own mark, never the key
     if (this.gatebox !== null && this.gateGlyph !== null && this.gateStatus !== null) {
@@ -186,7 +191,7 @@ export class RegionCard implements CardView {
   private renderWarning(): void {
     const g = this.item.gate;
     if (g === null) return;
-    const [a, b] = TEXT.gateWarn(g.label);
+    const a = TEXT.gateWarn(g.label);
     const view = h('button', { class: 'btn btn--sm btn--secondary', type: 'button', text: TEXT.viewMyMark(g.label) });
     view.addEventListener('click', (ev) => this.engine.viewMark(this.item.id, sourceOfEvent(ev)));
     const anyway = h('button', { class: 'btn btn--sm btn--secondary', type: 'button', text: TEXT.commitAnyway });
@@ -198,7 +203,7 @@ export class RegionCard implements CardView {
         'div',
         { class: 'alert alert--neutral' },
         h('span', { class: 'alert__glyph', 'aria-hidden': 'true', text: '!' }),
-        h('div', { class: 'stack stack--tight' }, h('div', {}, a, ...keycaps(this.engine.keys('mag:20', ['5'])), b), h('div', { class: 'learn-item__warn-actions' }, view, anyway)),
+        h('div', { class: 'stack stack--tight' }, h('div', { text: a }), h('div', { class: 'learn-item__warn-actions' }, view, anyway)),
       ),
     );
   }
@@ -238,8 +243,10 @@ export class RegionCard implements CardView {
     const spec = e.file()?.answerKeys?.find((k) => k.id === this.item.key);
     const label = l.key?.label ?? spec?.label ?? '';
     const area = t === null ? null : formatArea(t.area_um2);
-    const expert = e.file()?.case?.expertView !== undefined && e.shell.commands.get('expert:toggle') !== undefined;
-    const key = `${revealed}|${label}|${area}|${l.keyShown}|${expert}`;
+    const ev = e.file()?.case?.expertView;
+    const expert = ev !== undefined && e.shell.commands.get('expert:toggle') !== undefined;
+    const expertOn = expert && e.revealer()?.expertOn === true;
+    const key = `${revealed}|${label}|${area}|${l.keyShown}|${expert}|${expertOn}`;
     if (key === this.afterKey) return;
     this.afterKey = key;
     hide(this.after, !revealed);
@@ -252,9 +259,11 @@ export class RegionCard implements CardView {
     toggle.addEventListener('click', () => e.toggleKey(id));
     const rows: HTMLElement[] = [h('div', { class: 'mark-row learn-item__key' }, h('span', { class: 'swatch swatch--outline swatch--lg learn-swatch--key', 'aria-hidden': 'true' }), h('span', { class: 'flex-1' }, a, h('span', { class: 'text-secondary', text: b })), toggle)];
     if (expert) {
-      const btn = h('button', { class: 'btn btn--secondary btn--block learn-item__expert', type: 'button' }, TEXT.expert, ' ', ...keycaps([e.keys('expert:toggle', ['⇧', 'E']).join('')]));
-      btn.addEventListener('click', (ev) => e.shell.commands.run('expert:toggle', sourceOfEvent(ev)));
+      const btn = h('button', { class: 'btn btn--secondary btn--block learn-item__expert', type: 'button', 'aria-pressed': String(expertOn) }, TEXT.expert, ' ', ...keycaps([e.keys('expert:toggle', ['⇧', 'E']).join('')]));
+      btn.addEventListener('click', (x) => e.shell.commands.run('expert:toggle', sourceOfEvent(x)));
       rows.push(btn);
+      // review fix (2026-11-08): what the expert's view shows, on screen while it is on, with a legend in words
+      if (expertOn && ev !== undefined) rows.push(h('div', { class: 'learn-item__expert-note text-sm', 'data-expert-note': '' }, h('p', { text: ev.text }), h('p', { class: 'text-secondary', text: TEXT.expertLegend })));
     }
     this.after.replaceChildren(...rows);
   }

@@ -94,4 +94,5 @@ export const FETCH_TEXT = Object.freeze({
   notJson: 'the file is not JSON',
   notLayer: 'the file is not a vector layer',
   network: 'the network request failed',
+  timeout: (ms: number) => `no answer within ${Math.round(ms / 1000)} s`, // review fix 2026-11-08
 });

@@ -404,7 +404,10 @@ export interface Candidate {
   view: ViewPoint;
 }
 
-/** Structured text answer (ux-copy §13.5 "Answer in text"), recorded as `modality: text`, never discounted. */
+/**
+ * Structured text answer (ux-copy §13.5 "Answer in text"), recorded as `modality: text`. It is not discounted for its
+ * modality (NFR-A5); the zoom gate applies to it as to every answer, checked against the key target at reveal.
+ */
 export interface TextRubric {
   /** ≥ 1. */
   fields: RubricField[];
@@ -1049,7 +1052,8 @@ export interface PrimaryAction {
 
 export type CommitResult = { ok: true } | { ok: false; reason: 'no-answer' | 'gate-warning' | 'not-awaiting'; text: string };
 
-export type RevealOutcome = { ok: true; score: ItemScore } | { ok: false; reason: 'not-committed' | 'waiting' | 'key-unavailable' | 'cancelled'; text: string };
+/** Additive (review fixes, 2026-11-08): `loading` = a reveal of this item is already fetching its answer key. */
+export type RevealOutcome = { ok: true; score: ItemScore } | { ok: false; reason: 'not-committed' | 'waiting' | 'loading' | 'key-unavailable' | 'cancelled'; text: string };
 
 /** The item engine (provided by `items`). */
 export interface ItemsService {
@@ -1080,9 +1084,16 @@ export interface LearnOverlayTokens {
 
 /**
  * Where reveal reads the open module and the answers when no `player` is installed (the studio's key preview,
- * LEARN.md §7 step 4). Additive (Wave L2 integrator, LEARN-QUESTIONS A-R-Q1); implemented by reveal in Wave L3.
+ * LEARN.md §7 step 4). Additive (Wave L2 integrator, LEARN-QUESTIONS A-R-Q1). Not yet implemented by reveal: no
+ * reveal builder ran in Wave L3, so it is carried to reveal's next change (LEARN-QUESTIONS 2026-11-08 A-IE-Q2).
  */
 export interface RevealContext {
+  /**
+   * The open draft as a LoadedModule (`url: draft:<id>`). It changes while the author edits (a new object per change,
+   * its `contentHash` re-computed shortly after; LEARN-QUESTIONS STU-N2): reveal reads it again on every `key()` and
+   * `showItem()` call and keys its compiled-key cache by `contentHash`, and when `module().file` is a different object
+   * from the one the hash was computed for, it treats the cache entry as stale (A-STU-N2).
+   */
   module(): LoadedModule | null;
   /** null: no learner answers (the studio): `showItem` then draws the item's key as soon as it is compiled. */
   progress(): ModuleProgress | null;
@@ -1119,7 +1130,8 @@ export interface RevealService {
   toggleHidden(source: CommandSource): boolean;
   readonly hidden: boolean;
   /**
-   * Additive (Wave L2 integrator, A-R-Q1; optional until reveal implements it at the start of Wave L3, then required):
+   * Additive (Wave L2 integrator, A-R-Q1; optional until reveal implements it, then required; not implemented in
+   * Wave L3, see RevealContext):
    * the studio attaches its draft (url `draft:<id>`) so `key()` and `showItem()` work without a `player`; the player's
    * module is used otherwise. The disposer detaches it.
    */
@@ -1242,8 +1254,12 @@ export interface TopBarHost {
 }
 
 export interface LearnHudHost {
-  /** The zoom-gate chip in `.hud` (ux-copy `hud.gate`), written at rest; null hides it. */
-  setGate(text: string | null): void;
+  /**
+   * The zoom-gate chip in `.hud` (ux-copy `hud.gate`), written at rest; null hides it. Additive (review fixes,
+   * 2026-11-08): `withKey` false leaves out the 20× preset's keycap (default true), for a chip that says what is
+   * missing at the gate's magnification already.
+   */
+  setGate(text: string | null, withKey?: boolean): void;
 }
 
 export type LearnDialogId = 'candidates' | 'keymap' | 'about';
@@ -1271,8 +1287,13 @@ export type LearnPlate =
   | { kind: 'course-failed'; reason: string }
   | { kind: 'module-failed'; title: string; reason: string }
   | { kind: 'fingerprint'; title: string; slide: string }
-  /** The integrator's own: this build has no course player (learner, preview) or no author studio (studio) installed. */
-  | { kind: 'empty'; what: 'course' | 'studio' };
+  /**
+   * The integrator's own: this build has no course player (learner, preview) or no author studio (studio) installed;
+   * `studio-slide` (additive, Wave L3 integrator, LEARN-QUESTIONS STU-Q2): the studio is installed but no slide is
+   * open yet (`No slide open` · `Open a draft, or add a slide in Collect.`); the integrator shows it and clears it at
+   * the next `slideOpened`, so the studio never needs to.
+   */
+  | { kind: 'empty'; what: 'course' | 'studio' | 'studio-slide' };
 
 /**
  * Focus-scoped keys (LEARN.md §9): while focus is inside `el`, `handler` sees keydown before the registry; true =

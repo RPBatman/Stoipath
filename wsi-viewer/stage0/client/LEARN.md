@@ -1,6 +1,6 @@
 # Stoipath Learn · L1: build specification
 
-**Status:** specification for builders, 2026-11-04. **Wave L2 (2026-11-05):** the learner flow runs end to end on the real case: reveal, items, player, course and content are wired into `learn.html` through `src/learn/main.ts` (the module glob and the host conventions of LEARN-QUESTIONS.md needed no change), the contract requests of the five builders are answered (LEARN-QUESTIONS.md, 2026-11-05 section; contract stays 1), `harness/learn/integrator.check.mjs` now runs LI-6 … LI-10 in full on the case, and the exit gate (PLY-*, ITM-*, RVL-*, CRS-*, PRG-2 … 5, CNT-1 … 4, LI-6 … 10) is green on one `npm run build` together with the Phase A gates (§13, §15.2b J-I22; the one borderline line, the overlay p95 of the 1920 × 1080 wheel burst with every Learn source drawn, is disclosed in J-I20). Wave L3 (studio, item-editor) has not started. **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
+**Status:** specification for builders, 2026-11-04. **Wave L2 (2026-11-05):** the learner flow runs end to end on the real case: reveal, items, player, course and content are wired into `learn.html` through `src/learn/main.ts` (the module glob and the host conventions of LEARN-QUESTIONS.md needed no change), the contract requests of the five builders are answered (LEARN-QUESTIONS.md, 2026-11-05 section; contract stays 1), `harness/learn/integrator.check.mjs` now runs LI-6 … LI-10 in full on the case, and the exit gate (PLY-*, ITM-*, RVL-*, CRS-*, PRG-2 … 5, CNT-1 … 4, LI-6 … 10) is green on one `npm run build` together with the Phase A gates (§13, §15.2b J-I22; the one borderline line, the overlay p95 of the 1920 × 1080 wheel burst with every Learn source drawn, is disclosed in J-I20). **Wave L3 (2026-11-08):** the author studio and the item editor are wired into `learn.html?studio=1` (the module glob and `STUDIO_ORDER` needed no change); their contract notes are answered (LEARN-QUESTIONS.md, 2026-11-08 section; contract stays 1); STU-1 … STU-7, IED-1 … IED-4 and LI-8's studio states pass on one `npm run build` together with every earlier Learn check and the Phase A gates (§13, §15.2c J-I27). One piece is carried: reveal's `attach` (A-R-Q1), so the studio's `Show the answer key` refuses honestly until reveal implements it (J-I25). **Wave L4 (2026-11-08):** the final gate is green on one `npm run build`: every LI and module check, and the Phase A gates (run.mjs + check-metrics, shell-check, tools-check, unit, python), with the design system's layout-check rules (LI-7) and axe-core WCAG 2.2 AA in the Learn states (LI-8) (§15.2d J-I32). The 28 reviewed screenshots are in `design/screens/integrated/shots/learn-*.jpg` (J-I30). The deploy list is [`DEPLOY-LEARN-L1.md`](DEPLOY-LEARN-L1.md). Reviewing the screenshots found two integrator defects on the bottom sheets, both fixed before the final build. The first leaked the answer on tablets: the tour's 20× lymphoid view landed on the deposit (J-I28). The second cut off the current stage in the phone flow bar (J-I29). Reveal's `attach` is still carried (J-I25). Every owner default stays pending (§15.1). **Review fixes (2026-11-08):** the 24 issues of the engine and pathologist-educator / accessibility reviews are applied, among them the draft chip under the candidates panel, two-tab progress merging, a CSP that blocks every other origin, positional candidate descriptions, the conservative "small tumour areas" wording and a landscape-phone layout; the gate is green again on one `npm run build` (§15.2e, with the list and the numbers). The changed clinical sentences are flagged in §12 for the owner; the case stays `draft`. **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
 
 **Why:** on 2026-11-04 the owner wrote: *"Lets start on the learning components/modules builds."* Education is one of the project's three pillars (plan 12 §5). L1 is the first usable slice of **Stoipath Learn**: a module format, a learner player, the signature region-marking item, a course shell, a minimal author studio and one real case on CAMELYON16 tumor_014.
 
@@ -36,7 +36,7 @@ Not needed first: LTI, telemetry, the Rust engine, any server. L1 is static file
 |---|---|---|---|
 | D1 | **A separate page `learn.html` with its own Vite entry `src/learn/main.ts`.** It has the `LEARN` badge and the Learn label string. The product is compiled into the entry (`product: 'learn'`). | Design About: "separate build per product (never a runtime flag)". The research shell and measurement page keep their chunk graphs (LI-1). | A runtime `?product=learn` flag in `shell.html`: it blurs the product boundary FR-R0 draws at the build artefact. |
 | D2 | **Learn installs these Phase A modules: geometry, interop, annotations, draw-tools.** It also provides the `catalogue` service by constructing `LibraryCatalogue` (`src/shell/library/catalogue.ts`) in the integrator. | Point / Polygon / Brush / Measure marks, undo, persistence and GeoJSON import already exist and are tested. Learn reuses them through `ShellApi`, as a module would. | Learn's own drawing tools: a copy of draw-tools. |
-| D3 | **Three modes on one page.** `learn.html` is the learner. `learn.html?studio=1` is the author studio. `learn.html?preview=<draftId>`, opened by the studio in a new tab, is a learner view of a draft. Each mode has its own storage namespace (D5). The preview database is deleted at start and reads the draft read-only from the studio database (`LearnHost.draftStorage`). | Author ink (keys, hotspots drawn as annotations) lives in the studio's annotation store, which the annotations module draws on every slide open. Only a separate store guarantees that a learner, or a preview, never sees it. | In-page preview: the studio's ink would be drawn over the slide during preview, which leaks the key. |
+| D3 | **Three modes on one page.** `learn.html` is the learner. `learn.html?studio=1` is the author studio. `learn.html?preview=<draftId>`, opened by the studio in a new tab, is a learner view of a draft. Each mode has its own storage namespace (D5). The preview database is emptied at start (its object stores are cleared through the page's own connection; review fix 2026-11-08, §15.2e: deleting it closed an earlier preview tab's connection) and reads the draft read-only from the studio database (`LearnHost.draftStorage`). | Author ink (keys, hotspots drawn as annotations) lives in the studio's annotation store, which the annotations module draws on every slide open. Only a separate store guarantees that a learner, or a preview, never sees it. | In-page preview: the studio's ink would be drawn over the slide during preview, which leaks the key. |
 | D4 | **Learn does not install the Phase A layers module, the library UI, compare or share.** | **layers** shows the CAMELYON16 expert outline by default on tumor_014 (TOOLS.md §6.7): the answer, before the question. **library** brings the research Cohort/Slides tray, `]`/`[` through the catalogue and "Open a manifest URL". **compare** has no paired H&E/IHC in the public set. **share** burns the RUO string into every snapshot (`share/burn-in.ts`). | Installing layers and hiding the expert layer on `slideOpened`: it is fetched and drawn at once (`defaultVisible`), which is a race that leaks. |
 | D5 | **Storage.** The learner uses IndexedDB `stoipath-learn` and prefs `stoipath.learn.v1.`. The studio uses `stoipath-learn-studio` and `stoipath.learn-studio.v1.`. The preview uses `stoipath-learn-preview` and `stoipath.learn-preview.v1.`. All go through core's `KeyValueStore` once L0 lands. Progress sits in core's `session` store under `learn.progress/<moduleId>` and `learn.course/<courseId>`; drafts under `learn.draft/<id>` and `learn.drafts`. | This reuses core's store with its caps and failure handling, so a new store would be a copy of `core/storage.ts`. Separate databases keep research and Learn data apart on the shared `rpbatman.github.io` origin (TOOLS.md §15 Q8). | The shared `stoipath-shell` database: mixes data and leaks answers (§1). A Learn-only IndexedDB wrapper: a copy. |
 | D6 | **Content lives in `stage0/data/learn/`:** `courses/*.course.json`, `modules/*.module.json` and `modules/*.facts.json`. URLs resolve against the catalogue URL (`catalogue.resolve('learn/courses/stage0-l1.course.json')`). The schema stays in `client/learn/schema/`. | This is the catalogue's own rule (TOOLS.md D12). One relative path works in `vite dev`, the local build (serve.mjs) and Pages, and `data/` is already deployed and tracked. | `client/learn/modules/`: a different relative path in dev and build, and not deployed. Bundling modules into JS: "publishing = committing a module file" would then need a rebuild. |
@@ -55,7 +55,7 @@ Not needed first: LTI, telemetry, the Rust engine, any server. L1 is static file
 | D19 | **There is no audio in L1.** "Play tour" (Space) auto-advances tour steps after a dwell (default 5 s + 60 ms per character of text, at most 30 s; `dwellMs` overrides it). It is off by default, pauses on any learner input on the slide, and stops before an item or reveal step. | WCAG 2.2.1 and 2.2.2: moving content must be pausable and is better not started automatically. ux-copy's "Play narration" would promise audio that does not exist. | Autoplay on: fights the learner's own navigation. |
 | D20 | **The Learn integrator's command registry filters Phase A registrations per mode.** It wraps `palette.ts`'s `Registry`. In learner and preview mode it drops `class:*` (Q, Q+digits), `import:geojson`, `export:geojson` and `tool:area` (⇧M, whose refusal names the Annotations list learners never see; §15.2 J-I3). The studio keeps all of them. | No Learn keymap row exists for them, and a class menu without markup would open nothing. The filter is integrator code, so no Phase A module changes. | Leaving `Q` live: a key that does nothing visible. |
 | D21 | **Module text may contain `{cmd:<commandId>}`**, rendered as the command's keycaps from the registry and spoken as "shortcut …". | ux-copy tone rule 7: shortcuts are rendered from the registry, never typed into a sentence. The orientation module needs to name keys. | Key names in text: drift when bindings change. |
-| D22 | **`learn.html` carries `<meta http-equiv="Content-Security-Policy" content="connect-src 'self'; form-action 'none'; base-uri 'self'">`.** LI-5 asserts that every request is a same-origin GET. | "No data leaves the browser" is then enforced by the browser, not only promised. Tiles, the catalogue, modules and overlays are all same-origin. | A promise in About only. |
+| D22 | **`learn.html` carries `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'self'">`** (review fix 2026-11-08: the policy used to name `connect-src` only, so images, scripts, frames and prefetches to other origins were not blocked; §15.2e). LI-5 asserts that every request is a same-origin GET and that a cross-origin fetch, image, script, frame and stylesheet each fire `securitypolicyviolation`. | "No data leaves the browser" is then enforced by the browser, not only promised. Tiles, the catalogue, modules and overlays are all same-origin. | A promise in About only. |
 | D23 | **The course has a second, non-clinical module:** "Using the slide viewer" on CMU-1-Small-Region. Owner default (2026-11-04, pending): it is the course's **second** entry, after the case (Appendix B; §15.1, §15.2 J-I6). | The course shell's ordering, completion and next-module flow need ≥ 2 real entries, and an orientation tour suits every audience. It contains no clinical claims. | Fixtures only: the deployed course would be a list of one. |
 | D24 | **Tests.** `harness/learn-check.mjs` (integrator) runs `harness/learn/<module>.check.mjs`. `harness/unit.mjs` already finds `harness/unit/learn-<module>.test.mjs`. `stage0/tools/tests/test_learn_schema.py` validates every `data/learn` file with `jsonschema` 4.26 (installed). | Exclusive ownership extends to tests, as in TOOLS.md D20, and no new dependency is added. | Extending tools-check: that file is the Phase A integrator's. |
 | D25 | **Answers are not secret in L1.** The module file and the overlay file are public static files. The key layer is only *fetched* at reveal, and nothing on screen shows it before reveal (ITM-8). Owner default (2026-11-04, pending): answers readable in the public module and overlay files are acceptable for formative L1. | L1 is formative practice. Secure exam mode needs a server (FR-E8 exam mode, v1). | Obfuscation: fake security. |
@@ -120,8 +120,8 @@ Each Learn module lives in `src/learn/<module>/` and exports `name` and `install
 | **items** | feature | `src/learn/items/{index.ts, machine.ts, mcq.ts, multi.ts, region.ts, marks.ts, gate-log.ts, candidates.ts, rubric-form.ts, confidence.ts, feedback.ts, commands.ts, text.ts, items.css}`; `harness/unit/learn-items.test.mjs`; `harness/learn/items.check.mjs`; `harness/fixtures/learn/items/**` | `ItemsService` (`items`); commands `item:reveal` U, `item:alternatives` ⇧↵, `item:reopen` | scoring; reveal; player (`update`); shell annotations service, ToolHost, bus; host.dialogs / keys / hud |
 | **player** | feature | `src/learn/player/{index.ts, machine.ts, card.ts, open-card.ts, tour.ts, autoplay.ts, reveal-step.ts, summary.ts, rail.ts, fragment.ts, cmd-text.ts, commands.ts, text.ts, player.css}`; `harness/unit/learn-player.test.mjs`; `harness/learn/player.check.mjs` | `PlayerService` (`player`); commands `step:next` N, `step:prev` ⇧N, `tour:play` (Space by the host rule) | format; progress; items; reveal; course (`mountOutline`); shell views, state, commands |
 | **course** | feature | `src/learn/course/{index.ts, course.ts, outline.ts, routing.ts, text.ts, course.css}`; `harness/unit/learn-course.test.mjs` (added 2026-11-05, LEARN-QUESTIONS C-Q1); `harness/learn/course.check.mjs`; `harness/fixtures/learn/course/**` | `CourseService` (`course`) | format; progress; player; drafts (preview mode) |
-| **studio** | feature (studio mode) | `src/learn/studio/{index.ts, drafts-ui.ts, collect.ts, record.ts, edit.ts, publish.ts, io.ts, preview.ts, text.ts, studio.css}`; `harness/learn/studio.check.mjs` | — (renders the task card in studio mode); commands `studio:capture` ⇧N, `studio:stage:next` N | format; scoring; drafts; reveal; itemEditor; shell annotations service, catalogue, state |
-| **item-editor** | feature (studio mode) | `src/learn/item-editor/{index.ts, choice-editor.ts, region-editor.ts, key-editor.ts, candidates-editor.ts, rubric-editor.ts, text.ts, item-editor.css}`; `harness/learn/item-editor.check.mjs` | `ItemEditorService` (`itemEditor`) | scoring; reveal (key preview); format (lint rules for one item) |
+| **studio** | feature (studio mode) | `src/learn/studio/{index.ts, drafts-ui.ts, collect.ts, record.ts, edit.ts, publish.ts, io.ts, preview.ts, text.ts, studio.css}`; `harness/unit/learn-studio.test.mjs` (added 2026-11-08, LEARN-QUESTIONS STU-Q1); `harness/learn/studio.check.mjs` | — (renders the task card in studio mode); commands `studio:capture` ⇧N, `studio:stage:next` N | format; scoring; drafts; reveal; itemEditor; shell annotations service, catalogue, state |
+| **item-editor** | feature (studio mode) | `src/learn/item-editor/{index.ts, choice-editor.ts, region-editor.ts, key-editor.ts, candidates-editor.ts, rubric-editor.ts, text.ts, item-editor.css}`; `harness/unit/learn-item-editor.test.mjs` (added 2026-11-08, LEARN-QUESTIONS IE-Q1); `harness/learn/item-editor.check.mjs` | `ItemEditorService` (`itemEditor`) | scoring; reveal (key preview); format (lint rules for one item) |
 | **content** | data | `stage0/data/learn/courses/stage0-l1.course.json`; `stage0/data/learn/modules/{sln-find-metastasis.module.json, sln-find-metastasis.facts.json, viewer-orientation.module.json}`; `harness/unit/learn-content.test.mjs`; `harness/learn/content.check.mjs` | the first course and case (Appendix A, §12) | format + scoring (tests only) |
 
 ### 4.1 Shared files: Learn integrator only
@@ -279,11 +279,11 @@ Use design-system classes first. `base.css` already has `.item-card*`, `.option*
   - `Mark without a pointer ⇧↵`;
   - confidence (`How sure are you?` + the D18 hint; `Guessing` · `Unsure` · `Fairly sure` · `Certain`, a `role="radiogroup"` with roving focus; optional).
 
-  The HUD chip `Zoom gate · now {mag} · need ≥ 20× 5` shows while the item is awaiting and the gate is unmet; it is written at rest.
+  The HUD chip `Zoom gate · now {mag} · need ≥ 20× 5` shows while the item is awaiting and the gate is unmet; it is written at rest. At the gate's magnification already it reads `Zoom gate · place a mark first` (no mark) or `Zoom gate · {mag} · not over your mark yet`, without the keycap (review fix 2026-11-08: `now 20× · need ≥ 20×` contradicted itself).
 - **Mark capture** (`marks.ts`, D16). While a region item is awaiting and its slide is open, an `annotationCreated` with cause `edit` creates the mark. Its kind must be in `accept` (measurements are ignored).
   - It becomes `draftMarkId`; a previous mark annotation is removed with `store.remove([prev], 'command')`.
   - `markChanged` fires. The modality is `pointer` (inputDevice `mouse` / `pen` / `touch`) or `keyboard` (Enter at the crosshair).
-  - When the creation came from the keyboard, focus moves to the CTA and this is spoken: `Polygon closed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.` For a point: `Point placed. Commit answer has focus. …`.
+  - When the creation came from the keyboard, focus moves to the CTA and this is spoken: `Polygon closed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.` For a point: `Point placed. Commit answer has focus. …`. The first Esc on that action returns focus to the slide and keeps the mark, its selection and the tool (review fix, round 2, §15.2f).
 - **Commit.** With no answer: `Place a mark first. Draw with P, F or T, or press Shift Enter to mark without a pointer.`
   - **Gate warning:** with the gate unmet and not yet warned, the warning shows (§6.4) and `gateWarned` is set; the next commit proceeds.
   - **Copy:** a mark's geometry is copied into `answer`.
@@ -295,7 +295,7 @@ Use design-system classes first. `base.css` already has `.item-card*`, `.option*
   - **Keys:** arrows move between radios (native). `Fly there` flies to `candidate.view` without changing the radio and speaks `Flying to region {L}, {description}, at 20 times.`
   - **Commit:** `Commit {L} as my mark ↵` commits the candidate as the answer: modality `keyboard`, and inputDevice the device that pressed it.
   - **While open:** the panel sits beside the slide at ≥ 1080 px, so arrows on the slide still pan. On sheets (≤ 1079 px) it closes on Fly there, and `⇧↵` reopens it on the same region.
-  - **Text tab:** `Describe where the focus is…` with one field per rubric field (`<select>` for choice, `<input>` for keywords) and `Commit my text answer ↵`; modality `text`.
+  - **Text tab:** `Describe where it is. Scored against the author’s rubric. Full credit also needs a view of that area at 20× or more before you reveal.` (review fix 2026-11-08: it said `never discounted`, but the zoom gate halves an unviewed text answer too) with one field per rubric field (`<select>` for choice, `<input>` for keywords) and `Commit my text answer ↵`; modality `text`.
 - **Reveal.** `items.reveal()`:
   1. `reveal.revealable('A')`; if not sharp, `revealWaiting` (§6.5);
   2. `await reveal.key(item.key)`;
@@ -393,22 +393,25 @@ Corrections of 2026-11-04 (scoring): the draft placed P3 at the vertex (11908.5,
 3. **Areas:** a, b and i are the mark, target and intersection counts × cell². IoU = i / (a + b − i).
 4. **Speed:** use an active-edge table sorted by ymin. Budget ≤ 150 ms for the real key in Node (SCR-8). It runs at commit-lint and reveal, never in a frame. Measured 2026-11-04: `iou(R1)` takes 6 ms on the first call and 4 ms median in Node 22.22, and 5 ms in the headless Chromium of the harness; `compileKey` on the real key takes 5–26 ms.
 5. **Error:** the boundary-band bound is perimeter × cell / 2. For T (perimeter 14.8 mm) that is ≤ 0.6 % of its area; the measured gap was 0.0002 IoU.
+6. **Small marks** (review fix 2026-11-08): a mark that covers fewer than 256 cells of that grid is counted again on a grid of its own bbox (≤ 2048 cells across, ≥ 0.25 px), so an outline smaller than a cell is not empty: 1–4 px squares inside the deposit scored `wrong` while a 6 px one earned rule (b)'s half credit. |T| stays the shared grid's. An outline with no area at all is scored as the point at its bbox centre (SCR-2b).
 
 **6.3.4 Candidates.** A candidate answer is scored as a mark with the candidate's geometry, through the same function. `scoreRegion(item, key, {kind: 'candidate', candidate: 'C'})` therefore deep-equals the score of a drawn point at (7168, 5120), except for the answer field (SCR-6, AC-A4). For case 1: C is correct and A, B and D are wrong, at 522, 1,439 and 820 µm outside (D's 784 µm in the draft was a miscalculation, corrected 2026-11-04). None is within 50 µm of a small focus (the nearest is D, 862 µm away), so rule (a) changes none of them.
 
 **6.3.5 Text answers.** Each field is scored in turn:
 - a `choice` field is correct iff the chosen option is in `correct`;
-- a `keywords` field is correct iff any keyword occurs case-insensitively as a whole word or phrase (`\b…\b` on the normalised text).
+- a `keywords` field is correct iff any keyword occurs case-insensitively as a whole word or phrase (`\b…\b` on the normalised text), **not governed by a negation** (review fix 2026-11-08): an occurrence after `no`, `not`, `non(-)`, `without`, `never`, `absent`, `lack(s|ing)` or `nor`, with at most two words between and no punctuation, does not count (`non-cohesive`, `no large cells`).
 
-The answer is correct iff every `required` field is correct and at least `passMin` fields are correct. Case 1 needs position = centre, plus size = "> 2 mm" or a feature keyword. Examples:
+The answer is correct iff every `required` field is correct and at least `passMin` fields are correct. Case 1 needs position = centre, plus size = "> 2 mm" or a feature keyword. Since the review fixes of 2026-11-08 (pending owner) the feature keywords are discriminating morphology only: `cohesive`, `clusters`, `large cells`, `larger cells`, `pale cells`, `large nuclei`, `larger nuclei`, `nucleoli`, `more cytoplasm`, `abundant cytoplasm` (the stem's words `carcinoma`, `tumour`, `tumor`, `metastasis`, `metastatic` and the background's `sheet(s)` earned credit without describing anything). Size stays optional: the pointer path asks for a location only, and a required size would make the text path harder than the pointer path (NFR-A5). Examples:
 - {centre, > 2 mm, "cohesive sheets"} → correct;
 - {centre, 0.2–2 mm, "large pale cells"} → correct (2 of 3);
-- {lower edge, > 2 mm, "tumour"} → wrong (the required position is wrong).
+- {lower edge, > 2 mm, "tumour"} → wrong (the required position is wrong; `tumour` is not a keyword);
+- {centre, 0.2–2 mm, "no tumour seen, only lymphocytes"} → wrong (1 of 3; it used to pass);
+- {centre, 0.2–2 mm, "non-cohesive small cells"} → wrong (a negated keyword).
 
 ### 6.4 The zoom gate and the half-credit rule
 
 - **The view log** (`items/gate-log.ts`). On each `viewSettled` of view A while a region item is current, compute the uncovered viewport rectangle in level-0 px. Width = `(cssW − insetLeft − insetRight) × scale_um_per_px / mpp`; height = `cssH × scale / mpp`; the centre shifts by `(insetLeft − insetRight) / 2 × scale / mpp`. This is read at settle only.
-- **When a view counts as sharp.** If `host.sharpness('A').state` is `sharp` at that settle, the entry gets `sharp: true`. Otherwise it is held until a `tileSettled {sharp: true}` with no camera movement in between. Movement drops it: an unsharp entry is kept with `sharp: false`. Cap: 500 entries.
+- **When a view counts as sharp.** If `host.sharpness('A').state` is `sharp` at that settle, the entry gets `sharp: true`. Otherwise it is held until a `tileSettled {sharp: true}` with no camera movement in between. Movement drops it: an unsharp entry is kept with `sharp: false`. Cap: 500 entries; over the cap the oldest entry that could not meet the gate (not sharp, or coarser than the gate scale) goes first (review fix 2026-11-08). A settle whose camera move began before the item mounted is not logged (J-ITM2; LEARN-QUESTIONS I-N4).
 - **Met** iff some entry has `sharp: true`, `scale_um_per_px ≤ gate.scale_um_per_px × 1.01`, and a rect that intersects the subject. A point must lie in the rect. A polygon must have overlapping bboxes and either a vertex in the rect, the rect centre inside the polygon, or crossing edges.
 - **The subject** is the mark, or the candidate's geometry. For a text answer it is the target, evaluated at reveal only; the gatebox then reads `Checked when you reveal: view the area you describe at 20× or more.`
 - **Score.** Wrong → 0. Correct (`correct` or `correct-related`) with the gate met, or no gate → `points`. Correct with the gate unmet → `points × unmetFactor`: `0.5 / 1`, feedback `Correct region, but you never viewed it at 20×: half credit by the gate rule stated on the card.` (`FeedbackKind` `half-gate`; for a rule (a) point `ItemScore.related` still names the feature, so the card can add its sentence). Rule (b) partial → `points × partialInside.factor × gate factor`: 0.5 / 1 with the gate met, 0.25 / 1 without (both rules are on the card; §15.2 J-I5).
@@ -418,7 +421,7 @@ The answer is correct iff every `required` field is correct and at least `passMi
   - `Met · {mag} over your mark`.
 
   None of these depends on the key (ITM-8).
-- **Gate warning, on the first commit while unmet:** `You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or press 5 to jump to 20× first.` The `5` is a keycap. Two buttons follow: `View my mark at 20×` (flies to the mark's centroid at the gate scale) and `Commit anyway`.
+- **Gate warning, on the first commit while unmet:** `You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or choose View my mark at 20× first.` (review fix 2026-11-08: it said `press 5`, but the 20× preset zooms about the centre of the view, so a learner who followed it usually left the mark out of view; the candidates panel's twin says `…, or use Fly there on its row first.`) Two buttons follow: `View my mark at 20×` (flies to the mark's centroid at the gate scale) and `Commit anyway`.
 
 Worked example: P1 placed at fit (≈ 2.2×) and committed without zooming gives the warning, then a commit, then a reveal: 0.5 / 1. The same point, after `5` at the mark and a sharp settle, gives 1 / 1. Candidate C after `Fly there` (20× at C), sharp, gives 1 / 1.
 
@@ -434,7 +437,7 @@ Worked example: P1 placed at fit (≈ 2.2×) and committed without zooming gives
 
 ### 6.6 Scores and rounding
 
-Item scores round to 2 decimals; the total is their sum. `correct` is false for partial multi answers and for rule (b) outlines. A text answer is never discounted for modality: its gate is checked against the target (NFR-A5).
+Item scores round to 2 decimals; the total is their sum. `correct` is false for partial multi answers and for rule (b) outlines. A text answer is not discounted for its modality, and the zoom gate applies to it as to every answer: its gate is checked against the target (NFR-A5).
 
 ---
 
@@ -544,7 +547,7 @@ Strings come from ux-copy §13 and §14 verbatim where one exists. Deviations ar
   - `The course file could not be read ({reason}). Nothing was opened.`;
   - `{title} could not be opened ({reason}).`;
   - `{title} was written for a different build of {slide}; it was not opened.`
-- **Preview:** `Preview · progress is not kept` (persistent notice) **N**.
+- **Preview:** `Preview · progress is not kept` (persistent notice) **N**; it is also the preview's storage notice, and the preview's Open card note is `Preview: your answers are not kept.` (review fix 2026-11-08).
 - **Storage:** the L0 `unavailableText` **N**: `This browser does not allow saving here; your progress stays until you close the page. Export your results to keep them.`
 - **Reduced motion chip:** `hud.motion` `Reduced motion · fly-to jumps`. **Gate chip:** `hud.gate`.
 
@@ -559,7 +562,7 @@ ux-copy §13.1–§13.6 strings as quoted in §5 and §6, with these deviations:
 | `Case (synthetic teaching case · no PHI)` | kept for `synthetic: true`; `Case (public dataset · no PHI)` for `false` | D13 |
 | `(feeds your review queue, not your grade)` | `(recorded with your answer, not part of your score)` | D18 |
 | `Not met yet · highest magnification over the focus so far: {mag}` / `Met · {mag} over the focus` | `… over your mark …` | D7 |
-| `You have not viewed the focus at 20× yet. Commit now for half credit, or press 5 to jump to 20× first.` | `You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or press 5 to jump to 20× first.` | D7: no answer implied |
+| `You have not viewed the focus at 20× yet. Commit now for half credit, or press 5 to jump to 20× first.` | `You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or choose View my mark at 20× first.` | D7: no answer implied; names the button that flies to the mark (review fix 2026-11-08) |
 | `Answer saved. Press U to reveal. You can still change your mark and confidence until you reveal (Change answer, below); the answer key stays hidden (layer ACL revealOn(itemAnswered)).` | `… the answer key stays hidden until then.` | the ACL clause is internal jargon |
 | `Reveal is waiting for sharp pixels. 3 tiles under your mark have not settled…` | `… {n} tiles in view have not settled…` | D8 |
 | `You said {confidence} and were right: this item comes back in {n} days.` | `You said {confidence} and were {right\|wrong}.` | no spaced retrieval (FR-E6, v1) |
@@ -572,9 +575,9 @@ ux-copy §13.1–§13.6 strings as quoted in §5 and §6, with these deviations:
 - `Revealed · inside the outline · {score} / {points}`;
 - `Revealed · {d} µm from the outline · {score} / {points}`;
 - `Your point is inside the outline.` / `Your point is {d} µm from the outline; points within {t} µm count.`;
-- `Your point is inside an area the expert excluded from the outline (Exclusion: non-tumour tissue within the deposit), so it does not count.` (owner default: the feedback says the expert excluded that area);
+- `Your point is inside an area the expert excluded from the outline (Exclusion: a non-tumour area such as a vessel lumen or space, which the dataset leaves out of the tumour outline), so it does not count.` (review fix 2026-11-08, with F22; pending owner) (owner default: the feedback says the expert excluded that area);
 - rule (a): `Revealed · on a tumour focus · {score} / {points}`, then the related entry's sentence (it names the largest deposit);
-- rule (b): `Revealed · IoU {pct} % · {score} / {points}` and `Correct location; the outline covers only part of the deposit (IoU {iou}).`;
+- rule (b): `Revealed · IoU {pct} % · {score} / {points}` and `Correct location; the outline covers only part of the deposit (IoU {iou}).`; its assertive sentence ends `… {score} of {points}. Correct location; the outline covers only part of the deposit.` (review fix 2026-11-08);
 - the R3 outline sentence (§6.3.2);
 - the related feedback comes from the module.
 
@@ -620,13 +623,13 @@ These rules hold throughout: unmodified keys and Shift chords only; Ctrl/⌘ onl
 | `K` | `card:toggle` (integrator) | window | ✓ Task card show / hide | `K` Context panel | same meaning, Learn's dock |
 | `H` | `learn:overlays` (reveal) | window | ✓ Hide / show overlays | `overlays` (layers; not installed) | Learn sources only (§5.4) |
 | `A`–`H`, `1`–`8` | items key scope | focus in an item's options | ✓ "A–D, 1–3 Choose an option (item focused)" | `A`/`D` pan (WASD); `1`–`6` presets | consumed only inside the item form (`host.keys.scope`); elsewhere WASD and presets are unchanged |
-| `5` | `zoom:20` preset (integrator) | window | ✓ 20× | ✓ | unchanged; named in the gate warning |
+| `5` | `zoom:20` preset (integrator) | window | ✓ 20× | ✓ | unchanged; the HUD gate chip shows its keycap below the gate scale (the gate warning names `View my mark at 20×` instead, review fix 2026-11-08) |
 | `V` `T` `X` `E` `P` `F` `M` | `tool:*` (draw-tools) | window | V P F T M ✓; X, E not listed | ✓ | unchanged; the rail shows only the step's tools; X and E stay on keys and the palette |
 | `Ctrl/⌘ Z`, `Ctrl/⌘ Y` / `⇧Ctrl/⌘ Z` | `undo` / `redo` (annotations) | window | ✓ Undo | ✓ | unchanged (marks are annotations, D16) |
 | `⌫` / `Del` | tool vertex, else `deleteSelected` | slide | — | ✓ | unchanged; deleting the mark reopens a committed item (§5.5) |
 | `Q`, then `1`–`8` | `class:*` (annotations) | — | not listed | ✓ | learner and preview: dropped by the registry filter (D20); studio: kept |
 | arrows / WASD, `⇧`+arrows, `+` `=` `−`, `0` / Home, `1`–`6`, `Z`, `O`, Enter on the readout | navigation (integrator; the shell's command ids `pan`, `pan.viewport`, `zoomin`, `zoomout`, `fit`, `togglemag`, `zoom:type`, `nav`) | as shell | ✓ | ✓ | unchanged |
-| `Ctrl/⌘ K`, `?` / `Ctrl/⌘ /`, `Esc` | palette, keymap, cascade | — | ✓ | ✓ | Esc order: palette or dialog → candidates panel → tool shape → carried vertex → selection → non-Select tool → task drawer or sheet; Esc never commits or reveals |
+| `Ctrl/⌘ K`, `?` / `Ctrl/⌘ /`, `Esc` | palette, keymap, cascade | — | ✓ | ✓ | Esc order: palette or dialog → candidates panel → a primary action that took focus from the slide by keyboard (back to the slide; review fix round 2) → tool shape → carried vertex → selection → non-Select tool → task drawer or sheet; Esc never commits or reveals |
 | `⇧D` | refusal | window | ✓ "Dx mode: not in this build" | refusal (RUO wording) | Learn wording (§8.1) |
 | `⇧Q` · `⇧K` · `B` · `⇧S` · `C` · `R` / `⇧R` · `]` / `[` | refusals (integrator, group `Not in this build`) | window | listed in the Learn map | various | each says its sentence (§8.1); they are struck through in the keymap |
 
@@ -641,8 +644,8 @@ These rules hold throughout: unmodified keys and Shift chords only; Ctrl/⌘ onl
 | 1.3.1 Info and relationships | Items are `<form>`s with `aria-labelledby` = stem; choice options are native inputs in a radiogroup or fieldset; the vignette is a `<dl>`; the course outline is a list. |
 | 1.4.1 Use of colour | Feedback is glyph + text (`✓ correct`, `✕ your choice`); the key is dashed and named "Answer key (dashed yellow)"; Exclusion is dashed; the gatebox glyph changes (`×` / `✓`) with text. |
 | 1.4.3 / 1.4.11 Contrast | Tokens only; every overlay stroke has a halo (TOOLS.md §6.2); locked phases use secondary text at full opacity (design revision). |
-| 1.4.10 Reflow | Task card bottom sheet ≤ 1079 px (≤ 40 vh, DS-14); bottom flow bar; it fits 320 px (LI-7). |
-| 2.1.1 Keyboard | Every item has a full keyboard path: choice keys and ↵; the region item has the candidates panel or a text answer, and a crosshair placement (Enter) with Point; Fly there and `5` meet the gate. CNT-3 completes the whole case without a pointer. |
+| 1.4.10 Reflow | Task card bottom sheet ≤ 1079 px (≤ 40 vh, DS-14); bottom flow bar; it fits 320 px (LI-7). A phone or tablet in landscape (≤ 1079 × 500) gets a drawer from the right instead, so the canvas keeps ≥ 70 % of the height (review fix 2026-11-08; LI-7 at 844 × 390). |
+| 2.1.1 Keyboard | Every item has a full keyboard path: choice keys and ↵; the region item has the candidates panel or a text answer, and a crosshair placement (Enter) with Point; Fly there and `View my mark at 20×` meet the gate. CNT-3 completes the whole case without a pointer. |
 | 2.2.1 / 2.2.2 Timing, pause | No time limits; autoplay off by default, pausable, stops on input (D19); `Reveal now` after 15 s (D8). |
 | 2.3.3 Animation from interactions | Reduced motion: fly-to becomes instant and the HUD chip says so (AC-A7). |
 | 2.4.3 / 2.4.7 / 2.4.11 Focus | Order: top bar → canvas → rail → task card → strip → navigator (handoff §4.6). Focus moves to the step title (`tabindex="-1"`) on step change and to the CTA after a keyboard mark. Dialogs return focus to the opener. Dock dialogs make the dock they cover `inert`. |
@@ -682,10 +685,13 @@ Test hooks (integrator):
   - `conflicts()` is empty in learner, studio and preview modes;
   - no element's text, `title` or `aria-*` contains `Stoipath Viewer (RUO)` or the RUO string.
 - **LI-4 Storage namespace.** After a mark is created and a step is reached, `indexedDB.databases()` lists `stoipath-learn` and no new write reached `stoipath-shell` (its `annotations` store is untouched; the test seeds a research annotation on tumor_014 first and asserts it is not drawn in Learn). Every localStorage key written starts with `stoipath.learn.v1.`. The studio writes `stoipath-learn-studio`.
-- **LI-5 No data leaves.** Across the CNT-3 run, every `request` is same-origin with method GET, and no `navigator.sendBeacon`, WebSocket or `fetch` with a body occurs (init-script wrappers). The CSP meta of D22 is present. `fetch('https://example.org/')` from the page rejects and fires `securitypolicyviolation`.
+- **LI-5 No data leaves.** Across the CNT-3 run, every `request` is same-origin with method GET, and no `navigator.sendBeacon`, WebSocket or `fetch` with a body occurs (init-script wrappers). The CSP meta of D22 is present. `fetch('https://example.org/')` from the page rejects and fires `securitypolicyviolation`; so do a cross-origin `img`, `script`, `iframe` and stylesheet `link` (review fix 2026-11-08).
 - **LI-6 Frame cost.** With hotspots, a revealed key, a frozen mark and the expert view visible, a 1 s drag and a wheel burst pass `helpers.frameCostChecks`: 0 layout reads, mutations only in `.hud`, `.navigator__viewport`, the indicators and the app class, and CDP LayoutCount ≤ frames + 2. The overlay `p95Ms ≤ 3` or `blits > 0` (OVL-4), or else the exact-render average ≤ 3 ms (the D3 policy's own criterion: no blit was needed); the line reports the p95 and says when OVL-4's p95 rule alone was not met (Wave L2, §15.2b J-I20: with every source drawn the 1920 × 1080 wheel burst's p95 is 2.9–3.7 ms over runs while the average is 1.4–1.8 ms).
-- **LI-7 Layout.** `layout-check.mjs` T1, Z1, S1, A1–A3 at the five viewports, with the task card open (docked at 1920, drawer at 1440, sheet at 1024 and 390) and the candidates panel open. The canvas is ≥ 70 % of the frame at rest. The context bar shows at 1440 × 900 with the stem and CTA; the peek bar shows at 390 × 844.
-- **LI-8 axe states.** 0 violations in: Open card; tour step; region item awaiting with the candidates panel open (both tabs); region item revealed; MCQ revealed; multi revealed; summary; course outline open; studio at each stage with the Annotations tab open. Each state is checked at 1440 × 900 and at 390 × 844 coarse. (Wave L2: the learner states run on the real case; the studio states come with Wave L3.)
+- **LI-6b Frame cost, item awaiting** (review fix 2026-11-08). With q-region awaiting, a mark placed and the candidates panel open, a 1 s drag and a wheel burst pass `helpers.frameCostChecks` at 1440 × 900 and 1920 × 1080 (the gate log's settle reads no layout: the insets are cached, host/env.ts).
+- **LI-7 Layout.** `layout-check.mjs` T1, Z1, S1, A1–A3 at the five viewports and a phone in landscape (844 × 390 coarse; review fix 2026-11-08, where the dock dialog takes the drawer's place and Z1 counts it as that drawer, §15.2e J-I35), with the task card open (docked at 1920, drawer at 1440, sheet at 1024 and 390) and the candidates panel open. The canvas is ≥ 70 % of the frame at rest. The context bar shows at 1440 × 900 with the stem and CTA; the peek bar shows at 390 × 844. With the candidates panel open, a draft chip is hit-testable (`elementFromPoint`) inside `#candPanel` at every viewport (review fix 2026-11-08).
+- **LI-R Review fixes** (2026-11-08, 1440 × 900). The gate warning names `View my mark at 20×` and following it meets the gate; after the reveal the CTA note and the context bar's `Mark without a pointer` are gone and the tool is Select; the q-size measurement is kept; with ⇧E on the reveal step shows the expert view's text and legend; Start again leaves no learner annotation on the slide and every item awaiting.
+- **LI-R2 Review fixes, round 2** (2026-11-08, 1440 × 900). With the drawer closed, a keyboard point (T, ←, ↵) hands focus to `#ctxCta` with the sentence, and one Esc returns focus to the slide with the mark kept. ↵ inside q-sinus's options commits and moves focus to the primary action (`Reveal U`), not `<body>`. Measure from q-size stays on q-features, which discloses it. Back on step 1, where the rail shows only Select, the active tool is Select, and Space on the slide plays the tour.
+- **LI-8 axe states.** 0 violations in: Open card; tour step; region item awaiting with the candidates panel open (both tabs); region item revealed; MCQ revealed; multi revealed; summary; course outline open; studio at each stage with the Annotations tab open. Each state is checked at 1440 × 900 and at 390 × 844 coarse. (Wave L2: the learner states run on the real case. Wave L3: the studio states run in `studio.check.mjs` flow D, tagged `LI-8`, LEARN-QUESTIONS A-STU-N4.)
 - **LI-9 Keymap.** `?` opens `Keyboard map · Stoipath Learn` with the four Learn groups. Every row of §9 is present with its keycaps. `⇧D` writes the Learn refusal to the strip and says it assertively.
 - **LI-10 No answer leaks in identity.** Before q-size is revealed, no DOM text, attribute, `document.title` or canvas `aria-label` contains `breast-carcinoma macrometastasis` (the catalogue title and the manifest stain phrase).
 
@@ -713,6 +719,7 @@ Test hooks (integrator):
 
 - **SCR-1 Raster.** Two 100 px squares overlapping by half → IoU 1/3 (± 1e-9). Two discs of r = 1000 px at d = 1000 → analytic IoU within 0.5 %. Translating both by (0.37, 0.61) px changes IoU < 1e-3. A bow-tie mark uses even-odd. A MultiPolygon and a polygon with a hole are exact on axis-aligned shapes.
 - **SCR-2 Real key.** `compileKey` on the reference file + Appendix A's key gives a target area of 3.291 mm² (± 0.5 %). IoU R1 0.567, R2 0.691, R3 0.268, R4 0.075, R5 0.508 (each ± 0.005). Rule (b): inside fractions R1 0.569, R2 0.706, R3 0.908, R4 0.992, R5 0.830, R6 1.000 (each ± 0.005; the iou metric's `inside`); R1, R2 and R5 score 1 / 1 (`correct`), R3, R4 and R6 score 0.5 / 1 (`partial-inside`, `correct: false`), R6 with `related: 'small-foci'`, all with a gate-meeting log.
+- **SCR-2b Small outlines** (review fix 2026-11-08). 1, 2, 3, 4, 6, 8, 12 and 24 px squares inside the deposit at candidate C all score rule (b) (0.5 / 1, inside 1); an outline with no area there scores as a point (1 / 1); a 3 px square at candidate B is wrong.
 - **SCR-3 Points.** P1–P7 give exactly the results and distances of §6.3.1 (± 0.5 µm), including `inHole` (and `wrong-hole`) for P6, and for P5 a correct score by rule (a): `feedback: 'correct-related'`, `related: 'small-foci'`, 1 / 1 with a gate-meeting log. With `credit` removed from the fixture's related entry, P5 is wrong with `wrong-related` (the pre-default rule still works).
 - **SCR-4 Gate.** On view-log fixtures (and a rule (b) outline with the gate unmet scores 0.25 / 1):
   - no views → not met, factor 0.5;
@@ -730,6 +737,7 @@ Test hooks (integrator):
 ### 11.3 progress (PRG-n)
 
 - **PRG-1 Unit (fake KeyValueStore).** `load` creates a record. Five `save` calls within 800 ms produce one `put`. Reconcile: a version change with unchanged item hashes keeps the responses; a changed hash clears that item and produces the §5.6 text. `results()` output validates as `ResultsFile`.
+- **PRG-1b Two tabs** (unit; review fix 2026-11-08). A stale second store writing step 1 keeps the first one's `maxStepIndex` 3 and its revealed item; what the second changed itself is written; a stored record of another build is not merged.
 - **PRG-2 Resume.** Commit q-sinus with B, reload: the same step opens, q-sinus is `committed` with B, and the course outline says `in progress · step 5 of 10`.
 - **PRG-3 Storage blocked.** An init script makes `indexedDB.open` throw. The module completes; the memory-only text shows in the summary; the persistent notice shows and is spoken once.
 - **PRG-4 Results export.** After the case, `Export results` downloads a file whose `JSON.parse` passes `format.parseResults`. The test also writes it to the scratch dir and validates it with python against `$defs/ResultsFile`. It has no key matching `/name|email|user|device|ip/i` except `title` fields. `total` equals the summary card; `labelString` is verbatim; `review.status` is `draft`.
@@ -770,7 +778,7 @@ Test hooks (integrator):
   - a Point-tool tap places a mark;
   - the candidates panel is a bottom sheet that closes on `Fly there`, and `⇧↵` (or the bar button) reopens it on the same region;
   - every control is ≥ 44 px (layout-check A2).
-- **ITM-12 One mark.** Two Point taps leave one mark annotation in the store. After reveal the store has none for the item, and the frozen mark source draws it.
+- **ITM-12 One mark.** Two Point taps leave one mark annotation in the store. After reveal the store has none for the item, and the frozen mark source draws it. After reveal the tool is Select, and clicks on the slide (with Point chosen again) leave the store empty, with a sentence that names no class (review fix 2026-11-08).
 
 ### 11.6 reveal (RVL-n)
 
@@ -849,12 +857,12 @@ Test hooks (integrator):
 | F2 | `/case/vignette/text` | No clinical history is published with the slide. | The release has images and lesion annotations only. |
 | F3 | `/case/vignette/text` | You are looking at a 3.7 mm × 3.7 mm region inside the H&E section, not the whole section. | 15,360 px × 0.243094 µm/px = 3.73 mm; the window is at (36,864, 66,560) of a 97,792 × 214,016 px scan; tissue fraction 0.953. |
 | F4 | `/steps/1/text` | Most of this region is lymphoid tissue, which looks dense and dark at low power because lymphocytes have dark nuclei and little cytoplasm. | Standard histology; the deposit outline covers 24 % of the region's area. |
-| F5 | `/steps/2/text` | This is the background: sheets of small lymphocytes with round, dark nuclei and very little cytoplasm. | View (3181.6, 3181.6) µm at 20×, 1.44 mm from the outline; `tiles/2/6_6.jpg` shows dense small lymphocytes, with a paler sinus-like area at its right edge. |
+| F5 | `/steps/2/text` | This is the background: a dense, non-cohesive population of small lymphocytes with round, dark nuclei and very little cytoplasm. | **Changed 2026-11-08 (review fixes, pending owner):** was "sheets of small lymphocytes …"; F17 and the rubric treat "sheets" as a carcinoma feature, so the background is described as non-cohesive ("cohesive" stays the discriminating word).  View (3181.6, 3181.6) µm at 20×, 1.44 mm from the outline; `tiles/2/6_6.jpg` shows dense small lymphocytes, with a paler sinus-like area at its right edge. |
 | F6 | `/items/0/explanation` | The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. | 'Annotation 3' spans 2.61 × 2.22 mm around the region centre; `tiles/2/3_2.jpg` shows sheets of large cells. |
-| F7 | `/items/0/candidates/0/description` | Upper border: round clear spaces between bands of dark lymphoid tissue | Point (9300, 1000) px, 522 µm outside; `tiles/3/2_0.jpg`. The spaces look like fat; the text does not say so. |
-| F8 | `/items/0/candidates/1/description` | Lower right corner: dense, dark-staining lymphoid tissue | Point (13088, 13088) px, 1.44 mm outside; `tiles/2/6_6.jpg`. |
-| F9 | `/items/0/candidates/2/description` | Centre: sheets of large, pale cells with abundant pink cytoplasm | Point (7168, 5120) px, inside, 459 µm from the edge, in no Exclusion. |
-| F10 | `/items/0/candidates/3/description` | Lower edge: round and slit-like clear spaces within lymphoid tissue | Point (6400, 13900) px, 820 µm outside the outline (819.8 µm by Phase A `distanceToGeometry`, checked in Python; the draft said 784 µm, corrected 2026-11-04, LEARN-QUESTIONS S-Q4); `tiles/3/1_3.jpg`. |
+| F7 | `/items/0/candidates/0/description` | Upper border of the region | **Changed 2026-11-08 (review fixes, pending owner):** position only; the old text ("round clear spaces between bands of dark lymphoid tissue") described the histology, so the keyboard path could be answered by reading.  Point (9300, 1000) px, 522 µm outside; `tiles/3/2_0.jpg`. The spaces look like fat; the text does not say so. |
+| F8 | `/items/0/candidates/1/description` | Lower right corner of the region | **Changed 2026-11-08 (review fixes, pending owner):** position only (was "… dense, dark-staining lymphoid tissue").  Point (13088, 13088) px, 1.44 mm outside; `tiles/2/6_6.jpg`. |
+| F9 | `/items/0/candidates/2/description` | Centre of the region | **Changed 2026-11-08 (review fixes, pending owner):** position only (was "Centre: sheets of large, pale cells with abundant pink cytoplasm": the carcinoma features q-features teaches, and "abundant" overstated it: at 40× the cells have moderate pale, eosinophilic-to-amphophilic cytoplasm, with vesicular nuclei and prominent nucleoli).  Point (7168, 5120) px, inside, 459 µm from the edge, in no Exclusion. |
+| F10 | `/items/0/candidates/3/description` | Lower edge of the region | **Changed 2026-11-08 (review fixes, pending owner):** position only.  Point (6400, 13900) px, 820 µm outside the outline (819.8 µm by Phase A `distanceToGeometry`, checked in Python; the draft said 784 µm, corrected 2026-11-04, LEARN-QUESTIONS S-Q4); `tiles/3/1_3.jpg`. |
 | F11 | `/items/1/stem` (option B correct) | Tumour cells that reach a lymph node through its afferent lymphatics usually lodge first in which compartment? (B: The subcapsular (marginal) sinus) | Standard nodal anatomy and metastatic pattern. |
 | F12 | `/items/1/explanation` | Afferent lymphatics open into the subcapsular sinus under the capsule, so lymph-borne tumour cells usually lodge there first and can then spread into the rest of the node. | Standard. |
 | F13 | `/items/1/explanation` | This region is a window inside the node, so the capsule may not be visible here. | Hedged; whether the capsule is in the window was not verified. |
@@ -866,10 +874,10 @@ Test hooks (integrator):
 | F19 | `/items/3/options/2/text` (correct) | More abundant cytoplasm | Standard, with the histiocyte caveat in F21. |
 | F20 | `/items/3/options/3/feedback` (option D incorrect) | This describes the lymphocytes. | D: small, round, dark nuclei with very little cytoplasm. |
 | F21 | `/items/3/explanation` | Sinus histiocytes also have abundant cytoplasm, so cohesion and nuclear features matter; when the distinction is uncertain, immunohistochemistry for cytokeratin is commonly used to confirm epithelial tumour cells in a lymph node. | Standard practice. |
-| F22 | `/steps/7/text` | The smaller outlined areas inside it are marked Exclusion: non-tumour tissue inside a tumour outline, by the dataset's convention. | CAMELYON16 ASAP group `Exclusion`; all six lie inside 'Annotation 3' (computed). |
-| F23 | `/case/expertView/text` | three small separate tumour foci | 'Annotation 4–6', greatest dimensions 0.05, 0.07 and 0.15 mm (areas 830, 2,424 and 5,185 µm²). None overlaps 'Annotation 3', but their nearest vertices are only 15, 20 and 11 µm from it (area centroids 28, 48 and 65 µm; measured 2026-11-04 by the scoring module, LEARN-QUESTIONS S-Q4b; the draft said 70–950 µm). **For review:** whether CAMELYON16 drew these as foci separate from the deposit or as fragments at its edge is a pathologist's call; a more conservative wording would be "three small tumour areas outlined separately". |
+| F22 | `/steps/7/text` | The smaller outlined areas inside it are marked Exclusion: non-tumour areas such as vessel lumens and spaces, which the dataset excludes from the tumour outline. | **Changed 2026-11-08 (review fixes, pending owner):** was "non-tumour tissue inside a tumour outline, by the dataset's convention"; the Exclusions inspected are empty lumens and spaces (vessels, some with red cells) inside the deposit. The items' wrong-hole feedback (`items/text.ts` `pointHole`) now says the same.  CAMELYON16 ASAP group `Exclusion`; all six lie inside 'Annotation 3' (computed). |
+| F23 | `/case/expertView/text` | three small tumour areas the CAMELYON16 outline marks separately | **Changed 2026-11-08 (review fixes, pending owner):** was "three small separate tumour foci": at 10× and 20× Annotations 4–6 are small tumour-cell nests that abut the deposit's irregular edge, 11–20 µm from it, not separate metastases; the conservative wording below is now the text.  'Annotation 4–6', greatest dimensions 0.05, 0.07 and 0.15 mm (areas 830, 2,424 and 5,185 µm²). None overlaps 'Annotation 3', but their nearest vertices are only 15, 20 and 11 µm from it (area centroids 28, 48 and 65 µm; measured 2026-11-04 by the scoring module, LEARN-QUESTIONS S-Q4b; the draft said 70–950 µm). **For review:** whether CAMELYON16 drew these as foci separate from the deposit or as fragments at its edge is a pathologist's call; a more conservative wording would be "three small tumour areas outlined separately". |
 | F24 | `/steps/8/text` | The carcinoma cells are larger than the lymphocytes, with more cytoplasm and larger nuclei, and they lie together in cohesive sheets. | View (2738.2, 1369.1) µm at 20×, 33 µm inside the right edge; `tiles/2/5_2.jpg` shows tumour cells left, lymphocytes right. |
-| F25 | `/answerKeys/0/related/0/feedback` | That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. | As F23 (owner default rule (a), 2026-11-04, default pending owner: a point on any Tumor focus counts). The review question of F23 applies to "separate" here too; a more conservative wording would be "one of three small tumour areas the CAMELYON16 outline marks separately". |
+| F25 | `/answerKeys/0/related/0/feedback` | That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts. | **Changed 2026-11-08 (review fixes, pending owner):** was "one of three small separate foci in the CAMELYON16 outline" (as F23).  As F23 (owner default rule (a), 2026-11-04, default pending owner: a point on any Tumor focus counts). The review question of F23 applies to "separate" here too; a more conservative wording would be "one of three small tumour areas the CAMELYON16 outline marks separately". |
 | F26 | `/answerKeys/0/related/0/feedback` | The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. | As F6 (added 2026-11-04 so the feedback names the largest deposit, owner default rule (a)). |
 | F27 | `/items/3/explanation` | Carcinoma cells are larger than lymphocytes, with more cytoplasm and larger nuclei, and they hold together in cohesive groups. | Standard histology: the general form of F24 (this deposit's edge) and of options A–C (F17–F19). Added 2026-11-04 by the content builder; the draft list did not have it. |
 | F28 | `/items/2/options/0/text` | Isolated tumour cells (≤ 0.2 mm) | AJCC Cancer Staging Manual, 8th ed., breast, pN: isolated tumour cells are clusters not larger than 0.2 mm (or not more than 200 cells in one cross-section; F15). Marked incorrect for this deposit (F14). Added 2026-11-04 by the content builder. |
@@ -894,8 +902,9 @@ The orientation module has no clinical statements. It states only the product co
 | **L0** | Phase A integrator | §4.3 C1–C4 | tsc; run.mjs + check-metrics (20 ok); shell-check; tools-check; unit |
 | **L1** | Learn integrator · format · scoring · progress | integrator: `learn.html`, `src/learn/main.ts`, `host/*`, `learn.css`, vite input, `learn-check.mjs` + helpers, the Phase A installs, the catalogue, the registry filter, test hooks, LI-1/3/4/5/9 on an empty course plate; format with the schema test and lint; scoring with all unit tests; progress with unit tests | LI-1, LI-3, LI-4, LI-5; FMT-1…6; SCR-1…9; PRG-1, PRG-6; Phase A gates unchanged (LI-2) |
 | **L2** | reveal · items · player · course · content | the learner flow end to end on fixtures and the real case | each module's checks on a private build with stand-ins for siblings; then the integrator wires the wave: PLY-*, ITM-*, RVL-*, CRS-*, PRG-2…5, CNT-1…4, LI-6…10. **Done 2026-11-05** (integrator; numbers in §15.2 J-I22) |
-| **L3** | studio · item-editor | the author studio | STU-*, IED-*; LI-8 studio states |
-| **L4** | Learn integrator | final gate; screenshots `design/screens/integrated/shots/learn-{1920x1080,1440x900,1024x1366,390x844}-{open,tour,region,candidates,revealed,summary,studio-publish}.jpg`, each reviewed; this file's §15 judgement-call log; `DEPLOY-LEARN-L1.md` | all LI, module and Phase A gates green on one `npm run build` |
+| **L3** | studio · item-editor | the author studio | STU-*, IED-*; LI-8 studio states. **Done 2026-11-08** (integrator; numbers in §15.2c J-I27; reveal's `attach` carried, J-I25) |
+| **L4** | Learn integrator | final gate; screenshots `design/screens/integrated/shots/learn-{1920x1080,1440x900,1024x1366,390x844}-{open,tour,region,candidates,revealed,summary,studio-publish}.jpg`, each reviewed; this file's §15 judgement-call log; `DEPLOY-LEARN-L1.md` | all LI, module and Phase A gates green on one `npm run build`. **Done 2026-11-08** (integrator; numbers in §15.2d J-I32; two sheet defects found in the screenshots and fixed, J-I28, J-I29) |
+| **Review fixes** | Learn integrator (for every Learn module) | the 24 issues of the engine and pathologist-educator / a11y reviews; 40 re-taken screenshots | all LI, module and Phase A gates green on one `npm run build`. **Done 2026-11-08** (§15.2e, numbers in J-I41) |
 
 Builders in the same wave share no files. A builder blocked on a contract gap writes it up for the Learn integrator (LEARN-QUESTIONS.md) and does not widen a type locally. Stand-ins for sibling services, until the integrator wires the wave, live in the builder's own test or rig files under its scratch dir, never in another module's directory.
 
@@ -1050,6 +1059,351 @@ owner can (D11).
   the item CTA note still reads `On the slide, ↵ closes the polygon … You can change your answer until you reveal.`, and
   the context bar still offers `Mark without a pointer ⇧↵` on a revealed region item. The formal reviewed screenshots
   are Wave L4's.
+
+### 15.2c Judgement-call log (Learn integrator, Wave L3, 2026-11-08)
+
+- **J-I24 · The studio says why its canvas is empty** (LEARN-QUESTIONS STU-Q2): `LearnPlate` `{kind: 'empty', what:
+  'studio-slide'}` reads `No slide open` · `Open a draft, or add a slide in Collect.` (`role="status"`, N strings). The
+  integrator shows it at the studio's start when no slide is open, unless the studio already put up its `opening` plate
+  for a remembered draft; it goes at the next `slideOpened`. The studio never closes a slide, so the plate does not
+  come back after `All drafts` (the last draft's slide stays in view, which is harmless: no learner sees the studio).
+  Looked at in screenshots at 1440 × 900, 1920 × 1080 and 390 × 844 coarse.
+- **J-I25 · Reveal's `attach` is carried, not made** (A-R-Q1, A-IE-Q2, A-STU-N2). No reveal builder ran in Wave L3 and
+  reveal's files are reveal's, so `RevealService.attach` stays optional. The studio's `Show the answer key` refuses with
+  reveal's own sentence and the studio's hotspot preview draws nothing until reveal implements it; no L3 check depends on
+  it. The contracts now say how reveal must read `RevealContext.module()` (again on every call, compiled keys cached by
+  `contentHash`, stale when `module().file` is another object), which also closes the race STU-N2 describes.
+- **J-I26 · LI-8's studio states run in `studio.check.mjs` flow D** (A-STU-N4), not in `integrator.check.mjs`, so the
+  studio's drivers are not copied; the lines carry the `LI-8` tag. Seen in the L3 screenshots, for L4 (studio's files,
+  not changed here): the Items stage eyebrow reads `AUTHOR · 4 ITEMS  4 ITEMS` (the stage name and the count say the
+  same thing on that stage); the stage heading keeps a focus ring after the studio moves focus to it on a stage change
+  (intended focus management, but it looks like a text field); and at 390 × 844 the active phase chip `Items` in the
+  flow bar sits against the Select tool's active marker.
+- **J-I27 · Wave L3 gate numbers** (2026-11-08, one `npm run build` into client/dist; `node harness/learn-check.mjs
+  --ref-dist <L0 dist> --axe <axe-core 4.10.3>`, the Phase A gates run on the same build just before it): learn-check
+  387 s, 995 checks, 0 FAIL (integrator 329: LI-1 9, LI-1b 3, LI-3 31 including the studio plate, LI-4 15, LI-5 5, LI-6
+  50, LI-7 113, LI-8 54, LI-9 9, LI-10 10, LI-I 30; studio 92: STU-1 7, STU-2 3, STU-3 2, STU-4 4, STU-5 7, STU-6 10,
+  STU-7 8, LI-8 studio states 27, other 24; item-editor 64: IED-1 18, IED-2 10, IED-3 13, IED-4 9, other 14; content 62;
+  course 95; items 118; player 109; progress 48; reveal 78); results JSON
+  `harness/results/learn-check-2026-11-08-l3-full.json`. LI-6's 1920 × 1080 wheel burst again measured an overlay p95
+  over 3 ms (3.30 ms, exact-render average 1.20 ms) and passed by the D3 average, as J-I20 discloses; the 1440 × 900
+  drag fell back to blits (58). run.mjs exit 0 (0 blank frames after base); check-metrics.mjs 20 ok ("all metric checks
+  passed"); shell-check.mjs 190 ok, 0 FAIL; tools-check.mjs (axe-core 4.10.3) 628 ok (612 module + 16 integrator), 0
+  FAIL; unit.mjs 2588 ok, 0 FAIL in 20 files (learn-studio 62, learn-item-editor 62); python `unittest discover
+  tools/tests` 63 tests OK. `src/main.ts`, `src/shell/main.ts`, `index.html` and `shell.html` keep their Wave L1
+  sha256. `src/learn/contracts.ts` got doc lines after the build; a private rebuild of the tree differs from client/dist
+  only in the build timestamp and the chunk names that carry it.
+
+### 15.2d Judgement-call log (Learn integrator, Wave L4, 2026-11-08)
+
+Wave L4 changed no contract (contract stays 1), no owner default and no clinical text. Every row of §15.1 is still a
+**default pending owner**. The case is still `draft`, and its 37 facts are still `pending`. Q13 (deploy timing) has no
+default: `DEPLOY-LEARN-L1.md` says to publish after the TSP measurements.
+
+- **J-I28 · The bottom sheet no longer resizes the canvas between steps (fixed; an answer leak on tablets).** The L4
+  tablet screenshot of step 3 (`Lymphoid tissue at 20×`, before the region item) showed the deposit's tumour cells at
+  20×, not the lymphoid tissue. Cause:
+  - At ≤ 1079 px the sheet is the grid's in-flow row (J-I8), and its height followed its content (`height: auto`, at
+    most 40 vh). The tablet canvas went 814 → 762 → 668 px over steps 2–4.
+  - The engine's `Camera.setViewport` re-anchors the pan target at the current centre on every resize. That is engine
+    code, frozen with the measurement page.
+  - So a step change cut the step's fly short: the zoom finished (0.5 µm/px) but the camera stayed at the region's
+    centre, 2037.8 µm, on the deposit.
+
+  LI-7 ran with reduced motion (instant jumps), so it could not see this. Phones hid it because their expanded sheet
+  always hits the 40 vh cap. The phone's peek bar still changed height (681 → 667 px) when a stem wrapped to two lines.
+
+  Fix (`learn.css`, integrator): an expanded sheet is exactly `--layout-sheet-max` (40 vh) tall and its body scrolls.
+  The tablet peek stem and the phone peek-bar stem always take two lines. After the fix:
+  - the canvas keeps one height on every step, on the tablet and the phone, expanded and peeking;
+  - every fly lands, including `Fly there` to candidate C (the diagnostic is in the integrator's scratch).
+
+  LI-7 now has L4 lines for this (`harness/learn/integrator.check.mjs`; 12 lines, all passing on the final build). On
+  the tablet and phone sheets, expanded and peeking, with motion on, they check for one canvas height across steps 1–4
+  (668 / 1035 / 406 / 667 px) and for step 3's fly landing on its view within half a CSS px.
+
+  A short card now leaves empty space at the bottom of an expanded sheet, which is the trade. Opening or closing the
+  sheet (`K`, the toggle) still resizes the canvas, but that is the learner's own input, as a pinch is.
+- **J-I29 · The phone flow bar keeps the current phase in view (fixed).** At 390 px the studio's five stages and the
+  step's three tools need about 460 px. The stage list is its own horizontal scroller (`.flow--h`), and it clipped the
+  current stage's label under the tools (`Pu|`, seen at Publish; J-I26 saw it at Items). `PhaseRail.render`
+  (`host/layout.ts`) now scrolls the current phase into the list's view after rendering. It runs at rest, once per phase
+  change. Earlier stages scroll off to the left and can be swiped back. The learner's five phases already fitted.
+- **J-I30 · The reviewed screenshots.** There are 28 JPEGs at q85 in `design/screens/integrated/shots/`:
+  `learn-{1920x1080,1440x900,1024x1366,390x844}-{open,tour,region,candidates,revealed,summary,studio-publish}.jpg`.
+  - **How they were taken:** from `client/dist` of the final build, fresh contexts, motion on. The tablet and phone run
+    coarse with the harness's iPad and phone user agents.
+  - **The learner path:** `N` to the steps. The region shot has a Point mark placed at candidate C after a 20× jump
+    (gate met). Then come the candidates panel with C chosen, `Fly there`, `Commit C as my mark` and `U`, then the
+    three choice items by letter keys, ↵ and `U`, then the summary.
+  - **The studio shot:** the case adopted as a draft on Publish.
+  - **Test hooks used:** only `test.card(true)`, so the card shows at the drawer widths, and the studio's `adoptModule`.
+  - Every shot was looked at, and the run had 0 console or page errors.
+
+  What they show matches the design final at every width: docked card at 1920, drawer with context bar at 1440, sheet
+  and flow bar at 1024 and 390, no RUO wording, the draft chip on every learner step, and `Score 4 of 4` on the summary.
+
+  Seen and **not changed here** (other modules' files, carried):
+  - **player** (J-I23, still open): on a revealed region item, the CTA note still reads `On the slide, ↵ closes the
+    polygon … until you reveal.`, and the context bar still offers `Mark without a pointer ⇧↵`.
+  - **items:** once a mark exists, the mark row keeps the `Draw with P, F or T, or press ⇧↵ …` hint under
+    `Your mark · point`. This is harmless (it says how to replace the mark), but it is longer than §5.5's row.
+  - **studio** (J-I26, still open): the stage heading keeps its focus ring after the studio moves focus to it.
+  - **design note:** at 1080–1599 px with the drawer open, the draft chip shows twice (context bar and card). This is
+    J-I7's design, kept.
+- **J-I31 · The deploy list** (`DEPLOY-LEARN-L1.md`) is computed from `dist/.vite/manifest.json`: the `learn.html`
+  entry, its imports followed recursively, and its CSS, plus the decode worker the viewer chunk names in its code. Each
+  file was compared by sha256 with the local `stage0-deploy` worktree as of the Phase A deploy of 2026-11-02.
+  - **Page graph:** every file is a new content-hashed name, except the decode worker, which is byte-identical to the
+    deployed one. The chunks this build shares with `shell.html` and `index.html` are new names too, so neither
+    published page loads a byte that changes.
+  - **Content:** the facts file is copied with the module (D26), although the page never reads it. The schema is
+    optional.
+  - **Already published:** `data/catalogue.json`, the expert geojson, both manifests and both tile trees (1,210 + 44
+    files) are byte-identical on the branch. The key version and the fingerprints depend on them.
+  - **Not copied:** `index.html` and its entry chunk (frozen), and `shell.html` and its graph (the published shell keeps
+    its Phase A build).
+- **J-I25 is still carried.** Reveal's `attach` is not implemented (no reveal builder ran in L3 or L4), so the studio's
+  `Show the answer key` refuses with reveal's own sentence, as J-I25 describes. No check depends on it.
+- **J-I32 · Wave L4 gate numbers.** All on one `npm run build` into `client/dist`, build id `2026-11-08T08:49:54Z`,
+  the tree with the J-I28 and J-I29 fixes. Every gate below ran on that one build. `src/main.ts`, `src/shell/main.ts`,
+  `index.html` and `shell.html` keep their Wave L1 sha256 (checked before and after).
+  - tsc `--noEmit` clean, also as part of the build.
+  - run.mjs: exit 0, 0 blank frames after base (`harness/results/2026-11-08T08-50-24-689Z-headless-chromium.json`).
+  - check-metrics.mjs: 20 ok (`all metric checks passed`).
+  - shell-check.mjs: 190 ok, 0 FAIL.
+  - tools-check.mjs (axe-core 4.10.3): 628 ok (612 module + 16 integrator), 0 FAIL.
+  - unit.mjs: 2588 ok, 0 FAIL in 20 files.
+  - python `unittest discover tools/tests`: 63 tests OK.
+  - learn-check (`--ref-dist <L0 dist> --axe <axe-core 4.10.3>`, 394 s): 1,007 checks, 0 FAIL.
+    - integrator 341: LI-1 9, LI-1b 3, LI-3 31, LI-4 15, LI-5 5, LI-6 50, LI-7 125, LI-8 54, LI-9 9, LI-10 10, LI-I 30.
+      LI-7 has 113 layout-check lines plus the 12 new sheet lines of J-I28.
+    - modules: content 62, course 95, item-editor 64, items 118, player 109, progress 48, reveal 78, studio 92 (the
+      studio's 92 include the 23 LI-8 studio states).
+    - Results JSON: `harness/results/learn-check-2026-11-08-l4-full.json`.
+  - **LI-7 and LI-8.** LI-7 is the design system's `layout-check.mjs` rules (T1, Z1, S1, A1–A3) at the five
+    viewports. LI-8 is axe-core WCAG 2.2 AA, 0 violations in every Learn state at 1440 × 900 and 390 × 844 coarse,
+    studio included.
+  - **LI-6.** The overlay p95 met OVL-4's strict rule in three of the four gestures (2.6–2.9 ms). The 1440 × 900 drag
+    measured 3.30 ms and passed by the D3 average (1.98 ms), as J-I20 discloses. On the first L4 build, all four met
+    the strict rule (2.6–3.1 ms or blits).
+  - **One flaky check, disclosed.** The first full learn-check on this build had 2 FAILs, both in the items check's
+    flow A at one moment: ITM-8 `a mark at P7, then the deposit at 20×` read `Met · 20× over your mark`, and the HUD
+    gate chip was therefore hidden.
+    - The items check alone was then rerun three times on the same build and passed all three. The full learn-check
+      was rerun and passed (the numbers above).
+    - **Reading of the cause:** a timing race in items. When step 3's 20× view of P7 (the lymphoid hotspot, J-ITM2)
+      settles only after the item step is current, it gets logged.
+    - **Effect on learners:** none that leaks. The view counted is one the learner really saw sharp at 20×. It only
+      makes ITM-8's no-leak assertion nondeterministic.
+    - **Owner and fix:** the items builder, in `items/machine.ts`. Either skip a `viewSettled` whose camera move began
+      before the item mounted, or have the check wait for step 3's settle before pressing N.
+    - Not changed here (items' files). It is carried.
+  - **The first L4 build** (before J-I28 and J-I29) was also fully green: learn-check 995 checks, 0 FAIL, plus every
+    Phase A gate. The screenshot review then found the two sheet defects, so the build was redone.
+
+### 15.2e Review fixes (Learn integrator, 2026-11-08)
+
+Two reviews of the Wave L4 build (an engine lens and a pathologist-educator / accessibility lens) filed 24 issues: one
+high, eleven medium, twelve low. The integrator applied every one of them, acting for each Learn module's files (no
+Phase A file changed). None was wrong; two are applied with a stated trade-off (J-I36, J-I37). The contract stays 1;
+its two additions are optional (LEARN-QUESTIONS.md, 2026-11-08 review-fixes section). Every owner default stays a
+**default pending owner** (§15.1). The case stays `draft`, its 37 facts stay `pending`, and every changed clinical
+sentence is listed in §12 with its old wording for the owner.
+
+**Review fixes list** (issue → what changed, file):
+
+1. **High · draft chip hidden by the candidates panel** (1920, 1024, 390). `#candPanel` carries its own
+   `[data-draft-note]` chip under its title (`learn.html`, `learn.css`), so `setDraftNote` toggles it with the others.
+   LI-7 asserts a hit-testable chip inside the panel at every viewport, landscape included.
+2. **Medium · two tabs, last writer wins** (`progress/store.ts`). A write merges with the stored record (`mergeStored`):
+   the larger `maxStepIndex`, the earliest `startedAt` / `completedAt`, a response another tab revealed, and every
+   response this tab did not change since its last write; `stepIndex` is this tab's (PRG-1b). Not covered: a stale tab
+   that writes after another tab's Start again re-creates its own record (there is nothing stored to merge with).
+3. **Medium · a second preview broke the first** (`main.ts`). The preview no longer deletes `stoipath-learn-preview`;
+   it clears its object stores through its own connection before core opens it (a database that does not exist is not
+   created), so no `versionchange` reaches an earlier preview tab. The preview's storage notice is its own
+   `Preview · progress is not kept` (`host/env.ts`), and its Open card note reads `Preview: your answers are not kept.`
+4. **Medium · the CSP blocked connections only** (`learn.html`, D22). The policy is now `default-src 'self'` with
+   `script-src 'self'`, `style-src 'self' 'unsafe-inline'` (style attributes), `img-src 'self' data: blob:`,
+   `worker-src 'self' blob:`, `connect-src 'self'`, `frame-src 'none'`, `object-src 'none'`, `form-action 'none'`,
+   `base-uri 'self'`. LI-5 now proves a cross-origin image, script, frame and stylesheet are refused (each fires
+   `securitypolicyviolation`), and §1 item 5's "A CSP blocks every other origin" is true.
+5. **Medium · candidate descriptions gave the answer away** (content). A–D are positional only (`Upper border of the
+   region`, `Lower right corner of the region`, `Centre of the region`, `Lower edge of the region`); the text tab's
+   position options were positional already. A keyboard or screen-reader learner now has to look at the regions (Fly
+   there narrates the position only). F7–F10 changed (§12).
+6. **Medium · the gate warning said "press 5"** (`items/text.ts`, §6.4, §8.2). It names the button that flies to the
+   mark: `… or choose View my mark at 20× first.`; the panel's twin says `… or use Fly there on its row first.` LI-R
+   follows the sentence literally and asserts the gate is met. The `5` keycap stays on the HUD chip below 20×.
+7. **Medium · stray marks after reveal** (`items/machine.ts`, `player/machine.ts`). At reveal and on every step change
+   a drawing tool gives way to Select (Measure stays). A mark made while no region item is open for marking is removed
+   at once with `Marks are kept only while a region question is open, so that mark was not kept.` (no class name, D17).
+   Start again deletes every learner annotation on the module's open slide, measurements included, in one store
+   transaction (ITM-12, LI-R).
+8. **Medium · "never discounted"** (`items/text.ts`, `contracts.ts`, `item-editor/text.ts`). The text tab says `Full
+   credit also needs a view of that area at 20× or more before you reveal.`, with the item's own gate label.
+9. **Medium · keywords credited generic and negated words** (content, `scoring/rubric.ts`). The Feature keywords are
+   discriminating morphology only (§6.3.5), and a negated occurrence does not count. `{centre, 0.2–2 mm, "no tumour
+   seen, only lymphocytes"}` now fails (SCR-7, CNT-2). Size stays optional (J-I37).
+10. **Medium · the expert view's "separate foci"** (content; F23, F25). The conservative wording offered in the basis is
+    now the text: `three small tumour areas the CAMELYON16 outline marks separately`. Flagged for the owner.
+11. **Medium · landscape phone** (`learn.css`, `items/items.css`, `host/env.ts`, `host/engine-ui.ts`). At ≤ 1079 × 500
+    landscape the task card is a drawer from the right (peeking: its head and CTA at the bottom right; open: compact
+    rows), the strip goes (the sharpness label joins the HUD), the bottom bar is 56 px, the HUD takes the phone's diet
+    (no dataset/licence suffix, position or magnification second line; the top-left items flow in rows), the navigator
+    waits behind O as on a phone, and the HUD zoom-gate chip is not shown (the card's gatebox says the same; above the
+    magnification it sat in the canvas's central band, beside it on the scale bar). The canvas is 286 of 390 px (73 %) at
+    844 × 390 and 271 of 375 px at 667 × 375. The dock dialogs are side panels there (J-I35). LI-7 runs at 844 × 390.
+12. **Low · reveal key fetch with no timeout** (`reveal/keys.ts`, `items/machine.ts`). The key request aborts after 20 s
+    (`no answer within 20 s`, through keyFailed); after 400 ms the card is `aria-busy`, `Loading the answer key…` is said
+    politely and the CTA waits; a second `U` returns `{reason: 'loading'}` with that sentence (contracts: additive).
+13. **Low · sub-cell outlines scored wrong** (`scoring/region.ts`, `raster.ts`, §6.3.3 step 6, SCR-2b).
+14. **Low · layout read in the frame hook** (`host/env.ts`). Pane A's insets are cached and recomputed in a task of their
+    own when the app class, a dock-layer dialog, the palette or a box changes; LI-6b measures the item-awaiting state.
+15. **Low · gate log cap** (`items/gate-log.ts`). Over 500 entries the oldest entry that could not meet the gate goes
+    first. Not reproduced by the reviewer either; fixed by inspection.
+16. **Low · F5 "sheets of small lymphocytes"** (content). `a dense, non-cohesive population of small lymphocytes …`.
+17. **Low · "abundant pink cytoplasm"** (content, F9). Gone with item 5; F6's basis records the 40× reading (moderate
+    pale cytoplasm, vesicular nuclei, prominent nucleoli).
+18. **Low · Exclusion described as "non-tumour tissue"** (content F22, `items/text.ts` `pointHole`). `non-tumour areas
+    such as vessel lumens and spaces, which the dataset excludes from the tumour outline`. Flagged for the owner.
+19. **Low · the expert view's text was spoken only** (`player/reveal-step.ts`, `items/region.ts`). While ⇧E is on, the
+    reveal step and the revealed region card show `expertView.text` and the legend `Expert’s view (white lines): solid
+    outlines tumour, dashed outlines the areas the dataset excludes. The dashed yellow line over it is the answer key.`
+    (SC 1.4.1: line style and words, not colour alone; the screenshot review showed the key's dashed yellow lying on the
+    expert's solid outline, so the legend names it too); the card's button has `aria-pressed`.
+20. **Low · HUD chip "now 20× · need ≥ 20×"** (`items/machine.ts`, `host/layout.ts`). At the gate's magnification the
+    chip reads `Zoom gate · place a mark first` or `Zoom gate · 20× · not over your mark yet`, without the keycap
+    (`LearnHudHost.setGate(text, withKey?)`, additive).
+21. **Low · revealed item kept its CTA note and `Mark without a pointer`** (`player/machine.ts`; J-I23, J-I30 closed).
+22. **Low · preview Open card promised saving** (`player/text.ts`; item 3).
+23. **Low · rule (b)'s assertive sentence did not say why** (`items/feedback.ts`). It ends `Correct location; the
+    outline covers only part of the deposit.`
+24. **Medium · the keyboard path was a reading test** (pathologist lens: the same leak as item 5, plus the tour's step 3
+    sitting on candidate B). Item 5 fixes the descriptions; step 3 is kept on purpose (J-I36).
+
+Also fixed while there: **I-N4**, the ITM-8 flake disclosed in J-I32 (a settle whose camera move began before the item
+mounted is no longer logged; `items/machine.ts`).
+
+- **J-I33 · The module version is 0.1.1** (`updated` 2026-11-08) and the facts file follows. A learner's stored
+  q-region response is cleared on load with the §5.6 notice, since its item hash changed; the three choice items keep
+  theirs. The examples copy (Appendix A) is updated with the module, so CNT-1's equality holds.
+- **J-I34 · The case's lint warnings.** `colour-only` is gone with "pink" (item 5); `review-recorded` stays (draft).
+- **J-I35 · The landscape dock dialog is a side panel, and LI-7 counts it as the drawer it replaces.** A 40 % bottom
+  sheet is 156 px at 844 × 390, which showed one candidate row and cut the commit button. As a panel from the right
+  (360 px, as tall as the canvas) it shows the head, the draft chip, the tabs, one and a half rows (the list scrolls) and
+  the footer, and the left 57 % of the slide stays in view. layout-check's Z1 passes a floating `.dock` as a transient
+  drawer; this panel is in the dock's place (base.css 1014–1022), so LI-7's Z1 line at the landscape viewport treats
+  `#candPanel` the same. Default pending owner (a design-system call: the system has no landscape-phone rule).
+- **J-I36 · The tour's step 3 still shows candidate B's lymphoid tissue** (the reviewer offered moving it as an
+  alternative). It is the module's reference picture of the background ("Compare anything you find later with this
+  picture"), shown before the item on purpose. With positional descriptions it rules out one of four regions by
+  looking, which is the skill being taught; moving it would change PLY-3, J-I28's LI-7 lines and the §12 bases F5, F8,
+  F33 and F36. Default pending owner (content decision; F33's label stays `Lymphoid tissue, lower right`).
+- **J-I37 · Size is not made required in the text rubric** (the reviewer said "consider"). The pointer and candidate
+  paths ask for a location only; a required size would make the text path harder than the pointer path (NFR-A5). Size
+  still counts toward `passMin`. Default pending owner.
+- **J-I38 · Start again clears the open slide's store only.** Every L1 module has one slide, which is open on the
+  summary; a later multi-slide module would leave other slides' learner marks until those slides open.
+- **J-I39 · The stray-mark rule removes, it does not prevent.** The tool switch to Select stops the usual path; a
+  learner who picks Point again on a tour or choice step sees the dot drawn and then removed, with the sentence. Undo
+  of the removal recreates it and it is removed again.
+- **J-I40 · Harness changes the stricter CSP needed.** axe-core used to be injected as an inline script, and
+  item-editor's `waitRows` evaluated `new Function` in the page; `script-src 'self'` refuses both, as it should.
+  `harness/learn/helpers.mjs` now injects axe through the DevTools protocol (its own `axe`, which the Learn checks
+  already import), and `waitRows` polls rows from Node. One RVL-4 read of the strip after a fixed 600 ms came back empty
+  under the full gate's load (three reruns passed); it now waits up to 3 s for the sentence.
+- **J-I41 · Review-fix gate numbers.** One `npm run build` into `client/dist`, build id `2026-11-08T11:05:25Z`.
+  `src/main.ts`, `src/shell/main.ts`, `index.html` and `shell.html` keep their Wave L1 sha256 (checked before and after).
+  - tsc `--noEmit` clean, also as part of the build.
+  - run.mjs: exit 0, 0 blank frames after base; check-metrics.mjs: 20 ok (`all metric checks passed`).
+  - shell-check.mjs: 190 ok, 0 FAIL; tools-check.mjs (axe-core 4.10.3): 628 ok, 0 FAIL.
+  - unit.mjs: 2609 ok, 0 FAIL in 20 files (21 new: SCR-2b 10, PRG-1b 3, the content and rubric cases); python
+    `unittest discover tools/tests`: 63 tests OK.
+  - learn-check (`--ref-dist <L0 dist> --axe <axe-core 4.10.3>`): 1,078 checks, 0 FAIL on the run after J-I40's RVL-4
+    wait (`learn-check-final2`; the run before it had one FAIL, that read). Integrator 408 (LI-1 9, LI-1b 3, LI-3 31,
+    LI-4 15, LI-5 9, LI-6 72 with the item-awaiting state, LI-7 153 with the landscape phone and the draft-chip lines,
+    LI-8 54, LI-9 9, LI-10 10, LI-R 13, LI-I 30); modules: content 62, course 95, item-editor 64, items 122, player 109,
+    progress 48, reveal 78, studio 92.
+  - LI-6: every gesture met OVL-4's own rule (p95 2.2–2.9 ms or blits) on that run; the item-awaiting drag and wheel
+    burst read no layout at 1440 and 1920 (`0`), where the review measured 3.
+- **J-I42 · Screenshots, re-taken and looked at.** 40 JPEGs in `design/screens/integrated/shots/`:
+  `learn-{1920x1080,1440x900,1024x1366,390x844,844x390}-{open,tour,region,candidates,revealed,expert,summary,studio-publish}.jpg`
+  (the `expert` state and the landscape row are new), from the final `client/dist`, 0 page errors. Seen and acted on
+  while taking them: the landscape drawer's rows were too tall for its CTA and title (compacted), the navigator and the
+  HUD gate chip sat in the landscape canvas's central band (behind O, and left to the card's gatebox), the candidates
+  sheet showed one row there (now a side panel, J-I35), and the expert legend's "solid outlines" did not match what is
+  seen where the key's dashed yellow lies on the expert outline (the legend now names both). Still as before and carried:
+  the studio heading's focus ring (J-I26), the mark row's long hint, and the phone's expanded sheet, where a long step
+  text needs a scroll to reach the expert note (the sheet is 40 vh by design, J-I28).
+### 15.2f Review fixes, round 2 (Learn integrator, 2026-11-08)
+
+A second review of the review-fixes build filed four issues: two medium, two low. The integrator applied all four,
+acting for the items, player and studio modules' files and its own host (no Phase A file changed; no contract change;
+no content change, so no §12 entry is new and the case stays `draft`, version 0.1.1, its 37 facts `pending`). Every
+owner default stays a **default pending owner** (§15.1).
+
+**Review fixes list, round 2** (issue → what changed, file):
+
+1. **Medium · Measure stayed active on steps that do not offer it** (`host/commands.ts`, comment in `items/machine.ts`).
+   The rail's `onToolsChanged` now also runs `dropHiddenTool()`: when the step's rail does not disclose the active tool
+   (`PhaseRailHost.disclosed`), the tool gives way to Select (`activate('select', 'surface')`). This runs on every step
+   change, on module open (the player's `setTools`) and when "Show all tools" is turned off, never per frame. A
+   disclosed tool stays, so Measure from q-size is still active on q-features (which offers it) and on step 9. Space then
+   plays a tour, and a drag pans. One part of the evidence is not a defect: the case's step 9 discloses Measure
+   (`tools: ["select", "measure"]` in the module), so there Measure is in the rail and stays by design. The summary
+   and the orientation module's steps were the real cases, and both now run with Select. LI-R2 checks it (Measure kept
+   on q-features, Select with only Select in the rail back on step 1, and Space plays the tour).
+2. **Medium · "or Escape to go back to the slide" was untrue** (`host/commands.ts`, §5.5, §9). The host notes a primary
+   action (`#ctxCta`, `#peekCta`, the card's CTA) that took focus from the slide canvas by keyboard. This happens after a
+   keyboard mark, or after ↵ on the slide with Select. The first Esc on that action returns focus to the slide and keeps
+   the mark, its selection and the tool, so the learner can adjust the mark or commit with ↵ again. Esc order (§9):
+   palette or dialog → candidates panel → that handoff → the rest as before. A pointer click on the CTA does not count
+   as a handoff, so Esc there behaves as before. LI-R2 checks it at 1440 with the drawer closed (T, ←, ↵ → focus on
+   `#ctxCta` and the sentence; one Esc → focus on `#view`, mark kept). Run against the previous build, the same check fails (focus stays on `#ctxCta`).
+3. **Low · ↵ inside a choice item's options dropped focus to `<body>`** (`items/mcq.ts`). After a successful keyboard
+   commit from the form, focus moves to the primary action (`player.focusPrimary()`, now `Reveal U`), as the region
+   item's keyboard path does (SC 2.4.3). The options keep the `disabled` attribute. LI-R2 checks it on q-sinus at 1440.
+   The previous build fails the check (`BODY`).
+4. **Low · the Publish note said "below"** (`studio/text.ts`). `noteExportBlocked` reads `Export is blocked until every
+   error above is fixed.`. The checks list is above the Export button. (The Publish blocker line keeps its own wording.)
+
+- **J-I43 · The handoff rule lives in the host, not in items.** The host's Esc cascade is the integrator's, and the
+  sentence is about focus, not about the item, so items keeps its sentence unchanged (it is now true). The rule covers
+  both keyboard handoffs (a mark, and ↵ on the slide), since in both the learner came from the slide.
+- **J-I44 · Seen, not fixed (carried).** In the round-2 screenshot of the orientation module's step 2, the strip still
+  showed the previous module's last feedback (`Correct · A, B, C · 1/1`) until the next sentence replaced it. It is a
+  polite status line, not a focus or scoring defect, and no review filed it. It is carried for L2: clear the strip on module change.
+- **J-I45 · Round-2 gate numbers.** One `npm run build` into `client/dist`, build id `2026-11-08T12:07:45Z`.
+  `src/main.ts`, `src/shell/main.ts`, `index.html` and `shell.html` keep their sha256 (checked before and after).
+  - tsc `--noEmit`: clean, also as part of the build.
+  - run.mjs: exit 0, 0 blank frames after base. check-metrics.mjs: 20 ok (`all metric checks passed`).
+  - shell-check.mjs: 190 ok, 0 FAIL.
+  - tools-check.mjs (axe-core 4.10.3): 628 ok, 0 FAIL on the second run. The first run had one FAIL: CMP-6's
+    SwiftShader-relative frame-interval p95 (single 16.8 ms, compare 33.3 ms, against a limit of 25.2 ms). The rerun
+    passed (single 33.3 ms, compare 16.8 ms). The two p95 values swap between 16.7 and 33.3 ms, so the result depends
+    on the software renderer. No Phase A source and no shell file changed in this round.
+  - unit.mjs: 2609 ok, 0 FAIL in 20 files. Python `unittest discover tools/tests`: 63 tests OK.
+  - learn-check (`--ref-dist <L0 dist> --axe <axe-core 4.10.3>`): 1,091 checks, 0 FAIL. Integrator 421 (13 new:
+    LI-R2), modules 670 (content 62, course 95, item-editor 64, items 122, player 109, progress 48, reveal 78, studio 92).
+    LI-6 gesture p95 at most 3.00 ms.
+  - LI-R2 was also run against the previous build (`client/dist` before this round). There it fails the Esc check
+    (focus stays on `#ctxCta`) and the choice-commit check (focus on `BODY`). The checks therefore detect both defects.
+- **J-I46 · Screenshots, taken and looked at.** Six new JPEGs in `design/screens/integrated/shots/`, taken from the final
+  `client/dist` with 0 page errors:
+  `learn-review2-1440-{keyboard-mark-cta,esc-back-to-slide,q-sinus-enter-commit,summary-after-measure,orientation-step2}.jpg`
+  and `learn-review2-1920-studio-publish-error.jpg`. Each was looked at:
+  - After the keyboard point, the focus ring is on the context bar's `Commit answer` and the strip shows the sentence.
+  - After one Esc, the ring is on the slide and the point is still drawn.
+  - After ↵ inside q-sinus, the ring is on `Reveal U` and the options are locked.
+  - The case's summary after a q-size measurement shows Select pressed, the only tool in the rail.
+  - The orientation module's step 2 shows Select pressed and the tour's play control.
+  - The Publish stage with one error shows `Export is blocked until every error above is fixed.` under the disabled
+    Export button, below the checks list.
+  None of the 40 standard J-I42 screenshots shows a state these fixes change, so they were not re-taken: no tool other
+  than Select is active in them, and their studio-publish state has no error. Carried: J-I44 (the previous module's strip
+  line) and the studio heading's focus ring (J-I26).
 
 ### 15.3 Judgement-call log (scoring, Wave L1, 2026-11-04)
 
@@ -1301,6 +1655,79 @@ public module and overlay files, D25). Each is applied as a **default pending ow
 - **J-CNT8 · The python schema test runs on data/learn now** (its `data/learn absent` skip is gone: 63 tests, 0 skipped
   by content), and `course.check.mjs` no longer needs `LEARN_DATA_STANDIN`.
 
+### 15.8 Judgement-call log (item-editor, Wave L3, 2026-11-08)
+
+As filed by the item-editor builder (LEARN-QUESTIONS IE-N4), logged by the integrator.
+
+- **J-IED1 · Rule (b) is off for a new region item** (default pending owner, owner default Q2 (b)): contracts §9 names
+  the studio defaults (points 1, gate 20×, IoU 0.5). The region editor offers `Half credit for an outline that lies
+  mostly on the target` (`scoring.partialInside`, 90 % / 50 % when turned on, both editable); the case keeps its own.
+- **J-IED2 · The reference key** is `{dataset}-reference` / `{dataset} reference outline` (Appendix A's
+  `camelyon16-reference`), source `{layer, version}` with the version read from the fetched file's
+  `provenance.version` (refused for another build of the slide or no version), one target `{slug(class)}` =
+  `{className: Tumor}` minus `{className: Exclusion}`. A key of that id that already reads the same layer (an imported
+  module such as Appendix A) is reused: the version is re-pinned and a target with these classes is added if missing, so
+  its target and its credited `related` entry stay. `related` entries (and `credit`, owner default Q3 (a), default
+  pending owner) are not editable in the L1 editor: they come from the module file.
+- **J-IED3 · The inline key** is `key-{itemId}` with every selected region (polygon, brush, rectangle, ellipse) as a
+  feature (`id` = annotation UUID, `className` = its class); its one target `outline` includes the non-`Exclusion`
+  features and subtracts the `Exclusion` ones. Points and measurements are left out.
+- **J-IED4 · A candidate's Fly there view** is centred on the point, or on the bounding-box centre of the polygon, at the
+  item's gate scale (else the current view's scale); a one-part brush stroke becomes a Polygon, a several-part one is
+  refused. Candidates are added in the order the Annotations selection lists them.
+- **J-IED5 · Destructive buttons:** deleting a candidate or a rubric field needs a second press within 5 s (§7 step 3's
+  rule for steps); removing a choice option is one press (an item keeps ≥ 2), and the letters re-flow at once.
+- **J-IED6 · Rubric ids follow their text** (a unique slug: `Position` → `position`, `> 2 mm` → `gt-2-mm`), and the
+  `correct` list follows a renamed option. `Correct fields needed` is not clamped, so an impossible rubric shows as
+  lint's `rubric-passable` error instead of being fixed silently (IED-4).
+- **J-IED7 · CSS:** `.checks*` (final 331–335) and `.mark-row` (final 220–223) are copied scoped under `.learn-ied`, so
+  the editor renders the same with or without the studio's stylesheet; `.cand-edit` (326–328) is the editor's own. The
+  accepted-kind checkboxes show the draw tool's keycap from the registry, `aria-hidden`.
+- **J-IED8 · N strings** are in `src/learn/item-editor/text.ts` (§8.3); §7's stage strings are verbatim.
+
+### 15.9 Judgement-call log (studio, Wave L3, 2026-11-08)
+
+As filed by the studio builder (LEARN-QUESTIONS STU-N5), logged by the integrator.
+
+- **J-STU1 · A new module's defaults:** id `untitled-module` until a title is typed; review `draft`, read-only (D11;
+  owner defaults Q4 / Q12, default pending owner: only the owner marks a module reviewed, in the file); text licence
+  CC BY 4.0 (owner default Q5, default pending owner); one empty author row (Q6's `Stoipath Learn L1 build (AI-assisted
+  draft)` is for the committed case, not a default for authors); language `en`, difficulty 2, 10 minutes, no slides,
+  items or steps.
+- **J-STU2 · The module id follows the title** while it still equals the previous title's suggestion; an id typed by
+  hand stops following. A value outside the schema pattern is refused in place (`aria-invalid` + the fix).
+- **J-STU3 · Slide refs are editable**; a rename updates every reference. Removing a slide that a step, hotspot, key or
+  item names is refused with how many parts use it.
+- **J-STU4 · Capture** (⇧N) works on every stage while a draft and one of its slides are open. The centre is rounded to
+  0.01 µm, the scale is kept exact. A tour step after a Decide step gets Complete (a tour step is never Decide).
+- **J-STU5 · No draft chip in the studio** (STU-N1, A-STU-N1).
+- **J-STU6 · Hotspots** go to the focused step when it is a tour or reveal step, else to the last such step; an item
+  step is refused. Measurement lines and multipoints in the selection are skipped and counted in the sentence.
+- **J-STU7 · Items and their steps:** adding an item appends its item step; deleting an item (second press) removes its
+  item step, its id from reveal steps (a reveal step left empty is removed) and from `expertView.unlockAfter`.
+- **J-STU8 · Lint at rest** 600 ms after the last change and when a draft opens. Its errors show on the field at the
+  finding's pointer once that field was touched, and on every field after `Fix`; local pattern checks (module id, slide
+  ref, language, minutes) refuse a value at once.
+- **J-STU9 · Publish:** the blocker sits above the checks list, then `Preview as learner`, the list (errors with `Fix`,
+  warnings, passes), the import and the note. Preview and Export are disabled while any error remains or a lint is
+  running (§7.1). N on Publish says `This is the last stage. Export the module file to publish it.`
+- **J-STU10 · The task card opens at start** at 1080–1599 px (a drawer, closed by default for learners): the draft list
+  is the studio's first screen.
+- **J-STU11 · No facts file in the studio's LintContext** (contracts §8 allows it absent). The studio never sets
+  `reviewed`; the python test checks committed modules.
+- **J-STU12 · The open draft is remembered** in the studio's prefs (`stoipath.learn-studio.v1.studio.open`) and reopened
+  on reload, on the stage and with the step / item it had (STU-1).
+- **J-STU13 · The rail** shows all five stages reachable while a draft is open, and locked without one (`Not yet` /
+  `Open a draft or start a new module first.`).
+- **J-STU14 · Import** caps a file at 5 MB and uses the forward-reading parse (an unknown property is dropped with a
+  warning); an invalid file lists the parser's errors (`aria-invalid` + `aria-describedby`) and makes no draft.
+- **J-STU15 · Camera choices per step kind** (Edit): tour `The captured view` / `The whole slide`; item adds `Keep the
+  learner’s view`; reveal adds `Fit the answer key`. `{cmd:…}` chips: `step:next`, `zoomin`, `zoomout`, `fit`,
+  `pan.viewport`, `nav`, `mag:20`.
+- Owner defaults the studio touches (each a default pending owner, §15.1): Q4 / Q12 (draft review, never set by the
+  studio), Q5 (CC BY 4.0 for a new module's text), Q15 (an exported module file carries its answers, as the committed
+  case does).
+
 ---
 
 ## 16. Open questions for the owner
@@ -1326,13 +1753,13 @@ confirms or changes it.
 
 ---
 
-## Appendix A. `stage0/data/learn/modules/sln-find-metastasis.module.json` (as specified; validated against the schema before the owner defaults of 2026-11-04, which add `textLicence`, `related[0].credit`, `scoring.partialInside` and change the q-region stem, explanation, candidates title and related feedback; the format module's schema adds the two new fields, LEARN-QUESTIONS A-F-Q1/Q2)
+## Appendix A. `stage0/data/learn/modules/sln-find-metastasis.module.json` (as specified; validated against the schema before the owner defaults of 2026-11-04, which add `textLicence`, `related[0].credit`, `scoring.partialInside` and change the q-region stem, explanation, candidates title and related feedback; the format module's schema adds the two new fields, LEARN-QUESTIONS A-F-Q1/Q2. The review fixes of 2026-11-08 changed version 0.1.1, `updated`, the candidate descriptions, the Feature keywords, the expert view's text, the related feedback and the text of steps 3 and 8, as below and in §12)
 
 ```json
 {
   "schema": "stoipath.learn.module/1",
   "id": "sln-find-metastasis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "metadata": {
     "title": "Sentinel lymph node: find the metastasis",
     "summary": "Survey a region of a sentinel lymph node section at low power, find the largest metastatic deposit, confirm it at 20× and name its size category.",
@@ -1349,7 +1776,7 @@ confirms or changes it.
     "language": "en",
     "estimatedMinutes": 15,
     "created": "2026-11-04",
-    "updated": "2026-11-04"
+    "updated": "2026-11-08"
   },
   "slides": [
     {
@@ -1371,7 +1798,7 @@ confirms or changes it.
     "slides": ["he"],
     "expertView": {
       "view": { "slide": "he", "center_um": [1590.6, 1483.88], "scale_um_per_px": 3 },
-      "text": "The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion areas, and three small separate tumour foci.",
+      "text": "The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion areas, and three small tumour areas the CAMELYON16 outline marks separately.",
       "keys": ["camelyon16-reference"],
       "unlockAfter": ["q-region"]
     }
@@ -1390,7 +1817,7 @@ confirms or changes it.
         { "id": "largest-deposit", "label": "Largest deposit", "include": { "ids": ["f5049586-cbdd-54a7-a198-8aadd4f15d8a"] }, "subtract": { "className": "Exclusion" } }
       ],
       "related": [
-        { "id": "small-foci", "include": { "ids": ["a23671ad-a137-5b55-bc87-8fa11f1c993a", "ce4d072d-cf26-53c6-a4af-8fb4eb5ecd5a", "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"] }, "credit": true, "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region." }
+        { "id": "small-foci", "include": { "ids": ["a23671ad-a137-5b55-bc87-8fa11f1c993a", "ce4d072d-cf26-53c6-a4af-8fb4eb5ecd5a", "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"] }, "credit": true, "feedback": "That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region." }
       ]
     }
   ],
@@ -1410,16 +1837,16 @@ confirms or changes it.
       "gate": { "scale_um_per_px": 0.5, "label": "20×", "unmetFactor": 0.5 },
       "candidatesTitle": "Mark the metastasis without a pointer",
       "candidates": [
-        { "id": "A", "description": "Upper border: round clear spaces between bands of dark lymphoid tissue", "geometry": { "type": "Point", "coordinates": [9300, 1000] }, "view": { "slide": "he", "center_um": [2260.77, 243.09], "scale_um_per_px": 0.5 } },
-        { "id": "B", "description": "Lower right corner: dense, dark-staining lymphoid tissue", "geometry": { "type": "Point", "coordinates": [13088, 13088] }, "view": { "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 } },
-        { "id": "C", "description": "Centre: sheets of large, pale cells with abundant pink cytoplasm", "geometry": { "type": "Point", "coordinates": [7168, 5120] }, "view": { "slide": "he", "center_um": [1742.5, 1244.64], "scale_um_per_px": 0.5 } },
-        { "id": "D", "description": "Lower edge: round and slit-like clear spaces within lymphoid tissue", "geometry": { "type": "Point", "coordinates": [6400, 13900] }, "view": { "slide": "he", "center_um": [1555.8, 3379.01], "scale_um_per_px": 0.5 } }
+        { "id": "A", "description": "Upper border of the region", "geometry": { "type": "Point", "coordinates": [9300, 1000] }, "view": { "slide": "he", "center_um": [2260.77, 243.09], "scale_um_per_px": 0.5 } },
+        { "id": "B", "description": "Lower right corner of the region", "geometry": { "type": "Point", "coordinates": [13088, 13088] }, "view": { "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 } },
+        { "id": "C", "description": "Centre of the region", "geometry": { "type": "Point", "coordinates": [7168, 5120] }, "view": { "slide": "he", "center_um": [1742.5, 1244.64], "scale_um_per_px": 0.5 } },
+        { "id": "D", "description": "Lower edge of the region", "geometry": { "type": "Point", "coordinates": [6400, 13900] }, "view": { "slide": "he", "center_um": [1555.8, 3379.01], "scale_um_per_px": 0.5 } }
       ],
       "textRubric": {
         "fields": [
           { "id": "position", "label": "Position", "kind": "choice", "required": true, "options": [ { "id": "centre", "text": "Centre of the region" }, { "id": "upper", "text": "Upper border" }, { "id": "lower-right", "text": "Lower right corner" }, { "id": "lower", "text": "Lower edge" }, { "id": "left", "text": "Left edge" } ], "correct": ["centre"] },
           { "id": "size", "label": "Size", "kind": "choice", "options": [ { "id": "macro", "text": "> 2 mm" }, { "id": "micro", "text": "0.2–2 mm" }, { "id": "itc", "text": "≤ 0.2 mm" } ], "correct": ["macro"] },
-          { "id": "feature", "label": "Feature", "kind": "keywords", "keywords": ["cohesive", "sheet", "sheets", "large cells", "pale cells", "abundant cytoplasm", "carcinoma", "tumour", "tumor", "metastasis", "metastatic"] }
+          { "id": "feature", "label": "Feature", "kind": "keywords", "keywords": ["cohesive", "clusters", "large cells", "larger cells", "pale cells", "large nuclei", "larger nuclei", "nucleoli", "more cytoplasm", "abundant cytoplasm"] }
         ],
         "passMin": 2
       }
@@ -1471,12 +1898,12 @@ confirms or changes it.
   "steps": [
     { "id": "open", "kind": "tour", "phase": "open", "title": "Before you look", "text": "This module uses one public slide. Survey the region at low power, mark the largest metastatic deposit, then answer three questions and compare your answer with the CAMELYON16 reference outline.", "view": { "kind": "fit", "slide": "he" }, "transition": "cut", "tools": ["select"] },
     { "id": "survey", "kind": "tour", "phase": "screen", "title": "Survey at low power", "text": "Look over the whole region before zooming in; {cmd:pan.viewport} steps one screen at a time. Most of this region is lymphoid tissue, which looks dense and dark at low power because lymphocytes have dark nuclei and little cytoplasm. Look for areas that look different.", "view": { "kind": "fit", "slide": "he" }, "transition": "fly", "tools": ["select", "measure"] },
-    { "id": "lymphoid", "kind": "tour", "phase": "examine", "title": "Lymphoid tissue at 20×", "text": "This is the background: sheets of small lymphocytes with round, dark nuclei and very little cytoplasm. Compare anything you find later with this picture.", "view": { "kind": "view", "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 }, "transition": "fly", "highlights": ["hs-lymphoid"], "tools": ["select", "measure"] },
+    { "id": "lymphoid", "kind": "tour", "phase": "examine", "title": "Lymphoid tissue at 20×", "text": "This is the background: a dense, non-cohesive population of small lymphocytes with round, dark nuclei and very little cytoplasm. Compare anything you find later with this picture.", "view": { "kind": "view", "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 }, "transition": "fly", "highlights": ["hs-lymphoid"], "tools": ["select", "measure"] },
     { "id": "find", "kind": "item", "phase": "decide", "title": "Identify the metastasis", "item": "q-region", "view": null, "tools": ["select", "point", "polygon", "brush", "measure"] },
     { "id": "sinus", "kind": "item", "phase": "decide", "title": "Where tumour cells arrive", "item": "q-sinus", "view": null, "tools": ["select"] },
     { "id": "size", "kind": "item", "phase": "decide", "title": "Measure and classify", "item": "q-size", "view": null, "tools": ["select", "measure"] },
     { "id": "features", "kind": "item", "phase": "decide", "title": "Tumour cells or lymphocytes?", "item": "q-features", "view": { "kind": "view", "slide": "he", "center_um": [2738.21, 1369.11], "scale_um_per_px": 0.5 }, "tools": ["select", "measure"] },
-    { "id": "compare", "kind": "reveal", "phase": "complete", "title": "Compare with the reference outline", "items": ["q-region"], "text": "The dashed outline is the CAMELYON16 reference annotation of the largest deposit in this region. The smaller outlined areas inside it are marked Exclusion: non-tumour tissue inside a tumour outline, by the dataset's convention. Your own mark is drawn beside it for comparison.", "view": { "kind": "key" }, "transition": "fly", "tools": ["select", "measure"] },
+    { "id": "compare", "kind": "reveal", "phase": "complete", "title": "Compare with the reference outline", "items": ["q-region"], "text": "The dashed outline is the CAMELYON16 reference annotation of the largest deposit in this region. The smaller outlined areas inside it are marked Exclusion: non-tumour areas such as vessel lumens and spaces, which the dataset excludes from the tumour outline. Your own mark is drawn beside it for comparison.", "view": { "kind": "key" }, "transition": "fly", "tools": ["select", "measure"] },
     { "id": "edge", "kind": "tour", "phase": "complete", "title": "At the edge of the deposit", "text": "Here the deposit meets the lymphoid tissue. The carcinoma cells are larger than the lymphocytes, with more cytoplasm and larger nuclei, and they lie together in cohesive sheets.", "view": { "kind": "view", "slide": "he", "center_um": [2738.21, 1369.11], "scale_um_per_px": 0.5 }, "transition": "fly", "highlights": ["hs-edge"], "tools": ["select", "measure"] }
   ]
 }

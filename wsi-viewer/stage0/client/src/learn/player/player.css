@@ -80,3 +80,8 @@
 #taskCard.learn-player .learn-summary__status { margin: 0; }
 #taskCard.learn-player .learn-player__answers dd { margin: 0; }
 #taskCard.learn-player .task__cta .cta-note[hidden], #taskCard.learn-player .task__secondary[hidden] { display: none; }
+
+/* The expert's view note (review fix 2026-11-08): its text and a legend in words while ⇧E is on */
+.learn .learn-player__expert { display: flex; flex-direction: column; gap: var(--space-1); }
+.learn .learn-player__expert p { margin: 0; }
+.learn .learn-player__expert[hidden] { display: none; }

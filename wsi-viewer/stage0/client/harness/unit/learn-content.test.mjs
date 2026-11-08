@@ -7,7 +7,8 @@
 // committed files and check them with the real format and scoring services (the only two modules content may depend
 // on, tests only), the catalogue (data/catalogue.json) and the reference layer (data/overlays/…/camelyon16-expert.geojson):
 //   CNT-1  the four files exist, parse with no warning, pass the closed schema, are the studio's export text
-//          (format.stringify) byte for byte, and lint with 0 errors (the case's warnings: review-recorded, colour-only);
+//          (format.stringify) byte for byte, and lint with 0 errors (the case's warning: review-recorded; the review fixes of
+//          2026-11-08 made the candidate descriptions positional, so "pink" and its colour-only warning are gone);
 //          the course lists the case first and the orientation tour second (owner default Q10) and its entries match
 //          the modules; the owner defaults Q4, Q5, Q6, Q12 and D12 / D13 are in the files;
 //   CNT-2  content scoring on the real key: candidate C scores full and A, B, D score 0 with a gate-meeting log; the
@@ -153,7 +154,7 @@ export default async function (t) {
   });
   const lintCase = await F.lintModule(mod, lintContext(mod, facts));
   t.eq(lintCase.errors, 0, `the case lints with 0 errors (${lintCase.findings.filter((f) => f.severity === 'error').map((f) => `${f.rule} ${f.path}: ${f.message}`).join('; ') || 'none'})`);
-  t.eq(lintCase.findings.map((f) => [f.severity, f.rule]), [['warning', 'review-recorded'], ['warning', 'colour-only']], `its warnings are review-recorded (draft) and colour-only ("pink" in candidate C, a stain colour): ${lintCase.findings.map((f) => `${f.rule} ${f.path}`).join(', ')}`);
+  t.eq(lintCase.findings.map((f) => [f.severity, f.rule]), [['warning', 'review-recorded']], `its one warning is review-recorded (draft; review fixes 2026-11-08: no colour-only, the candidate descriptions are positional): ${lintCase.findings.map((f) => `${f.rule} ${f.path}`).join(', ')}`);
   t.eq(lintCase.findings.find((f) => f.rule === 'review-recorded')?.message, `Draft: learners will see "${DRAFT_NOTE}"`, 'the draft warning quotes the draft note (owner default Q12)');
   t.eq(lintCase.passed.find((x) => x.rule === 'candidate-scores')?.message, 'Candidates that score as correct: C', 'lint (real scoring): only candidate C scores as correct');
   t.ok(lintCase.passed.some((x) => x.rule === 'tour-shows-key'), 'lint: tour-shows-key passes (no pre-item hotspot or view shows the answer)');
@@ -279,7 +280,9 @@ export default async function (t) {
   for (const [fields, want, label] of [
     [{ position: 'centre', size: 'macro', feature: 'cohesive sheets' }, [1, true, 3], 'the reference text answer {centre, > 2 mm, "cohesive sheets"} passes 3 / 3'],
     [{ position: 'centre', size: 'micro', feature: 'large pale cells' }, [1, true, 2], '{centre, 0.2–2 mm, "large pale cells"} passes (2 of 3)'],
-    [{ position: 'lower', size: 'macro', feature: 'tumour' }, [0, false, 2], '{lower edge, > 2 mm, "tumour"} fails (the required position is wrong)'],
+    [{ position: 'lower', size: 'macro', feature: 'tumour' }, [0, false, 1], '{lower edge, > 2 mm, "tumour"} fails (the required position is wrong; "tumour" is no longer a keyword, review fixes 2026-11-08)'],
+    [{ position: 'centre', size: 'micro', feature: 'no tumour seen, only lymphocytes' }, [0, false, 1], '{centre, 0.2–2 mm, "no tumour seen, only lymphocytes"} fails (review fixes 2026-11-08: generic and negated words earn nothing)'],
+    [{ position: 'centre', size: 'micro', feature: 'non-cohesive small cells' }, [0, false, 1], '{centre, 0.2–2 mm, "non-cohesive small cells"} fails (a negated keyword does not count)'],
   ]) {
     const s = S.scoreRegion(item, key, { kind: 'text', fields }, targetView, mpp);
     t.eq([s.score, s.correct, s.metric.kind === 'rubric' ? s.metric.correctFields?.length ?? s.metric.correct?.length ?? null : null, s.rule], [...want, 'region-text'], `${label} (score ${s.score}, metric ${JSON.stringify(s.metric).slice(0, 120)})`);

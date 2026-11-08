@@ -167,14 +167,18 @@ export class EngineChrome {
   }
 
   // ---------------------------------------------------------------- navigator visibility (O)
+  /** A phone, or a short landscape screen (review fix 2026-11-08): the navigator is behind O (base.css (5)). */
+  private navBehindO(): boolean {
+    return this.env.isPhone() || this.env.isShortLandscape();
+  }
   navVisible(): boolean {
-    return this.env.isPhone() ? this.app.classList.contains('nav-open') : !this.app.classList.contains('nav-hidden');
+    return this.navBehindO() ? this.app.classList.contains('nav-open') : !this.app.classList.contains('nav-hidden');
   }
   syncNavPressed(): void {
     for (const b of Array.from(document.querySelectorAll<HTMLElement>('[data-cmd="nav"]'))) b.setAttribute('aria-pressed', String(this.navVisible()));
   }
   toggleNav(): void {
-    if (this.env.isPhone()) this.app.classList.toggle('nav-open');
+    if (this.navBehindO()) this.app.classList.toggle('nav-open');
     else this.app.classList.toggle('nav-hidden');
     this.syncNavPressed();
     this.nav?.markDirty();

@@ -121,6 +121,7 @@ export class CandidatesPanel {
       this.rubric = new RubricForm(
         idBase,
         item.textRubric,
+        item.gate?.label ?? null,
         l.text,
         (fields) => {
           this.engine.live(item.id).text = fields;
@@ -200,11 +201,11 @@ export class CandidatesPanel {
     const out: HTMLElement[] = [];
     const g = this.item.gate;
     if (l.panelTab === 'candidates' && l.gateWarning && l.warnFrom === 'panel' && g !== null && this.engine.gateView(this.itemId).met === false) {
-      const [a, b] = TEXT.gateWarn(g.label);
+      const a = TEXT.gateWarnPanel(g.label);
       // the same two ways out as the card's warning: fly there first (the rows' Fly there meets the gate), or commit anyway
       const anyway = h('button', { class: 'btn btn--sm btn--secondary', type: 'button', text: TEXT.commitAnyway });
       anyway.addEventListener('click', (e) => this.commit(sourceOfEvent(e)));
-      out.push(h('div', { class: 'alert alert--neutral' }, h('span', { class: 'alert__glyph', 'aria-hidden': 'true', text: '!' }), h('div', { class: 'stack stack--tight' }, h('div', {}, a, ...keycaps(this.engine.keys('mag:20', ['5'])), b), h('div', {}, anyway))));
+      out.push(h('div', { class: 'alert alert--neutral' }, h('span', { class: 'alert__glyph', 'aria-hidden': 'true', text: '!' }), h('div', { class: 'stack stack--tight' }, h('div', { text: a }), h('div', {}, anyway))));
     } else if (l.notice !== null && l.notice.kind === 'refusal') out.push(noticeAlert(l.notice.text));
     const nsig = out.map((x) => x.textContent).join('|');
     if (this.notice.dataset['sig'] !== nsig) {

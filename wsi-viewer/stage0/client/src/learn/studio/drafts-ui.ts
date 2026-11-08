@@ -10,7 +10,7 @@
  */
 import type { Annotation, CatalogueService, CommandSource, ShellApi } from '../../shell/contracts';
 import { h } from '../../shell/dom';
-import type { AuthorDraft, AuthorStage, DraftSummary, ItemEditorContext, ItemEditorService, LearnApi, LintReport, ModuleFile, ViewPoint } from '../contracts';
+import type { AuthorDraft, AuthorStage, DraftSummary, ItemEditorContext, ItemEditorService, LearnApi, LintFinding, LintReport, ModuleFile, ViewPoint } from '../contracts';
 import { TEXT } from './text';
 
 /**
@@ -28,6 +28,8 @@ export interface StageCtx {
   /** Apply a change to the draft's module (autosave 800 ms at rest, lint at rest); `rerender` redraws the stage. */
   update(mutate: (m: ModuleFile) => void, label: string, rerender?: boolean): void;
   setStage(stage: AuthorStage, source: CommandSource): void;
+  /** `Fix` on a check: go to the finding's stage, select its step or item and focus the field at its pointer. */
+  fix(finding: LintFinding, source: CommandSource): void;
   /** Select a step (Edit) or an item (Items) and redraw. */
   focusStep(stepId: string | null): void;
   focusItem(itemId: string | null): void;
@@ -46,11 +48,15 @@ export interface StageCtx {
   selection(): readonly Annotation[];
   /** The first chord of a registered command as display keys (`['⇧', 'N']`), or null. */
   keysOf(commandId: string): string[] | null;
+  /** A registered command's label, or null. */
+  commandLabel(commandId: string): string | null;
   readonly itemEditor: ItemEditorService | null;
   itemEditorContext(): ItemEditorContext;
   exportModule(source: CommandSource): void;
   preview(source: CommandSource): void;
   importFile(file: File, source: CommandSource, report: (errors: string[] | null) => void): void;
+  /** Put focus on the control with this `data-fk` after the next redraw. */
+  focusAfterRender(fk: string): void;
   /** Run when this render is replaced (unmount an item editor, drop a listener). */
   onDispose(fn: () => void): void;
 }
@@ -259,7 +265,7 @@ export interface CheckOption {
 
 /** A `<fieldset>` of native checkboxes (SC 1.3.1); `onChange` gets the checked values in option order. */
 export function checkboxGroup(legend: string, options: readonly CheckOption[], fk: string, onChange: (values: string[]) => void, o: { ptr?: string; hint?: string; empty?: string } = {}): HTMLFieldSetElement {
-  const fs = h('fieldset', { class: 'field learn-studio__checks' });
+  const fs = h('fieldset', { class: 'field learn-studio__checkset' });
   if (o.ptr !== undefined) fs.dataset['ptr'] = o.ptr;
   fs.append(h('legend', { class: 'field__label', text: legend }));
   const boxes: HTMLInputElement[] = [];

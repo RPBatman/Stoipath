@@ -56,7 +56,7 @@ import type {
 } from '../contracts';
 import { CandidatesPanel } from './candidates';
 import { choiceFeedback, regionFeedback, type FeedbackView } from './feedback';
-import { GateLog, appendView, gateStatus, viewRect, type GateStatus, type GateSubjectKind } from './gate-log';
+import { GateLog, VIEW_CAP, appendView, gateStatus, viewRect, type GateStatus, type GateSubjectKind } from './gate-log';
 import { acceptPhrase, answerMark, candidateMark, deviceOfSource, inputOfAnnotation, markArea_um2, markCentre, markKindOf, markOf, markSummary, modalityOfInput, newestAccepted } from './marks';
 import { McqCard } from './mcq';
 import { MultiCard } from './multi';
@@ -141,6 +141,8 @@ interface Mounted {
   el: HTMLElement;
   view: CardView;
   presentedMs: number;
+  /** performance.now() at mount: a camera move that began before it is not logged (J-ITM2, LEARN-QUESTIONS I-N4). */
+  mountedPerf: number;
 }
 
 const nowIso = (): string => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -160,6 +162,8 @@ export class ItemsEngine implements ItemsService {
   private escScope: (() => void) | null = null;
   /** Items whose reveal is running (the key is being fetched): a second U waits for the first. */
   private readonly revealing = new Set<string>();
+  /** Items whose answer key has been loading for more than a moment (the card is aria-busy, the CTA waits). */
+  private readonly keyLoading = new Set<string>();
   /** The engine's own sentences, newest last (window.__learn.tools.items().said). */
   readonly said: { polite: string[]; assertive: string[] } = { polite: [], assertive: [] };
   lastCommit: { itemId: string; result: CommitResult } | null = null;
@@ -170,7 +174,14 @@ export class ItemsEngine implements ItemsService {
     const bus = this.shell.bus;
     bus.on('viewSettled', (s) => this.onSettled(s));
     bus.on('viewChanged', (s) => {
-      if (s.view === 'A') this.log.move();
+      if (s.view !== 'A') return;
+      this.log.move();
+      // O(1): when the current camera move began (review fixes 2026-11-08, I-N4: a fly that started before the item
+      // mounted, step 3's 20× view, settled after it and was logged)
+      if (!this.camMoving) {
+        this.camMoving = true;
+        this.moveBegan = performance.now();
+      }
     });
     bus.on('tileSettled', ({ view, sharp }) => {
       if (view !== 'A') return;
@@ -186,6 +197,8 @@ export class ItemsEngine implements ItemsService {
       this.lastMeasure.set(slideKey, length_um);
       this.schedule();
     });
+    // the revealed region card shows what the expert's view draws while it is on (review fix 2026-11-08)
+    this.learn.bus.on('expertViewChanged', () => this.schedule());
     bus.on('slideOpened', ({ view }) => {
       if (view === 'A') this.schedule();
     });
@@ -369,6 +382,12 @@ export class ItemsEngine implements ItemsService {
       return;
     }
     const s = this.shell.primary.sample();
+    // Review fix (2026-11-08): at the gate's magnification already, "now 20× · need ≥ 20×" contradicted itself; the
+    // chip then says what is missing instead, without the 20× preset's keycap (it would not help).
+    if (s !== null && s.scale_um_per_px <= item.gate.scale_um_per_px * 1.01) {
+      hud.setGate(this.subject(m.itemId).mark === null ? TEXT.hudGateNoMark : TEXT.hudGateNotOver(mag(s.scale_um_per_px)), false);
+      return;
+    }
     hud.setGate(TEXT.hudGate(s === null ? '–' : mag(s.scale_um_per_px), item.gate.label));
   }
 
@@ -395,10 +414,14 @@ export class ItemsEngine implements ItemsService {
     if (st === 'revealed' || !this.onItemSlide(item)) return null;
     return { itemId: m.itemId, item };
   }
+  private camMoving = false;
+  private moveBegan = 0;
   private onSettled(s: ViewSample): void {
     if (s.view !== 'A') return;
+    const began = this.camMoving ? this.moveBegan : null;
+    this.camMoving = false;
     const cur = this.logging();
-    if (cur === null || this.mounted === null) {
+    if (cur === null || this.mounted === null || (began !== null && began < this.mounted.mountedPerf)) {
       this.log.drop();
       this.schedule();
       return;
@@ -421,9 +444,11 @@ export class ItemsEngine implements ItemsService {
   }
   private appendViews(itemId: string, entries: readonly ViewLogEntry[]): void {
     if (entries.length === 0) return;
+    const it = this.item(itemId);
+    const gateScale = it !== null && it.kind === 'region' && it.gate !== null ? it.gate.scale_um_per_px : null;
     this.save(itemId, (r) => {
       let v = r.views;
-      for (const e of entries) v = appendView(v, e);
+      for (const e of entries) v = appendView(v, e, VIEW_CAP, gateScale);
       r.views = v;
     });
     this.syncGate(itemId);
@@ -459,10 +484,12 @@ export class ItemsEngine implements ItemsService {
     }
     if (e.cause === 'select') return;
     const cur = this.regionOnSlide(e.slideKey);
-    if (cur === null) return;
+    const st0 = cur === null ? null : this.state(cur.itemId);
+    if (cur === null || st0 === 'revealed') {
+      this.refuseStray(e);
+      return;
+    }
     const { itemId, item } = cur;
-    const st0 = this.state(itemId);
-    if (st0 === 'revealed') return;
     const store = this.store();
     if (store === null) return;
     const a = newestAccepted(e.ids, (id) => store.get(id), item.accept);
@@ -492,6 +519,20 @@ export class ItemsEngine implements ItemsService {
       } else this.sayPolite(TEXT.pointerMark(this.markText(itemId)));
     }
     this.schedule();
+  }
+  /**
+   * Review fix (2026-11-08): a mark made while no region item is open for marking (a tour or choice step, a revealed
+   * item) is not kept: it is removed at once and a Learn sentence (no class name, D17) says why. Measurements stay
+   * (they are a tool of those steps, never scored).
+   */
+  private refuseStray(e: AnnotationEvent): void {
+    if (e.cause === 'load' || e.cause === 'import') return;
+    const store = this.store();
+    if (store === null || store.slideKey !== e.slideKey) return;
+    const stray = e.ids.filter((id) => markKindOf(store.get(id)) !== null);
+    if (stray.length === 0) return;
+    queueMicrotask(() => this.removeMarks(stray, 'command'));
+    this.sayPolite(TEXT.strayMark);
   }
   private onUpdated(e: AnnotationEvent): void {
     const cur = this.regionOnSlide(e.slideKey);
@@ -656,7 +697,7 @@ export class ItemsEngine implements ItemsService {
         },
       };
     const u = this.keys('item:reveal', ['U']).join('');
-    if (st === 'committed') return { label: 'Reveal', key: u, disabled: false, run: (s) => void this.reveal(itemId, s) };
+    if (st === 'committed') return { label: 'Reveal', key: u, disabled: this.keyLoading.has(itemId), run: (s) => void this.reveal(itemId, s) };
     if (st === 'reveal-waiting') return { label: 'Reveal', key: u, disabled: true, run: () => {} };
     return { label: 'Next step', key: this.keys('step:next', ['N']).join(''), disabled: false, run: (s) => void this.player()?.next(s) };
   }
@@ -787,8 +828,17 @@ export class ItemsEngine implements ItemsService {
     return true;
   }
 
+  /** The answer key of this item's running reveal is still loading (review fix 2026-11-08). */
+  isKeyLoading(itemId: string): boolean {
+    return this.keyLoading.has(itemId);
+  }
   async reveal(itemId: string, source: CommandSource): Promise<RevealOutcome> {
-    if (this.revealing.has(itemId)) return { ok: false, reason: 'waiting', text: TEXT.waiting(0) };
+    if (this.revealing.has(itemId)) {
+      if (this.live(itemId).waiting !== null) return { ok: false, reason: 'waiting', text: TEXT.waiting(this.live(itemId).waiting?.pendingTiles ?? 0) };
+      // a second U while the key is fetched: say what is happening (review fix 2026-11-08; was "waiting for 0 tiles")
+      this.sayPolite(TEXT.keyLoading, false);
+      return { ok: false, reason: 'loading', text: TEXT.keyLoading };
+    }
     this.revealing.add(itemId);
     try {
       return await this.revealInner(itemId, source);
@@ -835,12 +885,22 @@ export class ItemsEngine implements ItemsService {
       if (!ok) return { ok: false, reason: 'cancelled', text: TEXT.waitCancelled };
     }
     let key: CompiledKey;
+    // Review fix (2026-11-08): a key that takes more than a moment says so politely and marks the card busy; the
+    // request itself gives up after 20 s (reveal/keys.ts), which ends here as keyFailed.
+    const slow = window.setTimeout(() => {
+      this.keyLoading.add(itemId);
+      this.sayPolite(TEXT.keyLoading, false);
+      this.schedule();
+    }, 400);
     try {
       key = await rv.key(item.key);
     } catch (e) {
       const text = TEXT.keyFailed(e instanceof Error ? e.message : String(e));
       this.refuse(itemId, text);
       return { ok: false, reason: 'key-unavailable', text };
+    } finally {
+      window.clearTimeout(slow);
+      if (this.keyLoading.delete(itemId)) this.schedule();
     }
     if (this.state(itemId) !== 'committed') return { ok: false, reason: 'cancelled', text: TEXT.waitCancelled };
     const r = this.response(itemId);
@@ -924,6 +984,7 @@ export class ItemsEngine implements ItemsService {
       x.draftMarkId = null;
     });
     if (markId !== null) this.removeMarks([markId], 'command');
+    if (item.kind === 'region') this.toSelect();
     const l = this.live(itemId);
     l.notice = null;
     l.gateWarning = false;
@@ -1069,7 +1130,7 @@ export class ItemsEngine implements ItemsService {
     const view: CardView = item.kind === 'mcq' ? new McqCard(this, item) : item.kind === 'multi' ? new MultiCard(this, item) : new RegionCard(this, item);
     el.replaceChildren(view.root);
     const presentedAt = this.response(itemId)?.presentedAt ?? null;
-    const m: Mounted = { itemId, el, view, presentedMs: presentedAt !== null && Number.isFinite(Date.parse(presentedAt)) ? Date.parse(presentedAt) : Date.now() };
+    const m: Mounted = { itemId, el, view, presentedMs: presentedAt !== null && Number.isFinite(Date.parse(presentedAt)) ? Date.parse(presentedAt) : Date.now(), mountedPerf: performance.now() };
     this.mounted = m;
     this.log.drop();
     const l = this.live(itemId);
@@ -1128,6 +1189,18 @@ export class ItemsEngine implements ItemsService {
     if (m.el.contains(m.view.root)) m.el.replaceChildren();
     this.mounted = null;
     this.learn.host.hud.setGate(null);
+    this.toSelect();
+  }
+  /**
+   * Review fix (2026-11-08): a drawing tool does not outlive the region item it was for. At reveal and when the item
+   * leaves the card (every step change), Point, Polygon, Brush, Rectangle and Ellipse give way to Select, so a click
+   * on the slide afterwards does not make a mark nobody asked for. Measure stays here; the host (host/commands.ts,
+   * `dropHiddenTool`) switches any tool the new step's rail does not disclose, Measure included, back to Select on
+   * every step change and module open (review fix, round 2).
+   */
+  private toSelect(): void {
+    const t = this.shell.tools as ShellApi['tools'] | undefined;
+    if (t !== undefined && t.active !== 'select' && t.active !== 'measure') t.activate('select', 'surface');
   }
 
   /** The current item's measurement hint (`Your measurement · {length}`): the newest measurement on its slide. */

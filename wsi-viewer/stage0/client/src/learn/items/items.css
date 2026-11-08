@@ -71,3 +71,16 @@
 .learn-cands > .tabs, .learn-cands > .dialog__footer, .learn-cands > .learn-cands__notice { flex: 0 0 auto; }
 .learn-cands > .learn-cands__panel { flex: 1 1 auto; min-height: 0; overflow: auto; }
 .learn-item .option__feedback { white-space: nowrap; }
+
+/* The expert's view note (review fix 2026-11-08): its text and a legend in words while ⇧E is on */
+.learn .learn-item__expert-note { display: flex; flex-direction: column; gap: var(--space-1); }
+.learn .learn-item__expert-note p { margin: 0; }
+.learn .learn-item__expert-note[hidden] { display: none; }
+
+/* Phone or tablet in landscape (review fix 2026-11-08): the panel is a side panel as tall as the canvas; its tabs and
+   footer take less height so the regions keep the room */
+@media (max-width: 1079px) and (max-height: 500px) and (orientation: landscape) {
+  .learn-cands > .tabs .tab { min-height: var(--target); }
+  .learn-cands .dialog__footer { padding: var(--space-2) var(--space-5); }
+  .learn-cands > .learn-cands__panel > p { margin-block: var(--space-2); }
+}

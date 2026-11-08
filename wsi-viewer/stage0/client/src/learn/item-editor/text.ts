@@ -67,10 +67,15 @@ export const TEXT = {
   keyNone: 'No answer key yet.',
   keyInline: (label: string, n: number) => `${label} · ${n} outline${n === 1 ? '' : 's'} drawn in the studio`,
   keyReference: (label: string, layer: string, version: string) => `${label} · reference layer ${layer}, version ${version}`,
-  keyTargetLine: (label: string, inc: string, sub: string | null) => `Target ${label}: ${inc}${sub === null ? '' : ` minus ${sub}`}`,
+  keyTargetLine: (label: string, inc: string, sub: string | null) => {
+    const what = `${inc}${sub === null ? '' : ` minus ${sub}`}`;
+    return label === what ? `Target: ${what}` : `Target ${label}: ${what}`;
+  },
   useSelection: 'Use the selected annotations as the answer key',
   useReference: 'Use the slide’s reference layer',
   referenceLayer: 'Reference layer',
+  referenceLegend: 'From the slide’s reference layer',
+  layerLabel: 'Layer',
   noReference: 'The catalogue lists no reference layer for this slide.',
   includeClass: 'Target class',
   subtractClass: 'Subtract class',
@@ -118,6 +123,7 @@ export const TEXT = {
   candidatesTitleLabel: 'Panel title (optional)',
   candidatesTitleHint: 'Default: Mark without a pointer.',
   candidateDesc: (L: string) => `Candidate ${L} description`,
+  candidatePlaceholder: 'What the learner reads, e.g. position and what is there',
   candidateGeom: (kind: 'Point' | 'Polygon', x: number, y: number, n: number) => (kind === 'Point' ? `Point at ${x.toFixed(0)}, ${y.toFixed(0)} px` : `Polygon of ${n} vertices around ${x.toFixed(0)}, ${y.toFixed(0)} px`),
   candidateView: (mag: string, s: number) => `Fly there at ${mag} (${s.toFixed(2)} µm/px)`,
   addCandidate: 'Add candidate from the selection',
@@ -135,7 +141,7 @@ export const TEXT = {
   // ---------------------------------------------------------------- text rubric
   rubricHeading: 'Text alternative · answer in text',
   rubricToggle: 'Offer an answer in text',
-  rubricHint: 'Learners describe where the focus is; scored field by field and never discounted for modality.',
+  rubricHint: 'Learners describe where the focus is; scored field by field, not discounted for modality, with the zoom gate applied as to a mark.',
   fieldLegend: (n: number, label: string) => `Field ${n}${label === '' ? '' : `: ${label}`}`,
   fieldLabel: (n: number) => `Field ${n} label`,
   fieldKind: (n: number) => `Field ${n} kind`,
@@ -144,12 +150,15 @@ export const TEXT = {
   fieldRequired: (n: number) => `Field ${n} is required`,
   requiredWord: 'Required',
   fieldOption: (n: number, k: number) => `Field ${n} option ${k}`,
+  optionPlaceholder: (k: number) => `Option ${k}`,
   fieldOptionCorrect: (n: number, k: number) => `Field ${n} option ${k} is correct`,
   removeFieldOption: (n: number, k: number) => `Remove field ${n} option ${k}`,
   addFieldOption: (n: number) => `Add an option to field ${n}`,
   fieldKeywords: (n: number) => `Field ${n} keywords`,
   fieldKeywordsHint: 'One per line or separated by commas; matched as whole words or phrases, case-insensitive. List plurals yourself.',
   addField: 'Add field',
+  fieldsMin: 'A text answer needs at least one field; turn off Offer an answer in text instead.',
+  fieldMoved: (n: number) => `Field moved to position ${n}.`,
   fieldName: (n: number) => `field ${n}`,
   fieldAdded: (n: number) => `Field ${n} added.`,
   fieldRemoved: (n: number) => `Field ${n} removed.`,
@@ -159,11 +168,40 @@ export const TEXT = {
   lintHeading: 'Checks for this item',
   lintPending: 'Checking…',
   lintNotRun: 'Not checked yet',
+  lintNotRunWhy: 'not checked yet (fix the errors above first)',
   lintPass: 'pass',
   lintWarning: 'warning',
   lintError: 'error',
   lintSummary: (e: number, w: number) => (e === 0 && w === 0 ? 'No problems found' : `${e} error${e === 1 ? '' : 's'}, ${w} warning${w === 1 ? '' : 's'}`),
   lintFailed: (reason: string) => `The checks could not run (${reason}).`,
+  /** A finding's pointer inside the item, in words (`/candidates/0/description` → `Candidate A description`). */
+  where: (rel: string, letters: readonly string[]): string | null => {
+    const L = (k: string) => letters[Number(k)] ?? String(Number(k) + 1);
+    const n = (k: string) => String(Number(k) + 1);
+    const rules: [RegExp, (m: RegExpExecArray) => string][] = [
+      [/^\/(stem|title|explanation|hint|points|id)$/, (m) => ({ stem: 'Stem', title: 'Title', explanation: 'Explanation', hint: 'Hint', points: 'Points', id: 'Item id' })[m[1] as 'stem']],
+      [/^\/options\/(\d+)\/text$/, (m) => `Option ${L(m[1] ?? '0')} text`],
+      [/^\/options\/(\d+)\/feedback$/, (m) => `Option ${L(m[1] ?? '0')} feedback`],
+      [/^\/options$/, () => 'Options'],
+      [/^\/candidates\/(\d+)\/description$/, (m) => `Candidate ${L(m[1] ?? '0')} description`],
+      [/^\/candidates\/(\d+)(\/.*)?$/, (m) => `Candidate ${L(m[1] ?? '0')}`],
+      [/^\/candidatesTitle$/, () => 'Panel title'],
+      [/^\/textRubric\/fields\/(\d+)\/label$/, (m) => `Field ${n(m[1] ?? '0')} label`],
+      [/^\/textRubric\/fields\/(\d+)\/options\/(\d+)\/text$/, (m) => `Field ${n(m[1] ?? '0')} option ${n(m[2] ?? '0')}`],
+      [/^\/textRubric\/fields\/(\d+)\/correct$/, (m) => `Field ${n(m[1] ?? '0')} correct options`],
+      [/^\/textRubric\/fields\/(\d+)\/keywords$/, (m) => `Field ${n(m[1] ?? '0')} keywords`],
+      [/^\/textRubric\/fields\/(\d+)(\/.*)?$/, (m) => `Field ${n(m[1] ?? '0')}`],
+      [/^\/textRubric\/passMin$/, () => 'Correct fields needed'],
+      [/^\/(slide|key|target|gate|accept)$/, (m) => ({ slide: 'Slide', key: 'Answer key', target: 'Target', gate: 'Zoom gate', accept: 'Accepted mark kinds' })[m[1] as 'slide']],
+      [/^\/scoring\/iouFull$/, () => 'Full credit at IoU'],
+      [/^\/scoring\/pointTolerance_um$/, () => 'Point tolerance'],
+    ];
+    for (const [re, f] of rules) {
+      const m = re.exec(rel);
+      if (m !== null) return f(m);
+    }
+    return null;
+  },
   /** Per-item passing rows (format's passed rows are module-wide; these say what passed for THIS item). */
   pass: {
     schema: 'The item matches the module schema',

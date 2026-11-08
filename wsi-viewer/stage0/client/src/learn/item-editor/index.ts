@@ -43,10 +43,16 @@ import type {
   ViewPoint,
 } from '../contracts';
 import { ChoiceEditor } from './choice-editor';
+import { freeId, r2 } from './key-editor';
 import { RegionEditor } from './region-editor';
 import { KIND_LABEL, KIND_TITLE, TEXT } from './text';
 
 export const name = 'item-editor';
+export { freeId, inlineKeyFrom, layerClasses, r2, roundArea, slug } from './key-editor';
+export { LETTERS, reletter } from './choice-editor';
+export { gateChoice } from './region-editor';
+export { candidateGeometry, candidateView, geometryCentre, reletterCandidates } from './candidates-editor';
+export { blankRubric, parseKeywords, slugId } from './rubric-editor';
 
 // =====================================================================================================================
 // Shared kit (the editors import these as types only, so no module cycle exists at run time)
@@ -131,30 +137,6 @@ export function mppOfFingerprint(fp: string): number | null {
   return Number.isFinite(v) && v > 0 ? v : null;
 }
 
-/** A free id `{prefix}{n}` (n from 1) not in `taken`. */
-export function freeId(prefix: string, taken: ReadonlySet<string>): string {
-  for (let n = 1; ; n++) {
-    const id = `${prefix}${n}`;
-    if (!taken.has(id)) return id;
-  }
-}
-
-/** `CAMELYON16` → `camelyon16`; a LocalId-safe slug (letters, digits, dashes), or `x`. */
-export function slug(s: string): string {
-  const out = s
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 48);
-  return out === '' ? 'x' : out;
-}
-
-/** Round to 2 decimals (the export rounds coordinates the same way, format §7.2). */
-export function r2(n: number): number {
-  return Math.round(n * 100) / 100;
-}
-
 export const LOCAL_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
 /** Rename an item and every reference to it (item steps, reveal steps, the expert view's unlock list). */
@@ -211,19 +193,28 @@ export function itemLintRows(report: LintReport, module: ModuleFile, itemId: str
     if ((rule === 'candidate-gate' && (item.kind !== 'region' || item.candidates.length === 0 || item.gate === null)) || ((rule === 'key-version' || rule === 'key-resolves') && kprefix === null)) continue;
     const found = report.findings.filter((f) => f.rule === rule && concerns(f));
     if (found.length > 0) {
-      for (const f of found) rows.push({ rule, state: f.severity, text: f.message, path: f.path });
+      for (const f of found) rows.push({ rule, state: f.severity, text: humanise(f, prefix, item), path: f.path });
       continue;
     }
     if (rule === 'candidate-scores') {
       const p = report.passed.find((x) => x.rule === rule && under(x.path, prefix));
-      rows.push(p !== undefined ? { rule, state: 'pass', text: p.message, path: null } : { rule, state: 'pending', text: `Candidates that score as correct: ${TEXT.lintNotRun.toLowerCase()}`, path: null });
+      rows.push(p !== undefined ? { rule, state: 'pass', text: p.message, path: null } : { rule, state: 'pending', text: `Candidates that score as correct: ${TEXT.lintNotRunWhy}`, path: null });
       continue;
     }
     const ran = !CONDITIONAL.has(rule) || report.passed.some((x) => x.rule === rule && (x.path === '' || under(x.path, prefix)));
     const passText = rule === 'tour-shows-key' ? TOUR_PASS : (TEXT.pass[rule] ?? rule);
-    rows.push(ran ? { rule, state: 'pass', text: passText, path: null } : { rule, state: 'pending', text: `${passText}: ${TEXT.lintNotRun.toLowerCase()}`, path: null });
+    rows.push(ran ? { rule, state: 'pass', text: passText, path: null } : { rule, state: 'pending', text: `${passText}: ${TEXT.lintNotRunWhy}`, path: null });
   }
-  return rows;
+  const order = { error: 0, warning: 1, pending: 2, pass: 3 } as const;
+  return rows.map((r, n) => ({ r, n })).sort((a, b) => order[a.r.state] - order[b.r.state] || a.n - b.n).map((x) => x.r);
+}
+
+/** A schema finding's `{pointer}: {what}` with the pointer said in words when it is inside the item. */
+function humanise(f: Pick<LintFinding, 'rule' | 'path' | 'message'>, prefix: string, item: Item): string {
+  if (f.rule !== 'schema' || !(f.path === prefix || f.path.startsWith(`${prefix}/`)) || !f.message.startsWith(`${f.path}: `)) return f.message;
+  const letters = item.kind === 'region' ? item.candidates.map((c) => c.id) : item.options.map((o) => o.id);
+  const words = TEXT.where(f.path.slice(prefix.length), letters);
+  return words === null ? f.message : `${words}: ${f.message.slice(f.path.length + 2)}`;
 }
 
 // =====================================================================================================================
@@ -363,6 +354,7 @@ export class ItemEditor implements ItemEditorService {
         body,
       );
       card.hidden = false;
+      this.learn.host.taskCard.setOpen(true, 'test');
       const reveal = this.learn.service('reveal');
       if (st.detach === null && reveal?.attach !== undefined) st.detach = reveal.attach({ module: () => this.harnessLoaded(), progress: () => null });
       st.dispose = this.mount(itemId, body, this.harnessContext(st));

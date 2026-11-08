@@ -392,6 +392,24 @@ export default async function (t) {
     t.eq(pc, pm, 'a polygon candidate deep-equals the same polygon drawn');
   }
 
+  // ------------------------------------------------------------------------------------------------ SCR-2b small outlines
+  // Review fix (2026-11-08): an outline smaller than a cell of the shared grid (5.24 px for case 1) used to count as
+  // empty and score `wrong`, while a 6 px one earned rule (b)'s half credit. Now it is counted on its own grid, and an
+  // outline with no area is the point it is.
+  t.group('SCR-2b small outlines (review fix)');
+  {
+    for (const side of [1, 2, 3, 4, 6, 8, 12, 24]) {
+      const g = rectPoly(7168 - side / 2, 5120 - side / 2, 7168 + side / 2, 5120 + side / 2);
+      const sc = S.scoreRegion(item, key, areaMark(g, 'rect'), metLog(g), mpp);
+      t.eq([sc.feedback, sc.score, sc.metric.kind === 'iou' ? sc.metric.inside : null], ['partial-inside', 0.5, 1], `a ${side} px square inside the deposit at candidate C: rule (b), 0.5 / 1, inside 1 (mark ${sc.metric.mark_px2?.toFixed(2)} px²)`);
+    }
+    const flat = poly([[7168, 5120], [7172, 5120], [7176, 5120]]);
+    const z = S.scoreRegion(item, key, areaMark(flat, 'rect'), metLog(rectPoly(7166, 5118, 7178, 5122)), mpp);
+    t.eq([z.rule, z.feedback, z.score], ['region-point', 'correct', 1], 'an outline with no area at candidate C is scored as the point it is (1 / 1)');
+    const outside = rectPoly(13088 - 1.5, 13088 - 1.5, 13088 + 1.5, 13088 + 1.5);
+    t.eq(S.scoreRegion(item, key, areaMark(outside, 'rect'), metLog(outside), mpp).feedback, 'wrong', 'a 3 px square at candidate B (lymphoid tissue) is still wrong');
+  }
+
   // ------------------------------------------------------------------------------------------------ SCR-7 rubric
   t.group('SCR-7 rubric');
   {

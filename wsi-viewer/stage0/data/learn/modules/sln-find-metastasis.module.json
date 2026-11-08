@@ -1,7 +1,7 @@
 {
   "schema": "stoipath.learn.module/1",
   "id": "sln-find-metastasis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "metadata": {
     "title": "Sentinel lymph node: find the metastasis",
     "summary": "Survey a region of a sentinel lymph node section at low power, find the largest metastatic deposit, confirm it at 20× and name its size category.",
@@ -30,7 +30,7 @@
     "language": "en",
     "estimatedMinutes": 15,
     "created": "2026-11-04",
-    "updated": "2026-11-04",
+    "updated": "2026-11-08",
     "textLicence": {
       "id": "CC-BY-4.0",
       "text": "Creative Commons Attribution 4.0 International",
@@ -65,7 +65,7 @@
         "center_um": [1590.6, 1483.88],
         "scale_um_per_px": 3
       },
-      "text": "The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion areas, and three small separate tumour foci.",
+      "text": "The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion areas, and three small tumour areas the CAMELYON16 outline marks separately.",
       "keys": ["camelyon16-reference"],
       "unlockAfter": ["q-region"]
     }
@@ -134,7 +134,7 @@
               "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"
             ]
           },
-          "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region.",
+          "feedback": "That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region.",
           "credit": true
         }
       ]
@@ -169,7 +169,7 @@
       "candidates": [
         {
           "id": "A",
-          "description": "Upper border: round clear spaces between bands of dark lymphoid tissue",
+          "description": "Upper border of the region",
           "geometry": {
             "type": "Point",
             "coordinates": [9300, 1000]
@@ -182,7 +182,7 @@
         },
         {
           "id": "B",
-          "description": "Lower right corner: dense, dark-staining lymphoid tissue",
+          "description": "Lower right corner of the region",
           "geometry": {
             "type": "Point",
             "coordinates": [13088, 13088]
@@ -195,7 +195,7 @@
         },
         {
           "id": "C",
-          "description": "Centre: sheets of large, pale cells with abundant pink cytoplasm",
+          "description": "Centre of the region",
           "geometry": {
             "type": "Point",
             "coordinates": [7168, 5120]
@@ -208,7 +208,7 @@
         },
         {
           "id": "D",
-          "description": "Lower edge: round and slit-like clear spaces within lymphoid tissue",
+          "description": "Lower edge of the region",
           "geometry": {
             "type": "Point",
             "coordinates": [6400, 13900]
@@ -277,16 +277,15 @@
             "kind": "keywords",
             "keywords": [
               "cohesive",
-              "sheet",
-              "sheets",
+              "clusters",
               "large cells",
+              "larger cells",
               "pale cells",
-              "abundant cytoplasm",
-              "carcinoma",
-              "tumour",
-              "tumor",
-              "metastasis",
-              "metastatic"
+              "large nuclei",
+              "larger nuclei",
+              "nucleoli",
+              "more cytoplasm",
+              "abundant cytoplasm"
             ]
           }
         ],
@@ -416,7 +415,7 @@
       "kind": "tour",
       "phase": "examine",
       "title": "Lymphoid tissue at 20×",
-      "text": "This is the background: sheets of small lymphocytes with round, dark nuclei and very little cytoplasm. Compare anything you find later with this picture.",
+      "text": "This is the background: a dense, non-cohesive population of small lymphocytes with round, dark nuclei and very little cytoplasm. Compare anything you find later with this picture.",
       "view": {
         "kind": "view",
         "slide": "he",
@@ -474,7 +473,7 @@
       "phase": "complete",
       "title": "Compare with the reference outline",
       "items": ["q-region"],
-      "text": "The dashed outline is the CAMELYON16 reference annotation of the largest deposit in this region. The smaller outlined areas inside it are marked Exclusion: non-tumour tissue inside a tumour outline, by the dataset's convention. Your own mark is drawn beside it for comparison.",
+      "text": "The dashed outline is the CAMELYON16 reference annotation of the largest deposit in this region. The smaller outlined areas inside it are marked Exclusion: non-tumour areas such as vessel lumens and spaces, which the dataset excludes from the tumour outline. Your own mark is drawn beside it for comparison.",
       "view": {
         "kind": "key"
       },

@@ -38,7 +38,7 @@
      ]
     },
     "credit": true,
-    "feedback": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region."
+    "feedback": "That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region."
    }
   ]
  },
@@ -76,7 +76,7 @@
   "candidates": [
    {
     "id": "A",
-    "description": "Upper border: round clear spaces between bands of dark lymphoid tissue",
+    "description": "Upper border of the region",
     "geometry": {
      "type": "Point",
      "coordinates": [
@@ -95,7 +95,7 @@
    },
    {
     "id": "B",
-    "description": "Lower right corner: dense, dark-staining lymphoid tissue",
+    "description": "Lower right corner of the region",
     "geometry": {
      "type": "Point",
      "coordinates": [
@@ -114,7 +114,7 @@
    },
    {
     "id": "C",
-    "description": "Centre: sheets of large, pale cells with abundant pink cytoplasm",
+    "description": "Centre of the region",
     "geometry": {
      "type": "Point",
      "coordinates": [
@@ -133,7 +133,7 @@
    },
    {
     "id": "D",
-    "description": "Lower edge: round and slit-like clear spaces within lymphoid tissue",
+    "description": "Lower edge of the region",
     "geometry": {
      "type": "Point",
      "coordinates": [
@@ -212,16 +212,15 @@
      "kind": "keywords",
      "keywords": [
       "cohesive",
-      "sheet",
-      "sheets",
+      "clusters",
       "large cells",
+      "larger cells",
       "pale cells",
-      "abundant cytoplasm",
-      "carcinoma",
-      "tumour",
-      "tumor",
-      "metastasis",
-      "metastatic"
+      "large nuclei",
+      "larger nuclei",
+      "nucleoli",
+      "more cytoplasm",
+      "abundant cytoplasm"
      ]
     }
    ],

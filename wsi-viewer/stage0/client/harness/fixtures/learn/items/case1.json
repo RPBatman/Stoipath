@@ -23,7 +23,7 @@
     "multiFeedbackD": "This describes the lymphocytes.",
     "polygonClosed": "Polygon closed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.",
     "pointPlaced": "Point placed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.",
-    "gateWarnSpoken": "You have not viewed your mark at 20 times yet. Commit now for half credit if it is correct, or press 5 to jump to 20 times first.",
+    "gateWarnSpoken": "You have not viewed your mark at 20 times yet. Commit now for half credit if it is correct, or choose View my mark at 20 times first.",
     "halfIou": "Revealed · IoU 57 % · 0.5 / 1",
     "halfGate": "Correct region, but you never viewed it at 20×: half credit by the gate rule stated on the card.",
     "rubric": "Revealed · rubric 3 / 3 · 1 / 1",
