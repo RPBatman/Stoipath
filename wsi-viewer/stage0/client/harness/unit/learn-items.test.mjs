@@ -207,12 +207,20 @@ export default async function (t) {
     // a candidate without a 20× view: the one-time gate warning, then the next commit proceeds
     r = E.commitCandidate(id, 'C', 'keyboard');
     t.eq([r.ok, r.reason, env.resp(id).gateWarned, E.state(id)], [false, 'gate-warning', true, 'awaiting'], 'the first commit while unmet shows the gate warning and sets gateWarned');
-    t.eq(E.said.polite.at(-1), CASE.expect.gateWarnSpoken, 'the warning is said politely');
+    t.eq([E.said.assertive.filter((x) => x === CASE.expect.gateWarnSpoken).length, E.said.polite.includes(CASE.expect.gateWarnSpoken)], [1, false], 'the warning is said once, assertively, and not politely (J-I47)');
+    {
+      // the card's warning for the integrator's mirror (contracts ItemsService.warning, J-I47); a candidate commit raised
+      // it here, and the card shows it on the same condition (awaiting, warned, gate unmet)
+      const w = E.warning(id);
+      t.eq(w === null ? null : [w.text, w.actions.map((a) => a.label)], ['You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or choose View my mark at 20× first.', ['View my mark at 20×', 'Commit anyway']], 'warning(): the card\'s sentence and its two actions, in the card\'s order');
+      t.eq(E.warning('q-sinus'), null, 'warning(): null on an item without a gate');
+    }
     r = E.commitCandidate(id, 'C', 'pointer');
     const rp = env.resp(id);
     t.eq([r.ok, E.state(id), rp.answer, rp.modality, rp.inputDevice, typeof rp.committedAt], [true, 'committed', { kind: 'candidate', candidate: 'C' }, 'keyboard', 'mouse', 'string'], 'Commit anyway: committed; a candidate is modality keyboard whatever device chose it');
     t.eq(env.bus('itemCommitted').at(-1), { itemId: id, modality: 'keyboard', confidence: null }, 'itemCommitted');
     t.eq(E.primaryAction(id).label, 'Reveal', 'primary action after commit: Reveal');
+    t.eq(E.warning(id), null, 'warning(): null once the answer is committed');
     t.eq(E.primaryAction(id).key, 'U', '… with the U keycap from the registry');
     // Change answer, and commit again (the answer is kept)
     t.ok(E.reopen(id, 'keyboard') && E.state(id) === 'awaiting' && env.bus('itemReopened').length === 1, 'Change answer: committed → awaiting (itemReopened)');

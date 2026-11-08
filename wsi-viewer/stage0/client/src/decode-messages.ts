@@ -8,10 +8,19 @@ export interface FetchRequest {
   tier: number;
   /** Why it was requested (RequestKind); echoed back for prefetch accounting. */
   kind: number;
+  /**
+   * Dispatch number (decode-pool.ts), echoed in the response so a late answer to a request the watchdog already gave up
+   * on is dropped instead of being taken for the re-dispatched one (IOS-FIX.md).
+   */
+  seq?: number | undefined;
 }
 export interface CancelRequest {
   type: 'cancel';
   key: number;
+  /** Abort even when most of the body has arrived (the watchdog's cancel; 04 F4 keeps such fetches otherwise). */
+  force?: boolean;
+  /** With force: abort only the request with this dispatch number. */
+  seq?: number | undefined;
 }
 export type WorkerRequest = FetchRequest | CancelRequest;
 
@@ -41,6 +50,8 @@ export interface TileResponse {
   cacheHit: boolean | null;
   /** The response's Cache-Control header (recorded so the export shows whether the host serves tiles `immutable`). */
   cacheControl: string | null;
+  /** FetchRequest.seq echoed. */
+  seq?: number | undefined;
 }
 export interface ErrorResponse {
   type: 'error';
@@ -49,5 +60,7 @@ export interface ErrorResponse {
   kind: number;
   aborted: boolean;
   message: string;
+  /** FetchRequest.seq echoed. */
+  seq?: number | undefined;
 }
 export type WorkerResponse = TileResponse | ErrorResponse;

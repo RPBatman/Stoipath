@@ -87,15 +87,20 @@ For development with hot reload: `npm run dev` (serves `../data` under `/data/`)
 * Mouse wheel / trackpad pinch (ctrl+wheel) / two-finger pinch zoom about the pointer; drag to pan (flick for
   inertia); double-click or double-tap zooms one level; `+`/`-` zoom, arrow keys pan (Ctrl/Cmd + key is left to the
   browser).
-* **`O`** toggles the overlay (or add `?overlay=1`). **`R`** resets to fit. **`P`** runs the scripted path.
-* The status line (top right) reads `loading manifest…`, `starting renderer…`, then `ready (overview loading 64
+* **`O`** toggles the overlay (or add `?overlay=1`; on a touch-only device tap the **Panel** button, bottom right).
+  **`R`** resets to fit. **`P`** runs the scripted path.
+* The status line (top right, above the HUD) reads `loading manifest…`, `starting renderer…`, `loading base n/21`
+  (with `(errors k, timeouts t) — last: tile L/x_y: …` when tiles fail; IOS-FIX.md), then `ready (overview loading 64
   tiles)` once the pinned base (levels 3–5, 21 tiles) is resident and `ready` once the 3840-px overview level has
   loaded too (on a phone-sized GPU array the overview level is skipped and the status is `ready` at once); while
   the scripted path runs it reads `scripted path running n/m — hands off`, then
   `scripted path done (run N) — export or copy the summary`.
 * Buttons on the panel: **Run scripted path**, **Export JSON** (downloads the full log), **Copy summary**
   (clipboard), **Reset view**, **Evict GPU tiles** (drops every non-pinned tile from the GPU for a GPU-cold rerun;
-  the browser HTTP cache stays warm, so label such a run `warm`), **Hide**.
+  the browser HTTP cache stays warm, so label such a run `warm`), **Hide**. The buttons come first; the device block
+  is under **Device, build and slide** (open by default on large screens). A red error line under the status shows
+  uncaught errors, frame-loop exceptions and decode-worker errors. Since 2026-11-08 (instrument 2) the page also
+  retries stalled and failed tiles and holds a screen wake lock during the scripted path: see `IOS-FIX.md`.
 
 ### Reading the overlay
 

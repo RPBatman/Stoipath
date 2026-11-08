@@ -12,10 +12,16 @@
  *    are counted against the non-pinned layers of the texture array, and prefetch tiers are dispatched only while
  *    there is room. Without this a wanted set larger than the cache (ring + partners + intent at s = 0.5) made every
  *    arrival evict another wanted tile, which was then re-fetched: an endless churn even with the camera still;
- *  - per-host concurrency 6 on HTTP/1.1, higher when h2/h3 was negotiated.
+ *  - per-host concurrency 6 on HTTP/1.1, higher when h2/h3 was negotiated;
+ *  - failure handling (IOS-FIX.md, 2026-11-08; inert while every request is answered): a request watchdog aborts a
+ *    request still in flight TILE_WATCHDOG_MS after dispatch (doubling per timeout of the same tile) and fails it like
+ *    an error, so it is re-dispatched; pinned-base and warm-base tiles, which gate "ready" and the scripted path, are
+ *    retried indefinitely with a capped backoff (other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS); the last
+ *    failure and the error / timeout counts are kept for the measurement page's status line.
  * The wanted set is rebuilt every frame from the camera, so the heap is cleared and refilled (typed arrays, no GC).
  */
 import {
+  BASE_RETRY_MAX_MS,
   CANCEL_GRACE_FRAMES,
   CONCURRENCY_H1,
   CONCURRENCY_H2,
@@ -25,6 +31,8 @@ import {
   PREFETCH_SLOTS_MIN,
   PREFETCH_SLOT_FRACTION,
   RING_TILES,
+  TILE_WATCHDOG_MAX_MS,
+  TILE_WATCHDOG_MS,
   ZOOM_INTENT_HOLD_MS,
   ZOOM_INTENT_HORIZON_MS,
   ZOOM_INTENT_MAX_LEVELS,
@@ -133,6 +141,8 @@ export interface SchedulerCounters {
   cancelledLate: number;
   aborted: number;
   errors: number;
+  /** Requests the watchdog gave up on (TILE_WATCHDOG_MS; IOS-FIX.md). Not included in `errors`. */
+  timeouts: number;
   /** Prefetched tiles that arrived and were later drawn (hit) — the complement is waste. */
   prefetchReceived: number;
   heapOverflow: number;
@@ -174,6 +184,7 @@ export class Scheduler {
     cancelledLate: 0,
     aborted: 0,
     errors: 0,
+    timeouts: 0,
     prefetchReceived: 0,
     heapOverflow: 0,
     prefetchHeldFrames: 0,
@@ -200,6 +211,12 @@ export class Scheduler {
   focusY = 0;
   /** Called for each tile that arrives, after bookkeeping. */
   onTile: ((msg: WorkerResponse) => void) | null = null;
+  /** The last tile failure ("tile L/x_y: message", "tile L/x_y: no answer after 12 s"), null until one happens. */
+  lastFailure: string | null = null;
+  /** Watchdog timeouts per tile (the limit doubles with each); cleared when the tile arrives. */
+  private readonly timeoutsByKey = new Map<number, number>();
+  /** rAF time of the previous update(), to discount a suspended page (hidden tab, locked phone) from request ages. */
+  private lastUpdateAt = -1;
 
   constructor(
     private readonly pyr: Pyramid,
@@ -253,6 +270,7 @@ export class Scheduler {
       if (this.counters.cacheControl === null && msg.cacheControl !== null) this.counters.cacheControl = msg.cacheControl;
       this.counters.receivedByKind[msg.kind] = (this.counters.receivedByKind[msg.kind] ?? 0) + 1;
       this.failed.delete(msg.key);
+      if (this.timeoutsByKey.size > 0) this.timeoutsByKey.delete(msg.key);
       this.awaitingUpload.add(msg.key);
       this.onTile?.(msg);
       return;
@@ -264,7 +282,41 @@ export class Scheduler {
     this.counters.errors++;
     const f = this.failed.get(msg.key);
     this.failed.set(msg.key, { at: performance.now(), attempts: (f?.attempts ?? 0) + 1 });
+    this.lastFailure = `tile ${keyLevel(msg.key)}/${keyX(msg.key)}_${keyY(msg.key)}: ${msg.message}`;
     if (rec !== undefined && rec.tier <= 0) console.warn('[tiles] failed', keyLevel(msg.key), keyX(msg.key), keyY(msg.key), msg.message);
+  }
+
+  /** Base / warm-base tiles: never given up, backoff FAILED_RETRY_MS × 2^(attempts-1) capped at BASE_RETRY_MAX_MS. */
+  private static baseRetryWait(attempts: number): number {
+    return Math.min(BASE_RETRY_MAX_MS, FAILED_RETRY_MS * 2 ** Math.max(0, Math.min(attempts - 1, 8)));
+  }
+
+  /**
+   * Request watchdog (IOS-FIX.md): give up on in-flight requests older than their limit. A pause of the page (no
+   * update() for over a second: hidden tab, locked phone, debugger) is not counted against requests in flight.
+   */
+  private watchdog(now: number): void {
+    const gap = this.lastUpdateAt < 0 ? 0 : now - this.lastUpdateAt;
+    this.lastUpdateAt = now;
+    if (this.inflight.size === 0) return;
+    if (gap > 1000) {
+      for (const rec of this.inflight.values()) rec.startedAt += gap;
+      return;
+    }
+    for (const [key, rec] of this.inflight) {
+      const n = this.timeoutsByKey.size > 0 ? (this.timeoutsByKey.get(key) ?? 0) : 0;
+      const limit = Math.min(TILE_WATCHDOG_MAX_MS, TILE_WATCHDOG_MS * 2 ** n);
+      if (now - rec.startedAt <= limit) continue;
+      this.inflight.delete(key);
+      this.pool.abandon(key);
+      this.counters.timeouts++;
+      if (rec.cancelled) continue; // no longer wanted: nothing to retry
+      this.timeoutsByKey.set(key, n + 1);
+      const f = this.failed.get(key);
+      this.failed.set(key, { at: now, attempts: (f?.attempts ?? 0) + 1 });
+      this.lastFailure = `tile ${keyLevel(key)}/${keyX(key)}_${keyY(key)}: no answer after ${(limit / 1000).toFixed(0)} s (retrying)`;
+      console.warn('[tiles] timed out', keyLevel(key), keyX(key), keyY(key), `${limit} ms`);
+    }
   }
 
   /** The renderer uploaded (or dropped) a decoded tile. */
@@ -316,6 +368,7 @@ export class Scheduler {
    * `zoomingIn` is true while a zoom-in burst is in progress (zoom velocity > 0).
    */
   update(frame: number, now: number, cam: Camera, lstar: number): void {
+    this.watchdog(now);
     const pyr = this.pyr;
     const maxLevel = pyr.levels.length - 1;
     this.wanted.clear();
@@ -408,8 +461,15 @@ export class Scheduler {
         if (t < rec.tier) rec.tier = t;
         continue;
       }
-      const f = this.failed.get(key);
-      if (f !== undefined && (f.attempts >= FAILED_MAX_ATTEMPTS || now - f.at < FAILED_RETRY_MS)) continue;
+      if (this.failed.size > 0) {
+        const f = this.failed.get(key);
+        if (f !== undefined) {
+          const kind = this.wantedKind.get(key);
+          if (kind === RequestKind.BASE || kind === RequestKind.WARMBASE) {
+            if (now - f.at < Scheduler.baseRetryWait(f.attempts)) continue;
+          } else if (f.attempts >= FAILED_MAX_ATTEMPTS || now - f.at < FAILED_RETRY_MS) continue;
+        }
+      }
       this.heap.push(key, prio);
     }
     this.counters.heapOverflow = this.heap.overflow;

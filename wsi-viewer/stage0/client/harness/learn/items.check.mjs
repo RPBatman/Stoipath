@@ -444,7 +444,9 @@ export async function run(ctx) {
       await page.waitForTimeout(300);
       const v = await items(page);
       ok(v.lastCommit?.result?.reason === 'gate-warning' && v.response?.gateWarned === true && v.states['q-region'] === 'awaiting', `ITM-4: the first commit shows the gate warning (gateWarned ${v.response?.gateWarned}, ${v.lastCommit?.result?.reason})`);
-      ok(await said(page, 'polite', X.gateWarnSpoken), 'ITM-4: the warning is said politely');
+      ok(await said(page, 'assertive', X.gateWarnSpoken), 'ITM-4: the warning is said assertively (once; J-I47)');
+      ok(!(await page.evaluate(() => window.__learn.tools.items().said.polite.some((x) => x.includes('not viewed your mark')))), 'ITM-4: and not politely as well');
+      ok(await page.evaluate(() => document.getElementById('ctxWarn')?.hidden === true), 'ITM-4: with the card open, the warning is in the card only (the integrator\'s banner stays hidden)');
       await page.waitForSelector(`${CARD('q-region')} .learn-item__warn:not([hidden])`);
       const warn = await text(page, `${CARD('q-region')} .learn-item__warn`);
       ok(warn?.includes('You have not viewed your mark at 20× yet.') === true && warn.includes('View my mark at 20×') && warn.includes('Commit anyway'), `ITM-4: the card shows the warning with "View my mark at 20×" and "Commit anyway" ("${warn?.slice(0, 80)}…")`);

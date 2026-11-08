@@ -1,6 +1,11 @@
 /**
  * Diagnostic overlay: live numbers, a frame-time / sharpness sparkline, device info and the action buttons.
  * DOM text is refreshed every OVERLAY_REFRESH_FRAMES frames so the overlay does not distort what it measures.
+ *
+ * Phone layout (IOS-FIX.md, 2026-11-08): the action buttons come first in the panel and the device block is a
+ * collapsible <details> (open by default on large screens), so Run and Export are visible without scrolling on every
+ * phone width and orientation; #status and the error line sit above the HUD; a "Panel" button shows the overlay on a
+ * touch-only device when ?overlay=1 is missing or Hide was tapped.
  */
 import { OVERLAY_REFRESH_FRAMES } from './constants';
 import type { PlanStats } from './frame-planner';
@@ -32,6 +37,9 @@ export class Overlay {
   private readonly status: HTMLElement;
   private readonly spark: HTMLCanvasElement;
   private readonly sparkCtx: CanvasRenderingContext2D | null;
+  /** Optional elements (index.html since IOS-FIX.md): error line, show-panel button, device <details>. */
+  private readonly errLine: HTMLElement | null;
+  private readonly showBtn: HTMLElement | null;
   private readonly frameHist = new Float32Array(240);
   private readonly sharpHist = new Float32Array(240);
   private histIdx = 0;
@@ -46,6 +54,10 @@ export class Overlay {
     this.status = must('status');
     this.spark = must('spark') as HTMLCanvasElement;
     this.sparkCtx = this.spark.getContext('2d');
+    this.errLine = document.getElementById('errline');
+    this.showBtn = document.getElementById('btn-show');
+    const details = document.getElementById('device-box');
+    if (details instanceof HTMLDetailsElement && window.innerWidth >= 700 && window.innerHeight >= 600) details.open = true;
   }
 
   bindButtons(handlers: { path: () => void; export: () => void; copy: () => void; reset: () => void; evict: () => void }): void {
@@ -55,12 +67,15 @@ export class Overlay {
     must('btn-reset').addEventListener('click', handlers.reset);
     must('btn-evict').addEventListener('click', handlers.evict);
     must('btn-hide').addEventListener('click', () => this.setVisible(false));
+    this.showBtn?.addEventListener('click', () => this.setVisible(true));
+    this.showBtn?.classList.toggle('hidden', this.visible);
   }
 
   setVisible(v: boolean): void {
     this.visible = v;
     this.hud.classList.toggle('hidden', !v);
     this.panel.classList.toggle('hidden', !v);
+    this.showBtn?.classList.toggle('hidden', v);
   }
   toggle(): void {
     this.setVisible(!this.visible);
@@ -69,6 +84,13 @@ export class Overlay {
   setStatus(text: string): void {
     this.status.textContent = text;
     this.status.classList.toggle('hidden', text === '');
+  }
+
+  /** The visible error line (ViewerUi.showError; window errors on the measurement page). Keeps the latest message. */
+  showError(text: string): void {
+    if (this.errLine === null) return;
+    this.errLine.textContent = text;
+    this.errLine.classList.toggle('hidden', text === '');
   }
 
   setDevice(d: DeviceInfo, extra: string): void {

@@ -30,6 +30,7 @@ import { formatArea, length_um } from '../../shell/geometry/index';
 import type {
   AnswerModality,
   CandidateId,
+  CardWarning,
   CommitResult,
   CompiledKey,
   Confidence,
@@ -684,6 +685,28 @@ export class ItemsEngine implements ItemsService {
   }
 
   // ------------------------------------------------------------------------------------------------- ItemsService
+  /**
+   * The card's pending warning (contracts ItemsService.warning): the gate warning, on exactly the condition the region
+   * card shows it (region.ts update()), with the card's two actions. The integrator mirrors it while the card is hidden.
+   */
+  warning(itemId: string): CardWarning | null {
+    const item = this.item(itemId);
+    if (item === null || item.kind !== 'region' || item.gate === null) return null;
+    if (this.state(itemId) !== 'awaiting' || !this.live(itemId).gateWarning || this.gateView(itemId).met) return null;
+    const label = item.gate.label;
+    return {
+      text: TEXT.gateWarn(label),
+      actions: [
+        { label: TEXT.viewMyMark(label), run: (s) => this.viewMark(itemId, s) },
+        {
+          label: TEXT.commitAnyway,
+          run: (s) => {
+            this.commit(itemId, s);
+          },
+        },
+      ],
+    };
+  }
   primaryAction(itemId: string): PrimaryAction {
     const st = this.state(itemId);
     if (this.item(itemId) === null) return { label: TEXT.nothingHere, key: '', disabled: true, run: () => {} };
@@ -738,14 +761,17 @@ export class ItemsEngine implements ItemsService {
       if (item.gate !== null && subject !== null && !r.gateWarned && sc !== null) {
         const g = sc.gate(item.gate, { kind: 'mark', mark: subject }, r.views);
         if (!g.met) {
+          // the live state first: the save re-renders the player's chrome, whose context bar mirrors this warning (J-I47)
+          l.gateWarning = true;
+          l.notice = null;
+          l.warnFrom = override !== null ? 'panel' : 'card';
           this.save(itemId, (x) => {
             x.gateWarned = true;
           });
-          l.gateWarning = true;
-          l.notice = null;
           const text = TEXT.gateWarnSpoken(item.gate.label);
-          l.warnFrom = override !== null ? 'panel' : 'card';
-          this.sayPolite(text, false);
+          // assertive, once (gate-warning fix 2026-11-08, J-I47): the learner pressed commit and nothing was committed;
+          // the card's block and the integrator's banner carry no live role, so this is the only time it is spoken
+          this.sayAssertive(text);
           this.schedule();
           return { ok: false, reason: 'gate-warning', text };
         }

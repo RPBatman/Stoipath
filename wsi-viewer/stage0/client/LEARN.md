@@ -1,6 +1,6 @@
 # Stoipath Learn · L1: build specification
 
-**Status:** specification for builders, 2026-11-04. **Wave L2 (2026-11-05):** the learner flow runs end to end on the real case: reveal, items, player, course and content are wired into `learn.html` through `src/learn/main.ts` (the module glob and the host conventions of LEARN-QUESTIONS.md needed no change), the contract requests of the five builders are answered (LEARN-QUESTIONS.md, 2026-11-05 section; contract stays 1), `harness/learn/integrator.check.mjs` now runs LI-6 … LI-10 in full on the case, and the exit gate (PLY-*, ITM-*, RVL-*, CRS-*, PRG-2 … 5, CNT-1 … 4, LI-6 … 10) is green on one `npm run build` together with the Phase A gates (§13, §15.2b J-I22; the one borderline line, the overlay p95 of the 1920 × 1080 wheel burst with every Learn source drawn, is disclosed in J-I20). **Wave L3 (2026-11-08):** the author studio and the item editor are wired into `learn.html?studio=1` (the module glob and `STUDIO_ORDER` needed no change); their contract notes are answered (LEARN-QUESTIONS.md, 2026-11-08 section; contract stays 1); STU-1 … STU-7, IED-1 … IED-4 and LI-8's studio states pass on one `npm run build` together with every earlier Learn check and the Phase A gates (§13, §15.2c J-I27). One piece is carried: reveal's `attach` (A-R-Q1), so the studio's `Show the answer key` refuses honestly until reveal implements it (J-I25). **Wave L4 (2026-11-08):** the final gate is green on one `npm run build`: every LI and module check, and the Phase A gates (run.mjs + check-metrics, shell-check, tools-check, unit, python), with the design system's layout-check rules (LI-7) and axe-core WCAG 2.2 AA in the Learn states (LI-8) (§15.2d J-I32). The 28 reviewed screenshots are in `design/screens/integrated/shots/learn-*.jpg` (J-I30). The deploy list is [`DEPLOY-LEARN-L1.md`](DEPLOY-LEARN-L1.md). Reviewing the screenshots found two integrator defects on the bottom sheets, both fixed before the final build. The first leaked the answer on tablets: the tour's 20× lymphoid view landed on the deposit (J-I28). The second cut off the current stage in the phone flow bar (J-I29). Reveal's `attach` is still carried (J-I25). Every owner default stays pending (§15.1). **Review fixes (2026-11-08):** the 24 issues of the engine and pathologist-educator / accessibility reviews are applied, among them the draft chip under the candidates panel, two-tab progress merging, a CSP that blocks every other origin, positional candidate descriptions, the conservative "small tumour areas" wording and a landscape-phone layout; the gate is green again on one `npm run build` (§15.2e, with the list and the numbers). The changed clinical sentences are flagged in §12 for the owner; the case stays `draft`. **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
+**Status:** specification for builders, 2026-11-04. **Wave L2 (2026-11-05):** the learner flow runs end to end on the real case: reveal, items, player, course and content are wired into `learn.html` through `src/learn/main.ts` (the module glob and the host conventions of LEARN-QUESTIONS.md needed no change), the contract requests of the five builders are answered (LEARN-QUESTIONS.md, 2026-11-05 section; contract stays 1), `harness/learn/integrator.check.mjs` now runs LI-6 … LI-10 in full on the case, and the exit gate (PLY-*, ITM-*, RVL-*, CRS-*, PRG-2 … 5, CNT-1 … 4, LI-6 … 10) is green on one `npm run build` together with the Phase A gates (§13, §15.2b J-I22; the one borderline line, the overlay p95 of the 1920 × 1080 wheel burst with every Learn source drawn, is disclosed in J-I20). **Wave L3 (2026-11-08):** the author studio and the item editor are wired into `learn.html?studio=1` (the module glob and `STUDIO_ORDER` needed no change); their contract notes are answered (LEARN-QUESTIONS.md, 2026-11-08 section; contract stays 1); STU-1 … STU-7, IED-1 … IED-4 and LI-8's studio states pass on one `npm run build` together with every earlier Learn check and the Phase A gates (§13, §15.2c J-I27). One piece is carried: reveal's `attach` (A-R-Q1), so the studio's `Show the answer key` refuses honestly until reveal implements it (J-I25). **Wave L4 (2026-11-08):** the final gate is green on one `npm run build`: every LI and module check, and the Phase A gates (run.mjs + check-metrics, shell-check, tools-check, unit, python), with the design system's layout-check rules (LI-7) and axe-core WCAG 2.2 AA in the Learn states (LI-8) (§15.2d J-I32). The 28 reviewed screenshots are in `design/screens/integrated/shots/learn-*.jpg` (J-I30). The deploy list is [`DEPLOY-LEARN-L1.md`](DEPLOY-LEARN-L1.md). Reviewing the screenshots found two integrator defects on the bottom sheets, both fixed before the final build. The first leaked the answer on tablets: the tour's 20× lymphoid view landed on the deposit (J-I28). The second cut off the current stage in the phone flow bar (J-I29). Reveal's `attach` is still carried (J-I25). Every owner default stays pending (§15.1). **Review fixes (2026-11-08):** the 24 issues of the engine and pathologist-educator / accessibility reviews are applied, among them the draft chip under the candidates panel, two-tab progress merging, a CSP that blocks every other origin, positional candidate descriptions, the conservative "small tumour areas" wording and a landscape-phone layout; the gate is green again on one `npm run build` (§15.2e, with the list and the numbers). The changed clinical sentences are flagged in §12 for the owner; the case stays `draft`. **Gate-warning fix (2026-11-08):** with the task card hidden (the closed drawer at 1080–1599 px, a peeking sheet), the region item's gate warning and its two actions are now a banner over the canvas top edge, said once assertively; the drawer is not opened (§15.2g J-I47; LI-R3). **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
 
 **Why:** on 2026-11-04 the owner wrote: *"Lets start on the learning components/modules builds."* Education is one of the project's three pillars (plan 12 §5). L1 is the first usable slice of **Stoipath Learn**: a module format, a learner player, the signature region-marking item, a course shell, a minimal author studio and one real case on CAMELYON16 tumor_014.
 
@@ -210,7 +210,7 @@ Use design-system classes first. `base.css` already has `.item-card*`, `.option*
 - **Items block N.** `N` on an item that is not yet revealed is refused: "Answer this item first: commit, then reveal (U)." `U` is rendered as a keycap.
 - **Phase rail.** It shows the five phases Open · Screen · Examine · Decide · Complete. A phase is `done` when all its steps are reached and its items revealed, `current`, `reached`, or `locked`.
 - **Locked phases.** A locked phase stays in the Tab order. Its name ends ", locked, not yet reached". Activating it shows the toast `Not yet` / `Finish the current phase first; Skip to the question is in the card.` (ux-copy §13.1).
-- **Card layout.** One card per step with ONE primary action (`.btn--cta`). The head carries `Step {n} of {total}`, the phase meta, the title and the draft chip. The integrator mirrors the step, stem and primary action into the context bar (1080–1599 px) and the phone peek bar through `taskCard.setContext()`.
+- **Card layout.** One card per step with ONE primary action (`.btn--cta`). The head carries `Step {n} of {total}`, the phase meta, the title and the draft chip. The integrator mirrors the step, stem and primary action into the context bar (1080–1599 px) and the phone peek bar through `taskCard.setContext()`. Since the gate-warning fix of 2026-11-08 it also mirrors the card's pending warning (`ContextBarState.warning`, from `ItemsService.warning`): while the card is hidden (closed drawer, folded dock, peeking sheet) the warning's sentence and both its actions are a banner over the canvas top edge (§15.2g J-I47).
 - **Open step** (tour step, phase `open`). The card shows:
   - the course line: `{course title}`, `Module {n} of {total}`, and a progress bar named `Course progress`;
   - the course outline `Modules · {done} of {total} done` (`course.mountOutline`);
@@ -285,7 +285,7 @@ Use design-system classes first. `base.css` already has `.item-card*`, `.option*
   - `markChanged` fires. The modality is `pointer` (inputDevice `mouse` / `pen` / `touch`) or `keyboard` (Enter at the crosshair).
   - When the creation came from the keyboard, focus moves to the CTA and this is spoken: `Polygon closed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.` For a point: `Point placed. Commit answer has focus. …`. The first Esc on that action returns focus to the slide and keeps the mark, its selection and the tool (review fix, round 2, §15.2f).
 - **Commit.** With no answer: `Place a mark first. Draw with P, F or T, or press Shift Enter to mark without a pointer.`
-  - **Gate warning:** with the gate unmet and not yet warned, the warning shows (§6.4) and `gateWarned` is set; the next commit proceeds.
+  - **Gate warning:** with the gate unmet and not yet warned, the warning shows (§6.4) and `gateWarned` is set; the next commit proceeds. It is said once, assertively (nothing was committed). While the card is hidden, the integrator shows the same sentence and both buttons as a banner over the canvas top edge (§15.2g J-I47).
   - **Copy:** a mark's geometry is copied into `answer`.
   - **Spoken:** `Answer saved. You can still change it until you reveal. Press U to reveal.`
 - **Candidates panel** (`⇧↵`; `#candPanel`, `aria-modal="false"`, no backdrop; ux-copy §13.5).
@@ -691,6 +691,7 @@ Test hooks (integrator):
 - **LI-7 Layout.** `layout-check.mjs` T1, Z1, S1, A1–A3 at the five viewports and a phone in landscape (844 × 390 coarse; review fix 2026-11-08, where the dock dialog takes the drawer's place and Z1 counts it as that drawer, §15.2e J-I35), with the task card open (docked at 1920, drawer at 1440, sheet at 1024 and 390) and the candidates panel open. The canvas is ≥ 70 % of the frame at rest. The context bar shows at 1440 × 900 with the stem and CTA; the peek bar shows at 390 × 844. With the candidates panel open, a draft chip is hit-testable (`elementFromPoint`) inside `#candPanel` at every viewport (review fix 2026-11-08).
 - **LI-R Review fixes** (2026-11-08, 1440 × 900). The gate warning names `View my mark at 20×` and following it meets the gate; after the reveal the CTA note and the context bar's `Mark without a pointer` are gone and the tool is Select; the q-size measurement is kept; with ⇧E on the reveal step shows the expert view's text and legend; Start again leaves no learner annotation on the slide and every item awaiting.
 - **LI-R2 Review fixes, round 2** (2026-11-08, 1440 × 900). With the drawer closed, a keyboard point (T, ←, ↵) hands focus to `#ctxCta` with the sentence, and one Esc returns focus to the slide with the mark kept. ↵ inside q-sinus's options commits and moves focus to the primary action (`Reveal U`), not `<body>`. Measure from q-size stays on q-features, which discloses it. Back on step 1, where the rail shows only Select, the active tool is Select, and Space on the slide plays the tour.
+- **LI-R3 Gate warning with the card hidden** (gate-warning fix 2026-11-08, §15.2g J-I47). At 1440 × 900 with the drawer closed, 1024 × 1366 coarse and 390 × 844 coarse with the sheet peeking, a point on candidate C at the step's view (gate unmet over the mark) and a click or tap on the primary action on screen (`#ctxCta`, the tablet peek's card CTA, `#peekCta`). Without K: the banner `#ctxWarn` shows the whole sentence; `View my mark at 20×` and `Commit anyway` are on screen, hit-testable at their centres (`elementFromPoint`), ≥ 44 px tall on coarse viewports; the warning is said once, assertively, and not politely; the banner has no live role; axe-core 0 violations in that state. One run follows `View my mark at 20×`: the camera is at 0.5 µm/px with the mark at the pane's centre, the gate is met, nothing is committed, the banner goes and focus is not left on `<body>`. A second run takes `Commit anyway`: committed, the banner goes, and U reveals `score 0.5`, `gateMet false`.
 - **LI-8 axe states.** 0 violations in: Open card; tour step; region item awaiting with the candidates panel open (both tabs); region item revealed; MCQ revealed; multi revealed; summary; course outline open; studio at each stage with the Annotations tab open. Each state is checked at 1440 × 900 and at 390 × 844 coarse. (Wave L2: the learner states run on the real case. Wave L3: the studio states run in `studio.check.mjs` flow D, tagged `LI-8`, LEARN-QUESTIONS A-STU-N4.)
 - **LI-9 Keymap.** `?` opens `Keyboard map · Stoipath Learn` with the four Learn groups. Every row of §9 is present with its keycaps. `⇧D` writes the Learn refusal to the strip and says it assertively.
 - **LI-10 No answer leaks in identity.** Before q-size is revealed, no DOM text, attribute, `document.title` or canvas `aria-label` contains `breast-carcinoma macrometastasis` (the catalogue title and the manifest stain phrase).
@@ -763,7 +764,7 @@ Test hooks (integrator):
 - **ITM-1 MCQ by keyboard.** Tab into q-sinus's options. `B` checks B; `2` checks B too. `D` inside the group leaves the camera unchanged (WASD suppressed). `↵` on the CTA commits and says `Answer saved. You can still change it until you reveal. Press U to reveal.` `U` reveals: option B has `.is-correct` and text `✓ correct`, and the title is `Correct · B · 1 / 1`.
 - **ITM-2 Multi partial.** Select A, B and D, commit, reveal: `0.33 / 1`. A, B and C show `✓ correct`, D shows `✕ your choice` and the feedback `This describes the lymphocytes.`
 - **ITM-3 Point, pointer path.** Point tool. `jumpTo` C at 0.5 µm/px, `settle`, click the centre. The mark row reads `Your mark · point` and the gatebox `Met · 20× over your mark`. Commit and reveal give `Revealed · inside the outline · 1 / 1`, and `itemAnswered {modality: 'pointer', gateMet: true, score: 1}`.
-- **ITM-4 Half credit.** At fit, draw a polygon by four clicks at R1's bbox corners and Enter. The first commit shows the gate warning (polite sentence, `gateWarned`). `Commit anyway` then reveal gives `Revealed · IoU 57 % · 0.5 / 1` and the half-credit sentence.
+- **ITM-4 Half credit.** At fit, draw a polygon by four clicks at R1's bbox corners and Enter. The first commit shows the gate warning (one assertive sentence, not also polite, since §15.2g; `gateWarned`). `Commit anyway` then reveal gives `Revealed · IoU 57 % · 0.5 / 1` and the half-credit sentence.
 - **ITM-5 Keyboard candidate (AC-A4).** No mouse events. `⇧↵` opens the panel (`aria-modal="false"`). Arrow keys go to C. Tab to `Fly there`, Enter: the camera is at 20× over C and the radio is still C. `settle`. Tab to `Commit C as my mark`, Enter, `U`. The score deep-equals `__learn.tools.scoring().scoreRegion(item, key, {kind: 'mark', mark: point(C)}, log, mpp)`. Modality is `keyboard`. The assertive sentence is `Revealed. Your point is inside the outline. 1 of 1.`
 - **ITM-6 Text answer.** Answer in text: Centre, `> 2 mm`, `cohesive sheets`. With a sharp 20× view of the target in the log, reveal gives `Revealed · rubric 3 / 3 · 1 / 1` and modality `text`. Without such a view: 0.5 / 1 (the gate rule applies to every modality alike).
 - **ITM-7 Change answer.** After commit, `Change answer` returns the item to `awaiting` (`itemReopened`). Deleting the mark annotation with ⌫ while committed also reopens it (`Answer unlocked…`).
@@ -1404,6 +1405,82 @@ owner default stays a **default pending owner** (§15.1).
   None of the 40 standard J-I42 screenshots shows a state these fixes change, so they were not re-taken: no tool other
   than Select is active in them, and their studio-publish state has no error. Carried: J-I44 (the previous module's strip
   line) and the studio heading's focus ring (J-I26).
+
+### 15.2g Gate-warning fix (Learn integrator, 2026-11-08)
+
+Final verification filed one open medium issue. At 1080–1599 px (1440 × 900) the task card is a drawer, closed by
+default. On the region item, a first commit with the zoom gate unmet showed no visible warning: the warning (`You have
+not viewed your mark at 20× yet. …`, with `View my mark at 20×` and `Commit anyway`) rendered only inside the closed
+drawer (a 0 × 0 box), only the polite region said it, and `#ctxCta` still read `Commit answer`, so a second click
+committed for half credit unseen. The same held for a peeking sheet at ≤ 1079 px (tablet and phone). The integrator
+fixed it, acting for the items and player modules' files and its own host (no Phase A file changed; no content change,
+so no §12 entry is new and the case stays `draft`, version 0.1.1).
+
+**What changed** (file):
+
+- `contracts.ts` (additive, optional; the contract stays 1): `CardWarning { text; actions }`,
+  `ItemsService.warning?(itemId)` and `ContextBarState.warning?`.
+- `items/machine.ts`: `warning(itemId)` returns the gate warning on exactly the region card's condition (awaiting,
+  warned, gate unmet), with the card's two actions in the card's order. The commit that raises it now says it with
+  `sayAssertive` (it was `sayPolite`), and it sets the live state before the save, so the player's chrome refresh that
+  the save triggers already sees it.
+- `player/machine.ts`: the context state carries `warning`, its signature includes it, and `gateChanged` re-renders
+  the chrome (a gate met clears the warning).
+- `host/layout.ts`, `learn.html`, `learn.css`: `#ctxWarn`, a `.banner.banner--warning` grid item over the canvas cell
+  at `--z-banner`, with the sentence and the two buttons. `TaskCard` shows it iff the context has a warning and the card
+  is not open, and rebuilds it only when the text changes. When the banner goes while one of its buttons has focus,
+  focus moves to the primary action on screen (the context bar's, the peek bar's or the card's CTA), not `<body>`.
+  At ≤ 1079 px the actions share the sentence's row when it keeps 16em (tablet, landscape) and take their own row on a
+  phone. It stops short of the navigator when the navigator shows (a right margin of the navigator's width plus two
+  HUD insets). A dialog or the palette hides it while open.
+- Harness: LI-R3 in `harness/learn/integrator.check.mjs` (§11.0); ITM-4 now expects the assertive sentence and no
+  polite one, and that the banner stays hidden while the card is open; the items unit test checks `warning()` and the
+  single assertive sentence.
+
+- **J-I47 · Mirror the warning as a banner; do not open the card.** The issue offered two remedies: mirror the warning
+  into the context bar or status strip, or open the drawer. The integrator chose the mirror, as a design-system banner
+  "under the top bar, over the canvas top edge" (base.css 6.12), for these reasons:
+  - **The layout rules keep the card closed unless the learner opens it.** The drawer is closed by default for learners
+    and the canvas keeps ≥ 70 % of the frame at rest (§5.2, LI-7). At ≤ 1079 px an expanded sheet is the grid's in-flow
+    row, so opening it resizes the canvas, and J-I28 limits that to the learner's own K or toggle: a resize re-anchors
+    the camera.
+  - **The drawer and the expanded sheet shrink the rectangle the gate is measured over.** `ShellEnv.visibleInsets`
+    excludes them (D7). Opening one on a gate warning could cover the very mark the learner is asked to view at 20×.
+    The banner is not an inset, and it is transient: it goes when the gate is met. `View my mark at 20×` puts the mark at
+    the pane's centre, below the banner. A banner over the canvas changes neither the canvas size nor the gate.
+  - **The context bar is already the card's mirror** (step, stem, primary action; §5.2), and the reveal result already
+    goes to the strip. The 40 px bar has no room for a 120-character sentence and two more buttons, and the phone peek
+    bar clamps its stem at two lines. The strip is one line and is not shown on a phone. A banner below the bar, with
+    the card's own sentence and both buttons, is the mirror that fits every presentation: drawer, folded dock, tablet
+    peek, phone peek and landscape.
+  - **The primary action keeps `Commit answer`.** Beside the card's own warning the card's CTA has always said `Commit
+    answer`, and the next commit proceeds (§5.5, owner design). The defect was that the second commit happened unseen.
+    The banner now states the half credit in view at every width, so the bar and peek CTAs mirror the card unchanged.
+    Hiding them would also drop the focus of a learner who committed from the keyboard (LI-R2).
+  - **Spoken once, assertively.** The learner pressed commit and nothing was committed, which is the case for an
+    assertive sentence (§10, SC 4.1.3). Neither the card's block nor the banner has a live role, so it is not said twice.
+  - The banner covers the top of the canvas while it shows: the top-left HUD (identity, tool line) at 1440, about
+    113 px of a phone's canvas. It stops short of the navigator wherever the navigator shows, so the navigator's pan
+    buttons stay whole. The first gate run's new axe pass caught this at 1024 × 1366 (`target-size`: the `↑` button
+    showed 44 × 14.7 px under the banner), and the fix was made before the final run (J-I48). Hiding the
+    warning instead would be worse. It goes as soon as the learner decides.
+
+- **J-I48 · Gate-warning fix: gate numbers.** One `npm run build` into `client/dist`, build id `2026-11-08T13:46:21Z`.
+  `src/main.ts`, `src/shell/main.ts`, `index.html` and `shell.html` keep their sha256 (checked before and after).
+  - tsc `--noEmit`: clean, also as part of the build.
+  - run.mjs: exit 0. check-metrics.mjs: 20 ok (`all metric checks passed`).
+  - shell-check.mjs: 190 ok, 0 FAIL.
+  - tools-check.mjs (axe-core 4.10.3): 628 ok, 0 FAIL when re-run on its own. In the full run it had one FAIL, CMP-6's
+    SwiftShader-relative frame-interval p95 (single 16.8 ms, compare 33.3 ms, against a limit of 25.2 ms): the timing
+    line J-I45 describes. On the re-run it was 16.8 / 16.7 ms. No shell or Phase A file changed.
+  - unit.mjs: 2612 ok, 0 FAIL in 20 files (3 new: the single assertive sentence and `warning()`). Python
+    `python3 -I -m unittest discover tools/tests`: 63 tests OK.
+  - learn-check (`--ref-dist <L0 dist> --axe <axe-core 4.10.3>`): 1,144 checks, 0 FAIL. Integrator 472 (51 new:
+    LI-R3), modules 672 (content 62, course 95, item-editor 64, items 124, player 109, progress 48, reveal 78, studio 92).
+  - The first full run, on the build before the navigator margin, failed one line: LI-R3's axe pass at 1024 × 1366
+    (`target-size`, see J-I47). Everything else in that run passed, tools-check included (628 ok).
+  - LI-R3 run against the build before this fix (the same harness, `--dist` of that tree): all six runs fail, because
+    there is no banner. The check therefore detects the defect.
 
 ### 15.3 Judgement-call log (scoring, Wave L1, 2026-11-04)
 

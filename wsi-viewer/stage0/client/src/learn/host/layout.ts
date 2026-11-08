@@ -9,7 +9,7 @@
  */
 import type { CommandSource, ToolId } from '../../shell/contracts';
 import { $, h, keycaps } from '../../shell/dom';
-import type { ContextBarState, DraftNoteString, LearnHudHost, LearnPlate, PhaseRailHost, PhaseState, PrimaryAction, TaskCardHost, TopBarHost } from '../contracts';
+import type { CardWarning, ContextBarState, DraftNoteString, LearnHudHost, LearnPlate, PhaseRailHost, PhaseState, PrimaryAction, TaskCardHost, TopBarHost } from '../contracts';
 import type { LearnEnv } from './env';
 
 export const DRAFT_NOTE: DraftNoteString = 'Draft — pending pathologist review';
@@ -31,7 +31,9 @@ export class TaskCard implements TaskCardHost {
   /** The dock opened or closed (panels render, the gate log's insets change). */
   onToggled: (open: boolean, source: CommandSource) => void = () => {};
   /** Every setContext, for tests (window.__learn.host().context). */
-  lastContext: { step: string; stem: string; primary: string | null; secondary: string | null } | null = null;
+  lastContext: { step: string; stem: string; primary: string | null; secondary: string | null; warning: string | null } | null = null;
+  /** The signature of the warning banner's rendered contents (rebuilt on change only, so a focused button survives). */
+  private warnSig = '';
 
   constructor(
     private readonly app: HTMLElement,
@@ -75,11 +77,52 @@ export class TaskCard implements TaskCardHost {
     $('peekToggle').setAttribute('aria-expanded', String(open));
     $('sheetToggle').setAttribute('aria-expanded', String(open));
     $('sheetToggle').setAttribute('aria-label', open ? 'Collapse the task card' : 'Expand the task card');
+    this.applyWarning();
+  }
+
+  /**
+   * The card's pending warning while the card is hidden (LEARN.md §15.2g J-I47): a banner over the canvas top edge with
+   * the card's sentence and its actions, shown iff the context carries a warning and the card is not open (a closed
+   * drawer at 1080–1599, a folded dock at ≥ 1600, a peeking sheet at ≤ 1079). Opening the card hides it (the card
+   * shows the same block). It is not a live region: items says the warning once, assertively. Written on setContext
+   * and on open / close only, never per frame.
+   */
+  private applyWarning(): void {
+    const w: CardWarning | null = this.ctx?.warning ?? null;
+    const bar = $('ctxWarn');
+    const sig = w === null ? '' : JSON.stringify([w.text, w.actions.map((a) => a.label)]);
+    const cleared = sig !== this.warnSig && w === null;
+    if (sig !== this.warnSig) {
+      this.warnSig = sig;
+      if (w !== null) {
+        $('ctxWarnText').textContent = w.text;
+        $('ctxWarnActions').replaceChildren(
+          ...w.actions.map((a) => {
+            const b = h('button', { class: 'btn btn--sm btn--secondary', type: 'button', text: a.label });
+            b.addEventListener('click', (e) => a.run(sourceOf(e)));
+            return b;
+          }),
+        );
+      }
+    }
+    const show = w !== null && !this.isOpen;
+    if (bar.hidden === show) {
+      // a banner button that held focus would leave it on <body>: hand it to the primary action the learner can see
+      // (the context bar's, the peek bar's or the card's), as a keyboard commit does (J-I47)
+      const had = !show && bar.contains(document.activeElement);
+      bar.hidden = !show;
+      this.app.classList.toggle('learn-warn-on', show);
+      if (had) focusVisiblePrimary(this.root);
+    }
+    if (cleared) {
+      $('ctxWarnText').textContent = '';
+      $('ctxWarnActions').replaceChildren();
+    }
   }
 
   setContext(state: ContextBarState | null): void {
     this.ctx = state;
-    this.lastContext = state === null ? null : { step: state.step, stem: state.stem, primary: state.primary?.label ?? null, secondary: state.secondary?.label ?? null };
+    this.lastContext = state === null ? null : { step: state.step, stem: state.stem, primary: state.primary?.label ?? null, secondary: state.secondary?.label ?? null, warning: state.warning?.text ?? null };
     $('ctxStep').textContent = state?.step ?? '';
     $('ctxStem').textContent = state?.stem ?? '';
     $('peekStem').textContent = state === null ? '' : state.stem !== '' ? state.stem : state.step;
@@ -91,6 +134,7 @@ export class TaskCard implements TaskCardHost {
       actionContent(alt, state.secondary.label, state.secondary.key);
       alt.hidden = false;
     }
+    this.applyWarning();
   }
   private renderAction(btn: HTMLElement, a: PrimaryAction | null): void {
     if (a === null) {
@@ -100,6 +144,16 @@ export class TaskCard implements TaskCardHost {
     actionContent(btn, a.label, a.key);
     (btn as HTMLButtonElement).disabled = a.disabled;
     btn.hidden = false;
+  }
+}
+
+/** Focus the first primary action on screen: the context bar's, the peek bar's, then the card's own CTA. */
+function focusVisiblePrimary(card: HTMLElement): void {
+  const cands = [document.getElementById('ctxCta'), document.getElementById('peekCta'), card.querySelector<HTMLElement>('.task__cta .btn--cta')];
+  for (const el of cands) {
+    if (!(el instanceof HTMLButtonElement) || el.hidden || el.disabled || el.getClientRects().length === 0) continue;
+    el.focus();
+    if (document.activeElement === el) return;
   }
 }
 

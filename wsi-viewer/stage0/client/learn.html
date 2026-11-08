@@ -95,6 +95,16 @@
         <button class="btn btn--sm btn--primary" type="button" id="ctxCta" hidden></button>
       </div>
 
+      <!-- The task card's pending warning (the gate warning) while the card itself is hidden: a closed drawer, a folded
+           dock or a peeking sheet. A banner over the canvas top edge, with the card's sentence and its two actions
+           (integrator; from TaskCardHost.setContext's `warning`, LEARN.md §15.2g J-I47). No live role: items says it
+           once, assertively. -->
+      <div class="banner banner--warning learn-warnbar" id="ctxWarn" role="region" aria-label="Warning" hidden>
+        <span class="banner__glyph" aria-hidden="true">!</span>
+        <span class="banner__text" id="ctxWarnText"></span>
+        <span class="banner__actions" id="ctxWarnActions"></span>
+      </div>
+
       <!-- B. Canvas area: pane A (the engine canvas, replaced on every slide switch, sits before #overlayA), its HUD and
            the plates. Pane B exists for core's two view hosts and is never shown in Learn (no compare, LEARN.md D4). -->
       <div class="canvas-area region" id="canvasArea" role="main" aria-label="Slide canvas area">

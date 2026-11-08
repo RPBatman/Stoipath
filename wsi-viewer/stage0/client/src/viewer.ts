@@ -29,6 +29,7 @@ import {
   UPLOAD_MAX_PER_FRAME_IDLE,
   WARM_BASE_MIN_FREE_VIEWPORTS,
   OVERLAY_REFRESH_FRAMES,
+  INSTRUMENT_VERSION,
 } from './constants';
 import { DecodePool, chooseWorkerCount } from './decode-pool';
 import type { WorkerResponse } from './decode-messages';
@@ -144,6 +145,12 @@ export interface ViewerUi {
   bindButtons(handlers: ViewerButtonHandlers): void;
   setVisible(v: boolean): void;
   toggle(): void;
+  /**
+   * Optional (IOS-FIX.md): a visible error line for failures that otherwise reach only the console: an exception in
+   * the frame loop and decode-worker error events (the measurement page also routes window errors here). Hosts that
+   * leave it out get console.error only, as before.
+   */
+  showError?(text: string): void;
 }
 
 /**
@@ -287,6 +294,22 @@ export interface ViewerOptions {
    * starts compare's second engine with false so window.__stage0 stays view A's (TOOLS.md D8, §12.1).
    */
   exposeGlobal?: boolean;
+  /**
+   * The measurement page's extended status line (IOS-FIX.md; default false, so the shell and Learn are unchanged):
+   * while the pinned base loads, "loading base n/m" with the tile error / timeout counts and the last tile failure,
+   * and "ready …" again once the base is back after a WebGL context restore.
+   */
+  measurementStatus?: boolean;
+  /** Hold a screen wake lock while the scripted path runs, where the browser offers one (feature-detected). */
+  wakeLockDuringPath?: boolean;
+}
+
+interface WakeLockSentinelLike {
+  readonly released: boolean;
+  release(): Promise<void>;
+}
+interface NavigatorWakeLock {
+  wakeLock?: { request(type: 'screen'): Promise<WakeLockSentinelLike> };
 }
 
 function paramNum(p: URLSearchParams, name: string): number | null {
@@ -422,6 +445,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   const workerCount = chooseWorkerCount(navigator.hardwareConcurrency, paramNum(params, 'workers'));
   let scheduler: Scheduler;
   const pool = new DecodePool(workerCount, (msg: WorkerResponse) => scheduler.handleWorkerMessage(msg));
+  pool.onError = (message) => overlay.showError?.(message);
   scheduler = new Scheduler(pyramid, cache, pool, protocol);
   scheduler.onTile = (msg) => {
     if (msg.type !== 'tile') return;
@@ -585,12 +609,14 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   const baseText = (): string =>
     `pinned base levels ${pyramid.basePinLevel}-${pyramid.levels.length - 1} (${pyramid.basePinTileCount} tiles), ` +
     (pyramid.warmBaseTileCount > 0 ? `warm base levels ${pyramid.warmBaseLevel}-${pyramid.basePinLevel - 1} (${pyramid.warmBaseTileCount} tiles)` : `no warm base (${renderer.layerCount} layers leave fewer than ${WARM_BASE_MIN_FREE_VIEWPORTS} typical viewports free)`);
-  overlay.setDevice(
-    device,
-    `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}; ${baseText()}\n` +
-      `in-flight cap ${scheduler.maxInflight} (prefetch ${scheduler.prefetchSlots})  renderer init ${renderer.initMs.toFixed(0)} ms  build ${__BUILD_ID__}  label ${label}${metrics.run.network ? ` net ${metrics.run.network}` : ''}${metrics.run.cache ? ` cache ${metrics.run.cache}` : ''}\n` +
-      (opts.keys === 'measurement' ? `keys: O overlay, R reset, P path, +/- zoom, arrows pan` : `keys: the host page's map (shell.html: ? lists them)`),
-  );
+  const showDevice = (d: DeviceInfo): void =>
+    overlay.setDevice(
+      d,
+      `slide ${pyramid.name} ${pyramid.width}x${pyramid.height} px, ${pyramid.levels.length} levels, tile ${pyramid.tileSize}, mpp ${pyramid.mpp ?? '?'}; ${baseText()}\n` +
+        `in-flight cap ${scheduler.maxInflight} (prefetch ${scheduler.prefetchSlots})  renderer init ${renderer.initMs.toFixed(0)} ms  build ${__BUILD_ID__} (instrument ${INSTRUMENT_VERSION})  label ${label}${metrics.run.network ? ` net ${metrics.run.network}` : ''}${metrics.run.cache ? ` cache ${metrics.run.cache}` : ''}\n` +
+        (opts.keys === 'measurement' ? `keys: O overlay, R reset, P path, +/- zoom, arrows pan` : `keys: the host page's map (shell.html: ? lists them)`),
+    );
+  showDevice(device);
 
   const finishSummary = (): Summary => {
     const s = metrics.summary();
@@ -616,11 +642,41 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     return n;
   };
 
+  // Screen wake lock while the scripted path runs (opts.wakeLockDuringPath; feature-detected, failures ignored): a
+  // phone that dims and locks mid-path interrupts the run (IOS-FIX.md).
+  let wakeLock: WakeLockSentinelLike | null = null;
+  const acquireWakeLock = (): void => {
+    if (opts.wakeLockDuringPath !== true || (wakeLock !== null && !wakeLock.released)) return;
+    const wl = (navigator as Navigator & NavigatorWakeLock).wakeLock;
+    if (wl === undefined || typeof wl.request !== 'function') return;
+    try {
+      wl.request('screen').then(
+        (l) => {
+          if (disposed || !path.running) void l.release().catch(() => undefined);
+          else wakeLock = l;
+        },
+        () => undefined,
+      );
+    } catch {
+      /* not allowed here: the run goes on without it */
+    }
+  };
+  const releaseWakeLock = (): void => {
+    if (wakeLock === null) return;
+    const l = wakeLock;
+    wakeLock = null;
+    if (!l.released) void l.release().catch(() => undefined);
+  };
+  const startPath = (now: number): void => {
+    path.start(now);
+    acquireWakeLock();
+  };
+
   const api: Stage0Api = {
     summary: finishSummary,
     exportJson,
     runPath: () => {
-      if (!path.running) path.start(performance.now());
+      if (!path.running) startPath(performance.now());
     },
     evictGpuTiles,
     jumpTo: (wx, wy, logZoom) => cam.jumpTo(wx, wy, logZoom),
@@ -658,6 +714,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   };
   if (exposeGlobal) window.__stage0 = api;
   path.onDone = () => {
+    releaseWakeLock();
     metrics.run.pathRuns++;
     const s = finishSummary();
     if (exposeGlobal) window.__stage0Summary = s;
@@ -705,14 +762,20 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   // A hidden tab stops rAF; the delta on return is not a frame time and any open gesture is void (REVIEW M10).
   const onVisibility = (): void => {
     if (document.hidden) metrics.notePause();
+    else if (path.running) acquireWakeLock(); // the browser releases a wake lock when the page is hidden
   };
   document.addEventListener('visibilitychange', onVisibility);
 
   // Context loss (REVIEW H5): mobile drivers commit texture memory lazily, so an oversize array fails seconds later as
   // a context loss. Recover with half the layers, remember the count for the next load in this tab, keep the metrics.
+  /** The context was lost while the page was hidden (backgrounded): not a memory signal, so no layer hint (IOS-FIX.md). */
+  let lostWhileHidden = false;
+  /** A restore is reloading the base; the measurement status says "ready" again once it is resident. */
+  let restorePending = false;
   canvas.addEventListener('webglcontextlost', (e) => {
     if (disposed) return; // dispose() lost the context on purpose: no recovery, no status
     e.preventDefault();
+    lostWhileHidden = document.hidden;
     renderer.lost = true;
     metrics.noteContextLoss();
     overlay.setStatus('WebGL context lost — recovering with a smaller tile array…');
@@ -722,7 +785,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     const previousLayers = renderer.layerCount;
     const layers = Math.max(pyramid.basePinTileCount + TEXTURE_LAYERS_RESERVE, previousLayers >> 1);
     renderer.restore(layers);
-    writeLayersHint(layersHintKey, renderer.layerCount);
+    // A loss while the page was hidden (app switch, screen lock) says nothing about GPU memory: halving the array for
+    // every later load in this tab would make those runs incomparable (IOS-FIX.md). Otherwise remember it, as before.
+    if (!lostWhileHidden) writeLayersHint(layersHintKey, renderer.layerCount);
     applyPinBudget(pyramid, renderer.layerCount);
     applyWarmBudget(pyramid, renderer.layerCount, viewportTilesAtTypicalScale(renderer.width, renderer.height, pyramid.tileSize));
     cache.reset(renderer.layerCount);
@@ -735,8 +800,30 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     }
     metrics.notes.push(`WebGL context lost and restored with ${renderer.layerCount} layers; ${baseText()}; tiles were reloaded`);
     resize();
+    if (device !== null) showDevice(device);
+    restorePending = true;
     overlay.setStatus(`WebGL context restored with ${renderer.layerCount} layers — reloading tiles`);
   });
+  const measurementStatus = opts.measurementStatus === true;
+  let lastLoadStatus = '';
+  /** "loading base n/m (errors k, timeouts t) — last: tile L/x_y: message" (opts.measurementStatus). */
+  const loadStatusText = (): string => {
+    const c = scheduler.counters;
+    const problems = c.errors + c.timeouts > 0 ? ` (errors ${c.errors}${c.timeouts > 0 ? `, timeouts ${c.timeouts}` : ''})` : '';
+    const last = scheduler.lastFailure !== null && c.errors + c.timeouts > 0 ? ` — last: ${scheduler.lastFailure}` : '';
+    return `loading base ${Math.min(cache.pinnedCount, pyramid.basePinTileCount)}/${pyramid.basePinTileCount}${problems}${last}`;
+  };
+  /** Exceptions caught in the frame loop (the loop re-arms regardless; IOS-FIX.md). */
+  let frameErrors = 0;
+  let lastFrameError = '';
+  const reportFrameError = (err: unknown): void => {
+    frameErrors++;
+    const msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    if (frameErrors <= 3 || msg !== lastFrameError) console.error('[stage0] frame loop error', err);
+    if (frameErrors === 1) metrics.notes.push(`the frame loop threw (first: ${msg}); the loop continued`);
+    if (msg !== lastFrameError || frameErrors % 60 === 1) overlay.showError?.(`frame loop error${frameErrors > 1 ? ` (×${frameErrors})` : ''}: ${msg}`);
+    lastFrameError = msg;
+  };
 
   const frameInput: FrameInput = {
     now: 0,
@@ -763,6 +850,17 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   let rafId = 0;
   const loop = (rafTs: number): void => {
     if (disposed) return;
+    // One exception must not stop the only loop (the picture, the HUD and the scripted path all run from it): catch,
+    // show it, and re-arm (IOS-FIX.md). Nothing here changes what a frame does when nothing throws.
+    try {
+      frameBody(rafTs);
+    } catch (err) {
+      reportFrameError(err);
+    }
+    frame++;
+    rafId = requestAnimationFrame(loop);
+  };
+  const frameBody = (rafTs: number): void => {
     const dt = metrics.beginFrame(rafTs);
     const now = rafTs;
     cam.step(now);
@@ -821,6 +919,21 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
       if (!path.running) overlay.setStatus('ready');
     }
     if (path.running && frame % OVERLAY_REFRESH_FRAMES === 0) overlay.setStatus(`scripted path running ${path.progress}${scheduler.baseReady ? '' : ' (waiting for the base)'} — hands off`);
+    if (measurementStatus && !renderer.lost) {
+      if (!scheduler.basePinned) {
+        if (!path.running && frame % OVERLAY_REFRESH_FRAMES === 0) {
+          const t = loadStatusText();
+          if (t !== lastLoadStatus) {
+            lastLoadStatus = t;
+            overlay.setStatus(t);
+          }
+        }
+      } else if (restorePending) {
+        restorePending = false;
+        lastLoadStatus = '';
+        if (!path.running) overlay.setStatus(`ready (after a WebGL context loss: this tab's runs record contextLosses ${metrics.contextLosses}; use a fresh tab for a valid run)`);
+      }
+    }
 
     frameInput.now = now;
     frameInput.drawn = drawn;
@@ -886,11 +999,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
 
     if (params.get('path') === '1' && !autoPathStarted && scheduler.baseReady) {
       autoPathStarted = true;
-      path.start(now);
+      startPath(now);
     }
     path.tick(now);
-    frame++;
-    rafId = requestAnimationFrame(loop);
   };
   rafId = requestAnimationFrame(loop);
 
@@ -934,6 +1045,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     frameHooks.length = 0;
     resizeHooks.length = 0;
     path.onDone = null;
+    releaseWakeLock();
     pool.terminate();
     // A live PerformanceObserver is a GC root: without this every disposed engine (canvas, GL context, cache, frame log)
     // stays reachable through Metrics (Phase A review, engine lens). Queued decoded bitmaps are closed at once too.

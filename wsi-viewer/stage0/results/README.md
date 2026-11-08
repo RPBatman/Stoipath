@@ -111,6 +111,11 @@ The **Export JSON** button writes a bundle with `format: "stoipath-stage0-metric
 }
 ```
 
+Two additive fields since the 2026-11-08 iPhone fix (`client/IOS-FIX.md`): `instrument` (top level; `2`, absent
+in older exports = instrument 1) and `summary.tiles.timeouts` (requests the 12 s watchdog gave up on; not part of
+`tiles.errors`). The summariser does not read them. Exports from builds dated after 2026-10-25 (`build`) come from
+the new instrument version: keep them apart from the abstract's runs, or say that they are pooled.
+
 `gestures[]` is the source of truth: a **zoom-in burst** is a gesture with `levelsZoomed > 0`
 (level 0 is full resolution, so a positive value means L* became finer) that was not `interrupted`
 and did not end magnified (`endMagnified`: level 0 shown at s > 1, "sharp" cells but visibly soft;

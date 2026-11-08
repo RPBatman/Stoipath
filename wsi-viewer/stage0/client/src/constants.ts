@@ -8,6 +8,14 @@
  * Values marked "tune by measurement" are starting points the harness is meant to recalibrate.
  */
 
+/**
+ * Version of the measuring instrument, written into every export as `instrument` (IOS-FIX.md). 1 = the build measured
+ * for the abstract (build id 2026-10-25T16:53:04Z and the other builds of 2026-10-25; their exports carry no
+ * `instrument` field); 2 = from the 2026-11-08 iOS reliability fix (request watchdog, base retries, status / error
+ * lines, phone layout). Policy constants and metric definitions are the same in both; failure handling is not.
+ */
+export const INSTRUMENT_VERSION = 2;
+
 // ---------------------------------------------------------------- pyramid / residency
 /** Tile edge in pixels. 04 F5, A §2 (512² RGBA8 layers). The manifest may override; the GPU array is sized from it. */
 export const TILE_SIZE_DEFAULT = 512;
@@ -83,6 +91,21 @@ export const CANCEL_KEEP_UNKNOWN_BYTES = 16_384;
 /** Retry a failed tile after this long, at most FAILED_MAX_ATTEMPTS times. task. */
 export const FAILED_RETRY_MS = 2000;
 export const FAILED_MAX_ATTEMPTS = 3;
+/**
+ * Request watchdog (IOS-FIX.md, 2026-11-08; additive, never reached when tiles arrive): a tile request still in flight
+ * this long after dispatch is aborted, counted as a timeout (summary.tiles.timeouts) and failed like an error, so it
+ * is re-dispatched under the retry policy. iOS loads have no default timeout, so a stalled fetch or decode would
+ * otherwise hold the request (and, for a base tile, "ready") for the life of the page. The limit doubles for each
+ * timeout of the same tile, up to TILE_WATCHDOG_MAX_MS, so a merely slow link is not aborted in a loop.
+ */
+export const TILE_WATCHDOG_MS = 12_000;
+export const TILE_WATCHDOG_MAX_MS = 48_000;
+/**
+ * Pinned-base and warm-base tiles gate "ready" and the scripted path, so they are never given up after
+ * FAILED_MAX_ATTEMPTS (IOS-FIX.md): they are retried indefinitely, FAILED_RETRY_MS after the first failure and then
+ * with the wait doubling per failure up to this cap. Other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS.
+ */
+export const BASE_RETRY_MAX_MS = 5_000;
 
 // ---------------------------------------------------------------- prefetch / prediction
 /** Ring of tiles around the (predicted) viewport at L*. 04 F3 "Ring (keepBuffer)" baseline, always on. */

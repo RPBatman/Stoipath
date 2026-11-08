@@ -269,6 +269,8 @@ export class Player implements PlayerService {
     bus.on('itemAnswered', () => this.queueChrome());
     bus.on('itemCommitted', () => this.queueChrome());
     bus.on('itemReopened', () => this.queueChrome());
+    // the gate met clears the card's gate warning, and with it the context bar's mirror of it (J-I47)
+    bus.on('gateChanged', () => this.queueChrome());
     bus.on('expertViewChanged', ({ on }) =>
       this.shell.atRest(() => {
         if (this.body.kind === 'reveal') this.body.view.setExpert(on);
@@ -946,6 +948,8 @@ export class Player implements PlayerService {
       primary: this.action(),
       // review fix (2026-11-08): as the card's own button, offered only until the item is revealed (or waits for it)
       secondary: item?.kind === 'region' && it !== null && it.state(item.id) !== 'revealed' && it.state(item.id) !== 'reveal-waiting' ? { label: 'Mark without a pointer', key: this.keyOf('item:alternatives', '⇧↵'), run: () => void it.openAlternatives(item.id, null) } : null,
+      // the card's pending warning (the gate warning), mirrored by the integrator while the card is hidden (J-I47)
+      warning: item !== undefined && it !== null ? (it.warning?.(item.id) ?? null) : null,
     };
   }
 
@@ -1166,7 +1170,7 @@ export class Player implements PlayerService {
     this.card.setNote(this.note());
     this.card.setSecondary(this.secondaryDefs());
     const ctx = this.contextState();
-    const csig = ctx === null ? '' : JSON.stringify([ctx.step, ctx.stem, ctx.primary?.label, ctx.primary?.key, ctx.primary?.disabled, ctx.secondary?.label, ctx.secondary?.key]);
+    const csig = ctx === null ? '' : JSON.stringify([ctx.step, ctx.stem, ctx.primary?.label, ctx.primary?.key, ctx.primary?.disabled, ctx.secondary?.label, ctx.secondary?.key, ctx.warning?.text, ctx.warning?.actions.map((a) => a.label)]);
     if (csig !== this.ctxSig) {
       this.ctxSig = csig;
       this.host.taskCard.setContext(ctx);

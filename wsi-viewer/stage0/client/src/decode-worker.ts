@@ -17,6 +17,8 @@ interface Progress {
   received: number;
   total: number;
   controller: AbortController;
+  /** FetchRequest.seq of the request this entry belongs to. */
+  seq: number | undefined;
 }
 
 const scope = self as unknown as WorkerScope;
@@ -89,7 +91,7 @@ async function makeMip(bitmap: ImageBitmap): Promise<ImageBitmap | null> {
 
 async function handleFetch(req: FetchRequest): Promise<void> {
   const controller = new AbortController();
-  const progress: Progress = { received: 0, total: 0, controller };
+  const progress: Progress = { received: 0, total: 0, controller, seq: req.seq };
   inflight.set(req.key, progress);
   const tStart = performance.now();
   let cancelledLate = false;
@@ -150,20 +152,27 @@ async function handleFetch(req: FetchRequest): Promise<void> {
         cancelledLate,
         cacheHit,
         cacheControl,
+        seq: req.seq,
       },
       transfer,
     );
   } catch (err) {
     const aborted = err instanceof DOMException && err.name === 'AbortError';
-    scope.postMessage({ type: 'error', key: req.key, tier: req.tier, kind: req.kind, aborted, message: aborted ? 'aborted' : String(err) }, []);
+    scope.postMessage({ type: 'error', key: req.key, tier: req.tier, kind: req.kind, aborted, message: aborted ? 'aborted' : String(err), seq: req.seq }, []);
   } finally {
-    inflight.delete(req.key);
+    // A watchdog re-dispatch of the same key to this worker may already own the entry (IOS-FIX.md).
+    if (inflight.get(req.key) === progress) inflight.delete(req.key);
   }
 }
 
-function handleCancel(key: number): void {
+function handleCancel(key: number, force: boolean, seq: number | undefined): void {
   const p = inflight.get(key);
   if (p === undefined) return;
+  if (force) {
+    // The page's request watchdog gave up on this request (IOS-FIX.md): abort whatever has arrived.
+    if (seq === undefined || p.seq === seq) p.controller.abort();
+    return;
+  }
   // Most bytes are here: finishing is cheaper than re-fetching later (04 F4). Without a Content-Length the fraction
   // is unknown, so a byte floor stands in for it (REVIEW L3). Flag either case for the metrics.
   const mostlyHere = p.total > 0 ? p.received / p.total >= CANCEL_BYTES_FRACTION : p.received >= CANCEL_KEEP_UNKNOWN_BYTES;
@@ -177,5 +186,5 @@ function handleCancel(key: number): void {
 scope.onmessage = (ev: MessageEvent<WorkerRequest>) => {
   const msg = ev.data;
   if (msg.type === 'fetch') void handleFetch(msg);
-  else handleCancel(msg.key);
+  else handleCancel(msg.key, msg.force === true, msg.seq);
 };

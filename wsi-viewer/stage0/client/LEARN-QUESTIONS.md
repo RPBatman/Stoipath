@@ -10,16 +10,27 @@ LI-1 asserts that these two files still have these sha256 values on every later 
 
 | File | sha256 |
 |---|---|
-| `src/main.ts` | `eaeb9c0797a2b00e9f404d2ac4cdff4e51bb740c350b4933459efc8a4f46ebad` |
+| `src/main.ts` | `eb0eba9b5cc5756f6ab14004f45db6898c6688e5373189549c34930a0efa8260` |
 | `src/shell/main.ts` | `d5a2dc7ebb7a8ccb2f2df1c71492656d49e78d8eb47279bd935113c20a933556` |
 
 For reference (not asserted by LI-1, but checked by the integrator at each gate):
 
 | File | sha256 |
 |---|---|
-| `index.html` | `537a55ea20d77a800afd877c3dc673997bc0b7d3a1c70820180ead96186a93e9` |
+| `index.html` | `c090d0d870d84e393fa018e70e0d1cb2c4a76b3e231748e3aef3d2dec2e343cc` |
 | `shell.html` | `f75786a3af73b0535a1e6232ffb4f9a474469b5198a7860127198df55fff5b88` |
 | `vite.config.ts` (before the L1 `learn` input) | `290bd47c1e7dccf4ccfc8910af8f70e395c59636db3717b57309cf206342c630` |
+
+**2026-11-08 · baseline updated (measurement page iPhone fix, `IOS-FIX.md`).** The measurement freeze for the
+abstract has passed, and the iPhone reliability fix changes the measurement page itself. It adds the status and error
+lines and the phone layout in `index.html`, and window error handlers and two engine options in `src/main.ts`. The
+engine files it changes (`src/viewer.ts`, `scheduler.ts`, `decode-pool.ts`, `decode-worker.ts`, `decode-messages.ts`,
+`overlay.ts`, `metrics.ts`, `constants.ts`) are not hashed here. The `src/main.ts` and `index.html` rows above
+therefore now hold the post-fix values. The values recorded at Wave L1 start were `src/main.ts`
+`eaeb9c0797a2b00e9f404d2ac4cdff4e51bb740c350b4933459efc8a4f46ebad` and `index.html`
+`537a55ea20d77a800afd877c3dc673997bc0b7d3a1c70820180ead96186a93e9`. This keeps LI-1 a check of isolation rather than
+a stale hash. No Learn module reaches the measurement page's source or built graph, and that is still asserted by
+LI-1's graph checks. `src/shell/main.ts` is unchanged.
 
 ## 2026-11-04 · format (Wave L1): contract questions
 

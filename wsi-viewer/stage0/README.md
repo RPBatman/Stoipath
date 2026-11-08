@@ -130,6 +130,18 @@ run. Exports, screenshots and the CSV go to `results/` with the file-name conven
 `ttsFromLastInputMs` (last input → end of pop-in); the A §3 target form is `sharpAfterSettleMs`;
 protocol §6 defines both and §7 lists what in-browser measurement cannot see.
 
+## Changes after the measurement freeze
+
+- **2026-11-08 — iPhone reliability fix (instrument 2).** The measurement page could not be run on an iPhone. On
+  narrow phones Run and Export were below the panel's fold and the status line was under the HUD. A tile request
+  that never settled, or failed three times, kept the page at `starting renderer…` with no visible error. The fix
+  puts the buttons first and the status above the HUD, adds a 12 s request watchdog and retries base tiles
+  indefinitely, and adds a visible error line, a **Panel** button and a wake lock during the scripted path. What is
+  measured, and how, is unchanged. The export gains `instrument: 2` and `summary.tiles.timeouts`. The build id
+  still means the UTC build time, and **exports from builds dated after 2026-10-25 are a new instrument version**:
+  do not pool them with the abstract's numbers without saying so. Details and before/after evidence are in
+  `client/IOS-FIX.md`.
+
 ## Where things are
 
 | Question | Where |
@@ -138,5 +150,6 @@ protocol §6 defines both and §7 lists what in-browser measurement cannot see.
 | How to measure, what the numbers mean, what they cannot mean | `MEASUREMENT_PROTOCOL.md` §5–§7 |
 | Where results go, file names, CSV columns, export schema | `results/README.md`, `results/results-template.csv` |
 | What was reviewed and how each finding was resolved | `client/REVIEW.md` (Resolution lines), `client/CHANGES.md` |
+| What changed after the freeze (iPhone fix, instrument 2) | `client/IOS-FIX.md` |
 | Slide provenance and licence | `data/SOURCE.md` |
 | Headless (CI) numbers and their caveats | `client/harness/results/README.md` |

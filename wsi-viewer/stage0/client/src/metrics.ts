@@ -35,6 +35,7 @@ import {
   EVENT_TIMING_THRESHOLD_MS,
   FRAME_LOG_CAPACITY,
   GESTURE_IDLE_MS,
+  INSTRUMENT_VERSION,
   PAUSE_FRAME_MS,
   SHARP_TIMEOUT_MS,
   STANDARD_REFRESH_HZ,
@@ -243,6 +244,11 @@ export interface Summary {
     cancelledLate: number;
     aborted: number;
     errors: number;
+    /**
+     * Requests the watchdog gave up on (constants.ts TILE_WATCHDOG_MS; IOS-FIX.md). Added 2026-11-08 (instrument 2);
+     * absent in older exports, 0 whenever every request was answered.
+     */
+    timeouts: number;
     /** HTTP-cache hits / transfers / unknown (PerformanceResourceTiming.transferSize in the worker). */
     cacheHits: number;
     cacheMisses: number;
@@ -963,6 +969,7 @@ export class Metrics {
         cancelledLate: c?.cancelledLate ?? 0,
         aborted: c?.aborted ?? 0,
         errors: c?.errors ?? 0,
+        timeouts: c?.timeouts ?? 0,
         cacheHits: c?.cacheHits ?? 0,
         cacheMisses: c?.cacheMisses ?? 0,
         cacheUnknown: c?.cacheUnknown ?? 0,
@@ -1007,6 +1014,8 @@ export class Metrics {
       schema: 'stoipath-stage0-export/2',
       format: 'stoipath-stage0-metrics/1',
       build: summary.build,
+      // Additive (IOS-FIX.md): 2 = builds with the 2026-11-08 iOS reliability fix; exports without it are instrument 1.
+      instrument: INSTRUMENT_VERSION,
       device: {
         ...d,
         dpr: d.devicePixelRatio,

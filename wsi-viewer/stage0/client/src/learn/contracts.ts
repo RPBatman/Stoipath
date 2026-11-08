@@ -1067,6 +1067,19 @@ export interface ItemsService {
   reveal(itemId: string, source: CommandSource): Promise<RevealOutcome>;
   /** `⇧↵`: open the candidates panel for the current region item. */
   openAlternatives(itemId: string, opener: HTMLElement | null): boolean;
+  /**
+   * The warning the item's card shows now and that waits for a decision (the gate warning: `View my mark at 20×` ·
+   * `Commit anyway`), or null. The integrator mirrors it beside the context bar and the peek bar while the card is hidden.
+   * Additive, optional (gate-warning fix 2026-11-08, LEARN.md §15.2g J-I47).
+   */
+  warning?(itemId: string): CardWarning | null;
+}
+
+/** A card warning with its actions, in the card's order (additive, 2026-11-08, J-I47). */
+export interface CardWarning {
+  /** The card's sentence, verbatim. */
+  text: string;
+  actions: readonly { label: string; run(source: CommandSource): void }[];
 }
 
 /** Whether the focused view's pixels allow a reveal now (LEARN.md D8). */
@@ -1214,6 +1227,11 @@ export interface ContextBarState {
   primary: PrimaryAction | null;
   /** Secondary button ("Mark without a pointer ⇧↵" on region items), or null. */
   secondary: { label: string; key: string; run(source: CommandSource): void } | null;
+  /**
+   * The card's pending warning (ItemsService.warning), shown by the integrator as a banner over the canvas top edge
+   * whenever the card itself is not visible (a closed drawer, a folded dock, a peeking sheet). Additive, optional (J-I47).
+   */
+  warning?: CardWarning | null;
 }
 
 /**

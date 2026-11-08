@@ -24,7 +24,11 @@
 //         LI-3 here asserts the studio's `No slide open` plate (A-STU-Q2);
 //   LI-9  keymap (integrator and Phase A rows; (L2) the flow rows) and the ⇧D refusal;
 //   LI-10 (L2) no answer leaks in identity before q-size is revealed;
-//   LI-I  integrator extras: the D20 filter, task-card placement per viewport, K, Esc, insets, host hooks, axe.
+//   LI-I  integrator extras: the D20 filter, task-card placement per viewport, K, Esc, insets, host hooks, axe;
+//   LI-R3 (gate-warning fix 2026-11-08, J-I47) the gate warning with the task card hidden (drawer closed at 1440,
+//         sheet peeking at 1024 and 390 coarse): the banner's sentence and both actions visible and hit-testable without
+//         K, said once assertively; `Commit anyway` commits with the gate unmet (0.5 at reveal), `View my mark at 20×`
+//         flies to the mark at the gate scale.
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -1031,6 +1035,130 @@ export async function run(ctx) {
         check(TAG, false, `LI-R2 ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
       } finally {
         await c.close();
+      }
+    }
+
+    // ---------------------------------------------------------------- LI-R3 (gate-warning fix 2026-11-08, J-I47) the gate
+    // warning while the task card is hidden. The warning used to render only inside the card, so with the drawer closed
+    // (1080–1599) or the sheet peeking (≤ 1079) it had a 0 × 0 box and only the polite region said it. It is now a
+    // banner over the canvas top edge with the card's sentence and both actions, said once assertively. Each viewport runs
+    // twice: once following `View my mark at 20×`, once with `Commit anyway`. Every click is at the centre of a box that
+    // elementFromPoint proves is the control (a tap on coarse viewports); K is never pressed.
+    {
+      const SENTENCE = 'You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or choose View my mark at 20× first.';
+      const SPOKEN = 'You have not viewed your mark at 20 times yet.';
+      const MARK = [7168, 5120];
+      /** The first primary action on screen (context bar, peek bar, the card's CTA in the tablet peek) and a hit test. */
+      const visiblePrimary = (page) =>
+        page.evaluate(() => {
+          for (const s of ['#ctxCta', '#peekCta', '#taskCard .task__cta .btn--cta']) {
+            const el = document.querySelector(s);
+            if (!el || el.hidden || el.getClientRects().length === 0) continue;
+            const r = el.getBoundingClientRect();
+            const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+            return { sel: s, x: r.x + r.width / 2, y: r.y + r.height / 2, hit: hit === el || el.contains(hit), label: el.textContent.replace(/\s+/g, ' ').trim() };
+          }
+          return null;
+        });
+      /** The banner: its sentence and its two buttons, each with its box and an elementFromPoint hit test at its centre. */
+      const banner = (page) =>
+        page.evaluate(() => {
+          const b = document.getElementById('ctxWarn');
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const inView = (r) => r.width > 0 && r.height > 0 && r.left >= 0 && r.top >= 0 && r.right <= vw + 0.5 && r.bottom <= vh + 0.5;
+          const text = document.getElementById('ctxWarnText');
+          const tr = text.getBoundingClientRect();
+          const textHit = document.elementFromPoint(tr.x + Math.min(20, tr.width / 2), tr.y + Math.min(8, tr.height / 2));
+          return {
+            shown: !b.hidden && b.getClientRects().length > 0,
+            live: b.getAttribute('aria-live') ?? b.getAttribute('role'),
+            text: text.textContent,
+            textVisible: inView(tr) && text.scrollWidth <= text.clientWidth + 1 && text.scrollHeight <= text.clientHeight + 1 && (textHit === text || text.contains(textHit) || b.contains(textHit)),
+            buttons: [...b.querySelectorAll('button')].map((x) => {
+              const r = x.getBoundingClientRect();
+              const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+              return { label: x.textContent.trim(), x: r.x + r.width / 2, y: r.y + r.height / 2, w: Math.round(r.width), h: Math.round(r.height), inView: inView(r), hit: hit === x || x.contains(hit) };
+            }),
+          };
+        });
+      const press = async (page, vp, x, y) => {
+        if (vp.coarse) await page.touchscreen.tap(x, y);
+        else await page.mouse.click(x, y);
+      };
+      for (const vp of [H.VIEWPORTS.desktop, H.VIEWPORTS.tablet, H.VIEWPORTS.phone]) {
+        for (const path of ['view', 'anyway']) {
+          const { ctx: c, page, errors } = await open(vp, { reducedMotion: true });
+          const D = driver(page);
+          const t = `${H.vpTag(vp)} card hidden, ${path === 'view' ? 'View my mark' : 'Commit anyway'}`;
+          try {
+            await D.boot();
+            check(TAG, await D.toStep(STEP.region), `LI-R3 ${t}: the region item`);
+            await page.waitForSelector(CARD('q-region'), { state: 'attached', timeout: 10_000 });
+            await page.evaluate(() => window.__learn.test.card(false));
+            await page.evaluate(([x, y]) => window.__shell.tools.annotations().create({ kind: 'point', geometry: { type: 'Point', coordinates: [x, y] }, input: 'mouse' }), MARK);
+            await page.waitForFunction(() => window.__learn.tools.items().draftMarkId !== null, null, { timeout: 10_000, polling: 50 });
+            await H.settle(page, { sharp: false, quietMs: 300 });
+            const pre = await page.evaluate(() => ({ card: window.__learn.host().taskCard, met: window.__learn.tools.items().gate?.met ?? null }));
+            const want = vp.width >= 1080 ? '#ctxCta' : vp.width < 600 ? '#peekCta' : '#taskCard .task__cta .btn--cta';
+            const p0 = await visiblePrimary(page);
+            check(TAG, pre.card.open === false && pre.met === false && p0?.sel === want && p0.hit && p0.label.startsWith('Commit answer'), `LI-R3 ${t}: the card is hidden (${pre.card.presentation}, open ${pre.card.open}), the gate unmet over the mark (${pre.met}), and "${p0?.label}" on screen at ${p0?.sel} (hit ${p0?.hit})`);
+            await press(page, vp, p0.x, p0.y);
+            await page.waitForFunction(() => window.__learn.tools.items().lastCommit?.result?.reason === 'gate-warning', null, { timeout: 10_000, polling: 50 });
+            await page.waitForFunction(() => !document.getElementById('ctxWarn').hidden, null, { timeout: 10_000, polling: 50 }).catch(() => null);
+            await H.settle(page, { sharp: false, quietMs: 300 });
+            const b = await banner(page);
+            const after = await page.evaluate(() => {
+              const w = document.querySelector('#taskCard .learn-item__warn');
+              const r = w?.getBoundingClientRect();
+              const it = window.__learn.tools.items();
+              return { card: window.__learn.host().taskCard.open, cardWarn: r ? Math.round(r.width * r.height) : null, state: it.states['q-region'], assertive: it.said.assertive, polite: it.said.polite, region: document.getElementById('liveAssertive').textContent };
+            });
+            check(TAG, b.shown && b.text === SENTENCE && b.textVisible && after.card === false, `LI-R3 ${t}: the banner shows the whole sentence with the card still hidden and K not pressed (text visible ${b.textVisible}; card box ${after.cardWarn} px², card open ${after.card})`);
+            const minH = vp.coarse ? 44 : 24;
+            const [view, anyway] = b.buttons;
+            check(
+              TAG,
+              b.buttons.length === 2 && view.label === 'View my mark at 20×' && anyway.label === 'Commit anyway' && b.buttons.every((x) => x.inView && x.hit && x.h >= minH),
+              `LI-R3 ${t}: "View my mark at 20×" and "Commit anyway" are on screen and hit-testable (${b.buttons.map((x) => `${x.label} ${x.w}×${x.h} hit ${x.hit}`).join('; ')})`,
+            );
+            const spoken = after.assertive.filter((x) => x.startsWith(SPOKEN)).length;
+            const politeToo = after.polite.some((x) => x.includes('not viewed your mark'));
+            check(TAG, spoken === 1 && !politeToo && after.region.startsWith(SPOKEN) && b.live !== 'alert' && b.live !== 'status' && b.live !== 'assertive' && b.live !== 'polite', `LI-R3 ${t}: said once, assertively (${spoken} assertive, polite too ${politeToo}; the banner's live role: ${b.live})`);
+            if (path === 'view') {
+              await H.axe(page, check, TAG, `LI-R3 ${H.vpTag(vp)}: axe with the gate warning's banner shown`);
+              await press(page, vp, view.x, view.y);
+              await H.settle(page, { sharp: true, quietMs: 400 });
+              await page.waitForTimeout(400);
+              const r = await page.evaluate(([x, y]) => {
+                const v = window.__shell.state().views[0];
+                const pane = document.getElementById('paneA').getBoundingClientRect();
+                const [cx, cy] = window.__shell.tools.overlay().test.worldToClient('A', x, y);
+                return { s: v.scale_um_per_px, dx: (cx - (pane.x + pane.width / 2)) / pane.width, dy: (cy - (pane.y + pane.height / 2)) / pane.height, met: window.__learn.tools.items().gate?.met ?? null, warn: !document.getElementById('ctxWarn').hidden, focus: document.activeElement?.id || document.activeElement?.tagName, state: window.__learn.tools.items().states['q-region'] };
+              }, MARK);
+              check(TAG, Math.abs(Math.log2(r.s / 0.5)) < 0.02 && Math.abs(r.dx) < 0.1 && Math.abs(r.dy) < 0.1 && r.met === true && r.state === 'awaiting', `LI-R3 ${t}: View my mark at 20× flies to the mark at the gate scale (${r.s.toFixed(3)} µm/px; mark at ${(r.dx * 100).toFixed(1)} %, ${(r.dy * 100).toFixed(1)} % from the pane's centre) and the gate is met (${r.met}), nothing committed (${r.state})`);
+              check(TAG, !r.warn && r.focus !== 'BODY', `LI-R3 ${t}: the banner goes with the warning and focus is not dropped to <body> (banner ${r.warn ? 'shown' : 'gone'}, focus ${r.focus})`);
+            } else {
+              let t0 = await D.since();
+              await press(page, vp, anyway.x, anyway.y);
+              const committed = await D.waitEvent('itemCommitted', t0, { itemId: 'q-region' }, 10_000).catch(() => null);
+              await H.settle(page, { sharp: false, quietMs: 300 });
+              const mid = await page.evaluate(() => ({ warn: !document.getElementById('ctxWarn').hidden, state: window.__learn.tools.items().states['q-region'], ok: window.__learn.tools.items().lastCommit?.result?.ok === true, focus: document.activeElement?.id || document.activeElement?.tagName }));
+              check(TAG, committed !== null && mid.ok && mid.state === 'committed' && !mid.warn && mid.focus !== 'BODY', `LI-R3 ${t}: Commit anyway commits (${mid.state}), the banner goes, and focus is not dropped to <body> (${mid.focus})`);
+              t0 = await D.since();
+              await page.focus('#view');
+              await page.keyboard.press('u');
+              const a = await D.waitEvent('itemAnswered', t0, { itemId: 'q-region' }, 40_000).catch(() => null);
+              check(TAG, a !== null && a.gateMet === false && a.score === 0.5, `LI-R3 ${t}: revealed with the gate unmet: half credit (${JSON.stringify(a)})`);
+            }
+            noErrors(errors, `LI-R3 ${t}`);
+            await guardOf(page);
+          } catch (e) {
+            check(TAG, false, `LI-R3 ${t} threw: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+          } finally {
+            await c.close();
+          }
+        }
       }
     }
 

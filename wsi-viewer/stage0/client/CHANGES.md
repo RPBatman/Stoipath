@@ -147,3 +147,14 @@ except where the line says otherwise. The behaviour changes, in one place:
 - `window.__stage0.state()` also reports `blankCells`; `harness/check-metrics.mjs` asserts "ancestor drawn or already
   sharp, never blank" right after a jump instead of "every cell still deficit", which raced with fast loopback tiles
   (flaky before this change as well).
+
+# iPhone reliability fix (2026-11-08, instrument 2)
+
+After the measurement freeze, see `IOS-FIX.md`. The phone layout puts the buttons first, makes the device block
+collapsible and adds a Panel button, and the status line now sits above the HUD. A request watchdog (12 s) was
+added, base and warm-base tiles are retried indefinitely with backoff, a null bitmap is treated as an error, and a
+decode worker that fails is skipped. A visible error line shows frame-loop, worker and window errors, and the frame
+loop survives an exception. After a context restore the status and device block are redrawn, and no layer hint is
+written for a loss while hidden. The page holds a wake lock during the scripted path. The export gains `instrument`
+and `summary.tiles.timeouts`. Policy constants, metric definitions, the scripted path and the normal-operation
+request order are unchanged.
