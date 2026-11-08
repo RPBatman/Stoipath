@@ -595,6 +595,11 @@ export interface CompiledRelated {
   id: string;
   include: readonly (PolygonGeometry | MultiPolygonGeometry)[];
   feedback: string;
+  /**
+   * Additive (Wave L2 integrator, LEARN-QUESTIONS A-S-Q1): copied from `KeyRelated.credit` by `compileKey` (absent =
+   * false). Rule (a): a point on it is correct; rule (b): its area counts as inside (owner defaults 2026-11-04).
+   */
+  credit?: boolean;
 }
 
 export type ScoreMetric =
@@ -626,7 +631,11 @@ export interface ItemScore {
   gate: GateResult;
   metric: ScoreMetric;
   feedback: FeedbackKind;
-  /** KeyRelated.id hit by a wrong mark. */
+  /**
+   * The `KeyRelated.id` the mark mostly hit, for any feedback: `wrong-related`, `correct-related` (a credited point),
+   * `partial-inside` when most of the outline lies on a credited feature, and `half-gate` when the correct answer was a
+   * credited point (LEARN-QUESTIONS A-S-Q3).
+   */
   related?: string;
 }
 
@@ -635,7 +644,12 @@ export type RegionAnswer = { kind: 'mark'; mark: MarkGeometry } | { kind: 'candi
 
 /** Pure scoring service (provided by `scoring`). Never touches the DOM, storage or the network. */
 export interface ScoringService {
-  /** Resolve a key's selectors against its source features (refuses a fingerprint mismatch: throws with a reason). */
+  /**
+   * Resolve a key's selectors against its source features. Refuses (throws with a reason) a fingerprint that does not
+   * parse, geometry outside the slide it names, a non-polygon or non-finite feature, and a target that selects no
+   * feature; callers compare a layer file's own fingerprint with the module slide's first (lint and reveal do;
+   * LEARN-QUESTIONS A-S-Q2).
+   */
   compileKey(spec: AnswerKeySpec, source: readonly KeyFeature[], fingerprint: string): CompiledKey;
   /** Raster IoU of a mark against a target (union of include minus subtract; even-odd rings, holes respected). */
   iou(mark: PolygonGeometry | MultiPolygonGeometry, target: CompiledTarget, opts?: IouOptions): IouResult;
@@ -995,6 +1009,11 @@ export type OpenModuleReason = 'course' | 'url' | 'resume' | 'preview' | 'next-m
 
 /** The learner player (provided by `player`): the step machine, the task card, tours and reveal steps. */
 export interface PlayerService {
+  /**
+   * Open a module. Rejects after showing the plate when the module cannot be opened: the error is a `PlayerOpenError`
+   * (`name: 'PlayerOpenError'`, `code: 'fingerprint' | 'catalogue' | 'slide' | 'progress'`, `message` = the sentence),
+   * read by the course as `(e as { code?: unknown }).code` (LEARN-QUESTIONS P-Q1, C-A1).
+   */
   open(module: LoadedModule, opts: { courseId: string | null; reason: OpenModuleReason; step?: number }): Promise<void>;
   /** Flush progress, drop the module's overlay sources. */
   close(): Promise<void>;
@@ -1059,6 +1078,22 @@ export interface LearnOverlayTokens {
   candidate: AnnToken;
 }
 
+/**
+ * Where reveal reads the open module and the answers when no `player` is installed (the studio's key preview,
+ * LEARN.md §7 step 4). Additive (Wave L2 integrator, LEARN-QUESTIONS A-R-Q1); implemented by reveal in Wave L3.
+ */
+export interface RevealContext {
+  module(): LoadedModule | null;
+  /** null: no learner answers (the studio): `showItem` then draws the item's key as soon as it is compiled. */
+  progress(): ModuleProgress | null;
+}
+
+/** Which parts of an item's revealed sources `showItem` switches (absent = both; LEARN-QUESTIONS A-R-Q3). */
+export interface ShowItemParts {
+  key?: boolean;
+  mark?: boolean;
+}
+
 /** Answer keys, their honest reveal, and Learn's overlay sources (provided by `reveal`). */
 export interface RevealService {
   readonly tokens: LearnOverlayTokens;
@@ -1067,8 +1102,12 @@ export interface RevealService {
   revealable(view?: ViewId): RevealGate;
   /** Resolves at the next Sharp `tileSettled` of the view (or at once when sharp); rejects when `signal` aborts. */
   whenSharp(view: ViewId, signal: AbortSignal): Promise<void>;
-  /** Draw (or stop drawing) an item's revealed sources: key target, related features, the frozen mark. */
-  showItem(itemId: string, on: boolean): void;
+  /**
+   * Draw (or stop drawing) an item's revealed sources: key target, related features, the frozen mark. `parts` (additive,
+   * Wave L2 integrator, A-R-Q3) limits the switch to the key (target + related) or the mark; absent = both, so a
+   * `Hide key` that should keep the learner's mark for comparison passes `{ key: false }`.
+   */
+  showItem(itemId: string, on: boolean, parts?: ShowItemParts): void;
   /** Candidate letters on the slide while the candidates panel is open. */
   showCandidates(itemId: string | null): void;
   /** Hotspots of a step (null clears). */
@@ -1079,6 +1118,12 @@ export interface RevealService {
   /** `H`: hide or show every Learn source (the learner's in-progress mark in the annotation store stays). */
   toggleHidden(source: CommandSource): boolean;
   readonly hidden: boolean;
+  /**
+   * Additive (Wave L2 integrator, A-R-Q1; optional until reveal implements it at the start of Wave L3, then required):
+   * the studio attaches its draft (url `draft:<id>`) so `key()` and `showItem()` work without a `player`; the player's
+   * module is used otherwise. The disposer detaches it.
+   */
+  attach?(ctx: RevealContext): Disposer;
 }
 
 /** The course shell (provided by `course`). */

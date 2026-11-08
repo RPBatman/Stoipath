@@ -9,6 +9,8 @@ import type { LiveRegions, NoticeSink, ShellApi } from '../../shell/contracts';
 import { TextSlot, h } from '../../shell/dom';
 
 const SETTLE_ANNOUNCE_MS = 500;
+/** How long a queued polite result waits for a newer one to replace it before it is written (J-I14). */
+const COALESCE_MS = 120;
 
 /** The one polite region (#livePolite): command results, then the settle sentence (the strip's spoken twin). */
 export class PoliteRegion {
@@ -35,7 +37,11 @@ export class PoliteRegion {
       }
     }
     if (now - this.lastWriteAt < SETTLE_ANNOUNCE_MS) return;
-    if (this.status !== null && now - this.statusSince >= SETTLE_ANNOUNCE_MS) {
+    // ≤ 1 write per 500 ms, at settle (the Phase A rule). A result waits only COALESCE_MS of its own, not a further
+    // 500 ms: sentences queued together (a notice ahead of the step sentence, J-PLY12) still merge, but a learner who
+    // steps through a tour once a second hears each step as the camera lands instead of losing every sentence but the
+    // last (LEARN-QUESTIONS C-N3; LEARN.md §15.2 J-I14).
+    if (this.status !== null && now - this.statusSince >= COALESCE_MS) {
       this.write(now, this.status);
       this.status = null;
     } else if (this.sentence !== null && now - this.sentenceSince >= SETTLE_ANNOUNCE_MS) {

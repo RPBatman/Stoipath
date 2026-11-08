@@ -664,3 +664,130 @@ null. `status(id)` is synchronous and current: the open module's status comes fr
   the browser's `Failed to load resource … 404` console line and the course plate (14 LI FAIL lines on my private build,
   all from that). With the content stand-in served at `data/learn/` (a scratch server root), all 114 integrator checks
   pass on the same private build, and so do `player.check.mjs` (109) and `course.check.mjs` (95).
+- **Update 2026-11-05 (course builder).** `stage0/data/learn/` exists now (content), so the course check runs without
+  `LEARN_DATA_STANDIN` on a private build of the whole tree (`npx vite build --outDir <scratch>/learn/course/dist`):
+  95 course checks, 0 FAIL; `learn-course` unit 126 ok; `tsc --noEmit` clean. The judgement calls are in LEARN.md §15.6
+  (J-CRS1 … J-CRS14).
+
+**C-N3 · A polite sentence said in the half second before the player's opening sentence is lost (observation, for
+the player builder and the Learn integrator; no course change).** `PlayerMachine` says `Step {n} of {total}. …` 1 s
+after a module opens (`OPENING_SENTENCE_DELAY_MS`, J-PLY12) through `shell.live.polite`, and the host's `PoliteRegion`
+keeps only the newest unspoken sentence (`say()` replaces a status that has not reached the DOM yet; a status waits
+500 ms and a settled frame, the Phase A rule). So a `host.toast()` (`Not yet. Complete Fixture tour A first.`) or a
+transient notice spoken between about 0.5 s and 1 s after the open never reaches the live region: the toast is shown,
+the sentence is not said. Seen on the fresh build when `course.check.mjs` activated a locked outline row right after
+boot (CRS-3 "spoken once politely" failed twice; the earlier runs had been slower). The check now waits for the opening
+sentence before it acts, as a learner does (J-CRS13). If the page should never drop a sentence, two ways, neither in a
+course file: the player could skip its delayed sentence while `PoliteRegion.pending` is true (the queued sentence is
+heard, the step was announced by the card), or the region could keep a short queue instead of the newest one.
+
+## 2026-11-04 · content (Wave L2): notes for the integrator, format and the owner's review
+
+Filed by the content builder. No contract change is requested and no type was widened. The module is data:
+`stage0/data/learn/courses/stage0-l1.course.json` and `stage0/data/learn/modules/{sln-find-metastasis.module.json,
+sln-find-metastasis.facts.json, viewer-orientation.module.json}`, with `harness/unit/learn-content.test.mjs` (CNT-1,
+CNT-2, CNT-4) and `harness/learn/content.check.mjs` (CNT-1 on the served site, CNT-3). Judgement calls are logged in
+LEARN.md §15.7 (J-CNT1 … J-CNT8); the owner defaults it applies are "default pending owner" (Q4, Q5, Q6, Q10, Q12, Q15).
+
+**T-N1 · What the files are.** The case is LEARN.md Appendix A up to key order (owner defaults included), the course is
+Appendix B (case first, orientation second), the orientation tour is the draft example plus `textLicence` CC BY 4.0 and
+a summary that says "short" instead of "two-minute" (the outline says `3 min`). Both module files are
+`format.stringify` output byte for byte, so a studio export of the same module would not differ (D26). The facts file
+lists F1–F37, all `pending`; F27–F37 are new (statements the draft list had not covered, §15.7 J-CNT2), and the bases of
+F10, F23 and F25 carry the scoring module's corrections (S-Q4, S-Q4b) with the review question on "separate" foci.
+
+**T-N2 · For the integrator (wiring and the checks).**
+- `data/learn/` exists now, so `course.check.mjs`, `player.check.mjs` and `items.check.mjs` run without
+  `LEARN_DATA_STANDIN` or a scratch root (C-N2, P-N4, I-N3). The default course the page opens is this one.
+- The python test `stage0/tools/tests/test_learn_schema.py` no longer skips its data/learn cases (63 tests OK, the one
+  remaining skip is not content's). `content.check.mjs` CNT-1 shells out to it, so LI-2 and the content check both cover
+  the committed files.
+- `content.check.mjs` CNT-3 is the keyboard-only end to end at 1440 × 900 with reduced motion (62 checks on my private
+  build, 0 FAIL): it reads only contract-level things (the bus log, `__learn.tools.player()` / `.format()`, the CTA,
+  `[data-item-id]` cards, `#candPanel`, the summary ring, `data-action` buttons) and the download, so it should run
+  unchanged on the wired build.
+- Two FAIL lines of `items.check.mjs` on the course builder's full private build (its `lc-items-root.log`, 2026-11-04
+  08:20) are not content's: ITM-8's "a mark at P7, then the deposit at 20×" read `Met · 20× over your mark`, and the
+  HUD gate chip read `null`. They may be a wiring or timing matter for the items builder and the integrator; the content
+  files place P7 (candidate B) at (13088, 13088) px, 1,439 µm outside the deposit, as §6.3.1 says.
+
+**T-N3 · For format (information).** `parseFacts` accepts the committed facts file with no warning, and `lint` with
+`LintContext.facts` returns the two expected warnings for the case (`review-recorded`, `colour-only` for "pink") and one
+for the orientation tour (`review-recorded`); `passed` carries `Candidates that score as correct: C`. No change needed.
+
+**T-Q1 · For the owner's review (medical content; no build change).** Besides the F1–F37 list in LEARN.md §12, three
+wordings deserve a look: "three small separate tumour foci" (F23, F25; the foci come within 11–20 µm of the deposit's
+outline), "about 2.7 mm in greatest dimension" (F14; the maximum Feret of the convex hull is 2.66 mm, but a pathologist
+measuring on the slide may read a different greatest dimension), and the AJCC size thresholds as written in the q-size
+options (F28–F30, mirroring F15). Only the owner changes these texts; the build keeps them `draft`.
+
+## 2026-11-05 · Learn integrator (Wave L2): answers to scoring, reveal, items, player, course and content
+
+Every change below is in `src/learn/contracts.ts` (contract stays 1; each addition is optional or a doc line, so no
+module had to change to typecheck: `npx tsc --noEmit -p tsconfig.json` is clean). The wired build (`npm run build`,
+client/dist) runs every L2 check unchanged, so nothing in any module's check needed a stand-in any more.
+
+**A-S-Q1 · Accepted.** `CompiledRelated.credit?: boolean`, copied from `KeyRelated.credit` by `compileKey` (absent =
+false), exactly as proposed; scoring's own flag becomes the contract's.
+
+**A-S-Q2 · Accepted as the doc line of `ScoringService.compileKey`:** it refuses a fingerprint that does not parse,
+geometry outside the slide it names, a non-polygon or non-finite feature and a target that selects no feature; callers
+compare a layer file's own fingerprint with the module slide's first (lint and reveal do).
+
+**A-S-Q3 · Accepted:** `ItemScore.related` now reads "the `KeyRelated.id` the mark mostly hit, for any feedback", with
+the four kinds listed.
+
+**A-R-Q1 · Accepted for Wave L3, additive now.** `RevealContext { module(); progress() }` is in contracts §10, and
+`RevealService.attach?(ctx): Disposer` is **optional until reveal implements it at the start of Wave L3** (then the
+integrator makes it required in the same change). The studio and item-editor builders may rely on it; reveal, please
+implement it first thing in L3 (the studio's `Show the answer key` depends on it).
+
+**A-R-Q2 · A Phase A request, not made in L2.** Label pills beside point features are the overlay module's
+(`src/shell/overlay/vector.ts` `drawLabels`), a Phase A file no Learn builder edits. Recorded in LEARN.md §15.2 J-I19 as
+an L0-style additive request for the Phase A integrator (draw the pill `POINT_RADIUS_CSS + 4` CSS px right of a
+`KIND_POINT` dot whatever its size). Until then the letters and numbers live in the candidate rows and the hotspot list,
+which is where WCAG reads them; the check suite does not depend on pills on the slide.
+
+**A-R-Q3 / A-I-Q3 · Accepted.** `showItem(itemId, on, parts?: ShowItemParts)` with `ShowItemParts { key?; mark? }`
+(absent = both). Reveal's current two-argument implementation is type-compatible and keeps L2's behaviour (`Hide key`
+hides the mark too, as both of you noted). Reveal implements `parts` with A-R-Q1 in Wave L3; items then passes
+`{ key: false }` from `Hide key` so the learner's mark stays for comparison. Logged as J-I18.
+
+**R-N2 · Logged (J-I20), with a number.** With every Learn source drawn (expert view, key, related, mark, hotspots:
+LI-6's state) the 1920 × 1080 wheel burst's overlay p95 measured 2.9–3.3 ms over three runs of the wired build (the
+OVL-4 budget is 3 ms or a blit fallback; 1440 × 900 measures 1.9–2.4 ms). Most of those vertices are 'Annotation 3'
+drawn twice (the key and the expert view coincide). R-N2's own suggestion (the key and related sources of the keys in
+`expertView.keys` step aside while ⇧E is on) would halve them and also make the expert view read as the CAMELYON16
+reference; it is reveal's call, in L3 or L4. LI-6 passed on the gated run (2.9 ms).
+
+**R-N3 · No change needed.** LI-4 passed on the wired build: the preview check reads `__shell.notice()` after
+`waitForLearn`, and the preview mode of that check names a draft that does not exist, so no slide opens before the
+read. Noted in J-I21 in case a later check opens one: the `preview` notice ranks above `engine` in `RANK` already
+(20 > 0 means later), so a wait for the slide is the fix, not a rank change.
+
+**A-I-Q1 · Deferred, recorded.** `RegionItem.ruleText?` and `KeyRelated.label?` are not added in L1: the one case is
+about tumour, and a schema field is a format change (schema twin, lint `text-length`, stringify order). Logged in
+LEARN.md §15 as a later-release item ("rule line per module").
+
+**I-Q2 / P-N1 · Confirmed by the wired build:** items' six conventions hold on the real player (ITM-1 … ITM-12: 118
+checks, 0 FAIL).
+
+**A-C-Q1 · Done.** `harness/unit/learn-course.test.mjs` is in the course row of LEARN.md §4.
+
+**C-A1 / A-P-Q1 · Done.** `PlayerService.open`'s doc line names `PlayerOpenError` and its codes.
+
+**C-N3 / P-N5 · The host's polite region now coalesces for 120 ms instead of 500 ms (J-I14).** A queued result still
+waits for a settled frame and ≥ 500 ms since the last write (the Phase A rule), but no longer a further 500 ms of its
+own, so a learner (or a check) stepping through a tour once a second hears each step as the camera lands instead of
+every sentence but the last. PLY-10 ("the polite region spoke one") failed once on the wired build before this change
+and passes after it; the J-CRS13 wait in `course.check.mjs` is still fine. P-N5 (a `sessionStorage` copy of the newest
+record on `pagehide`) is progress's call; no integrator change.
+
+**T-N2 · Both ITM-8 lines pass on the wired build** (`Not met yet · highest magnification over your mark so far: …`
+for a mark at P7 with the deposit viewed at 20×; the HUD gate chip reads `Zoom gate · now 20× · need ≥ 20× 5`). The
+earlier FAIL lines were the course builder's rig, not the content.
+
+**Wave L2 gate (2026-11-05, `npm run build` into client/dist):** see LEARN.md §13 (the L2 row) and §15.2 J-I22 for the
+numbers: learn-check (integrator LI-1 … LI-10 and LI-I, 325 checks; content, course, items, player, progress, reveal
+checks) and the Phase A gates (run.mjs + check-metrics, shell-check, tools-check, unit, python) on the same build.
+

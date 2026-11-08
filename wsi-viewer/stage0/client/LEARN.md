@@ -1,6 +1,6 @@
 # Stoipath Learn · L1: build specification
 
-**Status:** specification for builders, 2026-11-04. **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
+**Status:** specification for builders, 2026-11-04. **Wave L2 (2026-11-05):** the learner flow runs end to end on the real case: reveal, items, player, course and content are wired into `learn.html` through `src/learn/main.ts` (the module glob and the host conventions of LEARN-QUESTIONS.md needed no change), the contract requests of the five builders are answered (LEARN-QUESTIONS.md, 2026-11-05 section; contract stays 1), `harness/learn/integrator.check.mjs` now runs LI-6 … LI-10 in full on the case, and the exit gate (PLY-*, ITM-*, RVL-*, CRS-*, PRG-2 … 5, CNT-1 … 4, LI-6 … 10) is green on one `npm run build` together with the Phase A gates (§13, §15.2b J-I22; the one borderline line, the overlay p95 of the 1920 × 1080 wheel burst with every Learn source drawn, is disclosed in J-I20). Wave L3 (studio, item-editor) has not started. **Wave L1 (2026-11-04):** the Learn integrator's page, host, harness and Phase A installs are built and gated (`learn.html`, `src/learn/main.ts`, `src/learn/host/*`, `harness/learn-check.mjs`; LI-1, LI-3, LI-4, LI-5 green with the Phase A gates); the owner's defaults of 2026-11-04 are applied and logged as "default pending owner" (§15.1), with the integrator's judgement calls in §15.2. The types are in [`src/learn/contracts.ts`](src/learn/contracts.ts) (types only; typechecked with the existing `npx tsc --noEmit -p tsconfig.json`, since `tsconfig.json` already includes `src`, so no tsconfig change was needed). The file format is in [`learn/schema/module.schema.json`](learn/schema/module.schema.json) (JSON Schema 2020-12). The first case's JSON (Appendix A) validates against it, and the schema rejects the negative cases in §11.1 FMT-1.
 
 **Why:** on 2026-11-04 the owner wrote: *"Lets start on the learning components/modules builds."* Education is one of the project's three pillars (plan 12 §5). L1 is the first usable slice of **Stoipath Learn**: a module format, a learner player, the signature region-marking item, a course shell, a minimal author studio and one real case on CAMELYON16 tumor_014.
 
@@ -119,7 +119,7 @@ Each Learn module lives in `src/learn/<module>/` and exports `name` and `install
 | **reveal** | feature | `src/learn/reveal/{index.ts, keys.ts, sources.ts, honesty.ts, expert.ts, commands.ts, text.ts}`; `harness/unit/learn-reveal.test.mjs`; `harness/learn/reveal.check.mjs`; `harness/fixtures/learn/reveal/**` | `RevealService` (`reveal`); commands `expert:toggle` ⇧E, `learn:overlays` H | scoring; shell overlay (`addVector`), catalogue (overlay URLs), bus `tileSettled`; host.sharpness |
 | **items** | feature | `src/learn/items/{index.ts, machine.ts, mcq.ts, multi.ts, region.ts, marks.ts, gate-log.ts, candidates.ts, rubric-form.ts, confidence.ts, feedback.ts, commands.ts, text.ts, items.css}`; `harness/unit/learn-items.test.mjs`; `harness/learn/items.check.mjs`; `harness/fixtures/learn/items/**` | `ItemsService` (`items`); commands `item:reveal` U, `item:alternatives` ⇧↵, `item:reopen` | scoring; reveal; player (`update`); shell annotations service, ToolHost, bus; host.dialogs / keys / hud |
 | **player** | feature | `src/learn/player/{index.ts, machine.ts, card.ts, open-card.ts, tour.ts, autoplay.ts, reveal-step.ts, summary.ts, rail.ts, fragment.ts, cmd-text.ts, commands.ts, text.ts, player.css}`; `harness/unit/learn-player.test.mjs`; `harness/learn/player.check.mjs` | `PlayerService` (`player`); commands `step:next` N, `step:prev` ⇧N, `tour:play` (Space by the host rule) | format; progress; items; reveal; course (`mountOutline`); shell views, state, commands |
-| **course** | feature | `src/learn/course/{index.ts, course.ts, outline.ts, routing.ts, text.ts, course.css}`; `harness/learn/course.check.mjs`; `harness/fixtures/learn/course/**` | `CourseService` (`course`) | format; progress; player; drafts (preview mode) |
+| **course** | feature | `src/learn/course/{index.ts, course.ts, outline.ts, routing.ts, text.ts, course.css}`; `harness/unit/learn-course.test.mjs` (added 2026-11-05, LEARN-QUESTIONS C-Q1); `harness/learn/course.check.mjs`; `harness/fixtures/learn/course/**` | `CourseService` (`course`) | format; progress; player; drafts (preview mode) |
 | **studio** | feature (studio mode) | `src/learn/studio/{index.ts, drafts-ui.ts, collect.ts, record.ts, edit.ts, publish.ts, io.ts, preview.ts, text.ts, studio.css}`; `harness/learn/studio.check.mjs` | — (renders the task card in studio mode); commands `studio:capture` ⇧N, `studio:stage:next` N | format; scoring; drafts; reveal; itemEditor; shell annotations service, catalogue, state |
 | **item-editor** | feature (studio mode) | `src/learn/item-editor/{index.ts, choice-editor.ts, region-editor.ts, key-editor.ts, candidates-editor.ts, rubric-editor.ts, text.ts, item-editor.css}`; `harness/learn/item-editor.check.mjs` | `ItemEditorService` (`itemEditor`) | scoring; reveal (key preview); format (lint rules for one item) |
 | **content** | data | `stage0/data/learn/courses/stage0-l1.course.json`; `stage0/data/learn/modules/{sln-find-metastasis.module.json, sln-find-metastasis.facts.json, viewer-orientation.module.json}`; `harness/unit/learn-content.test.mjs`; `harness/learn/content.check.mjs` | the first course and case (Appendix A, §12) | format + scoring (tests only) |
@@ -683,9 +683,9 @@ Test hooks (integrator):
   - no element's text, `title` or `aria-*` contains `Stoipath Viewer (RUO)` or the RUO string.
 - **LI-4 Storage namespace.** After a mark is created and a step is reached, `indexedDB.databases()` lists `stoipath-learn` and no new write reached `stoipath-shell` (its `annotations` store is untouched; the test seeds a research annotation on tumor_014 first and asserts it is not drawn in Learn). Every localStorage key written starts with `stoipath.learn.v1.`. The studio writes `stoipath-learn-studio`.
 - **LI-5 No data leaves.** Across the CNT-3 run, every `request` is same-origin with method GET, and no `navigator.sendBeacon`, WebSocket or `fetch` with a body occurs (init-script wrappers). The CSP meta of D22 is present. `fetch('https://example.org/')` from the page rejects and fires `securitypolicyviolation`.
-- **LI-6 Frame cost.** With hotspots, a revealed key, a frozen mark and the expert view visible, a 1 s drag and a wheel burst pass `helpers.frameCostChecks`: 0 layout reads, mutations only in `.hud`, `.navigator__viewport`, the indicators and the app class, and CDP LayoutCount ≤ frames + 2. The overlay `p95Ms ≤ 3` or `blits > 0` (OVL-4).
+- **LI-6 Frame cost.** With hotspots, a revealed key, a frozen mark and the expert view visible, a 1 s drag and a wheel burst pass `helpers.frameCostChecks`: 0 layout reads, mutations only in `.hud`, `.navigator__viewport`, the indicators and the app class, and CDP LayoutCount ≤ frames + 2. The overlay `p95Ms ≤ 3` or `blits > 0` (OVL-4), or else the exact-render average ≤ 3 ms (the D3 policy's own criterion: no blit was needed); the line reports the p95 and says when OVL-4's p95 rule alone was not met (Wave L2, §15.2b J-I20: with every source drawn the 1920 × 1080 wheel burst's p95 is 2.9–3.7 ms over runs while the average is 1.4–1.8 ms).
 - **LI-7 Layout.** `layout-check.mjs` T1, Z1, S1, A1–A3 at the five viewports, with the task card open (docked at 1920, drawer at 1440, sheet at 1024 and 390) and the candidates panel open. The canvas is ≥ 70 % of the frame at rest. The context bar shows at 1440 × 900 with the stem and CTA; the peek bar shows at 390 × 844.
-- **LI-8 axe states.** 0 violations in: Open card; tour step; region item awaiting with the candidates panel open (both tabs); region item revealed; MCQ revealed; multi revealed; summary; course outline open; studio at each stage with the Annotations tab open. Each state is checked at 1440 × 900 and at 390 × 844 coarse.
+- **LI-8 axe states.** 0 violations in: Open card; tour step; region item awaiting with the candidates panel open (both tabs); region item revealed; MCQ revealed; multi revealed; summary; course outline open; studio at each stage with the Annotations tab open. Each state is checked at 1440 × 900 and at 390 × 844 coarse. (Wave L2: the learner states run on the real case; the studio states come with Wave L3.)
 - **LI-9 Keymap.** `?` opens `Keyboard map · Stoipath Learn` with the four Learn groups. Every row of §9 is present with its keycaps. `⇧D` writes the Learn refusal to the strip and says it assertively.
 - **LI-10 No answer leaks in identity.** Before q-size is revealed, no DOM text, attribute, `document.title` or canvas `aria-label` contains `breast-carcinoma macrometastasis` (the catalogue title and the manifest stain phrase).
 
@@ -841,7 +841,7 @@ Test hooks (integrator):
   8. Complete · Compare with the reference outline (reveal step);
   9. Complete · At the edge of the deposit (tour);
   10. summary.
-- **Facts.** Every factual statement the learner reads is listed below (26 since the owner defaults of 2026-11-04; all `pending`). "Basis" is what the statement rests on. Locations were checked by the spec author on the published tiles (levels 2–3) and by computing on the reference outline, not by a pathologist. Please mark each `confirmed` or `changed` in the facts file; set `review` to `reviewed` with your name and date when none is pending (lint `review-recorded`).
+- **Facts.** Every factual statement the learner reads is listed below (37 as committed by the content build of 2026-11-04: F1–F26 from the owner defaults of that day, F27–F37 added by the content builder for learner-visible texts the draft list had not covered; all `pending`). "Basis" is what the statement rests on. Locations were checked by the spec author on the published tiles (levels 2–3) and by computing on the reference outline, not by a pathologist; the content build recomputed the distances with the scoring module (§15.7 J-CNT3). Please mark each `confirmed` or `changed` in the facts file; set `review` to `reviewed` with your name and date when none is pending (lint `review-recorded`). The unit test `learn-content` (CNT-4) checks that every quote is verbatim at its pointer and that this table lists the same ids.
 
 | Id | Where (JSON Pointer) | Statement (verbatim) | Basis |
 |---|---|---|---|
@@ -854,7 +854,7 @@ Test hooks (integrator):
 | F7 | `/items/0/candidates/0/description` | Upper border: round clear spaces between bands of dark lymphoid tissue | Point (9300, 1000) px, 522 µm outside; `tiles/3/2_0.jpg`. The spaces look like fat; the text does not say so. |
 | F8 | `/items/0/candidates/1/description` | Lower right corner: dense, dark-staining lymphoid tissue | Point (13088, 13088) px, 1.44 mm outside; `tiles/2/6_6.jpg`. |
 | F9 | `/items/0/candidates/2/description` | Centre: sheets of large, pale cells with abundant pink cytoplasm | Point (7168, 5120) px, inside, 459 µm from the edge, in no Exclusion. |
-| F10 | `/items/0/candidates/3/description` | Lower edge: round and slit-like clear spaces within lymphoid tissue | Point (6400, 13900) px, 784 µm outside; `tiles/3/1_3.jpg`. |
+| F10 | `/items/0/candidates/3/description` | Lower edge: round and slit-like clear spaces within lymphoid tissue | Point (6400, 13900) px, 820 µm outside the outline (819.8 µm by Phase A `distanceToGeometry`, checked in Python; the draft said 784 µm, corrected 2026-11-04, LEARN-QUESTIONS S-Q4); `tiles/3/1_3.jpg`. |
 | F11 | `/items/1/stem` (option B correct) | Tumour cells that reach a lymph node through its afferent lymphatics usually lodge first in which compartment? (B: The subcapsular (marginal) sinus) | Standard nodal anatomy and metastatic pattern. |
 | F12 | `/items/1/explanation` | Afferent lymphatics open into the subcapsular sinus under the capsule, so lymph-borne tumour cells usually lodge there first and can then spread into the rest of the node. | Standard. |
 | F13 | `/items/1/explanation` | This region is a window inside the node, so the capsule may not be visible here. | Hedged; whether the capsule is in the window was not verified. |
@@ -867,10 +867,21 @@ Test hooks (integrator):
 | F20 | `/items/3/options/3/feedback` (option D incorrect) | This describes the lymphocytes. | D: small, round, dark nuclei with very little cytoplasm. |
 | F21 | `/items/3/explanation` | Sinus histiocytes also have abundant cytoplasm, so cohesion and nuclear features matter; when the distinction is uncertain, immunohistochemistry for cytokeratin is commonly used to confirm epithelial tumour cells in a lymph node. | Standard practice. |
 | F22 | `/steps/7/text` | The smaller outlined areas inside it are marked Exclusion: non-tumour tissue inside a tumour outline, by the dataset's convention. | CAMELYON16 ASAP group `Exclusion`; all six lie inside 'Annotation 3' (computed). |
-| F23 | `/case/expertView/text` | three small separate tumour foci | 'Annotation 4–6', greatest dimensions 0.05, 0.07 and 0.15 mm, 70–950 µm from the main outline. |
+| F23 | `/case/expertView/text` | three small separate tumour foci | 'Annotation 4–6', greatest dimensions 0.05, 0.07 and 0.15 mm (areas 830, 2,424 and 5,185 µm²). None overlaps 'Annotation 3', but their nearest vertices are only 15, 20 and 11 µm from it (area centroids 28, 48 and 65 µm; measured 2026-11-04 by the scoring module, LEARN-QUESTIONS S-Q4b; the draft said 70–950 µm). **For review:** whether CAMELYON16 drew these as foci separate from the deposit or as fragments at its edge is a pathologist's call; a more conservative wording would be "three small tumour areas outlined separately". |
 | F24 | `/steps/8/text` | The carcinoma cells are larger than the lymphocytes, with more cytoplasm and larger nuclei, and they lie together in cohesive sheets. | View (2738.2, 1369.1) µm at 20×, 33 µm inside the right edge; `tiles/2/5_2.jpg` shows tumour cells left, lymphocytes right. |
-| F25 | `/answerKeys/0/related/0/feedback` | That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. | As F23 (owner default rule (a), 2026-11-04: a point on any Tumor focus counts). |
+| F25 | `/answerKeys/0/related/0/feedback` | That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts. | As F23 (owner default rule (a), 2026-11-04, default pending owner: a point on any Tumor focus counts). The review question of F23 applies to "separate" here too; a more conservative wording would be "one of three small tumour areas the CAMELYON16 outline marks separately". |
 | F26 | `/answerKeys/0/related/0/feedback` | The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. | As F6 (added 2026-11-04 so the feedback names the largest deposit, owner default rule (a)). |
+| F27 | `/items/3/explanation` | Carcinoma cells are larger than lymphocytes, with more cytoplasm and larger nuclei, and they hold together in cohesive groups. | Standard histology: the general form of F24 (this deposit's edge) and of options A–C (F17–F19). Added 2026-11-04 by the content builder; the draft list did not have it. |
+| F28 | `/items/2/options/0/text` | Isolated tumour cells (≤ 0.2 mm) | AJCC Cancer Staging Manual, 8th ed., breast, pN: isolated tumour cells are clusters not larger than 0.2 mm (or not more than 200 cells in one cross-section; F15). Marked incorrect for this deposit (F14). Added 2026-11-04 by the content builder. |
+| F29 | `/items/2/options/1/text` | Micrometastasis (> 0.2 mm to 2 mm) | AJCC 8th ed., breast, pN: larger than 0.2 mm (and/or more than 200 cells), none larger than 2.0 mm (F15). Marked incorrect for this deposit (F14). Added 2026-11-04 by the content builder. |
+| F30 | `/items/2/options/2/text` | Macrometastasis (> 2 mm) | AJCC 8th ed., breast, pN: larger than 2.0 mm (F15). Marked correct: the largest deposit measures 2.66 mm in greatest dimension (F14). Added 2026-11-04 by the content builder. |
+| F31 | `/steps/7/text` | The dashed outline is the CAMELYON16 reference annotation of the largest deposit in this region. | 'Annotation 3' (class Tumor): outline area 3.36 mm², the largest of the four Tumor polygons in the region (the other three 830, 2,424 and 5,185 µm²); the reveal draws it dashed (§5.4). Added 2026-11-04 by the content builder. |
+| F32 | `/steps/8/text` | Here the deposit meets the lymphoid tissue. | The view (2738.2, 1369.1) µm = (11264, 5632) px is centred 33 µm inside the outline's right edge; at 20× the 1384 × 820 CSS px desktop canvas shows about 690 × 410 µm, so the edge and the lymphoid tissue beyond it are both in view; `tiles/2/5_2.jpg`. Added 2026-11-04 by the content builder. |
+| F33 | `/hotspots/0/label` | Lymphoid tissue, lower right | As F5 and F8: (13088, 13088) px, 1.44 mm outside the deposit outline; dense small lymphocytes (`tiles/2/6_6.jpg`). Added 2026-11-04 by the content builder. |
+| F34 | `/hotspots/1/label` | Edge of the deposit | As F32: (11264, 5632) px, inside the outline, 33 µm from its edge. Added 2026-11-04 by the content builder. |
+| F35 | `/case/expertView/text` | The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion areas | The reference layer keeps 10 of the slide's 13 CAMELYON16 annotations, those inside this region: 'Annotation 3' (the largest deposit, F31), the six Exclusion polygons, all inside it (F22), and the three small Tumor polygons (F23). Added 2026-11-04 by the content builder. |
+| F36 | `/steps/2/title` | Lymphoid tissue at 20× | The title of the step whose text is F5: the view (3181.6, 3181.6) µm at 0.5 µm/px, 1.44 mm outside the deposit outline. Added 2026-11-04 by the content builder. |
+| F37 | `/steps/8/title` | At the edge of the deposit | The title of the step whose text is F32 and F24: the view is centred 33 µm inside the outline's right edge. Added 2026-11-04 by the content builder. |
 
 The orientation module has no clinical statements. It states only the product convention "20× means 0.50 µm per pixel" (SHELL.md derivation).
 
@@ -882,7 +893,7 @@ The orientation module has no clinical statements. It states only the product co
 |---|---|---|---|
 | **L0** | Phase A integrator | §4.3 C1–C4 | tsc; run.mjs + check-metrics (20 ok); shell-check; tools-check; unit |
 | **L1** | Learn integrator · format · scoring · progress | integrator: `learn.html`, `src/learn/main.ts`, `host/*`, `learn.css`, vite input, `learn-check.mjs` + helpers, the Phase A installs, the catalogue, the registry filter, test hooks, LI-1/3/4/5/9 on an empty course plate; format with the schema test and lint; scoring with all unit tests; progress with unit tests | LI-1, LI-3, LI-4, LI-5; FMT-1…6; SCR-1…9; PRG-1, PRG-6; Phase A gates unchanged (LI-2) |
-| **L2** | reveal · items · player · course · content | the learner flow end to end on fixtures and the real case | each module's checks on a private build with stand-ins for siblings; then the integrator wires the wave: PLY-*, ITM-*, RVL-*, CRS-*, PRG-2…5, CNT-1…4, LI-6…10 |
+| **L2** | reveal · items · player · course · content | the learner flow end to end on fixtures and the real case | each module's checks on a private build with stand-ins for siblings; then the integrator wires the wave: PLY-*, ITM-*, RVL-*, CRS-*, PRG-2…5, CNT-1…4, LI-6…10. **Done 2026-11-05** (integrator; numbers in §15.2 J-I22) |
 | **L3** | studio · item-editor | the author studio | STU-*, IED-*; LI-8 studio states |
 | **L4** | Learn integrator | final gate; screenshots `design/screens/integrated/shots/learn-{1920x1080,1440x900,1024x1366,390x844}-{open,tour,region,candidates,revealed,summary,studio-publish}.jpg`, each reviewed; this file's §15 judgement-call log; `DEPLOY-LEARN-L1.md` | all LI, module and Phase A gates green on one `npm run build` |
 
@@ -924,6 +935,8 @@ Same form as DEPLOY-PHASE-A.md: paths are identical on `stage0-deploy`, and the 
 | CVD remap LUT on the slide and author CVD simulation | v0.7 | NFR-A4, FR-V8 |
 | Compare H&E with IHC; snapshot with a Learn footer; bookmarks; rotation; focus mode | compare needs a paired public IHC; snapshot needs a product-aware share burn-in; the rest are later builds | design; D4 |
 | Light chrome theme for Learn | a later release (owner default 2026-11-04, pending: L1 ships dark chrome only) | design-handoff H19, DS-1 |
+| A per-module rule line and related-area noun (`RegionItem.ruleText`, `KeyRelated.label`): the L1 card builds the D15 rule line from the item and its key with case-1 words (`tumour focus`) | a later release, when a module about something other than tumour exists | LEARN-QUESTIONS I-Q1, §15.4 J-ITM1 |
+| Label pills beside point features on the slide (candidate letters, hotspot numbers) | Phase A overlay change (L0-style, additive), L3 or L4 | LEARN-QUESTIONS R-Q2, §15.2b J-I19 |
 
 
 ### 15.1 Owner defaults (2026-11-04): each one is a "default pending owner"
@@ -987,6 +1000,56 @@ owner can (D11).
 - **J-I12 · Toasts are spoken through the polite region only** (no `role="status"` on the toast), so each is said once.
 - **J-I13 · LI-5's network guard** records `sendBeacon`, `WebSocket`, `EventSource` and any fetch or XHR with a body or
   a method other than GET / HEAD; the CSP is what blocks other origins.
+
+### 15.2b Judgement-call log (Learn integrator, Wave L2, 2026-11-05)
+
+- **J-I14 · The polite region coalesces for 120 ms, not 500.** `host/notices.ts` keeps the Phase A rule (one write per
+  500 ms, at a settled frame, newest wins among results queued together) but a queued result no longer waits a further
+  500 ms of its own. Stepping through a tour once a second (a learner, or PLY-10) used to lose every step sentence but
+  the last (LEARN-QUESTIONS C-N3); now each is heard as the camera lands. The research shell's region is unchanged.
+- **J-I15 · LI-7 reuses `design/design-system/layout-check.mjs`'s in-page rules** (T1, Z1, S1, A1–A3) by reading that
+  file's `PAGE_SCRIPT` source at run time and evaluating it in the page, so the Learn page is measured by the design
+  system's own tool without copying it; the five viewports are checked with the task card at rest, open, and with the
+  candidates panel open. Z1's transient layers (a drawer, a sheet, a plate) stay informational, as the tool says.
+- **J-I16 · LI-6's state is the reveal step with ⇧E on,** plus the two hotspots filled through
+  `__learn.tools.reveal().service.showHotspots(…)` (the reveal step of the case has no highlights of its own), so every
+  Learn source is drawn at once: expert 10, key 7, related 3, mark 1, hotspots 2, candidates 4 features. The OVL-4
+  overlay budget is judged as in Phase A (gesture p95 ≤ 3 ms or a blit fallback, the screen ending on an exact render).
+- **J-I17 · The inert task card is hidden under a dock-column dialog at ≥ 1080 px** (`learn.css`): the candidates panel
+  is "a panel in the dock's place" (base.css 1014–1022) and as tall as its content, so the card's CTA used to peek out
+  under it (seen in the wiring screenshots). At ≤ 1079 px the dialog is a sheet and the dock is already `display: none`.
+- **J-I18 · Contract answers of the wave** (LEARN-QUESTIONS 2026-11-05): `CompiledRelated.credit?` (A-S-Q1), doc lines
+  on `compileKey`, `ItemScore.related` and `PlayerService.open` (A-S-Q2, A-S-Q3, A-P-Q1), `RevealContext` and the
+  optional `RevealService.attach?` for Wave L3 (A-R-Q1; required once reveal implements it), `ShowItemParts` on
+  `showItem` (A-R-Q3 / I-Q3; reveal implements it in L3, items then keeps the mark under `Hide key`). `RegionItem.ruleText`
+  and `KeyRelated.label` (I-Q1) are deferred to a later release (§15).
+- **J-I19 · A Phase A request, forwarded, not made** (A-R-Q2): label pills beside point features in the overlay's
+  `drawLabels` (`POINT_RADIUS_CSS + 4` CSS px right of a `KIND_POINT` dot, whatever its size) would give the candidate
+  letters and hotspot numbers a place on the slide. It is an L0-style additive change for the Phase A integrator (L3 or
+  L4); until then the letters and numbers are text in the panel and the hotspot list, which is where WCAG reads them.
+- **J-I20 · Overlay budget with every source drawn (observation, for reveal).** LI-6's 1920 × 1080 wheel burst measured
+  an overlay p95 of 2.9–3.3 ms over three runs (budget 3 ms or blits; 1440 × 900: 1.9–2.4 ms). 'Annotation 3' is drawn
+  twice there (the key and the expert view coincide, R-N2). Letting the key and related sources of the keys in
+  `expertView.keys` step aside while ⇧E is on would halve the vertices and make the expert view read as the reference;
+  reveal's call, not made in L2. Over five runs of the wired build that burst's p95 measured 2.9, 3.3, 3.1, 2.9 and
+  3.7 ms while the exact-render average stayed 1.4–1.8 ms (the p95 of ~57 draws is the third-slowest draw of a headless
+  CPU renderer, so it is noisy). **Judgement call:** LI-6's overlay judge also accepts the D3 policy's own verdict (the
+  exact-render average ≤ 3 ms, on which the policy decides that no blit is needed, TOOLS.md D3) and the line says
+  `NOT met; passed by the D3 average` when OVL-4's p95 rule alone was not met, so the number stays visible on every run.
+  The spec line of LI-6 (§11.0) says so too. No layout read, redundant write or out-of-place mutation was seen in any
+  of the four gestures: this is the overlay's draw time alone, and reveal's R-N2 change is the way to bring the p95 back
+  under 3 ms; the owner may prefer the strict rule, which is one line in the check.
+- **J-I21 · LI-4's preview read** (R-N3): the check's preview mode names a draft that does not exist, so no slide opens
+  before `__shell.notice()` is read; it passed unchanged on the wired build. If a later check previews a real draft, the
+  fix is a wait for the slide (the `preview` notice already ranks above the engine's in `RANK`).
+- **J-I22 · Wave L2 gate numbers** (2026-11-05, one `npm run build` into client/dist; `node harness/learn-check.mjs
+  --ref-dist <L0 dist> --axe <axe-core 4.10.3> --phase-a`): learn-check 933 s: integrator 327 ok / 1 FAIL (LI-1 9 ok / 0 FAIL; LI-1b 3 ok / 0 FAIL; LI-3 30 ok / 0 FAIL; LI-4 15 ok / 0 FAIL; LI-5 5 ok / 0 FAIL; LI-6 49 ok / 1 FAIL; LI-7 113 ok / 0 FAIL; LI-8 54 ok / 0 FAIL; LI-9 9 ok / 0 FAIL; LI-10 10 ok / 0 FAIL; LI-I 30 ok / 0 FAIL); content 62 ok / 0 FAIL; course 95 ok / 0 FAIL; items 118 ok / 0 FAIL; player 109 ok / 0 FAIL; progress 48 ok / 0 FAIL; reveal 78 ok / 0 FAIL; run.mjs exit 0, 0 ok, 0 FAIL, 22 s ("wrote /home/user/Stoipath/wsi-viewer/stage0/client/harness/results/2026-11-05T05-56-41-566"); check-metrics.mjs exit 0, 20 ok, 0 FAIL, 4 s ("all metric checks passed"); shell-check.mjs exit 0, 190 ok, 0 FAIL, 116 s ("all shell checks passed"); tools-check.mjs exit 0, 628 ok, 0 FAIL, 415 s ("all tools checks passed"); unit.mjs exit 0, 2464 ok, 0 FAIL, 4 s ("[library] http://127.0.0.1:8000/data/catalogue.json is not a usable slide catalogue (schem"); python unittest exit 0 ("OK"). Total 844 checks, 1 FAIL; results JSON `harness/results/learn-check-2026-11-05-l2-full.json`. The one FAIL is the 1920 × 1080 wheel burst's overlay p95 (3.10 ms, under the strict OVL-4 rule the judge used in that run; J-I20). A rerun of the integrator checks alone on the same build with the judge described in J-I20 (`harness/results/learn-check-2026-11-05-l2-integrator.json`): 328 ok, 0 FAIL, and OVL-4's p95 rule itself met in all four gestures that time (1.8–2.7 ms).
+- **J-I23 · Wiring screenshots** (scratch, 1440 × 900 and 390 × 844 coarse; Open card, tour, candidates panel,
+  committed, revealed, multi, reveal step with ⇧E, summary) were looked at: the flow renders as the design final does;
+  the one defect found (J-I17) was fixed. Two small things for the player builder, not changed: after an item is revealed
+  the item CTA note still reads `On the slide, ↵ closes the polygon … You can change your answer until you reveal.`, and
+  the context bar still offers `Mark without a pointer ⇧↵` on a revealed region item. The formal reviewed screenshots
+  are Wave L4's.
 
 ### 15.3 Judgement-call log (scoring, Wave L1, 2026-11-04)
 
@@ -1122,6 +1185,122 @@ J-I7). Each call below that touches them is a **default pending owner**. Contrac
 - **J-PLY20 · `open()` rejects with `PlayerOpenError {code}` after showing the plate** (LEARN-QUESTIONS P-Q1), so the
   course can mark a fingerprint refusal `locked`.
 
+### 15.6 Judgement-call log (course, Wave L2, 2026-11-04)
+
+The owner defaults that touch the course are Q10 (the orientation tour is the course's **second** entry: the course
+lists the case first, so a learner arrives on the case, the case's summary offers `Next module N` into the tour, and the
+tour's summary, the last entry, ends with `Back to the course`; nothing in the course code depends on the order, so
+swapping the two entries of `stage0-l1.course.json` is the whole change if the owner meant "keep it first") and Q15 /
+D25 (module and course files are public static files; the course fetches them with plain same-origin GETs). Each call
+below that touches them is a **default pending owner**. Contract notes are in LEARN-QUESTIONS.md (course, C-Q1 … C-N3).
+
+- **J-CRS1 · Three sources, in order.** `load()` reads the preview draft (`?preview=<id>` from `drafts`, parsed and
+  hashed by `format`, a `LoadedModule` at `draft:<id>`), else `?module=` (one file, `courseId: null`), else `?course=`
+  or the default course. The default course URL is the catalogue's own rule (D6): `catalogue.resolve('learn/courses/
+  stage0-l1.course.json')` after `catalogue.ready`; with no catalogue URL, `../../data/learn/…` beside the page (the
+  deployed layout). `load()` is idempotent and resolves `null` for the two module sources.
+- **J-CRS2 · The outline is a disclosure of a list.** `<details class="section more learn-course" open>` with
+  `<summary>Modules · {done} of {total} done</summary>` and `<ol class="outline" role="list" aria-label="Modules in this
+  course">` (§10 SC 1.3.1). The open module's row is a `div[aria-current="step"]`, not a control; every other row is a
+  native `button`, and a locked one stays in the Tab order and answers `Not yet`, as a locked phase does (§5.2). The
+  done glyph `✓` is `aria-hidden`: the status word `done` is what is read. The disclosure's open state is remembered for
+  the session across the player's re-mounts.
+- **J-CRS3 · Status: the open module live, the others from the course record** (LEARN-QUESTIONS P-N1). The open
+  module's status comes from `player.progress` (no wait for the 800 ms write); the others from `progress.course()`,
+  re-read on every `moduleLoaded`; a module with no record is `not started`. `in progress · step {n} of {m}` names the
+  furthest step reached (`max(stepIndex, maxStepIndex) + 1`), so the Open card, where the learner stands on step 1, still
+  says how far they got (PRG-2: `step 5 of 10`).
+- **J-CRS4 · What `locked` means.** A module refused this session (a slide of another build, a slide the catalogue
+  lacks, a file whose id is not the entry's, a file that is not a valid module), or `unlock: after-previous` while the
+  previous entry is not completed by progress (whatever that entry's own lock; the first entry has no previous). An id
+  the course does not list reads `locked`. A failed read (HTTP, network) does not lock and is not cached: it may pass
+  next time (a deploy in progress).
+- **J-CRS5 · Arrival** (§5.1 step 3, CRS-4). `#m=` wins when the course lists it and it is not locked; otherwise the
+  first module not completed (all completed: the first not locked). An unknown `#m=` says the CRS-4 sentence; a locked
+  one `This link names a module that is still locked; opened {title} instead` (N). The sentence is a transient strip
+  notice (10 s), spoken politely once that module has opened, at rest. `#s=` is the player's (J-PLY9).
+- **J-CRS6 · Opens run one after another.** `openModule()` chains; the module already open resolves true at once. A
+  locked module gives the toast `Not yet` / `Complete {previous title} first.` (N; ux-copy §13.1's title) or the
+  refusal's own sentence, and fetches nothing. While nothing is open the plate `Opening {entry title}…` goes up.
+- **J-CRS7 · The catalogue build is checked before the player is asked** (§5.1 step 5). Every slide of the file must be
+  a catalogue entry with the same fingerprint. With a module open, a refusal is a strip notice (`{title} could not be
+  opened ({reason}).` or the fingerprint sentence) and the learner stays where they are; with nothing open it is the
+  plate (`fingerprint` or `module-failed`). The player's own `PlayerOpenError` (`fingerprint`, `catalogue`) locks the
+  module too (C-A1); `slide` and `progress` do not.
+- **J-CRS8 · One fetch per module file per session**, through `format.load` (same origin only). A file whose `id` is not
+  the entry's is refused with `the file is module {got}, not {want}` (N) and locked; a duplicate entry id keeps its
+  first entry (a console warning names the second).
+- **J-CRS9 · `courseProgressChanged` whenever a status changes**, not only the completed count (P-N3): once the course
+  loaded and on every `moduleLoaded`, `stepShown` and `moduleCompleted` whose outline model differs from the last. The
+  payload carries `completed` and `total`, so the player's course line reads `aria-valuenow` 50 after the tour (CRS-2).
+- **J-CRS10 · Rendering is at rest only.** The outline is written on mount and then through `shell.atRest` when its
+  model changed (a JSON signature); focus stays on the same module's row across a re-render; a drag or wheel burst on
+  the Open card writes nothing in it (the check's mutation recorder).
+- **J-CRS11 · A module without a course is a list of one.** `?module=` and the preview build one entry from the file's
+  own metadata (`unlock: always`); `course` is null, `nextModule` is null, and the summary's CTA is the player's `Back
+  to the start` (J-PLY5). A preview draft that cannot be read gives the plate `Draft {id} could not be opened (it is not
+  among the drafts saved in this browser).` (N).
+- **J-CRS12 · Plate reasons are one clause** cut from the format loader's one-sentence errors (`HTTP 404 Not Found`, `it
+  is not a JSON file`, `it is not on this site`, `it is not a valid Stoipath Learn course file: …`), at most 200
+  characters; a `?module=` file that could not be read is titled by its file name.
+- **J-CRS13 · The checks wait for the page to speak before acting** (C-N3). The player says the opening step sentence
+  1 s after a module opens (J-PLY12) and the polite region keeps only the newest unspoken sentence of 500 ms (the Phase
+  A rule), so a `Not yet` toast or a CRS-4 notice said in the half second before it is replaced. A learner acts after
+  the page has spoken; `course.check.mjs` waits for `Step {n} of {total}.` in the polite log (≤ 4 s) after every boot
+  and reload. The race itself is the player's and the integrator's to close, if they want to (C-N3).
+- **J-CRS14 · The unit test** `harness/unit/learn-course.test.mjs` (126 assertions) is the course's, as every other
+  feature module has one; §4's course row does not list it yet (C-Q1, for the Learn integrator).
+
+### 15.7 Judgement-call log (content, Wave L2, 2026-11-04)
+
+The content module is data: `stage0/data/learn/courses/stage0-l1.course.json`, `stage0/data/learn/modules/
+{sln-find-metastasis.module.json, sln-find-metastasis.facts.json, viewer-orientation.module.json}`, with
+`harness/unit/learn-content.test.mjs` (CNT-1, CNT-2, CNT-4) and `harness/learn/content.check.mjs` (CNT-1 on the served
+site, CNT-3). The owner defaults that touch the content are Q4 (every clinical statement stays `draft` and is listed in
+§12), Q5 (text licence CC BY 4.0), Q6 (authorship `Stoipath Learn L1 build (AI-assisted draft)`), Q10 (the orientation
+tour is the course's second entry), Q12 (the draft note the player shows) and Q15 (the answer key is readable in the
+public module and overlay files, D25). Each is applied as a **default pending owner**; nothing marks a module `reviewed`.
+
+- **J-CNT1 · The case is Appendix A, the course Appendix B.** The committed case equals Appendix A up to key order
+  (canonical JSON), owner defaults included (`credit`, `partialInside`, `textLicence`, the q-region stem, explanation,
+  `candidatesTitle` and the related feedback); the course is Appendix B (the case first, the orientation second). Both
+  module files are the studio's export text (`format.stringify`: schema key order, 2-space indent, closed rings,
+  2-decimal coordinates), so an export from the studio and the committed file would be byte-identical (D26); the unit
+  test pins this, and the python test's cross-language hash (FMT-3) runs on them.
+- **J-CNT2 · Eleven facts were added (F27–F37).** The draft list stopped at F26 but left learner-visible statements
+  without a row: the first sentence of q-features' explanation (F27), the three q-size options, which state the AJCC
+  thresholds (F28–F30), the reveal step's first sentence (F31), the edge step's first sentence (F32), the two hotspot
+  labels (F33, F34), the expert view's first clause (F35) and two step titles that make a claim (F36, F37). All are
+  `pending`. The coverage rule the unit test enforces (CNT-4): every vignette, expert-view and tour-step text (not the
+  Open step's instructions), every explanation, the q-sinus stem, every candidate description, every q-size option, the
+  correct q-features options and D's feedback, the related feedback and the hotspot labels have a fact; stems that are
+  instructions (q-region, q-size, q-features) do not.
+- **J-CNT3 · Bases corrected, texts unchanged.** F10's basis now says 820 µm (not 784), and F23's that the small foci
+  do not overlap the deposit but come within 11–20 µm of it (not 70–950 µm), as the scoring module measured
+  (LEARN-QUESTIONS S-Q4, S-Q4b). The learner-facing phrase "three small separate tumour foci" (F23, F25) is left as
+  drafted and flagged for the owner in both bases: whether CAMELYON16 drew separate foci or fragments at the edge is a
+  pathologist's call, and the content builder does not change a clinical claim (Q4). A conservative alternative is
+  offered in the basis.
+- **J-CNT4 · The orientation tour differs from the draft example in two fields.** `textLicence` CC BY 4.0 was added
+  (Q5 applies to every module's text, not only the case's), and the summary's "two-minute" became "short", since the
+  course lists the tour at 3 min and the outline shows `3 min`. Everything else is Appendix B verbatim; it has no
+  clinical statement (the unit test scans its strings), so it has no facts file.
+- **J-CNT5 · The numbers behind the bases are pinned.** The unit test recomputes, from the committed layer and module,
+  what the §12 bases state: the region's 3.73 mm and the outline's 24 % share (F3, F4), the 2.66 mm Feret (F14), the
+  foci's 0.05 / 0.07 / 0.15 mm (F23), every Exclusion inside 'Annotation 3' (F22), hs-edge 33 µm inside the outline
+  (F24, F32, F34), the lymphoid view 1.44 mm away (F5, F8), and the §6 scoring tables (P1–P7, R1–R6, candidates, the
+  text rubric, the gate worked example, the choice examples). A changed layer, tile set or key would fail the content
+  test rather than leave a wrong statement in the module.
+- **J-CNT6 · No answer in the tour.** The pre-item hotspot (hs-lymphoid) is 1,439 µm from the target and the pre-item
+  20× view is centred on it; hs-edge, which is inside the deposit, is highlighted only at step 9. `tour-shows-key`
+  passes with the real scoring, and the unit test asserts the geometry directly.
+- **J-CNT7 · The check records pointer events rather than throwing** (CNT-3's "an init script that fails the test on
+  any mouse or touch event"): a trusted mouse, pointer, wheel or touch event is pushed to a list and the check fails
+  naming it, so the cause is readable. Export results is pressed with Enter on the focused button. The results file is
+  validated with python jsonschema against `$defs/ResultsFile` and parsed with `format.parseResults`.
+- **J-CNT8 · The python schema test runs on data/learn now** (its `data/learn absent` skip is gone: 63 tests, 0 skipped
+  by content), and `course.check.mjs` no longer needs `LEARN_DATA_STANDIN`.
+
 ---
 
 ## 16. Open questions for the owner
@@ -1132,7 +1311,7 @@ confirms or changes it.
 1. **Gate over your mark (D7).** Is "full credit needs a sharp 20× view of what you marked" the rule you want? The design's "viewed the focus" leaks the lesion's location.
 2. **Region scoring (D15, §6.3).** Are a 50 µm point tolerance and IoU ≥ 0.50 for outlines right? Should a small outline drawn inside the deposit count (example R3, IoU 0.27, scores 0)? The alternative is "most of your outline lies on tumour". Should a point inside an Exclusion area within the deposit count (P6)?
 3. **Largest deposit or any focus (§12).** The item asks for the largest deposit; a point on one of the three small foci scores 0 with the "tumour too" feedback. Should any tumour focus count instead?
-4. **The 25 factual statements (§12).** Please confirm or correct each in the facts file, then mark the module reviewed with your name and date.
+4. **The 37 factual statements (§12).** Please confirm or correct each in the facts file (`stage0/data/learn/modules/sln-find-metastasis.facts.json`), then mark the module reviewed with your name and date. F23 and F25 ask in particular whether "three small separate tumour foci" is the right description of 'Annotation 4–6' (§15.7 J-CNT3).
 5. **Licence of the module text** (`metadata.textLicence`): CC BY 4.0, CC0, or the repo's Apache-2.0?
 6. **Authorship line.** Is "Stoipath Learn L1 build (AI-assisted draft)" acceptable until you sign as reviewer or author?
 7. **Wave L0.** Do you approve the small additive Phase A core change (a database namespace and `product`) before Learn starts?

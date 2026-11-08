@@ -232,6 +232,13 @@ print(json.dumps(out))`,
     const guard = await page.evaluate(() => window.__netGuard?.attempts ?? []);
     ok(bad.length === 0 && guard.length === 0, `${what}: ${reqs.length} requests, all same-origin GET; no beacon, socket or request body (${bad.length} other${bad.length ? ': ' + bad.slice(0, 2).map((r) => `${r.method} ${r.url}`).join(', ') : ''}; ${guard.length} guarded)`);
   };
+  /**
+   * The page has spoken its opening step sentence (`Step {n} of {total}. …`, LEARN.md §8.4). The player says it 1 s
+   * after the module opens (J-PLY12), and the polite region keeps only the newest unspoken sentence of 500 ms (the
+   * Phase A rule), so a toast or notice said in the half second before it would be replaced. A learner acts after the
+   * page has spoken; the checks wait for the same, up to 4 s (LEARN-QUESTIONS course C-N3).
+   */
+  const spokenStep = (page) => page.waitForFunction(() => (window.__liveLog?.polite ?? []).some((t) => /^Step \d+ of \d+\./.test(t)), null, { timeout: 4000, polling: 50 }).catch(() => null);
   /** A fresh context on learn.html (?query, #hash); waits for the boot and, unless `slide: false`, the first step. */
   const boot = async (v, { query = {}, hash = '', reduced = true, slide = true, init = [] } = {}) => {
     const { ctx: c, page, cdp, errors } = await H.newPage(browser, v, { initScripts: [H.NET_GUARD, LIVE_LOG, ...init], reducedMotion: reduced });
@@ -242,6 +249,7 @@ print(json.dumps(out))`,
     if (slide) {
       await H.waitForSlide(page);
       await page.waitForFunction(() => window.__learn.bus.log().some((e) => e.name === 'stepShown'), null, { timeout: 30_000, polling: 100 });
+      await spokenStep(page);
     }
     return { c, page, cdp, errors, reqs };
   };
@@ -253,6 +261,7 @@ print(json.dumps(out))`,
     await H.waitForLearn(page);
     await H.waitForSlide(page);
     await page.waitForFunction(() => window.__learn.bus.log().some((e) => e.name === 'stepShown'), null, { timeout: 30_000, polling: 100 });
+    await spokenStep(page);
   };
   const openCard = async (page) => {
     await page.evaluate(() => window.__learn.test.card(true));

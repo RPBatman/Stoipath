@@ -180,6 +180,12 @@
 .app.learn.nav-hidden .navigator { display: none; }
 .learn .navigator__label .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .learn .navigator__label .nav-hint { flex: 0 0 auto; white-space: nowrap; }
+/* A dock-column dialog (the candidates panel) is "a panel in the dock's place" (base.css 1014–1022): it is as tall as its
+   content, so the inert task card under it is hidden too, instead of its CTA peeking out below the panel (J-I17). At
+   ≤ 1079 px the dialog is a sheet and the dock is display: none (below). */
+@media (min-width: 1080px) {
+  .app.learn.dialog-open #taskHead, .app.learn.dialog-open #taskCard { visibility: hidden; }
+}
 /* Docked width with the card folded: the palette and dialogs use the empty dock column over the canvas edge (shell.css 270–276) */
 @media (min-width: 1600px) {
   .app.learn:not(.dock-open):is(.palette-open, .dialog-open) .nav-host .navigator,
