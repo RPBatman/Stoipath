@@ -207,12 +207,14 @@ export async function run(ctx) {
     await waitNode(ctx, page, 2);
     await page.waitForFunction(() => window.__signout.tools.review().nodes[2].traceLength >= 1, null, { timeout: 10_000 }).catch(() => {});
     const before = (await rv(page)).nodes[2].traceLength;
-    // jumpTo 20× over the node's tissue (instant; §14.7 REV-2), then the settle
-    await page.evaluate(() => {
-      const s = window.__signout.tools.review().sample;
+    // jumpTo 20× over the node's tissue (instant; §14.7 REV-2), then the settle. The camera goes to the tissue box centre,
+    // which is a tissue cell on this node: the fit camera's centre is shifted by the drawer inset and, since the S3 review
+    // fix (§19.5), "over tissue" means meeting a tissue cell, not the box
+    const tb = caseFile.extensions.signout.nodes[2].tissueBbox;
+    await page.evaluate(([x, y]) => {
       const mpp = 0.2431; // patient_017 (centre 0)
-      window.__stage0.jumpTo(s.center_um[0] / mpp, s.center_um[1] / mpp, Math.log2((window.devicePixelRatio * mpp) / 0.5));
-    });
+      window.__stage0.jumpTo(x, y, Math.log2((window.devicePixelRatio * mpp) / 0.5));
+    }, [(tb[0] + tb[2]) / 2, (tb[1] + tb[3]) / 2]);
     await helpers.settle(page, { quietMs: 500 });
     const after20 = await rv(page);
     const e20 = after20.nodes[2].trace.at(-1);

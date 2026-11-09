@@ -112,6 +112,7 @@ class Review implements ReviewService {
     bus.on('tileSettled', ({ view, sharp }) => {
       if (view !== 'A') return;
       const e = this.hold.tile(sharp);
+      if (e !== null && e.sharp) this.openPending = false; // the opening view (or a later one) went Sharp: logged
       if (e !== null && this.nodeNow !== null) this.queueEntries(this.nodeNow, [e]);
     });
     bus.on('slideOpened', ({ view, slide }) => {
@@ -567,9 +568,13 @@ class Review implements ReviewService {
     if (this.readOnly || this.caseId === null || this.ownOpen > 0) return false;
     const e = this.entryFor(s, node);
     if (e === null) return false;
-    this.openPending = false;
     this.noteTissue(e.rect, node);
-    const out = this.hold.settled(e, this.api.host.sharpness('A').state === 'sharp');
+    const sharpNow = this.api.host.sharpness('A').state === 'sharp';
+    // a still-unsharp opening entry held from an earlier settle of this same view (a resize, the drawer opening) is
+    // replaced, not kept twice; the opening stays pending until it is logged Sharp (or the trainee moves away)
+    this.hold.drop();
+    const out = this.hold.settled(e, sharpNow);
+    if (sharpNow) this.openPending = false;
     if (out.length > 0) this.queueEntries(node, out);
     return true;
   }
