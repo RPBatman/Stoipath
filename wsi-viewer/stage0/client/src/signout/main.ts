@@ -154,6 +154,12 @@ const chrome = new EngineChrome(app, env, notices, polite, live.assertive, (cata
   if (catalogueId === null || identities === null) return null;
   return identities.get(catalogueId) ?? null;
 });
+/**
+ * §19.6 (review fix, 2026-11-09): keyboard zooms (1–6, typed zoom, Z, + / −) keep the centre of the uncovered view fixed
+ * and ⇧+arrow steps by the uncovered view, so a keyboard-only trainee stays on the tissue the inset-aware fit showed and
+ * a systematic ⇧+arrow survey leaves no strip under the task card. The insets are Learn's cached read (no layout).
+ */
+chrome.keyInsets = () => env.visibleInsets?.('A') ?? null;
 
 /**
  * LearnCommands takes the Learn player for two things only: the Enter rule's `focusPrimary()` and the Space rule's

@@ -19,6 +19,9 @@
 //   REV-5  opening a node lands on its tissueBbox (centre within 0.5 CSS px × scale, scale within 1 %); [0, 0, 0, 0]
 //          fits the whole slide; `Fit tissue` returns after a zoom
 //   REV-6  phone 390 × 844 coarse: the tray in the sheet, rows ≥ 44 px, the on-screen `Next node` button and ]
+//   REV-7  (S3 review fix 2, §19.6) at 1440 × 900 with the card docked over the canvas: preset 3 from Node 2's tissue
+//          fit keeps the visible centre (≤ one tissue cell from the tissue-box centre); two ⇧→ steps give trace
+//          rectangles that touch or overlap; + then − zoom about the uncovered centre
 //   plus axe-core WCAG 2.2 AA (0 violations) on the Open card and on Review with the tray, at 1440 × 900 and 390 × 844,
 //   and no console or page error anywhere.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -420,6 +423,46 @@ export async function run(ctx) {
     await key(page, ']');
     await waitNode(ctx, page, 1);
     await fitCheck(1, caseFile.extensions.signout.nodes[1].tissueBbox, 'node 2 after ]');
+    // REV-7 (S3 review fix 2, SIGNOUT.md §19.6): keyboard zoom and ⇧+arrow work on the uncovered view, not the canvas
+    {
+      const mpp = entries.find((x) => x.id === caseFile.slides[1].catalogueId).mpp;
+      const tb = caseFile.extensions.signout.nodes[1].tissueBbox;
+      const cellUm = (caseFile.extensions.signout.nodes[1].tissueCells?.cell ?? 2048) * mpp;
+      const view = () => page.evaluate(() => ({ s: window.__signout.tools.review().sample, insets: window.__signout.host().env.insets }));
+      const visCx = (v) => v.s.center_um[0] + (((v.insets?.left ?? 0) - (v.insets?.right ?? 0)) / 2) * v.s.scale_um_per_px;
+      const fit = await view();
+      await key(page, '3');
+      await helpers.settle(page, { quietMs: 400 });
+      const at5 = await view();
+      const boxCx = ((tb[0] + tb[2]) / 2) * mpp;
+      const covered = (at5.insets?.left ?? 0) + (at5.insets?.right ?? 0);
+      check(TAG, covered > 0 && near(at5.s.scale_um_per_px, 2, 0.01) && Math.abs(visCx(at5) - boxCx) <= cellUm && Math.abs(visCx(at5) - visCx(fit)) <= at5.s.scale_um_per_px, `REV-7 from the tissue fit on Node 2 at 1440 × 900 (card covers ${covered} CSS px), preset 3 kept the visible centre: x ${(visCx(fit) / 1000).toFixed(2)} → ${(visCx(at5) / 1000).toFixed(2)} mm, tissue box centre ${(boxCx / 1000).toFixed(2)} mm (≤ one cell, ${cellUm.toFixed(0)} µm), at ${at5.s.scale_um_per_px.toFixed(3)} µm/px`);
+      const lastRect = async () => (await rv(page)).nodes[1].trace.at(-1);
+      await key(page, 'Shift+ArrowRight');
+      await helpers.settle(page, { quietMs: 400 });
+      const a = await lastRect();
+      await key(page, 'Shift+ArrowRight');
+      await helpers.settle(page, { quietMs: 400 });
+      const b = await lastRect();
+      const gapPx = b !== undefined && a !== undefined ? b.rect.minX - a.rect.maxX : NaN;
+      const tol = a !== undefined ? a.scale_um_per_px / mpp : 0; // one CSS px in level-0 px
+      // a whole step (≥ 98 % of the uncovered width, so a step clamped at the slide's edge does not pass) that leaves no strip
+      const stepPx = b !== undefined && a !== undefined ? b.rect.minX - a.rect.minX : NaN;
+      check(TAG, a !== undefined && b !== undefined && b.t > a.t && stepPx >= 0.98 * (a.rect.maxX - a.rect.minX) && gapPx <= tol, `REV-7 two ⇧→ steps at 5×: consecutive trace rectangles touch or overlap (gap ${gapPx.toFixed(1)} level-0 px, ≤ ${tol.toFixed(1)} = one CSS px; step ${(b && a ? b.rect.minX - a.rect.minX : NaN).toFixed(0)} px, uncovered width ${(a ? a.rect.maxX - a.rect.minX : NaN).toFixed(0)} px)`);
+      await key(page, '0');
+      await helpers.settle(page, { quietMs: 300 });
+      // + then − about the uncovered centre: the visible centre comes back to where it was (no drift to the canvas centre)
+      await key(page, '3');
+      await helpers.settle(page, { quietMs: 300 });
+      const p0 = await view();
+      await key(page, '=');
+      await helpers.settle(page, { quietMs: 300 });
+      const p1 = await view();
+      await key(page, '-');
+      await helpers.settle(page, { quietMs: 300 });
+      const p2 = await view();
+      check(TAG, near(p1.s.scale_um_per_px, p0.s.scale_um_per_px / 2, 0.01) && Math.abs(visCx(p1) - visCx(p0)) <= p1.s.scale_um_per_px && Math.abs(visCx(p2) - visCx(p0)) <= p0.s.scale_um_per_px, `REV-7 + and − zoom about the uncovered centre: visible centre x ${(visCx(p0) / 1000).toFixed(3)} → ${(visCx(p1) / 1000).toFixed(3)} → ${(visCx(p2) / 1000).toFixed(3)} mm (≤ one CSS px), ${p0.s.scale_um_per_px.toFixed(2)} → ${p1.s.scale_um_per_px.toFixed(2)} → ${p2.s.scale_um_per_px.toFixed(2)} µm/px`);
+    }
     await page.click('#nodeTray .so-tray__row[data-node="3"]');
     await waitNode(ctx, page, 3);
     await fitCheck(3, [0, 0, 0, 0], 'node 4 with tissueBbox [0, 0, 0, 0] fits the whole slide');

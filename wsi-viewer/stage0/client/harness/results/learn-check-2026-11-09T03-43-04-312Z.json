@@ -1,0 +1,5751 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "refDist": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/learn/integrator/baseline-dist",
+ "seconds": 445,
+ "files": [
+  "integrator.check.mjs",
+  "content.check.mjs",
+  "course.check.mjs",
+  "item-editor.check.mjs",
+  "items.check.mjs",
+  "player.check.mjs",
+  "progress.check.mjs",
+  "reveal.check.mjs",
+  "studio.check.mjs"
+ ],
+ "moduleCounts": {
+  "integrator": 472,
+  "content": 62,
+  "course": 95,
+  "item-editor": 64,
+  "items": 124,
+  "player": 109,
+  "progress": 48,
+  "reveal": 78,
+  "studio": 92
+ },
+ "gates": [],
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 index.html's built graph (index.html, _viewer-BCehJxFD.js) holds no src/learn/ module (none) and no chunk carrying a Learn string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 shell.html's built graph (shell.html, _sharpness-yGL6MC9N.js, _viewer-BCehJxFD.js) holds no src/learn/ module (none) and no chunk carrying a Learn string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 the measurement page's graph is still index.html + the viewer chunk only (index.html, _viewer-BCehJxFD.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 learn.html is its own entry (assets/learn-CNwSfs7Y.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/main.ts's module graph (18 modules) reaches nothing under src/learn/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/shell/main.ts's module graph (55 modules) reaches nothing under src/learn/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 learn.html's module graph (src/learn/main.ts + 9 Learn module(s), 172 modules) holds nothing from src/shell/{layers,compare,share}/ and only catalogue.ts of src/shell/library/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/main.ts sha256 eb0eba9b5cc5756f… equals the value recorded at Wave L1 start (eb0eba9b5cc5756f…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/shell/main.ts sha256 d5a2dc7ebb7a8ccb… equals the value recorded at Wave L1 start (d5a2dc7ebb7a8ccb…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b desktop 1440x900: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b desktop-wide 1920x1080: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b phone 390x844 coarse: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: document.title \"Sentinel lymph node: find the metastasis · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: __learn.product \"learn\", mode \"learner\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: command registry conflicts() empty (67 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (383 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: document.title \"Author studio · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: __learn.product \"learn\", mode \"studio\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: command registry conflicts() empty (73 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: with no draft open the canvas plate says \"No slide open · Open a draft, or add a slide in Collect.\" (role status)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (395 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: document.title \"Preview · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: __learn.product \"learn\", mode \"preview\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: command registry conflicts() empty (67 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (260 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 seed: the research shell stored its annotation in stoipath-shell (2 record(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: the research annotation is not loaded or drawn (store 0, overlay features 0; database stoipath-learn)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: indexedDB.databases() lists stoipath-learn (stoipath-learn, stoipath-shell); the mark (stored in 2 annotation records) and the progress record are in it (session keys learn.course/stage0-l1, learn.progress/li-4-check)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: stoipath-shell is untouched (annotations identical: true; no learn.* key in its session store)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: the active class is Stroma (--ann-5, D17): Stroma"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: every localStorage key written starts with stoipath.learn.v1. (stoipath.learn.v1.class.active; new keys stoipath.learn.v1.class.active; others none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: no sessionStorage write (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 studio: writes go to stoipath-learn-studio (stoipath-learn, stoipath-learn-studio, stoipath-shell; session keys learn.draft/d-li4check01)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 studio: localStorage keys written start with stoipath.learn-studio.v1. (none written)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: stoipath-learn-preview is empty at start (a record written before the reload is gone: true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: drafts are read from the studio database read-only (got d-li4check01; put resolved false; the studio record unchanged)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: the persistent notice \"Preview · progress is not kept\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: localStorage keys written start with stoipath.learn-preview.v1. (none written)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4: after the learner, studio and preview runs stoipath-shell annotations are byte-identical to the seed"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 ? opens \"Keyboard map · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the four Learn groups in order (The flow (Learn) · Navigate · Mark and measure · Help and reserved)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the integrator and Phase A rows of §9 are present with their keycaps (29 rows; all present)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the \"Not in this build\" rows are struck through (9 of 9)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I D20: the learner keymap has no class picker or GeoJSON rows (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 axe-core WCAG 2.2 AA (keymap open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 ⇧D writes \"Dx mode — not part of Stoipath Learn (educational use)\" to the strip and says it assertively (\"Dx mode — not part of Stoipath Learn (educational use)\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I D20: learner mode drops 12 registrations (class:*, import/export:geojson, tool:area); no #classMenu in the page"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I palette: placeholder \"Type a command, step, candidate, layer or setting…\", groups The flow (Learn) · Navigate · Mark and measure · Help and reserved, the task dock inert while open (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I axe-core WCAG 2.2 AA (palette open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I About: Product \"Stoipath Learn\", Launch \"Standalone · no LMS launch in this build · product learn\", Data \"No protected health information. Slides:…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I axe-core WCAG 2.2 AA (About open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I hud.setGate: \"Zoom gate · now 2.1× · need ≥ 20× 5\" with keycap 5; null hides it"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I host.plate (fingerprint): \"Sentinel lymph node: find the metastasis was written for a different build of tumor_014 · H&E; it was not opened.\" (alert)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I host.toast: \"Not yetFinish the current phase first; Skip to the question is in the card.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 / LI-I: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: the task card is docked, open at load (want docked, open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: K closes it (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: a docked column covers no canvas (right 0 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080 axe-core WCAG 2.2 AA (slide open, task card docked): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: the task card is drawer, closed at load (want drawer, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: K opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: visibleInsets counts the open drawer (right 340 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: Esc closes the drawer (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900 axe-core WCAG 2.2 AA (slide open, task card drawer): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: the task card is sheet, closed at load (want sheet, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: the sheet toggle opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: Esc closes the sheet (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse axe-core WCAG 2.2 AA (slide open, task card sheet): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: the task card is sheet, closed at load (want sheet, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: the sheet toggle opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: Esc closes the sheet (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse axe-core WCAG 2.2 AA (slide open, task card sheet): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: CDP LayoutCount 62 ≤ 184 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: 388 of 388 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: CDP LayoutCount 45 ≤ 49 frames + 2 and RecalcStyleCount 46 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: CDP LayoutCount 62 ≤ 198 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: 312 of 312 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: CDP LayoutCount 36 ≤ 39 frames + 2 and RecalcStyleCount 36 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the default course opened sln-find-metastasis at step 1"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the course outline is open on the Open card with 2 modules"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no DOM text, attribute or title names \"breast-carcinoma macrometastasis\" on the Open card"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: Open card with the course outline open: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the flow rows of §9 are present with their keycaps (7 rows; all present)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 \"The flow (Learn)\" is the first group and holds the step, item, expert, tour and card rows (card:toggle, flow:enter, expert:toggle, item:reveal, item:alternatives, step:next, step:prev, tour:play)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens the tour step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: tour step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N × 2 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no leak on the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the candidates panel is open (aria-modal=\"false\", tabs Candidate regions · Answer in text)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: region item awaiting, candidates panel, Candidate regions tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the Answer in text tab selects"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: region item awaiting, candidates panel, Answer in text tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-region by candidate C, Fly there, Commit, U: {\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the card reads \"Revealed · inside the outline · 1 / 1\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no leak with q-region revealed (before q-size)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: region item revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no leak on q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-sinus by B, ↵, U: {\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: MCQ revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens q-size"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: before q-size is revealed no DOM string, document.title or canvas aria-label names \"breast-carcinoma macrometastasis\" (0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-size by C, ↵, U: {\"itemId\":\"q-size\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens q-features"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-features by A, B, C, ↵, U: {\"itemId\":\"q-features\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: multi-select revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: reveal step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N × 2 reaches the summary"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the summary \"Your results\" totals \"Score 4 of 4\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: summary: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the default course opened sln-find-metastasis at step 1"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the course outline is open on the Open card with 2 modules"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no DOM text, attribute or title names \"breast-carcinoma macrometastasis\" on the Open card"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: Open card with the course outline open: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens the tour step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: tour step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N × 2 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no leak on the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the candidates panel is open (aria-modal=\"false\", tabs Candidate regions · Answer in text)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: region item awaiting, candidates panel, Candidate regions tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the Answer in text tab selects"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: region item awaiting, candidates panel, Answer in text tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-region by candidate C, Fly there, Commit, U: {\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the card reads \"Revealed · inside the outline · 1 / 1\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no leak with q-region revealed (before q-size)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: region item revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no leak on q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-sinus by B, ↵, U: {\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: MCQ revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens q-size"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: before q-size is revealed no DOM string, document.title or canvas aria-label names \"breast-carcinoma macrometastasis\" (0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-size by C, ↵, U: {\"itemId\":\"q-size\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens q-features"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-features by A, B, C, ↵, U: {\"itemId\":\"q-features\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: multi-select revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: reveal step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N × 2 reaches the summary"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the summary \"Your results\" totals \"Score 4 of 4\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: summary: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 design/design-system/layout-check.mjs's in-page rules (T1, Z1, S1, A1–A3) are reused (8821 chars)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: the canvas is 83 % of the frame at rest (task card drawer, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: the context bar shows the stem and the CTA (\"Before you look…\" / \"Start the case N\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: A1 every operable control ≥ 24 px (18 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: the task card is open (drawer)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: A1 every operable control ≥ 24 px (22 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: A1 every operable control ≥ 24 px (39 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: with the candidates panel open a draft chip is visible and hit-testable (ctxbar, candPanel)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: the canvas is 74 % of the frame at rest (task card docked, open; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: A1 every operable control ≥ 24 px (20 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: the task card is open (docked)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: A1 every operable control ≥ 24 px (20 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: A1 every operable control ≥ 24 px (36 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: with the candidates panel open a draft chip is visible and hit-testable (candPanel)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: the canvas is 81 % of the frame at rest (task card drawer, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: A1 every operable control ≥ 24 px (18 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: the task card is open (drawer)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: A1 every operable control ≥ 24 px (22 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: A1 every operable control ≥ 24 px (39 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: with the candidates panel open a draft chip is visible and hit-testable (ctxbar, candPanel)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: the canvas is 76 % of the frame at rest (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: A1 every operable control ≥ 44 px (16 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: the task card is open (sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: A1 every operable control ≥ 44 px (19 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: A1 every operable control ≥ 44 px (42 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: with the candidates panel open a draft chip is visible and hit-testable (candPanel)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: the canvas is 79 % of the frame at rest (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: the peek bar shows the stem and the primary action (\"Start the case N\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: A1 every operable control ≥ 44 px (10 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: the task card is open (sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: A1 every operable control ≥ 44 px (13 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: A1 every operable control ≥ 44 px (34 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: with the candidates panel open a draft chip is visible and hit-testable (candPanel)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse: the canvas is 73 % of the frame at rest (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card at rest: A1 every operable control ≥ 44 px (12 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse: the task card is open (sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card open: A1 every operable control ≥ 44 px (15 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse region item, candidates panel open: A1 every operable control ≥ 44 px (30 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse: with the candidates panel open a draft chip is visible and hit-testable (candPanel)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone-landscape 844x390 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse sheet expanded: the canvas keeps one height across steps 1–4 (668, 668, 668, 668 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse sheet expanded: step 3's fly lands on its view (3181.5, 3181.5 µm at 0.500 µm/px; want 3181.61, 3181.61 at 0.5)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse sheet expanded: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse sheet peeking: the canvas keeps one height across steps 1–4 (1035, 1035, 1035, 1035 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse sheet peeking: step 3's fly lands on its view (3181.5, 3181.5 µm at 0.500 µm/px; want 3181.61, 3181.61 at 0.5)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse sheet peeking: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse sheet expanded: the canvas keeps one height across steps 1–4 (406, 406, 406, 406 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse sheet expanded: step 3's fly lands on its view (3181.5, 3181.5 µm at 0.500 µm/px; want 3181.61, 3181.61 at 0.5)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse sheet expanded: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse sheet peeking: the canvas keeps one height across steps 1–4 (667, 667, 667, 667 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse sheet peeking: step 3's fly lands on its view (3181.5, 3181.5 µm at 0.500 µm/px; want 3181.61, 3181.61 at 0.5)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse sheet peeking: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: q-region revealed ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: hotspots, the revealed key, the frozen mark and the expert view are drawn (learn-expert 10, learn-hotspots 2, learn-related 3, learn-key 7, learn-mark 1, learn-candidates 4)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: 306 of 316 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: CDP LayoutCount 58 ≤ 208 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: 61 overlay draws, gesture p95 1.70 ms, exact-render average 4.40 ms, 59 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: 316 of 316 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: CDP LayoutCount 36 ≤ 39 frames + 2 and RecalcStyleCount 36 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: 63 overlay draws, gesture p95 2.10 ms, exact-render average 1.30 ms, 50 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no mutation inside #taskCard or #phaseRail while moving (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: q-region revealed ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: hotspots, the revealed key, the frozen mark and the expert view are drawn (learn-expert 10, learn-hotspots 2, learn-related 3, learn-key 7, learn-mark 1, learn-candidates 4)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: 303 of 313 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: CDP LayoutCount 58 ≤ 189 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: 60 overlay draws, gesture p95 3.70 ms, exact-render average 1.82 ms, 0 blits (OVL-4's p95 ≤ 3 ms or blits: NOT met; passed by the D3 average ≤ 3 ms, J-I20); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: 308 of 308 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: CDP LayoutCount 35 ≤ 38 frames + 2 and RecalcStyleCount 35 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: 57 overlay draws, gesture p95 2.80 ms, exact-render average 1.20 ms, 0 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no mutation inside #taskCard or #phaseRail while moving (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the gate warning names the button that flies to the mark (\"!You have not viewed your mark at 20× yet. Commit now for half credit if it is correct, or choose View my mark at 20× fi…\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: following it, the gate is met over the mark (Met · 20× over your mark)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: q-region revealed by candidate C ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the CTA note \"On the slide, ↵ closes the polygon and m…\" goes once the item is revealed (null)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the tool is Select after the reveal (select)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the context bar offers \"Mark without a pointer\" only until the reveal (before true, after false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the q-size measurement is kept in the store (1 annotation)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: with ⇧E on, the reveal step shows the expert view's text and its legend (\"The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion a…\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: the summary"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: Start again leaves no learner annotation on the slide (0) and every item awaiting ({\"q-region\":\"awaiting\",\"q-sinus\":\"awaiting\",\"q-size\":\"awaiting\",\"q-features\":\"awaiting\"})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R desktop 1440x900 review fixes: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: a keyboard point hands focus to the context bar's action and says so (#ctxCta; \"Point placed. Commit answer has focus. Press Enter again to …\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: one Esc on #ctxCta goes back to the slide and keeps the mark (focus #view, mark 08be007f-e7e7-47e2-8b81-cf81becaf2f9)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: q-region revealed ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: ↵ inside q-sinus's options commits and focus moves to the primary action (BUTTON \"Reveal U\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: q-size"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: q-features (Measure disclosed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: Measure stays on a step that discloses it (q-size measure, q-features measure)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: back to step 1 (Select only)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: on a step that does not disclose it, Measure gives way to Select (select; rail tool:select:true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: Space on the slide plays the tour (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R2 desktop 1440x900 review fixes 2: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: the card is hidden (drawer, open false), the gate unmet over the mark (false), and \"Commit answer ↵\" on screen at #ctxCta (hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: the banner shows the whole sentence with the card still hidden and K not pressed (text visible true; card box 0 px², card open false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: \"View my mark at 20×\" and \"Commit anyway\" are on screen and hit-testable (View my mark at 20× 140×28 hit true; Commit anyway 110×28 hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: said once, assertively (1 assertive, polite too false; the banner's live role: region)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900: axe with the gate warning's banner shown: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: View my mark at 20× flies to the mark at the gate scale (0.500 µm/px; mark at 0.0 %, 0.0 % from the pane's centre) and the gate is met (true), nothing committed (awaiting)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: the banner goes with the warning and focus is not dropped to <body> (banner gone, focus ctxCta)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, View my mark: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: the card is hidden (drawer, open false), the gate unmet over the mark (false), and \"Commit answer ↵\" on screen at #ctxCta (hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: the banner shows the whole sentence with the card still hidden and K not pressed (text visible true; card box 0 px², card open false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: \"View my mark at 20×\" and \"Commit anyway\" are on screen and hit-testable (View my mark at 20× 140×28 hit true; Commit anyway 110×28 hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: said once, assertively (1 assertive, polite too false; the banner's live role: region)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: Commit anyway commits (committed), the banner goes, and focus is not dropped to <body> (ctxCta)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: revealed with the gate unmet: half credit ({\"itemId\":\"q-region\",\"modality\":\"pointer\",\"score\":0.5,\"points\":1,\"gateMet\":false,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 desktop 1440x900 card hidden, Commit anyway: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: the card is hidden (sheet, open false), the gate unmet over the mark (false), and \"Commit answer ↵\" on screen at #taskCard .task__cta .btn--cta (hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: the banner shows the whole sentence with the card still hidden and K not pressed (text visible true; card box 0 px², card open false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: \"View my mark at 20×\" and \"Commit anyway\" are on screen and hit-testable (View my mark at 20× 140×44 hit true; Commit anyway 110×44 hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: said once, assertively (1 assertive, polite too false; the banner's live role: region)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse: axe with the gate warning's banner shown: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: View my mark at 20× flies to the mark at the gate scale (0.500 µm/px; mark at 0.0 %, -0.0 % from the pane's centre) and the gate is met (true), nothing committed (awaiting)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: the banner goes with the warning and focus is not dropped to <body> (banner gone, focus BUTTON)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, View my mark: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: the card is hidden (sheet, open false), the gate unmet over the mark (false), and \"Commit answer ↵\" on screen at #taskCard .task__cta .btn--cta (hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: the banner shows the whole sentence with the card still hidden and K not pressed (text visible true; card box 0 px², card open false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: \"View my mark at 20×\" and \"Commit anyway\" are on screen and hit-testable (View my mark at 20× 140×44 hit true; Commit anyway 110×44 hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: said once, assertively (1 assertive, polite too false; the banner's live role: region)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: Commit anyway commits (committed), the banner goes, and focus is not dropped to <body> (BUTTON)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: revealed with the gate unmet: half credit ({\"itemId\":\"q-region\",\"modality\":\"pointer\",\"score\":0.5,\"points\":1,\"gateMet\":false,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 tablet 1024x1366 coarse card hidden, Commit anyway: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: the card is hidden (sheet, open false), the gate unmet over the mark (false), and \"Commit answer ↵\" on screen at #peekCta (hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: the banner shows the whole sentence with the card still hidden and K not pressed (text visible true; card box 0 px², card open false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: \"View my mark at 20×\" and \"Commit anyway\" are on screen and hit-testable (View my mark at 20× 140×44 hit true; Commit anyway 110×44 hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: said once, assertively (1 assertive, polite too false; the banner's live role: region)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse: axe with the gate warning's banner shown: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: View my mark at 20× flies to the mark at the gate scale (0.500 µm/px; mark at 0.0 %, -0.0 % from the pane's centre) and the gate is met (true), nothing committed (awaiting)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: the banner goes with the warning and focus is not dropped to <body> (banner gone, focus peekCta)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, View my mark: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: the card is hidden (sheet, open false), the gate unmet over the mark (false), and \"Commit answer ↵\" on screen at #peekCta (hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: the banner shows the whole sentence with the card still hidden and K not pressed (text visible true; card box 0 px², card open false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: \"View my mark at 20×\" and \"Commit anyway\" are on screen and hit-testable (View my mark at 20× 140×44 hit true; Commit anyway 110×44 hit true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: said once, assertively (1 assertive, polite too false; the banner's live role: region)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: Commit anyway commits (committed), the banner goes, and focus is not dropped to <body> (peekCta)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: revealed with the gate unmet: half credit ({\"itemId\":\"q-region\",\"modality\":\"pointer\",\"score\":0.5,\"points\":1,\"gateMet\":false,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-R3 phone 390x844 coarse card hidden, Commit anyway: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting: q-region awaiting with a mark and the candidates panel open ({\"state\":\"awaiting\",\"panel\":true})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting 1 s drag: 174 of 183 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting 1 s drag: CDP LayoutCount 17 ≤ 199 frames + 2 and RecalcStyleCount 52 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting wheel burst: 381 of 381 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting wheel burst: CDP LayoutCount 43 ≤ 47 frames + 2 and RecalcStyleCount 44 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 item awaiting: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting: q-region awaiting with a mark and the candidates panel open ({\"state\":\"awaiting\",\"panel\":true})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting 1 s drag: 256 of 265 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting 1 s drag: CDP LayoutCount 17 ≤ 190 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting wheel burst: 358 of 358 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting wheel burst: CDP LayoutCount 39 ≤ 42 frames + 2 and RecalcStyleCount 39 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 item awaiting: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 the CSP meta of D22 is present (\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'self'\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 fetch('https://example.org/') rejects (TypeError: Failed to fetch) and fires securitypolicyviolation (connect-src https://example.org/)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 a cross-origin img fires securitypolicyviolation (img-src https://img.example.org/x.png)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 a cross-origin script fires securitypolicyviolation (script-src-elem https://script.example.org/x.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 a cross-origin iframe fires securitypolicyviolation (frame-src https://frame.example.org)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 a cross-origin stylesheet fires securitypolicyviolation (style-src-elem https://style.example.org/x.css)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5: no page error beyond the blocked fetch's CSP report (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 across every page of these checks (4691 requests): all same-origin (0 other: none) and GET (0 other: none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 no sendBeacon, WebSocket, EventSource, or fetch / XHR with a body or another method (0)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: the four content files are served from the site (stage0-l1.course.json 200, sln-find-metastasis.module.json 200, sln-find-metastasis.facts.json 200, viewer-orientation.module.json 200)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: each is served as JSON (application/json)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: the course lists sln-find-metastasis then viewer-orientation (the case first, the orientation tour second: owner default Q10)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: module ids sln-find-metastasis, viewer-orientation; the facts file names sln-find-metastasis 0.1.1"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: both modules are draft and all 37 facts are pending (D11; owner default Q4)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: the course's relative URLs resolve to the served module files (/data/learn/modules/sln-find-metastasis.module.json, /data/learn/modules/viewer-orientation.module.json)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: the four files validate with python jsonschema (modules against the schema, the course against $defs/CourseFile, the facts against $defs/FactsFile)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1: python3 -m unittest tools/tests/test_learn_schema.py passes with data/learn present (Ran 14 tests in 0.688s |  | OK)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the default course opens the case at step 1 (sln-find-metastasis, step 1; \"Before you look\")"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the card says `Step 1 of 10`"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the draft chip `Draft — pending pathologist review` shows on the Open card (owner default Q12)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the Slides line reads `tumor_014 · H&E · CAMELYON16 · CC0…` (the module's label, never the catalogue title, D12)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 / LI-10: no DOM string contains \"breast-carcinoma macrometastasis\" on the Open card"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: Open card (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 2 (Survey at low power)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: tour step (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 3 (Lymphoid tissue at 20×)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 4, the region item"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "ITM-8: the reference layer has not been requested before the reveal (0 requests)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "LI-10: no DOM string contains \"breast-carcinoma macrometastasis\" on the region item"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: ⇧↵ opens \"Mark the metastasis without a pointer\" (aria-modal=\"false\", 4 candidates, focus on a region)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: region item awaiting with the candidates panel (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: arrow keys reach candidate C"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: Tab reaches \"Fly there: region C at 20 times\""
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: Fly there puts the camera at 20× over C (1742.5, 1244.6 µm at 0.500 µm/px) and the view settled sharp"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: Tab reaches \"Commit C as my mark ↵\""
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: q-region committed by keyboard ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"confidence\":null})"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: U reveals q-region: {\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "ITM-8: the reference layer was requested once, at the reveal (1)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the card reads \"Revealed · inside the outline · 1 / 1\""
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: region item revealed (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 5, q-sinus"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: q-sinus by B, ↵, U: 1 / 1 ({\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: \"Correct · B · 1 / 1\""
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: MCQ revealed (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 6, q-size"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: q-size by C, ↵, U: 1 / 1 ({\"itemId\":\"q-size\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 7, q-features"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: q-features by A, B, C, ↵, U: 1 / 1 ({\"itemId\":\"q-features\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: multi-select revealed (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 8, the reveal step"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: revealShown {\"moduleId\":\"sln-find-metastasis\",\"itemIds\":[\"q-region\"],\"stepIndex\":7}"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: reveal step (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 9, At the edge of the deposit"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: N opens step 10, the summary"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: moduleCompleted {\"moduleId\":\"sln-find-metastasis\",\"score\":4,\"points\":4}"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the summary \"Your results\" totals \"Score 4 of 4\" (Region marking 1 / 1; Lymphatic route 1 / 1; Size category 1 / 1; Tumour cells or lymphocytes? 1 / 1)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: four items, each 1 / 1"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the CTA offers \"Next module N\" (the orientation tour is the next entry, owner default Q10)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3 axe: summary (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: Export results (Enter on the button) downloads \"stoipath-learn_sln-find-metastasis_20261109-033851.results.json\""
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the download passes format.parseResults (ok)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the download validates with python against $defs/ResultsFile"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: total 4 of 4; items q-region 1, q-sinus 1, q-size 1, q-features 1"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: module sln-find-metastasis review draft; the label string verbatim; the privacy sentence"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: q-region answered by candidate C, keyboard, gate met; every item by keyboard (keyboard, keyboard, keyboard, keyboard)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: no key of the results file matches /name|email|user|device|ip/i except title and inputDevice (none)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: resultsExported {\"moduleId\":\"sln-find-metastasis\",\"bytes\":3779}"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: no trusted mouse, pointer, wheel or touch event along the way (0)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: no console or page error (0)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: 172 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-3: the page fetched the committed course and case files from data/learn/ (D6)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "content: stage0/data/learn/courses/stage0-l1.course.json exists (the content module, wave L2)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "fixtures: 6 files in harness/fixtures/learn/course validate with python jsonschema (modules against the schema, courses against $defs/CourseFile)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: the default course stage0-l1 loads from http://127.0.0.1:40111/data/learn/courses/stage0-l1.course.json (catalogue http://127.0.0.1:40111/data/catalogue.json + learn/courses/stage0-l1.course.json, D6)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: one GET for the course file at that URL"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: courseLoaded {courseId: stage0-l1, modules: 2} once"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: the initial module is the first one not completed, sln-find-metastasis (#m= absent)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: the outline lists the case, then the orientation tour (owner default, Appendix B): \"Modules · 0 of 2 done\" | 1 Sentinel lymph node: find the metastasis [not started] 15 min (current) | 2 Using the slide viewer [not started] 3 min"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: both rows say `not started` with `{n} min` (not started · 15 min, not started · 3 min)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: the outline's summary reads \"Modules · 0 of 2 done\" and is open"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: a list (role list, \"Modules in this course\"); the open module's row is aria-current=\"step\" and not a control, the other a native button"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: the course line says `Module 1 of 2`"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1: Course progress aria-valuenow 0 (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-1 axe: the Open card with the course outline (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: Enter on the outline row opens viewer-orientation (openModule reason course, in place true)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: the slide switched in place from tumor_014 to CMU-1-Small-Region (same document, 1 canvas#view, history 2 → 2)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: N four times reaches the orientation summary (step 5 of 5)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: moduleCompleted {moduleId: viewer-orientation}"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: courseProgressChanged {courseId: stage0-l1, completed: 1, total: 2}"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: the orientation summary, the last entry, offers `Back to the course` (\"Back to the course\")"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: the orientation row says `done` with `✓` (\"Modules · 1 of 2 done\" | 1 Sentinel lymph node: find the metastasis [not started] 15 min | ✓ Using the slide viewer [done] 3 min (current))"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: \"Modules · 1 of 2 done\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: Course progress aria-valuenow=\"50\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: the case row is now a button (another module)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2 axe: the course outline with a completed module: 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: on reload the initial module is sln-find-metastasis (the case is not completed)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: after the reload the outline still says \"Modules · 1 of 2 done\" | 1 Sentinel lymph node: find the metastasis [not started] 15 min (current) | ✓ Using the slide viewer [done] 3 min"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-2: after the reload Course progress aria-valuenow=\"50\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 1: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 1: 250 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5 setup: the case's record completed through the progress service (4 items revealed, step 10 reached)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: #m=sln-find-metastasis&s=9 opens the case's summary (step 10 of 10)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: the case is completed and nextModule(sln-find-metastasis) = viewer-orientation"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: the case's summary offers `Next module` (\"Next module N\")"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5 axe: the case summary with Next module: 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: tumor_014 is open before (camelyon16.tumor_014.r36864_66560)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: Next module opens viewer-orientation (openModule reason next-module)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: the slide switches in place from tumor_014 to openslide.CMU-1-Small-Region (CORE-1: no navigation entry, history 4 → 4; 1 canvas#view)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: the URL fragment updates (#m=viewer-orientation&s=0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: N four times reaches the orientation summary"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: the orientation summary, the last entry, offers `Back to the course` (\"Back to the course\"; nextModule = null)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-5: Back to the course shows the Open card's outline: \"Modules · 2 of 2 done\" | ✓ Sentinel lymph node: find the metastasis [done] 15 min | ✓ Using the slide viewer [done] 3 min (current)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 2: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 2: 210 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: the fixture course loads (course-fixture-locked) and opens its first module (course-fixture-a)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: the second module (unlock: after-previous) shows `locked` and stays in the Tab order (\"Modules · 0 of 2 done\" | 1 Fixture tour A [not started] 2 min (current) | 2 Fixture tour B [locked · opens after Fixture tour A] 2 min)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: nextModule(A) is null while B is locked"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: activating it shows `Not yet` / \"Complete Fixture tour A first.\" and opens nothing (0 moduleLoaded; still course-fixture-a)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: the toast is spoken once politely"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3 axe: an outline with a locked module and the toast: 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: N twice reaches the first module's summary"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: once the first module is completed its summary offers `Next module` (\"Next module N\")"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-3: the second module is unlocked and opens"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 3: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 3: 60 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4: a reachable #m=viewer-orientation wins (opened viewer-orientation, no notice)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4 reachable #m=: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4: an unknown #m= opens the first module (sln-find-metastasis) with the notice \"This link names a module that is not in this course; opened Sentinel lymph node: find the metastasis instead\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4: the notice is shown in the strip and spoken politely"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4 axe: the notice over the Open card: 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4 unknown #m=: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4: a #m= that names a locked module opens the first open one (course-fixture-a) and says \"This link names a module that is still locked; opened Fixture tour A instead\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-4 locked #m=: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: ?course=https://example.org/x.json is refused and the default course is used (stage0-l1, sln-find-metastasis)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: the notice \"This link names a course on another site; the built-in course was used\" is shown"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: nothing was requested from example.org"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6 other origin: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6 other origin: 100 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: ?course=../../client/harness/fixtures/learn/course/two.course.json loads (http://127.0.0.1:40111/client/harness/fixtures/learn/course/two.course.json) and opens course-fixture-a"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: its module URLs resolve against the course file"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: its outline: \"Modules · 0 of 2 done\" | 1 Fixture tour A [not started] 2 min (current) | 2 Fixture tour B [not started] 4 min"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6: the course line says `Module 1 of 2`"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6 fixture course: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-6 fixture course: 59 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: a module written for another build of its slide is refused with \"Fixture on another build was written for a different build of CMU-1-Small-Region · H&E; it was not opened.\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: the outline then marks it locked with the reason, and the open module stays (\"Modules · 0 of 4 done\" | 1 Fixture tour A [not started] 2 min (current) | 2 Fixture on another build [locked · written for a different build of CMU-1-Small-Region · H&E] 2 min | 3 Fixture with the wrong file [not started] 2 min | 4 Fixture that is not there [not started] 2 min; plate none)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: activating the refused module again shows `Not yet` with its reason"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: an entry whose file is another module is refused and locked (locked · the file is module course-fixture-b, not course-fixture-wrong)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: a module file that is not there: \"Fixture that is not there could not be opened (HTTP 404 Not Found).\""
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: a failed read does not lock the module (it may be retried) and the open module stays"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R axe: an outline with refused modules: 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 6: no console or page error (0; 1 expected 404 line(s))"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 6: 62 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: with nothing open the refusal is the §8.1 plate (fingerprint: \"! This module could not be opened Fixture on another build was written for a different build of CMU-1-Small-Region · H&E; it was not opened. Retry\")"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: and the module is locked"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R axe: the fingerprint plate: 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R plate: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: a course file that is not there gives the course plate (\"! The course could not be opened The course file could not be read (HTTP 404 Not Found). Nothing was opened. Retry\")"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R: and nothing opens"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "CRS-R course plate: no console or page error (0; 1 expected 404 line(s))"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "outline at 390 × 844 coarse: every row ≥ 44 px tall (44×362, 44×362; SC 2.5.8 with base.css coarse targets)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "axe: the course outline in the phone sheet (390 × 844 coarse): 0 violations"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 7 phone: no console or page error (0)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "flow 7 phone: 100 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "frame cost: a 1 s drag and a wheel burst on the Open card at 1920 × 1080 write nothing in the outline (0 mutations)"
+  },
+  {
+   "tag": "course",
+   "ok": true,
+   "msg": "frame-cost page: no console or page error (0)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "install: studio mode provides `itemEditor` and __learn.tools['item-editor']() (modules format, scoring, progress, reveal, item-editor, studio)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "kinds: [\"mcq\",\"multi\",\"region\"]"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 create('mcq'): q-1, points 1, options ABCD, none correct"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 live: with no correct option the strip shows mcq-one-correct as an error (\"Item q-1 needs exactly one correct option\")"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 keyboard: Tab reaches \"Option B is correct\", Space marks B correct (A B✓ C D)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 live: one correct → mcq-one-correct passes (\"Exactly one option is correct\")"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 radio: marking C leaves exactly one correct (C)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 remove A: letters contiguous A=Subcapsular sinus✓, B=Medullary cords, C=Hilar fat; rows ABC"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 remove: focus moves to the option now at that place (/options/0/text)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 add (Enter): option D appended, letters ABCD, focus on its text (/options/3/text)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 remove the correct one: ABC, none correct (Medullary cords / Hilar fat / Paracortex)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 live: mcq-one-correct fails again (\"Item q-1 needs exactly one correct option\")"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 SC 3.3.1: the options list carries aria-invalid with the row as its description (true)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 complete MCQ: no error rows (schema:pass ids-unique:pass item-once:pass mcq-one-correct:pass no-phi:pass colour-only:pass text-length:pass)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 axe (Multiple choice editor, 1440): 0 violations"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 multi live: none correct → multi-has-correct error (\"Item q-2 needs at least one correct option\")"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 multi live: A and C correct → multi-has-correct passes"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 multi remove B: A=Cohesive sheets✓, B=More cytoplasm✓, C=Small dark nuclei"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 multi scoring by arrows: all-or-nothing (All or nothing:true:0 Partial:false:-1)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-1 axe (Select all editor, 1440): 0 violations"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 create('region'): slide he, no key yet, gate 20× (0.5 µm/px), IoU 0.5, points 1"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 reference: key {\"id\":\"camelyon16-reference\",\"slide\":\"he\",\"label\":\"CAMELYON16 reference outline\",\"source\":{\"kind\":\"reference-layer\",\"layer\":\"camelyon16-expert\",\"version\":\"d94db5bb\"},\"targets\":[{\"id\":\"tumor\",\"label\":\"Tumor minus Exclusion\",\"include\":{\"className\":\"Tumor\"},\"subtract\":{\"className\":\"Exclusion\"}}]}; item.key camelyon16-reference, target tumor (classes Layer=camelyon16-expert[camelyon16-expert] Target class=Tumor[Tumor,Exclusion] Subtract class=Exclusion[Tumor,Exclusion,∅]; before: \"No answer key yet.\")"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 version pinned from the file's provenance.version: d94db5bb (file d94db5bb)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 strip: key-resolves and key-version pass (key-resolves:pass key-version:pass)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 key row: \"CAMELYON16 reference outline · reference layer camelyon16-expert, version d94db5bbTarget: Tumor minus Exclusion\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 refusal with nothing selected: \"Select annotations in the Annotations list first.\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 inline: key key-q-3 (inline) features 6fa15b00…/Tumor, 271e541e…/Stroma = the selected regions' UUIDs; the point was left out; target outline"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 inline: the unused reference key was dropped (keys key-q-3)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 strip: the inline key resolves"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-2 note: the draft's structural parse now reads \"/items/2/stem: must not be empty | /items/2/explanation: must not be empty | /items/2: every region item needs a keyboard or text alternative (NFR-A5): at least\" (stem and explanation are still empty)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 add: 3 candidates at the gate scale (0.5 µm/px) centred on the annotations (point, point, polygon bbox centre): A:3181.61,3181.61@0.5 B:1742.5,1244.64@0.5 C:2260.77,243.09@0.5"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 geometry copied: Point, Point, Polygon"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 focus moves to the first new description (/candidates/0/description)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 strip: candidate-scores ran for this item"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 candidate-scores row \"Candidates that score as correct: B\" = scoring's own list [B]"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 candidate-gate: pass (\"Every candidate’s Fly there meets the gate\")"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 Move up: A:7168,5120 B:13088,13088 C:9000,900,9600,900,9600,1100,9000,1100,9000,900; focus \"Move candidate A down\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 the row follows the order: \"Candidates that score as correct: A\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 Delete, first press: still 3 candidates, the button reads \"Press again to delete candidate C\" (true)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 Delete, second press: AB"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 one candidate, no rubric: region-alternative error \"Every region item needs a keyboard or text alternative (NFR-A5)\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 two candidates again: region-alternative passes; \"Candidates that score as correct: A\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-3 axe (Region marking editor with candidates, 1440): 0 violations"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "key preview without reveal.attach (A-R-Q1 not implemented in this build): stays aria-pressed=false and says why: \"The answer key cannot be shown (No module is open, so there is no answer key to show).\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 Offer an answer in text: one blank field, passMin 1"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 rubric: position/choice![centre-of-the-region✓,upper-border] feature/keywords[cohesive|sheets|large cells] size/choice[gt-2-mm✓,0-2-to-2-mm,le-0-2-mm] passMin 2"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 rubric-passable passes with passMin 2 of 3"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 round trip: parseModule(JSON.parse(format.stringify(module))) ok and deep-equals the draft, rubric included (fields, options, correct, required, passMin)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 the whole exported module parses with 0 errors (6190 bytes)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 passMin 4 > 3 fields: rubric-passable fails \"The text rubric of q-3 cannot be passed\""
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 SC 3.3.1: the rubric is marked aria-invalid (true)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 back to passMin 2: rubric-passable passes"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "region settings: partialInside {\"fraction\":0.9,\"factor\":0.5}, gate 10×, accept point,polygon,brush,ellipse"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "a looser gate (10×) still passes candidate-gate (views at 0.5 µm/px)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "keyboard: 70 controls, none with a positive tabindex, none taken out of the Tab order except roving radios"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "IED-4 axe (Region marking editor with rubric, 1440): 0 violations"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "unmount: the editor is removed and #taskCard gets back what it had"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "studio page (1440): no console or page error (0)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "studio page (1440): 100 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "phone: every editor control (or its label) is ≥ 44 px tall under coarse (0 smaller)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "phone: no horizontal overflow in the editor (0 px)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "phone axe (Region marking editor in the bottom sheet, 390 × 844 coarse): 0 violations"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "studio page (390): no console or page error (0)"
+  },
+  {
+   "tag": "item-editor",
+   "ok": true,
+   "msg": "studio page (390): 99 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "install: items provides `items` and __learn.tools.items() (modules format, scoring, progress, reveal, items, player, course)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "install: item:reveal U, item:alternatives ⇧↵ and item:reopen are registered in \"The flow (Learn)\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "install: the registry reports no binding conflict (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N × 3 reaches step 4, the region item"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "D15: the card states the scoring rule before answering (\"Scored: a point on any tumour focus (or within 50 µm of one), or an outline of the largest deposit with IoU 0.50 or more; an outline that lies at least 90 % on tumour earns half credit.\")"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "card head: \"Item 1 of 4 · Region marking\" · \"1 point\" (Item 1 of 4 · Region marking1 point)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "the item is mounted awaiting; the primary action is \"Commit answer ↵\" (Commit answer ↵)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "the card's CTA reads \"Commit answer ↵\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-9: N on an awaiting item leaves step 4 and says \"Answer this item first: commit, then reveal (U).\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: before U no request matches camelyon16-expert.geojson (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: overlay features 0 = the annotation store's 0 + the step's 0 hotspots (Learn sources hold 0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: no mark, the deposit at 20× settled: the gatebox still reads \"Not met yet · place a mark, then view it at 20×\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: region item awaiting (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "no frame cost: 0 mutations in #taskCard and the HUD gate chip during a 1 s drag on the region item (0; 0 at rest after it)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: a mark at P7, then the deposit at 20×: \"Not met yet · highest magnification over your mark so far: 5×\" (the finest view over the mark, not the deposit)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "HUD gate chip while unmet at 20× with the mark out of view (review fix: no \"now 20× · need ≥ 20×\"): \"Zoom gate · 20× · not over your mark yet\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: still no request for the reference layer"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: two Point clicks leave one mark annotation in the store (1; the newest is the item's draft mark)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "markChanged fired for each mark (2; last: point, mouse)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the mark row reads \"Your mark · point\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the gatebox reads \"Met · 20× over your mark\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "HUD gate chip hidden once the gate is met (null)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "gateChanged {met: true, bestScale 0.5} ({\"itemId\":\"q-region\",\"met\":true,\"bestScale_um_per_px\":0.5})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the CTA commits (itemCommitted {\"itemId\":\"q-region\",\"modality\":\"pointer\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the polite region says \"Answer saved. You can still change it until you reveal. Press U to reveal.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "committed: the CTA reads \"Reveal U\" and the card \"Answer saved. Press U to reveal…\" [card committed, engine q-region:committed, scheduled false, status \"✓Answer saved. Press U to reveal. You can still change your \"]"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: itemAnswered {modality: pointer, gateMet: true, score: 1} ({\"itemId\":\"q-region\",\"modality\":\"pointer\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the feedback title reads \"Revealed · inside the outline · 1 / 1\" [card revealed, engine q-region:revealed, scheduled false, status \"✓Revealed · inside the outline · 1 / 1Your point is inside t\"]"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: the reference layer is fetched only after U (1 request)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: after reveal the store holds no mark for the item (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: the frozen mark source (z 310) draws it ([{\"id\":\"learn-mark\",\"features\":1}])"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "revealed: the key row \"Answer key (dashed yellow) · CAMELYON16 reference outline, 3.29 mm²Hide key\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "revealed: the CTA reads \"Next step N\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: region item revealed (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: after reveal the active tool is Select (select)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: clicks on the slide after reveal leave the store empty, even with Point chosen again (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: and the polite region says why, naming no class (D17)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: no sentence of items names the class (arks are kept only while a region question is open, so that mark was not kept. | Marks are kept only while a region question is open, so that mark was not kept.)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N reaches step 5, q-sinus"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: Tab reaches the options of q-sinus"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: B checks B (B); 2 checks B too (B)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: D inside the group checks D and leaves the camera unchanged (WASD suppressed: true)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: ↵ on the CTA commits ({\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: says \"Answer saved. You can still change it until you reveal. Press U to reveal.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: option B has .is-correct and the text \"✓ correct\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: the title is \"Correct · B · 1 / 1\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: MCQ revealed (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N reaches step 6, q-size"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-10: before measuring the card reads \"Measure with M (two clicks or two taps).\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-10: two clicks with M: the card shows \"Your measurement · 789.5 µm\" (formatLengthUm of 789.5 µm)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-10: C scores 1 / 1 whatever was measured (\"Correct · C · 1 / 1\"; the score's metric holds only the choice)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N reaches step 7, q-features"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: A, B and D toggle on (ABD)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: A, B, D commit and reveal 0.33 / 1 (\"Partly correct · you chose A, B, D · 0.33 / 1\")"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: A, B and C show \"✓ correct\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: D shows \"✕ your choice\" and \"This describes the lymphocytes.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: multi revealed (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow A: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow A: 172 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4 setup: the region item"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: Enter closes the polygon and moves focus to the card's primary action"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: says \"Polygon closed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the mark row reads \"Your mark · polygon · 5.80 mm²\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the first commit shows the gate warning (gateWarned true, gate-warning)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the warning is said assertively (once; J-I47)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: and not politely as well"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: with the card open, the warning is in the card only (the integrator's banner stays hidden)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the card shows the warning with \"View my mark at 20×\" and \"Commit anyway\" (\"!You have not viewed your mark at 20× yet. Commit now for half credit if it is c…\")"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: gate warning (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: Commit anyway, then U: \"Revealed · IoU 57 % · 0.5 / 1\" (iou 0.567, gateMet false)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: and the half-credit sentence"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow B: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow B: 126 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5 setup: the region item, by N only"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: ⇧↵ opens the panel (aria-modal=\"false\", \"Mark the metastasis without a pointer\"), focus on a region"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: the candidate letters are drawn while the panel is open (4 points, z 450)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: arrow keys go to C"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: Tab reaches \"Fly there: region C at 20 times\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: Fly there puts the camera at 20× over C (1742.5, 1244.6 µm at 0.500 µm/px)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: the radio is still C and the panel stays open beside the slide"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: says \"Flying to region C, …, at 20 times.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: Tab reaches \"Commit C as my mark ↵\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: committed by keyboard ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"confidence\":null}); the panel closed"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5 (AC-A4): the score deep-equals scoreRegion(item, key, {kind: 'mark', mark: point(C)}, log, mpp) (score 1, gate met true)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: modality keyboard, 1 / 1 ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: the assertive sentence is \"Revealed. Your point is inside the outline. 1 of 1.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: no mouse, pointer, wheel or touch event along the way (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow C: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow C: 150 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6 setup (with a 20× view)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: candidates panel, Candidate regions tab (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: candidates panel, Answer in text tab (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: \"Commit my text answer\" commits with modality text ({\"itemId\":\"q-region\",\"modality\":\"text\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: the gatebox reads \"Checked when you reveal: view the area you describe at 20× or more.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: with a sharp 20× view of the target: \"Revealed · rubric 3 / 3 · 1 / 1\", modality text"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow D: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow D: 149 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6 setup (without a 20× view)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: \"Commit my text answer\" commits with modality text ({\"itemId\":\"q-region\",\"modality\":\"text\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: the gatebox reads \"Checked when you reveal: view the area you describe at 20× or more.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: without one: 0.5 / 1 (\"Revealed · rubric 3 / 3 · 0.5 / 1\"; the gate applies to every modality alike)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow E: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow E: 121 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7 setup"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "Enter with Point places a mark at the crosshair, moves focus to the CTA and says \"Point placed. Commit answer has focus. P…\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "focus is on the primary action"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "a keyboard mark commits with modality keyboard ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: Change answer returns the item to awaiting (itemReopened)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: says \"Answer unlocked. Change your mark or confidence, then commit again.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: ⌫ on the committed mark deletes it and reopens the item (awaiting, draft mark null)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: and says \"Answer unlocked…\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow F: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow F: 130 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11 setup (390 × 844 coarse)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: a Point-tool tap places a mark ({\"kind\":\"point\",\"annotationId\":\"4320ba68-ca21-4cf2-859b-bd004574e126\",\"area_um2\":null,\"inputDevice\":\"touch\"})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: the candidates panel is a bottom sheet (390 × 338 px, bottom at 788 of 844)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: candidates panel as a sheet (390 coarse): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: every control of the sheet is ≥ 44 px or spaced (12 checked)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: Fly there closes the sheet so the slide is visible"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: ⇧↵ reopens it on the same region (C checked, focus C)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: every control of the item card is ≥ 44 px or spaced (6 checked)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: region item awaiting (390 coarse): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow G: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow G: 126 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the rail has 5 phases and Open is aria-current=\"step\" (open · screen · examine · decide · complete)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the other four names end \", locked, not yet reached\" (\"Screen, locked, not yet reached\", \"Examine, locked, not yet reached\", \"Decide, locked, not yet reached\", \"Complete, locked, not yet reached\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the card shows \"Step 1 of 10\" (\"Step 1 of 10Open the case\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the title \"Before you look\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the vignette says \"Case (public dataset · no PHI)\" and the D13 vignette"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: Slides \"tumor_014 · H&E · CAMELYON16 · CC0…\" (the module licence id: \"tumor_014 · H&E · CAMEL\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1 / PLY-9: the draft chip \"Draft — pending pathologist review\" shows"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the CTA \"Start the case N\" with keycap N"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the CTA note \"Your place is saved in this browser after every step.\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: the course line \"Stoipath Learn · sample courseModule 1 of 2\", progress bar \"Course progress\" at 0"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1: readiness \"Slides ready · streaming, 1 slideKeyboard: N next, Space play, ? all keys\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-1 / D12: the Open card names the slide by its module label, never the catalogue title"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: Open card (1920): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-2: N advances to step 2 (stepShown {\"moduleId\":\"sln-find-metastasis\",\"stepIndex\":1,\"stepId\":\"survey\",\"kind\":\"tour\",\"phase\":\"screen\",\"source\":\"keyboard\"})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-9: the draft chip shows on step 2"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-2: ⇧N goes back to step 1 ({\"moduleId\":\"sln-find-metastasis\",\"stepIndex\":0,\"stepId\":\"open\",\"kind\":\"tour\",\"phase\":\"open\",\"source\":\"keyboard\"})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-2: a locked phase's button shows the toast {\"title\":\"Not yet\",\"text\":\"Finish the current phase first; Skip to the question is in the card.\"}"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-2: … and moves nothing"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-2: N pressed during a drag changes nothing in #taskCard or #phaseRail while moving (0 mutations; 0 stepShown before the release)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-2: … and the step and the rail update at rest (step 1, rail current screen)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: tour step (1920): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-5: with Select active and nothing selected, Enter on the slide focuses the CTA (btn btn--primary btn--cta)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-5: Enter again runs it (step 1)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "LEARN §10 SC 2.4.3: after a step change from the card, focus is on the step title"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-6: from step 2, Skip to the question opens step 4 (3) and maxStepIndex becomes 3 (3)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 items block N: refused with \"Answer this item first: commit, then reveal (U).\" (U a keycap)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-3: step 3 settles within 0.5 CSS px × scale of (3181.61, 3181.61) at |log2(u′/0.5)| < 0.01 (3181.58, 3181.58 µm at 0.5000)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-3: the hotspot source adds one feature (overlay features 0 → 1; hotspots 1)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-3: the hotspot list (role=\"list\" of buttons): [\"1Lymphoid tissue, lower right20× · fly thereFly ↵\"]"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-3: Fly ↵ on the row re-flies (3181.58, 3181.58 µm at 0.5000)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 tour card: {\"role\":\"group\",\"name\":\"Tour player\",\"btns\":[\"Previous step, shortcut Shift N\",\"Play tour, shortcut Space\",\"Next step, shortcut N\"],\"pos\":\"Step 2 of 2 in this tour\"}"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-11: during a 1 s drag on a tour step nothing changes inside #taskCard or #phaseRail (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow A: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow A: 146 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-5 (1440, drawer closed): Enter on the slide focuses the context bar's action (#ctxCta)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-5 (1440): Enter again runs it"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2: the context bar mirrors the step and its action (\"Step 2 of 10 · Screen Draft — pending pathologist review Survey at low power Task card K Next step N\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-3 (reduced motion): step 3 lands at once (3181.61, 3181.61 µm at 0.5000, one frame after stepShown)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-3: the fly was made instant by reduced motion ({\"view\":{\"kind\":\"view\",\"slide\":\"he\",\"center_um\":[3181.61,3181.61],\"scale_um_per_px\":0.5},\"transition\":\"fly\",\"instant\":true,\"source\":\"keyboard\",\"opened\":false})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow B: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow B: 116 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: autoplay is off at load (aria-pressed=\"false\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: Space on the slide during step 2 starts it ({\"stepId\":\"survey\",\"playing\":true}, aria-pressed=\"true\", \"Pause tour, shortcut Space\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "D19: the dwell is 5 s + 60 ms per character (255 characters → 20300 ms; the player's 20300)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: after the dwell it moves to step 3 (0 before; {\"moduleId\":\"sln-find-metastasis\",\"stepIndex\":2,\"stepId\":\"lymphoid\",\"kind\":\"tour\",\"phase\":\"examine\",\"source\":\"surface\"})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: a pointerdown on the canvas pauses it ({\"stepId\":\"lymphoid\",\"playing\":false}; polite \"Paused.\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: started at step 3 it stops at step 3's end without opening step 4 ({\"stepId\":\"lymphoid\",\"playing\":false}; 0 stepShown)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: … and says \"End of the tour. The next step is a question.\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-4: Space with the Polygon tool active does not toggle it (0 tourPlayback)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow C: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow C: 126 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-7: #m=sln-find-metastasis&s=6 on a fresh context opens step 1 (not reached; step 1)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.1: the fragment is kept current at rest (#m=sln-find-metastasis&s=0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "setup: the case's four items answered by the keyboard (q-region 1/1, q-sinus 1/1, q-size 1/1, q-features 1/1)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-7: history.length is unchanged across 7 step changes (2 → 2; replaceState only)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-9: the draft chip shows on step 8 (the reveal step)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-7: after reaching step 8 and reloading with #s=6 it opens step 7 (7, features)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-7: … and the reached steps are kept"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow D: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow D: 236 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "setup: the case answered by the keyboard"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 reveal step: revealShown {\"moduleId\":\"sln-find-metastasis\",\"itemIds\":[\"q-region\"],\"stepIndex\":7}; \"Show the expert's view ⇧E\" aria-pressed=\"false\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 reveal step: the key of q-region is drawn (7 features)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: reveal step (1440): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.4: leaving the reveal step for a tour step hides the key (0 features)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-9: the draft chip shows on every step reached in this flow (✓ ✓ ✓ ✓ ✓)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-8: after step 9 the summary \"Your results\" ({\"moduleId\":\"sln-find-metastasis\",\"stepIndex\":9,\"stepId\":\"summary\",\"kind\":\"summary\",\"phase\":\"complete\",\"source\":\"keyboard\"})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2: reaching the summary emits moduleCompleted {\"moduleId\":\"sln-find-metastasis\",\"score\":4,\"points\":4}"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-8: 4 items with {score} / 1 and modality (Region marking 1 / 1 keyboard; Lymphatic route 1 / 1 keyboard; Size category 1 / 1 keyboard; Tumour cells or lymphocytes? 1 / 1 keyboard)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-8: the gate \"20× met\" for the gated region item (choice items have none)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-8: the total ring \"Score 4 of 4\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-8: Export results and Next module N (Export results | Start again | Next module N | Back ⇧N)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§8.4: the progress status line \"Your place is saved in this browser after every step.\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: summary (1440): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.7: Export results downloads \"stoipath-learn_sln-find-metastasis_20261109-034040.results.json\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.7: the file parses as a ResultsFile, total {\"score\":4,\"points\":4}, review draft, label string verbatim"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.7: resultsExported {\"moduleId\":\"sln-find-metastasis\",\"bytes\":3779}"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 Start again: the first press reads \"Press again to clear your answers\" and clears nothing"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 Start again: not pressed again within 5 s, it reads \"Start again\" again"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "Next module N opens the orientation module in place (viewer-orientation, step 0, 1 canvas#view, slide openslide.CMU-1-Small-Region)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "… and the fragment follows (#m=viewer-orientation&s=0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-10: the orientation texts render keycaps (DOM kbd.key) for zoomin, zoomout, fit, nav and step:next ({\"step:next\":\"N\",\"zoomin\":\"+\",\"zoomout\":\"−\",\"fit\":\"0\",\"nav\":\"O\"})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-10: no raw \"{cmd:\" survives in the page or the polite region"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-10: the polite step sentence says \"shortcut …\" (\"Step 2 of 5. Zoom and pan. Zoom with shortcut plus and shortcut minus, the mouse wheel or a pinch; pan with the arrow ke…\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-10: … and the polite region spoke one"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "the orientation summary (the last entry) offers \"Back to the course\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "Back to the course opens the Open card with the course outline (step 0; outline \"Modules · 2 of 2 done✓Sentinel lymph node: find the metastas\")"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2: the course progress bar reads 100 with both modules done"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2: a reached phase's button goes to its first step (step 4)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.2 Start again: the second press within 5 s clears the record and the module opens at step 1 (step 0, maxStepIndex 0, completedAt null)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "Start again: says \"Your answers were cleared. …\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow E: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow E: 222 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "PLY-9: the chip is absent on every step of a reviewed module (reviewed; ✓ ✓ ✓ ✓ ✓)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "a module opened without a course ends with \"Back to the start\""
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: summary of a reviewed module (1440): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow F: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow F: 58 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.1 step 5: a slide of another build refuses the module with the plate \"Using the slide viewer was written for a different build of CMU-1-Small-Region · H&E; it was not opened.\" and moduleLoadFailed"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "§5.1 step 5: … and nothing opens (no step, no module, no slide)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow H: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow H: 9 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "phone: the sheet peeks with the step and its action ({\"stem\":\"Before you look\",\"cta\":\"Start the case N\",\"peeking\":true})"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: Open card, phone sheet peeking (390): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: Open card, phone sheet expanded (390): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "phone (coarse): every visible button of the tour card is at least 44 × 44 px (0 smaller)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "axe: tour step, phone (390): 0 violations"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow G: no console or page error (0)"
+  },
+  {
+   "tag": "player",
+   "ok": true,
+   "msg": "flow G: 100 requests, all same-origin GET; no beacon, socket or request body (0 other)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 learner: progress is installed and provides `progress` (services format, scoring, progress, reveal, items, player, course; no `drafts` on the learner page) and __learn.tools.progress()"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 learner: status before any write is idle (\"Your place is saved in this browser after every step.\")"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 stand-in: the example case loads through format.load (http://127.0.0.1:40111/client/learn/examples/sln-find-metastasis.module.json; q-region, q-sinus, q-size, q-features; 9 steps + summary)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 page: load() creates a record at step 1 with every item awaiting (awaiting, awaiting, awaiting, awaiting) and nothing to reconcile"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 page: merely opening a module writes nothing"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 page: five save() calls 100 ms apart produce one put (1: stoipath-learn/session/learn.progress/sln-find-metastasis)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 page: the record in stoipath-learn / session is the last one saved (stepIndex 4, sha256:2a1e210a…)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 page: the course record learn.course/stage0-l1 is derived and cached ({\"status\":\"in-progress\",\"stepIndex\":4,\"steps\":10,\"score\":0,\"points\":4,\"updatedAt\":\"2026-11-09T03:41:27Z\"})"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 page: progress lives in the Learn database only (databases: stoipath-learn)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 at rest: a save, then a 2300 ms drag (the 800 ms debounce ran out during it): the one put lands 15 ms after the pointer was up, not during the gesture"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1 learner page (slide open, progress in use): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-2 resume: after a reload the record opens at step 5 with q-sinus committed with B"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-2 resume: course('stage0-l1') gives the outline its line: \"in progress · step 5 of 10\" (the words are the course module's, LEARN.md §8.2)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-5 Start again: reset() deletes learn.progress/sln-find-metastasis and its course entry (session keys now: learn.course/stage0-l1)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-5 Start again: the module reopens at step 1 with every item awaiting; course status not-started"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-5 Start again: still not-started after a reload"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-1/2/5 learner page: no console or page error (0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3: with indexedDB.open throwing, storage is unavailable (SecurityError: The user denied permission to access the database.)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3: the module still completes in memory (4 items revealed, completedAt 2026-11-09T03:41:36Z; course entry completed)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3: the summary's status line is memory-only: \"Not saved: this browser blocks storage here. Export your results to keep them.\""
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3: Export still works without storage (results parse; 3.33 of 4)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3: the persistent notice shows (\"This browser does not allow saving here; your progress stays until you…\")"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3: the notice is spoken once (1×) and progress adds no second storage sentence (polite region said: \"This browser does not allow saving here;\", \"Sharp. About 2.09 times, 4.79 micrometre\", \"Step 1 of 10. Before you look. This modu\")"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3 storage-blocked page: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-3 page: no console or page error (0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: Export downloads stoipath-learn_sln-find-metastasis_20261109-034138.results.json"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: JSON.parse of the download passes format.parseResults (ok)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: written to /tmp/learn-progress-check-48STrj/stoipath-learn_sln-find-metastasis_20261109-034138.results.json and valid against $defs/ResultsFile by python jsonschema (0 errors)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: no key matches /name|email|user|device|ip/i except title (and inputDevice, the input KIND: keyboard, mouse) (none)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: total 3.33 of 4 equals the sum of the item scores the summary lists (q-region 1, q-sinus 1, q-size 1, q-features 0.33); choice items scored by the real scoring service"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: labelString verbatim, module.review.status \"draft\", the privacy sentence"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: per item answer, modality and gate (q-region: keyboard/true, q-sinus: keyboard/null, q-size: keyboard/null, q-features: pointer/null); 10 of 10 steps"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4: every time is UTC (…Z); no local time-zone offset in the file"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4 page: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-4 page: no console or page error (0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio: progress provides `drafts` (readOnly false) and `progress`"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio: put() resolves true and get() returns the draft deep-equal"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio: list() has one summary per draft, newest first (d-prg6other0 \"Sentinel lymph node: find the metastasis\", d-prg6check0 \"Sentinel lymph node: find the metastasis\")"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio: remove() resolves true; the draft is gone from get and list (d-prg6check0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio: stored in stoipath-learn-studio / session (learn.draft/d-prg6check0, learn.drafts)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio: after a reload get() and list() still return the draft (d-prg6check0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio page: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio page: no console or page error (0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 preview: drafts.readOnly is true and the studio's draft reads back (d-prg6check0)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 preview: put() and remove() resolve false (false, false); the studio database is unchanged"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 preview: the learner's progress there is written to stoipath-learn-preview only (stoipath-learn-preview:learn.progress/sln-find-metastasis)"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 preview page: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "progress",
+   "ok": true,
+   "msg": "PRG-6 studio and preview pages: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "the reveal module is installed and provides `reveal` (services: format, scoring, progress, reveal, items, player, course)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "commands: learn:overlays H (Annotate), expert:toggle ⇧E (The flow (Learn))"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "the registry reports no binding conflict with ⇧E and H (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "six Learn sources on view A's overlay (z 200, 220, 235, 240, 310, 450)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "no Learn source is hit-testable (Select never picks the key)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: no request for camelyon16-expert.geojson at load (nothing is fetched before it is needed)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: key('camelyon16-reference') twice: 1 request for the layer, the same compiled key"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: target 3.291 mm² with 6 Exclusion holes, related small-foci, 10 source features"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: version fixture rejects with the key-version message (\"Key camelyon16-reference was written for version deadbeef of camelyon16-expert; the slide has d94db5bb\")"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: slide-fingerprint fixture rejects (\"Key camelyon16-reference: he was captured on a different build of the slide\")"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: still 1 request after the fixtures (the layer file is cached by URL)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-1: 103 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: N, N, N reach the region item (Identify the metastasis)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: committed (candidate C), and still no request for camelyon16-expert.geojson before U (ITM-8)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: U with tiles held: reveal-waiting (revealWaiting emitted, no itemAnswered; indicator soft)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: the card says \"Reveal is waiting for sharp pixels. {n} tiles in view have not settled (retrying). The key is only scored against the pixels you could actually see.\""
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: … and the assertive region said it once (1)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: the key source is absent while waiting (revealable: not ok, 8 tiles pending)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: tiles released: the indicator is Sharp and the reveal completed with no input (score 1 / 1; key source 7 features)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: the reference layer was requested once, at the reveal (1)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: the key source is --ann-3 dashed, no fill, dark halo ([{\"stroke\":\"--ann-3\",\"dash\":\"dash\",\"width\":\"normal\",\"fill\":false,\"fillAlpha\":null,\"halo\":\"dark\",\"label\":null}])"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: overlay list: learn-key 7 (target outline + 6 Exclusion), learn-related 3, learn-mark 1"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: the frozen mark is candidate C's point, --ann-5 ([[7168,5120]])"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3 revealed: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: the card has one Hide key / Show key button"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: Hide key / Show key: aria-pressed true → false → true; drawn features 11 → 0 → 11"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: H hides every Learn source (drawn features 0 = the annotation store's 0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: … the strip says \"All overlays hidden · H shows them\""
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3 hidden: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: H again restores exactly the previous set (learn-expert:false:0 learn-hotspots:false:0 learn-related:true:3 learn-key:true:7 learn-mark:true:1 learn-candidates:false:4)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-3: … the strip says \"Overlays shown\""
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2/3: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2/3: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2/3: 192 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: with a clock override, Reveal now is absent at 14 s and appears at 15 s (0 → 1)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: … with \"Pixels in view are still not sharp; the answer key will be drawn over a softer view.\""
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2: Reveal now works: the reveal completes over the softer view (key source 7 features, indicator soft)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2 Reveal now: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2 Reveal now: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-2 Reveal now: 182 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: ⇧E before reveal says \"The expert's view unlocks after you reveal Region marking.\" and changes nothing (0 expertViewChanged)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: ⇧E after reveal flies to (1590.60, 1483.88) at 3.000 µm/px (want (1590.6, 1483.88) at 3; off by 0.00 µm)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: the expert source draws all 10 features: 4 Tumor solid, 6 Exclusion dashed, --ann-8"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4 expert view on: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F 1 s drag with the key, related, mark and expert sources shown: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F 1 s drag with the key, related, mark and expert sources shown: no redundant DOM write (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F 1 s drag with the key, related, mark and expert sources shown: 306 of 316 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F 1 s drag with the key, related, mark and expert sources shown: CDP LayoutCount 58 ≤ 198 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F wheel burst with the Learn sources shown: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F wheel burst with the Learn sources shown: no redundant DOM write (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F wheel burst with the Learn sources shown: 338 of 338 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F wheel burst with the Learn sources shown: CDP LayoutCount 39 ≤ 42 frames + 2 and RecalcStyleCount 39 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-F: overlay p95 2.10 ms ≤ 3 or blits 16 > 0 (OVL-4)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: ⇧E again turns it off (no expert features)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: expertViewChanged fired both times (true, false)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-4: 188 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop 1440x900 fit: vertex 0 of Annotation 3 at device (819.7, 388.9): the drawn key matches the engine-projected outline with a shift of 0.00 device px (0, 0; IoU 0.90, unshifted 0.90, 2 px off at best 0.47; 664 vertices, 249 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop 1440x900 20×: vertex 0 of Annotation 3 at device (629.7, 428.9): the drawn key matches the engine-projected outline with a shift of 0.00 device px (0, 0; IoU 0.92, unshifted 0.92, 2 px off at best 0.51; 36 vertices, 203 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop 1440x900: 179 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop-dsf2 1280x800 DSF 2 fit: vertex 0 of Annotation 3 at device (1445.7, 678.0): the drawn key matches the engine-projected outline with a shift of 0.00 device px (0, 0; IoU 0.95, unshifted 0.95, 2 px off at best 0.70; 738 vertices, 1054 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop-dsf2 1280x800 DSF 2 20×: vertex 0 of Annotation 3 at device (1099.3, 757.8): the drawn key matches the engine-projected outline with a shift of 0.00 device px (0, 0; IoU 0.97, unshifted 0.97, 2 px off at best 0.72; 36 vertices, 845 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop-dsf2 1280x800 DSF 2: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop-dsf2 1280x800 DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-5 desktop-dsf2 1280x800 DSF 2: 280 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: panel open: 4 letter points A(9300,1000) B(13088,13088) C(7168,5120) D(6400,13900) at the candidate positions"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: … --ann-8 points carrying the letters A–D"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: … the overlay draws 4 more features (0 → 4)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6 candidates panel open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: panel closed: no letters (0; drawn features 0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: no console or page error (0)"
+  },
+  {
+   "tag": "reveal",
+   "ok": true,
+   "msg": "RVL-6: 133 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "the studio module is installed in studio mode (modules: format, scoring, progress, reveal, item-editor, studio)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "commands: studio:capture ⇧N (The flow (Learn)), studio:stage:next N (The flow (Learn))"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio mode: the registry reports no binding conflicts (none)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "the first screen is the draft list (title Author studio, CTA New module; rail Collect:locked, Record:locked, Edit:locked, Items:locked, Publish:locked; itemEditor service present)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "a stage without a draft shows the toast \"Not yet · Open a draft or start a new module first.\" and moves nothing"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe draft list (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-1: New module opens Collect with focus on Title (meta:title); typing the title suggests the module id sentinel-node-practice (draft d-l3usabo1j7)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-1: a module id \"SLN\" is refused in place (aria-invalid, described by \"Use 3 to 64 lowercase letters, digits or hyphens, starting with a letter or a digit.\"); the draft keeps sentinel-node-practice"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-1: Add tumor_014 (listbox, arrow keys + Enter): licence {\"id\":\"CC0-1.0\",\"text\":\"CC0 1.0 Universal\",\"url\":\"https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/license.txt\"} and fingerprint 15360x15360@0.243094@36864,66560@ deep-equal the catalogue entry's; label \"tumor_014 · H&E\", ref \"tumor-014\""
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-1: the slide list names 5 catalogue entries by name, dataset, stain and licence; no catalogue title anywhere on the page (0 strings with it)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe Collect with a slide (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-1: reload restores draft d-l3usabo1j7 on Collect (title \"Sentinel node practice\", 1 slide; draftSaved seen before the reload)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-2: ⇧N on the slide adds step 1 with center_um (1742.5, 1244.64) = state (1742.500, 1244.640) ± 0.01, scale 0.5 exact, capturedFrom \"st=1&s=camelyon16.tumor_…\""
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-2: the new step's defaults: phase open, title \"Step 1\", empty text, transition fly"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-2: Steps captured so far lists it (11 · Step 1Tour 1 · Open · view at 20×Open)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-3: a point and a polygon selected in the Annotations list (2 selected)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe Record with the Annotations tab open (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-3: Make hotspots from the selection: 2 hotspots (hs-1 \"Hotspot 1\" Point, hs-2 \"Hotspot 2\" Polygon) whose geometry deep-equals the annotations', added to step 1's highlights (hs-1, hs-2)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-4: N on the slide moves Record → Edit; 3 steps (step-1, step-2, step-3), each inheriting the phase before it"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-4: Move up / Move down (pressed with Enter, no pointer, no drag) reorder the steps (step-2, step-1, step-3 → step-1, step-2, step-3)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-4: the phase select refuses Decide for a tour step (reverts to open; aria-invalid; \"A tour step cannot be in Decide: questions are item steps. Add an item step instead.\")"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-4: Delete needs a second press (first: \"Press again to delete\", 3 steps; second: 2 steps left, step-1, step-3)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe Edit with a step selected (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow A (STU-1 … STU-4): no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow A (STU-1 … STU-4): 325 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-5: the region-alternative row is failed (dot dot--fail, \"Every region item needs a keyboard or text alternative (NFR-A5)Fix\") with a Fix button, in a role=\"list\" of 22 checks"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-5: the blocker role=\"alert\" reads \"Publishing is blocked: Every region item needs a keyboard or text alternative (NFR-A5). This is a blocker, not a warning.\" (1 errors: region-alternative)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-5: Export (Export module file, aria-disabled true) and Preview as learner (aria-disabled true) are disabled"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-5: N on Publish exports nothing while errors remain"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe Publish with the blocker (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-5: Fix opens the item editor on q-region (mounted q-region, 1 elements, focus inside it: true; draft d-x0jzt495nl)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe Items with the item editor (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow B (STU-5): no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow B (STU-5): 68 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: importing the committed sln-find-metastasis.module.json makes draft d-mh85zyi9r7 (moduleImported {\"moduleId\":\"sln-find-metastasis\",\"ok\":true,\"errors\":0})"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: the imported case lints with 0 errors in the studio (1 warnings: review-recorded)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe Publish with every check passing (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: Export downloads sln-find-metastasis.module.json byte-equal to format.stringify (16202 bytes; moduleExported {\"moduleId\":\"sln-find-metastasis\",\"bytes\":16202})"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: …and byte-equal to the committed file (D26: committing the export is publishing)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: the exported file is valid by the schema (python Draft202012Validator: 0 errors)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: importing the export makes draft d-mynj57xg4a, whose module deep-equals the original"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: an invalid file sets aria-invalid on the input and the drop zone and lists 6 errors (/: missing required property \"version\" | /: missing required property \"metadata\"); no draft is made"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe draft list with an import error (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-6: a file that is not JSON says \"it is not a JSON file\""
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7: Preview as learner opens learn.html?label=learn-check&preview=d-mh85zyi9r7 in a new tab (mode preview)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7: its databases include stoipath-learn-preview (stoipath-learn-preview, stoipath-learn-studio), empty at start (session 0, annotations 0 entries)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7: it shows \"Preview · progress is not kept\""
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7: the studio's ink (1 annotations on tumor_014 in the studio) is not drawn: overlay features 0 on step 1 and 1 on lymphoid (its one hotspot); preview annotation store 0"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7: completing q-region in the preview (score 1 / 1, modality keyboard) leaves the studio draft record byte-identical (14241 chars)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7: the preview's progress went to stoipath-learn-preview (session keys learn.progress/sln-find-metastasis)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "axe the preview after a reveal (1440 × 900): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7 preview page: no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "STU-7 preview page: 147 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow C (STU-6, STU-7): no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow C (STU-6, STU-7): 99 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio draft list: 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio collect (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio collect (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio record (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio record (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio edit (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio edit (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio items (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio items (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio publish (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 studio publish (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow D (LI-8 desktop 1440x900): no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow D (LI-8 desktop 1440x900): 100 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio draft list: 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio collect (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio collect (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio record (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio record (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio edit (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio edit (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio items (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio items (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio publish (Task tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse studio publish (Annotations tab): 0 violations"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: nothing in the studio card is wider than the card (none)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow D (LI-8 phone 390x844 coarse): no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow D (LI-8 phone 390x844 coarse): 100 requests, all same-origin GET (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record 1 s drag (1440 × 900): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record 1 s drag (1440 × 900): no redundant DOM write (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record 1 s drag (1440 × 900): 249 of 259 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record 1 s drag (1440 × 900): CDP LayoutCount 62 ≤ 184 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record wheel burst (1440 × 900): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record wheel burst (1440 × 900): no redundant DOM write (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record wheel burst (1440 × 900): 398 of 398 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "studio Record wheel burst (1440 × 900): CDP LayoutCount 47 ≤ 50 frames + 2 and RecalcStyleCount 47 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow E (frame cost): no console or page errors (0)"
+  },
+  {
+   "tag": "studio",
+   "ok": true,
+   "msg": "flow E (frame cost): 121 requests, all same-origin GET (0 other)"
+  }
+ ]
+}

@@ -683,3 +683,33 @@ Older case files without the two new fields still read: the comparison falls bac
 - **feedback**: deposit rows print the largest single outline with the span as `({k} foci spanning about {µm} µm)`; more than five clusters → the three largest plus one collapsed row (`REST_ID`) whose Show me fits their extent; the borderline sentence; the neutral survey sentence on negative nodes; a coarse Show me is spoken as `at about 1.6×`.
 - **results**: the cohort counts line labels both breakdowns (`pN: …` and `case class: …`).
 - **source / engine**: array fetches report progress (`ArraysProgress`), and `RangeSource` aborts one only after 48 s with no progress. The stub gained `stream: true` (a slow link that streams its bytes), used by SO-P12.
+
+## 2026-11-09 · sign-out integrator: S3 review fixes, round 2 (keyboard zoom and pan on the uncovered view)
+
+Two reviewed medium issues: on the practice page the keyboard zooms (presets `1`–`6`, typed zoom, `Z`, `+` / `−`) zoomed about the centre of the whole canvas, and `⇧`+arrow stepped by the whole canvas width, although at 1080–1599 px the docked task card covers the right of the canvas. A keyboard-only trainee who pressed `3` from Node 2's tissue fit landed on blank glass (visible centre 19.9 mm instead of 10.0 mm), and a `⇧→` survey skipped about a quarter of each column. SIGNOUT.md §19.6 has what was done and the numbers.
+
+### Contract need (Learn host; additive, recorded here instead of widening a type locally)
+
+The practice page needs the keyboard navigation rows of `LearnCommands` to work on the **uncovered view**, and Learn L1 and the shell must not change. `src/learn/host/engine-ui.ts` gained one additive host option and three methods. The sign-out integrator made the change as a reviewed defect fix in a Learn host file; the Learn integrator owns the file and may move it.
+
+- `EngineChrome.keyInsets: (() => { left; right } | null) | null`, default `null`. The practice page sets it to `() => env.visibleInsets('A')`, Learn's cached read, so it reads no layout.
+- `flyKeepingView(v, lz, kind)`: fly to log zoom `lz` keeping the uncovered centre's world point fixed, `cx' = cx + δ (1/k − 1/k')`. With `keyInsets` null it is the old `flyTo(cx, cy, lz)`. `zoomTo` (presets, typed zoom) and `togglemag` use it.
+- `zoomStep(v, levels)` (`zoomin` / `zoomout`): with `keyInsets` null it is the old `zoomBy(levels)`. Otherwise it is a fly about the uncovered centre, chained on the previous key zoom's target while the camera still eases.
+- `viewportStep(v, uncovered)`: the device-px viewport a key pan steps by. With `keyInsets` set and for `⇧`+arrow, it is the canvas minus the insets. Otherwise, and for the 10 % pan everywhere, it is the whole canvas, as before.
+
+`src/learn/host/commands.ts` routes `pan.viewport:*`, `zoomin`, `zoomout` and `togglemag` through these methods. Its ids, labels, keys and bindings are unchanged, so learn.html's keymap text is the same (SI-1b).
+
+### SI-1 after-S0 values (2026-11-09, revised by the round-2 review fix to `src/learn/host/commands.ts`)
+
+`integrator.check.mjs` reads the last section with this heading. This table supersedes the 2026-11-09 S3 one for `commands.ts`. `navigator.ts` and `scheduler.ts` are unchanged. `src/learn/host/engine-ui.ts` is not on SI-1's list, so its sha256 is given here for information only: `9c81fd0eb3bc943f8763de749c3fec02db47f6722386a6730e2a4db199456d8f`.
+
+| File | sha256 |
+|---|---|
+| `src/learn/host/commands.ts` | `2432ec3c7c3b62826e3ad4bca0dd26cb92f4d8b404915597b9d29c8e73121456` |
+| `src/shell/navigator.ts` | `c0b06231be56e4991e22397b7b70e7227dfe60bd50641245c9d7c02939f9e027` |
+| `src/scheduler.ts` | `01de7e79bc0e5987eba60f6ff65a22a8e3a5f330d67a716e69120fce754e8b32` |
+
+### Notes to owners (informational)
+
+- **Learn integrator**: learn.html never sets `keyInsets`, so its presets, `Z`, `+` / `−` and `⇧`+arrows behave exactly as before; learn-check passes on the same build. L1 has the same drawer at 1080–1599 px. Whether learn.html should opt in too is the Learn owner's call. It would be a one-line change in `src/learn/main.ts`, which SI-1 freezes for this work.
+- **review**: the tray's survey hint (`⇧+↑↓←→ steps one full viewport for systematic coverage`) is accurate now and was kept: one viewport is the uncovered view. REV-7 is new in `review.check.mjs`.

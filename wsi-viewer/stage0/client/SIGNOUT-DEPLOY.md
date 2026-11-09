@@ -9,7 +9,7 @@
 
 **When.** After the owner's review of SIGNOUT.md §15 (the ten draft cases) and the Safari colour check (Q18), and at the time the owner chooses (Q17). Building and testing did not wait for those; publishing does.
 
-**Build.** One `npm run build`, build id `2026-11-09T02:12:38Z` (the `__BUILD_ID__` in the viewer chunk). Every gate of SIGNOUT.md §16 row S3 passed on this build after the S3 review fixes (§19.5). If the orchestrator rebuilds before copying, the hashed names change. In that case, recompute §1 from the new `dist/.vite/manifest.json`: the `signout.html` entry, its `imports` (followed recursively) and its `css`, plus the `assets/decode-worker-*.js` that the viewer chunk names in its code. Keep §4's exclusions.
+**Build.** One `npm run build`, build id `2026-11-09T03:19:33Z` (the `__BUILD_ID__` in the viewer chunk). Every gate of SIGNOUT.md §16 row S3 passed on this build after the S3 review fixes and their second round (§19.5, §19.6). If the orchestrator rebuilds before copying, the hashed names change. In that case, recompute §1 from the new `dist/.vite/manifest.json`: the `signout.html` entry, its `imports` (followed recursively) and its `css`, plus the `assets/decode-worker-*.js` that the viewer chunk names in its code. Keep §4's exclusions.
 
 The tables were computed by a script from the manifest, the chunk texts and the data tree, not written by hand. "On stage0-deploy" compares each file with the local `stage0-deploy` worktree at commit `9d08796` (the Learn L1 publication). Check it again against the branch as it stands when you copy.
 
@@ -19,21 +19,21 @@ The tables were computed by a script from the manifest, the chunk texts and the 
 
 | Path (same on stage0-deploy) | Bytes | sha256 (first 16) | On stage0-deploy |
 |---|---:|---|---|
-| `client/dist/signout.html` | 30,607 | `ae6d9d9d6575b5ea…` | absent (new) |
-| `client/dist/assets/signout-vIAtK_uV.js` | 283,493 | `89c2c04e8102702e…` | absent (new) |
+| `client/dist/signout.html` | 30,607 | `efce8670fad079db…` | absent (new) |
+| `client/dist/assets/signout-BSMEOKp9.js` | 283,545 | `e6d5e3cc45bddf0d…` | absent (new) |
 | `client/dist/assets/signout-C7yIincS.css` | 54,647 | `573050646ba34733…` | absent (new) |
-| `client/dist/assets/sharpness-DTWUOiYk.js` | 262,995 | `14fa5181f5b2161b…` | absent (new) |
+| `client/dist/assets/sharpness-yGL6MC9N.js` | 262,995 | `54e544f26b3eae4a…` | absent (new) |
 | `client/dist/assets/sharpness-BIe6eH59.css` | 86,404 | `4e7da52984cbe808…` | identical (already there) |
-| `client/dist/assets/viewer-CERUASVv.js` | 93,628 | `546b5ef9e04a2512…` | absent (new) |
-| `client/dist/assets/panels-CXs1mHYo.js` | 129,769 | `064782bc70857c13…` | absent (new) |
+| `client/dist/assets/viewer-BCehJxFD.js` | 93,628 | `0aea9f5802066583…` | absent (new) |
+| `client/dist/assets/panels-0R7yMs5c.js` | 130,783 | `96d55b30b02766d1…` | absent (new) |
 | `client/dist/assets/decode-worker-DA5Af6kW.js` | 8,734 | `b2659ff57031281d…` | absent (new) |
 
-Total 950,277 bytes.
+Total 951,343 bytes.
 
 Notes:
 - **Nothing is overwritten.** Every asset name is content-hashed. Seven of the eight files are new names on the branch; `sharpness-BIe6eH59.css` is already there with identical bytes. `signout.html` is a new page.
 - **The decode worker is new.** Wave S0 added the range path to `decode-worker.ts`, and the S3 review fixes added array progress notes (§19.5), so its bytes changed and it has a new content-hashed name (`decode-worker-DA5Af6kW.js`). The published `index.html`, `shell.html` and `learn.html` keep loading their own older workers (`decode-worker-CHXeosd7.js`, `decode-worker-DZQUwclY.js`), which stay on the branch untouched.
-- **Shared chunks are new names.** In this build `viewer-*.js`, `sharpness-*.js` and `panels-*.js` are shared between `signout.html` and this build's `learn.html` / `shell.html` (and `viewer-*.js` with this build's `index.html`). The scheduler and navigator changed in S0 (the scheduler again in the S3 review fixes, §19.5, inert without a range source), and Rollup split the Learn host code into a `panels` chunk (§19.1 J-E7). None of these names is on the branch, and the published pages load their own older chunks. Copying this graph therefore changes no byte that a published page loads.
+- **Shared chunks are new names.** In this build `viewer-*.js`, `sharpness-*.js` and `panels-*.js` are shared between `signout.html` and this build's `learn.html` / `shell.html` (and `viewer-*.js` with this build's `index.html`). The scheduler and navigator changed in S0 (the scheduler again in the S3 review fixes, §19.5, inert without a range source), Rollup split the Learn host code into a `panels` chunk (§19.1 J-E7), which the second review round changed again (keyboard zoom and pan on the uncovered view, §19.6; learn.html's behaviour is unchanged). Every hashed name also changes with the build id. None of these names is on the branch, and the published pages load their own older chunks. Copying this graph therefore changes no byte that a published page loads.
 - **What the page may fetch.** The CSP meta (D21) is `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://camelyon-dataset.s3.amazonaws.com; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'self'`. The page's own request guard and the index allowlist (§8.6) limit slide reads to the bucket host. Tile reads are made by the decode workers as single closed `Range` GETs (SO-P7, SO-P9). The page needs no web font, CDN or analytics.
 - **Delete nothing** under `client/dist/assets/`.
 
@@ -205,11 +205,11 @@ Nothing already published is required by this page. In particular `data/catalogu
 | Path | Why |
 |---|---|
 | `client/dist/index.html` | the measurement page is frozen; the published one stays |
-| `client/dist/assets/index-B14W9mWD.js` | the measurement page's entry chunk (frozen) |
+| `client/dist/assets/index-B3XOP0mZ.js` | the measurement page's entry chunk (frozen) |
 | `client/dist/learn.html` | Learn L1 keeps its published build unless the owner redeploys L1 on purpose |
-| `client/dist/assets/learn-BJNVSCdc.js` | this build's Learn L1 entry chunk (not needed by `signout.html`) |
+| `client/dist/assets/learn-CNwSfs7Y.js` | this build's Learn L1 entry chunk (not needed by `signout.html`) |
 | `client/dist/shell.html` | the research shell keeps its published Phase A build |
-| `client/dist/assets/shell-5rSbc-XJ.js` | this build's shell entry chunk |
+| `client/dist/assets/shell-CN-8h_0Q.js` | this build's shell entry chunk |
 | `client/dist/assets/shell-y4bCx_os.css` | this build's shell stylesheet |
 | `client/dist/.vite/manifest.json` | build metadata, not served |
 | `any `*.tif`, tile, `.npy` or offset-array file` | slides stay in the CAMELYON17 bucket; nothing of a slide is copied (the Pages site is at about 668 MB of its 1 GB budget) |

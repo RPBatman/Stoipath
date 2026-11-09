@@ -503,6 +503,7 @@ Polite, at settle, ≤ 1 per 500 ms (coalesced 120 ms, J-I14): `Node {n} of 5 op
 | `H` | `learn:overlays` (feedback) | window | sign-out sources only |
 | `T`, `M`, `V` | draw-tools | window | Point (flags), Measure, Select; the rail discloses `select`, `point`, `measure` during Review and `select`, `measure` elsewhere; `P` `F` `X` `E` stay on keys and are refused by review's flag rule when used (the mark is removed with the sentence) |
 | `K` | `card:toggle` (integrator) | window | unchanged |
+| `1`–`6`, typed zoom, `Z`, `+` / `−`, `⇧`+arrows | Learn's navigation rows (integrator) | window | on this page they work on the **uncovered view** (the canvas minus the docked task card at 1080–1599 px): zooms keep its centre fixed and `⇧`+arrow steps by its width, through the additive `EngineChrome.keyInsets` (§19.6); learn.html leaves it unset and is unchanged |
 | `A`–`H`, `1`–`8` | — | — | **not** consumed inside the report form (the radiogroups use arrows; the presets `1`–`6` keep their meaning everywhere, since a trainee zooms while filling the form) |
 | `Space` | held-pan only | — | no tour here |
 | `⇧↵`, `U`, `⇧D`, `⇧Q`, `⇧K`, `B`, `⇧S`, `C`, `R`/`⇧R` | refusals (integrator) | window | §9.1 |
@@ -1128,6 +1129,37 @@ Two independent reviews of the S3 build (a pathologist-educator / accessibility 
   - outage: Sharp at +10 s after recovery, where before the fix it stayed 0.276 for 30 s;
   - slow link: with the stub's non-streaming `kbps`, the progress-aware deadline still closes the stalled request at 48 s, as intended (E-M1). With `stream: true`, level 0 was resident at +67 s.
 
+
+### 19.6 Sign-out integrator, S3 review fixes round 2 (2026-11-09)
+
+A hands-on keyboard-only review of the S3 fixed build found two medium issues, both in Learn host files the practice page reuses. Both were applied. Neither was judged wrong: the reviewer's numbers were reproduced before the fix (below). Learn L1, the shell and the measurement page are unchanged. learn.html never sets the new option, and SI-1b, learn-check, shell-check and check-metrics pass on the same build. `SIGNOUT-QUESTIONS.md` has the dated section: the contract need, and a revised SI-1 after-S0 sha256 for `commands.ts`.
+
+- **K-M1 · keyboard zoom left the tissue (`src/learn/host/engine-ui.ts`, `commands.ts`; medium).** The presets `1`–`6`, typed zoom, `Z` and `+` / `−` zoomed about the centre of the whole canvas. At 1080–1599 px the docked task card covers the right of the canvas (340 CSS px at 1440 × 900). So from Node 2's tissue fit, which is inset-aware, `3` moved the visible centre from x 10.0 mm to 19.9 mm, onto blank glass. Keyboard-only trainees then had fewer nodes `examined` and `viewed at 10×` in their trace and export.
+  - `EngineChrome.keyInsets` is a new additive host option, null by default. The practice page sets it to Learn's cached `visibleInsets('A')` (no layout read).
+  - When it is set, `zoomTo` (presets, typed zoom), `togglemag` and `zoomin` / `zoomout` fly about the centre of the uncovered span, keeping its world point fixed: `cx' = cx + δ (1/k − 1/k')`. Consecutive `+` presses chain on the previous target while the camera eases.
+  - When it is null, each path is the old call exactly: `flyTo(cx, cy, …)`, `zoomBy(±1)`.
+  - Checks: REV-7 in `review.check.mjs`. From the tissue fit on c17-01 Node 2 at 1440 × 900, `3` keeps the visible centre within one tissue cell of the tissue-box centre (measured 9.99 → 9.99 mm against 9.99 mm). `+` then `−` keep it within one CSS px.
+  - On the pre-fix build (S3 `client/dist`) the same rows fail: 9.99 → 19.94 mm, and + / − drift 11.408 → 11.578 mm.
+  - Real bytes from the range cache (`fix-r2/hands/zoomc.mjs`): at the fit the visible centre is 10.02 mm. After `3` it is 9.99 mm, the HUD chip reads `Node 2 of 5 · not yet viewed at 10×` instead of `no tissue in this view`, and the screenshot shows the node's capsule and sinus.
+- **K-M2 · `⇧`+arrow skipped strips under the card (`commands.ts`, `engine-ui.ts`; medium).** `Pan one viewport` stepped by the whole canvas width. At 1440 × 900 and 5× that is 2,752 µm, while the uncovered view is 2,072 µm wide, so a survey that followed the tray's hint never saw about a quarter of each column.
+  - With `keyInsets` set, `⇧`+arrow now steps by the uncovered span (`viewportStep`). The 10 % arrow pan is unchanged.
+  - *Judgement call:* the tray hint `⇧+↑↓←→ steps one full viewport for systematic coverage` was kept, because it is now true of the view the trainee sees. The step is exactly the uncovered width, with no overlap added: REV-7 measured a gap of 0.1 level-0 px, about a hundredth of a screen pixel at 5×.
+  - Check: REV-7. Two `⇧→` steps at 5× give trace rectangles that touch, with a step of 8,523 level-0 px equal to the uncovered width. The row also requires a whole step (≥ 98 % of the width), so a step clamped at the slide's edge cannot pass. On the pre-fix build it fails (step 1,895 px from the blank-glass landing, gap −6,628 px).
+  - Real bytes: step 8,523 px, width 8,523 px, gap 0.0 px. Both views were not yet Sharp: the run was cache-only (`network: false`), and the strip said the host was not answering for the uncached 5× tiles.
+- **Other judgement calls.**
+  - The fix lives in the Learn host. A practice-page override of the `mag:*` / `zoomin` / `zoomout` / `togglemag` / `pan.viewport:*` rows was the alternative, but it would have duplicated the registry rows and their keymap text. The additive option keeps one row set, so SI-1b's learn.html keymap comparison passes unchanged.
+  - `0` (`Fit whole slide`) is not inset-aware on either page, as before. Opening a node and `Fit tissue` are.
+  - learn.html has the same drawer at 1080–1599 px. Opting it in is the Learn owner's call (SIGNOUT-QUESTIONS.md).
+- **Deploy list.** `SIGNOUT-DEPLOY.md` was recomputed from the gate build: 8 page files, 951,343 B. The new names are `signout-BSMEOKp9.js`, `panels-0R7yMs5c.js`, `viewer-BCehJxFD.js` and `sharpness-yGL6MC9N.js`. The viewer and sharpness chunks have new names only through the build id, because no engine file changed. The worker is unchanged (`decode-worker-DA5Af6kW.js`). `data/signout/` is unchanged: 136 files, 2,249,388 B.
+
+**Gate numbers (S3 review fixes round 2, 2026-11-09; one `npm run build` into `client/dist`, build id `2026-11-09T03:19:33Z`).** `src/main.ts`, `src/shell/main.ts`, `src/learn/main.ts`, `index.html`, `shell.html` and `learn.html` keep their sha256 (checked before and after the gate).
+- tsc `--noEmit`: clean.
+- `harness/signout-check.mjs --phase-a --ref-dist <L1 final dist> --learn-ref-dist <L0 baseline> --axe <axe-core 4.10.3>` (the §19.5 invocation, with the range cache), exit 0 in 1,419 s:
+  - **integrator 387 ok**, including SI-1 on the revised `commands.ts` sha256 and SI-1b, whose learn.html keymap text is equal to the L1 final build's.
+  - **modules 466 ok**: worklist 87, results 43, review 51 (48 + the three REV-7 rows), report 62, feedback 197, content 23, plus 3 library rows.
+  - **SI-2 on the same build:** run.mjs exit 0, check-metrics **20 ok**; shell-check **190 ok**; tools-check (`--axe`) **628 ok**; unit.mjs **4,127 ok**; learn-check **1,144 ok, 0 FAIL** (no timing re-run needed); python **OK**.
+- `harness/signout/source.check.mjs --dist client/dist --dist-abort <S0's abort build> --dist-pre <L1 final dist>`: **60 ok, 0 FAIL**.
+- Screenshots looked at: `zoomc-fit.png`, `zoomc-5x.png` and `panreal-2steps.png` in `<scratch>/signout/fix-r2/hands/`, all real bytes at 1440 × 900.
 
 ---
 

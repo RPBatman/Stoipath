@@ -172,7 +172,11 @@ export class LearnCommands implements KeyScopeHost {
     const pan = (dx: number, dy: number, f: number): void => {
       const v = engine();
       if (v === null) return;
-      v.commands.panBy(-dx * f * v.snapshot.viewW, -dy * f * v.snapshot.viewH);
+      // ⇧+arrow (f = 1) steps by the chrome's viewport: the whole canvas, or the uncovered span when the page set
+      // `chrome.keyInsets` (the practice page, SIGNOUT.md §19.6); learn.html leaves it null, so nothing changes there.
+      // The 10 % pan stays a tenth of the canvas.
+      const [w, h] = d.chrome.viewportStep(v, f === 1);
+      v.commands.panBy(-dx * f * w, -dy * f * h);
     };
     const rows: ShellCommand[] = [
       { id: 'pan', owner: OWNER, group: NAV, label: 'Pan 10 %', keys: [['←', '↑', '↓', '→'], ['W', 'A', 'S', 'D']], keymapOnly: true },
@@ -188,8 +192,30 @@ export class LearnCommands implements KeyScopeHost {
         { id: `pan:${dir}`, owner: OWNER, group: NAV, label: `Pan ${dir}`, keymapOnly: true, bindings: [w(arrow), w(letter)], run: () => pan(dx, dy, 0.1) },
         { id: `pan.viewport:${dir}`, owner: OWNER, group: NAV, label: `Pan one viewport ${dir}`, keymapOnly: true, bindings: [w(arrow, { shift: true })], run: () => pan(dx, dy, 1) },
       ]),
-      { id: 'zoomin', owner: OWNER, group: NAV, label: 'Zoom in 2×', keys: [['+'], ['=']], bindings: [w('+'), w('=')], run: () => engine()?.commands.zoomBy(1) },
-      { id: 'zoomout', owner: OWNER, group: NAV, label: 'Zoom out 2×', keys: [['−']], bindings: [w('-')], run: () => engine()?.commands.zoomBy(-1) },
+      {
+        id: 'zoomin',
+        owner: OWNER,
+        group: NAV,
+        label: 'Zoom in 2×',
+        keys: [['+'], ['=']],
+        bindings: [w('+'), w('=')],
+        run: () => {
+          const v = engine();
+          if (v !== null) d.chrome.zoomStep(v, 1);
+        },
+      },
+      {
+        id: 'zoomout',
+        owner: OWNER,
+        group: NAV,
+        label: 'Zoom out 2×',
+        keys: [['−']],
+        bindings: [w('-')],
+        run: () => {
+          const v = engine();
+          if (v !== null) d.chrome.zoomStep(v, -1);
+        },
+      },
       {
         id: 'fit',
         owner: OWNER,
@@ -231,7 +257,7 @@ export class LearnCommands implements KeyScopeHost {
           }
           const target = d.chrome.prevLogZoom;
           d.chrome.prevLogZoom = v.snapshot.logZoom;
-          v.commands.flyTo(v.snapshot.cx, v.snapshot.cy, target, 'preset', d.env.reducedMotion());
+          d.chrome.flyKeepingView(v, target, 'preset');
         },
       },
       { id: 'zoom:type', owner: OWNER, group: NAV, label: 'Type a zoom (× or µm/px)', meta: 'Enter on the magnification readout', keys: [['↵']], run: () => d.chrome.openTypedZoom() },
