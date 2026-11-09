@@ -26,7 +26,8 @@
 //   SI-11 the stub switched to fail then ok through its control endpoint: plate ≤ 10 s, submit, Show me's coordinates
 //         sentence, Retry draws;
 //   SO-P1 … SO-P8 (P3b, P6b) on the practice page at the DSFs §13 names (SO-P7's ignore-range half and SO-P10/11 stay in
-//         source.check.mjs, which the gate runs standalone).
+//         source.check.mjs, which the gate runs standalone). SO-P8 is gated against DECODE_CONTROL, a matched control
+//         decode on the same machine at the same moments; the absolute 10 ms device budget is reported (§19.8).
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
@@ -34,7 +35,7 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fbTree } from './feedback.check.mjs';
-import { TISSUE } from './range-server.mjs';
+import { POOL_BASE, TISSUE } from './range-server.mjs';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const clientDir = resolve(here, '..', '..');
@@ -692,7 +693,101 @@ const FETCH_LOG = () => {
     return post.call(this, m, ...rest);
   };
 };
-const ANSWER = /patient_|macrometastasis|micrometastasis|isolated tumour cells/i;
+/**
+ * SO-P8's same-machine reference (SIGNOUT.md §13, §19.8): a harness-owned "control" worker that, while armed, decodes the
+ * tile of every range / blank request the page hands a decode worker, at that moment, with the steps decode-worker.ts
+ * takes between tBody and tDecoded (splice tables + APP14, Blob, createImageBitmap with the crop and DECODE_OPTS, the
+ * half-size 'high' mip; for a blank URL the ImageData bitmap and the mip). It sees the same tiles, the same browser and
+ * the same CPU load (SwiftShader drawing and uploading on the same cores) as the product's decodes, so the ratio of the
+ * two p50s is a property of the pipeline, not of the runner. arm(spec): spec.prefix = base64 tables (- EOI) [+ APP14],
+ * spec.tiles = { '<off>-<len>': base64 tile bytes }; stop() → { n, ms[], unknown }.
+ */
+const DECODE_CONTROL = () => {
+  const post = Worker.prototype.postMessage;
+  const S = { worker: null, ms: [], unknown: 0, armed: false };
+  const src = `
+    const O = { colorSpaceConversion: 'none', premultiplyAlpha: 'none' };
+    let prefix = null; const tiles = new Map(); const blanks = new Map();
+    const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+    async function mip(bmp) {
+      return createImageBitmap(bmp, { ...O, resizeWidth: Math.max(1, Math.ceil(bmp.width / 2)), resizeHeight: Math.max(1, Math.ceil(bmp.height / 2)), resizeQuality: 'high' });
+    }
+    async function blank(tw, th, rgb) {
+      const k = tw + 'x' + th + '/' + rgb.join(',');
+      let img = blanks.get(k);
+      if (img === undefined) {
+        img = new ImageData(Math.max(1, tw), Math.max(1, th));
+        const d = img.data;
+        for (let i = 0; i < d.length; i += 4) { d[i] = rgb[0]; d[i + 1] = rgb[1]; d[i + 2] = rgb[2]; d[i + 3] = 255; }
+        if (blanks.size >= 8) blanks.clear();
+        blanks.set(k, img);
+      }
+      return createImageBitmap(img, O);
+    }
+    onmessage = async (ev) => {
+      const m = ev.data;
+      if (m.type === 'spec') { prefix = b64(m.prefix); for (const [k, v] of Object.entries(m.tiles)) tiles.set(k, b64(v)); return; }
+      let r = /^stoipath-range:(\\d+)-(\\d+)\\/(\\d+)x(\\d+)$/.exec(m.url);
+      const t0 = performance.now();
+      let bmp;
+      if (r !== null) {
+        const tile = tiles.get(r[1] + '-' + r[2]);
+        if (tile === undefined || prefix === null) { postMessage({ unknown: true }); return; }
+        const out = new Uint8Array(new ArrayBuffer(prefix.length + tile.length - 2));
+        out.set(prefix, 0);
+        out.set(tile.subarray(2), prefix.length);
+        bmp = await createImageBitmap(new Blob([out], { type: 'image/jpeg' }), 0, 0, Number(r[3]), Number(r[4]), O);
+      } else if ((r = /^stoipath-blank:(\\d+)x(\\d+)\\/(\\d+),(\\d+),(\\d+)$/.exec(m.url)) !== null) {
+        bmp = await blank(Number(r[1]), Number(r[2]), [Number(r[3]), Number(r[4]), Number(r[5])]);
+      } else { postMessage({ unknown: true }); return; }
+      const mp = await mip(bmp);
+      const ms = performance.now() - t0;
+      bmp.close(); mp.close();
+      postMessage({ ms });
+    };`;
+  window.__decodeControl = {
+    arm(spec) {
+      S.worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })), { name: 'so-p8-control' });
+      S.worker.onmessage = (e) => (e.data.unknown ? S.unknown++ : S.ms.push(e.data.ms));
+      post.call(S.worker, { type: 'spec', prefix: spec.prefix, tiles: spec.tiles });
+      S.ms = [];
+      S.unknown = 0;
+      S.armed = true;
+    },
+    async stop() {
+      S.armed = false;
+      await new Promise((r) => setTimeout(r, 300)); // let the last control decodes answer
+      S.worker?.terminate();
+      return { n: S.ms.length, ms: S.ms.slice(), unknown: S.unknown };
+    },
+  };
+  Worker.prototype.postMessage = function (m, ...rest) {
+    if (S.armed && this !== S.worker && m !== null && typeof m === 'object' && m.type === 'fetch' && typeof m.url === 'string' && m.url.startsWith('stoipath-')) post.call(S.worker, { type: 'decode', url: m.url });
+    return post.call(this, m, ...rest);
+  };
+};
+/** DECODE_CONTROL's spec for a virtual object: the splice prefix of decode-worker.ts setSource() and every pool tile by range. */
+function decodeControlSpec(vs) {
+  const L = vs.layout;
+  let t = vs.read(POOL_BASE + L.tables.at, POOL_BASE + L.tables.at + L.tables.length - 1);
+  if (t.length >= 2 && t[t.length - 2] === 0xff && t[t.length - 1] === 0xd9) t = t.subarray(0, t.length - 2);
+  const APP14 = Buffer.from([0xff, 0xee, 0x00, 0x0e, 0x41, 0x64, 0x6f, 0x62, 0x65, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00]);
+  const prefix = L.photometric === 'rgb' && t.length >= 2 ? Buffer.concat([t.subarray(0, 2), APP14, t.subarray(2)]) : t;
+  const tiles = {};
+  for (const tile of L.tiles) {
+    if (tile.length <= 0) continue;
+    const off = POOL_BASE + tile.at;
+    tiles[`${off}-${tile.length}`] = vs.read(off, off + tile.length - 1).toString('base64');
+  }
+  return { prefix: prefix.toString('base64'), tiles };
+}
+/**
+ * SO-P8's gate factor: product decode p50 ≤ SO_P8_FACTOR × the matched control's p50 (SIGNOUT.md §19.8 has the data it
+ * was chosen from). The absolute 10 ms of §13 is the device budget; it is reported, and gated only through this ratio.
+ */
+const SO_P8_FACTOR = 1.5;
+const SO_P8_BUDGET_MS = 10;
+const ANSWER =/patient_|macrometastasis|micrometastasis|isolated tumour cells/i;
 const CALLS_017 = ['negative', 'negative', 'macro', 'macro', 'micro'];
 const STEP = { negative: 0, itc: 1, micro: 2, macro: 3 };
 const PN_ORDER = ['pN0', 'pN0(i+)', 'pN1mi', 'pN1', 'pN2'];
@@ -1320,7 +1415,7 @@ async function waveS2(ctx, { open, noErrors, sections = null }) {
   ]) {
     const dsf = vp.dsf;
     const tag = `${H.vpTag(vp)}`;
-    const { ctx: c, page, errors, reqs } = await open(vp, { initScripts: [FETCH_LOG] });
+    const { ctx: c, page, errors, reqs } = await open(vp, { initScripts: [FETCH_LOG, ...(dsf === 1 ? [DECODE_CONTROL] : [])] });
     try {
       await boot(page, 'si-main');
       const m0 = mark();
@@ -1357,6 +1452,9 @@ async function waveS2(ctx, { open, noErrors, sections = null }) {
         SO.level1Arrays_B = a1[0]?.bytes ?? null;
       }
       // SO-P6: the scripted node review on Node 3 (patient_017_node_2): fit → 5× pan 3 screens → 20× on a deposit → 40×
+      // SO-P8's matched control decodes alongside every tile request from here to the SO-P8 sample (the same window as the
+      // engine's decode metrics, which start with Node 3's viewer)
+      if (dsf === 1) await page.evaluate((spec) => window.__decodeControl.arm(spec), decodeControlSpec(vsOf(2)));
       await page.evaluate(() => window.__signout.test.openNode(2));
       await waitNode(page, 2, true);
       const m3 = mark();
@@ -1388,8 +1486,23 @@ async function waveS2(ctx, { open, noErrors, sections = null }) {
       SO[`${dsfLabel} review`] = { egressBytes: egress, requests: rv.length, tilesTwice: twice, tiles: fetched };
       if (dsf === 1) {
         const dec = await page.evaluate(() => window.__stage0.summary().tiles.decodeMs);
-        check(TAG, dec.p50 !== null && dec.p50 <= 10, `SO-P8 ${tag}: decode p50 ${dec.p50} ms per tile (≤ 10 ms; worker tDecoded − tBody, n ${dec.n}, p95 ${dec.p95})`);
+        const ctl = await page.evaluate(() => window.__decodeControl.stop());
+        const cs = ctl.ms.slice().sort((a, b) => a - b);
+        const cq = (p) => (cs.length ? cs[Math.min(cs.length - 1, Math.floor(p * cs.length))] : null);
+        const c50 = cq(0.5);
+        const limit = c50 === null ? null : SO_P8_FACTOR * c50;
+        const met = dec.p50 !== null && dec.p50 <= SO_P8_BUDGET_MS;
+        check(
+          TAG,
+          dec.p50 !== null && c50 !== null && ctl.n >= 40 && ctl.unknown === 0 && dec.p50 <= limit,
+          `SO-P8 ${tag}: decode p50 ${dec.p50} ms per tile (worker tDecoded − tBody, n ${dec.n}, p95 ${dec.p95}) ≤ ${SO_P8_FACTOR} × the matched control's p50 ${c50?.toFixed(1)} ms = ${limit?.toFixed(1)} ms (the same tiles decoded the same way at the same moments in a harness worker on this machine; n ${ctl.n}, p95 ${cq(0.95)?.toFixed(1)}, ${ctl.unknown} unknown; ratio ${c50 ? (dec.p50 / c50).toFixed(2) : '—'}); device budget ${SO_P8_BUDGET_MS} ms (§13): ${met ? 'met' : 'not met'} on this machine (recorded)`,
+        );
         SO.decodeP50_ms = dec.p50;
+        SO.decodeP95_ms = dec.p95;
+        SO.decodeControlP50_ms = c50 === null ? null : Number(c50.toFixed(2));
+        SO.decodeRatio = c50 ? Number((dec.p50 / c50).toFixed(2)) : null;
+        SO.decodeBudget_ms = SO_P8_BUDGET_MS;
+        SO.decodeBudgetMet = met;
         // SO-P6b: Node 3 at 20×, switch to Node 4, return to Node 3: zero array requests on the return (the LRU, ER-8)
         await jump(page, dx, dy, logZoomFor(k, 0.5, dsf));
         await waitSharp(page);

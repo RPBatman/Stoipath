@@ -557,7 +557,7 @@ Measured by `harness/signout/source.check.mjs` (SO-P) on the local range stub (l
 | SO-P6 | Egress for the scripted node review (tissue fit → 5× pan 3 screens → 20× on a deposit → 40× once) ≤ 15 MB at DSF 1 and recorded at DSF 2; tiles fetched twice ≤ 5 % of tiles fetched | request log |
 | SO-P6b | Open node 3, jump to 20×, switch to node 4, return to node 3: the return makes **zero** array requests (the LRU, ER-8); tile bytes on the return are recorded and `fromDiskCache` hits counted | request log + CDP `Network.responseReceived` |
 | SO-P7 | Every request to the slide host is a GET with one `Range: bytes=a-b` (no comma, no open end), answered 206. With the stub in `ignore-range` mode (a 200 whole object streamed at ≤ 2 MB/s): the worker posts `not a partial response (HTTP 200)`, no tile is drawn, the stub sees the socket closed within 1 s and has written < 4 MB (replaces the unmeasurable "≤ 64 KB read": loopback socket buffers take the whole blob before the abort; ER-12) | stub log + bus |
-| SO-P8 | Decode p50 ≤ 10 ms per tile (worker `tDecoded − tBody`) | metrics summary |
+| SO-P8 | Decode p50 ≤ 10 ms per tile (worker `tDecoded − tBody`) on the target device: the **device budget**, reported on every run (`decodeP50_ms`, `decodeBudgetMet` in the SO-P measurements). **Gated hardware-relative** (§19.8): on the scripted review of Node 3 at DSF 1, decode p50 ≤ 1.5 × the p50 of a *matched control*, a harness worker that decodes the tile of every range or blank request at the moment the page makes it, with the worker's own steps (splice, `createImageBitmap` with the crop, the half-size mip), so it shares the tiles, the browser and the CPU load (SwiftShader) of the run | metrics summary + the control's samples (`decodeControlP50_ms`, `decodeRatio`) |
 | SO-P9 (network, informational) | On `patient_086_node_3` (0.48 GB, centre 4, F§5) the first view and one 20× jump complete, total bytes ≤ 3 MB; recorded in the results JSON | request log |
 | SO-P10 (S0; decides `RANGE_SOFT_CANCEL`) | The scripted review at an emulated 40 ms RTT under the two soft-cancel policies on the range path (abort · finish): new connections to the slide host (CDP `connectionId`, `connectionReused`) and time to sharp; the faster policy is adopted and logged in §19.1 (ER-10) | CDP network events |
 | SO-P11 (S0) | The level gate: with the stub's array ranges delayed 2 s, the view draws resident ancestors meanwhile, no watchdog fires, no tile is marked failed, and the level draws when the arrays land without a reload; with the arrays failing once and then recovering, the same (ER-2) | bus + `__stage0` counters |
@@ -1177,6 +1177,57 @@ Final verification found one low defect on the practice page, and CI found a Lea
 - tsc `--noEmit`: clean. run.mjs exit 0, check-metrics **20 ok**; shell-check **190 ok**; tools-check (`--axe`) **628 ok**; unit.mjs **4,144 ok** in 30 files; learn-check (J-I48's invocation) **1,150 ok** (LEARN.md J-I50); `python3 -I -m unittest discover tools/tests` **95 tests OK**.
 - `harness/signout-check.mjs --phase-a --ref-dist <L1 final dist> --learn-ref-dist <L0 baseline> --axe <axe-core 4.10.3>` (the §19.5 invocation, with the range cache), exit 0 in 1,429 s: **868 ok, 0 FAIL**. Integrator 387; modules 474 (worklist 87, results 51 with RES-7's 8, review 51, report 62, feedback 197, content 23, library rows 3); SI-2 on the same build: run.mjs, check-metrics 20, shell-check 190, tools-check 628, unit 4,144, learn-check 1,150, python OK.
 - `SIGNOUT-DEPLOY.md` §1 was recomputed by script from this build's manifest: 8 page files, 954,047 B. New names: `signout-cJsLXdBx.js`, `sharpness-CeiNsMj0.js`, `viewer-Bud8-SUp.js`, `panels-3crOAU6U.js`. The worker is unchanged (`decode-worker-DA5Af6kW.js`).
+
+### 19.8 SO-P8 on the CI runner: a device budget asserted on unknown hardware (2026-11-09)
+
+CI (`stage0-ci.yml`, GitHub `ubuntu-24.04`, 4 vCPU, SwiftShader) failed the signout gate on both attempts with one line: `SO-P8 desktop 1440x900: decode p50 10.1 ms per tile (n 148, p95 25)`, and on the re-run 10.8 ms (p95 21.5). Locally the same check reads 5.3–5.6 ms. Every other gate was green on CI. The question was whether the product decodes slowly on four cores, or whether the check asserts an absolute device budget on hardware it does not know.
+
+- **What `tDecoded − tBody` measures.** It is wall time in the decode worker from the last body byte to the decoded tile and its mip. For a range tile that is the splice copy, `createImageBitmap(blob, crop)` and the half-size `'high'` mip. For a blank tile (`stoipath-blank:`) it is an `ImageData` fill and the mip, with no JPEG decode. It does not include queueing in the pool or the fetch, because `tBody` comes after the fetch. It does include time when the worker's thread, or the decoder thread behind `createImageBitmap`, waits for a CPU.
+- **Breakdown on this machine.** This used an instrumented test build (scratch only; 4 vCPU Xeon 2.3 GHz, the same Playwright 1.63 headless shell and SwiftShader as CI):
+  - Of 214 tiles answered on the page, 72 are blank (p50 1.6 ms).
+  - JPEG tiles: p50 7.3 ms, of which `createImageBitmap` takes 6.1 and the mip 1.0.
+  - 18 % of the JPEG tiles had another decode running in the same worker.
+  - The same tiles, decoded one at a time in an idle worker, take 3.3–3.8 ms (decode 2.4 + mip 1.0). So a decode during the review takes about twice as long as an idle one.
+  - When tiles arrive the machine is busy: median 78 % CPU utilisation, measured from `/proc/stat`. That time goes to the page's own drawing and uploads in SwiftShader.
+- **Product causes ruled out.** None of these is the cause:
+  - *Worker count:* with 1, 2 and 3 workers (hardwareConcurrency 4), p50 was 5.9–6.7, 5.3–6.5 and 5.1–5.8 ms. With one worker, 56 % of decodes overlapped another one in that worker, and p50 barely moved.
+  - *Background load* (three busy loops at the same priority): p50 5.2–5.6 ms.
+  - *Mip:* about 1 ms. *Queueing in the pool:* outside the interval.
+  - *A different path:* CI's measurement page, on the plain fetch path where decode is recorded but not gated, read decode p50 **14.6 ms against 7.6 ms here (1.9×)**. That is the same factor as SO-P8 (10.1–10.8 against 5.3–5.6). The runner is simply slower for this work under software GL.
+- **Reproduced.** A cgroup CPU-bandwidth limit with all four CPUs still visible (period 1 ms) brings the local number to CI's level and beyond:
+  - quota 2.0 CPUs: p50 14.3 ms;
+  - quota 1.5: 15.0–20.8 ms;
+  - quota 1.0: 23.3–31.6 ms.
+
+  Every one of these runs fails the old line. In the same cgroups, the idle-worker calibration stayed at 3.7–4.3 ms. An idle decode does not see the load that the review's decodes see, so it cannot make this check hardware-relative on a loaded runner.
+- **Verdict: (b), a test that asserts an absolute device budget on unknown hardware.** No product change was made: `src/` is untouched. The 10 ms stays in §13 as the device budget, and every run reports it (`decodeBudgetMet`).
+- **The check now (`integrator.check.mjs`).** It works like CMP-6, a same-run comparison:
+  - The init script `DECODE_CONTROL` wraps `Worker.prototype.postMessage` like `FETCH_LOG` does. It is armed just before Node 3 opens, so it covers the window of the engine's decode metrics.
+  - For every range or blank request the page hands a decode worker, a harness worker decodes the same pool tile at that moment, with the steps of `decode-worker.ts` between `tBody` and `tDecoded`: splice with tables and APP14, `createImageBitmap` with the crop and `DECODE_OPTS`, then the half-size `'high'` mip, or the `ImageData` fill for a blank tile.
+  - The control sees the same tiles, browser and CPU load. The gate is **decode p50 ≤ 1.5 × the control's p50**, with at least 40 control samples and 0 unknown tiles.
+  - The line also prints the ratio and whether the 10 ms device budget was met. `decodeControlP50_ms`, `decodeRatio`, `decodeBudget_ms` and `decodeBudgetMet` join `decodeP50_ms` in the SO-P measurements.
+- **Why 1.5.** The ratio (product p50 / control p50) measured on this machine:
+
+  | Condition | Ratio |
+  |---|---|
+  | Unloaded | 0.68, 0.70, 0.75, 0.78 |
+  | `taskset` 2 CPUs (1 worker) | 0.62, 0.81 |
+  | Bandwidth quota 2.0 | 0.90 |
+  | Bandwidth quota 1.5 | 0.93, 0.95 |
+  | Bandwidth quota 1.0 | 0.90 |
+  | Three busy loops | 0.49 |
+  | Forced single worker | 0.71 |
+
+  Across these runs the product p50 ranged from 5.3 to 31.6 ms. The highest ratio is 0.95, so 1.5 leaves about 1.6× headroom.
+  - The control reads a little slower than the product (ratio below 1). It starts at the request, before the stub answers and while that frame is still being drawn; the product starts after the body arrives.
+  - The control adds decode work while it runs. The product p50 in the same window was 5.3–6.8 ms with the control, against 4.7–5.8 ms without it.
+- **It still fails when decode is slowed.** A test build (scratch only) busy-waits a fixed extra time after each JPEG decode in the worker, inside `tBody … tDecoded`:
+  - **+8 ms:** p50 15.0 and 14.6 ms against limits of 11.5 and 11.0, ratios 1.95 and 2.00: **FAIL**.
+  - **+15 ms under the 1.5-CPU quota:** p50 37.9 and 34.0 against limits of 23.1 and 29.7: **FAIL**.
+  - **+4 ms:** p50 10.2 against a limit of 11.0, ratio 1.40: passes. Here, the check catches a pipeline that adds more than about 5 ms per JPEG tile, roughly doubling its decode time. The old line would have failed this run, at 10.2 ms. The new line does not, because a 10 ms absolute cannot be told apart from runner speed (above).
+- **Not changed.** The metric itself still counts blank tiles as decodes (a third of the samples). Changing what the engine reports is a metrics question for the engine owner, not part of this fix.
+
+GATE_NUMBERS_PLACEHOLDER
 
 ---
 
