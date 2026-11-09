@@ -358,7 +358,7 @@ export async function run(ctx) {
     check(TAG, b0.flags[0] === 'Your flag 1 on node 1: this node has no annotation to compare with', `D26: "${b0.flags[0]}"`);
     const b2 = c.blocks.find((b) => b.node === 2);
     check(TAG, b2.flags[0] === 'Your flag 1 on node 3: on a reference deposit' && /^Your flag 2 on node 3: [\d,]+ µm from the nearest deposit$/.test(b2.flags[1] ?? ''), `D26: node 3 flags "${b2.flags.join(' | ')}"`);
-    check(TAG, b2.deposits.length === 5 && b2.showMe.length === 5 && b2.deposits.every((d) => /^Deposit \d · about [\d,]+ µm · (in view at [\d.]+× for [\d.,]+ s|never in view at 10× or more)$/.test(d)), `§5.6 item 3: node 3 lists 5 deposits with Show me ("${b2.deposits[0]}")`);
+    check(TAG, b2.deposits.length === 5 && b2.showMe.length === 5 && b2.deposits.every((d) => /^Deposit \d · about [\d,]+ µm( \(\d+ foci spanning about [\d,]+ µm\))? · (in view at [\d.]+× for [\d.,]+ s|never in view at 10× or more)$/.test(d)) && /^Deposit 5 · about 360 µm \(5 foci spanning about 770 µm\) · /.test(b2.deposits[4] ?? ''), `§5.6 item 3: node 3 lists 5 deposits with Show me; the five-polygon cluster reads its largest outline and its span as foci (S3 review fix; "${b2.deposits[4]}")`);
     // the stored result now carries the polygon-based summaries (A-GRD-N5), classes untouched
     const res = (await wv(page)).progress.result;
     check(TAG, f.refined.length >= 1 && res.classes.case === 'match' && res.nodes[2].flags.length === 2 && res.nodes[2].flags[0].onDeposit === true, `FBK-N1: the stored result was refined with the loaded polygons (${f.refined.join(', ')}), classes unchanged (${res.classes.case})`);

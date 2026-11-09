@@ -17,7 +17,8 @@
 // bytes written before the socket closed; `fail` → 503; `slow` → +3 s; `etag-changed` → 206 with another ETag;
 // `arrays-delay` → array ranges answer after `delayMs` (default 2000). `rttMs` (any mode) delays every answer by
 // rttMs and the first answer on a new connection by 3 × rttMs more (TCP + TLS set-up), so the cost of a closed
-// HTTP/1.1 connection is visible on loopback (SO-P10); `kbps` (any mode) sends a 206 body after its transfer time. Every request is logged (method, Range, headers, status,
+// HTTP/1.1 connection is visible on loopback (SO-P10); `kbps` (any mode) sends a 206 body after its transfer time
+// (with `stream: true`, streamed in 8 KB pieces at that rate, as a real slow link does; SO-P12). Every request is logged (method, Range, headers, status,
 // bytes, kind tile|arrays|other, connection id, new connection, start / end / close times) and written to `logFile`.
 import { createServer } from 'node:http';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
@@ -238,7 +239,7 @@ export function virtualIndex(vs, { sourceUrl, name, thumbnailUrl = null, thumbna
 export async function startRangeServer({ fixture = loadFixture(), slides, logFile = null, host = '127.0.0.1' } = {}) {
   const vss = new Map();
   for (const s of slides ?? fixture.geometry.nodes.map((n) => n.slide)) vss.set(s, virtualSlide(fixture, s));
-  const state = { mode: 'ok', rttMs: 0, delayMs: 2000, kbps: 0 };
+  const state = { mode: 'ok', rttMs: 0, delayMs: 2000, kbps: 0, stream: false };
   const log = [];
   let connSeq = 0;
   const sockets = new Set();
@@ -329,6 +330,28 @@ export async function startRangeServer({ fixture = loadFixture(), slides, logFil
     later(delay, () => {
       if (res.destroyed) return;
       const headers = { ...common, 'Content-Length': String(b - a + 1), 'Content-Range': `bytes ${a}-${b}/${vs.size}` };
+      if (state.kbps > 0 && state.stream) {
+        // A real slow link (SIGNOUT.md §19.5, SO-P12): headers now, then the body streamed in 8 KB pieces at the rate.
+        e.status = 206;
+        res.writeHead(206, { ...cors, ...headers });
+        const body = vs.read(a, b);
+        const piece = 8192;
+        let at = 0;
+        const step = () => {
+          if (res.destroyed) return;
+          const end = Math.min(body.length, at + piece);
+          const chunk = body.subarray(at, end);
+          at = end;
+          e.bytes = at;
+          if (at >= body.length) res.end(chunk, () => (e.tEnd = now()));
+          else {
+            res.write(chunk);
+            setTimeout(step, (piece * 8) / state.kbps);
+          }
+        };
+        setTimeout(step, (Math.min(piece, body.length) * 8) / state.kbps);
+        return;
+      }
       if (state.kbps > 0) {
         // Emulated link throughput: headers now, the body after its transfer time (SO-P10).
         e.status = 206;
@@ -362,6 +385,7 @@ export async function startRangeServer({ fixture = loadFixture(), slides, logFil
           if (j.rttMs !== undefined) state.rttMs = Number(j.rttMs);
           if (j.delayMs !== undefined) state.delayMs = Number(j.delayMs);
           if (j.kbps !== undefined) state.kbps = Number(j.kbps);
+          if (j.stream !== undefined) state.stream = j.stream === true;
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify(state));
         } catch (err) {
