@@ -9,7 +9,7 @@
 
 **When.** After the owner's review of SIGNOUT.md §15 (the ten draft cases) and the Safari colour check (Q18), and at the time the owner chooses (Q17). Building and testing did not wait for those; publishing does.
 
-**Build.** One `npm run build`, build id `2026-11-09T00:43:01Z` (the `__BUILD_ID__` in the viewer chunk). Every gate of SIGNOUT.md §16 row S3 passed on this build (§19.4). If the orchestrator rebuilds before copying, the hashed names change. In that case, recompute §1 from the new `dist/.vite/manifest.json`: the `signout.html` entry, its `imports` (followed recursively) and its `css`, plus the `assets/decode-worker-*.js` that the viewer chunk names in its code. Keep §4's exclusions.
+**Build.** One `npm run build`, build id `2026-11-09T02:12:38Z` (the `__BUILD_ID__` in the viewer chunk). Every gate of SIGNOUT.md §16 row S3 passed on this build after the S3 review fixes (§19.5). If the orchestrator rebuilds before copying, the hashed names change. In that case, recompute §1 from the new `dist/.vite/manifest.json`: the `signout.html` entry, its `imports` (followed recursively) and its `css`, plus the `assets/decode-worker-*.js` that the viewer chunk names in its code. Keep §4's exclusions.
 
 The tables were computed by a script from the manifest, the chunk texts and the data tree, not written by hand. "On stage0-deploy" compares each file with the local `stage0-deploy` worktree at commit `9d08796` (the Learn L1 publication). Check it again against the branch as it stands when you copy.
 
@@ -19,38 +19,38 @@ The tables were computed by a script from the manifest, the chunk texts and the 
 
 | Path (same on stage0-deploy) | Bytes | sha256 (first 16) | On stage0-deploy |
 |---|---:|---|---|
-| `client/dist/signout.html` | 30,607 | `1ccef3daa7ea288f…` | absent (new) |
-| `client/dist/assets/signout-BswXuHke.js` | 275,059 | `c04ce818454fb8bd…` | absent (new) |
+| `client/dist/signout.html` | 30,607 | `ae6d9d9d6575b5ea…` | absent (new) |
+| `client/dist/assets/signout-vIAtK_uV.js` | 283,493 | `89c2c04e8102702e…` | absent (new) |
 | `client/dist/assets/signout-C7yIincS.css` | 54,647 | `573050646ba34733…` | absent (new) |
-| `client/dist/assets/sharpness-D8UrOEgI.js` | 262,995 | `f80463b8cfe5b558…` | absent (new) |
+| `client/dist/assets/sharpness-DTWUOiYk.js` | 262,995 | `14fa5181f5b2161b…` | absent (new) |
 | `client/dist/assets/sharpness-BIe6eH59.css` | 86,404 | `4e7da52984cbe808…` | identical (already there) |
-| `client/dist/assets/viewer-Bz0lPO8j.js` | 92,690 | `e91b1f73cea4f6a4…` | absent (new) |
-| `client/dist/assets/panels-CZNMbx_C.js` | 129,769 | `d658fe8c295e2b31…` | absent (new) |
-| `client/dist/assets/decode-worker-Dysm0Cq0.js` | 8,614 | `7b63b93e8b3d75f4…` | absent (new) |
+| `client/dist/assets/viewer-CERUASVv.js` | 93,628 | `546b5ef9e04a2512…` | absent (new) |
+| `client/dist/assets/panels-CXs1mHYo.js` | 129,769 | `064782bc70857c13…` | absent (new) |
+| `client/dist/assets/decode-worker-DA5Af6kW.js` | 8,734 | `b2659ff57031281d…` | absent (new) |
 
-Total 940,785 bytes.
+Total 950,277 bytes.
 
 Notes:
 - **Nothing is overwritten.** Every asset name is content-hashed. Seven of the eight files are new names on the branch; `sharpness-BIe6eH59.css` is already there with identical bytes. `signout.html` is a new page.
-- **The decode worker is new.** Wave S0 added the range path to `decode-worker.ts`, so its bytes changed and it has a new content-hashed name (`decode-worker-Dysm0Cq0.js`). The published `index.html`, `shell.html` and `learn.html` keep loading their own older workers (`decode-worker-CHXeosd7.js`, `decode-worker-DZQUwclY.js`), which stay on the branch untouched.
-- **Shared chunks are new names.** In this build `viewer-*.js`, `sharpness-*.js` and `panels-*.js` are shared between `signout.html` and this build's `learn.html` / `shell.html` (and `viewer-*.js` with this build's `index.html`). The scheduler and navigator changed in S0, and Rollup split the Learn host code into a `panels` chunk (§19.1 J-E7). None of these names is on the branch, and the published pages load their own older chunks. Copying this graph therefore changes no byte that a published page loads.
+- **The decode worker is new.** Wave S0 added the range path to `decode-worker.ts`, and the S3 review fixes added array progress notes (§19.5), so its bytes changed and it has a new content-hashed name (`decode-worker-DA5Af6kW.js`). The published `index.html`, `shell.html` and `learn.html` keep loading their own older workers (`decode-worker-CHXeosd7.js`, `decode-worker-DZQUwclY.js`), which stay on the branch untouched.
+- **Shared chunks are new names.** In this build `viewer-*.js`, `sharpness-*.js` and `panels-*.js` are shared between `signout.html` and this build's `learn.html` / `shell.html` (and `viewer-*.js` with this build's `index.html`). The scheduler and navigator changed in S0 (the scheduler again in the S3 review fixes, §19.5, inert without a range source), and Rollup split the Learn host code into a `panels` chunk (§19.1 J-E7). None of these names is on the branch, and the published pages load their own older chunks. Copying this graph therefore changes no byte that a published page loads.
 - **What the page may fetch.** The CSP meta (D21) is `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://camelyon-dataset.s3.amazonaws.com; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'self'`. The page's own request guard and the index allowlist (§8.6) limit slide reads to the bucket host. Tile reads are made by the decode workers as single closed `Range` GETs (SO-P7, SO-P9). The page needs no web font, CDN or analytics.
 - **Delete nothing** under `client/dist/assets/`.
 
 ## 2. Copy: content (from `data/signout/`)
 
-The catalogue, worklist, cases, slide indexes, thumbnails and reference overlays are static files read at run time, same-origin. 136 files, 2,095,236 bytes (about 2.1 MB; the §17 estimate was ≈ 3 MB).
+The catalogue, worklist, cases, slide indexes, thumbnails and reference overlays are static files read at run time, same-origin. 136 files, 2,249,388 bytes (about 2.2 MB; the §17 estimate was ≈ 3 MB).
 
 | Folder | What | Files | Bytes |
 |---|---|---:|---:|
 | `data/signout/` | catalogue and build log | 2 | 104,292 |
-| `data/signout/cases/` | cases, facts and common facts | 21 | 192,052 |
+| `data/signout/cases/` | cases, facts and common facts | 21 | 272,131 |
 | `data/signout/overlays/` | reference overlays (GeoJSON) | 12 | 310,402 |
-| `data/signout/slides/` | slide indexes and thumbnails | 100 | 1,485,484 |
+| `data/signout/slides/` | slide indexes and thumbnails | 100 | 1,559,557 |
 | `data/signout/worklists/` | worklist | 1 | 3,006 |
 
 Notes:
-- **Slide indexes, not slides.** The 50 `*.index.json` files (492,652 B) hold each slide's level geometry, JPEG tables, inline offset arrays for the coarse levels and the bucket URL with its ETag. The 50 `*.thumb.jpg` files (992,832 B) are the navigator's stitched overviews (D28). The fine levels' offset arrays are read from the bucket by range when a trainee first zooms in (§8.3).
+- **Slide indexes, not slides.** The 50 `*.index.json` files (566,725 B) hold each slide's level geometry, JPEG tables, inline offset arrays for the coarse levels and the bucket URL with its ETag. The 50 `*.thumb.jpg` files (992,832 B) are the navigator's stitched overviews (D28). The fine levels' offset arrays are read from the bucket by range when a trainee first zooms in (§8.3).
 - **The cases are drafts.** All ten cases ship with `metadata.review.status: "draft"`, and the page shows `Draft — pending pathologist review`. The facts files are the owner's review sheet (§15.3); every statement in them is pending. Only the owner sets `reviewed`, in the files.
 - **Answers are readable in public files.** The case files and overlays carry the reference labels and outlines, as L1's do (Q8, pending); the UI says so for exam style (D19).
 - **Every file is new.** None exists on the branch.
@@ -61,25 +61,25 @@ The full list (computed):
 |---|---:|---|---|
 | `data/signout/BUILD-LOG.md` | 21,259 | `94af90806f6b7f5b…` | absent (new) |
 | `data/signout/cases/c17-01.facts.json` | 8,067 | `29160a898f9677f7…` | absent (new) |
-| `data/signout/cases/c17-01.module.json` | 14,926 | `51c894c2b90381e1…` | absent (new) |
+| `data/signout/cases/c17-01.module.json` | 22,102 | `ed9295cdab4eae9c…` | absent (new) |
 | `data/signout/cases/c17-02.facts.json` | 4,980 | `c3743c2d002f724c…` | absent (new) |
-| `data/signout/cases/c17-02.module.json` | 8,173 | `4f36e32c99815c51…` | absent (new) |
+| `data/signout/cases/c17-02.module.json` | 14,918 | `c2298fa889b3ff7f…` | absent (new) |
 | `data/signout/cases/c17-03.facts.json` | 7,627 | `0310aef7eee8054e…` | absent (new) |
-| `data/signout/cases/c17-03.module.json` | 17,785 | `58f3813c491753a6…` | absent (new) |
+| `data/signout/cases/c17-03.module.json` | 31,033 | `395f55a20810c66d…` | absent (new) |
 | `data/signout/cases/c17-04.facts.json` | 6,589 | `de5c24ac91af9235…` | absent (new) |
-| `data/signout/cases/c17-04.module.json` | 9,949 | `f93b3a8119edb55d…` | absent (new) |
+| `data/signout/cases/c17-04.module.json` | 16,727 | `5d5354aac14693f9…` | absent (new) |
 | `data/signout/cases/c17-05.facts.json` | 6,566 | `7c3900f635096c51…` | absent (new) |
-| `data/signout/cases/c17-05.module.json` | 13,038 | `42c80e5e06944843…` | absent (new) |
+| `data/signout/cases/c17-05.module.json` | 25,435 | `dc73fdbeed4071f0…` | absent (new) |
 | `data/signout/cases/c17-06.facts.json` | 4,997 | `620c421e5667c38f…` | absent (new) |
-| `data/signout/cases/c17-06.module.json` | 8,191 | `e4a9085cf3631f6f…` | absent (new) |
+| `data/signout/cases/c17-06.module.json` | 14,744 | `8cace72a554a3239…` | absent (new) |
 | `data/signout/cases/c17-07.facts.json` | 5,512 | `4bb0c19cff8dd7dc…` | absent (new) |
-| `data/signout/cases/c17-07.module.json` | 10,034 | `f36820b9d119d310…` | absent (new) |
+| `data/signout/cases/c17-07.module.json` | 17,039 | `54d0725a7f76937e…` | absent (new) |
 | `data/signout/cases/c17-08.facts.json` | 8,075 | `d41747a12b5e0bc1…` | absent (new) |
-| `data/signout/cases/c17-08.module.json` | 10,888 | `66f789b2e5bf4fae…` | absent (new) |
+| `data/signout/cases/c17-08.module.json` | 18,329 | `9444e8ac8e54dbee…` | absent (new) |
 | `data/signout/cases/c17-09.facts.json` | 5,536 | `d4df156ee3568e81…` | absent (new) |
-| `data/signout/cases/c17-09.module.json` | 13,173 | `5421069713861c11…` | absent (new) |
+| `data/signout/cases/c17-09.module.json` | 20,338 | `a22056e28ae6cc72…` | absent (new) |
 | `data/signout/cases/c17-10.facts.json` | 6,582 | `3a0387cbbab7cfc5…` | absent (new) |
-| `data/signout/cases/c17-10.module.json` | 9,697 | `64fba2055464cf9b…` | absent (new) |
+| `data/signout/cases/c17-10.module.json` | 15,268 | `d310e2ed207688a8…` | absent (new) |
 | `data/signout/cases/common.facts.json` | 11,667 | `3b3eb0c270132c04…` | absent (new) |
 | `data/signout/catalogue.json` | 83,033 | `8a1cae1fd0dae8c6…` | absent (new) |
 | `data/signout/overlays/patient_004_node_4.geojson` | 4,148 | `a8744881b2f0a173…` | absent (new) |
@@ -144,56 +144,56 @@ The full list (computed):
 | `data/signout/slides/camelyon17.c17s-0048.thumb.jpg` | 7,244 | `e4be51ec60d834ef…` | absent (new) |
 | `data/signout/slides/camelyon17.c17s-0049.thumb.jpg` | 8,931 | `a18b113a87c378ee…` | absent (new) |
 | `data/signout/slides/camelyon17.c17s-0050.thumb.jpg` | 7,057 | `9e5e4b26b741675d…` | absent (new) |
-| `data/signout/slides/patient_004_node_0.index.json` | 11,592 | `192549f0e970474c…` | absent (new) |
-| `data/signout/slides/patient_004_node_1.index.json` | 11,098 | `07d8692ab76d32d2…` | absent (new) |
-| `data/signout/slides/patient_004_node_2.index.json` | 11,642 | `e76c444b557f3c7f…` | absent (new) |
-| `data/signout/slides/patient_004_node_3.index.json` | 11,613 | `fa618280e160e90d…` | absent (new) |
-| `data/signout/slides/patient_004_node_4.index.json` | 11,209 | `34ad25d2649e2011…` | absent (new) |
-| `data/signout/slides/patient_017_node_0.index.json` | 11,552 | `1c757ab76e40f4ba…` | absent (new) |
-| `data/signout/slides/patient_017_node_1.index.json` | 11,179 | `70920ec1ad8b29d6…` | absent (new) |
-| `data/signout/slides/patient_017_node_2.index.json` | 11,653 | `fc8f8f5d3625cf89…` | absent (new) |
-| `data/signout/slides/patient_017_node_3.index.json` | 11,588 | `7146a9597b2e460e…` | absent (new) |
-| `data/signout/slides/patient_017_node_4.index.json` | 11,177 | `410cb86b1a63b7d1…` | absent (new) |
-| `data/signout/slides/patient_025_node_0.index.json` | 11,399 | `3f92dc25a87943e0…` | absent (new) |
-| `data/signout/slides/patient_025_node_1.index.json` | 11,481 | `1a1d5b98990f5844…` | absent (new) |
-| `data/signout/slides/patient_025_node_2.index.json` | 11,304 | `93fd6a4a5a415935…` | absent (new) |
-| `data/signout/slides/patient_025_node_3.index.json` | 11,613 | `cea88e68c4ba7b03…` | absent (new) |
-| `data/signout/slides/patient_025_node_4.index.json` | 11,332 | `e34e6691a8cb5c80…` | absent (new) |
-| `data/signout/slides/patient_036_node_0.index.json` | 11,388 | `f938a4b9144b5714…` | absent (new) |
-| `data/signout/slides/patient_036_node_1.index.json` | 11,306 | `a5afad30526a85c7…` | absent (new) |
-| `data/signout/slides/patient_036_node_2.index.json` | 11,395 | `6847acdff3f741c6…` | absent (new) |
-| `data/signout/slides/patient_036_node_3.index.json` | 11,393 | `60777730c201f904…` | absent (new) |
-| `data/signout/slides/patient_036_node_4.index.json` | 11,249 | `7bf8919d9b25b415…` | absent (new) |
-| `data/signout/slides/patient_046_node_0.index.json` | 7,124 | `b04b90268eaebdc4…` | absent (new) |
-| `data/signout/slides/patient_046_node_1.index.json` | 7,099 | `5f06f84f0297372f…` | absent (new) |
-| `data/signout/slides/patient_046_node_2.index.json` | 7,744 | `03905c72975e347c…` | absent (new) |
-| `data/signout/slides/patient_046_node_3.index.json` | 7,779 | `0d7d1caa89176483…` | absent (new) |
-| `data/signout/slides/patient_046_node_4.index.json` | 5,305 | `9a011892f3668b4a…` | absent (new) |
-| `data/signout/slides/patient_052_node_0.index.json` | 7,064 | `4567c2e3c10c44b7…` | absent (new) |
-| `data/signout/slides/patient_052_node_1.index.json` | 8,348 | `65124dd0f2eec40a…` | absent (new) |
-| `data/signout/slides/patient_052_node_2.index.json` | 8,283 | `a85f6b0d907344bb…` | absent (new) |
-| `data/signout/slides/patient_052_node_3.index.json` | 6,336 | `61e97dc1b7ea238a…` | absent (new) |
-| `data/signout/slides/patient_052_node_4.index.json` | 8,806 | `5158d478ed03790b…` | absent (new) |
-| `data/signout/slides/patient_075_node_0.index.json` | 11,154 | `cfef1172ba034ee3…` | absent (new) |
-| `data/signout/slides/patient_075_node_1.index.json` | 11,392 | `eebac06d1558817e…` | absent (new) |
-| `data/signout/slides/patient_075_node_2.index.json` | 11,413 | `cc35c12dd4d7b85b…` | absent (new) |
-| `data/signout/slides/patient_075_node_3.index.json` | 11,434 | `52505ce3625c9281…` | absent (new) |
-| `data/signout/slides/patient_075_node_4.index.json` | 11,206 | `4619d2ab6e99093c…` | absent (new) |
-| `data/signout/slides/patient_078_node_0.index.json` | 11,625 | `ef130f0d5efd5966…` | absent (new) |
-| `data/signout/slides/patient_078_node_1.index.json` | 11,371 | `3e8d4164cea4ef54…` | absent (new) |
-| `data/signout/slides/patient_078_node_2.index.json` | 11,166 | `08614e72bca4fc70…` | absent (new) |
-| `data/signout/slides/patient_078_node_3.index.json` | 11,263 | `51c39e65bd4d950c…` | absent (new) |
-| `data/signout/slides/patient_078_node_4.index.json` | 11,070 | `4fc67caa3b2ce6ff…` | absent (new) |
-| `data/signout/slides/patient_086_node_0.index.json` | 8,784 | `d7f42f133122a113…` | absent (new) |
-| `data/signout/slides/patient_086_node_1.index.json` | 6,977 | `46aab0cabe545933…` | absent (new) |
-| `data/signout/slides/patient_086_node_2.index.json` | 6,235 | `c040c666ab263dd0…` | absent (new) |
-| `data/signout/slides/patient_086_node_3.index.json` | 7,237 | `00d69ecf6d729e9a…` | absent (new) |
-| `data/signout/slides/patient_086_node_4.index.json` | 9,782 | `a807c66cbed61ef1…` | absent (new) |
-| `data/signout/slides/patient_092_node_0.index.json` | 7,094 | `11aa672618a2dfc6…` | absent (new) |
-| `data/signout/slides/patient_092_node_1.index.json` | 8,020 | `d20a37296afeb30e…` | absent (new) |
-| `data/signout/slides/patient_092_node_2.index.json` | 7,903 | `e283baac33fd0a5d…` | absent (new) |
-| `data/signout/slides/patient_092_node_3.index.json` | 5,887 | `029fbd178a860bd1…` | absent (new) |
-| `data/signout/slides/patient_092_node_4.index.json` | 9,588 | `2c0928c67f91534d…` | absent (new) |
+| `data/signout/slides/patient_004_node_0.index.json` | 12,875 | `276e82a3e30451f0…` | absent (new) |
+| `data/signout/slides/patient_004_node_1.index.json` | 12,333 | `7dbf232e2a8d26a0…` | absent (new) |
+| `data/signout/slides/patient_004_node_2.index.json` | 12,925 | `68d4dce61c1318cb…` | absent (new) |
+| `data/signout/slides/patient_004_node_3.index.json` | 12,896 | `d3c30006210b6964…` | absent (new) |
+| `data/signout/slides/patient_004_node_4.index.json` | 12,444 | `4628c68551344014…` | absent (new) |
+| `data/signout/slides/patient_017_node_0.index.json` | 12,835 | `beec916f99829d61…` | absent (new) |
+| `data/signout/slides/patient_017_node_1.index.json` | 12,414 | `de5dcf05ac612c01…` | absent (new) |
+| `data/signout/slides/patient_017_node_2.index.json` | 12,936 | `256efb3746f73e99…` | absent (new) |
+| `data/signout/slides/patient_017_node_3.index.json` | 12,871 | `62b3f6e0af7f48fd…` | absent (new) |
+| `data/signout/slides/patient_017_node_4.index.json` | 12,412 | `b39aff80b547f69a…` | absent (new) |
+| `data/signout/slides/patient_025_node_0.index.json` | 12,682 | `5d2e4d5a662fb12f…` | absent (new) |
+| `data/signout/slides/patient_025_node_1.index.json` | 12,764 | `685e6477d38b08bc…` | absent (new) |
+| `data/signout/slides/patient_025_node_2.index.json` | 12,587 | `7eb9b8fb830f5891…` | absent (new) |
+| `data/signout/slides/patient_025_node_3.index.json` | 12,896 | `51d542b353daeae2…` | absent (new) |
+| `data/signout/slides/patient_025_node_4.index.json` | 12,615 | `9f835fb076d257cd…` | absent (new) |
+| `data/signout/slides/patient_036_node_0.index.json` | 12,671 | `2cfde4c36f4ede0f…` | absent (new) |
+| `data/signout/slides/patient_036_node_1.index.json` | 12,589 | `1f24d078abe0a152…` | absent (new) |
+| `data/signout/slides/patient_036_node_2.index.json` | 12,678 | `bbde8f2c8ee0fe73…` | absent (new) |
+| `data/signout/slides/patient_036_node_3.index.json` | 12,676 | `ff20290a435bf2f0…` | absent (new) |
+| `data/signout/slides/patient_036_node_4.index.json` | 12,532 | `c1159cbae074ee3c…` | absent (new) |
+| `data/signout/slides/patient_046_node_0.index.json` | 9,471 | `1ee18ee7911c52a1…` | absent (new) |
+| `data/signout/slides/patient_046_node_1.index.json` | 9,537 | `01044ee807de5237…` | absent (new) |
+| `data/signout/slides/patient_046_node_2.index.json` | 10,673 | `f0b9c19f22ded001…` | absent (new) |
+| `data/signout/slides/patient_046_node_3.index.json` | 10,763 | `09561543f0801d87…` | absent (new) |
+| `data/signout/slides/patient_046_node_4.index.json` | 6,784 | `087a5626024d3d76…` | absent (new) |
+| `data/signout/slides/patient_052_node_0.index.json` | 9,487 | `4d36062453d2e356…` | absent (new) |
+| `data/signout/slides/patient_052_node_1.index.json` | 11,583 | `2c8fd50fd4f684ee…` | absent (new) |
+| `data/signout/slides/patient_052_node_2.index.json` | 11,491 | `7281649baa9b9f41…` | absent (new) |
+| `data/signout/slides/patient_052_node_3.index.json` | 8,318 | `b27c057c190fb727…` | absent (new) |
+| `data/signout/slides/patient_052_node_4.index.json` | 9,719 | `2f6867c97f6e0d8b…` | absent (new) |
+| `data/signout/slides/patient_075_node_0.index.json` | 12,389 | `d5d879bc99b1b42a…` | absent (new) |
+| `data/signout/slides/patient_075_node_1.index.json` | 12,627 | `cfcd4dedfc208880…` | absent (new) |
+| `data/signout/slides/patient_075_node_2.index.json` | 12,648 | `e2f078972242b482…` | absent (new) |
+| `data/signout/slides/patient_075_node_3.index.json` | 12,717 | `35805ed996a4e03e…` | absent (new) |
+| `data/signout/slides/patient_075_node_4.index.json` | 12,441 | `44563c1bd514856e…` | absent (new) |
+| `data/signout/slides/patient_078_node_0.index.json` | 12,908 | `a2b0c8faeae18e85…` | absent (new) |
+| `data/signout/slides/patient_078_node_1.index.json` | 12,606 | `852faf2324662e8d…` | absent (new) |
+| `data/signout/slides/patient_078_node_2.index.json` | 12,401 | `416df130ac421cc8…` | absent (new) |
+| `data/signout/slides/patient_078_node_3.index.json` | 12,498 | `43247c9f1e249538…` | absent (new) |
+| `data/signout/slides/patient_078_node_4.index.json` | 12,305 | `0f30451c0f5c8358…` | absent (new) |
+| `data/signout/slides/patient_086_node_0.index.json` | 9,690 | `9a31cedb3575a110…` | absent (new) |
+| `data/signout/slides/patient_086_node_1.index.json` | 9,514 | `dee99bfc2d4ee9f2…` | absent (new) |
+| `data/signout/slides/patient_086_node_2.index.json` | 7,866 | `8bdc50909b609a01…` | absent (new) |
+| `data/signout/slides/patient_086_node_3.index.json` | 8,039 | `1532051021ad9e66…` | absent (new) |
+| `data/signout/slides/patient_086_node_4.index.json` | 10,931 | `b1a9bb82a0f5f3fe…` | absent (new) |
+| `data/signout/slides/patient_092_node_0.index.json` | 7,832 | `255d7d09956b4956…` | absent (new) |
+| `data/signout/slides/patient_092_node_1.index.json` | 9,126 | `38f274278e6938b2…` | absent (new) |
+| `data/signout/slides/patient_092_node_2.index.json` | 8,688 | `c81f37feeb5f9730…` | absent (new) |
+| `data/signout/slides/patient_092_node_3.index.json` | 7,449 | `a211edc7eef5324f…` | absent (new) |
+| `data/signout/slides/patient_092_node_4.index.json` | 10,593 | `5f619ca46132a400…` | absent (new) |
 | `data/signout/worklists/camelyon17-pilot.worklist.json` | 3,006 | `f33f0eb60d630a16…` | absent (new) |
 
 ## 3. Already published (required)
@@ -205,15 +205,15 @@ Nothing already published is required by this page. In particular `data/catalogu
 | Path | Why |
 |---|---|
 | `client/dist/index.html` | the measurement page is frozen; the published one stays |
-| `client/dist/assets/index-DFORb87f.js` | the measurement page's entry chunk (frozen) |
+| `client/dist/assets/index-B14W9mWD.js` | the measurement page's entry chunk (frozen) |
 | `client/dist/learn.html` | Learn L1 keeps its published build unless the owner redeploys L1 on purpose |
-| `client/dist/assets/learn-B_etC161.js` | this build's Learn L1 entry chunk (not needed by `signout.html`) |
+| `client/dist/assets/learn-BJNVSCdc.js` | this build's Learn L1 entry chunk (not needed by `signout.html`) |
 | `client/dist/shell.html` | the research shell keeps its published Phase A build |
-| `client/dist/assets/shell-AJxklpjZ.js` | this build's shell entry chunk |
+| `client/dist/assets/shell-5rSbc-XJ.js` | this build's shell entry chunk |
 | `client/dist/assets/shell-y4bCx_os.css` | this build's shell stylesheet |
 | `client/dist/.vite/manifest.json` | build metadata, not served |
-| any `*.tif`, tile, `.npy` or offset-array file | slides stay in the CAMELYON17 bucket; nothing of a slide is copied (the Pages site is at about 668 MB of its 1 GB budget) |
-| `harness/**`, `tools/**`, scratch files | tests and builders, not served |
+| `any `*.tif`, tile, `.npy` or offset-array file` | slides stay in the CAMELYON17 bucket; nothing of a slide is copied (the Pages site is at about 668 MB of its 1 GB budget) |
+| `harness/**, tools/**, scratch files` | tests and builders, not served |
 
 The shared chunks of §1 (`viewer-*`, `sharpness-*`, `panels-*`, the new worker) are copied once, for `signout.html`. They are new names, so they do not change what the published `learn.html`, `shell.html` or `index.html` load.
 

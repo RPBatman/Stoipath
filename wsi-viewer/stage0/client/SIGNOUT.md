@@ -1105,7 +1105,28 @@ Two independent reviews of the S3 build (a pathologist-educator / accessibility 
   - The stub gained `stream: true`, which streams 8 KB pieces at the rate, as a real slow link does. At 150 kbit/s level 0 became resident after about 70 s with one 1,226,112 B request (before: aborted at 48 s in a loop).
   - Check: the new SO-P12.
 
-GATE-NUMBERS
+- **Other judgement calls.**
+  - The case files grow by the tissue masks (`data/signout/` is now 2,249,388 B, up from 2,095,236 B). The masks are copied rather than read from the indexes at run time, because grading reads the case file only.
+  - `contracts.ts` now carries three pure helpers, which grading imports at run time; GRD-6 was widened for that one import.
+  - `SI-1`'s after-S0 table is revised in a new dated section, and `integrator.check.mjs` reads the last one.
+- **Screenshots.** The gate ran without `SIGNOUT_SHOTS`. The ten screenshots of a separate `feedback,review` run on the same `client/dist` were looked at one by one (`<scratch>/signout/fix-s3r/shots`), including the new Case 3 Node 5 block at 390 × 844 and the macro Show me at 1440. So was ENG-2's canvas shot. Real-byte screenshots were not retaken; the changed surfaces are text and chips that the stub runs show.
+- **Deploy list.** `SIGNOUT-DEPLOY.md` was recomputed from the gate build: 8 page files, 950,277 B. The new names are `signout-vIAtK_uV.js`, `viewer-CERUASVv.js`, `sharpness-DTWUOiYk.js`, `panels-CXs1mHYo.js` and `decode-worker-DA5Af6kW.js`. `data/signout/` is 136 files, 2,249,388 B, and nothing is copied over a published file.
+
+**Gate numbers (S3 review fixes, 2026-11-09; one `npm run build` into `client/dist`, build id `2026-11-09T02:12:38Z`).**
+- tsc `--noEmit`: clean, standalone and inside the build.
+- `harness/signout-check.mjs --phase-a --ref-dist <L1 final dist> --learn-ref-dist <L0 baseline> --axe <axe-core 4.10.3>`, with the range cache for CNT-6, exit 0 in 1,400 s:
+  - **integrator 387 ok**, including SI-1 21 (the revised `scheduler.ts` value read from the new section), SI-1b 11, SI-3 (contract 4), SI-11, SO-P1 0.39 s / 0.35 s, SO-P6 3.27 MB / 2.53 MB, and SO-P8 decode p50 5.3 ms (p95 11.8).
+  - **modules 463 ok**: worklist 87, results 43, review 48, report 62, feedback 197, content 23, plus 3 library rows. Against S3's 467: this run took no screenshots, so 11 screenshot rows are absent; REV-2's "not logged" row was replaced by REV-2b; and 7 page rows were added (WRK-P focus, REV-1b and five FBK rows).
+  - Library runs: casefmt 208 unit + 14 python, grading 267 unit (S3: 256), content 327 unit + 15 python.
+  - **SI-2 on the same build:** run.mjs exit 0, check-metrics **20 ok**; shell-check **190 ok**; tools-check (`--axe`) **628 ok**; unit.mjs **4,127 ok** (S3: 4,098); learn-check (J-I48's invocation) **1,144 ok, 0 FAIL** (no timing re-run needed this time); python **95 tests OK** (S3: 94).
+- `harness/signout/source.check.mjs --dist client/dist --dist-abort <S0's abort build> --dist-pre <L1 final dist>`: **60 ok, 0 FAIL** (S3: 56).
+  - ENG-2: 36 of 36, APP14 37 of 37, max difference 0.
+  - SO-P10: abort 7.47 s, finish 7.56 s.
+  - **SO-P12**: level 0 resident after 70 s at 150 kbit/s with one 1,226,112 B request.
+  - **SO-P13**: sharp 0.276 during a 9 s outage, Sharp again 5.3 s after the host answered.
+- The reviewers' own scripts were re-run on a private build of this tree:
+  - outage: Sharp at +10 s after recovery, where before the fix it stayed 0.276 for 30 s;
+  - slow link: with the stub's non-streaming `kbps`, the progress-aware deadline still closes the stalled request at 48 s, as intended (E-M1). With `stream: true`, level 0 was resident at +67 s.
 
 
 ---
