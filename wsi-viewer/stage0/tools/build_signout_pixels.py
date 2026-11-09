@@ -12,6 +12,12 @@ build_signout_index.py --no-pixels it:
     a pixel is tissue when its mean is < 235 (not white glass), its maximum > 25 (not the converter's black fill of
     unscanned areas, which the CAMELYON17 centre 0/1/3 TIFFs carry as a 9,327-byte black tile) and its channel spread
     is >= 20 (stained, not grey glass or dust); rows and columns with fewer than max(3, 0.3 %) tissue pixels are ignored;
+  * computes `pixels.tissueGrid` from the same mask (S3 review fix, SIGNOUT.md §19.5): the tissue level cut into cells of
+    TISSUE_CELL_PX = 16 tissue-level px (2,048 level-0 px at level 7, about 0.5 mm); a cell is tissue when it holds at
+    least TISSUE_CELL_MIN = 3 tissue pixels. `bits` is the row-major mask as hex, four cells per digit, most significant
+    bit first, zero-padded to a whole digit. build_signout_cases.py copies it into each case node as `tissueCells`, and
+    grading counts a view as "over tissue" only when it meets a tissue cell (an unscanned, black-filled bbox centre is
+    not tissue). `--grid-only` recomputes just this field and leaves the rest of the index and the thumbnail untouched;
   * writes the stitched thumbnail `<slide>.thumb.jpg` beside the index: every top-level tile decoded, stitched, cropped
     to the effective top-level size and re-encoded at the highest JPEG quality that fits 25 KB (D28, ER-6), and sets
     `thumbnail {url, width, height}`;
@@ -50,6 +56,8 @@ FINE_LEVEL_CENTRES = {0, 1, 3}
 TISSUE_MEAN_MAX = 235
 FILL_MAX = 25
 SPREAD_MIN = 20
+TISSUE_CELL_PX = 16
+TISSUE_CELL_MIN = 3
 
 
 def level_arrays(r: RangeReader, lvl: dict):
@@ -88,12 +96,30 @@ def level_image(np, imagecodecs, r, index, level: int, tables: bytes):
     return img[:h, :w]
 
 
-def tissue_bbox(np, img, scale: int, w0: int, h0: int):
+def tissue_mask(np, img):
     f = img.astype(np.int16)
     mean = f.mean(axis=2)
     mx = f.max(axis=2)
     spread = mx - f.min(axis=2)
-    mask = (mean < TISSUE_MEAN_MAX) & (mx > FILL_MAX) & (spread >= SPREAD_MIN)
+    return (mean < TISSUE_MEAN_MAX) & (mx > FILL_MAX) & (spread >= SPREAD_MIN)
+
+
+def tissue_grid(np, img, scale: int) -> dict:
+    """The coarse tissue mask (see the module docstring): {cell (level-0 px), cols, rows, minPixels, bits (hex)}."""
+    mask = tissue_mask(np, img)
+    k = TISSUE_CELL_PX
+    h, w = mask.shape
+    rows, cols = math.ceil(h / k), math.ceil(w / k)
+    pad = np.zeros((rows * k, cols * k), bool)
+    pad[:h, :w] = mask
+    cells = (pad.reshape(rows, k, cols, k).sum(axis=(1, 3)) >= TISSUE_CELL_MIN).reshape(-1).tolist()
+    cells += [False] * (-len(cells) % 4)
+    bits = ''.join('%x' % (cells[i] * 8 + cells[i + 1] * 4 + cells[i + 2] * 2 + cells[i + 3]) for i in range(0, len(cells), 4))
+    return {'cell': k * scale, 'cols': cols, 'rows': rows, 'minPixels': TISSUE_CELL_MIN, 'bits': bits}
+
+
+def tissue_bbox(np, img, scale: int, w0: int, h0: int):
+    mask = tissue_mask(np, img)
     # Rows / columns with too few tissue pixels (dust, pen marks, glass edges) do not extend the box.
     rows = np.where(mask.sum(axis=1) >= max(3, math.ceil(0.003 * mask.shape[1])))[0]
     cols = np.where(mask.sum(axis=0) >= max(3, math.ceil(0.003 * mask.shape[0])))[0]
@@ -171,6 +197,7 @@ def main(argv=None) -> int:
     ap.add_argument('--pylib', help='directory with imagecodecs / numpy / PIL')
     ap.add_argument('--cache', default=os.environ.get('STOIPATH_SIGNOUT_CACHE'))
     ap.add_argument('--offline', action='store_true')
+    ap.add_argument('--grid-only', action='store_true', help='recompute pixels.tissueGrid only (the rest of the index and the thumbnail are kept)')
     a = ap.parse_args(argv)
     if a.pylib:
         sys.path.insert(0, a.pylib)
@@ -192,6 +219,17 @@ def main(argv=None) -> int:
         pinned = [i for i, l in enumerate(levels) if max(l['width'], l['height']) <= PINNED_BASE_MAX_PX]
         finest = pinned[0] if pinned else len(levels) - 1
         img = level_image(np, imagecodecs, r, index, finest, tables)
+        grid = tissue_grid(np, img, 2 ** finest)
+        if a.grid_only:
+            if index.get('pixels', {}).get('tissueLevel') != finest:
+                raise SystemExit(f'{path}: the index was measured at another tissue level; run without --grid-only')
+            index['pixels']['tissueGrid'] = grid
+            with open(path, 'w', encoding='utf-8') as fh:
+                fh.write(build_signout_index.dumps(index))
+            total_read += r.bytes_read
+            total_fetched += r.bytes_fetched
+            print(f'{path}: tissueGrid {grid["cols"]} x {grid["rows"]} cells of {grid["cell"]} px, {bin(int(grid["bits"], 16)).count("1")} tissue; read {r.bytes_read} B (fetched {r.bytes_fetched} B)')
+            continue
         bbox = tissue_bbox(np, img, 2 ** finest, index['width'], index['height'])
         top = len(levels) - 1
         top_img = img if top == finest else level_image(np, imagecodecs, r, index, top, tables)
@@ -214,7 +252,7 @@ def main(argv=None) -> int:
         t['blankFill'] = fill
         index['thumbnail'] = {'url': thumb_name, 'width': levels[top]['width'], 'height': levels[top]['height']}
         index['tissueBbox'] = bbox
-        index['pixels'] = {'generator': GENERATOR, 'tissueLevel': finest, 'tissueThreshold': TISSUE_MEAN_MAX, 'blankVerification': blanks}
+        index['pixels'] = {'generator': GENERATOR, 'tissueLevel': finest, 'tissueThreshold': TISSUE_MEAN_MAX, 'blankVerification': blanks, 'tissueGrid': grid}
         gen = index.get('generator', '')
         if 'build_signout_pixels' not in gen:
             index['generator'] = f'{gen} + build_signout_pixels.py 1'
