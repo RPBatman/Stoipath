@@ -152,7 +152,7 @@ export default async function (t) {
   t.ok(/^stoipath-learn-practice_[a-z0-9-]+_\d{8}-\d{6}\.results\.json$/.test(T.resultsFileName('wrk-check', new Date())), 'RES-2 the name pattern holds for now');
   t.eq(T.isoSeconds(new Date('2026-11-08T07:05:09.123Z')), '2026-11-08T07:05:09Z', 'exportedAt is UTC to the second (no time zone)');
   for (const [k, v] of Object.entries({ cohortTitle: 'Cohort tool · practice reports', addFiles: 'Add results files', dropZone: 'Drop results files here, or press Enter to choose', readLocal: 'Files are read in this browser; nothing is uploaded.', nodeNote: "Node columns use the data set's node index (node0–node4); the trainee saw them as Node 1–5.", downloadCases: 'Download cases.csv', downloadNodes: 'Download nodes.csv', duplicate: 'duplicate' })) t.eq(T.TEXT[k], v, `§9.3 string ${k} verbatim`);
-  t.eq(T.TEXT.counts(3, 6, 4, 1, 1), '3 files · 6 case rows · pN match 4 · minor 1 · major 1', '§9.3 counts line');
+  t.eq(T.TEXT.counts(3, 6, 4, 1, 1, 3, 1, 2), '3 files · 6 case rows · pN: match 4 · minor 1 · major 1 · case class: match 3 · minor 1 · major 2', '§9.3 counts line: the pN and the case-class breakdowns, each labelled (S3 review fix)');
   t.eq(T.TEXT.notResults('x'), 'This is not a results file (x).', '§9.3 refusal sentence');
 
   // ------------------------------------------------------------------------------------------------ the store (§5.8, D10)
@@ -351,7 +351,7 @@ export default async function (t) {
     t.eq(r2.slice(1).map((x) => x[col('duplicate')]), ['', '', '', ''], 'without a code, two different submissions are two trainees, not duplicates');
   }
   // the counts line
-  t.eq(C.cohortCounts(files), { files: 3, rows: 6, match: 5, minor: 0, major: 1 }, 'counts: 3 files · 6 case rows · pN match 5 · minor 0 · major 1');
+  t.eq(C.cohortCounts(files), { files: 3, rows: 6, match: 5, minor: 0, major: 1, caseMatch: 3, caseMinor: 2, caseMajor: 1 }, 'counts: 3 files · 6 case rows · pN: match 5 · minor 0 · major 1 · case class: match 3 · minor 2 · major 1');
   // comment quoting round trip through csvText
   t.eq(parseCsv(C.csvText(['a', 'b'], [['x,1', 'say "hi"\r\nbye']])), [['a', 'b'], ['x,1', 'say "hi"\r\nbye']], 'RFC 4180 round trip of a comment with a comma, quotes and CRLF');
 

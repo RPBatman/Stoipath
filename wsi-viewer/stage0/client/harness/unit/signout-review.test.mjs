@@ -98,6 +98,7 @@ export default async function (t) {
     t.eq(st, { bestScale: 0.25, bestScaleOverTissue: 1.0 }, 'the finest sharp scale anywhere and over the tissue box; unsharp entries ignored');
     t.eq(trace.foldStats({ bestScale: 0.4, bestScaleOverTissue: 0.8 }, [over], tissue), { bestScale: 0.4, bestScaleOverTissue: 0.8 }, 'existing finer values are kept');
     t.eq(trace.foldStats({ bestScale: null, bestScaleOverTissue: null }, [off], null).bestScaleOverTissue, 0.25, 'no tissue box: anywhere counts');
+    t.eq(trace.foldStats({ bestScale: null, bestScaleOverTissue: null }, [over, off], (r) => r.minX >= 9000).bestScaleOverTissue, 0.25, 'S3 review fix: a tissue predicate (the case node\'s tissue cells) decides "over tissue" in place of the box');
     t.ok(trace.isExamined(true, 2.0) && trace.isExamined(true, 2.02) && !trace.isExamined(true, 2.03), 'examined at ≤ 2 µm/px (× 1.01 slack)');
     t.ok(!trace.isExamined(false, 0.5) && !trace.isExamined(true, null), 'not examined unless opened and viewed');
     t.ok(trace.viewed10x(1.0) && trace.viewed10x(1.01) && !trace.viewed10x(1.5) && !trace.viewed10x(null), 'viewed at 10×: ≤ 1 µm/px');

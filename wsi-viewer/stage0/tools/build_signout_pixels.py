@@ -104,15 +104,22 @@ def tissue_mask(np, img):
     return (mean < TISSUE_MEAN_MAX) & (mx > FILL_MAX) & (spread >= SPREAD_MIN)
 
 
-def tissue_grid(np, img, scale: int) -> dict:
-    """The coarse tissue mask (see the module docstring): {cell (level-0 px), cols, rows, minPixels, bits (hex)}."""
+def tissue_grid(np, img, scale: int, bbox: list) -> dict:
+    """The coarse tissue mask (see the module docstring): {cell (level-0 px), cols, rows, minPixels, bits (hex)}.
+    Only cells that meet `bbox` (level-0 px, tissue_bbox's) can be tissue: the box already drops sparse rows and columns
+    (dust, pen marks, glass edges), and the mask must not bring them back."""
     mask = tissue_mask(np, img)
     k = TISSUE_CELL_PX
     h, w = mask.shape
     rows, cols = math.ceil(h / k), math.ceil(w / k)
     pad = np.zeros((rows * k, cols * k), bool)
     pad[:h, :w] = mask
-    cells = (pad.reshape(rows, k, cols, k).sum(axis=(1, 3)) >= TISSUE_CELL_MIN).reshape(-1).tolist()
+    grid = pad.reshape(rows, k, cols, k).sum(axis=(1, 3)) >= TISSUE_CELL_MIN
+    c = k * scale
+    x0, y0, x1, y1 = bbox
+    keep = np.zeros_like(grid)
+    keep[max(0, y0 // c):min(rows, -(-y1 // c)), max(0, x0 // c):min(cols, -(-x1 // c))] = True
+    cells = (grid & keep).reshape(-1).tolist()
     cells += [False] * (-len(cells) % 4)
     bits = ''.join('%x' % (cells[i] * 8 + cells[i + 1] * 4 + cells[i + 2] * 2 + cells[i + 3]) for i in range(0, len(cells), 4))
     return {'cell': k * scale, 'cols': cols, 'rows': rows, 'minPixels': TISSUE_CELL_MIN, 'bits': bits}
@@ -219,10 +226,11 @@ def main(argv=None) -> int:
         pinned = [i for i, l in enumerate(levels) if max(l['width'], l['height']) <= PINNED_BASE_MAX_PX]
         finest = pinned[0] if pinned else len(levels) - 1
         img = level_image(np, imagecodecs, r, index, finest, tables)
-        grid = tissue_grid(np, img, 2 ** finest)
+        bbox = tissue_bbox(np, img, 2 ** finest, index['width'], index['height'])
+        grid = tissue_grid(np, img, 2 ** finest, bbox)
         if a.grid_only:
-            if index.get('pixels', {}).get('tissueLevel') != finest:
-                raise SystemExit(f'{path}: the index was measured at another tissue level; run without --grid-only')
+            if index.get('pixels', {}).get('tissueLevel') != finest or index.get('tissueBbox') != bbox:
+                raise SystemExit(f'{path}: the index was measured at another tissue level or box; run without --grid-only')
             index['pixels']['tissueGrid'] = grid
             with open(path, 'w', encoding='utf-8') as fh:
                 fh.write(build_signout_index.dumps(index))
@@ -230,7 +238,6 @@ def main(argv=None) -> int:
             total_fetched += r.bytes_fetched
             print(f'{path}: tissueGrid {grid["cols"]} x {grid["rows"]} cells of {grid["cell"]} px, {bin(int(grid["bits"], 16)).count("1")} tissue; read {r.bytes_read} B (fetched {r.bytes_fetched} B)')
             continue
-        bbox = tissue_bbox(np, img, 2 ** finest, index['width'], index['height'])
         top = len(levels) - 1
         top_img = img if top == finest else level_image(np, imagecodecs, r, index, top, tables)
         for i in pinned:

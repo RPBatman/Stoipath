@@ -174,8 +174,12 @@ export async function run(ctx) {
     check(TAG, tray0.mounted === 'examine' && tray0.tray.length === 5 && tray0.tray[0].current && tray0.tray[0].text.startsWith('Node 1 · opened · '), `REV-1 Review: the tray lists Node 1 … Node 5, Node 1 is aria-current and 'opened · m:ss' (${tray0.tray.map((r) => r.text).join(' | ')})`);
     const chip0 = await page.evaluate(() => window.__signout.host().gate);
     check(TAG, chip0 === 'Node 1 of 5 · not yet viewed at 10×', `REV-1 HUD node chip '${chip0}' (withKey false: no keycap)`);
-    // REV-2: no entry for the view the node opened on
-    check(TAG, tray0.nodes[0].traceLength === 0, `REV-2 the view node 1 opened on is not logged (${tray0.nodes[0].traceLength} entries)`);
+    // REV-2b (S3 review fix, SIGNOUT.md §19.5): the view the node opened on (the tissue fit) is logged once when it settles
+    await page.waitForFunction(() => window.__signout.tools.review().nodes[0].traceLength >= 1, null, { timeout: 10_000 }).catch(() => {});
+    await page.waitForTimeout(400);
+    const tr0 = await rv(page);
+    const e0 = tr0.nodes[0].trace[0];
+    check(TAG, tr0.nodes[0].traceLength === 1 && e0?.sharp === true && e0.scale_um_per_px > 2, `REV-2b the view node 1 opened on (the tissue fit) is logged once, sharp, at the fit scale, with no move (${tr0.nodes[0].traceLength} entr${tr0.nodes[0].traceLength === 1 ? 'y' : 'ies'}, ${e0?.scale_um_per_px?.toFixed(2)} µm/px)`);
 
     // ] → node 2 in place
     await key(page, ']');
@@ -201,6 +205,7 @@ export async function run(ctx) {
     // REV-1 HUD chip after a 20× view; REV-2 one sharp entry at 0.5 ± 1 %
     await page.click('#nodeTray .so-tray__row[data-node="2"]');
     await waitNode(ctx, page, 2);
+    await page.waitForFunction(() => window.__signout.tools.review().nodes[2].traceLength >= 1, null, { timeout: 10_000 }).catch(() => {});
     const before = (await rv(page)).nodes[2].traceLength;
     // jumpTo 20× over the node's tissue (instant; §14.7 REV-2), then the settle
     await page.evaluate(() => {
@@ -211,7 +216,7 @@ export async function run(ctx) {
     await helpers.settle(page, { quietMs: 500 });
     const after20 = await rv(page);
     const e20 = after20.nodes[2].trace.at(-1);
-    check(TAG, before === 0 && after20.nodes[2].traceLength === 1 && e20?.sharp === true && near(e20.scale_um_per_px, 0.5, 0.01), `REV-2 jumpTo 20× + settle wrote one sharp entry at ${e20?.scale_um_per_px?.toFixed(4)} µm/px (${before} → ${after20.nodes[2].traceLength} entries; t ${e20?.t} ms)`);
+    check(TAG, before === 1 && after20.nodes[2].traceLength === 2 && e20?.sharp === true && near(e20.scale_um_per_px, 0.5, 0.01), `REV-2 jumpTo 20× + settle wrote one sharp entry at ${e20?.scale_um_per_px?.toFixed(4)} µm/px (${before} → ${after20.nodes[2].traceLength} entries; t ${e20?.t} ms)`);
     const r = e20?.rect;
     const vw = await page.evaluate(() => ({ s: window.__signout.tools.review().sample, insets: window.__signout.host().env.insets }));
     if (r && vw.s) {

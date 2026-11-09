@@ -54,6 +54,21 @@ export function showMeCamera(label: Exclude<NodeLabel, 'negative'>, bbox: readon
   return { center_um: [cx * mpp, cy * mpp], scale_um_per_px: scale };
 }
 
+/**
+ * The collapsed row's Show me (S3 review fix, §19.5): the extent of a node's smaller deposits fitted to 60 % of the
+ * uncovered viewport like a macro, never finer than the label's own Show me scale (ITC 0.5, micro 1.0 µm/px).
+ */
+export function showMeExtentCamera(label: Exclude<NodeLabel, 'negative'>, bbox: readonly number[], mpp: number, pane: Pane): Camera | null {
+  const fit = showMeCamera('macro', bbox, mpp, pane);
+  if (fit === null) return null;
+  const floor = label === 'itc' ? SHOW_ME_SCALE.itc : SHOW_ME_SCALE.micro;
+  if (fit.scale_um_per_px >= floor) return fit;
+  const l = pane.insets !== null && pane.insets.left > 0 ? pane.insets.left : 0;
+  const r = pane.insets !== null && pane.insets.right > 0 ? pane.insets.right : 0;
+  const cx = (bbox[0]! + bbox[2]!) / 2 - ((l - r) / 2) * (floor / mpp);
+  return { center_um: [cx * mpp, ((bbox[1]! + bbox[3]!) / 2) * mpp], scale_um_per_px: floor };
+}
+
 /** The box centre in µm (the `Images are unavailable; the deposit is at {x}, {y} µm.` sentence). */
 export function boxCentreUm(bbox: readonly number[], mpp: number): [number, number] {
   return [((bbox[0]! + bbox[2]!) / 2) * mpp, ((bbox[1]! + bbox[3]!) / 2) * mpp];

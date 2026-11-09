@@ -33,20 +33,21 @@
  */
 import type { Annotation, CommandSource, Disposer, ShellApi, SlideEntry, VectorLayerFile } from '../../shell/contracts';
 import type { CaseProgress, CaseResult, DepositPolygon, DepositView, FeedbackService, GradingService, LoadedCase, NodeIndex, NodeLabel, SignoutApi } from '../contracts';
+import { viewMeetsTissue } from '../contracts';
 import { feedbackCommands } from './commands';
 import { compareModel, type CompareModel } from './compare';
-import { depositBlocks, type NodeBlock } from './deposits';
-import { boxCentreUm, showMeCamera, type Camera } from './showme';
+import { depositBlocks, depositLabel, depositOrder, REST_ID, type NodeBlock } from './deposits';
+import { boxCentreUm, showMeCamera, showMeExtentCamera, type Camera } from './showme';
 import { FeedbackSource, STYLES, depositPolygons, flagFeatures, layerVersion, lookedFeatures, lookedRegion, polygonsBox, referenceFeatures, type LookedRegion } from './sources';
-import { AJCC_CAP, AJCC_CAP_SUMMARY, PRACTICE, SOURCES, SOURCE_NAMES, TEXT, aboutSize, group, type SourceName } from './text';
+import { AJCC_CAP, AJCC_CAP_SUMMARY, LOOKED_CELL_UM, LOOKED_MAX_VERTICES, PRACTICE, SOURCES, SOURCE_NAMES, TEXT, group, showMeMagnification, type SourceName } from './text';
 import './feedback.css';
 
 /** S2-N1: how long Show me waits after a node switch for the base or the failure threshold (the plate's 8 s, §8.4). */
 const SHOW_ME_SWITCH_WAIT_MS = 8000;
 
 export { banner, compareModel, sizeRow } from './compare';
-export { depositBlocks, flagSentences, labelOnlySentence, missSentence } from './deposits';
-export { boxCentreUm, landing, showMeCamera, showMeScale, visibleWidth } from './showme';
+export { depositBlocks, depositLabel, depositOrder, depositSize, flagSentences, labelOnlySentence, LIST_MAX, LIST_TOP, missSentence, REST_ID } from './deposits';
+export { boxCentreUm, landing, showMeCamera, showMeExtentCamera, showMeScale, visibleWidth } from './showme';
 export { FeedbackSource, STYLES, depositPolygons, flagFeatures, layerVersion, lookedEntry, lookedFeatures, lookedRegion, markCells, polygonsBox, referenceFeatures, signature, traceCells } from './sources';
 export { feedbackCommands } from './commands';
 export * as text from './text';
@@ -357,7 +358,7 @@ export class FeedbackController {
       } else {
         const e = this.entryOf(lc, node);
         const np = p.nodes[node];
-        const region = lookedRegion(np?.trace ?? [], this.mppOf(lc, node), e?.width ?? 0, e?.height ?? 0);
+        const region = lookedRegion(np?.trace ?? [], this.mppOf(lc, node), e?.width ?? 0, e?.height ?? 0, LOOKED_CELL_UM, LOOKED_MAX_VERTICES, (r) => viewMeetsTissue(r, cn));
         this.lastLooked = region;
         changed = this.sources.looked.set(lookedFeatures(cn.ref, region)) || changed;
         changed = this.sources.flags.set(flagFeatures(cn.ref, np?.flags ?? [])) || changed;
@@ -403,8 +404,16 @@ export class FeedbackController {
 
   private clusterBox(lc: LoadedCase, node: number, clusterId: string): readonly number[] | null {
     const cn = lc.case.nodes[node];
-    const cl = cn?.annotation?.clusters.find((x) => x.id === clusterId);
-    if (cn === undefined || cl === undefined) return null;
+    if (cn === undefined) return null;
+    if (clusterId === REST_ID) {
+      // the collapsed row (S3 review fix): the union of the smaller clusters' boxes
+      const rest = depositOrder(cn.annotation?.clusters ?? []).rest;
+      const boxes = rest.map((c) => this.clusterBox(lc, node, c.id)).filter((b): b is readonly number[] => b !== null);
+      if (boxes.length === 0) return null;
+      return [Math.min(...boxes.map((b) => b[0]!)), Math.min(...boxes.map((b) => b[1]!)), Math.max(...boxes.map((b) => b[2]!)), Math.max(...boxes.map((b) => b[3]!))];
+    }
+    const cl = cn.annotation?.clusters.find((x) => x.id === clusterId);
+    if (cl === undefined) return null;
     const polys = this.polygons(lc, node)?.filter((p) => p.clusterId === clusterId || cl.featureIds.includes(p.featureId)) ?? [];
     return polygonsBox(polys) ?? cl.bbox;
   }
@@ -442,7 +451,10 @@ export class FeedbackController {
     const label = cn?.reference.label;
     const bbox = this.clusterBox(lc, node, clusterId);
     if (cn === undefined || label === undefined || label === 'negative' || bbox === null) return;
-    const j = (cn.annotation?.clusters.findIndex((x) => x.id === clusterId) ?? 0) + 1;
+    // the row's own number and size (largest deposit first; the collapsed row is REST_ID), S3 review fix
+    const lab = depositLabel(cn.annotation?.clusters ?? [], clusterId);
+    if (lab === null) return;
+    const j = lab.j;
     const mpp = this.mppOf(lc, node);
     this.api.bus.emit('showMe', { caseId: lc.id, node, cluster: clusterId });
     const live = this.shell.live;
@@ -477,13 +489,13 @@ export class FeedbackController {
     const v = this.shell.primary;
     const snap = v.viewer?.snapshot;
     const pane = { cssW: snap?.cssW ?? v.host.clientWidth, cssH: snap?.cssH ?? v.host.clientHeight, insets: this.shell.env.visibleInsets?.('A') ?? null };
-    const cam = showMeCamera(label as Exclude<NodeLabel, 'negative'>, bbox, mpp, pane);
+    const cam = clusterId === REST_ID ? showMeExtentCamera(label as Exclude<NodeLabel, 'negative'>, bbox, mpp, pane) : showMeCamera(label as Exclude<NodeLabel, 'negative'>, bbox, mpp, pane);
     if (cam === null) return;
     const instant = this.shell.env.reducedMotion();
     v.flyTo(cam.center_um, cam.scale_um_per_px, instant);
     const g = this.grading();
-    const size = aboutSize(cn.annotation?.clusters.find((x) => x.id === clusterId)?.feret_um ?? 0);
-    const spoken = TEXT.flying(j, node + 1, size, g?.magnificationWord(cam.scale_um_per_px) ?? '');
+    const word = showMeMagnification(cam.scale_um_per_px, g?.magnificationWord(cam.scale_um_per_px) ?? '');
+    const spoken = clusterId === REST_ID ? TEXT.flyingRest(lab.rest, node + 1, word) : TEXT.flying(j, node + 1, lab.size, word);
     live.polite(spoken);
     this.lastShowMe = { node, cluster: clusterId, camera: cam, instant, spoken, switched };
     this.syncSources();
@@ -538,7 +550,7 @@ export class FeedbackController {
       return;
     }
     const model = compareModel(r, lc, g);
-    const blocks = depositBlocks(lc.case.nodes, r.nodes, this.views(lc, p, g), (s) => g.magnificationWord(s));
+    const blocks = depositBlocks(lc.case.nodes, r.nodes, this.views(lc, p, g), (s) => g.magnificationWord(s), r.submitted.calls);
     this.lastModel = { compare: model, blocks };
     const b = model.banner;
 
@@ -617,12 +629,13 @@ export class FeedbackController {
       if (blk.annotated) {
         const ul = el('ul', { class: 'so-fb__deposits' });
         for (const d of blk.deposits) {
-          const btn = el('button', { type: 'button', class: 'btn btn--secondary btn--sm', 'data-focus-key': `show-${blk.node}-${d.clusterId}`, 'data-showme': `${blk.node}:${d.clusterId}`, 'aria-label': TEXT.showMeName(d.j, blk.node + 1), text: TEXT.showMe });
+          const btn = el('button', { type: 'button', class: 'btn btn--secondary btn--sm', 'data-focus-key': `show-${blk.node}-${d.clusterId}`, 'data-showme': `${blk.node}:${d.clusterId}`, 'aria-label': d.rest > 0 ? TEXT.showMeRestName(blk.node + 1) : TEXT.showMeName(d.j, blk.node + 1), text: TEXT.showMe });
           btn.addEventListener('click', (ev) => void this.showMe(blk.node as NodeIndex, d.clusterId, (ev as MouseEvent).detail === 0 ? 'keyboard' : 'pointer'));
           ul.append(el('li', { class: 'so-fb__deposit', 'data-cluster': d.clusterId }, el('span', { text: d.text }), btn));
         }
         sec.append(ul);
         if (blk.miss !== null) sec.append(el('p', { class: 'so-fb__miss', 'data-miss': String(blk.missType), text: blk.miss }));
+        if (blk.borderlineNote !== null) sec.append(el('p', { class: 'so-fb__miss', 'data-miss': 'borderline', text: blk.borderlineNote }));
       } else {
         if (blk.labelOnly !== null) sec.append(el('p', { class: 'so-fb__labelonly', text: blk.labelOnly }));
         if (blk.finest !== null) sec.append(el('p', { class: 'so-fb__finest', text: blk.finest }));

@@ -25,7 +25,7 @@ import { counts, derivePn, RULES } from './staging';
 import { analyseNode, magnificationWord } from './trace';
 
 export { compare, formatMm, previewText } from './compare';
-export { BORDERLINE_SUFFIX, caseClass, classSentence, CLASS_DEFINITIONS, inconsistent, LABEL_WORD, nodeAgreementText, nodeClass, pnAgreementText, pnClass, pnDistance, worst } from './discrepancy';
+export { BORDERLINE_SUFFIX, borderlineOnly, caseClass, classSentence, CLASS_DEFINITIONS, inconsistent, LABEL_WORD, nodeAgreementText, nodeClass, pnAgreementText, pnClass, pnDistance, worst } from './discrepancy';
 export { caseSize, ITC_MAX_UM, largestMayBeUnannotated, MICRO_MAX_UM, nodeIndexOfRef, relativeDifference, SIZE_TOLERANCE, sizeAgreement, sizeBand } from './size';
 export { counts, derivePn, isNodeLabel, isPnCategory, labelOrdinal, N_CATEGORY, NODE_LABELS, PN_CATEGORIES, pnOrdinal, RULES } from './staging';
 export {

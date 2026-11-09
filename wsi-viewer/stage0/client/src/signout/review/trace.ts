@@ -108,13 +108,17 @@ export interface TraceStats {
   bestScaleOverTissue: number | null;
 }
 
-/** Fold sharp entries into the node's best scales (minimum; existing values kept). */
-export function foldStats(prev: TraceStats, entries: readonly TraceEntry[], tissue: Box | null): TraceStats {
+/**
+ * Fold sharp entries into the node's best scales (minimum; existing values kept). `tissue` is the tissue box, or (S3
+ * review fix, §19.5) a predicate: the contracts' `viewMeetsTissue` for the node, which tests its tissue cells.
+ */
+export function foldStats(prev: TraceStats, entries: readonly TraceEntry[], tissue: Box | null | ((r: Box) => boolean)): TraceStats {
   let { bestScale, bestScaleOverTissue } = prev;
+  const over = typeof tissue === 'function' ? tissue : (r: Box): boolean => overTissue(r, tissue);
   for (const e of entries) {
     if (!e.sharp || !(e.scale_um_per_px > 0)) continue;
     if (bestScale === null || e.scale_um_per_px < bestScale) bestScale = e.scale_um_per_px;
-    if (overTissue(e.rect, tissue) && (bestScaleOverTissue === null || e.scale_um_per_px < bestScaleOverTissue)) bestScaleOverTissue = e.scale_um_per_px;
+    if (over(e.rect) && (bestScaleOverTissue === null || e.scale_um_per_px < bestScaleOverTissue)) bestScaleOverTissue = e.scale_um_per_px;
   }
   return { bestScale, bestScaleOverTissue };
 }

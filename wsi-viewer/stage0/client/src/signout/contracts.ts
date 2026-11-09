@@ -114,6 +114,59 @@ export interface SignoutCaseNode {
   annotation: NodeAnnotation | null;
   /** Level-0 px [x0, y0, x1, y1] (D25); [0, 0, 0, 0] = fit the whole slide. */
   tissueBbox: [number, number, number, number];
+  /**
+   * Additive (S3 review fix, SIGNOUT.md §19.5; contract 4): the coarse tissue mask of the node's slide (the index's
+   * `pixels.tissueGrid`). When present, a view is "over tissue" (examined, the tray's viewed-at, where-you-looked) only
+   * when it meets a tissue cell; absent → the `tissueBbox` test of contract 3.
+   */
+  tissueCells?: TissueCells;
+}
+
+/** A coarse tissue mask: `cols` × `rows` cells of `cell` level-0 px, row-major, `bits` hex (4 cells a digit, MSB first). */
+export interface TissueCells {
+  cell: number;
+  cols: number;
+  rows: number;
+  bits: string;
+}
+
+/** True when the mask's numbers are usable (positive sizes, enough hex digits). Pure. */
+export function validTissueCells(t: TissueCells | null | undefined): t is TissueCells {
+  if (t === null || t === undefined || typeof t !== 'object') return false;
+  const ok = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v > 0;
+  return ok(t.cell) && ok(t.cols) && ok(t.rows) && typeof t.bits === 'string' && t.bits.length >= Math.ceil((t.cols * t.rows) / 4) && /^[0-9a-f]*$/.test(t.bits);
+}
+
+/** Is cell (column i, row j) tissue? Out-of-grid cells are not. Pure. */
+export function tissueCellAt(t: TissueCells, i: number, j: number): boolean {
+  if (i < 0 || j < 0 || i >= t.cols || j >= t.rows) return false;
+  const k = j * t.cols + i;
+  const d = parseInt(t.bits.charAt(k >> 2), 16);
+  return Number.isFinite(d) && ((d >> (3 - (k & 3))) & 1) === 1;
+}
+
+/**
+ * Shared rule (S3 review fix, SIGNOUT.md §19.5; one definition for grading, review and feedback): does a view rect
+ * (level-0 px) lie over the node's tissue? With a valid `tissueCells` mask, the rect must meet (closed) at least one
+ * tissue cell; otherwise the contract-3 test applies: the rect meets `tissueBbox`, whose [0, 0, 0, 0] or degenerate
+ * form is the whole slide. Pure; at most rows × cols cell reads, called at rest only.
+ */
+export function viewMeetsTissue(rect: Box, node: { tissueBbox: readonly number[]; tissueCells?: TissueCells | null }): boolean {
+  if (![rect.minX, rect.minY, rect.maxX, rect.maxY].every((v) => typeof v === 'number' && Number.isFinite(v))) return false;
+  const t = node.tissueCells;
+  if (validTissueCells(t)) {
+    const c = t.cell;
+    const i0 = Math.max(0, Math.floor(rect.minX / c));
+    const i1 = Math.min(t.cols - 1, Math.floor(rect.maxX / c));
+    const j0 = Math.max(0, Math.floor(rect.minY / c));
+    const j1 = Math.min(t.rows - 1, Math.floor(rect.maxY / c));
+    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) if (tissueCellAt(t, i, j)) return true;
+    return false;
+  }
+  const b = node.tissueBbox;
+  const whole = !(Array.isArray(b) && b.length === 4 && b.every((v) => Number.isFinite(v)) && (b[2]! > b[0]! || b[3]! > b[1]!));
+  if (whole) return true;
+  return rect.minX <= b[2]! && b[0]! <= rect.maxX && rect.minY <= b[3]! && b[1]! <= rect.maxY;
 }
 
 export interface NodeReference {
@@ -142,7 +195,13 @@ export interface NodeAnnotation {
 export interface DepositCluster {
   id: string;
   featureIds: string[];
+  /** The cluster span: Feret of all its polygons merged (annotation geometry, never a deposit size, §6.3). */
   feret_um: number;
+  /**
+   * Additive (S3 review fix, §19.5; contract 4): Feret of the cluster's largest single polygon, µm: the deposit size the
+   * comparison prints. Absent in older case files (the comparison then falls back to `feret_um`).
+   */
+  largestPolygon_um?: number;
   /** Level-0 px [x0, y0, x1, y1]. */
   bbox: [number, number, number, number];
 }
@@ -235,7 +294,7 @@ export type CaseStatus =
   | { kind: 'locked'; reason: string }
   | { kind: 'not-started' }
   | { kind: 'in-review'; node: NodeIndex }
-  | { kind: 'submitted'; class: DiscrepancyClass | null };
+  | { kind: 'submitted'; class: DiscrepancyClass | null; /** Additive (S3 review fix, contract 4): the case's class rests only on a borderline node (§6.2, PE-3). */ borderline?: boolean };
 
 // =====================================================================================================================
 // 3. Progress (§5.8; records in the sign-out database `stoipath-learn-signout`, D10)
@@ -862,9 +921,10 @@ export interface SignoutServices {
 export interface SignoutApi {
   /**
    * Contract version of this file: 2 since Wave S1 (GRD-Q1, CASEFMT-Q3); 3 since Wave S2 (RES-Q1
-   * `NodeTraceSummary.largestDeposit_um?`, REVIEW-Q1 `CaseProgress.countdownExtensions?`).
+   * `NodeTraceSummary.largestDeposit_um?`, REVIEW-Q1 `CaseProgress.countdownExtensions?`); 4 since the S3 review fixes
+   * (`DepositCluster.largestPolygon_um?`, `SignoutCaseNode.tissueCells?`, `CaseStatus.borderline?`; SIGNOUT.md §19.5).
    */
-  readonly contract: 3;
+  readonly contract: 4;
   readonly product: 'learn';
   readonly mode: SignoutMode;
   /** Learn's API: `learn.service('format')`, `learn.service('scoring')` (LEARN.md's modules, installed unchanged, D3). */

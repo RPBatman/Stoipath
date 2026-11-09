@@ -795,6 +795,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     else if (path.running) acquireWakeLock(); // the browser releases a wake lock when the page is hidden
   };
   document.addEventListener('visibilitychange', onVisibility);
+  // Range slides only (SIGNOUT.md §8.4, §19.5): back online → every failed tile is requested again at once.
+  const onOnline = (): void => scheduler.resetFailures();
+  if (pyramid.rangeSource !== undefined) window.addEventListener('online', onOnline);
 
   // Context loss (REVIEW H5): mobile drivers commit texture memory lazily, so an oversize array fails seconds later as
   // a context loss. Recover with half the layers, remember the count for the next load in this tab, keep the metrics.
@@ -1075,6 +1078,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
       dprWatch = null;
     }
     document.removeEventListener('visibilitychange', onVisibility);
+    window.removeEventListener('online', onOnline);
     frameHooks.length = 0;
     resizeHooks.length = 0;
     path.onDone = null;

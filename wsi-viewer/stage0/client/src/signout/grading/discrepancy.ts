@@ -130,7 +130,10 @@ export function classSentence(r: Pick<CaseResult, 'classes' | 'submitted' | 'ref
       const n = r.classes.nodes[i]!;
       const call = r.submitted.calls[i]!;
       const ref = r.reference.labels[i]!;
-      detail = `node ${i + 1} called ${SENTENCE_WORD[call]}, reference ${SENTENCE_WORD[ref]} (${NODE_DIRECTION_WORD[n.direction === 'over' ? 'over' : 'under']})`;
+      // S3 review fix (§19.5, PE-3): a borderline pair is not called "missed"; the borderline note replaces the direction
+      detail = n.borderline
+        ? `node ${i + 1} called ${SENTENCE_WORD[call]}, reference ${SENTENCE_WORD[ref]} · ${BORDERLINE_SUFFIX}`
+        : `node ${i + 1} called ${SENTENCE_WORD[call]}, reference ${SENTENCE_WORD[ref]} (${NODE_DIRECTION_WORD[n.direction === 'over' ? 'over' : 'under']})`;
     } else {
       const p = r.classes.pN;
       detail = `pN ${r.submitted.pN}, reference ${r.reference.pN} (${PN_DIRECTION_WORD[p.direction === 'over' ? 'over' : 'under']})`;
@@ -139,6 +142,18 @@ export function classSentence(r: Pick<CaseResult, 'classes' | 'submitted' | 'ref
   }
   if (!r.complete && r.nodesNotExamined > 0) s += ` ${r.nodesNotExamined} node(s) not examined.`;
   return s;
+}
+
+/**
+ * True when the case's class rests only on borderline nodes (S3 review fix, §19.5): the class is not a match, every
+ * node of that class is a borderline pair, and the pN class is milder. The worklist then reads
+ * `submitted · major discrepancy (borderline node)`.
+ */
+export function borderlineOnly(r: Pick<CaseResult, 'classes'>): boolean {
+  const cc = r.classes.case;
+  if (cc === 'match' || r.classes.pN.class === cc) return false;
+  const at = r.classes.nodes.filter((n) => n.class === cc);
+  return at.length > 0 && at.every((n) => n.borderline);
 }
 
 /**
@@ -163,7 +178,7 @@ export const CLASS_DEFINITIONS: Readonly<Record<string, string>> = Object.freeze
   inconsistent: 'Inconsistent: the entered pN differs from the pN that the rules give for the trainee\'s own node calls. A flag, never a class.',
   complete: 'Complete: every node was opened and had at least one sharp settled view at ≤ 2 µm/px intersecting its tissue box. An agreement on a node that was not examined is labelled, never counted as a plain match; nodes_not_examined counts them.',
   miss_type:
-    'Miss type (only for an annotated positive node called below its reference: negative or itc for micro or macro, or negative for itc): search = no annotated deposit of the node was ever in a sharp settled view at or finer than the adequate scale (ITC 0.5, micro 1.0, macro 2.0 µm/px); recognition = a deposit was in such a view for ≥ 2 s of cumulative dwell (dwell = time to the next settled view, capped at 30 s) and was not called; indeterminate = in such a view for under 2 s; empty otherwise.',
+    'Miss type (only for an annotated positive node called below its reference: negative or itc for micro or macro, or negative for itc): search = no annotated deposit of the node was ever in a sharp settled view at or finer than the adequate scale (ITC 0.5, micro 1.0, macro 2.0 µm/px); recognition = a deposit was in such a view for ≥ 2 s of cumulative dwell (dwell = time to the next settled view, capped at 30 s) and was not called; indeterminate = in such a view for under 2 s; empty otherwise, and also empty on a borderline node called itc against a micro reference once a deposit was in such a view (a disagreement on the cell-count criterion, not a miss).',
   size_category: 'Size category agreement: the trainee\'s largest deposit and the reference\'s longest single annotated outline fall in the same AJCC band (≤ 0.2 mm, > 0.2 to 2.0 mm, > 2.0 mm). Not compared when the trainee gave no size, when no node is annotated, or when the largest deposit may lie in an unannotated node.',
   size_numeric: 'Size numeric agreement: the trainee\'s figure lies within ±20 % of the reference\'s longest single annotated outline. Secondary to the category; a size never changes a class.',
 });

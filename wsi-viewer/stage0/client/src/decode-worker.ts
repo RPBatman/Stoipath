@@ -449,7 +449,16 @@ async function handleArrays(req: ArraysFetch): Promise<void> {
   try {
     if (revoked !== null) throw new Error(revoked);
     if (req.length <= 0 || req.length % 16 !== 0) throw new Error(`bad array range length ${req.length}`);
-    const r = await fetchRange(req.url, req.etag, req.start, req.length, controller, 0, () => undefined, () => undefined);
+    // SIGNOUT.md §19.5 (S3 review fix): progress notes (headers, then body bytes, at most every
+    // TILE_PROGRESS_EVERY_MS) so that RangeSource aborts a stalled fetch, never a slow one
+    let noted = -1e9;
+    const note = (force: boolean): void => {
+      const now = performance.now();
+      if (!force && now - noted < TILE_PROGRESS_EVERY_MS) return;
+      noted = now;
+      scope.postMessage({ type: 'arrays-progress', id: req.id }, []);
+    };
+    const r = await fetchRange(req.url, req.etag, req.start, req.length, controller, 0, () => note(true), () => note(false));
     const n = req.length / 16;
     const view = new DataView(r.body.buffer, r.body.byteOffset, r.body.byteLength);
     const counts = long8(view, 0, n);

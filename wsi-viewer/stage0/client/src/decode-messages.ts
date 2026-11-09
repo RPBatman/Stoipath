@@ -136,6 +136,14 @@ export interface ArraysError {
   level: number;
   message: string;
 }
+/**
+ * Additive (SIGNOUT.md §19.5, S3 review fix): an array fetch is still receiving (headers, then body bytes; at most
+ * every TILE_PROGRESS_EVERY_MS), so RangeSource aborts only after a stretch without progress, never a slow transfer.
+ */
+export interface ArraysProgress {
+  type: 'arrays-progress';
+  id: number;
+}
 export interface ProbeResponse {
   type: 'probe';
   id: number;
@@ -158,4 +166,4 @@ export interface ProgressNote {
   seq?: number | undefined;
 }
 /** Everything a decode worker posts to the page. */
-export type WorkerMessage = WorkerResponse | ProgressNote | ArraysResponse | ArraysError | ProbeResponse;
+export type WorkerMessage = WorkerResponse | ProgressNote | ArraysResponse | ArraysError | ArraysProgress | ProbeResponse;

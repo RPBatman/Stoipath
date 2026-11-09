@@ -272,17 +272,34 @@ export class RangeSource {
     const start = l.countsAt;
     const length = 16 * l.tiles;
     let reqId = -1;
-    const p = pool.requestArrays(level, this.url, this.etag, start, length, (id) => {
-      reqId = id;
-    });
-    this.loading.set(level, reqId);
-    // An array fetch is outside the scheduler (no watchdog): give up after TILE_WATCHDOG_MAX_MS and retry later.
-    this.timers.set(
+    // SIGNOUT.md §19.5 (S3 review fix): the deadline follows progress, as the tile watchdog does. The worker notes the
+    // headers and then body bytes; the fetch is abandoned only after TILE_WATCHDOG_MAX_MS without any (a stalled
+    // request), never because a large level-0 array is slow on a slow link (1.2 MB at 150 kbit/s takes ~65 s).
+    let aliveAt = performance.now();
+    const p = pool.requestArrays(
       level,
-      setTimeout(() => {
-        if (l.state === 'loading') pool.cancelArrays(reqId);
-      }, TILE_WATCHDOG_MAX_MS),
+      this.url,
+      this.etag,
+      start,
+      length,
+      (id) => {
+        reqId = id;
+      },
+      () => {
+        aliveAt = performance.now();
+      },
     );
+    this.loading.set(level, reqId);
+    const check = (): void => {
+      if (l.state !== 'loading' || this.disposed) return;
+      const idle = performance.now() - aliveAt;
+      if (idle >= TILE_WATCHDOG_MAX_MS) {
+        pool.cancelArrays(reqId);
+        return;
+      }
+      this.timers.set(level, setTimeout(check, Math.max(250, TILE_WATCHDOG_MAX_MS - idle)));
+    };
+    this.timers.set(level, setTimeout(check, TILE_WATCHDOG_MAX_MS));
     p.then(
       ({ counts, offsets }) => {
         this.settled(level);
@@ -302,7 +319,7 @@ export class RangeSource {
         if (this.disposed) return;
         const msg = err instanceof Error ? err.message : String(err);
         if (msg === RANGE_CHANGED_MESSAGE) this.changed = true;
-        this.fail(l, `arrays level ${level}: ${msg === 'aborted' ? `no answer in ${TILE_WATCHDOG_MAX_MS / 1000} s` : msg}`);
+        this.fail(l, `arrays level ${level}: ${msg === 'aborted' ? `no progress for ${TILE_WATCHDOG_MAX_MS / 1000} s` : msg}`);
       },
     );
   }

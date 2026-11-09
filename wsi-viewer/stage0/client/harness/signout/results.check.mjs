@@ -166,7 +166,7 @@ export async function run(ctx) {
     const tbl = await page.evaluate(() => ({ rows: [...document.querySelectorAll('.so-cohort__table tbody tr')].map((tr) => [...tr.children].map((c) => c.textContent)), heads: [...document.querySelectorAll('.so-cohort__table thead th')].map((th) => th.textContent), counts: document.querySelector('.so-cohort__counts').textContent }));
     check(TAG, JSON.stringify(tbl.heads) === JSON.stringify(['File', 'Trainee code', 'Group', 'Attempt', 'Cases', 'Build', 'Exported', 'Action']), `RES-3: the table of loaded files: File, Trainee code, Group, Attempt, Cases, Build, Exported (${tbl.heads.join(', ')})`);
     check(TAG, tbl.rows.length === 3 && tbl.rows[0][1] === '(none)' && tbl.rows[2][1] === 'R2-017' && tbl.rows[2][2] === 'PGY2.site-A' && tbl.rows[2][3] === '2' && tbl.rows[0][4] === '2', `RES-3: three files loaded by chooser and by drop: (none) · R2-017 / PGY2.site-A · attempt 2 (${tbl.rows.map((r) => r.slice(1, 5).join('/')).join(' | ')})`);
-    check(TAG, tbl.counts === '3 files · 6 case rows · pN match 5 · minor 0 · major 1', `RES-3: the counts line "${tbl.counts}"`);
+    check(TAG, tbl.counts === '3 files · 6 case rows · pN: match 5 · minor 0 · major 1 · case class: match 3 · minor 2 · major 1', `RES-3: the counts line, both breakdowns labelled (S3 review fix) "${tbl.counts}"`);
     await H.axe(page, check, TAG, 'RES-4: axe-core WCAG 2.2 AA on the cohort tool with 3 files');
     const sp = await shot(page, 'cohort-1440');
     if (sp !== null) check(TAG, true, `RES-4: screenshot ${sp}`);

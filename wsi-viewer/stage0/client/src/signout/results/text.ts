@@ -38,7 +38,9 @@ export const TEXT = {
     'Rows with the same trainee code, worklist, case and attempt are all kept; every one after the first loaded is marked duplicate in the last column. Without a trainee code, only a row with the same submission time counts as a duplicate.',
   downloadCases: 'Download cases.csv',
   downloadNodes: 'Download nodes.csv',
-  counts: (files: number, rows: number, match: number, minor: number, major: number): string => `${files} file${files === 1 ? '' : 's'} · ${rows} case row${rows === 1 ? '' : 's'} · pN match ${match} · minor ${minor} · major ${major}`,
+  /** S3 review fix (§19.5): both breakdowns labelled, so `major 1` is never read as one case with a major discrepancy. */
+  counts: (files: number, rows: number, match: number, minor: number, major: number, caseMatch: number, caseMinor: number, caseMajor: number): string =>
+    `${files} file${files === 1 ? '' : 's'} · ${rows} case row${rows === 1 ? '' : 's'} · pN: match ${match} · minor ${minor} · major ${major} · case class: match ${caseMatch} · minor ${caseMinor} · major ${caseMajor}`,
   notResults: (reason: string): string => `This is not a results file (${reason}).`,
   duplicate: 'duplicate',
   /** N: table. */

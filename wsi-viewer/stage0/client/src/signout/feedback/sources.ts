@@ -338,8 +338,10 @@ export interface LookedRegion {
  * §5.6 item 4: where the trainee looked at 5× or more on one node, as rings on a 1,024 µm grid with < 2,000 vertices.
  * `slideW` / `slideH` are the level-0 size (cells end at the slide edge). Pure.
  */
-export function lookedRegion(trace: readonly unknown[], mpp: number, slideW: number, slideH: number, cellUm = LOOKED_CELL_UM, maxVertices = LOOKED_MAX_VERTICES): LookedRegion {
-  const rects = trace.filter(lookedEntry).map((e) => e.rect);
+export function lookedRegion(trace: readonly unknown[], mpp: number, slideW: number, slideH: number, cellUm = LOOKED_CELL_UM, maxVertices = LOOKED_MAX_VERTICES, overTissue: ((r: Box) => boolean) | null = null): LookedRegion {
+  // S3 review fix (§19.5): with `overTissue` (the contracts' viewMeetsTissue for the node), a view that met no tissue cell
+  // (an unscanned, black-filled region) is not "looked at"
+  const rects = trace.filter(lookedEntry).map((e) => e.rect).filter((r) => overTissue === null || overTissue(r));
   if (rects.length === 0 || !(mpp > 0) || !(slideW > 0) || !(slideH > 0)) return { rings: [], cellUm, cells: 0, vertices: 0, entries: rects.length };
   let um = cellUm;
   for (let guard = 0; guard < 24; guard++, um *= 2) {

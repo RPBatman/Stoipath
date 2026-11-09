@@ -27,6 +27,8 @@ interface Pending {
   worker: number;
   resolve: (msg: ArraysResponse | ProbeResponse) => void;
   reject: (err: Error) => void;
+  /** An array fetch's progress (SIGNOUT.md §19.5): headers or more body bytes arrived. */
+  progress?: () => void;
 }
 
 export function chooseWorkerCount(hardwareConcurrency: number | undefined, override: number | null): number {
@@ -76,6 +78,10 @@ export class DecodePool {
         const data = ev.data;
         if (data.type === 'arrays' || data.type === 'arrays-error' || data.type === 'probe') {
           this.settle(data);
+          return;
+        }
+        if (data.type === 'arrays-progress') {
+          this.pending.get(data.id)?.progress?.();
           return;
         }
         const o = this.owner.get(data.key);
@@ -253,7 +259,7 @@ export class DecodePool {
    * fetches cross-origin, ER-3). Resolves with the two Float64Arrays; rejects with the worker's message. `onId`
    * receives the request id so the caller can cancel it with cancelArrays().
    */
-  requestArrays(level: number, url: string, etag: string | null, start: number, length: number, onId?: (id: number) => void): Promise<{ counts: Float64Array; offsets: Float64Array }> {
+  requestArrays(level: number, url: string, etag: string | null, start: number, length: number, onId?: (id: number) => void, onProgress?: () => void): Promise<{ counts: Float64Array; offsets: Float64Array }> {
     if (this.workers.length === 0) return Promise.reject(new Error('decode pool terminated'));
     if (this.rangeRevoked !== null) return Promise.reject(new Error(this.rangeRevoked));
     const id = ++this.pendingId;
@@ -267,6 +273,7 @@ export class DecodePool {
           resolve({ counts: new Float64Array(m.counts), offsets: new Float64Array(m.offsets) });
         },
         reject,
+        ...(onProgress !== undefined ? { progress: onProgress } : {}),
       });
       const msg: WorkerRequest = { type: 'arrays', id, level, url, etag, start, length };
       this.workers[worker]?.postMessage(msg);

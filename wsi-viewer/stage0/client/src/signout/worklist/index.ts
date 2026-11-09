@@ -27,7 +27,7 @@
 import type { CommandSource, Disposer, ShellCommand, SlideContext } from '../../shell/contracts';
 import type { CardWarning, PhaseState } from '../../learn/contracts';
 import { h } from '../../shell/dom';
-import type { CaseProgress, CaseStatus, LoadedCase, LoadedWorklist, NodeIndex, NodeLabel, ResolvedOptions, SignoutApi, SignoutPhase, SignoutServices, SlideIdentity, WorklistEntry, WorklistRecord, WorklistService } from '../contracts';
+import type { CaseProgress, CaseResult, CaseStatus, LoadedCase, LoadedWorklist, NodeIndex, NodeLabel, ResolvedOptions, SignoutApi, SignoutPhase, SignoutServices, SlideIdentity, WorklistEntry, WorklistRecord, WorklistService } from '../contracts';
 import { renderWorklistBody, sourceOfClick, type ListRow } from './list';
 import { applyChoice, countdownMinutes, renderOptions } from './options';
 import { FragmentWriter, routeFromParams } from './routing';
@@ -83,8 +83,23 @@ export function caseStatus(e: { locked: string | null; progress: CaseProgress | 
   if (e.locked !== null) return { kind: 'locked', reason: e.locked };
   const p = e.progress;
   if (p === null || p.attempt !== attempt) return { kind: 'not-started' };
-  if (p.result !== null) return { kind: 'submitted', class: examLocked ? null : p.result.classes.case };
+  if (p.result !== null) {
+    if (examLocked) return { kind: 'submitted', class: null };
+    return borderlineOnly(p.result) ? { kind: 'submitted', class: p.result.classes.case, borderline: true } : { kind: 'submitted', class: p.result.classes.case };
+  }
   return { kind: 'in-review', node: p.currentNode };
+}
+
+/**
+ * The case's class rests only on borderline node pairs (§6.2, PE-3; S3 review fix, §19.5): not a match, every node of
+ * the case's class is a borderline pair, and the pN class is milder. Grading's `borderlineOnly`, restated here because
+ * sign-out modules never import each other (§4.4). Pure.
+ */
+export function borderlineOnly(r: Pick<CaseResult, 'classes'>): boolean {
+  const c = r.classes;
+  if (c === undefined || c.case === 'match' || c.pN?.class === c.case || !Array.isArray(c.nodes)) return false;
+  const at = c.nodes.filter((n) => n.class === c.case);
+  return at.length > 0 && at.every((n) => n.borderline === true);
 }
 
 /** The `task__head` / `task__body` / `task__cta` skeleton (LEARN-QUESTIONS host conventions 5), kept across renders. */
@@ -573,6 +588,8 @@ export class Worklist implements WorklistService {
       return;
     }
     const token = ++this.openToken;
+    // S3 review fix (§19.5, SC 2.4.3): captured before the worklist card (and the focused row) is torn down
+    const focusInCard = this.focusInFlow();
     const lc = e.loaded;
     const results = this.svc('results');
     await results?.flush();
@@ -622,6 +639,13 @@ export class Worklist implements WorklistService {
     const n = node ?? e.progress.currentNode;
     this.frag.write(caseId, n);
     await this.openNode(n, source);
+    // a case opened from the card (a worklist row, the card's CTA) lands focus on the phase title, not on <body>; N from
+    // the slide keeps focus where it was
+    if (token === this.openToken && (focusInCard || source === 'pointer' || source === 'touch' || document.activeElement === null || document.activeElement === document.body)) {
+      this.api.shell.atRest(() => {
+        if (token === this.openToken && this.current?.id === caseId) this.card.title.focus({ preventScroll: true });
+      });
+    }
   }
 
   private afterRefusal(): void {
@@ -778,7 +802,7 @@ export class Worklist implements WorklistService {
     const previous = this.phase;
     const lc = this.current;
     if (lc === null) return;
-    const focusInCard = document.activeElement instanceof HTMLElement && (document.getElementById('dock')?.contains(document.activeElement) === true || document.getElementById('phaseRail')?.contains(document.activeElement) === true || document.getElementById('flowBar')?.contains(document.activeElement) === true);
+    const focusInCard = this.focusInFlow();
     this.phase = phase;
     this.maxReached = Math.max(this.maxReached, PHASE_INDEX[phase]);
     if (this.progress !== null && this.progress.phase !== phase) this.update((p) => (p.phase = phase));
@@ -790,6 +814,12 @@ export class Worklist implements WorklistService {
     const e = this.entries.find((x) => x.entry.id === lc.id);
     this.api.shell.live.polite(TEXT.phaseSpoken(PHASE_LABEL[phase], `Case ${e?.number ?? ''}`));
     if (focusInCard || source === 'pointer' || source === 'touch') this.api.shell.atRest(() => this.card.title.focus({ preventScroll: true }));
+  }
+
+  /** Is focus in the task card, the phase rail or the flow bar (a phase change made from the card)? */
+  private focusInFlow(): boolean {
+    const a = document.activeElement;
+    return a instanceof HTMLElement && ['dock', 'phaseRail', 'flowBar'].some((id) => document.getElementById(id)?.contains(a) === true);
   }
 
   /** D12: the dataset files of the open case only after submission (and under exam style only once the worklist is complete). */

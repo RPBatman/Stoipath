@@ -295,6 +295,23 @@ class Cnt2Reference(unittest.TestCase):
             else:
                 self.assertEqual((r['largestDepositNode'], r['largestDeposit_um']), (None, None))
 
+    def test_cells_and_largest_polygon(self):
+        """S3 review fix (§19.5): every node carries its index's tissue mask; every cluster its largest single polygon,
+        which is never above the cluster span and whose maximum over the node is the node's largestDeposit_um."""
+        for path in sorted((DATA / 'cases').glob('c17-*.module.json')):
+            sc = json.loads(path.read_text(encoding='utf-8'))['extensions']['signout']
+            for n in sc['nodes']:
+                idx = json.loads((DATA / 'slides' / f"{n['slideId']}.index.json").read_text(encoding='utf-8'))
+                g = idx['pixels']['tissueGrid']
+                self.assertEqual(n['tissueCells'], {k: g[k] for k in ('cell', 'cols', 'rows', 'bits')}, n['slideId'])
+                if n['annotation'] is None:
+                    continue
+                for c in n['annotation']['clusters']:
+                    self.assertLessEqual(c['largestPolygon_um'], c['feret_um'] + 1e-9, (n['slideId'], c['id']))
+                    if len(c['featureIds']) == 1:
+                        self.assertEqual(c['largestPolygon_um'], c['feret_um'])
+                self.assertEqual(max(c['largestPolygon_um'] for c in n['annotation']['clusters']), n['reference']['largestDeposit_um'], n['slideId'])
+
     def test_borderline_only_patient_046_node_4(self):
         found = [(doc['extensions']['signout']['dataset']['patient'], i) for _, doc in cases()
                  for i, n in enumerate(doc['extensions']['signout']['nodes']) if 'borderline' in n['reference']]
@@ -407,6 +424,17 @@ class Cnt6Indexes(unittest.TestCase):
                     self.assertIsNotNone(t['blankFill'])
                 x0, y0, x1, y1 = idx['tissueBbox']
                 self.assertTrue(0 <= x0 < x1 <= w0 and 0 <= y0 < y1 <= h0, idx['tissueBbox'])
+                # S3 review fix (SIGNOUT.md §19.5): the coarse tissue mask covers the slide, has tissue, and its tissue
+                # cells all meet the tissue box (both come from the same mask)
+                g = idx['pixels']['tissueGrid']
+                self.assertEqual(g['cell'], 16 * 2 ** idx['pixels']['tissueLevel'])
+                self.assertEqual((g['cols'], g['rows']), (math.ceil(idx['levels'][idx['pixels']['tissueLevel']]['width'] / 16), math.ceil(idx['levels'][idx['pixels']['tissueLevel']]['height'] / 16)))
+                self.assertEqual(len(g['bits']), math.ceil(g['cols'] * g['rows'] / 4))
+                on = [k for k in range(g['cols'] * g['rows']) if (int(g['bits'][k >> 2], 16) >> (3 - (k & 3))) & 1]
+                self.assertTrue(on, 'a slide with no tissue cell')
+                for k in on:
+                    ci, cj = k % g['cols'], k // g['cols']
+                    self.assertTrue(ci * g['cell'] < x1 + g['cell'] and (ci + 1) * g['cell'] > x0 - g['cell'] and cj * g['cell'] < y1 + g['cell'] and (cj + 1) * g['cell'] > y0 - g['cell'], f'tissue cell {ci},{cj} far outside the tissue box')
                 thumb = DATA / 'slides' / idx['thumbnail']['url']
                 data = thumb.read_bytes()
                 self.assertLessEqual(len(data), 25_000)

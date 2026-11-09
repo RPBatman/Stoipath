@@ -101,6 +101,19 @@
         "generator": { "type": "string" },
         "tissueLevel": { "type": "integer", "minimum": 0 },
         "tissueThreshold": { "type": "number" },
+        "tissueGrid": {
+          "description": "Coarse tissue mask from the same pixels as tissueBbox (S3 review fix, SIGNOUT.md §19.5): cells of `cell` level-0 px (16 tissue-level px), `cols` x `rows`, row-major; a cell is tissue when it holds >= minPixels tissue pixels; `bits` is hex, four cells per digit, most significant bit first, zero-padded.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cell", "cols", "rows", "minPixels", "bits"],
+          "properties": {
+            "cell": { "type": "integer", "minimum": 1 },
+            "cols": { "type": "integer", "minimum": 1 },
+            "rows": { "type": "integer", "minimum": 1 },
+            "minPixels": { "type": "integer", "minimum": 1 },
+            "bits": { "type": "string", "pattern": "^[0-9a-f]*$" }
+          }
+        },
         "blankVerification": {
           "type": "array",
           "items": {

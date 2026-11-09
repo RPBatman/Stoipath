@@ -517,6 +517,36 @@ export default async function (t) {
     t.ok(/AJCC rule, which CAMELYON17 applies/.test(d.rules), 'the rules definition attributes the ITC exclusion to AJCC');
   }
 
+  // ------------------------------------------------------------------------------------------------ S3 review fixes
+  t.group('GRD S3 review fixes (SIGNOUT.md §19.5)');
+  {
+    const seen = { id: 'c1', feret_um: 779, geometry: 'polygons', bestScale_um_per_px: 0.5, viewed10x: true, viewed20x: true, viewedAtAdequate: true, msAt10x: 4800, msAt20x: 4800, msAtAdequate: 4800, msAtBest: 4800 };
+    const unseen = { ...seen, bestScale_um_per_px: null, viewed10x: false, viewed20x: false, viewedAtAdequate: false, msAt10x: 0, msAt20x: 0, msAtAdequate: 0, msAtBest: 0 };
+    t.eq(G.missType('itc', 'micro', [seen], true), null, 'borderline node: itc for micro after the deposit was in view at the adequate scale is not a miss (null)');
+    t.eq(G.missType('itc', 'micro', [seen], false), 'recognition', 'the same views on a node that is not borderline stay a recognition miss');
+    t.eq(G.missType('negative', 'micro', [seen], true), 'recognition', 'borderline node called negative: still a recognition miss');
+    t.eq(G.missType('itc', 'micro', [unseen], true), 'search', 'borderline node called itc but never in view at the adequate scale: a search miss');
+    const m = { class: 'match', direction: 'none', borderline: false };
+    const r = {
+      classes: { case: 'major', pN: { class: 'match', direction: 'none' }, nodes: [m, m, m, m, { class: 'major', direction: 'under', borderline: true }] },
+      submitted: { calls: ['negative', 'negative', 'negative', 'micro', 'itc'], pN: 'pN1mi' },
+      reference: { labels: ['negative', 'negative', 'negative', 'micro', 'micro'], pN: 'pN1mi' },
+      complete: true,
+      nodesNotExamined: 0,
+    };
+    t.eq(G.classSentence(r), 'Major discrepancy: node 5 called isolated tumour cells, reference micrometastasis · borderline node (reference label rests on the cell-count criterion).', 'the class sentence (banner, spoken) of a borderline pair says borderline, not "missed"');
+    t.eq(G.borderlineOnly(r), true, 'borderlineOnly: the case class rests only on the borderline node');
+    t.eq(G.borderlineOnly({ classes: { ...r.classes, pN: { class: 'major', direction: 'under' } } }), false, 'borderlineOnly: false when the pN is major too');
+    t.eq(G.borderlineOnly({ classes: { ...r.classes, nodes: [{ class: 'major', direction: 'under', borderline: false }, m, m, m, r.classes.nodes[4]] } }), false, 'borderlineOnly: false when another node is major');
+    // the tissue mask: 4 × 2 cells of 100 px, row 0 = 1100 (cells 0 and 1 tissue), row 1 = 0000
+    const cells = { cell: 100, cols: 4, rows: 2, bits: 'c0' };
+    const black = [entry(0, { minX: 250, minY: 120, maxX: 390, maxY: 190 }, 2.0)];
+    const onTissue = [entry(0, { minX: 150, minY: 20, maxX: 260, maxY: 90 }, 2.0)];
+    t.eq(G.bestScaleOverTissue(black, [0, 0, 400, 200], cells), null, 'a 5× view inside the tissue box but on no tissue cell (unscanned) is not over tissue');
+    t.eq(G.bestScaleOverTissue(black, [0, 0, 400, 200]), 2.0, '… while the box test alone (case files without a mask) counts it');
+    t.eq(G.bestScaleOverTissue(onTissue, [0, 0, 400, 200], cells), 2.0, 'a view meeting a tissue cell is over tissue');
+  }
+
   // ------------------------------------------------------------------------------------------------ GRD-6
   t.group('GRD-6 purity');
   {
@@ -530,7 +560,8 @@ export default async function (t) {
         const spec = m[3];
         const typeOnly = Boolean(m[2]);
         const okLocal = spec.startsWith('./');
-        const okTypes = typeOnly && ['../contracts', '../../learn/contracts', '../../shell/contracts'].includes(spec);
+        // '../contracts' may also be a runtime import: its pure helpers (viewMeetsTissue, S3 review fix, SIGNOUT.md §19.5)
+        const okTypes = (typeOnly && ['../contracts', '../../learn/contracts', '../../shell/contracts'].includes(spec)) || spec === '../contracts';
         const okGeom = /^\.\.\/\.\.\/shell\/geometry\/(area|hit|simplify|contour|shapes)$/.test(spec);
         if (!okLocal && !okTypes && !okGeom) bad.push(`${f}: ${m[0].trim().slice(0, 120)}`);
       }
@@ -541,8 +572,8 @@ export default async function (t) {
     const esbuild = require('esbuild');
     const out = await esbuild.build({ entryPoints: [resolve(gradingDir, 'index.ts')], bundle: true, write: false, metafile: true, format: 'esm', platform: 'neutral', logLevel: 'silent' });
     const inputs = Object.keys(out.metafile.inputs).map((p) => relative(CLIENT, resolve(CLIENT, p)).replace(/\\/g, '/'));
-    const outside = inputs.filter((p) => !p.startsWith('src/signout/grading/') && !/^src\/shell\/geometry\/(area|hit|simplify|contour|shapes)\.ts$/.test(p));
-    t.eq(outside, [], `the bundle's inputs are grading's own files (and pure geometry) only: ${inputs.join(', ')}`);
+    const outside = inputs.filter((p) => !p.startsWith('src/signout/grading/') && p !== 'src/signout/contracts.ts' && !/^src\/shell\/geometry\/(area|hit|simplify|contour|shapes)\.ts$/.test(p));
+    t.eq(outside, [], `the bundle's inputs are grading's own files, the sign-out contracts' pure helpers (and pure geometry) only: ${inputs.join(', ')}`);
     t.ok(!inputs.some((p) => p.includes('learn/scoring')), 'Learn scoring is not in the bundle (reached through the API)');
   }
 }

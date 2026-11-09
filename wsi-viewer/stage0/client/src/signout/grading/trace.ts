@@ -18,9 +18,13 @@
  *                negative or itc with reference micro or macro, or call negative with reference itc): `search` when no
  *                cluster met the gate at the adequate scale, `recognition` when one did for ≥ 2 s of dwell,
  *                `indeterminate` otherwise; null when the node is unannotated, the call agrees, the call over-calls,
- *                or the call is micro for a macro reference (a size call, not a miss).
- *   examined     opened and at least one sharp settled view at ≤ 2 µm/px (× 1.01) intersecting `tissueBbox`
- *                ([0, 0, 0, 0] = the whole slide) (D32).
+ *                or the call is micro for a macro reference (a size call, not a miss). S3 review fix (§19.5): also
+ *                null on a borderline node (PE-3) called itc against a micro reference once a deposit met the gate at
+ *                the adequate scale: the trainee saw it and called it ITC, a cell-count disagreement, not a miss.
+ *   examined     opened and at least one sharp settled view at ≤ 2 µm/px (× 1.01) over the tissue (D32): the
+ *                rect meets a cell of the node's `tissueCells` mask when the case file has one (S3 review fix,
+ *                §19.5: a view over an unscanned, black-filled part of the bbox is not tissue), else `tissueBbox`
+ *                ([0, 0, 0, 0] = the whole slide). The rule is the contracts' `viewMeetsTissue`.
  *   flags        `scoring.pointMetric` against each cluster target: on a deposit when inside or within 50 µm (D26).
  *
  * Magnification words (§6.4) are a convention of the page's strings: 40× = 0.25, 20× = 0.5, 10× = 1.0, 5× = 2.0,
@@ -28,7 +32,8 @@
  */
 import type { CompiledTarget, KeyFeature, ScoringService, ViewLogEntry, ZoomGate } from '../../learn/contracts';
 import type { Box, Position } from '../../shell/contracts';
-import type { DepositCluster, DepositPolygon, FlagRecord, MissType, NodeLabel, NodeProgress, NodeTraceSummary, SignoutCase, SignoutCaseNode } from '../contracts';
+import type { DepositCluster, DepositPolygon, FlagRecord, MissType, NodeLabel, NodeProgress, NodeTraceSummary, SignoutCase, SignoutCaseNode, TissueCells } from '../contracts';
+import { viewMeetsTissue } from '../contracts';
 
 /** §6.4 gates: 10× and 20×. */
 export const VIEWED_10X_UM_PER_PX = 1.0;
@@ -119,9 +124,9 @@ export function bestScale(trace: readonly ViewLogEntry[]): number | null {
   return minNonNull(...trace.filter(usable).map((e) => e.scale_um_per_px));
 }
 
-/** Finest sharp settled scale over `tissueBbox` (§6.4, D32), or null. */
-export function bestScaleOverTissue(trace: readonly ViewLogEntry[], tissueBbox: readonly number[]): number | null {
-  return minNonNull(...trace.filter((e) => usable(e) && rectMeetsBox(e.rect, tissueBbox)).map((e) => e.scale_um_per_px));
+/** Finest sharp settled scale over the tissue (§6.4, D32; `viewMeetsTissue`: the cells when given, else the bbox), or null. */
+export function bestScaleOverTissue(trace: readonly ViewLogEntry[], tissueBbox: readonly number[], tissueCells: TissueCells | null = null): number | null {
+  return minNonNull(...trace.filter((e) => usable(e) && viewMeetsTissue(e.rect, { tissueBbox, tissueCells })).map((e) => e.scale_um_per_px));
 }
 
 /** Examined (D32): opened and a sharp settled view at ≤ 2 µm/px over the tissue. */
@@ -309,12 +314,16 @@ export function isMiss(call: NodeLabel | null, ref: NodeLabel): boolean {
   return call === 'negative' && ref === 'itc';
 }
 
-/** §6.4 missType from the node's cluster views. */
-export function missType(call: NodeLabel | null, ref: NodeLabel, views: readonly ClusterView[]): MissType {
+/**
+ * §6.4 missType from the node's cluster views. `borderline` (PE-3): on a borderline node an itc call against a micro
+ * reference after a deposit met the adequate gate is a cell-count disagreement, not a miss (null; S3 review fix).
+ */
+export function missType(call: NodeLabel | null, ref: NodeLabel, views: readonly ClusterView[], borderline = false): MissType {
   if (!isMiss(call, ref)) return null;
   const scoreable = views.filter((v) => v.geometry !== 'none');
   if (scoreable.length === 0) return null;
   if (!scoreable.some((v) => v.viewedAtAdequate === true)) return 'search';
+  if (borderline && call === 'itc' && ref === 'micro') return null;
   return scoreable.some((v) => v.viewedAtAdequate === true && v.msAtAdequate >= RECOGNITION_MS) ? 'recognition' : 'indeterminate';
 }
 
@@ -358,7 +367,7 @@ export function analyseNode(
   const clusters = clusterViews(scoring, targets, trace, msOnScreen, adequateScale);
   const scoreable = clusters.filter((c) => c.geometry !== 'none');
   const judged = positive && scoreable.length > 0;
-  const bestOver = minNonNull(bestScaleOverTissue(trace, node.tissueBbox), p.bestScaleOverTissue);
+  const bestOver = minNonNull(bestScaleOverTissue(trace, node.tissueBbox, node.tissueCells ?? null), p.bestScaleOverTissue);
   const flags = (Array.isArray(p.flags) ? p.flags : []).map((f) => flagMetric(scoring, f, targets, mpp));
   const summary: NodeTraceSummary = {
     slideId: node.slideId,
@@ -374,7 +383,7 @@ export function analyseNode(
     adequateScale_um_per_px: adequateScale,
     viewedAtAdequate: judged ? scoreable.some((c) => c.viewedAtAdequate === true) : null,
     msAtAdequate: judged ? Math.max(...scoreable.map((c) => c.msAtAdequate)) : null,
-    missType: missType(call, ref, clusters),
+    missType: missType(call, ref, clusters, node.reference.borderline !== undefined),
     borderline: node.reference.borderline !== undefined,
     flags,
     // contract 3 (RES-Q1; S2 integrator): the node's own reference size for nodes.csv's largest_deposit_um

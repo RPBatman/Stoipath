@@ -218,13 +218,14 @@ topbar.setTitle(mode === 'cohort' ? TITLE_COHORT : TITLE_WORKLIST);
  * View A's failure counters, copied from each FrameSnapshot (E5's additive fields) by plain assignment: no allocation, no
  * DOM, so the frame hook stays free (TOOLS.md §2). `watchHost` judges them on a 1 s timer, never inside a frame.
  */
-const frameHealth = { errors: 0, timeouts: 0, lastFailure: null as string | null, baseLoaded: false, bytes: 0 };
+const frameHealth = { errors: 0, timeouts: 0, lastFailure: null as string | null, baseLoaded: false, bytes: 0, sharp: 1 };
 function noteHealth(s: FrameSnapshot): void {
   frameHealth.errors = s.errors;
   frameHealth.timeouts = s.timeouts;
   frameHealth.lastFailure = s.lastFailure;
   frameHealth.baseLoaded = s.baseLoaded;
   frameHealth.bytes = s.bytes;
+  frameHealth.sharp = s.stats.sharpFraction;
 }
 
 // ------------------------------------------------------------------ core (Phase A, Wave L0: product + namespace)
@@ -421,7 +422,7 @@ const host: SignoutHost = {
 };
 const signoutDebug = createDebugRegistry();
 const api: SignoutApi = {
-  contract: 3,
+  contract: 4,
   product: 'learn',
   mode,
   learn,
@@ -506,6 +507,10 @@ function registerOwnRefusals(): void {
 // ------------------------------------------------------------------ §8.4 the slide-host and changed-object plates
 /** ER-9: the worker's ETag refusal (decode-worker handleRange / handleArrays), carried in `lastFailure`. */
 const CHANGED_OBJECT = 'the slide file changed since this index was built';
+/** S3 review fix (§19.5): the post-base outage notice (non-blocking; the engine retries range tiles by itself). */
+export const HOST_RETRYING = 'The slide host is not answering; the blurred areas fill in by themselves when it answers again.';
+/** Post-base watch: failures in the last window, and when the notice was last shown. */
+let postBase: { errors: number; at: number; shownAt: number } | null = null;
 let hostTimer: number | null = null;
 let hostOpenedAt = 0;
 let hostRef: SlideRef | null = null;
@@ -524,6 +529,7 @@ function stopHostWatch(): void {
  */
 function watchHost(ref: SlideRef): void {
   stopHostWatch();
+  postBase = null;
   hostRef = ref;
   hostOpenedAt = performance.now();
   frameHealth.errors = 0;
@@ -536,7 +542,25 @@ function watchHost(ref: SlideRef): void {
   hostTimer = window.setInterval(() => {
     const st = shell.primary.state;
     if (st === 'opening') return;
-    if (st !== 'open' || frameHealth.baseLoaded) return stopHostWatch();
+    if (st !== 'open') return stopHostWatch();
+    if (frameHealth.baseLoaded) {
+      // S3 review fix (§19.5): a light watch after the base: failures still growing while the view is not sharp → one
+      // non-blocking notice (at most every 30 s); the scheduler retries range tiles with a doubling wait by itself
+      const now = performance.now();
+      const fails = frameHealth.errors + frameHealth.timeouts;
+      if (postBase === null) postBase = { errors: fails, at: now, shownAt: -1e9 };
+      if (now - postBase.at >= 10_000) {
+        postBase.errors = fails;
+        postBase.at = now;
+      } else if (fails - postBase.errors >= 3 && frameHealth.sharp < 1 && now - postBase.shownAt >= 30_000) {
+        postBase.shownAt = now;
+        postBase.errors = fails;
+        postBase.at = now;
+        notices.transient(HOST_RETRYING, 8000, false);
+        live.polite(HOST_RETRYING);
+      }
+      return;
+    }
     const health = shell.primary.slide?.pyramid.rangeSource?.health() ?? null;
     const caseNumber = services.worklist?.current?.number ?? 1;
     const node = services.review?.node ?? 0;

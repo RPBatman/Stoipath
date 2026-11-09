@@ -124,7 +124,10 @@ export function statusText(s: CaseStatus, stale = false): string {
       return `in review · node ${s.node + 1} of 5`;
     case 'submitted':
       if (stale) return TEXT.staleResult;
-      return s.class === null ? 'submitted' : s.class === 'match' ? 'submitted · match' : `submitted · ${s.class} discrepancy`;
+      if (s.class === null) return 'submitted';
+      if (s.class === 'match') return 'submitted · match';
+      // S3 review fix (§19.5, PE-3): a class that rests only on a borderline node says so
+      return s.borderline === true ? `submitted · ${s.class} discrepancy (borderline node)` : `submitted · ${s.class} discrepancy`;
   }
 }
 

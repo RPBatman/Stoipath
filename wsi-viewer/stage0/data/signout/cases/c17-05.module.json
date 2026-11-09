@@ -153,7 +153,13 @@
             "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
           },
           "annotation": null,
-          "tissueBbox": [1664, 0, 93376, 97280]
+          "tissueBbox": [1664, 0, 93376, 97280],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 96,
+            "rows": 98,
+            "bits": "00000003fbbfff7fffff800000000001ffffffffdfffc00000000001fffffffffffdc00000000001fdfffffffffff00000000000ffffffdffffff80000000001fdffffbfffffa40000000001ffffffefffeffc0000000003efffff37ffffa20000000003f3ffffedffded3000000010fefffffcfffffd900000018dfffffffffffffd9800005ffffffffffefffffffc0000fffbffffffefc3fffffc0023effffffffffbf3dffffc000ffffffffffffff37ffff4001fffffffffffffb3bfffbc001ffffffffffffcfb3fffdc001ffffffffffffff87ffffc003ffffffffffffdf0fffffc003ffffffffffffff03ffffc003fffffffffffffd01ffffc003ffffffffffffff01ffffc003fffffffffffffe01ffffc003fffffffffffffc03ffffe003fffffffffffffc0fffffe007fffffffffffffc0fffffe00fffffffbfff7ff80ffffff00ffffffffffe3ff01fffffe01fffffeffbfcfff83fffffe01ffffffff7fcfff81fffffe01ffffffaeff8fff81fffffc01e7ffffbeffdfff03fffffe03e7fffffeffbfff0fffffff03fffffffefff9ff1fffffff01ffffeffeffe1ff3ffffffe03ffffdffefff9fe3ffffffe02dffffffefff3ff3ffffff606dffffffcfff7ff7ffffffc03ffffdff0fffffffffffffc063fffd837fffffffffffffc03fffff81ffffffffffffffc03fffff00ffffffffffffffc03fffff03ffffffffffffffc03fbfffc1ffffffffffffffc03bffff83fff7ffffffffffc01fffff87ff3fffffffffff805ffffff73fffffffffffffe05fffffffbfeffffdffffffe01fffffeffffffffdfffffff01fffff7fe7fffbfcffffffe01fffffbff7fff7fcffffffe01fffffbffbfffff8ffffdfc01fffffaffbfffff07fffffc01fffffffffdfffe07fffff801fffffffffffffc03ffbff001dffffff7ffbff003fffff001dbfffff3ffff00076ffff000dffffff3ffffcfe3fff8f0000ffffffbffffcfe1fffee0007fffffffffeffff0ff7fe0001ffffffffff7fff43fffe0003effffcfeffffffee87fe0003ffffffffffffffff83fc0007ffffffffffffffff81f00003bbffd7ffffffffffc180000127ffcfffffffffffc10000003bffe3fffffffffbe00000003ffffffffffffffbe000000037ffe1ffffffffffe00000001ffffbffffffffffe00000001fffffffffffffffe00000000effffffdffffffde000000007bdffffdffffffff0000020019bffbfbffffffff0000000007bffffefffffff58000000003fffbffeffffffdc000000080ffdbffdffffffdc0000000003edff7efffffffc00000000006e00fefffffffc00000000003800005f7fff7800000000000000007feffff800000000000000003effff0000000000000200003d7fe00000000000000000003bfff00000000000000000001ffffe0000000000000000000ffffd00000000000000000007fffee0000000000000000003ffffe00000000000000000017fffc00000000000000000003fff800000000000000000001fff000000000000200000001ffe0000000000000000000007fc0000000000000000000007f80000000000000008000002f0000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
         },
         {
           "ref": "n1",
@@ -200,6 +206,7 @@
                   "e3380748-3c4b-55dc-a6b2-39e524c3529d"
                 ],
                 "feret_um": 3287.6,
+                "largestPolygon_um": 3009.3,
                 "bbox": [87607.02, 23955.4, 97298.2, 36646.79]
               },
               {
@@ -218,12 +225,14 @@
                   "cb623ad7-49b9-5df6-88bd-5e012d41a058"
                 ],
                 "feret_um": 2424.2,
+                "largestPolygon_um": 2424.2,
                 "bbox": [84373.9, 33732.8, 94783.4, 41281]
               },
               {
                 "id": "c3",
                 "featureIds": ["c1ff87d9-c152-570f-bcc2-e5ddc017ad4c"],
                 "feret_um": 477.7,
+                "largestPolygon_um": 477.7,
                 "bbox": [80220.9, 43656.5, 81379.7, 45742.8]
               },
               {
@@ -234,6 +243,7 @@
                   "b576ca52-3224-55d2-8b7d-db9d4eb744cd"
                 ],
                 "feret_um": 97.9,
+                "largestPolygon_um": 64.2,
                 "bbox": [83573.5, 24240.6, 83870.3, 24639.9]
               },
               {
@@ -244,23 +254,32 @@
                   "a8960e2d-74f0-5e23-9a48-4b54204b7076"
                 ],
                 "feret_um": 97.3,
+                "largestPolygon_um": 30.5,
                 "bbox": [86773.57, 23485.28, 87042.45, 23881.32]
               },
               {
                 "id": "c6",
                 "featureIds": ["6c3a176f-dce0-5031-9557-8099fd65fea5"],
                 "feret_um": 64.4,
+                "largestPolygon_um": 64.4,
                 "bbox": [83306.6, 39789.2, 83435.7, 40072.2]
               },
               {
                 "id": "c7",
                 "featureIds": ["f0d8fee4-26d0-5909-a5ad-8521006ecb19"],
                 "feret_um": 30.4,
+                "largestPolygon_um": 30.4,
                 "bbox": [83836.8, 39327.7, 83893.1, 39460.9]
               }
             ]
           },
-          "tissueBbox": [4352, 0, 125440, 103616]
+          "tissueBbox": [4352, 0, 125440, 103616],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 124,
+            "rows": 102,
+            "bits": "00000000000000fffffffff9c00004000000000000003ffffffffffff0000000000004000007ffffffffffff800000000000000002ffffffffffffff00000000002000007ffffffffffffff80000000000000007ffffffffffffffc0000000000003cf7fffffffffffffffa00000000000fff7ffefffffffffffff80000000000ffffffffffffffffffffe0000000001fffffffffffffffffffff0000000003ffffffffffffffffffeff8000000007ffff7ffffffffffffffffc00000007fbffffffffffffff7fffffe0000007ffffffffffffffffffffdffc0000007fffffffffffffffffffffffe0000007fffffffffffffffffffffff6000001bffffbfffffffffffffffff88000007bffff3ffffffffffffefffff000000ffffffffffffffffffbfffff0000000ffffffffffffffffff3fffffc000000ffff7fffffffffffffffffffc000000ffffffffffffffffffffffffc000000ffffffffffffffffffffffbfc000000fffffffffffffffffffffff8e800000ffffffffffffffffffffffffe000000feffffbffffffffffffff7ffe000000ffffffffffffffffffffffffc000000ffffffffffffffffffffffffc000000ffffffffffffffffffffffffc000000fffffffffffffffffffffffd8000000ffffffbfffffffffffffffff0000000ffffffffffffffffffffffff8000000ffffffffbfffffffffffffff8000000fffffdfffffffffffffffffe0000000ffffffffffffffffffffeffe0000000fffffffffffffffffffffffc0000000fffffbfffffffffffffffffc00000007ffffffffffffffffffafff800000001ffffffffffffffffffffff000000001fffffffffffffffffffffe0000000017ffffffffffffffffffff80000000007feffffffffffffffffc400000000001fffffffffffffffffc0000000000000fffffffffffffcfff803000000000007ffffffffffff8ffe000000000000003fffffffffffffffe004000000000003fffffffffffffffe200000004000001fffffffffffffffc000000004000000ffffffffdffffffc00000000000000077fffffffffffff80000000000000001ffffffffffffff00000000000000000ffffffdfffffff000000000000040000fffff07fffffc0000000000000000007fdff8bfffff80000000000000000001fdffdfffff800000000000100000001efffffffff000000000000000000000efffffffff800000000001000000000ffffffffff800000000000000000000ffffffffffc7f000000008000000000ffffffffffcff800000000000000007fffffffffffffc0000000000000003ffffffffffffffe0000000800000007ffffffffffffffff00000080000001fffffffffffffffffc0000084000003fffffffffffffffffe0000000000031ffffffffffffffffff00000000000f9ffffffffffffffffff80000100001ffffffffffffffffffff80000000001ffffffffffffffffffff80000000001fffffffffffffffffffff00000000017fffffffffffffffeffff0000000001fffffffffffffffffffff8000000000fffffffffffffffffffffc000000001fffffffffffffffffffafe000000003ffffffffffffffffffffbe000000003fffffffffffffffffff6be000100003ffffffffffffff27fff9fe000000003ffffffffffffffe7fffffe000000003fffffffffffffffffffbfe000000001fffffffffffffffffffbfe000400001ffffffffffffffffffffff000000001fffffffffffffffffbffff000000001fffffffffffffffffdfffe000000001ffffffffffffffffffffff000000001fffffffffffffffffffffe000000001ffffffffffffffffff8fce000000001ffffffffffffffffffffc0000600001ffffffffffffffffffff800007800003ffff7ffffffffffffff000007800000fffffffffffffff7ffe00000f8000007ff7ffffffffffffffa00000780000001e7ffffffffffbfff000000f8000000007ffffffdfffffff000000fc000000003ffffffcffffffe0000007c000000001ffffff0ffffff80000007c000000001ffffff00ffffe0000000000000001007ffffe007fe000000000000000000003c20000000200000020000020000000000000000000000000000000000000000000100000000000000000000000001e0e7f20000000000000000000000000000060000800000000"
+          }
         },
         {
           "ref": "n2",
@@ -272,7 +291,13 @@
             "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
           },
           "annotation": null,
-          "tissueBbox": [12864, 0, 128896, 89792]
+          "tissueBbox": [12864, 0, 128896, 89792],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 128,
+            "rows": 98,
+            "bits": "0000000000080000000001ffc0002c000000000000000001000007ff80000800000000100000000000000ffffc500000000000000380000000001fffffc005100000000003e0000000003fffffc00090000000000ffc000000003fffffe0401000000003ffff000000007fffffe7000000001007ffffe00000007ffffff100000000003ffffff80000003ffffff400000002006ffffffc0000007ffffff008c4000003bfffffff000000fffffff08880000005ffffffff800001fffffff880c000000fffffffffe00003fffffff8000000000fffffffffe00007fffffff0000000001ffffffffff8000ffffffff8000000001ffffffffffc000ffffffff8000000010ffffffffffa001ffffffff8040000010ffffffffff8003ffffffffc000000000ffffffffff800bffffffffc008000001ffffffffff8003ffffffffc000000001ffffffffff8007ffffffffc000000001ffffffffff800fffffffffc086000001ffffffffff800fffffffffc004000001ffffffffff000fffffffffc004000001ffffffffff001fffffffffc004000000ffffffffff001fffffffffc0040000003ffffffffe001fffffffffc004000000fffffffffc003fffffffffc006000000fffffffff8006fffffffffc006000000ffffffffe000ffffffffff8006000003ffffffff8000ffffffffff800600000fffffffff0000fdffffffff840600003a345ffffe00006dffffffff000600007108effffc00007e7fffffff80060000fbc67ffffc00003cffffffff80020000ebeb4ffff800003c7fffffff00060000859427ffe00000393ffffffd000400008353a7ffc00000383ffffff8080e4000001d57f00000003837fffff80006000000397f800080003c17fffff000060000000f7e000000002e1fffffe0000200000003f0000000001e1fffffc000060000000000000000001b7fcfff8000020000000000000000001fffdfff0000020000000000002000001fff77fe000002000000000005fe00000fb7ffdc000002000020000005ffc00007cfff9800000200000000003ffff00001f7ff100000020000000000fffff80001ffff000001000000000007fffffc0001fff780000000000000001ffffffe0001ffbc00000000000000002ffffffe0000fc3a00000000000000007ffffffe000077d80000000000000002377fffff01003fe00000200000000006ffffffff00000300008000000000001befffffff00000000000000000000003fbfffffff000000000000000100000033cffffffe200000000000000000000037effffffe00000000020038018000003f3ffffff700000000007df8010000003fffffffef000000001ffff80000000027ffffffde000000007fbff80000000030effffffe00000000fffff800000000277ffffffc00007c00fbfff8000000007b5ffffffc0fc07fe7fffff00000000077bffffff01fe07fffffffe0000000047bffffffe01df07fffffffe0200000005bffffff803df07fffffffc0000000003fffffff803ff87fffffffc0000000007fffffff003df07fffffff800000000037fffffc403cf1ffffffff00000000003ffffffc003f01fffffffe00000000002fffffb8007710dffffffc00000000000fffff30006300fffffffc000000000007fffce00020017ffffffc000000000000fff8c0000801fffffff0000000000000ffd300200401ffffffe00000400000007ff4000000c1dfffffe00000400000001fc0080000027fffffc0000040000000000000000003ffffff80000040000000000001000001ffffff80000040000000000001000000ffffff00000040000000000000000000fdfe7c00002000000000000000000000bdeff80000000000000000000000000065ffb000000000000000000000000000457fc00000000000200000000000000065fa000000000000000000000000000003c080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
         },
         {
           "ref": "n3",
@@ -284,7 +309,13 @@
             "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
           },
           "annotation": null,
-          "tissueBbox": [18624, 10048, 84160, 81536]
+          "tissueBbox": [18624, 10048, 84160, 81536],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 84,
+            "rows": 91,
+            "bits": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0000000000000000000ff8000000000000000001fff8000000000000000033ffe00000000000000007ffff000000000000000077fffc0000000000000007fffff0000000000000007fffffc100000000000007ffffff000000000000007ffffff800000000000007ffffffc00000100000007ffffffd00000000000007ffffffe00000000000007fffffff00000000000007fffffff00000000000007fffffff00000000000003fffffff00000000000003fffffff00000000000003fffffff80000000020003fffffff80000000000003fffffffc0000000000007fffffffc0000000000007fffffffc0000000000007fffffffc0000000e00007fffffffe0000001e00007fffffffc0000001e00007fffffffe0000003e00007fffffffc0000003f00003fffffffc0000007f00003fffffffc0000007fc0003bffffffc000000d7f0001fffffffc000000fe7c0001ffffffc000001fffff000ffffff4000001fffffc007ffffbc000001ffffff007fffffc000003ffffffc03fffffc000003feffffe01ffff7c000003fefffff807ffefc000007fffffffc00ffff8000007fffffffe00060c0000007fffffffe0000000000017fffffffe0000000000007ffffffff0000000000027fffffffe0000000000007ffffffff0000000000007ffffffff0200000000007ffffffff8000000000007ffffffff8000000000007ffffffff8000000000003ffffffff8040000000003ffffffff800001000000bffffffff8000000000001ffffffff8000000000001ffffffff8000000000001ffffffff8000000000000ffffffff0001000000000ffffffff00000000000003fffffff80000000000001f7fffff80000000000000fffffff00000000000000fffffff0000000000000007fffff0000000000000003fffff0000000000000001fffff0000000000020001ffff600000000000000001fffe000000000000000007fec0020000000000000001f00000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
         },
         {
           "ref": "n4",
@@ -296,7 +327,13 @@
             "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
           },
           "annotation": null,
-          "tissueBbox": [6144, 0, 135168, 103936]
+          "tissueBbox": [6144, 0, 135168, 103936],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 66,
+            "rows": 51,
+            "bits": "07f13fe0fffda00001ff7ffffffffff0003ffffffffffffe000fffffffffffffe007fffffffffffff801ffffffffffffff005ffbffffffffffc01ffbffffffeffff00ffffffffffffafc43fa7fffffffffff80ffffffffffffffe81ffffffffffffff80ffffffffffffffe03fffffffffdffff80fffffffffffffff03ffffffffffffffc0fffffffffffffff03ffffffffffffff81ffffffffffffffe07ffffffffffffff81ffffffffffffffc07fffffffffffffe00fffffffffffffe007fffffffffffff001fffff4effccfff007fffffffbb01ff801fff7bffc0007fe007fd3eff80073ff801ff3f7ff8019bfe007fcf6f1c00007f801feffe0400f8bff803e3ff80003e2ffe00f1fefa000301ff803c7edf8000003fe00f0fffb818000ff803c3ffe004001ffe01f077f9905087ff003819fffe1eefffc01601ffff87fffff000007fd65ffffffc00000fff7fffffff000003ffffffffff8000007ffffdfffbe0000003ffbfdff0100000007cdfffe000000400ffff9b70020000023fff7fbc000000000fffffee0000000000ffffff80000004001ffff7c00000000003fffc7800000"
+          }
         }
       ],
       "reference": {

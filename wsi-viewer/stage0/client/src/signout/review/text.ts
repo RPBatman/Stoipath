@@ -71,6 +71,10 @@ export const TEXT = {
   // ---------------------------------------------------------------- the HUD node chip (§5.3; withKey false)
   chipNotYet: (n: number): string => `Node ${n} of 5 · not yet viewed at 10×`,
   chipViewed: (n: number, mag: string): string => `Node ${n} of 5 · viewed at ${mag}`,
+  /** N (S3 review fix): after submission the 10× instruction no longer applies. */
+  chipSubmitted: (n: number): string => `Node ${n} of 5 · report submitted`,
+  /** N (S3 review fix): the settled view meets no tissue cell (an unscanned, black-filled area, or blank glass). */
+  chipNoTissue: (n: number): string => `Node ${n} of 5 · no tissue in this view (unscanned area or blank glass)`,
   // ---------------------------------------------------------------- live regions (§9.4)
   opened1: (n: number): string => `Node ${n} of 5 opened.`,
   noCase: 'Choose a case from the worklist.',

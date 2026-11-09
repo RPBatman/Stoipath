@@ -21,10 +21,11 @@
  * `shell.atRest`: progress writes, the tray, the card, the HUD chip, the fragment, the timer text. A drag therefore writes
  * nothing into #taskCard, #nodeTray or storage.
  */
-import type { CommandSource, ShellApi, ToolId, ViewSample } from '../../shell/contracts';
+import type { Box, CommandSource, ShellApi, ToolId, ViewSample } from '../../shell/contracts';
 import { h } from '../../shell/dom';
 import { formatLengthUm } from '../../shell/format';
 import type { CaseProgress, FlagRecord, LoadedCase, NodeIndex, NodeLabel, NodeProgress, ReviewService, SignoutApi, SignoutPhase, TraceEntry, WorklistService } from '../contracts';
+import { viewMeetsTissue } from '../contracts';
 import { registerReviewCommands } from './commands';
 import { classify, flagOf, kindOf, removeFlags, upsertFlags } from './flags';
 import { longer, measurementList } from './measure';
@@ -65,6 +66,10 @@ class Review implements ReviewService {
   /** When the open node's slide drew its first frame, and the camera it opened on (REV-2: that view is not logged). */
   private openedPerf = Number.POSITIVE_INFINITY;
   private openCam: { c: [number, number]; s: number } | null = null;
+  /** S3 review fix (§19.5): the view the node opened on (the tissue fit) is still to be logged, once, when it settles. */
+  private openPending = false;
+  /** Whether the last settled view of the open node met tissue (the HUD chip's unscanned-area hint), or null. */
+  private viewOverTissue: boolean | null = null;
   private loggedSinceOpen = false;
   /** Entries waiting for the next rest (node → entries). */
   private readonly pendingEntries = new Map<NodeIndex, TraceEntry[]>();
@@ -307,6 +312,8 @@ class Review implements ReviewService {
     this.openedPerf = performance.now();
     this.camMoving = false;
     this.loggedSinceOpen = false;
+    this.openPending = true;
+    this.viewOverTissue = null;
     const s = this.shell.primary.sample();
     this.openCam = s === null ? null : { c: [s.center_um[0], s.center_um[1]], s: s.scale_um_per_px };
     this.hold.drop();
@@ -323,6 +330,10 @@ class Review implements ReviewService {
     this.shell.atRest(() => this.api.host.setFragment({ c: caseId, n: node }));
     this.scheduleRender();
     this.scheduleRefit();
+    this.shell.atRest(() => {
+      const now = this.shell.primary.sample();
+      if (now !== null && now.view === 'A' && this.nodeNow === node) this.logOpening(now, node);
+    });
   }
 
   private adopt(node: NodeIndex, source: CommandSource): void {
@@ -390,6 +401,7 @@ class Review implements ReviewService {
     if (fit === null) return;
     this.shell.primary.flyTo(fit.center_um, fit.scale_um_per_px, true);
     this.openCam = { c: [fit.center_um[0], fit.center_um[1]], s: fit.scale_um_per_px };
+    this.openPending = true; // the refitted view is the view the node opened on
   }
 
   private step(dir: 1 | -1, source: CommandSource): void {
@@ -524,10 +536,13 @@ class Review implements ReviewService {
       this.hold.drop();
       return;
     }
+    // S3 review fix (§19.5): the view the node opened on (the tissue fit, or its refit) is logged once, like any other
+    // settled view (held until Sharp); LEARN.md I-N4 still drops a move that began before the node opened elsewhere
+    if (this.logOpening(s, node)) return;
     // a settle with no camera move since the last one (tiles landed between frames): nothing new was looked at; a held
     // entry stays held for the next tileSettled
     if (began === null) return;
-    // LEARN.md I-N4: a settle whose move began before the node opened is not logged; nor is the view it opened on
+    // LEARN.md I-N4: a settle whose move began before the node opened is not logged
     if (began < this.openedPerf) {
       this.hold.drop();
       return;
@@ -535,9 +550,38 @@ class Review implements ReviewService {
     if (!this.loggedSinceOpen && this.openCam !== null && sameCam(this.openCam, s)) return;
     const e = this.entryFor(s, node);
     if (e === null) return;
+    this.openPending = false;
+    this.noteTissue(e.rect, node);
     this.loggedSinceOpen = true;
     const out = this.hold.settled(e, this.api.host.sharpness('A').state === 'sharp');
     if (out.length > 0) this.queueEntries(node, out);
+  }
+
+  /**
+   * The view the node opened on, logged once (S3 review fix, §19.5; REV-2b): true when `s` is that view and was taken
+   * (held until Sharp like any settle). Called from a settle and, at rest, right after the node landed (the slide may
+   * have settled before `landed` ran, and then no further settle comes).
+   */
+  private logOpening(s: ViewSample, node: NodeIndex): boolean {
+    if (!this.openPending || this.loggedSinceOpen || this.openCam === null || s.moving || !sameCam(this.openCam, s)) return false;
+    if (this.readOnly || this.caseId === null || this.ownOpen > 0) return false;
+    const e = this.entryFor(s, node);
+    if (e === null) return false;
+    this.openPending = false;
+    this.noteTissue(e.rect, node);
+    const out = this.hold.settled(e, this.api.host.sharpness('A').state === 'sharp');
+    if (out.length > 0) this.queueEntries(node, out);
+    return true;
+  }
+
+  /** The HUD chip's unscanned-area hint: does this settled view meet the node's tissue (cells, else the bbox)? */
+  private noteTissue(rect: Box, node: NodeIndex): void {
+    const c = this.case();
+    const cn = c === null ? null : caseNode(c, node);
+    const over = cn === null ? null : viewMeetsTissue(rect, cn);
+    if (over === this.viewOverTissue) return;
+    this.viewOverTissue = over;
+    this.scheduleRender();
   }
 
   /** The uncovered viewport of a settled view (the host's cached insets, the engine's own css size; no layout read). */
@@ -587,7 +631,9 @@ class Review implements ReviewService {
         if (np === null || entries.length === 0) continue;
         np.trace = appendTrace(np.trace ?? [], entries);
         const before = `${np.bestScale}|${np.bestScaleOverTissue}`;
-        const st = foldStats({ bestScale: np.bestScale ?? null, bestScaleOverTissue: np.bestScaleOverTissue ?? null }, entries, tissueBox(caseNode(c, node)?.tissueBbox));
+        const cn = caseNode(c, node);
+        // S3 review fix (§19.5): over tissue = meets a tissue cell of the case node (the bbox for a file without cells)
+        const st = foldStats({ bestScale: np.bestScale ?? null, bestScaleOverTissue: np.bestScaleOverTissue ?? null }, entries, cn === null ? tissueBox(undefined) : (r: Box) => viewMeetsTissue(r, cn));
         np.bestScale = st.bestScale;
         np.bestScaleOverTissue = st.bestScaleOverTissue;
         if (`${np.bestScale}|${np.bestScaleOverTissue}` !== before) changed.push(node);
@@ -752,7 +798,15 @@ class Review implements ReviewService {
     // the HUD node chip (withKey false): the finest sharp scale over tissue at 10× or finer, else "not yet"
     if (node !== null) {
       const over = this.nodeProgress(node)?.bestScaleOverTissue ?? null;
-      host.hud.setGate(viewed10x(over) ? TEXT.chipViewed(node + 1, this.mag(over)) : TEXT.chipNotYet(node + 1), false);
+      // S3 review fixes (§19.5): after submission the 10× instruction no longer applies; a view of no tissue says so
+      const chip = this.readOnly
+        ? TEXT.chipSubmitted(node + 1)
+        : this.viewOverTissue === false
+          ? TEXT.chipNoTissue(node + 1)
+          : viewed10x(over)
+            ? TEXT.chipViewed(node + 1, this.mag(over))
+            : TEXT.chipNotYet(node + 1);
+      host.hud.setGate(chip, false);
     }
     if (this.mounted === 'examine') {
       const rows: TrayRow[] = [];

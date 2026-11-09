@@ -83,7 +83,7 @@ export default async function (t) {
     { id: 'c17-01', calls: ['negative', 'itc', 'macro', 'macro', 'micro'], pN: 'pN2', cls: 'major', detail: 'pN pN2, reference pN1 (over-staged)', nodes: ['agrees', 'agrees', 'agrees', 'agrees', 'agrees'], pn: 'major: pN2 vs pN1 (over-staged)', inconsistent: true, derived: 'pN1' },
     { id: 'c17-04', calls: ['negative', 'negative', 'negative', 'negative', 'negative'], pN: 'pN0', cls: 'minor', detail: 'node 5 called negative, reference isolated tumour cells (missed)', nodes: ['agrees', 'agrees', 'agrees', 'agrees', 'minor: negative vs ITC (missed)'], pn: 'minor: pN0 vs pN0(i+) (under-staged)', inconsistent: false },
     { id: 'c17-03', calls: ['negative', 'negative', 'negative', 'micro', 'negative'], pN: 'pN1mi', cls: 'major', detail: 'node 5 called negative, reference micrometastasis (missed)', nodes: ['agrees', 'agrees', 'agrees', 'agrees', 'major: negative vs micrometastasis (missed)'], pn: 'agrees', inconsistent: false },
-    { id: 'c17-03', calls: ['negative', 'negative', 'negative', 'micro', 'itc'], pN: 'pN1mi', cls: 'major', detail: 'node 5 called isolated tumour cells, reference micrometastasis (missed)', nodes: ['agrees', 'agrees', 'agrees', 'agrees', 'major: ITC vs micrometastasis · borderline node (reference label rests on the cell-count criterion)'], pn: 'agrees', inconsistent: false },
+    { id: 'c17-03', calls: ['negative', 'negative', 'negative', 'micro', 'itc'], pN: 'pN1mi', cls: 'major', detail: 'node 5 called isolated tumour cells, reference micrometastasis · borderline node (reference label rests on the cell-count criterion)', nodes: ['agrees', 'agrees', 'agrees', 'agrees', 'major: ITC vs micrometastasis · borderline node (reference label rests on the cell-count criterion)'], pn: 'agrees', inconsistent: false },
     { id: 'c17-05', calls: ['macro', 'macro', 'macro', 'macro', 'negative'], pN: 'pN1', cls: 'major', detail: 'pN pN1, reference pN2 (under-staged)', nodes: ['agrees', 'agrees', 'agrees', 'agrees', 'agrees'], pn: 'major: pN1 vs pN2 (under-staged)', inconsistent: true, derived: 'pN2' },
     { id: 'c17-07', calls: ['negative', 'negative', 'negative', 'macro', 'negative'], pN: 'pN1', cls: 'minor', detail: 'node 4 called macrometastasis, reference micrometastasis (over-called)', nodes: ['agrees', 'agrees', 'agrees', 'minor: macrometastasis vs micrometastasis (over-called)', 'agrees'], pn: 'minor: pN1 vs pN1mi (over-staged)', inconsistent: false },
     { id: 'c17-10', calls: ['macro', 'macro', 'micro', 'macro', 'macro'], pN: 'pN2', cls: 'major', detail: 'node 3 called micrometastasis, reference negative (over-called)', nodes: ['agrees', 'agrees', 'major: micrometastasis vs negative (over-called)', 'agrees', 'agrees'], pn: 'agrees', inconsistent: false },
@@ -285,6 +285,39 @@ export default async function (t) {
     t.eq(F.lookedRegion([], mpp, 1000, 1000).rings, [], 'no qualifying view: nothing drawn');
     const lf = F.lookedFeatures('n2', F.lookedRegion([e(100, 100, 200, 200)], mpp, 100000, 100000));
     t.ok(lf.length === 1 && lf[0].geometry.type === 'MultiPolygon', 'looked: one MultiPolygon feature');
+  }
+
+  // ---------------------------------------------------------------------------------------------- S3 review fixes (§19.5)
+  t.group('FBK S3 review fixes');
+  {
+    const lc = loaded('c17-03');
+    const sums = lc.case.nodes.map((n, i) => ({ opened: true, msOnScreen: 5000, bestScaleOverTissue: i === 0 ? null : 2.0, missType: null, borderline: i === 4, adequateScale_um_per_px: n.reference.label === 'negative' ? null : 1.0, msAtAdequate: 4800, flags: [] }));
+    const view = (id, on) => ({ id, feret_um: 0, geometry: 'polygons', bestScale_um_per_px: on ? 0.5 : null, viewed10x: on, viewed20x: on, viewedAtAdequate: on, msAt10x: on ? 4800 : 0, msAt20x: on ? 4800 : 0, msAtAdequate: on ? 4800 : 0, msAtBest: on ? 4800 : 0 });
+    const views = lc.case.nodes.map((n) => (n.annotation?.clusters ?? []).map((c) => view(c.id, c.id === 'c1')));
+    const b = F.depositBlocks(lc.case.nodes, sums, views, (x) => grading.magnificationWord(x), ['negative', 'negative', 'negative', 'micro', 'itc']);
+    t.eq(b[4].heading, 'Node 5 · micrometastasis · about 190 µm', 'PE-10: the heading is the largest single outline');
+    t.eq(b[4].deposits.map((d) => d.text), [
+      'Deposit 1 · about 190 µm (37 foci spanning about 780 µm) · in view at 20× for 4.8 s',
+      'Deposit 2 · about 130 µm (2 foci spanning about 270 µm) · never in view at 10× or more',
+      'Deposit 3 · about 130 µm (2 foci spanning about 230 µm) · never in view at 10× or more',
+      'and 12 smaller deposits (about 32–130 µm) · none in view at 10× or more',
+    ], 'PE-10: rows print the largest single outline, the cluster span as "foci spanning", three largest then one row for the rest (15 clusters)');
+    t.eq([b[4].deposits[3].clusterId, b[4].deposits[3].rest], [F.REST_ID, 12], 'the collapsed row: Show me target REST_ID, 12 clusters');
+    t.eq([b[4].miss, b[4].missType, b[4].borderlineNote], [null, null, 'You saw this deposit at 20× for 4.8 s and called it isolated tumour cells; the reference counts it as a micrometastasis by cell number.'], 'PE-3: an ITC call on the borderline node after the deposit was in view: no "not called (recognition miss)", the cell-count sentence');
+    t.eq(b[3].deposits.map((d) => d.text), ['Deposit 1 · about 1,100 µm · in view at 20× for 4.8 s', 'Deposit 2 · about 160 µm (2 foci spanning about 250 µm) · never in view at 10× or more'], 'a single-polygon cluster has no span note; a two-polygon one does');
+    t.eq([b[0].lowPower, b[1].lowPower], ['You did not view this node at 5× or more; a negative call rests on a complete low-power survey.', null], 'a negative node not viewed at 5×: the neutral survey sentence, not the macrometastasis sentence; viewed at 5×: none');
+    t.eq(F.depositLabel(lc.case.nodes[4].annotation.clusters, 'c6'), { j: 2, size: '130 µm', rest: 0 }, 'Show me numbers a deposit as its row does (largest first)');
+    t.eq(F.depositLabel(lc.case.nodes[4].annotation.clusters, F.REST_ID), { j: 4, size: '', rest: 12 }, 'Show me on the collapsed row');
+    t.eq([T.showMeMagnification(6.14, grading.magnificationWord(6.14)), T.showMeMagnification(0.5, '20×')], ['about 1.6×', '20×'], 'the Show me sentence speaks a coarse fit as its own power, not "below 2.5×"');
+    const pane = { cssW: 1000, cssH: 800, insets: null };
+    t.near(F.showMeExtentCamera('micro', [0, 0, 100, 100], 0.25, pane).scale_um_per_px, 1.0, 1e-12, 'the collapsed row fits the extent, never finer than the label scale (micro 1.0)');
+    t.ok(F.showMeExtentCamera('itc', [0, 0, 40000, 20000], 0.25, pane).scale_um_per_px > 0.5, 'a wide extent is fitted coarser than the label scale');
+    // FBK-4 on a positive label-only node keeps the PE-17 sentence
+    const lc5 = loaded('c17-05');
+    const s5 = lc5.case.nodes.map(() => ({ opened: true, msOnScreen: 1000, bestScaleOverTissue: 8.0, missType: null, borderline: false, adequateScale_um_per_px: 2.0, msAtAdequate: 0, flags: [] }));
+    const b5 = F.depositBlocks(lc5.case.nodes, s5, lc5.case.nodes.map(() => []), (x) => grading.magnificationWord(x));
+    t.eq([b5[0].lowPower, b5[4].lowPower], [T.TEXT.lowPower, T.TEXT.surveyNegative], 'label-only macro node: PE-17 sentence; negative node: the survey sentence');
+    t.eq(b5[1].deposits[0].text, 'Deposit 1 · about 3,000 µm (22 foci spanning about 3,300 µm) · never in view at 10× or more', 'Case 5 Node 2: about 3,000 µm, the span named as foci, never "3,300 µm" as a deposit');
   }
 
   // ---------------------------------------------------------------------------------------------- FBK-3 Show me camera

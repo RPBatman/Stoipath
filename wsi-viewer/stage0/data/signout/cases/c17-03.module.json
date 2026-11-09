@@ -153,7 +153,13 @@
             "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
           },
           "annotation": null,
-          "tissueBbox": [1024, 2944, 102016, 90432]
+          "tissueBbox": [1024, 2944, 102016, 90432],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 100,
+            "rows": 91,
+            "bits": "000000000000000000000000000000000000000000000000000000000000000000000002100000f800000080000001e02000001ff00000000000007fc0000003ff80000000040007fe0000381ffc000001000003fff000041fffe00000000003ffff0e0007effe00000000007ffffff8007ffff8040000000fffffffc007ffffe000000000fffffffe8077ffcf0000002007ffffff6007fffcf8000000007ffffefe007fffe7c000000007ffffffe007fffcfc007f0000ffffff7e007fff17e08ff8000ffffff7e003fbf83bd9ff8001ffffff7e00efbf83b89ffc003ffffff1e00cfffc0fdcffe003ffffff0e0077fef07fc3fe007ffffff8e007fffd87fbffe007ffffff8f00ffff3ffffffe01fffffff8e00fffffbfffefe01fffffffee007fbfffffdfff01fffffffe7007fff3fffdfff83ffffffff3003fff3fffffff07fffffffff801fff3fffffffcffffffffff803fff7fffffff0ffffffffff003fffefffbfff3ffffffffffc03fffffffbfff7ffffffffdf803fffffffffff7ffffffffff803ffffffffffffffffffffcfc03ffffffffffffffffffffefc01ffffffffffffffffffffefc01ffffffffffefffffffffffc01ffffffffffefffffffffff801ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff80bffffffffffffffffffffff801ffffffffffdfffffffffff801ffffffffffffffffffffff801ffffffffffffffffffffff801ffffffffffffffffffffff800ffffffffffdfffffffffff800ffffffffffffffffffffff800ffffffffffffffffffffff0007fffffffffffffffffffff0003ffffffffffffffffffff70003fffffffffffffffffffff0003fffffffffffffffffffff0003fffffffffffffffffffff1001fffffffffffffffffffff0000fffffffffffffffffffff0000fffffffffffffffffffff0000fffffffffffffffffffff00007bfffffffffffffffffff8000f9ffffffffbffffffffff00007ffffffffedffffffffff00003c3ffffffffffffffffff00001e3ffffffefffffffffff00001fdffffffeffffffffffe00000fcffffffeffffffffffe000007ffffffffbfffffffffe000007fffffffeffffffffffe000007ffffffffffffffffffe000003feffffffffffffffffe000003fffffffbffffffffffe040001fefffff79fffffffffc000000ffdffff7ffffffffff0000000ffefffcfffffffffff0000000fff7ffdfffffffffff0000000fffbffa7ffffffffff0008800ffbdff03ffffffff380000008fffefe07fffffffff800020007ffe7c1fbffffffe7800000007ffe781fffc63ff7f800000003ffc001fffe7fe7ffc00000001f00000fffddfe1fbc000000000000003ff9d587f0000020000000000fff1ffde40000000000000000ffc1ff9fa0000000000000000cf80fc0c00000000402000000fe00280000000000000000000708000000000000000000000000000000000000000000000000000000000000"
+          }
         },
         {
           "ref": "n1",
@@ -165,7 +171,13 @@
             "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
           },
           "annotation": null,
-          "tissueBbox": [4992, 1408, 105792, 90304]
+          "tissueBbox": [4992, 1408, 105792, 90304],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 104,
+            "rows": 91,
+            "bits": "000000000000000000000000000002000000001000400000410000000000000216000000000000000000000003fe000000000000000000000003dc00000002000000000000000ffe10000000200000000080003ffc00000000040000000010007ffd0000000880000000000003fff8800000008000000010000fffe0008000000000000004049fffe40000000000000000001fdfffc00000000000000000027fffffc8001000000000000001ffffff80000080000410000007ffffff8000000000004000001fffffff8000000000000000007fffffff800000000000000001ffffbfff600000000000000083ffff7fff800008000000000007ffffffff80036f00000000001fffff7fff8007ff80000040001fffffffff0007ffc0000800001ffffdf7ff000fffe0000008001ffffbafff000fffe0000100003fffffffff001ffff0083000003fffffffff803ffff800000000fffff73fff807ffff8001000007fffff8fffc0fffffc08200000ffffffcefff0fffffff00000017fffffffffe1fffffffc000003ff7fffeffff9fffffffe000003ffffffeffffbfffffdff000007fffffdeffff9fffffccf80000ffffdffbffff9fffffdff808007ffffffc7fff1ffffffff800003efffff9ffff1fffffffdc000038fffdfbdfff1fffffffec00003effffffcfff9fffff7ffc000079feffffffff9fffff7ff000003ffbf7dfffff8ffffffff800001fe7bfffffff8ffffffffc00001ffd7fffffff8ffffffffc00001ff83fffffff0fffffffff80001ff37bffffff0fffffffff80001fdffbffffff1fffffffff80000ffbbfbfffff1fffffffff801007febffffffe1fffffffffc00007e73ffffffe3fffffffffc00007efbffffffe7fffffffffc00003ef7ffffffc7fffffffffc00033fffffffffcffffffffff800000ff3f7ffffcffffffffbf800000fe7ffffff9ffffffffffc000003dfafffff9ffffffffffc000003d3ffffff1ffffffffffc000601fffffffe1ffffffffffc000000dffffffc1ffffffffff80004047ffffffa1fffffbffffc0000007ffffff01ffffffffffc0000047ffffff23ffffffffffc0008003ffffff87ffffffffffc0000003ffffdf83fffffff7ffec000001fffbdfc3ffffffffffee000221ffdfff81ffffffbfffee002000ffedff81ffffffffffff004000bfffffc0fffffbffdfff8000003fbfefc0ffffffffffff8000003ffffec07fffffffffff8000001fffbfc07fffffffffff800000007007902bffbfffffff0000000000038037ff7ffffffe0000000000000015fdfffd7ffe000000000000001dff07fffffe000000000000011ffffffff9fe000000000000001ffffffffbf0000000000000003eff7bf9ffe0000000000000003e7fffbfffc0000000000000003f7fefbfbd00000000000000001f6edffffc00000000000000000f9fefff30000000000000000003f7fffde0000004000000000107fedfffe0001000000200000001dfe7ffc1001008000000001801f7c37c000000000000000000007ffb30010000000000000000003f4fe00000000000000000000003fe400000000000040000000808200000420000000008000000100008200000000000000000000000000000000000000000000000000000000"
+          }
         },
         {
           "ref": "n2",
@@ -177,7 +189,13 @@
             "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
           },
           "annotation": null,
-          "tissueBbox": [0, 0, 114368, 102784]
+          "tissueBbox": [0, 0, 114368, 102784],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 112,
+            "rows": 102,
+            "bits": "800000000fc003ffffffff801f80000000003fc007ffffffffc02c80000000007fc01fffffffffe01b80000000007ff07fffffffffe03e80000000007fffffffffffffe07f80000000007ffffffffffffff03b80000000007ffffffffffffff43f8000000000fffffffffffffff01f8000000000fffffffffffffff03fc000000001fffffffffffffff0cdc000000003fffffffffffffff07e8000000003fffffffffffffff41d0000000003fbfffffffffffffc4b0000000001fffefffffffffffe2e0000000001ffffffffffffffff720000000001ffffffffffffffff260000000000ffffbfffffffffff9e0000000000ffffffffffffffff9a00000000007fffffffffffffffc300400000003fffffffffffffffc500000000003ffbffffffffffffe18000000000ffffffffffffffffe68000000000ffefffffffffffffe5c000040000ffeffffffffffffff4c000000000fffffffffffffffff840000000007fffffffffffffbffa40000000007fdffffffffffffffa600000000007fffffffffffffffe4000000000007ffffffffffffff84000000000003ffffffffffffff9c000000000001efdfffffffffff98000000000010ffffffffeffff7f00000000000107fffffffffffdce00000000000007fffffffffffccf00000000000003fffffffffffc4700000001000001fffffffffffe5f00000003e000003ffffffffffb0f80000003f800000f7efffffffa0200000003f800000f303ffffbf8041000006ff8000006001ffffff004c000007fd00000000007ffffe000c00000fff0000000000fffffe209400000fffbc0000000ffffff8203c00001ffffef200003ffffff8006400001ff8dff80001fffffff0001c00001fdffffe3801fffffff0003e00003ffbffffffc1fffffff0028400003fff7fffffe1ffffffe0001400003ffffffffff7ff6fffc0000400007ffdffffffffffffffc000340001ffffffffffffffffffc00424000ffffffffffffe7fdffbc00000003ffffffeffffffbfdfef80000000ffffffffff7ffffdb88400000007fdffffffffbff7f008000000400efffffffffffffff000000000000ffffffffffffffff000000200000ffffffffffffffff8000001c0400ffbfffffffffffffe200000c0000fffffffffffffffffc0000000802affffffffffffffffe8001000000fdf7ffffffffffffff0004081000cddfffdfffffffffffc000002000c9efffffffffffffffc004102000daffffffffffffffffe0000830005bfffffffbffffffffe00000000073fffffffffffffffffc00702800f3fffffffffffffffffc00200c00377ffffffffffffffffe000008007eeffffffffffffffffe00000600f687fffffbfffffffffe10082a003f03ffffffffffffffff10e0320007007fffefffffffffff00000b0050007fffffffffffffff00009300100fffffffffffffffff00000100391fff9f1fffffffffff00000b00fd7fff8dbfffffffffff00007d0078ffffefffffffffffff00000b0000fffff7ffffffffffff00001d0001fffffaeffffffffffe00000f0001ffffff7ffffffffffc0000090003fffffffffffffffffc0000010007fffffffffffffffffc0000618007fffffffffffffffffc00005ac003fffffffffffffffffc0000dbe001ffeffffffffffffff80000003001fffffffffffffffff00000001801ffffffffffffffff8000000c1801ffffffffffffffff000000040c007ffbfffffffffffc0000100006003ffffffffffffff90000100303003ffffffffffffff80000001bb2000ffffffffffffff000080c30020003ffffffffffffe008000020420000ffffffffffffe00400087083000031ffffffffffe00000087043000040ff7fffffffe000000010030000007fffffffcfc00000001a010000000005bfff06c0000000270300000000001ffc00c00000000bf6000000000009000000000000003a0000000000000000000000000000"
+          }
         },
         {
           "ref": "n3",
@@ -201,17 +219,25 @@
                 "id": "c1",
                 "featureIds": ["4d3eb577-2a7a-5bf0-855a-eba2306b075e"],
                 "feret_um": 1126.5,
+                "largestPolygon_um": 1126.5,
                 "bbox": [49039.2, 21865.4, 53766.8, 26433.2]
               },
               {
                 "id": "c2",
                 "featureIds": ["3ebea59b-dcae-58e6-84d5-47c994414be5", "8d18d9a5-cfc0-593d-85fd-42cc926d4bce"],
                 "feret_um": 248.9,
+                "largestPolygon_um": 155.9,
                 "bbox": [45246.4, 15495.3, 46056.3, 16587.4]
               }
             ]
           },
-          "tissueBbox": [3008, 0, 131072, 93184]
+          "tissueBbox": [3008, 0, 131072, 93184],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 128,
+            "rows": 91,
+            "bits": "000030000000000e000fe00000000000000000000000000e000fc000000000000000000000000007000d0000000000000000000000000011d000000210000000000000000000001df840000000000000000000000000001fffc0000000000000000000000000008fbfe0000000000000000000000000007c3fe00000000000400000000000001fffcff00000000000400000000000007fffdff8000000000000000000000001ffffeff0000000000000000000000003ffffe7f600500000000000000001fc03ffff77fe0000000000000000000fffe7ffff77fc0000000000000000001fffffffff7ffe0000000000020000003ffffffff978ff0000000000000000003ffffff7f9fbeb0000000000000000007fffffffffffff000000000000000000ffffffffffffff000000000000000001ffffffffbfffff000010000000000083ffffffffffffef000000000000000007ffffffffffffbf001a00000000000003fffffffffff77e000000000000000007fffffffffff77e000000000200000007fffffffffff7ff00000000000000000fffffffffffff2f00000000000000000ffffff5fffffead80000000000000000ffffff87ffffbc7800000000000000007fffef83ffffd3f80000000000000000ffffff81ffffff880000000000000000ffffff80ffffeb82000000000000000bffffff307ffff7c00000000000000003ffffbff000ffffc00000000000000003fffffff800ffff000000000200000003fffffffa007ff788000003d800000003fffffff8003fffc000000ff000000003ffd7fffc003fffc000008ffce0000003fffbfff0007fffe000080ffdf0000003fffefff800ffffe0000007fcf8000003fffffff800ffffb000007ffffc000003fbfdfff001ffffe000027ffffc000007ffff77f003fffff000007ffff8000007fffffff0017ffff000003ffffc00010ffffffff0037fffb00000bfffbc0003ffdf7ff7ec03ffffb80000ffffd80003fffffffffc03ffffb00001fffff7000fffffff7ff7037fffb80000fffff7000ff7ffffffb785fdfff9000079ffff800fffffffffef8feffff80000ffffff801ffdffcfffdf7edffff00000cffffe0017dffbe07fe1f3f7fff00000c7ffff003fffff7b7f40ffeffff0010037ffff0037fffedf89907f9ffff000003fffff003ffffff5d3b9f7dffff800003fffff010feffff5f3c09e9ffff800003fffff003ffffffcd300b5dffeec000017ff80006efffffdd538eb7ffff000001f04000067ff7bfe8151a9e7fff8000f000000007fffffff21c0bffdfffc001c000000007ffffff780c37fffffe8001f000000003fffffff6883fffcdbf80007c0e000003fffffff37faffffcfb00007cffc00003fffffffeffeffffde000007fffe00003ffffffffffdffffd0000007ffff00001ffffffffffef7ff80000007ffffe0001ffffffffffe47f70200001fffffe00017fffefdffe007ff8000003fffffe00017ffff7f208002e78000007fffffe00009dffffc000002010000007fb7fdf00000f7fff000000000000001f4207de000107bbfc000000000040003fc68038002007f1f0000000000000007fe380f8000003e10000000100000000ff3f807c000000000000000000000001eeff80fc00000108000000000000000bffbfc17800000000000000000000001ff1fd81fc0000000001000000000000fffffd8bfc0100000000000000000000ffc6f9dbfc0300080000000000000003fe80f1fffc0300080000000000000003ff9ff7fffe0700000000000000000007fe9feffffe070000000000000000000feffffffffc3f0001000000000000000ffffffefff8772000004000020000001ffffffffff8370000000000010080000dfffffffff01e0000000000000000000bdefee86ff00e00000000000000000003f81e8017e006000000000000000000007000000000060000000000030000000020000000001e0000000000000000000000000000001c00000000000000000000000000000018"
+          }
         },
         {
           "ref": "n4",
@@ -276,6 +302,7 @@
                   "512f84d5-435f-59c4-8410-b367846316b3"
                 ],
                 "feret_um": 779,
+                "largestPolygon_um": 193.6,
                 "bbox": [48008.4, 20299.3, 51013.5, 23686.9]
               },
               {
@@ -289,6 +316,7 @@
                   "f61214ec-dff7-52ba-a528-cdfd81e2f47a"
                 ],
                 "feret_um": 401.2,
+                "largestPolygon_um": 127.3,
                 "bbox": [48141.6, 16784.7, 49748.51, 17859.2]
               },
               {
@@ -302,6 +330,7 @@
                   "5858de0d-f18b-57fb-bf52-4f3d73494295"
                 ],
                 "feret_um": 370.1,
+                "largestPolygon_um": 77.7,
                 "bbox": [45892.8, 18744.9, 47450.5, 19769.7]
               },
               {
@@ -315,6 +344,7 @@
                   "63535fea-da7d-5481-92d5-e9c382699628"
                 ],
                 "feret_um": 345.4,
+                "largestPolygon_um": 110.2,
                 "bbox": [17979.6, 47281.8, 19062.4, 48741.6]
               },
               {
@@ -325,12 +355,14 @@
                   "f21208fa-46bb-548a-ba9f-2804332002a5"
                 ],
                 "feret_um": 273,
+                "largestPolygon_um": 108.7,
                 "bbox": [51860.9, 20923.8, 52785.9, 21774]
               },
               {
                 "id": "c6",
                 "featureIds": ["63925b4f-3fe9-5207-b4d1-53044ef2d17b", "cc06fd0a-8772-5683-b1f0-0a446c3f1793"],
                 "feret_um": 272.9,
+                "largestPolygon_um": 133.5,
                 "bbox": [50062.6, 18279.1, 50883.1, 19218.5]
               },
               {
@@ -343,18 +375,21 @@
                   "ea6fc100-5ee3-52ee-a11d-44ff4e2120d6"
                 ],
                 "feret_um": 253.4,
+                "largestPolygon_um": 89.6,
                 "bbox": [46327.1, 21220.9, 47190.3, 22219.4]
               },
               {
                 "id": "c8",
                 "featureIds": ["2655807c-9e4b-5214-bde3-1ab0ce5054c7", "fff2f0f2-411f-5ba0-9595-1c38033764e3"],
                 "feret_um": 228.6,
+                "largestPolygon_um": 128.9,
                 "bbox": [47925, 17929.2, 48346.7, 18938.6]
               },
               {
                 "id": "c9",
                 "featureIds": ["acb96f29-90c5-547e-b3cd-838377b7284a", "69b78b4a-dd70-5ea9-a589-265f67af3bd3"],
                 "feret_um": 226.6,
+                "largestPolygon_um": 105.8,
                 "bbox": [45846.8, 20193.4, 46837, 20494.3]
               },
               {
@@ -365,41 +400,53 @@
                   "bf048db9-98cb-5681-b1ff-124f3e7af50c"
                 ],
                 "feret_um": 206.4,
+                "largestPolygon_um": 72.1,
                 "bbox": [50499.7, 19601, 51303, 20240.3]
               },
               {
                 "id": "c11",
                 "featureIds": ["b945d134-5166-5518-a45a-e44e1eed00e6", "fadd0018-b888-56e8-a11e-22e57f184294"],
                 "feret_um": 134.5,
+                "largestPolygon_um": 38.2,
                 "bbox": [18664.6, 45427.2, 19208.1, 45725.7]
               },
               {
                 "id": "c12",
                 "featureIds": ["159dc847-02fa-54ed-8b52-3864d5a28f12"],
                 "feret_um": 50.5,
+                "largestPolygon_um": 50.5,
                 "bbox": [49894.8, 19385.3, 50080.8, 19594.2]
               },
               {
                 "id": "c13",
                 "featureIds": ["55f599fe-6825-5558-9ea7-9e03a9b92d41"],
                 "feret_um": 41.7,
+                "largestPolygon_um": 41.7,
                 "bbox": [51187, 21084.8, 51351.9, 21244.9]
               },
               {
                 "id": "c14",
                 "featureIds": ["4c51e59d-2e44-5fb5-a615-51bd7959ed41"],
                 "feret_um": 38.9,
+                "largestPolygon_um": 38.9,
                 "bbox": [19451.9, 48387.6, 19554.3, 48536.9]
               },
               {
                 "id": "c15",
                 "featureIds": ["197341fb-dfef-56ff-822c-ab0c6d817fb5"],
                 "feret_um": 31.7,
+                "largestPolygon_um": 31.7,
                 "bbox": [47991.1, 20036.8, 48117.8, 20168.5]
               }
             ]
           },
-          "tissueBbox": [2112, 640, 65536, 88960]
+          "tissueBbox": [2112, 640, 65536, 88960],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 64,
+            "rows": 88,
+            "bits": "100000000400200001010000004c0002004000000010001100002100000000050000017fd804001c200007ffff800807040017ffffe0288000000fffffe50068008003fffff8000421801fffffe118000001fffffff000400001fffffff000460001fffffffa19420003fffffffe0080000201fffffe80010000003fffff88c10000001fffffa6200000813fffffc18100008207ffffe21200018003fffff0060001c01ffffff8a00000e01ffffff8110000e01ffffff8010000e03ffffffe812000007ffffffe000000007ffffffc000000007ffffffe000000007ffffffe00000000ffffffff01000000ffffffff08000000ffffffff80000000ffffffff80078000ffffffff8007e0007fffffff8007f0007fffffff8003f8007fffffff8001f0087ffffffe0003f6003ffffffe0007ffb01ffffffe2207fff81ffffffef207fffe0ffffffff007fffe0ffffffff003fffe0ffffffff003fffe07fffffff003fffc07fffffff003fffe03fffffff003ffff03fffffff003fffa03fffffff003fff001fffffff001fff000fffffff000fff0007fffffe000fff0007fffffe0207ff0003fffffc0007ff0001fffff80007ff04a1fffff00203ff0080fffff00003ff0000fffff00001ff00607ffff00003ff00001fffc00001ff00001fff800003ff000007f8000001ff04000100000001ff00004000000003fe00000000000007ff0000000002000ffe0000200000003fff0000000000007fff0000000000007fff0002000000017fff0000000000027fff000000000000ffff8000000000007fff0000000000007fff0800000000003fff0100000000001fffc000000000000fff80000080000007ffc0000000000003ffc0000000000001ffe00000200000007fe00000008000003e00000040000100082000000800000000000000000080000080000100000000004000000004000000400000000000000000000000000"
+          }
         }
       ],
       "reference": {

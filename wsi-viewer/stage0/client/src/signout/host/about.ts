@@ -25,7 +25,7 @@ export const STAGING_RULES =
 
 /** §9.1 `Data`. */
 export const DATA_ROW =
-  'No protected health information. Slides: CAMELYON17 (CC0 1.0; Computational Pathology Group, Radboud University Medical Center), read directly from the public dataset bucket by byte range. Nothing you type leaves this browser; your progress stays here until you export it.';
+  'No protected health information. Slides: CAMELYON17 (CC0 1.0; Computational Pathology Group, Radboud University Medical Center), read directly from the public dataset bucket by byte range. Nothing you type leaves this browser; your progress stays here until you export it. Parts of a slide the scanner did not image are stored black in these files and are drawn black here: a black view is unscanned glass, not a failure (the node chip then says no tissue is in view).';
 
 /** §9.1 `Network` and D22's privacy row. */
 export const NETWORK_ROW = 'Slide tiles are read from camelyon-dataset.s3.amazonaws.com (Amazon S3), which sees your network address and which bytes you request, as any web host does.';

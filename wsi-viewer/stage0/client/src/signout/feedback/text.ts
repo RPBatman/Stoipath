@@ -117,8 +117,19 @@ export const TEXT = Object.freeze({
   // where the deposits were (§5.6 item 3, §9.3)
   depositsHeading: 'Where the deposits were',
   blockHeading: (n: number, label: string, size: string | null): string => (size === null ? `Node ${n} · ${label}` : `Node ${n} · ${label} · about ${size}`),
-  deposit: (j: number, um: string, mag: string, s: string): string => `Deposit ${j} · about ${um} µm · in view at ${mag} for ${s} s`,
-  depositNever: (j: number, um: string): string => `Deposit ${j} · about ${um} µm · never in view at 10× or more`,
+  /** `um` is the cluster's largest single polygon; `span` the optional ` ({k} foci spanning about {µm} µm)` (S3 review fix, PE-10). */
+  deposit: (j: number, um: string, mag: string, s: string, span = ''): string => `Deposit ${j} · about ${um} µm${span} · in view at ${mag} for ${s} s`,
+  depositNever: (j: number, um: string, span = ''): string => `Deposit ${j} · about ${um} µm${span} · never in view at 10× or more`,
+  /** N (S3 review fix): the merged-cluster span, as annotation geometry beside the deposit size. */
+  depositSpan: (k: number, um: string): string => ` (${k} foci spanning about ${um} µm)`,
+  /** N (S3 review fix): the collapsed row of a node with many clusters. */
+  depositRest: (k: number, range: string, seen: number): string =>
+    `and ${k} smaller deposits (about ${range} µm) · ${seen === 0 ? 'none' : seen === k ? 'all' : `${seen} of ${k}`} in view at 10× or more`,
+  showMeRestName: (n: number): string => `Show me the smaller deposits of node ${n}`,
+  flyingRest: (k: number, n: number, mag: string): string => `Flying to the ${k} smaller deposits of node ${n}, at ${mag}.`,
+  /** N (S3 review fix, PE-3): a borderline node called ITC after the deposit was in view. */
+  borderlineItc: (mag: string, s: string): string =>
+    `You saw this deposit at ${mag} for ${s} s and called it isolated tumour cells; the reference counts it as a micrometastasis by cell number.`,
   search: (mag: string): string => `You never had this deposit in view at ${mag} or more (search miss).`,
   recognition: (mag: string, s: string): string => `This deposit was in view at ${mag} for ${s} s and not called (recognition miss).`,
   indeterminate: (mag: string): string => `This deposit was in view at ${mag} for under 2 s (indeterminate).`,
@@ -134,6 +145,8 @@ export const TEXT = Object.freeze({
   noSharpView: (s: string): string => `You had no sharp settled view of this node; you spent ${s} s on it.`,
   notOpened: 'You did not open this node.',
   lowPower: 'A macrometastasis is usually visible at 2–5×: survey the whole section at low power before leaving a node.',
+  /** N (S3 review fix): the negative node's survey sentence (PE-17's sentence is for positive nodes only). */
+  surveyNegative: 'You did not view this node at 5× or more; a negative call rests on a complete low-power survey.',
   flagOn: (k: number, n: number): string => `Your flag ${k} on node ${n}: on a reference deposit`,
   flagOff: (k: number, n: number, d: string): string => `Your flag ${k} on node ${n}: ${d} µm from the nearest deposit`,
   flagNone: (k: number, n: number): string => `Your flag ${k} on node ${n}: this node has no annotation to compare with`,
@@ -162,6 +175,15 @@ export function group(n: number): string {
   const [int, frac] = Math.abs(n).toString().split('.');
   const g = (int ?? '0').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return `${neg ? '−' : ''}${g}${frac !== undefined ? `.${frac}` : ''}`;
+}
+
+/**
+ * The Show me sentence's magnification (S3 review fix): grading's word, except that a view coarser than half a step
+ * past 2.5× (the word `below 2.5×`) is spoken as its own power, `about 1.6×` (10× = 1.0 µm/px).
+ */
+export function showMeMagnification(scale: number, word: string): string {
+  if (word !== 'below 2.5×' || !(scale > 0) || !Number.isFinite(scale)) return word;
+  return `about ${Number((10 / scale).toPrecision(2))}×`;
 }
 
 /** Two significant figures (`3157.9` → `3200`, `83.6` → `84`, `0.0836` → `0.084`). */

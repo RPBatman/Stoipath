@@ -185,6 +185,10 @@
         "feret_um": {
           "$ref": "#/$defs/NonNegative"
         },
+        "largestPolygon_um": {
+          "description": "Maximum Feret diameter of the cluster's largest single polygon, µm (S3 review fix, SIGNOUT.md §19.5): the deposit size the comparison prints; feret_um is the cluster span (annotation geometry, §6.3). Optional so that case files written before it still read (the comparison then falls back to feret_um).",
+          "$ref": "#/$defs/NonNegative"
+        },
         "bbox": {
           "$ref": "#/$defs/Bbox"
         }
@@ -215,6 +219,35 @@
           "items": {
             "$ref": "#/$defs/DepositCluster"
           }
+        }
+      }
+    },
+    "TissueCells": {
+      "description": "A coarse tissue mask of the node's slide (S3 review fix, SIGNOUT.md §19.5; copied from the slide index's pixels.tissueGrid by build_signout_cases.py). Cells of `cell` level-0 px, `cols` x `rows`, row-major; `bits` is hex, four cells per digit, most significant bit first, zero-padded. A sharp settled view counts as over tissue (examined, the tray's viewed-at, where-you-looked) only when it meets a tissue cell.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cell",
+        "cols",
+        "rows",
+        "bits"
+      ],
+      "properties": {
+        "cell": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cols": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bits": {
+          "type": "string",
+          "pattern": "^[0-9a-f]*$"
         }
       }
     },
@@ -259,6 +292,9 @@
         },
         "tissueBbox": {
           "$ref": "#/$defs/Bbox"
+        },
+        "tissueCells": {
+          "$ref": "#/$defs/TissueCells"
         }
       },
       "allOf": [

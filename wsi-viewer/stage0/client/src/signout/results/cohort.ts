@@ -177,7 +177,7 @@ export class CohortTool {
 
   private countsText(): string {
     const c = cohortCounts(this.files);
-    return TEXT.counts(c.files, c.rows, c.match, c.minor, c.major);
+    return TEXT.counts(c.files, c.rows, c.match, c.minor, c.major, c.caseMatch, c.caseMinor, c.caseMajor);
   }
 
   private setError(text: string | null): void {

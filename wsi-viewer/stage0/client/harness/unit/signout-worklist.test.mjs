@@ -77,6 +77,15 @@ export default async function (t) {
   t.eq(T.statusText({ kind: 'submitted', class: null }), 'submitted', 'submitted (exam style)');
   t.eq(T.statusText({ kind: 'submitted', class: 'match' }), 'submitted · match', 'submitted · match');
   t.eq(T.statusText({ kind: 'submitted', class: 'minor' }), 'submitted · minor discrepancy', 'submitted · minor discrepancy');
+  t.eq(T.statusText({ kind: 'submitted', class: 'major', borderline: true }), 'submitted · major discrepancy (borderline node)', 'S3 review fix (PE-3): a class resting only on a borderline node says so');
+  {
+    const m = { class: 'match', direction: 'none', borderline: false };
+    const res = { classes: { case: 'major', pN: { class: 'match', direction: 'none' }, nodes: [m, m, m, m, { class: 'major', direction: 'under', borderline: true }] } };
+    const prog = { attempt: 1, currentNode: 4, result: res };
+    t.eq(W.caseStatus({ locked: null, progress: prog }, 1, false), { kind: 'submitted', class: 'major', borderline: true }, 'caseStatus: the borderline-only major case is marked borderline');
+    t.eq(W.caseStatus({ locked: null, progress: { ...prog, result: { classes: { ...res.classes, pN: { class: 'major', direction: 'under' } } } } }, 1, false), { kind: 'submitted', class: 'major' }, 'caseStatus: a major pN too → plain major');
+    t.eq(W.caseStatus({ locked: null, progress: prog }, 1, true), { kind: 'submitted', class: null }, 'caseStatus: exam style hides the class');
+  }
   t.eq(T.statusText({ kind: 'submitted', class: 'major' }), 'submitted · major discrepancy', 'submitted · major discrepancy');
   t.eq(T.statusText({ kind: 'locked', reason: 'x' }), 'locked', 'locked');
   const lc = { id: 'c17-01', module: { contentHash: 'sha256:' + 'b'.repeat(64) } };

@@ -18,6 +18,26 @@ const r2 = (n) => Math.round(n * 100) / 100;
 const rect = (cx, cy, s, mpp) => ({ minX: r2(cx - (W * s) / mpp / 2), minY: r2(cy - (H * s) / mpp / 2), maxX: r2(cx + (W * s) / mpp / 2), maxY: r2(cy + (H * s) / mpp / 2) });
 const entry = (t, cx, cy, s, mpp, sharp = true) => ({ t, rect: rect(cx, cy, s, mpp), scale_um_per_px: s, sharp });
 const mid = (b) => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
+/**
+ * The centre of the tissue cell nearest the tissue box centre (S3 review fix, SIGNOUT.md §19.5: "examined" needs a view
+ * that meets a tissue cell, and on fragmented slides the box centre is unscanned); the box centre without a mask.
+ */
+function tissuePoint(n) {
+  const t = n.tissueCells;
+  const [x, y] = mid(n.tissueBbox);
+  if (!t) return [x, y];
+  let best = null;
+  for (let j = 0; j < t.rows; j++)
+    for (let i = 0; i < t.cols; i++) {
+      const k = j * t.cols + i;
+      if (((parseInt(t.bits[k >> 2], 16) >> (3 - (k & 3))) & 1) === 0) continue;
+      const cx = (i + 0.5) * t.cell;
+      const cy = (j + 0.5) * t.cell;
+      const d = (cx - x) ** 2 + (cy - y) ** 2;
+      if (best === null || d < best[0]) best = [d, cx, cy];
+    }
+  return best === null ? [x, y] : [best[1], best[2]];
+}
 
 function caseOf(id) {
   const m = JSON.parse(readFileSync(resolve(DATA, 'cases', `${id}.module.json`), 'utf8'));
@@ -59,7 +79,7 @@ const out = { generator: 'harness/fixtures/signout/feedback/make_fixtures.mjs', 
 for (const id of ['c17-01', 'c17-03', 'c17-04', 'c17-05', 'c17-07', 'c17-08', 'c17-10', 'c17-02']) {
   const { sc, mpp } = caseOf(id);
   out.examined[id] = sc.nodes.map((n, i) => {
-    const [x, y] = mid(n.tissueBbox);
+    const [x, y] = tissuePoint(n);
     return [entry(0, x, y, 2.0, mpp[i]), entry(4000, x, y, 8.0, mpp[i])];
   });
 }

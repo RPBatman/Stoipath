@@ -18,7 +18,13 @@
  *    dispatch, then each progress note the worker posts for a slow request: headers or more body bytes) and fails it
  *    like an error, so it is re-dispatched; pinned-base and warm-base tiles, which gate "ready" and the scripted path,
  *    are retried indefinitely with a capped backoff (other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS); the last
- *    failure and the error / timeout counts are kept for the measurement page's status line.
+ *    failure and the error / timeout counts are kept for the measurement page's status line;
+ *  - range slides only (SIGNOUT.md §8.4, §19.5 S3 review fix; `pyr.rangeSource` set, so the measurement page is
+ *    unchanged): every tile kind is retried indefinitely, FAILED_RETRY_MS × 2^(attempts-1) capped at
+ *    RANGE_ARRAY_RETRY_MAX_S, because the slides come from a third-party bucket across the internet and a short outage
+ *    must not leave 20× / 40× tiles blurred for the rest of the open; a tile that arrives with bytes from the host, a
+ *    window `online` event (viewer.ts) or `resetFailures()` makes every failed tile eligible again (at most once a
+ *    second from arrivals).
  * The wanted set is rebuilt every frame from the camera, so the heap is cleared and refilled (typed arrays, no GC).
  */
 import {
@@ -31,6 +37,7 @@ import {
   PREDICT_HORIZON_MS,
   PREFETCH_SLOTS_MIN,
   PREFETCH_SLOT_FRACTION,
+  RANGE_ARRAY_RETRY_MAX_S,
   RING_TILES,
   TILE_WATCHDOG_MAX_MS,
   TILE_WATCHDOG_MS,
@@ -221,6 +228,10 @@ export class Scheduler {
   private readonly timeoutsByKey = new Map<number, number>();
   /** rAF time of the previous update(), to discount a suspended page (hidden tab, locked phone) from request ages. */
   private lastUpdateAt = -1;
+  /** A range slide (SIGNOUT.md §8.4): failed tiles of every kind are retried with a doubling wait, never given up. */
+  private readonly rangeRetry: boolean;
+  /** When an arrival last made the failed tiles eligible again (rate limit, once a second). */
+  private lastRevivedAt = -1e9;
 
   constructor(
     private readonly pyr: Pyramid,
@@ -229,6 +240,7 @@ export class Scheduler {
     protocol: string,
   ) {
     this.protocol = protocol;
+    this.rangeRetry = pyr.rangeSource !== undefined;
     const h2 = protocol === 'h2' || protocol === 'h3' || protocol.startsWith('h3');
     this.maxInflight = h2 ? CONCURRENCY_H2 : CONCURRENCY_H1;
     this.prefetchSlots = Math.max(PREFETCH_SLOTS_MIN, Math.floor(this.maxInflight * PREFETCH_SLOT_FRACTION));
@@ -279,6 +291,14 @@ export class Scheduler {
       this.counters.receivedByKind[msg.kind] = (this.counters.receivedByKind[msg.kind] ?? 0) + 1;
       this.failed.delete(msg.key);
       if (this.timeoutsByKey.size > 0) this.timeoutsByKey.delete(msg.key);
+      // range slides: bytes from the host prove it answers again, so the failed tiles need not wait out their backoff
+      if (this.rangeRetry && msg.bytes > 0 && this.failed.size > 0) {
+        const now = performance.now();
+        if (now - this.lastRevivedAt >= 1000) {
+          this.lastRevivedAt = now;
+          this.reviveFailures();
+        }
+      }
       this.awaitingUpload.add(msg.key);
       this.onTile?.(msg);
       return;
@@ -292,6 +312,28 @@ export class Scheduler {
     this.failed.set(msg.key, { at: performance.now(), attempts: (f?.attempts ?? 0) + 1 });
     this.lastFailure = `tile ${keyLevel(msg.key)}/${keyX(msg.key)}_${keyY(msg.key)}: ${msg.message}`;
     if (rec !== undefined && rec.tier <= 0) console.warn('[tiles] failed', keyLevel(msg.key), keyX(msg.key), keyY(msg.key), msg.message);
+  }
+
+  /** Every failed tile eligible on the next update (attempts kept at 1, so a repeat failure backs off again). */
+  private reviveFailures(): void {
+    for (const f of this.failed.values()) {
+      f.at = -1e9;
+      f.attempts = 1;
+    }
+  }
+
+  /**
+   * Additive (SIGNOUT.md §19.5): forget the failure state so every failed tile is requested again at once (the window
+   * `online` event of a range slide, or a page's Retry). Inert when nothing failed.
+   */
+  resetFailures(): void {
+    this.failed.clear();
+    this.timeoutsByKey.clear();
+  }
+
+  /** Range slides, other tiles: never given up, FAILED_RETRY_MS × 2^(attempts-1) capped at RANGE_ARRAY_RETRY_MAX_S. */
+  private static rangeRetryWait(attempts: number): number {
+    return Math.min(RANGE_ARRAY_RETRY_MAX_S * 1000, FAILED_RETRY_MS * 2 ** Math.max(0, Math.min(attempts - 1, 8)));
   }
 
   /** Base / warm-base tiles: never given up, backoff FAILED_RETRY_MS × 2^(attempts-1) capped at BASE_RETRY_MAX_MS. */
@@ -480,6 +522,8 @@ export class Scheduler {
           const kind = this.wantedKind.get(key);
           if (kind === RequestKind.BASE || kind === RequestKind.WARMBASE) {
             if (now - f.at < Scheduler.baseRetryWait(f.attempts)) continue;
+          } else if (this.rangeRetry) {
+            if (now - f.at < Scheduler.rangeRetryWait(f.attempts)) continue;
           } else if (f.attempts >= FAILED_MAX_ATTEMPTS || now - f.at < FAILED_RETRY_MS) continue;
         }
       }

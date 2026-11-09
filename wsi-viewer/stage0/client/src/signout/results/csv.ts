@@ -148,7 +148,11 @@ export function nodesCsv(files: readonly CohortFile[]): string {
 }
 
 /** The cohort counts line (§5.7): files, case rows, pN class counts. Pure. */
-export function cohortCounts(files: readonly CohortFile[]): { files: number; rows: number; match: number; minor: number; major: number } {
+/**
+ * The cohort counts line's numbers: the pN class breakdown (`match` / `minor` / `major`, unchanged) and, labelled apart
+ * since the S3 review fix (§19.5), the case class breakdown (`caseMatch` / `caseMinor` / `caseMajor`).
+ */
+export function cohortCounts(files: readonly CohortFile[]): { files: number; rows: number; match: number; minor: number; major: number; caseMatch: number; caseMinor: number; caseMajor: number } {
   const rows = caseRows(files);
   return {
     files: files.length,
@@ -156,5 +160,8 @@ export function cohortCounts(files: readonly CohortFile[]): { files: number; row
     match: countBy(rows, (r) => r.c.classes.pN.class === 'match'),
     minor: countBy(rows, (r) => r.c.classes.pN.class === 'minor'),
     major: countBy(rows, (r) => r.c.classes.pN.class === 'major'),
+    caseMatch: countBy(rows, (r) => r.c.classes.case === 'match'),
+    caseMinor: countBy(rows, (r) => r.c.classes.case === 'minor'),
+    caseMajor: countBy(rows, (r) => r.c.classes.case === 'major'),
   };
 }

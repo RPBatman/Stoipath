@@ -10,7 +10,8 @@ Inputs (all committed, so `--check` never touches the bucket):
     verified against its sha256): the per-node labels and the per-patient pN, the only label authority (D14);
   * the committed overlays `data/signout/overlays/<slide>.geojson` (from the ASAP XML): polygon count, the largest
     single polygon's Feret, the 100 µm clusters and their span, the area (tools/build_signout_overlays.py `measure`);
-  * the committed indexes `data/signout/slides/<slide>.index.json`: the per-slide MPP, size, md5 and `tissueBbox`;
+  * the committed indexes `data/signout/slides/<slide>.index.json`: the per-slide MPP, size, md5, `tissueBbox` and the
+    coarse tissue mask `pixels.tissueGrid` (copied into each node as `tissueCells`);
   * the catalogue ids (tools/build_signout_catalogue.py).
 
 Every number a trainee reads is computed here and written "about" to two significant figures; the teaching sentences
@@ -320,10 +321,15 @@ def build_case(data: Path, k: int, case_id: str, patient: str, pats: dict, nodes
             if (patient, n) in BORDERLINE:
                 ref['borderline'] = {'reason': BORDERLINE_REASON}
             annotation = {'layer': cat.LAYER_ID, 'version': layer['stoipath']['provenance']['version'],
-                          'clusters': [{'id': c['id'], 'featureIds': c['featureIds'], 'feret_um': c['feret_um'], 'bbox': c['bbox']}
-                                       for c in m['clusters']]}
-        case_nodes.append({'ref': f'n{n}', 'title': f'Node {n + 1}', 'slide': f'n{n}', 'slideId': slide, 'reference': ref,
-                           'annotation': annotation, 'tissueBbox': list(idx['tissueBbox'])})
+                          'clusters': [{'id': c['id'], 'featureIds': c['featureIds'], 'feret_um': c['feret_um'],
+                                        'largestPolygon_um': c['largestPolygon_um'], 'bbox': c['bbox']} for c in m['clusters']]}
+        node = {'ref': f'n{n}', 'title': f'Node {n + 1}', 'slide': f'n{n}', 'slideId': slide, 'reference': ref,
+                'annotation': annotation, 'tissueBbox': list(idx['tissueBbox'])}
+        grid = idx.get('pixels', {}).get('tissueGrid')
+        if grid is not None:
+            # S3 review fix (SIGNOUT.md §19.5): the coarse tissue mask, so "examined" means a view that met tissue
+            node['tissueCells'] = {'cell': grid['cell'], 'cols': grid['cols'], 'rows': grid['rows'], 'bits': grid['bits']}
+        case_nodes.append(node)
 
     c = counts(labels)
     top = max(measured, key=lambda i: measured[i]['largestDeposit_um']) if measured else None

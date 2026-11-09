@@ -20,7 +20,8 @@ pixels times the slide's own MPP:
   * `largestDeposit_um` is the largest single Tumor polygon's Feret (the reference deposit size, §6.3);
   * clusters: Tumor polygons whose boundaries come within 100 µm of each other (or overlap, or nest) are merged,
     transitively; a cluster's Feret is that of the convex hull of all its vertices, and `clusterSpan_um` is the
-    largest cluster's Feret (annotation geometry, never a deposit size);
+    largest cluster's Feret (annotation geometry, never a deposit size); each cluster also carries `largestPolygon_um`,
+    the Feret of its largest single polygon (the deposit size the comparison prints; S3 review fix, SIGNOUT.md §19.5);
   * `area_mm2` is the summed Tumor polygon area minus the Exclusion polygons' area (shoelace).
 """
 from __future__ import annotations
@@ -201,6 +202,7 @@ def measure(layer: dict, mpp: float) -> dict:
         pts = [p for k in members for p in tum[k][1][:-1]]
         x0, y0, x1, y1 = bbox(pts + [pts[0]])
         clusters.append({'featureIds': [tum[k][0] for k in members], 'feret_um': r1(feret_px(pts) * mpp),
+                         'largestPolygon_um': r1(max(singles[k][1] for k in members)),
                          'bbox': [round(x0, 2), round(y0, 2), round(x1, 2), round(y1, 2)], 'first': min(members)})
     clusters.sort(key=lambda c: (-c['feret_um'], c['first']))
     for k, c in enumerate(clusters, 1):
@@ -214,7 +216,8 @@ def measure(layer: dict, mpp: float) -> dict:
         'largestFeature': max(singles, key=lambda s: s[1])[0],
         'clusterSpan_um': r1(max(c['feret_um'] for c in clusters)),
         'area_mm2': area_px * mpp * mpp / 1e6,
-        'clusters': [{'id': c['id'], 'featureIds': c['featureIds'], 'feret_um': c['feret_um'], 'bbox': c['bbox']} for c in clusters],
+        'clusters': [{'id': c['id'], 'featureIds': c['featureIds'], 'feret_um': c['feret_um'], 'largestPolygon_um': c['largestPolygon_um'],
+                      'bbox': c['bbox']} for c in clusters],
     }
 
 
