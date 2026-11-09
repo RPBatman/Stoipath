@@ -1,0 +1,94 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [[26331.9,89309.2],[26304.2,89283.1],[26275.5,89289.2],[26265.2,89318],[26272,89347.4],[26285.1,89374.8],[26300.1,89400.2],[26320,89420],[26341.9,89437.2],[26369.3,89435.1],[26396,89422.1],[26408.3,89397.4],[26408.3,89368],[26390.5,89344],[26364.5,89324.1],[26331.9,89309.2]]
+        ],
+        "type": "Polygon"
+      },
+      "id": "62b5e622-823e-5c51-95be-06ad23108d66",
+      "properties": {
+        "classification": {
+          "color": [255,0,0],
+          "name": "Tumor"
+        },
+        "isLocked": true,
+        "name": "Annotation 0",
+        "objectType": "annotation",
+        "stoipath": {
+          "createdAt": "2022-09-28T12:49:33Z",
+          "input": "file",
+          "kind": "polygon",
+          "label": "R1",
+          "schema": "stoipath.annotation/1",
+          "updatedAt": "2022-09-28T12:49:33Z",
+          "version": 1
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [[26478.9,89454.3],[26448.8,89450.9],[26421.4,89456.3],[26402.9,89480.3],[26411.8,89507.7],[26433,89529.6],[26459.7,89545.4],[26481.6,89563.9],[26498.8,89588.5],[26517.3,89611.1],[26540.5,89628.9],[26563.1,89650.2],[26588.5,89664.5],[26616.6,89665.2],[26640.5,89648.1],[26650.8,89619.3],[26637.1,89592.6],[26612.5,89575.5],[26596.7,89552.9],[26574.8,89531],[26552.9,89513.2],[26530.9,89494.7],[26511.1,89474.1],[26478.9,89454.3]]
+        ],
+        "type": "Polygon"
+      },
+      "id": "4ab88c74-71e3-57bf-b6ec-d6daadf4dce6",
+      "properties": {
+        "classification": {
+          "color": [255,0,0],
+          "name": "Tumor"
+        },
+        "isLocked": true,
+        "name": "Annotation 1",
+        "objectType": "annotation",
+        "stoipath": {
+          "createdAt": "2022-09-28T12:49:33Z",
+          "input": "file",
+          "kind": "polygon",
+          "label": "R2",
+          "schema": "stoipath.annotation/1",
+          "updatedAt": "2022-09-28T12:49:33Z",
+          "version": 1
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "stoipath": {
+    "conversion": "subtracted regionLevel0 (0, 0); dropped 0 of 2 annotations outside the 179,712 × 98,816 px pyramid; kept 2 (2 Tumor) with 38 vertices; none partly inside; coordinates rounded to 2 decimals, rings closed",
+    "coordinateSpace": "pyramid-level0",
+    "featuresDropped": 0,
+    "generator": "stage0/tools/convert_asap_annotations.py 1",
+    "id": "camelyon17-annotation",
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T12:49:33Z",
+      "inputHash": "sha256:49d672455e7333512170a0b71fb5f1a2d1f768e9fb30d5161656e1a2b0d0fbf4",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "49d67245"
+    },
+    "regionOffset": [0,0],
+    "schema": "stoipath.layer/1",
+    "slide": {
+      "fingerprint": "179712x98816@0.25@0,0@8d054af49cfa",
+      "id": "camelyon17.c17s-0045"
+    },
+    "source": {
+      "bytes": 2679,
+      "format": "ASAP XML",
+      "sha256": "49d672455e7333512170a0b71fb5f1a2d1f768e9fb30d5161656e1a2b0d0fbf4",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/patient_086_node_4.xml"
+    },
+    "title": "CAMELYON17 annotation"
+  },
+  "type": "FeatureCollection"
+}
