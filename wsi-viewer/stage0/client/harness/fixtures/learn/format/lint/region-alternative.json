@@ -1,0 +1,44 @@
+{
+  "note": "STU-5: one candidate and no rubric",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/candidates",
+      "value": [
+        {
+          "id": "C",
+          "description": "Centre: sheets of large, pale cells with abundant pink cytoplasm",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              7168,
+              5120
+            ]
+          },
+          "view": {
+            "slide": "he",
+            "center_um": [
+              1742.5,
+              1244.64
+            ],
+            "scale_um_per_px": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "op": "remove",
+      "path": "/items/0/textRubric"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "region-alternative",
+      "severity": "error",
+      "path": "/items/0",
+      "message": "Every region item needs a keyboard or text alternative (NFR-A5)"
+    }
+  ],
+  "alsoAllowed": []
+}

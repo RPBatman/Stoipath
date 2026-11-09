@@ -1,0 +1,12 @@
+cfg {"drawer":"webgl","dpr":1,"cpu":1} rep 0: drawer=webgl zoom settle 5752 ms, settled_forced update p50 0 draw p50 0.5 tiles 24 levels 1
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: Target page, context or browser has been closed
+    at phase (/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C24/osd_bench.mjs:55:140)
+    at async file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C24/osd_bench.mjs:60:34 {
+  log: []
+}
+
+Node.js v22.22.0

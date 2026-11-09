@@ -1,0 +1,600 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "refDist": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/learn/integrator/baseline-dist",
+ "seconds": 67,
+ "files": [
+  "integrator.check.mjs"
+ ],
+ "moduleCounts": {
+  "integrator": 117
+ },
+ "gates": [],
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 index.html's built graph (index.html, _viewer-CFs_O7wW.js) holds no src/learn/ module (none) and no chunk carrying a Learn string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 shell.html's built graph (shell.html, _sharpness-3hzl5yso.js, _viewer-CFs_O7wW.js) holds no src/learn/ module (none) and no chunk carrying a Learn string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 the measurement page's graph is still index.html + the viewer chunk only (index.html, _viewer-CFs_O7wW.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 learn.html is its own entry (assets/learn-Dcb4-zll.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/main.ts's module graph (16 modules) reaches nothing under src/learn/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/shell/main.ts's module graph (53 modules) reaches nothing under src/learn/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 learn.html's module graph (src/learn/main.ts + 1 Learn module(s), 97 modules) holds nothing from src/shell/{layers,compare,share}/ and only catalogue.ts of src/shell/library/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/main.ts sha256 eaeb9c0797a2b00e… equals the value recorded at Wave L1 start (eaeb9c0797a2b00e…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/shell/main.ts sha256 d5a2dc7ebb7a8ccb… equals the value recorded at Wave L1 start (d5a2dc7ebb7a8ccb…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b desktop 1440x900: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b desktop-wide 1920x1080: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b phone 390x844 coarse: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: document.title \"Course · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: __learn.product \"learn\", mode \"learner\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: command registry conflicts() empty (58 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (255 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: document.title \"Author studio · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: __learn.product \"learn\", mode \"studio\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: command registry conflicts() empty (70 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (311 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: document.title \"Preview · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: __learn.product \"learn\", mode \"preview\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: command registry conflicts() empty (58 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (256 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 seed: the research shell stored its annotation in stoipath-shell (2 record(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: the research annotation is not loaded or drawn (store 0, overlay features 0; database stoipath-learn)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: indexedDB.databases() lists stoipath-learn (stoipath-learn, stoipath-shell); the mark (stored in 2 annotation records) and the progress record are in it (session keys learn.progress/li-4-check)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: stoipath-shell is untouched (annotations identical: true; no learn.* key in its session store)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: the active class is Stroma (--ann-5, D17): Stroma"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: every localStorage key written starts with stoipath.learn.v1. (stoipath.learn.v1.class.active; new keys stoipath.learn.v1.class.active; others none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: no sessionStorage write (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 studio: writes go to stoipath-learn-studio (stoipath-learn, stoipath-learn-studio, stoipath-shell; session keys learn.draft/d-li4check01)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 studio: localStorage keys written start with stoipath.learn-studio.v1. (none written)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: stoipath-learn-preview is empty at start (a record written before the reload is gone: true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: drafts are read from the studio database read-only (got d-li4check01; put resolved false; the studio record unchanged)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: the persistent notice \"Preview · progress is not kept\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: localStorage keys written start with stoipath.learn-preview.v1. (none written)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4: after the learner, studio and preview runs stoipath-shell annotations are byte-identical to the seed"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 ? opens \"Keyboard map · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the four Learn groups in order (The flow (Learn) · Navigate · Mark and measure · Help and reserved)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the integrator and Phase A rows of §9 are present with their keycaps (29 rows; all present)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the \"Not in this build\" rows are struck through (9 of 9)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I D20: the learner keymap has no class picker or GeoJSON rows (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 axe-core WCAG 2.2 AA (keymap open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 ⇧D writes \"Dx mode — not part of Stoipath Learn (educational use)\" to the strip and says it assertively (\"Dx mode — not part of Stoipath Learn (educational use)\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I D20: learner mode drops 12 registrations (class:*, import/export:geojson, tool:area); no #classMenu in the page"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I palette: placeholder \"Type a command, step, candidate, layer or setting…\", groups The flow (Learn) · Navigate · Mark and measure · Help and reserved, the task dock inert while open (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I axe-core WCAG 2.2 AA (palette open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I About: Product \"Stoipath Learn\", Launch \"Standalone · no LMS launch in this build · product learn\", Data \"No protected health information. Slides:…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I axe-core WCAG 2.2 AA (About open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I hud.setGate: \"Zoom gate · now 2.1× · need ≥ 20× 5\" with keycap 5; null hides it"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I host.plate (fingerprint): \"Sentinel lymph node: find the metastasis was written for a different build of tumor_014 · H&E; it was not opened.\" (alert)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I host.toast: \"Not yetFinish the current phase first; Skip to the question is in the card.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 / LI-I: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: the task card is docked, open at load (want docked, open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: K closes it (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: a docked column covers no canvas (right 0 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080 axe-core WCAG 2.2 AA (slide open, task card docked): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: the task card is drawer, closed at load (want drawer, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: K opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: visibleInsets counts the open drawer (right 340 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: Esc closes the drawer (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900 axe-core WCAG 2.2 AA (slide open, task card drawer): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: the task card is sheet, closed at load (want sheet, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: the sheet toggle opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: Esc closes the sheet (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse axe-core WCAG 2.2 AA (slide open, task card sheet): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: the task card is sheet, closed at load (want sheet, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: the sheet toggle opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: Esc closes the sheet (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse axe-core WCAG 2.2 AA (slide open, task card sheet): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: CDP LayoutCount 62 ≤ 205 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: 323 of 323 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: CDP LayoutCount 38 ≤ 41 frames + 2 and RecalcStyleCount 38 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: CDP LayoutCount 62 ≤ 205 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: 304 of 304 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: CDP LayoutCount 35 ≤ 38 frames + 2 and RecalcStyleCount 35 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 the CSP meta of D22 is present (\"connect-src 'self'; form-action 'none'; base-uri 'self'\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 fetch('https://example.org/') rejects (TypeError: Failed to fetch) and fires securitypolicyviolation (connect-src https://example.org/)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5: no page error beyond the blocked fetch's CSP report (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 across every page of these checks (1207 requests): all same-origin (0 other: none) and GET (0 other: none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 no sendBeacon, WebSocket, EventSource, or fetch / XHR with a body or another method (0)"
+  }
+ ]
+}

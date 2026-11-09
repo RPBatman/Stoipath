@@ -1,0 +1,15 @@
+{
+  "note": "MCQ with no correct option",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/1/options/1/correct",
+      "value": false
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/items/1/options"
+  }
+}

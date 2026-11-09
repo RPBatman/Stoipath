@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#303030" />
+    <title>Stoipath Viewer (RUO)</title>
+    <!--
+      Stoipath Viewer (RUO) research shell around the real Stage-0 engine (SHELL.md).
+      Styling: design/design-system/tokens.css + base.css, imported by src/shell/main.ts (single source of styling),
+      plus src/shell/shell.css for what the system lacks. Markup follows design/screens/final/research-annotation.html
+      and design/handoff/design-handoff.md; strings are design/handoff/ux-copy.md's.
+      The measurement page is index.html (unchanged); TSP-grade runs use it, not this page.
+    -->
+  </head>
+  <body>
+    <!-- Icon sprite (paths from design/screens/final/research-annotation.html; zoom-in / zoom-out added) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+        <symbol id="i-measure" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2"/></symbol>
+        <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></symbol>
+        <symbol id="i-zoomin" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></symbol>
+        <symbol id="i-zoomout" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M7.5 10.5h6"/></symbol>
+        <symbol id="i-nav" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><rect x="12" y="11" width="6" height="5"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+        <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M10 10h2M14 10h2M18 10h.01M6 14h12"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+        <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l12 8-12 8z"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></symbol>
+        <!-- Phase A (TOOLS.md §12.2): research final paths; i-ellipse and i-link drawn for this page. Modules may <use> any id here. -->
+        <symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></symbol>
+        <symbol id="i-rect" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14"/></symbol>
+        <symbol id="i-ellipse" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6.5"/></symbol>
+        <symbol id="i-polygon" viewBox="0 0 24 24"><path d="M6 4l12 3 2 10-8 4-7-6z"/></symbol>
+        <symbol id="i-brush" viewBox="0 0 24 24"><path d="M4 16c3-8 6 2 9-4s4 6 7 0"/><circle cx="20" cy="12" r="1.6"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></symbol>
+        <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol>
+        <symbol id="i-slides" viewBox="0 0 24 24"><rect x="3" y="7" width="12" height="10" rx="1"/><path d="M15 10h4v4h-4M7 7V5h12v8"/></symbol>
+        <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14"/><rect x="13" y="5" width="8" height="14"/></symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></symbol>
+        <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10 10a3 3 0 004 4M2 12s4-7 10-7c2 0 4 .6 5.5 1.5M22 12s-4 7-10 7c-2 0-4-.6-5.5-1.5"/></symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 19h16"/></symbol>
+        <symbol id="i-export" viewBox="0 0 24 24"><path d="M4 16v4h16v-4M12 4v11M8 8l4-4 4 4"/></symbol>
+        <symbol id="i-sync" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113-6l3 3M20 12a8 8 0 01-13 6l-3-3M17 4v5h-5M7 20v-5h5"/></symbol>
+        <symbol id="i-ann" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/></symbol>
+        <symbol id="i-inspect" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M8 11h6M11 8v6"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+        <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+        <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#view">Skip to slide</a>
+
+    <!-- Regions per principles §3.1 (A top bar · B canvas · C rail · D docks · E strip · F navigator). DOM (= Tab)
+         order (handoff §4.6, principles §8.3; TOOLS.md §9): top bar → canvas (pane A + its HUD readout, then pane B) →
+         rail → Library → Context → strip → navigator; grid areas keep visual positions (the navigator's host shares
+         the canvas cell). Phase A skeleton (TOOLS.md §4.2, §12.2): the integrator writes every container; a module owns
+         only the CONTENTS of its elements. Module controls ([data-cmd] of an unregistered command, [data-lib] and tabs
+         of an unclaimed panel) are hidden until the module registers or claims them. -->
+    <div class="app shell" id="app" data-product="ruo" data-surface="workspace" data-tool="select">
+
+      <!-- A. Top bar: badge + the full label string as real text (never dismissible), slide identity, search, help -->
+      <header class="topbar region" aria-label="Top bar">
+        <div class="topbar__slot-badge">
+          <button class="badge badge--ruo" id="badge" type="button" data-testid="badge" aria-haspopup="dialog" aria-controls="aboutDlg"
+                  aria-label="Stoipath Viewer, for research use only. Open the product label and About">RUO</button>
+        </div>
+        <span class="topbar__label" id="labelString" role="note" data-testid="topbar-label">For Research Use Only. Not for use in diagnostic procedures.</span>
+        <div class="topbar__identity" id="identity" role="group" aria-label="Slide identity" data-live="launch:context">
+          <span class="accession" id="idName">slide</span>
+          <span class="topbar__identity-rest">
+            <span class="meta cohort" id="idCohort"></span>
+            <span class="chip chip--stain" id="idStain" hidden></span>
+            <span class="chip chip--licence" id="idLic" hidden></span>
+            <span class="title" id="idTitle"></span>
+          </span>
+        </div>
+        <button class="topbar__search" id="paletteBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="paletteLayer"
+                aria-label="Search commands, panels and zoom levels (Ctrl K)">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-search"/></svg><span class="ph"><span class="ph-long">Search commands, panels…</span><span class="ph-short">Search…</span></span><span class="keys" aria-hidden="true"><kbd class="key" data-mod>Ctrl</kbd><kbd class="key">K</kbd></span>
+        </button>
+        <div class="topbar__slot-mode">
+          <button class="btn btn--icon btn--ghost" id="keymapBtn" type="button" aria-haspopup="dialog" aria-controls="keymapDlg" aria-label="Keyboard shortcuts (?)" title="Keyboard shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg></button>
+          <button class="btn btn--icon btn--ghost" id="aboutBtn" type="button" aria-haspopup="dialog" aria-controls="aboutDlg" aria-label="About this build and the product label" title="About"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></button>
+        </div>
+      </header>
+
+      <!-- B. Canvas area: one pane per view (.panes; pane B only in compare, .app.compare-on). Each pane holds its
+           engine's WebGL canvas (filling the pane; replaced on every slide switch, TOOLS.md D1, inserted before the
+           overlay canvas), ONE 2D overlay canvas (TOOLS.md D2: measurements, annotations, layers, tool previews) and
+           its HUD. The navigator follows view A. -->
+      <div class="canvas-area region" id="canvasArea" role="main" aria-label="Slide canvas area">
+        <div class="panes" id="panes">
+        <div class="pane pane--a" id="paneA" data-view="A">
+        <canvas id="view" class="canvas" tabindex="0" role="application" aria-roledescription="slide canvas"
+                aria-label="Slide canvas. Arrow keys pan, plus and minus zoom, question mark lists every shortcut." aria-describedby="livePolite"></canvas>
+        <canvas id="overlayA" class="canvas overlay-layer" aria-hidden="true" data-live="annotations"></canvas>
+
+        <div class="hud hud--tl">
+          <div class="hud__item hud__identity" data-live="launch:context"><span id="hudId">slide</span><span class="hud__secondary" id="hudCoh"></span></div>
+          <!-- FR-R11 marker line (layers owns the contents and toggles it at rest; ux-copy hud.marker) -->
+          <div class="hud__item hud__marker" id="hudMarker" data-live="layers:marker" hidden></div>
+          <div class="hud__item hud__toolline" id="toolLine" data-live="commands:tool" hidden><span id="toolLineText"></span></div>
+        </div>
+        <div class="hud hud--bl">
+          <span class="hud__item hud__sharp indicator indicator--sharpening" id="hudSharp" data-live="events:tileSettled"><span class="indicator__glyph" aria-hidden="true"></span><span class="indicator__label" id="hudSharpLabel">Sharpening…</span></span>
+          <div class="hud__item scalebar" id="scalebar" data-testid="scalebar" data-live="state.views[0].scale_um_per_px">
+            <span class="scalebar__bar" aria-hidden="true"><span class="scalebar__fill" id="scaleFill"></span><span class="scalebar__end" id="scaleEnd"></span></span>
+            <span class="scalebar__label" id="scaleLabel" data-testid="scalebar-label">–</span>
+          </div>
+          <div class="hud__item hud__position" id="hudPos" data-testid="position" data-live="state.views[0].center_um">x – mm · y – mm</div>
+        </div>
+        <div class="hud hud--br">
+          <div class="hud__item magnification" id="magBox" data-live="state.views[0].scale_um_per_px">
+            <button id="magBtn" class="magnification__value" type="button" data-testid="mag-value"
+                    aria-label="Magnification, derived from the scan. Press Enter to type a zoom (times or micrometres per pixel)"><span class="tilde" aria-hidden="true">~</span><span id="magVal">–</span></button>
+            <input class="zoom-input" id="zoomInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" hidden
+                   aria-label="Type a zoom: a magnification such as 20 or a pixel size such as 0.5 µm">
+            <span class="magnification__line2" id="magLine" data-testid="mag-line2">– µm/px · derived</span>
+          </div>
+        </div>
+        </div>
+        <div class="gutter" id="gutter" aria-hidden="true"></div>
+        <!-- Pane B (compare only; TOOLS.md §6.9). compare inserts its engine canvas before #overlayB and owns the
+             contents of this pane's .hud items and .panelabel; nothing here is focusable. -->
+        <div class="pane pane--b" id="paneB" data-view="B">
+          <canvas id="overlayB" class="canvas overlay-layer" aria-hidden="true" data-live="annotations"></canvas>
+          <div class="hud hud--bl">
+            <div class="hud__item scalebar" id="scalebarB" data-live="state.views[1].scale_um_per_px">
+              <span class="scalebar__bar" aria-hidden="true"><span class="scalebar__fill" id="scaleFillB"></span><span class="scalebar__end" id="scaleEndB"></span></span>
+              <span class="scalebar__label" id="scaleLabelB">–</span>
+            </div>
+            <div class="hud__item hud__position" id="hudPosB" data-live="state.views[1].center_um"></div>
+          </div>
+          <div class="hud hud--br">
+            <span class="hud__item panelabel" id="panelabelB" data-live="state.views[1]"></span>
+            <!-- FR-R11 marker line of pane B, under its identity line (layers owns the contents; Phase A review) -->
+            <div class="hud__item hud__marker" id="hudMarkerB" data-live="layers:marker:B" hidden></div>
+            <div class="hud__item magnification" id="magBoxB" data-live="state.views[1].scale_um_per_px">
+              <span class="magnification__value"><span class="tilde" aria-hidden="true">~</span><span id="magValB">–</span></span>
+              <span class="magnification__line2" id="magLineB">– µm/px</span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <!-- Compare bar (compare owns the contents; shown with .app.compare-on) -->
+        <div class="compare-bar" id="compareBar" role="group" aria-label="Compare" data-live="state.views[1].sync"></div>
+
+        <!-- S15: the slide could not be opened (manifest, WebGL); never a blank canvas without a sentence -->
+        <div class="plate" id="plate" hidden>
+          <div class="plate__card" role="alert">
+            <span class="plate__glyph" aria-hidden="true">!</span>
+            <span class="plate__title">This slide could not be opened</span>
+            <span class="plate__text" id="plateText"></span>
+            <div class="plate__actions"><button class="btn btn--primary" type="button" id="plateRetry">Retry</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C. Tool rail: Library switchers (with counts), then one vertical toolbar (roving tabindex, one Tab stop each);
+           tool order per TOOLS.md §6.6; printed key hints (hidden under coarse). The zoom buttons and presets leave the
+           rail at ≤ 1366 px (keys, palette and typed zoom remain; TOOLS.md §15 Q10). -->
+      <nav class="rail region" aria-label="Tools" data-live="commands">
+        <div class="rail__group lib-switch" id="libSwitch" role="toolbar" aria-orientation="vertical" aria-label="Library panels">
+          <button class="tool" type="button" data-lib="cohort" aria-controls="lib" aria-expanded="false" aria-label="Cohort panel" title="Cohort" hidden><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg><span class="badge-n" aria-hidden="true" hidden></span></button>
+          <button class="tool" type="button" data-lib="slides" aria-controls="lib" aria-expanded="false" aria-label="Slides panel" title="Slides" hidden><svg class="icon" aria-hidden="true"><use href="#i-slides"/></svg><span class="badge-n" aria-hidden="true" hidden></span></button>
+          <button class="tool" type="button" data-lib="layers" aria-controls="lib" aria-expanded="false" aria-label="Layers panel" title="Layers" hidden><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg><span class="badge-n" aria-hidden="true" hidden></span></button>
+        </div>
+        <div class="rail__divider lib-switch" aria-hidden="true"></div>
+        <div class="rail__group" id="railTools" role="toolbar" aria-orientation="vertical" aria-label="Tools and view">
+          <div class="rail__set">
+            <button class="tool" type="button" data-cmd="tool:select" aria-pressed="true" aria-label="Select or pan (V)" title="Select / pan · V"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg><span class="tool__key" aria-hidden="true">V</span></button>
+            <button class="tool" type="button" data-cmd="tool:point" aria-pressed="false" aria-label="Point marker (T)" title="Point · T" hidden><svg class="icon" aria-hidden="true"><use href="#i-point"/></svg><span class="tool__key" aria-hidden="true">T</span></button>
+            <button class="tool tool--drawing tool--secondary" type="button" data-cmd="tool:rect" aria-pressed="false" aria-label="Rectangle (X): drag, or click two corners" title="Rectangle · X" hidden><svg class="icon" aria-hidden="true"><use href="#i-rect"/></svg><span class="tool__key" aria-hidden="true">X</span></button>
+            <button class="tool tool--drawing tool--secondary" type="button" data-cmd="tool:ellipse" aria-pressed="false" aria-label="Ellipse (E): drag, or click two corners" title="Ellipse · E" hidden><svg class="icon" aria-hidden="true"><use href="#i-ellipse"/></svg><span class="tool__key" aria-hidden="true">E</span></button>
+            <button class="tool tool--drawing" type="button" data-cmd="tool:polygon" aria-pressed="false" aria-label="Polygon (P): click to place points, Enter closes" title="Polygon · P" hidden><svg class="icon" aria-hidden="true"><use href="#i-polygon"/></svg><span class="tool__key" aria-hidden="true">P</span></button>
+            <button class="tool tool--drawing" type="button" data-cmd="tool:brush" aria-pressed="false" aria-label="Brush, paints an area with pen pressure (F)" title="Brush · F" hidden><svg class="icon" aria-hidden="true"><use href="#i-brush"/></svg><span class="tool__key" aria-hidden="true">F</span></button>
+            <button class="tool" type="button" data-cmd="tool:measure" aria-pressed="false" aria-label="Measure length, two clicks or a drag, micrometres (M)" title="Measure · M"><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg><span class="tool__key" aria-hidden="true">M</span></button>
+            <!-- annotations owns the behaviour, the swatch and the aria-label / aria-expanded of #classBtn -->
+            <button class="tool" type="button" id="classBtn" data-cmd="class:pick" aria-haspopup="menu" aria-controls="classMenu" aria-expanded="false" aria-label="Class picker (Q)" title="Class · Q" hidden><span class="swatch swatch--lg class-swatch" aria-hidden="true"></span><span class="tool__key" aria-hidden="true">Q</span></button>
+          </div>
+          <div class="rail__divider" aria-hidden="true"></div>
+          <div class="rail__set rail__set--zoom">
+            <button class="tool" type="button" data-cmd="zoomin" aria-label="Zoom in 2× (+)" title="Zoom in · +"><svg class="icon" aria-hidden="true"><use href="#i-zoomin"/></svg><span class="tool__key" aria-hidden="true">+</span></button>
+            <button class="tool" type="button" data-cmd="zoomout" aria-label="Zoom out 2× (−)" title="Zoom out · −"><svg class="icon" aria-hidden="true"><use href="#i-zoomout"/></svg><span class="tool__key" aria-hidden="true">−</span></button>
+          </div>
+          <div class="rail__set">
+            <button class="tool" type="button" data-cmd="fit" aria-label="Fit whole slide (0)" title="Fit slide · 0"><svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="tool__key" aria-hidden="true">0</span></button>
+            <button class="tool" type="button" data-cmd="nav" aria-pressed="true" aria-label="Navigator (O)" title="Navigator · O"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg><span class="tool__key" aria-hidden="true">O</span></button>
+          </div>
+          <div class="rail__divider rail__divider--presets" aria-hidden="true"></div>
+          <div class="rail__group presets" id="presetGroup" role="group" aria-label="Magnification presets, derived from micrometres per pixel"></div>
+          <div class="rail__divider" aria-hidden="true"></div>
+          <div class="rail__set">
+            <button class="tool" type="button" data-cmd="compare:side" aria-pressed="false" aria-label="Compare two slides side by side, linked (C)" title="Compare · C" hidden><svg class="icon" aria-hidden="true"><use href="#i-compare"/></svg><span class="tool__key" aria-hidden="true">C</span></button>
+            <button class="tool" type="button" data-cmd="snapshot" aria-label="Snapshot with scale bar and product footer (Shift+S)" title="Snapshot · ⇧S" hidden><svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg><span class="tool__key" aria-hidden="true">⇧S</span></button>
+          </div>
+          <div class="rail__divider" aria-hidden="true"></div>
+          <div class="rail__set">
+            <button class="tool" type="button" data-cmd="dock" aria-pressed="false" aria-label="Context panel: slide, engine (K)" title="Context panel · K"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__key" aria-hidden="true">K</span></button>
+            <button class="tool" type="button" data-cmd="keymap" aria-label="Keyboard shortcuts (?)" title="Shortcuts · ?"><svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg><span class="tool__key" aria-hidden="true">?</span></button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Class picker popover beside the rail (annotations owns the contents, opens it and closes it; role="menu",
+           keys 1–8 while open, TOOLS.md §6.5). -->
+      <div class="menu class-menu" id="classMenu" role="menu" aria-label="Annotation class" data-live="annotations:classes" hidden></div>
+
+      <!-- D-left. Library (Cohort · Slides · Layers; TOOLS.md D10): a drawer over the canvas edge at ≥ 1080 px, the
+           in-flow sheet with a Library | Context switch ≤ 1079 px; closed by default. Tabs appear as modules claim them. -->
+      <aside class="dock lib region" id="lib" aria-label="Library">
+        <div class="dock__head"><span class="title">Library</span><span class="meta" id="libMeta">cohort · slides · layers</span>
+          <span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" type="button" aria-pressed="true" data-sheetdock="lib">Library</button><button class="segmented__item" type="button" aria-pressed="false" data-sheetdock="ctx">Context</button></span>
+          <button class="btn btn--sm btn--icon btn--ghost" type="button" data-close-dock="lib" aria-label="Close the Library (Esc)"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="dock__tabs tabs tabs--fill" role="tablist" aria-label="Library panels" id="libTabs">
+          <button class="tab" role="tab" type="button" id="tab-cohort" data-tab="cohort" data-label="cohort" aria-selected="false" aria-controls="tp-cohort" tabindex="-1" hidden>Cohort <span class="count" hidden></span></button>
+          <button class="tab" role="tab" type="button" id="tab-slides" data-tab="slides" data-label="slides" aria-selected="false" aria-controls="tp-slides" tabindex="-1" hidden>Slides <span class="count" hidden></span></button>
+          <button class="tab" role="tab" type="button" id="tab-layers" data-tab="layers" data-label="layers" aria-selected="false" aria-controls="tp-layers" tabindex="-1" hidden>Layers <span class="count" hidden></span></button>
+        </div>
+        <div class="dock__body">
+          <section class="tabpanel" role="tabpanel" id="tp-cohort" aria-labelledby="tab-cohort" tabindex="0" data-live="state.collection"></section>
+          <section class="tabpanel" role="tabpanel" id="tp-slides" aria-labelledby="tab-slides" tabindex="0" data-live="state.slides"></section>
+          <section class="tabpanel" role="tabpanel" id="tp-layers" aria-labelledby="tab-layers" tabindex="0" data-live="layers"></section>
+        </div>
+      </aside>
+
+      <!-- D. Context dock (docked ≥ 1600, drawer 1080–1599, in-flow sheet ≤ 1079): Inspector · Annotations · Slide · Engine
+           (TOOLS.md D10; measurements are a group of the Annotations list since Wave 4, D7). Module tabs appear as modules
+           claim them. -->
+      <aside class="dock region" id="dock" aria-label="Context">
+        <div class="dock__head"><span class="title">Context</span><span class="meta" id="dockMeta">slide · engine</span>
+          <span class="dock__switch segmented" role="group" aria-label="Which panel the sheet shows"><button class="segmented__item" type="button" aria-pressed="false" data-sheetdock="lib">Library</button><button class="segmented__item" type="button" aria-pressed="true" data-sheetdock="ctx">Context</button></span>
+          <button class="btn btn--sm btn--icon btn--ghost" type="button" id="dockClose" aria-label="Close panel (K)"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="dock__tabs tabs tabs--fill" role="tablist" aria-label="Context panels" id="dockTabs">
+          <button class="tab" role="tab" type="button" id="tab-inspector" data-tab="inspector" data-label="inspector" aria-selected="false" aria-controls="tp-inspector" tabindex="-1" hidden>Inspector</button>
+          <button class="tab" role="tab" type="button" id="tab-ann" data-tab="ann" data-label="annotations" aria-selected="false" aria-controls="tp-ann" tabindex="-1" hidden>Annotations <span class="count" hidden></span></button>
+          <button class="tab" role="tab" type="button" id="tab-slide" data-tab="slide" data-label="slide" aria-selected="true" aria-controls="tp-slide">Slide</button>
+          <button class="tab" role="tab" type="button" id="tab-engine" data-tab="engine" data-label="engine" aria-selected="false" aria-controls="tp-engine" tabindex="-1">Engine</button>
+        </div>
+        <div class="dock__body">
+          <!-- Inspector: #inspSelection (annotations) first, then the View section (#shareActions, share) -->
+          <section class="tabpanel" role="tabpanel" id="tp-inspector" aria-labelledby="tab-inspector" tabindex="0" data-live="annotations:selection">
+            <div id="inspSelection"></div>
+            <div class="sub insp-view"><span class="title">View</span><span class="meta">snapshot · link</span></div>
+            <div class="dock-actions" id="shareActions"></div>
+          </section>
+
+          <section class="tabpanel" role="tabpanel" id="tp-ann" aria-labelledby="tab-ann" tabindex="0" data-live="annotations"></section>
+
+          <section class="tabpanel is-active" role="tabpanel" id="tp-slide" aria-labelledby="tab-slide" tabindex="0" data-live="launch:context">
+            <div class="sub"><span class="title">Slide</span><span class="meta">from the manifest</span></div>
+            <dl class="kv" id="slideFacts"></dl>
+            <p class="note" id="slideNote"></p>
+          </section>
+
+          <section class="tabpanel" role="tabpanel" id="tp-engine" aria-labelledby="tab-engine" tabindex="0" data-live="telemetry:quality">
+            <div class="sub"><span class="title">Engine · live</span><span class="meta" id="engLabel">label</span></div>
+            <dl class="kv">
+              <dt>State</dt><dd id="eqState">–</dd>
+              <dt>Sharp fraction</dt><dd id="eqNtf">–</dd>
+              <dt>Deficit</dt><dd id="eqDeficit">–</dd>
+              <dt>Level drawn</dt><dd id="eqLevel">–</dd>
+              <dt>Frame time</dt><dd id="eqFrame">–</dd>
+              <dt>Tiles</dt><dd id="eqTiles">–</dd>
+              <dt>Loaded</dt><dd id="eqBytes">–</dd>
+              <dt>Link estimate</dt><dd id="eqNet">–</dd>
+              <dt>Last gesture</dt><dd id="eqGesture">–</dd>
+            </dl>
+            <p class="note">Updated at rest (4 Hz) while this tab is open; nothing here is written during a gesture. Status: <span id="engStatus">starting…</span></p>
+            <div class="sub"><span class="title">Measurement protocol</span><span class="meta">window.__stage0</span></div>
+            <div class="dock-actions">
+              <button class="btn btn--sm btn--primary" type="button" id="btnPath"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-play"/></svg>Run scripted path</button>
+              <button class="btn btn--sm btn--secondary" type="button" id="btnExport"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>Export JSON</button>
+              <button class="btn btn--sm btn--secondary" type="button" id="btnCopy">Copy summary</button>
+              <button class="btn btn--sm btn--secondary" type="button" id="btnEvict" title="Drop every non-pinned tile from the GPU cache for a GPU-cold rerun. The browser HTTP cache stays warm: label the run warm.">Evict GPU tiles</button>
+            </div>
+            <p class="note">TSP-grade runs use the official measurement page, <a id="measPageLink" href="index.html?overlay=1">index.html?overlay=1</a> (MEASUREMENT_PROTOCOL.md): it has no shell chrome, so its numbers are the engine's alone. This page runs the same engine and exports the same format, for inspection.</p>
+            <pre class="snippet" id="engSummary" tabindex="0" role="region" aria-label="Scripted path summary" hidden></pre>
+            <details class="section"><summary>Device and build</summary>
+              <div class="section__body"><pre class="snippet" id="engDevice" tabindex="0" role="region" aria-label="Device and build">–</pre></div>
+            </details>
+          </section>
+        </div>
+      </aside>
+
+      <!-- Bottom bar (tablet portrait / phone): labelled 44 px targets; names = the visible labels (SC 2.5.3). Research
+           order Select · Brush · Polygon · Point · Measure · Class · Library · Panels · Search (ux-copy); the .tool--nav
+           buttons (Zoom in / out, Fit, Navigator) leave once a drawing tool or the class picker is registered (shell.css). Phones
+           (≤ 599 px) drop .tool--secondary (zoom, Library: Panels opens the sheet with its Library | Context switch) and
+           .tool--drawing (base.css). -->
+      <nav class="bottombar region" aria-label="Tools (touch)" data-live="commands">
+        <button class="tool tool--labelled" type="button" data-cmd="tool:select" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-select"/></svg><span class="tool__label">Select</span></button>
+        <button class="tool tool--labelled tool--drawing" type="button" data-cmd="tool:brush" aria-pressed="false" hidden><svg class="icon" aria-hidden="true"><use href="#i-brush"/></svg><span class="tool__label">Brush</span></button>
+        <button class="tool tool--labelled tool--drawing" type="button" data-cmd="tool:polygon" aria-pressed="false" hidden><svg class="icon" aria-hidden="true"><use href="#i-polygon"/></svg><span class="tool__label">Polygon</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="tool:point" aria-pressed="false" hidden><svg class="icon" aria-hidden="true"><use href="#i-point"/></svg><span class="tool__label">Point</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="tool:measure" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-measure"/></svg><span class="tool__label">Measure</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="class:pick" aria-haspopup="menu" aria-controls="classMenu" aria-expanded="false" hidden><span class="swatch swatch--lg class-swatch" aria-hidden="true"></span><span class="tool__label">Class</span></button>
+        <button class="tool tool--labelled tool--secondary tool--nav" type="button" data-cmd="zoomin"><svg class="icon" aria-hidden="true"><use href="#i-zoomin"/></svg><span class="tool__label">Zoom in</span></button>
+        <button class="tool tool--labelled tool--secondary tool--nav" type="button" data-cmd="zoomout"><svg class="icon" aria-hidden="true"><use href="#i-zoomout"/></svg><span class="tool__label">Zoom out</span></button>
+        <button class="tool tool--labelled tool--nav" type="button" data-cmd="fit"><svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="tool__label">Fit</span></button>
+        <button class="tool tool--labelled tool--nav" type="button" data-cmd="nav" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-nav"/></svg><span class="tool__label">Navigator</span></button>
+        <button class="tool tool--labelled tool--secondary" type="button" data-lib="" aria-controls="lib" aria-expanded="false" hidden><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg><span class="tool__label">Library</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="dock" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-panel"/></svg><span class="tool__label">Panels</span></button>
+        <button class="tool tool--labelled" type="button" data-cmd="palette"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span class="tool__label">Search</span></button>
+      </nav>
+
+      <!-- E. Status strip: the polite live region's visual twin -->
+      <footer class="strip region" aria-label="Status">
+        <button class="indicator indicator--sharpening" type="button" id="stripSharp" data-testid="strip-indicator" data-live="events:tileSettled" aria-label="Sharpness: Sharpening…. Open details"><span class="indicator__glyph" aria-hidden="true"></span><span class="indicator__label" id="stripSharpLabel">Sharpening…</span></button>
+        <span class="strip__notice" id="stripNotice" data-testid="strip-notice"></span>
+        <div class="strip__group strip__group--end">
+          <span class="chip num" id="chipTiles" data-live="telemetry:quality" title="Tiles resident in the GPU tile array / layers">Tiles –</span>
+          <span class="chip" id="chipNet" data-live="telemetry:network" title="Link estimate (Network Information API); shown only when offline, slow, or during a cold fill" hidden></span>
+          <button class="btn btn--sm btn--secondary" type="button" id="engineBtn" aria-controls="tp-engine">Engine</button>
+        </div>
+      </footer>
+
+      <!-- F. Navigator, after the strip in the DOM (= Tab order, handoff §4.6) and drawn over the canvas cell by its host
+           (grid-area: canvas; shell.css .nav-host). The pyramid's top level as <img>, viewport rectangle by transform
+           only, pan buttons (SC 2.5.7). -->
+      <div class="nav-host" id="navHost">
+        <aside class="navigator" id="navigator" aria-label="Navigator" data-live="state.views[0]">
+          <div class="navigator__thumb" id="navThumb" title="Click to recentre">
+            <div class="nav-tiles" id="navTiles" aria-hidden="true"></div>
+            <span class="navigator__viewport" aria-hidden="true"><span class="nav-edge nav-edge--h" id="navTop"></span><span class="nav-edge nav-edge--h" id="navBottom"></span><span class="nav-edge nav-edge--v" id="navLeft"></span><span class="nav-edge nav-edge--v" id="navRight"></span></span>
+            <div class="navigator__pan" role="group" aria-label="Pan"><button class="up" type="button" aria-label="Pan up" data-pan="0,-1">↑</button><button class="left" type="button" aria-label="Pan left" data-pan="-1,0">←</button><button class="right" type="button" aria-label="Pan right" data-pan="1,0">→</button><button class="down" type="button" aria-label="Pan down" data-pan="0,1">↓</button></div>
+          </div>
+          <div class="navigator__label"><span class="mono" id="navLabel">slide</span><span class="text-xs nav-hint"><kbd class="key">O</kbd> hide</span></div>
+        </aside>
+      </div>
+
+      <!-- Command palette: one placement rule (.palette-layer: over the dock column ≥ 1080 px, the in-flow sheet row below); no scrim -->
+      <div class="palette-layer" id="paletteLayer" hidden>
+        <div class="palette" role="dialog" aria-label="Command palette" data-live="commands">
+          <div class="palette__input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="palInput" placeholder="Command or zoom…" aria-label="Search commands, panels and zoom levels" role="combobox" aria-expanded="true" aria-controls="palList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd class="key">Esc</kbd></div>
+          <div class="palette__list" id="palList" role="listbox" aria-label="Results"></div>
+          <div class="palette__footer"><span><kbd class="key">↑↓</kbd> move</span><span><kbd class="key">↵</kbd> run</span><span><kbd class="key">Esc</kbd> close</span><span class="pal-count" id="palCount"></span></div>
+        </div>
+      </div>
+
+      <!-- Dialog layer in the dock column (.modal-layer--dock): keymap and About; non-modal, the slide keeps its keys -->
+      <div class="modal-layer modal-layer--dock" id="modalLayer" hidden>
+        <div class="dialog" id="keymapDlg" role="dialog" aria-modal="false" aria-labelledby="keymapTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="keymapTitle">Keyboard map</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close (Esc)"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="dialog__body" tabindex="0" role="region" aria-label="Keyboard shortcuts">
+            <input class="input" type="search" id="keymapFilter" placeholder="Filter shortcuts…" aria-label="Filter shortcuts" autocomplete="off" spellcheck="false">
+            <div class="keymap" id="keymapList" data-live="commands:registry"></div>
+            <p class="note" id="keymapNote"></p>
+          </div>
+        </div>
+        <div class="dialog" id="aboutDlg" role="dialog" aria-modal="false" aria-labelledby="aboutTitle" hidden>
+          <div class="dialog__header"><h2 class="dialog__title" id="aboutTitle">About this build</h2><button class="btn btn--icon btn--ghost" type="button" data-close-dialog aria-label="Close (Esc)"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+          <div class="dialog__body about" tabindex="0" role="region" aria-label="About this build">
+            <div><span class="badge badge--ruo">RUO</span></div>
+            <p class="label-text">For Research Use Only. Not for use in diagnostic procedures.</p>
+            <dl class="kv" id="aboutFacts"></dl>
+            <p class="note">Stage-0 prototype shell: the real tile engine (WebGL2, decode workers, scheduler) inside the designed research workspace. No PHI: every slide in the Library is public, de-identified research data under its own licence (Context → Slide).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast-stack" aria-live="off"></div>
+      <div class="live-region" id="livePolite" aria-live="polite" aria-atomic="true"></div>
+      <div class="live-region" id="liveAssertive" aria-live="assertive" aria-atomic="true"></div>
+    </div>
+    <script type="module" src="/src/shell/main.ts"></script>
+  </body>
+</html>

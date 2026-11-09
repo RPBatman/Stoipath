@@ -1,0 +1,6 @@
+load average: 7.43, 8.96, 8.93
+pool 1 single rt 2.767 decode 2.389 msg 0.208 | burst20 wall 58.04 min 48.96 inline 55.57 speedup 0.96
+load average: 8.04, 9.06, 8.96
+pool 2 single rt 2.91 decode 2.404 msg 0.116 | burst20 wall 39.54 min 30.76 inline 58.82 speedup 1.49
+load average: 8.19, 9.08, 8.97
+pool 3 single rt 3.032 decode 2.406 msg 0.227 | burst20 wall 41.73 min 32.5 inline 57.6 speedup 1.38

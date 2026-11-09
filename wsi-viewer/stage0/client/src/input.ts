@@ -1,0 +1,300 @@
+/**
+ * Input: DOM events -> camera operations, with every policy of 04 F6 applied here:
+ * wheel normalised by deltaMode (read before deltaY), clamped per event, ctrl+wheel as trackpad pinch,
+ * pinch/drag 1:1 through Pointer Events (touch-action: none on the canvas), inertia on release,
+ * keyboard +/- and arrows, double-tap zoom. The same `Controls` facade is driven by the scripted path.
+ */
+import {
+  DOUBLE_TAP_LEVELS,
+  KEY_PAN_PX,
+  KEY_ZOOM_LEVELS,
+  TRACKPAD_PINCH_GAIN,
+  WHEEL_LINE_PX,
+  WHEEL_MAX_LEVELS_PER_EVENT,
+  WHEEL_PAGE_PX,
+  WHEEL_PX_PER_LEVEL,
+} from './constants';
+import type { Camera } from './camera';
+import type { Metrics } from './metrics';
+import type { Scheduler } from './scheduler';
+
+export class Controls {
+  /** Last pointer position in device px (focus for the scheduler while zooming). */
+  pointerX = 0;
+  pointerY = 0;
+  constructor(
+    readonly cam: Camera,
+    private readonly metrics: Metrics,
+    private readonly scheduler: Scheduler,
+    private readonly lstar: () => number,
+  ) {}
+
+  wheelLevels(levels: number, sx: number, sy: number, ts: number, kind = 'wheel'): void {
+    this.pointerX = sx;
+    this.pointerY = sy;
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
+    this.cam.zoomBy(levels, sx, sy, ts);
+    if (levels > 0) this.scheduler.noteIntent(ts);
+  }
+  dragStart(sx: number, sy: number, ts: number, kind = 'drag'): void {
+    this.pointerX = sx;
+    this.pointerY = sy;
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
+    this.cam.dragStart(sx, sy);
+    // Touch-down prefetch of the next finer level (04 F3 "hover/touch-down"): a finger down often precedes a pinch; a
+    // mouse button down is a pan, so no intent is armed for 'drag' (REVIEW L12).
+    if (kind !== 'drag') this.scheduler.noteIntent(ts);
+  }
+  dragMove(dx: number, dy: number, ts: number, kind = 'drag'): void {
+    this.pointerX += dx;
+    this.pointerY += dy;
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
+    this.cam.dragMove(dx, dy, ts);
+  }
+  dragEnd(ts: number): void {
+    this.cam.dragEnd(ts);
+  }
+  pinchStart(cx: number, cy: number, ts: number): void {
+    this.pointerX = cx;
+    this.pointerY = cy;
+    this.metrics.noteInput('pinch', ts, this.lstar(), this.cam.logZoom);
+    this.cam.pinchStart(cx, cy);
+    this.scheduler.noteIntent(ts);
+  }
+  pinchMove(cx: number, cy: number, scale: number, ts: number): void {
+    this.pointerX = cx;
+    this.pointerY = cy;
+    this.metrics.noteInput('pinch', ts, this.lstar(), this.cam.logZoom);
+    this.cam.pinchMove(cx, cy, scale, ts);
+    if (scale > 1) this.scheduler.noteIntent(ts);
+  }
+  keyZoom(levels: number, ts: number): void {
+    this.metrics.noteInput('key', ts, this.lstar(), this.cam.logZoom);
+    this.cam.zoomBy(levels, this.cam.viewW / 2, this.cam.viewH / 2, ts);
+    if (levels > 0) this.scheduler.noteIntent(ts);
+  }
+  keyPan(dx: number, dy: number, ts: number): void {
+    this.metrics.noteInput('key', ts, this.lstar(), this.cam.logZoom);
+    this.cam.panByEased(dx, dy);
+  }
+  flyTo(wx: number, wy: number, logZoom: number, ts: number, kind = 'fly'): void {
+    this.metrics.noteInput(kind, ts, this.lstar(), this.cam.logZoom);
+    this.cam.flyTo(wx, wy, logZoom);
+  }
+}
+
+interface PointerState {
+  x: number;
+  y: number;
+}
+
+/** The measurement page's keys besides +/- and arrows (MEASUREMENT_PROTOCOL: O overlay, R reset, P scripted path). */
+export interface MeasurementKeys {
+  onToggleOverlay: () => void;
+  onReset: () => void;
+  onRunPath: () => void;
+}
+
+export interface DomInputOptions {
+  /** CSS px -> device px factor (canvas.width / canvas.clientWidth). */
+  scale: () => number;
+  /**
+   * Keyboard map. The measurement page passes its O/R/P handlers and gets +/-, arrows, O, R, P exactly as before;
+   * `false` binds no key handler at all, so a host page (the RUO shell) binds its own map through `Controls`.
+   */
+  keys: MeasurementKeys | false;
+  /**
+   * Top-left of the canvas in CSS px relative to the viewport, read on every event (a host keeps it current from its
+   * resize handling; never measured here). The measurement page's canvas is fixed at (0, 0) and omits it.
+   */
+  origin?: { x: number; y: number };
+  /**
+   * Called on pointerdown and dblclick; `false` leaves that pointer to the host (e.g. a measure tool), so the camera
+   * neither drags nor double-click-zooms for it. Omitted = every pointer is the camera's (measurement page).
+   */
+  acceptPointer?: (e: PointerEvent | MouseEvent) => boolean;
+  /**
+   * Read on each release: `false` cancels the coast that dragEnd would start (prefers-reduced-motion in the shell;
+   * handoff §4.1, principles §8.5). Omitted = inertia always on (measurement page, unchanged).
+   */
+  inertia?: () => boolean;
+}
+
+/** Normalise a wheel event to pyramid levels (positive = zoom in). 04 F6. */
+export function wheelToLevels(e: WheelEvent): number {
+  // Read deltaMode BEFORE deltaY: Firefox reports lines once deltaMode has been read, pixels otherwise.
+  const mode = e.deltaMode;
+  const dy = e.deltaY;
+  const px = mode === 1 ? dy * WHEEL_LINE_PX : mode === 2 ? dy * WHEEL_PAGE_PX : dy;
+  let levels = -px / WHEEL_PX_PER_LEVEL;
+  if (e.ctrlKey) levels *= TRACKPAD_PINCH_GAIN;
+  return Math.max(-WHEEL_MAX_LEVELS_PER_EVENT, Math.min(WHEEL_MAX_LEVELS_PER_EVENT, levels));
+}
+
+export function bindDomInput(canvas: HTMLCanvasElement, c: Controls, opts: DomInputOptions): void {
+  const pointers = new Map<number, PointerState>();
+  let pinchDist = 0;
+  let pinchCx = 0;
+  let pinchCy = 0;
+  let lastTapTime = -1e9;
+  let lastTapX = 0;
+  let lastTapY = 0;
+
+  const origin = opts.origin ?? { x: 0, y: 0 };
+  const devX = (clientX: number): number => (clientX - origin.x) * opts.scale();
+  const devY = (clientY: number): number => (clientY - origin.y) * opts.scale();
+  const accept = opts.acceptPointer;
+  const centroid = (): void => {
+    let sx = 0;
+    let sy = 0;
+    for (const p of pointers.values()) {
+      sx += p.x;
+      sy += p.y;
+    }
+    pinchCx = sx / pointers.size;
+    pinchCy = sy / pointers.size;
+  };
+  const distance = (): number => {
+    const it = pointers.values();
+    const a = it.next().value;
+    const b = it.next().value;
+    if (a === undefined || b === undefined) return 0;
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (accept !== undefined && !accept(e)) return;
+    canvas.focus({ preventScroll: true });
+    canvas.setPointerCapture(e.pointerId);
+    const x = devX(e.clientX);
+    const y = devY(e.clientY);
+    pointers.set(e.pointerId, { x, y });
+    if (pointers.size === 1) {
+      // double-tap (touch/pen): two downs within 300 ms and 30 css px
+      if (e.pointerType !== 'mouse' && e.timeStamp - lastTapTime < 300 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 30) {
+        c.wheelLevels(DOUBLE_TAP_LEVELS, x, y, e.timeStamp, 'doubletap');
+        lastTapTime = -1e9;
+        // The tapping finger is not a drag: forget it so a following move does not pan an un-anchored camera (REVIEW L5).
+        pointers.delete(e.pointerId);
+        return;
+      }
+      lastTapTime = e.timeStamp;
+      lastTapX = e.clientX;
+      lastTapY = e.clientY;
+      c.dragStart(x, y, e.timeStamp, e.pointerType === 'mouse' ? 'drag' : 'touchdrag');
+    } else if (pointers.size === 2) {
+      centroid();
+      pinchDist = distance();
+      c.pinchStart(pinchCx, pinchCy, e.timeStamp);
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    const p = pointers.get(e.pointerId);
+    const x = devX(e.clientX);
+    const y = devY(e.clientY);
+    if (p === undefined) {
+      // hover: keep the focus point for zoom-intent prefetch
+      c.pointerX = x;
+      c.pointerY = y;
+      return;
+    }
+    if (pointers.size === 1) {
+      c.dragMove(x - p.x, y - p.y, e.timeStamp, e.pointerType === 'mouse' ? 'drag' : 'touchdrag');
+      p.x = x;
+      p.y = y;
+    } else {
+      p.x = x;
+      p.y = y;
+      centroid();
+      const d = distance();
+      const scale = pinchDist > 0 && d > 0 ? d / pinchDist : 1;
+      pinchDist = d;
+      c.pinchMove(pinchCx, pinchCy, scale, e.timeStamp);
+    }
+  });
+
+  const release = (e: PointerEvent): void => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (pointers.size === 0) {
+      c.dragEnd(e.timeStamp);
+      if (opts.inertia !== undefined && !opts.inertia()) c.cam.stopInertia();
+    } else if (pointers.size === 1) {
+      const rest = pointers.values().next().value;
+      if (rest !== undefined) c.dragStart(rest.x, rest.y, e.timeStamp, 'touchdrag');
+    } else {
+      centroid();
+      pinchDist = distance();
+    }
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+  canvas.addEventListener('lostpointercapture', release);
+
+  canvas.addEventListener(
+    'wheel',
+    (e) => {
+      e.preventDefault();
+      const levels = wheelToLevels(e);
+      if (levels !== 0) c.wheelLevels(levels, devX(e.clientX), devY(e.clientY), e.timeStamp, e.ctrlKey ? 'trackpad' : 'wheel');
+    },
+    { passive: false },
+  );
+
+  canvas.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    if (accept !== undefined && !accept(e)) return;
+    c.wheelLevels(DOUBLE_TAP_LEVELS, devX(e.clientX), devY(e.clientY), e.timeStamp, 'doubleclick');
+  });
+
+  // Safari legacy gesture events would double-apply; block them.
+  canvas.addEventListener('gesturestart', (e) => e.preventDefault());
+  canvas.addEventListener('gesturechange', (e) => e.preventDefault());
+  canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  const keys = opts.keys;
+  if (keys === false) return;
+  window.addEventListener('keydown', (e) => {
+    if (e.target instanceof HTMLElement && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    // Ctrl/Cmd +/- is browser zoom (it changes devicePixelRatio; resize() follows it), not a viewer command (REVIEW M9).
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    switch (e.key) {
+      case '+':
+      case '=':
+        c.keyZoom(KEY_ZOOM_LEVELS, e.timeStamp);
+        break;
+      case '-':
+      case '_':
+        c.keyZoom(-KEY_ZOOM_LEVELS, e.timeStamp);
+        break;
+      case 'ArrowLeft':
+        c.keyPan(KEY_PAN_PX, 0, e.timeStamp);
+        break;
+      case 'ArrowRight':
+        c.keyPan(-KEY_PAN_PX, 0, e.timeStamp);
+        break;
+      case 'ArrowUp':
+        c.keyPan(0, KEY_PAN_PX, e.timeStamp);
+        break;
+      case 'ArrowDown':
+        c.keyPan(0, -KEY_PAN_PX, e.timeStamp);
+        break;
+      case 'o':
+      case 'O':
+        keys.onToggleOverlay();
+        return;
+      case 'r':
+      case 'R':
+        keys.onReset();
+        return;
+      case 'p':
+      case 'P':
+        keys.onRunPath();
+        return;
+      default:
+        return;
+    }
+    e.preventDefault();
+  });
+}

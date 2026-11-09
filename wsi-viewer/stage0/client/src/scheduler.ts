@@ -1,0 +1,535 @@
+/**
+ * Request scheduler (04 F4, 04 F3, A §2 "Scheduler"):
+ *  - priority key (tier, |level - L*|, distance of tile centre from the focus point); focus = pointer while zooming,
+ *    viewport centre otherwise;
+ *  - tier -1 pinned base (coarsest first), tier 0 visible L* tiles, tier 1 trilinear partners / zoom-intent /
+ *    predicted-viewport ring, tier 2 ring while a zoom burst is in progress, tier 3 the warm base (the <= 4096 px
+ *    level that is no longer pinned, REVIEW M2: loaded at open behind everything else, inside the prefetch slot
+ *    share, so a user who zooms in at open gets visible tiles first);
+ *  - de-duplication through the residency table and the in-flight map; prefetch limited to a fraction of slots;
+ *  - cancellation of in-flight tiles that left the wanted set for CANCEL_GRACE_FRAMES frames;
+ *  - capacity-aware prefetch: resident tiles still wanted, decoded tiles awaiting upload and in-flight requests
+ *    are counted against the non-pinned layers of the texture array, and prefetch tiers are dispatched only while
+ *    there is room. Without this a wanted set larger than the cache (ring + partners + intent at s = 0.5) made every
+ *    arrival evict another wanted tile, which was then re-fetched: an endless churn even with the camera still;
+ *  - per-host concurrency 6 on HTTP/1.1, higher when h2/h3 was negotiated;
+ *  - failure handling (IOS-FIX.md, 2026-11-08; inert while every request is answered): a request watchdog aborts a
+ *    request that has shown no progress for TILE_WATCHDOG_MS (doubling per timeout of the same tile; progress is the
+ *    dispatch, then each progress note the worker posts for a slow request: headers or more body bytes) and fails it
+ *    like an error, so it is re-dispatched; pinned-base and warm-base tiles, which gate "ready" and the scripted path,
+ *    are retried indefinitely with a capped backoff (other tiles keep FAILED_RETRY_MS / FAILED_MAX_ATTEMPTS); the last
+ *    failure and the error / timeout counts are kept for the measurement page's status line.
+ * The wanted set is rebuilt every frame from the camera, so the heap is cleared and refilled (typed arrays, no GC).
+ */
+import {
+  BASE_RETRY_MAX_MS,
+  CANCEL_GRACE_FRAMES,
+  CONCURRENCY_H1,
+  CONCURRENCY_H2,
+  FAILED_MAX_ATTEMPTS,
+  FAILED_RETRY_MS,
+  PREDICT_HORIZON_MS,
+  PREFETCH_SLOTS_MIN,
+  PREFETCH_SLOT_FRACTION,
+  RING_TILES,
+  TILE_WATCHDOG_MAX_MS,
+  TILE_WATCHDOG_MS,
+  ZOOM_INTENT_HOLD_MS,
+  ZOOM_INTENT_HORIZON_MS,
+  ZOOM_INTENT_MAX_LEVELS,
+  ZOOM_INTENT_MIN_VELOCITY,
+  ZOOM_INTENT_WINDOW_PX,
+} from './constants';
+import type { Camera } from './camera';
+import type { DecodePool } from './decode-pool';
+import type { WorkerResponse } from './decode-messages';
+import { idealLevel, levelHolds } from './lod';
+import { keyLevel, keyX, keyY, tileKey, tileRange, type Pyramid } from './pyramid';
+import { REQUEST_KIND_NAMES, RequestKind, isPrefetchKind } from './request-kind';
+import type { TileCache } from './tile-cache';
+
+export { REQUEST_KIND_NAMES, RequestKind };
+
+/** Binary min-heap over typed arrays. */
+class PriorityHeap {
+  private readonly prio: Float64Array;
+  private readonly keys: Int32Array;
+  size = 0;
+  overflow = 0;
+  constructor(capacity: number) {
+    this.prio = new Float64Array(capacity);
+    this.keys = new Int32Array(capacity);
+  }
+  clear(): void {
+    this.size = 0;
+  }
+  push(key: number, prio: number): void {
+    if (this.size >= this.keys.length) {
+      this.overflow++;
+      return;
+    }
+    let i = this.size++;
+    this.keys[i] = key;
+    this.prio[i] = prio;
+    while (i > 0) {
+      const parent = (i - 1) >> 1;
+      if ((this.prio[parent] ?? 0) <= prio) break;
+      this.keys[i] = this.keys[parent] ?? 0;
+      this.prio[i] = this.prio[parent] ?? 0;
+      i = parent;
+    }
+    this.keys[i] = key;
+    this.prio[i] = prio;
+  }
+  /** Removes and returns the best key; its priority is left in `lastPrio`. */
+  lastPrio = 0;
+  pop(): number {
+    const top = this.keys[0] ?? -1;
+    this.lastPrio = this.prio[0] ?? 0;
+    this.size--;
+    if (this.size > 0) {
+      const key = this.keys[this.size] ?? 0;
+      const prio = this.prio[this.size] ?? 0;
+      let i = 0;
+      for (;;) {
+        const l = 2 * i + 1;
+        const r = l + 1;
+        let m = i;
+        let mp = prio;
+        if (l < this.size && (this.prio[l] ?? 0) < mp) {
+          m = l;
+          mp = this.prio[l] ?? 0;
+        }
+        if (r < this.size && (this.prio[r] ?? 0) < mp) m = r;
+        if (m === i) break;
+        this.keys[i] = this.keys[m] ?? 0;
+        this.prio[i] = this.prio[m] ?? 0;
+        i = m;
+      }
+      this.keys[i] = key;
+      this.prio[i] = prio;
+    }
+    return top;
+  }
+}
+
+interface Inflight {
+  tier: number;
+  /** Dispatch time (shifted past a page pause). viewer.ts reads it for the shell's host hook. */
+  startedAt: number;
+  /** Dispatch time, then the time of the worker's latest progress note (the watchdog's clock; IOS-FIX.md). */
+  aliveAt: number;
+  lastWanted: number;
+  cancelled: boolean;
+}
+interface Failure {
+  at: number;
+  attempts: number;
+}
+
+export interface SchedulerCounters {
+  requestsBase: number;
+  requestsTier0: number;
+  requestsPrefetch: number;
+  /** Warm-base requests (tier 3; not prefetch, not base). */
+  requestsWarmBase: number;
+  received: number;
+  bytes: number;
+  /** HTTP-cache hits / transfers / unknown among received tiles (PerformanceResourceTiming in the worker; REVIEW M8). */
+  cacheHits: number;
+  cacheMisses: number;
+  cacheUnknown: number;
+  /** Cache-Control header of the first tile response (null until one arrived). */
+  cacheControl: string | null;
+  cancelled: number;
+  cancelledLate: number;
+  aborted: number;
+  errors: number;
+  /** Requests the watchdog gave up on (TILE_WATCHDOG_MS; IOS-FIX.md). Not included in `errors`. */
+  timeouts: number;
+  /** Prefetched tiles that arrived and were later drawn (hit) — the complement is waste. */
+  prefetchReceived: number;
+  heapOverflow: number;
+  /** Frames in which prefetch was held back because the texture array had no room for more wanted tiles. */
+  prefetchHeldFrames: number;
+  /** Requests and completed fetches per RequestKind. */
+  requestedByKind: number[];
+  receivedByKind: number[];
+}
+
+const TIER_SPAN = 1e8;
+const LEVEL_SPAN = 1e6;
+/** Tier of the warm base: behind every prefetch tier (1, 2). */
+const TIER_WARM = 3;
+
+export function prioOf(tier: number, levelDist: number, dist: number): number {
+  return tier * TIER_SPAN + levelDist * LEVEL_SPAN + Math.min(dist, LEVEL_SPAN - 1);
+}
+function tierOf(prio: number): number {
+  return Math.floor(prio / TIER_SPAN);
+}
+
+export class Scheduler {
+  readonly maxInflight: number;
+  readonly prefetchSlots: number;
+  readonly protocol: string;
+  readonly counters: SchedulerCounters = {
+    requestsBase: 0,
+    requestsTier0: 0,
+    requestsPrefetch: 0,
+    requestsWarmBase: 0,
+    received: 0,
+    bytes: 0,
+    cacheHits: 0,
+    cacheMisses: 0,
+    cacheUnknown: 0,
+    cacheControl: null,
+    cancelled: 0,
+    cancelledLate: 0,
+    aborted: 0,
+    errors: 0,
+    timeouts: 0,
+    prefetchReceived: 0,
+    heapOverflow: 0,
+    prefetchHeldFrames: 0,
+    requestedByKind: [0, 0, 0, 0, 0, 0],
+    receivedByKind: [0, 0, 0, 0, 0, 0],
+  };
+  private readonly inflight = new Map<number, Inflight>();
+  /** Decoded tiles waiting in the renderer's upload queue: neither resident nor in flight, but not to be re-fetched. */
+  private readonly awaitingUpload = new Set<number>();
+  private readonly failed = new Map<number, Failure>();
+  private readonly wanted = new Map<number, number>();
+  private readonly wantedKind = new Map<number, number>();
+  private readonly heap = new PriorityHeap(8192);
+  private readonly range = new Int32Array(4);
+  private baseDone = false;
+  private warmDone = false;
+  private intentUntil = -1e9;
+  /** Distinct resident, non-pinned tiles in this frame's wanted set (occupied layers we must not evict for prefetch). */
+  private residentWanted = 0;
+  /** Non-pinned layers left for new tiles after the wanted residents, decoded-awaiting-upload and in-flight tiles; may go negative. */
+  lastRoom = 0;
+  /** Focus point used for distance ordering (device px). */
+  focusX = 0;
+  focusY = 0;
+  /** Called for each tile that arrives, after bookkeeping. */
+  onTile: ((msg: WorkerResponse) => void) | null = null;
+  /** The last tile failure ("tile L/x_y: message", "tile L/x_y: no progress for 12 s"), null until one happens. */
+  lastFailure: string | null = null;
+  /** Watchdog timeouts per tile (the limit doubles with each); cleared when the tile arrives. */
+  private readonly timeoutsByKey = new Map<number, number>();
+  /** rAF time of the previous update(), to discount a suspended page (hidden tab, locked phone) from request ages. */
+  private lastUpdateAt = -1;
+
+  constructor(
+    private readonly pyr: Pyramid,
+    private readonly cache: TileCache,
+    private readonly pool: DecodePool,
+    protocol: string,
+  ) {
+    this.protocol = protocol;
+    const h2 = protocol === 'h2' || protocol === 'h3' || protocol.startsWith('h3');
+    this.maxInflight = h2 ? CONCURRENCY_H2 : CONCURRENCY_H1;
+    this.prefetchSlots = Math.max(PREFETCH_SLOTS_MIN, Math.floor(this.maxInflight * PREFETCH_SLOT_FRACTION));
+    pool.onProgress = (key) => {
+      const rec = this.inflight.get(key);
+      if (rec !== undefined) rec.aliveAt = performance.now();
+    };
+  }
+
+  get inflightCount(): number {
+    return this.inflight.size;
+  }
+  /** The pinned base is resident: the viewer is usable ("ready"). */
+  get basePinned(): boolean {
+    return this.baseDone;
+  }
+  /** The warm base (<= WARM_BASE_MAX_PX, evictable) has also been loaded once; the scripted path waits for this. */
+  get warmBaseReady(): boolean {
+    return this.warmDone;
+  }
+  get baseReady(): boolean {
+    return this.baseDone && this.warmDone;
+  }
+  /** Forget residency-derived state after the GPU cache was cleared or recreated: base and warm base are re-checked next frame. */
+  resetResidency(): void {
+    this.awaitingUpload.clear();
+    this.baseDone = false;
+    this.warmDone = false;
+  }
+
+  /** Pointer-down or a zoom-in input: the next finer level under the pointer is "intended" for ZOOM_INTENT_HOLD_MS. */
+  noteIntent(now: number): void {
+    this.intentUntil = now + ZOOM_INTENT_HOLD_MS;
+  }
+
+  handleWorkerMessage(msg: WorkerResponse): void {
+    const rec = this.inflight.get(msg.key);
+    this.inflight.delete(msg.key);
+    if (msg.type === 'tile') {
+      this.counters.received++;
+      this.counters.bytes += msg.bytes;
+      if (msg.cancelledLate) this.counters.cancelledLate++;
+      if (msg.tier > 0 && isPrefetchKind(msg.kind)) this.counters.prefetchReceived++;
+      if (msg.cacheHit === true) this.counters.cacheHits++;
+      else if (msg.cacheHit === false) this.counters.cacheMisses++;
+      else this.counters.cacheUnknown++;
+      if (this.counters.cacheControl === null && msg.cacheControl !== null) this.counters.cacheControl = msg.cacheControl;
+      this.counters.receivedByKind[msg.kind] = (this.counters.receivedByKind[msg.kind] ?? 0) + 1;
+      this.failed.delete(msg.key);
+      if (this.timeoutsByKey.size > 0) this.timeoutsByKey.delete(msg.key);
+      this.awaitingUpload.add(msg.key);
+      this.onTile?.(msg);
+      return;
+    }
+    if (msg.aborted) {
+      this.counters.aborted++;
+      return;
+    }
+    this.counters.errors++;
+    const f = this.failed.get(msg.key);
+    this.failed.set(msg.key, { at: performance.now(), attempts: (f?.attempts ?? 0) + 1 });
+    this.lastFailure = `tile ${keyLevel(msg.key)}/${keyX(msg.key)}_${keyY(msg.key)}: ${msg.message}`;
+    if (rec !== undefined && rec.tier <= 0) console.warn('[tiles] failed', keyLevel(msg.key), keyX(msg.key), keyY(msg.key), msg.message);
+  }
+
+  /** Base / warm-base tiles: never given up, backoff FAILED_RETRY_MS × 2^(attempts-1) capped at BASE_RETRY_MAX_MS. */
+  private static baseRetryWait(attempts: number): number {
+    return Math.min(BASE_RETRY_MAX_MS, FAILED_RETRY_MS * 2 ** Math.max(0, Math.min(attempts - 1, 8)));
+  }
+
+  /**
+   * Request watchdog (IOS-FIX.md): give up on in-flight requests that have shown no progress (dispatch, or the
+   * worker's latest progress note) for their limit. A slow request still receiving bytes is kept. A pause of the page
+   * (no update() for over a second: hidden tab, locked phone, debugger) is not counted against requests in flight.
+   */
+  private watchdog(now: number): void {
+    const gap = this.lastUpdateAt < 0 ? 0 : now - this.lastUpdateAt;
+    this.lastUpdateAt = now;
+    if (this.inflight.size === 0) return;
+    if (gap > 1000) {
+      for (const rec of this.inflight.values()) {
+        rec.startedAt += gap;
+        rec.aliveAt = Math.min(rec.aliveAt + gap, now);
+      }
+      return;
+    }
+    for (const [key, rec] of this.inflight) {
+      const n = this.timeoutsByKey.size > 0 ? (this.timeoutsByKey.get(key) ?? 0) : 0;
+      const limit = Math.min(TILE_WATCHDOG_MAX_MS, TILE_WATCHDOG_MS * 2 ** n);
+      if (now - rec.aliveAt <= limit) continue;
+      this.inflight.delete(key);
+      this.pool.abandon(key);
+      this.counters.timeouts++;
+      if (rec.cancelled) continue; // no longer wanted: nothing to retry
+      this.timeoutsByKey.set(key, n + 1);
+      const f = this.failed.get(key);
+      this.failed.set(key, { at: now, attempts: (f?.attempts ?? 0) + 1 });
+      this.lastFailure = `tile ${keyLevel(key)}/${keyX(key)}_${keyY(key)}: no progress for ${(limit / 1000).toFixed(0)} s (retrying)`;
+      console.warn('[tiles] timed out', keyLevel(key), keyX(key), keyY(key), `${limit} ms`);
+    }
+  }
+
+  /** The renderer uploaded (or dropped) a decoded tile. */
+  markUploaded(key: number): void {
+    this.awaitingUpload.delete(key);
+  }
+
+  private want(key: number, prio: number, kind: number): void {
+    if (this.awaitingUpload.has(key)) return;
+    const cur = this.wanted.get(key);
+    if (cur === undefined || prio < cur) {
+      this.wanted.set(key, prio);
+      this.wantedKind.set(key, kind);
+    }
+  }
+
+  /** Distance (device px) from the focus to the centre of tile (level, x, y) under the current camera. */
+  private focusDist(cam: Camera, level: number, x: number, y: number): number {
+    const cell = this.pyr.tileSize * 2 ** level;
+    const sx = cam.screenX((x + 0.5) * cell);
+    const sy = cam.screenY((y + 0.5) * cell);
+    return Math.hypot(sx - this.focusX, sy - this.focusY);
+  }
+
+  private wantRange(cam: Camera, frame: number, level: number, tier: number, levelDist: number, kind: number, wx0: number, wy0: number, wx1: number, wy1: number): void {
+    const lvl = this.pyr.levels[level];
+    if (lvl === undefined) return;
+    if (!tileRange(this.pyr, lvl, wx0, wy0, wx1, wy1, this.range)) return;
+    const x0 = this.range[0] ?? 0;
+    const y0 = this.range[1] ?? 0;
+    const x1 = this.range[2] ?? 0;
+    const y1 = this.range[3] ?? 0;
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const key = tileKey(level, x, y);
+        const layer = this.cache.layerOf(key);
+        if (layer >= 0) {
+          // Resident: keep it fresh in the LRU and count it against the room for prefetch.
+          if (!this.cache.isPinned(layer) && this.cache.noteWanted(layer, frame)) this.residentWanted++;
+          continue;
+        }
+        this.want(key, prioOf(tier, levelDist, this.focusDist(cam, level, x, y)), kind);
+      }
+    }
+  }
+
+  /**
+   * Rebuild the wanted set for this frame, cancel what left it, dispatch what fits.
+   * `zoomingIn` is true while a zoom-in burst is in progress (zoom velocity > 0).
+   */
+  update(frame: number, now: number, cam: Camera, lstar: number): void {
+    this.watchdog(now);
+    const pyr = this.pyr;
+    const maxLevel = pyr.levels.length - 1;
+    this.wanted.clear();
+    this.wantedKind.clear();
+    this.heap.clear();
+    this.residentWanted = 0;
+
+    // Tier -1: pinned base, coarsest level first so the first paint is never blank (04 F2 item 3).
+    if (!this.baseDone) {
+      let missing = 0;
+      for (let level = maxLevel; level >= pyr.basePinLevel; level--) {
+        const lvl = pyr.levels[level];
+        if (lvl === undefined) continue;
+        for (let y = 0; y < lvl.tilesY; y++) {
+          for (let x = 0; x < lvl.tilesX; x++) {
+            const key = tileKey(level, x, y);
+            if (this.cache.has(key)) continue;
+            missing++;
+            this.want(key, -TIER_SPAN + (maxLevel - level) * LEVEL_SPAN + this.focusDist(cam, level, x, y), RequestKind.BASE);
+          }
+        }
+      }
+      if (missing === 0) this.baseDone = true;
+    }
+    // Tier 3: warm base (REVIEW M2) — coarsest first, behind every prefetch tier, only while slots and room are free.
+    if (this.baseDone && !this.warmDone) {
+      let missing = 0;
+      for (let level = pyr.basePinLevel - 1; level >= pyr.warmBaseLevel; level--) {
+        const lvl = pyr.levels[level];
+        if (lvl === undefined) continue;
+        for (let y = 0; y < lvl.tilesY; y++) {
+          for (let x = 0; x < lvl.tilesX; x++) {
+            const key = tileKey(level, x, y);
+            if (this.cache.has(key)) continue;
+            missing++;
+            this.want(key, prioOf(TIER_WARM, maxLevel - level, this.focusDist(cam, level, x, y)), RequestKind.WARMBASE);
+          }
+        }
+      }
+      if (missing === 0) this.warmDone = true;
+    }
+
+    // Tier 0: visible L* tiles; tier 1 (level distance 1): their trilinear partners at L*+1.
+    const wx0 = cam.worldX(0);
+    const wy0 = cam.worldY(0);
+    const wx1 = cam.worldX(cam.viewW);
+    const wy1 = cam.worldY(cam.viewH);
+    this.wantRange(cam, frame, lstar, 0, 0, RequestKind.VISIBLE, wx0, wy0, wx1, wy1);
+    if (lstar < maxLevel) this.wantRange(cam, frame, lstar + 1, 1, 1, RequestKind.PARTNER, wx0, wy0, wx1, wy1);
+
+    // Zoom intent (04 F3 "Zoom intent", A §3): destination level under the pointer, from the extrapolated zoom.
+    const zoomingIn = cam.zoomVel > ZOOM_INTENT_MIN_VELOCITY;
+    const intent = zoomingIn || now < this.intentUntil;
+    if (intent && lstar > 0) {
+      const destLog = zoomingIn ? cam.predictLogZoom(ZOOM_INTENT_HORIZON_MS) : cam.targetLogZoom + 1;
+      const destK = 2 ** destLog;
+      const destLevel = Math.max(lstar - ZOOM_INTENT_MAX_LEVELS, Math.min(lstar - 1, idealLevel(destK, pyr.levels.length)));
+      const ax = cam.worldX(this.focusX);
+      const ay = cam.worldY(this.focusY);
+      for (let level = lstar - 1; level >= destLevel; level--) {
+        // World extent of ±WINDOW device px at the zoom where `level` sits mid-band (s = 0.75).
+        const half = ZOOM_INTENT_WINDOW_PX / (0.75 * 2 ** -level);
+        this.wantRange(cam, frame, level, 1, lstar - level, RequestKind.INTENT, ax - half, ay - half, ax + half, ay + half);
+      }
+    }
+
+    // Predicted viewport + ring at the predicted level (04 F3 "Ring" + "Pan cone"). Tier 2 while zooming so
+    // destination tiles under the pointer win; tier 1 otherwise.
+    const pcx = cam.predictCentreX(PREDICT_HORIZON_MS);
+    const pcy = cam.predictCentreY(PREDICT_HORIZON_MS);
+    const pz = cam.predictLogZoom(PREDICT_HORIZON_MS);
+    const pk = 2 ** pz;
+    // The predicted level respects the hysteresis band: while the predicted zoom keeps L* valid the ring stays at L*
+    // instead of a level the selector will never pick (REVIEW L2).
+    const pLevel = Math.abs(pz - cam.logZoom) < 1e-6 || levelHolds(pk, lstar) ? lstar : idealLevel(pk, pyr.levels.length);
+    const pLvl = pyr.levels[pLevel];
+    if (pLvl !== undefined) {
+      const ring = RING_TILES * pyr.tileSize * pLvl.scale;
+      const hw = cam.viewW / 2 / pk;
+      const hh = cam.viewH / 2 / pk;
+      this.wantRange(cam, frame, pLevel, zoomingIn ? 2 : 1, Math.abs(pLevel - lstar), RequestKind.RING, pcx - hw - ring, pcy - hh - ring, pcx + hw + ring, pcy + hh + ring);
+    }
+
+    // Mark in-flight tiles that are still wanted; queue the rest.
+    for (const [key, prio] of this.wanted) {
+      const rec = this.inflight.get(key);
+      if (rec !== undefined) {
+        rec.lastWanted = frame;
+        const t = tierOf(prio);
+        if (t < rec.tier) rec.tier = t;
+        continue;
+      }
+      if (this.failed.size > 0) {
+        const f = this.failed.get(key);
+        if (f !== undefined) {
+          const kind = this.wantedKind.get(key);
+          if (kind === RequestKind.BASE || kind === RequestKind.WARMBASE) {
+            if (now - f.at < Scheduler.baseRetryWait(f.attempts)) continue;
+          } else if (f.attempts >= FAILED_MAX_ATTEMPTS || now - f.at < FAILED_RETRY_MS) continue;
+        }
+      }
+      this.heap.push(key, prio);
+    }
+    this.counters.heapOverflow = this.heap.overflow;
+
+    // Cancel requests that left the wanted set (04 F4; the worker keeps those past the byte threshold).
+    let prefetchInflight = 0;
+    let inflightNonBase = 0;
+    for (const [key, rec] of this.inflight) {
+      if (!rec.cancelled && frame - rec.lastWanted > CANCEL_GRACE_FRAMES) {
+        rec.cancelled = true;
+        this.counters.cancelled++;
+        this.pool.cancel(key);
+      }
+      if (rec.tier > 0 && !rec.cancelled) prefetchInflight++;
+      if (rec.tier >= 0 && !rec.cancelled) inflightNonBase++;
+    }
+
+    // Room in the texture array for tiles that are not resident yet: non-pinned layers minus the resident tiles we
+    // still want, minus decoded tiles waiting for upload, minus in-flight requests. Visible (tier 0) tiles are always
+    // dispatched (chooseLayerCount sizes the array for them and the LRU then evicts unwanted or prefetched tiles);
+    // prefetch tiers only while room remains, so the cache never churns against its own wanted set.
+    let awaitingNonBase = 0;
+    for (const key of this.awaitingUpload) if (keyLevel(key) < pyr.basePinLevel) awaitingNonBase++;
+    let room = this.cache.layerCount - pyr.basePinTileCount - this.residentWanted - awaitingNonBase - inflightNonBase;
+    this.lastRoom = room;
+    let held = false;
+
+    // Dispatch in priority order; prefetch tiers are capped to their slot share so visible tiles never starve.
+    while (this.heap.size > 0 && this.inflight.size < this.maxInflight) {
+      const key = this.heap.pop();
+      const tier = tierOf(this.heap.lastPrio);
+      const kind = this.wantedKind.get(key) ?? RequestKind.VISIBLE;
+      if (tier > 0) {
+        if (prefetchInflight >= this.prefetchSlots) break; // heap is ordered: nothing better is left
+        if (room <= 0) {
+          held = true;
+          break;
+        }
+        prefetchInflight++;
+        if (kind === RequestKind.WARMBASE) this.counters.requestsWarmBase++;
+        else this.counters.requestsPrefetch++;
+      } else if (tier === 0) this.counters.requestsTier0++;
+      else this.counters.requestsBase++;
+      if (tier >= 0) room--;
+      this.counters.requestedByKind[kind] = (this.counters.requestedByKind[kind] ?? 0) + 1;
+      this.inflight.set(key, { tier, startedAt: now, aliveAt: now, lastWanted: frame, cancelled: false });
+      this.pool.request(key, this.pyr.tileUrl(keyLevel(key), keyX(key), keyY(key)), tier, kind);
+    }
+    if (held) this.counters.prefetchHeldFrames++;
+  }
+}

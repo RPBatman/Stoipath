@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/2/highlights/0",
+      "value": "hs-nowhere"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "refs-resolve",
+      "severity": "error",
+      "path": "/steps/2/highlights/0",
+      "message": "/steps/2/highlights/0 names hs-nowhere, which does not exist"
+    }
+  ],
+  "alsoAllowed": []
+}

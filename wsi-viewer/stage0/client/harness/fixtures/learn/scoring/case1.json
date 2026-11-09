@@ -1,0 +1,495 @@
+{
+ "about": "LEARN.md §6.3 worked examples on CAMELYON16 tumor_014 (SCR-2, SCR-3, SCR-6; owner defaults of 2026-11-04, default pending owner). Coordinates are level-0 px of the 15,360 px region; distances are µm at mpp 0.243094. `key` and `item` are Appendix A's answer key and q-region (scoring fields); the unit test checks they still equal client/learn/examples/sln-find-metastasis.module.json. Point and outline marks are described by construction and their resolved coordinates are pinned too.",
+ "layer": "data/overlays/camelyon16.tumor_014.r36864_66560/camelyon16-expert.geojson",
+ "module": "client/learn/examples/sln-find-metastasis.module.json",
+ "fingerprint": "15360x15360@0.243094@36864,66560@",
+ "mpp": 0.243094,
+ "key": {
+  "id": "camelyon16-reference",
+  "slide": "he",
+  "label": "CAMELYON16 reference outline",
+  "source": {
+   "kind": "reference-layer",
+   "layer": "camelyon16-expert",
+   "version": "d94db5bb"
+  },
+  "targets": [
+   {
+    "id": "largest-deposit",
+    "label": "Largest deposit",
+    "include": {
+     "ids": [
+      "f5049586-cbdd-54a7-a198-8aadd4f15d8a"
+     ]
+    },
+    "subtract": {
+     "className": "Exclusion"
+    }
+   }
+  ],
+  "related": [
+   {
+    "id": "small-foci",
+    "include": {
+     "ids": [
+      "a23671ad-a137-5b55-bc87-8fa11f1c993a",
+      "ce4d072d-cf26-53c6-a4af-8fb4eb5ecd5a",
+      "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"
+     ]
+    },
+    "credit": true,
+    "feedback": "That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region."
+   }
+  ]
+ },
+ "item": {
+  "id": "q-region",
+  "kind": "region",
+  "title": "Region marking",
+  "stem": "Find the metastatic carcinoma in this region: place one point on tumour, or outline the largest deposit.",
+  "points": 1,
+  "explanation": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. A point counts when it falls on any outlined tumour focus or within 50 µm of one. An outline counts when its overlap with the outline of the largest deposit (IoU) is 0.50 or more, and earns half credit when at least 90 % of it lies on tumour. Full credit also needs a view of your mark at 20× or more.",
+  "slide": "he",
+  "key": "camelyon16-reference",
+  "target": "largest-deposit",
+  "accept": [
+   "point",
+   "polygon",
+   "brush",
+   "rect",
+   "ellipse"
+  ],
+  "scoring": {
+   "iouFull": 0.5,
+   "pointTolerance_um": 50,
+   "partialInside": {
+    "fraction": 0.9,
+    "factor": 0.5
+   }
+  },
+  "gate": {
+   "scale_um_per_px": 0.5,
+   "label": "20×",
+   "unmetFactor": 0.5
+  },
+  "candidatesTitle": "Mark the metastasis without a pointer",
+  "candidates": [
+   {
+    "id": "A",
+    "description": "Upper border of the region",
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      9300,
+      1000
+     ]
+    },
+    "view": {
+     "slide": "he",
+     "center_um": [
+      2260.77,
+      243.09
+     ],
+     "scale_um_per_px": 0.5
+    }
+   },
+   {
+    "id": "B",
+    "description": "Lower right corner of the region",
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      13088,
+      13088
+     ]
+    },
+    "view": {
+     "slide": "he",
+     "center_um": [
+      3181.61,
+      3181.61
+     ],
+     "scale_um_per_px": 0.5
+    }
+   },
+   {
+    "id": "C",
+    "description": "Centre of the region",
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      7168,
+      5120
+     ]
+    },
+    "view": {
+     "slide": "he",
+     "center_um": [
+      1742.5,
+      1244.64
+     ],
+     "scale_um_per_px": 0.5
+    }
+   },
+   {
+    "id": "D",
+    "description": "Lower edge of the region",
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      6400,
+      13900
+     ]
+    },
+    "view": {
+     "slide": "he",
+     "center_um": [
+      1555.8,
+      3379.01
+     ],
+     "scale_um_per_px": 0.5
+    }
+   }
+  ],
+  "textRubric": {
+   "fields": [
+    {
+     "id": "position",
+     "label": "Position",
+     "kind": "choice",
+     "required": true,
+     "options": [
+      {
+       "id": "centre",
+       "text": "Centre of the region"
+      },
+      {
+       "id": "upper",
+       "text": "Upper border"
+      },
+      {
+       "id": "lower-right",
+       "text": "Lower right corner"
+      },
+      {
+       "id": "lower",
+       "text": "Lower edge"
+      },
+      {
+       "id": "left",
+       "text": "Left edge"
+      }
+     ],
+     "correct": [
+      "centre"
+     ]
+    },
+    {
+     "id": "size",
+     "label": "Size",
+     "kind": "choice",
+     "options": [
+      {
+       "id": "macro",
+       "text": "> 2 mm"
+      },
+      {
+       "id": "micro",
+       "text": "0.2–2 mm"
+      },
+      {
+       "id": "itc",
+       "text": "≤ 0.2 mm"
+      }
+     ],
+     "correct": [
+      "macro"
+     ]
+    },
+    {
+     "id": "feature",
+     "label": "Feature",
+     "kind": "keywords",
+     "keywords": [
+      "cohesive",
+      "clusters",
+      "large cells",
+      "larger cells",
+      "pale cells",
+      "large nuclei",
+      "larger nuclei",
+      "nucleoli",
+      "more cytoplasm",
+      "abundant cytoplasm"
+     ]
+    }
+   ],
+   "passMin": 2
+  }
+ },
+ "target": {
+  "net_mm2": 3.291,
+  "outline_mm2": 3.362,
+  "bbox_mm": [
+   2.61,
+   2.22
+  ],
+  "cellPx_R1": 5.24
+ },
+ "points": [
+  {
+   "id": "P1",
+   "how": "candidate C",
+   "at": [
+    7168,
+    5120
+   ],
+   "expect": {
+    "inside": true,
+    "distance_um": 0,
+    "inHole": false,
+    "edge_um": 458.8,
+    "correct": true,
+    "feedback": "correct",
+    "score": 1
+   }
+  },
+  {
+   "id": "P2",
+   "how": "hotspot hs-edge",
+   "at": [
+    11264,
+    5632
+   ],
+   "expect": {
+    "inside": true,
+    "distance_um": 0,
+    "inHole": false,
+    "edge_um": 32.6,
+    "correct": true,
+    "feedback": "correct",
+    "score": 1
+   }
+  },
+  {
+   "id": "P3",
+   "how": "40 µm right of the outline's rightmost vertex",
+   "rightOf_um": 40,
+   "at": [
+    12076.15,
+    5845.8
+   ],
+   "expect": {
+    "inside": false,
+    "distance_um": 40.0,
+    "inHole": false,
+    "correct": true,
+    "feedback": "correct",
+    "score": 1
+   }
+  },
+  {
+   "id": "P4",
+   "how": "80 µm right of the outline's rightmost vertex",
+   "rightOf_um": 80,
+   "at": [
+    12240.69,
+    5845.8
+   ],
+   "expect": {
+    "inside": false,
+    "distance_um": 80.0,
+    "inHole": false,
+    "correct": false,
+    "feedback": "wrong",
+    "score": 0
+   }
+  },
+  {
+   "id": "P5",
+   "how": "area centroid of small focus 'Annotation 6'",
+   "centroidOf": "Annotation 6",
+   "at": [
+    11044.6,
+    6624.0
+   ],
+   "expect": {
+    "inside": false,
+    "distance_um": 64.8,
+    "inHole": false,
+    "correct": true,
+    "feedback": "correct-related",
+    "related": "small-foci",
+    "score": 1
+   },
+   "withoutCredit": {
+    "correct": false,
+    "feedback": "wrong-related",
+    "related": "small-foci",
+    "score": 0
+   }
+  },
+  {
+   "id": "P6",
+   "how": "area centroid of Exclusion 'Annotation 8'",
+   "centroidOf": "Annotation 8",
+   "at": [
+    7369.7,
+    3457.1
+   ],
+   "expect": {
+    "inside": false,
+    "distance_um": 56.0,
+    "inHole": true,
+    "correct": false,
+    "feedback": "wrong-hole",
+    "score": 0
+   }
+  },
+  {
+   "id": "P7",
+   "how": "candidate B",
+   "at": [
+    13088,
+    13088
+   ],
+   "expect": {
+    "inside": false,
+    "distance_um": 1438.7,
+    "inHole": false,
+    "correct": false,
+    "feedback": "wrong",
+    "score": 0
+   }
+  }
+ ],
+ "outlines": [
+  {
+   "id": "R1",
+   "how": "rectangle = bbox of the deposit outline",
+   "shape": "bbox-rect",
+   "expect": {
+    "iou": 0.567,
+    "inside": 0.569,
+    "mark_mm2": 5.8,
+    "inT_mm2": 3.291,
+    "correct": true,
+    "feedback": "correct",
+    "score": 1
+   }
+  },
+  {
+   "id": "R2",
+   "how": "64-gon ellipse inscribed in that bbox",
+   "shape": "bbox-ellipse",
+   "vertices": 64,
+   "expect": {
+    "iou": 0.691,
+    "inside": 0.706,
+    "mark_mm2": 4.55,
+    "correct": true,
+    "feedback": "correct",
+    "score": 1
+   }
+  },
+  {
+   "id": "R3",
+   "how": "1 mm × 1 mm square centred on candidate C",
+   "shape": "square",
+   "centre": [
+    7168,
+    5120
+   ],
+   "side_mm": 1,
+   "expect": {
+    "iou": 0.268,
+    "inside": 0.908,
+    "inT_mm2": 0.907,
+    "correct": false,
+    "feedback": "partial-inside",
+    "score": 0.5
+   }
+  },
+  {
+   "id": "R4",
+   "how": "0.5 mm × 0.5 mm square centred on candidate C",
+   "shape": "square",
+   "centre": [
+    7168,
+    5120
+   ],
+   "side_mm": 0.5,
+   "expect": {
+    "iou": 0.075,
+    "inside": 0.992,
+    "inT_mm2": 0.248,
+    "correct": false,
+    "feedback": "partial-inside",
+    "score": 0.5
+   }
+  },
+  {
+   "id": "R5",
+   "how": "1.5 mm × 1.5 mm square centred on candidate C",
+   "shape": "square",
+   "centre": [
+    7168,
+    5120
+   ],
+   "side_mm": 1.5,
+   "expect": {
+    "iou": 0.508,
+    "inside": 0.83,
+    "inT_mm2": 1.867,
+    "correct": true,
+    "feedback": "correct",
+    "score": 1
+   }
+  },
+  {
+   "id": "R6",
+   "how": "the outline of small focus 'Annotation 6' itself",
+   "shape": "feature",
+   "name": "Annotation 6",
+   "expect": {
+    "iou": 0.0,
+    "inside": 1.0,
+    "correct": false,
+    "feedback": "partial-inside",
+    "related": "small-foci",
+    "score": 0.5
+   }
+  }
+ ],
+ "candidates": {
+  "A": {
+   "distance_um": 521.9,
+   "correct": false,
+   "score": 0
+  },
+  "B": {
+   "distance_um": 1438.7,
+   "correct": false,
+   "score": 0
+  },
+  "C": {
+   "distance_um": 0,
+   "inside": true,
+   "correct": true,
+   "score": 1
+  },
+  "D": {
+   "distance_um": 819.8,
+   "correct": false,
+   "score": 0
+  }
+ },
+ "tolerance": {
+  "iou": 0.005,
+  "inside": 0.005,
+  "distance_um": 0.5,
+  "area_rel": 0.005,
+  "area_mm2": 0.01,
+  "at_px": 0.1
+ }
+}

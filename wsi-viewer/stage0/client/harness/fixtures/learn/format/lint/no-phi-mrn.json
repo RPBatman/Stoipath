@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/case/vignette/text",
+      "value": "Sentinel lymph node, MRN 0048213."
+    }
+  ],
+  "expect": [
+    {
+      "rule": "no-phi",
+      "severity": "error",
+      "path": "/case/vignette/text",
+      "message": "/case/vignette/text looks like patient information (MRN)"
+    }
+  ],
+  "alsoAllowed": []
+}

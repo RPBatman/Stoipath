@@ -1,0 +1,902 @@
+{
+  "generated": "2026-11-01",
+  "weights": {
+    "workflow_fit": 0.3,
+    "clarity": 0.2,
+    "accessibility": 0.15,
+    "feasibility": 0.15,
+    "device_fit": 0.15,
+    "distinctiveness": 0.05
+  },
+  "screens": [
+    {
+      "screen": "clinical-signout",
+      "run": "wf_84d422b3-0a5",
+      "judges": [
+        {
+          "judge": "pathologist",
+          "scores": [
+            {
+              "concept": "clinical-signout-a",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 7,
+              "feasibility": 8,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "At rest this is the screen a 60-case-a-day reader wants: 92 % canvas at 1920, 96 % at 4K, dark neutral chrome, identity fixed top-left, and the whole case is ] ] ] then Shift+Enter then Return to LIS. The corner cluster that fuses navigator, Tier-2 label image, three-slide tray and five summon tabs with their keys printed is the best single idea for muscle memory, and the command echo under the identity line is a genuine teaching device for residents. The safety story is the weakest of the three, though: the mock has no identity-mismatch plate, no session-expired or manifest-failed state and no 'Not complete \u2014 do not interpret' string, so the P5/FR-R9 test cannot be passed as presented, and the hand-off dialog lists coverage but never warns about an unviewed slide or offers to open it. Discoverability is thin for a first-week resident (11 px grey summon tabs, right-click radial) and the palette only indexes commands, not slides or sign-out. Mode and product are unmistakable, but the label string still reads '\u2039laboratory name\u203a' instead of the lab. Keyboard coverage, skip link, live regions and reduced-motion are in place; the strip sign-out button is 22 px and the tablet tabs 26 px, both under target. On iPad the five 44 px bottom targets and the case sheet work well; the embedded Hyperdrive form is the cleanest of the three. The shell is the simplest to build and keep frame-free, although the mock itself re-renders the top bar on every pointer move, which the product must not do.",
+              "graft_ideas": [
+                "Corner cluster: navigator + label image + slide tray (viewed/partial/unviewed) + summon tabs with keys printed, as the only persistent object over the canvas",
+                "Command echo under the identity line (visible twin of commandInvoked) to teach the keymap by use",
+                "One-drawer-slot rule: one panel open at a time, same place, Esc closes, becomes the bottom sheet on tablet",
+                "Radial tool ring at the pointer for right-click / Pencil squeeze / Menu key with the key on each wedge",
+                "Keep the small 'Request sign-out \u21e7\u21b5' in the status strip so the once-per-case action is visible without a panel (raise it to 24 px)",
+                "In-viewport AI legend bottom-right with click-a-class-to-jump and the fixed not-validated marker",
+                "Keymap sheet with Default / Left-hand / Right-hand presets and the site's reserved dictation keys struck through"
+              ]
+            },
+            {
+              "concept": "clinical-signout-b",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 6,
+              "distinctiveness": 8,
+              "rationale": "The Workbench is the most complete and the most explicit: a resident recognises the VS Code / Sectra shape in seconds, nothing is more than one click or two keys away, and the Ctrl+K palette is the only one of the three that finds slides with their viewed state, layout presets, sign-out and Dx. Its best safety ideas are the non-modal sign-out hand-off section that stays open while you keep screening and updates '2 slides not opened' with an Open button, the Dx gate as a six-row checklist that names the failing row and prints the verbatim refusal, and the Clinical-context panel from the LIS that shows prior biopsy and which parts are still scanning, which is exactly what stops a premature sign-out. It is the only mock whose gesture path touches only class, transform and textContent, so P2 discipline is demonstrated rather than promised, and it carries every \u00a76 degraded state including mismatch, expired, manifest 503, context loss and frozen-section TAT. The cost is chrome: 75 % canvas at 1920 and at 4K, 70 % on the laptop with the Inspector floating over tissue, and a dense wall of 12-13 px monospace in the Explorer that a high-volume reader will want gone after day one. Device fit is the weak score: on iPad landscape 42 targets are under 44 px (rail tools 30\u00d728), the embedded form stacks four header rows before the slide, and the two-dock model is the most shell engineering of the three. Focus lands on Return to LIS after Shift+Enter, so a double keystroke can hand back a case with unviewed slides; the warning is visible but not in the way. ARIA is the best of the three (toolbar, keyboard-resizable separators, aria-keyshortcuts, menus) and the canvas-floor governor turns P1 into a measurable rule with the reason stated in the dock header.",
+              "graft_ideas": [
+                "Canvas-floor governor: predict canvas share, degrade least-important chrome first, state what happened and why in the dock header, show the measured share",
+                "Non-modal sign-out hand-off section that updates 'n slides not opened' with Open buttons while screening continues",
+                "Dx gate as a checklist (build, window, tier, attestation, QA, self-check) with the failing row and the verbatim refusal string",
+                "Clinical context from the LIS: prior accession, parts with status such as 'B1 scanning (LIS will update)' and 'C1 not yet scanned'",
+                "Palette rows for slides with viewed state, bookmarks, layout presets and every command with its key",
+                "In-panel keyboard map with a filter box and the preset selector",
+                "Identity verified line under the case card ('launch context matches the manifest before the first tile was drawn')",
+                "Frozen-section TAT chip and the Request-consult section that lists exactly what the link carries (Tier 0, expiry, audit)"
+              ]
+            },
+            {
+              "concept": "clinical-signout-c",
+              "workflow_fit": 9,
+              "clarity": 9,
+              "accessibility": 7,
+              "feasibility": 7,
+              "device_fit": 8,
+              "distinctiveness": 9,
+              "rationale": "Task-flow is the one I would put in front of a PGY-1 and still use myself with Shift+G off: Open \u2192 Screen \u2192 Examine \u2192 Annotate \u2192 Sign-out is how a sentinel node is actually read, and every key works at every step so the rail costs the expert nothing but 72 px. Step 1 puts the label image, accession, patient placeholder and three explicit checks (identity match, display attested, launched by whom for what purpose) in front of the reader before high power, which is the strongest wrong-slide defence of the three; the Screen step's coverage bar per slide, 'A2-1 not yet viewed' callout and 'Next unviewed slide ]' are the strongest missed-area defence; and the Sign-out step is a checklist whose dialog warns, offers 'Open A2-1 first', and carries a 'Mark case Reviewed' toggle. It is the only mock that correctly switches the Dx strip to 'Not complete \u2014 do not interpret' when tiles fail, and its frozen-consult variant (TAT timer against the CAP 20-minute target, note templates, 'Also page the surgeon', send-preliminary dialog) is the best answer to US-C2 on an iPad. Product and mode are unmistakable with the purpose chip and the lab name in the label string. The accessibility score is held back by five 22 px segmented controls, dimmed layer names at 3.87:1 and badges at 2.67:1, tablet tools 33 px tall and the step drawer and bottom sheet opening by default so the sheet covers 40 % of the slide on iPad portrait (15 central-zone intrusions, the only concept with any). On the laptop the drawer overlays about a fifth of the tissue at step entry, which a sign-out reader will resent until they learn K. Feasibility is fine but two IA modes (flow and plain tabs) plus a per-step tool rail must be maintained together, and the mock's preset keys land on 5.5\u00d7 mid-animation rather than snapping. Expect 40,000-case attendings to call the Next button a wizard; the mitigation (nothing gated, Shift+G) is real and must stay.",
+              "graft_ideas": [
+                "Five-step reading order (Open, Screen, Examine, Annotate, Sign-out) as the default dock structure with Shift+G collapsing it to plain tabs and N / Shift+N to move",
+                "Identity as step 1: label image, accession, patient, specimen, stain, scanner, worklist, plus three check rows for identity match, display attestation and launch user/purpose",
+                "Coverage bar per slide, viewed/partial/unviewed by shape, 'Next unviewed slide ]' and the viewed-area trail that never auto-fades",
+                "Sign-out checklist with the hand-off dialog's 'Open A2-1 first', 'Keep reviewing' and 'Mark case Reviewed' toggle",
+                "Frozen consult: TAT timer against the CAP 20-minute target, preliminary-note templates, 'Also page the surgeon', send-preliminary dialog with evidence attached",
+                "AI overlay colours drawn from palette slots the pathologist's own classes never use, outline first, heatmap on demand, lab-validated marker with n",
+                "'Not complete \u2014 do not interpret' on tile errors in Dx; 'Nav mode \u00b7 Shift+D enters Dx mode' nudge in the strip on an attested display",
+                "Dx-refused banner with a 'Display record I' button; Hyperdrive iframe as a step chip plus tray chips plus 'Open on diagnostic display'"
+              ]
+            }
+          ],
+          "verdict": "Concept C (Task-flow) wins on this lens: it makes the top task faster for residents and no slower for experts, and it is the only concept that treats wrong-slide, missed-slide and mode-confusion as first-class steps rather than panels. Build the final sign-out screen on C's five-step structure, but close its two real weaknesses with grafts: adopt B's canvas-floor governor so the step drawer and tablet sheet never open over tissue by default (close on laptop and iPad portrait, open at 1920 and 4K), and adopt A's corner cluster (navigator + label image + tray + summon tabs with printed keys) plus command echo as the at-rest state when the flow is off, so an attending gets A's 92-96 % canvas with C's safety checks still one key away. Take B's non-modal hand-off section, Dx gate checklist and LIS clinical context into C's Sign-out and Open steps, and when any slide is unviewed land focus on 'Open A2-1 first' rather than 'Return to LIS'. Before the critique, fix across all three: 24 px minimum on every segmented control, 44 px tools on iPad landscape, 4.5:1 for layer names even when the layer is off, the lab name in Concept A's label string, and a mismatch, expired and manifest state in whatever ships (A has none). Design notes to carry forward: the 100 \u00b5m bar at 20\u00d7 under the 80-200 px rule (DN-A1/DN-C2), two docks versus region D (DN-B1), the default-open drawer (DN-C4), and the new bindings N/Shift+N/Shift+G/K and U/Shift+U/Shift+P to be filed against the command registry."
+        },
+        {
+          "judge": "ux-a11y",
+          "scores": [
+            {
+              "concept": "clinical-signout-a",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 6,
+              "feasibility": 9,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "Canvas-maximal is the fastest concept at rest: 92 % canvas at 1080p and 96 % at 4K, no rail or dock, every panel one key away, a radial at the pointer and a command echo that teaches the keymap by use. Product badge, label string, DX indicator and Rendering Complete stay fixed in every state, and the live region speaks at settle (\"Rendering Complete. 40 times. A1-1.\"). Its weaknesses are concentrated in discoverability and safety: the five summon tabs in the navigator cluster are 10 px low-contrast text at 26 px height (unreadable at 4K DPR 1, under the 44 px touch target on the iPad consult surface), and the label image is a thumbnail smaller than B's or C's. The Request sign-out dialog has aria-modal but no focus trap (Tab walks out to the page), hard-codes \"Slides viewed 3 of 3\" while the tray shows A2-1 unviewed, and has no unviewed-slide guard, so the once-per-case action is the least error-preventing of the three. The keymap and sign-out dialogs are centred over the canvas, against P1's explicit rule that dialogs never cover the centre. Dx availability is not derived from the device class, so the default phone state shows DX. The lab name placeholder is left as \"\u2039laboratory name\u203a\". Reduced motion drops to zero animations, pan buttons give the SC 2.5.7 alternative, and the whole shell is trivially frame-cost free, which is why feasibility is highest.",
+              "graft_ideas": [
+                "Command echo under the identity line (visible twin of commandInvoked) as the keymap-teaching device",
+                "Summon tabs printed with their keys on the navigator cluster so the navigator doubles as the panel index",
+                "Radial tool ring at the pointer / Pencil squeeze, dispatched through the same registry",
+                "One drawer slot under the navigator so the eye learns one place; sheets on portrait",
+                "Canvas-share targets of 92 % / 96 % as the bar the final layout should approach at rest",
+                "Measure-tool status line bottom-left (\"click two points \u00b7 Space pan \u00b7 Esc cancel\")"
+              ]
+            },
+            {
+              "concept": "clinical-signout-b",
+              "workflow_fit": 8,
+              "clarity": 7,
+              "accessibility": 7,
+              "feasibility": 7,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "Workbench buys learnability and completeness: Explorer (identity, hanging-protocol tray with coverage, layers with provenance) and Inspector (LIS clinical context and prior, measure, compare, consult, hand-off, keymap) are always one click away, and a canvas-floor governor degrades chrome mechanically and says why (\"Narrowed to the slide strip so the canvas stays \u2265 70 %\"). It is the only concept whose dialogs obey P1: the sign-out hand-off is a non-modal Inspector section that updates live and warns \"2 slides not opened\" with an Open A1-2 button, the Dx gate is a per-gate checklist popover anchored top-right with the failing row bold and the Enter button disabled, and the palette anchors top-left. It is also the only concept that derives Dx availability from the device class at runtime, so the phone and tablet correctly show NAV, Pitch unknown and the Tier 2 string. Semantics are the richest (aria-expanded accordions, role=separator resizers with arrow keys, toolbar roles, a live region that reports magnification, position and unviewed count), the canvas is focused on load, and reduced motion zeroes all 37 transitions. Costs: 75 % canvas at rest on the diagnostic display and 70 % on the laptop, two docks that split attention, 9-10 px key hints and a 9 px \"label \u00b7 Tier 2\" tag, Outline/Heatmap and Lock/Affine/None at 18-20 px, and at 1366 landscape (iPad with Pencil) the desktop rail stays at 30\u00d728 px. Esc from the hand-off panel drops focus onto the page instead of the canvas, and Esc inside the keymap filter never closes the floating keymap despite the rationale's claim. Two resizable docks plus a floating mode are more MVP shell work than A or C.",
+              "graft_ideas": [
+                "Canvas-floor governor: predicted canvas share drives which chrome degrades first, with the reason stated in the dock header and the share measurable",
+                "Dx gate as a checklist popover (build, window, tier, attestation, QA, self-check) with the exact refusal string and a disabled Enter button",
+                "Sign-out hand-off as a non-modal panel that keeps updating while reviewing, with the unviewed-slide warning and Open-next shortcut",
+                "Runtime device-class gating (pointer: coarse, width, surface) that forces NAV, ~mag and Pitch unknown on tablets/phones/iframes",
+                "Keyboard map generated from the command registry with filter, presets and reserved Dragon/Hyperdrive keys greyed",
+                "Clinical context from the LIS (specimen parts, prior accession, scanning status) in the dock",
+                "Explorer narrowed to an identity-plus-slides strip as the minimum identity surface that never disappears",
+                "Rich polite live region: magnification, \u00b5m/px, centre position, slide opened and unviewed count"
+              ]
+            },
+            {
+              "concept": "clinical-signout-c",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 8,
+              "device_fit": 8,
+              "distinctiveness": 9,
+              "rationale": "Task-flow organises the shell around how a case is actually read (Open \u2192 Screen \u2192 Examine \u2192 Annotate \u2192 Sign-out) and gives each step one panel, one primary action and only that step's tools, which produces the clearest hierarchy of the three: identity is step 1 with a large label image and three verification lines, screening carries a coverage contract with \"Next unviewed slide ]\", the layer rows distinguish research (fixed FR-R11 marker) from lab-validated (n = 62) overlays, and sign-out is a checklist that previews exactly what returns to the LIS, warns about A2-1, offers Open A2-1 first and a Mark Reviewed toggle. Guided-off turns the same panels into plain tabs, so the expert loses nothing, and the frozen-consult variant (flow bar, TAT timer against the CAP 20-minute target, note templates, 44 px pen tool bar with polygon/freehand/measure) is the best tablet story. Keyboard behaviour is the cleanest measured: the sign-out dialog traps focus, Esc returns to the canvas, the palette filters to \"Measure length\", and the live region announces the fit-to-slide on slide change. Failures to fix: the keymap, palette and sign-out dialogs are centred over the canvas (P1 forbids dialogs in the centre), focus order puts the step rail before the canvas, and the keymap opens with focus on Close. Dock controls (presets, lock/affine/none, Outline/Heatmap) are 22-28 px and stay that size under a coarse pointer, phone step chips are 28\u00d730 px and the phone sheet reaches 56 % of the viewport. State honesty slips in three places: the default phone state shows DX, the Dx-refused state keeps \"pitch EDID\" and the QA chip, and the 1366 offline consult strip clips its notice and duplicates the pack chip. Canvas share is 73 % at 1080p (84 % at 4K); the drawer opens by default on step entry at laptop width, which the owner should test for friction.",
+              "graft_ideas": [
+                "Identity-first step: label image, accession, patient, specimen, launch user/purpose and three verification lines before the first high-power view",
+                "Screening panel with per-slide coverage, \"A2-1 not yet viewed\" and a Next-unviewed-slide command",
+                "Sign-out checklist that previews the evidence returning to the LIS and blocks nothing but warns, with Open-first and Mark-Reviewed controls",
+                "Frozen-section consult flow: TAT timer vs CAP 20 min, preliminary-note templates, Request consult, Send to OR",
+                "Contextual tool rail per step with the full rail one toggle away (guided flow off)",
+                "Flow bar at the top and 44 px pen tool bar at the bottom on tablet portrait",
+                "Research vs lab-validated layer markers side by side, overlays off by default in Dx"
+              ]
+            }
+          ],
+          "verdict": "Winner under the UX and accessibility lens: clinical-signout-c (Task-flow), total 49/60 versus 44 for A and 44 for B. C has the strongest hierarchy, the safest sign-out and screening (unviewed-slide guard, evidence preview, identity-first step), the only pen-first tablet tool bar, and the cleanest keyboard behaviour (true focus trap, Esc restores focus, settle-based announcements). Conditions for the final design: (1) move the keymap, palette and sign-out off the canvas centre, following B's dock-anchored panels and popovers (P1 explicitly forbids centred dialogs); (2) adopt B's runtime device-class gating so phones, tablets and iframes always show NAV, ~mag and Pitch unknown, and make the Dx-refused state drop the QA chip and EDID pitch line; (3) raise all dock controls to 24 px on desktop and 44 px under pointer: coarse, cap the phone sheet at 40 %, and put the canvas before the rail in tab order; (4) fix the status-strip overflow by allowing one notice plus chips, never two notices; (5) borrow A's canvas-share discipline (command echo, summon tabs on the navigator, radial at the pointer) so the Examine step can collapse toward A's 92 % canvas on the diagnostic display, and B's canvas-floor governor to make that collapse mechanical and explained. Concept A should not win: its modal has no focus trap, its sign-out dialog misreports slide coverage with no unviewed guard, and its 10 px cluster tabs fail legibility at 4K and target size on touch. Concept B is the runner-up and the source of the most reusable mechanisms (governor, Dx gate checklist, non-modal hand-off, registry-generated keymap)."
+        },
+        {
+          "judge": "engineering",
+          "scores": [
+            {
+              "concept": "clinical-signout-a",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 7,
+              "feasibility": 8,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "Canvas-maximal is the cheapest shell of the three: one-column grid, a navigator cluster composed from existing tray/tab/navigator classes, one drawer slot and 40 page-level classes (B has 88, C 59); measured canvas share is 92.6 % at 1920x1080 and 96.3 % at 4K, far above P1. Every live element maps to a named contract (launch context, state document, layer API, tileSettled/renderingcomplete, command bus) and the single command registry drives keys, palette, radial, bottom bar and the keymap, which is exactly how a Lit shell over the command bus should be built; the headless probe confirmed ?, Ctrl+K, ], Shift+Enter and presets work and Alt/F-keys are ignored. The engineering debits: the radial is declared a transient GPU layer (custom engine work: glyph-atlas icons plus hit testing) or else it is DOM over the canvas; the command echo makes the top-left HUD box change height during gestures (the only chrome geometry change the probe found in any concept, hud#hudTL grew from 1 to 2 lines), so it must become a fixed-height slot; the mock never sets .is-gesturing and rebuilds the drawer/badge/tool states on every wheel notch (182 chrome mutations, 66 childList, for one drag plus six notches), a mock artefact but also a sign that HUD and chrome updates are not separated; keys stay bound in the embedded iframe variant despite the rationale's rule-5 claim; typed zoom is a toast stub. Workflow-wise it is fast for a keyboard-first expert but weak for AI-assisted screening (layers live behind Shift+H in a single slot shared with marks and compare), the sign-out dialog carries no unviewed-slide warning (B and C both do), and discoverability rests on 10 px summon-tab labels and a right-click. Targets are mostly fine (one 22 px strip button) and reduced motion is honoured, but tablet touch targets in the cluster (30 px thumbnails, 26 px tabs) fall below the 44 px touch rule even though the bottom bar is 44 px.",
+              "graft_ideas": [
+                "One command registry object that renders the keymap sheet, the palette, the rail/bottom bar and the key handler, with reserved dictation keys struck through everywhere",
+                "Command echo under the identity line as the visible twin of the proposed commandInvoked event (implemented as a fixed-height HUD slot so it never re-lays out)",
+                "Summon-tab key hints printed on the navigator cluster so the keymap is taught in place",
+                "Hanging-protocol line in the case panel (opened fit-to-slide, H&E before IHC) and the snapshot 'Label image included' tier chip",
+                "Radial tool at the pointer as a later, DOM-only, static-time option (never during a gesture)"
+              ]
+            },
+            {
+              "concept": "clinical-signout-b",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 8,
+              "feasibility": 6,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "Workbench is the best-engineered mock (syncCam updates HUD text only during a drag, .is-gesturing is set on pointerdown, list rebuilds happen in afterGesture at pointerup: 67 chrome mutations all at gesture end and zero chrome geometry change) and it is the only concept that binds no keys inside the EHR iframe, which is principles \u00a74.5 rule 5 by construction. It is also by far the most custom shell for an MVP: two docks with accordion sections that can be hidden, moved between docks and reordered, keyboard-resizable splitters, a canvas-floor governor that reads computed styles and predicts share, five layout presets remembered per surface and user, an activity bar, three collapsed forms (slide strip, identity ribbon, horizontal slide row), a floating inspector, dock-anchored popovers, and an analytics panel with coverage bars and a dwell histogram; 88 page-level classes against 40 and 59. Two panels imply contracts the plan does not have: 'Clinical context from LIS' (narrative history, prior accessions, specimen parts) and the frozen TAT chip need a read API from the integration service that is outside the launch-context contract of plan 04 \u00a78 / plan 12 \u00a71.1 and carries PHI, so they are a Design note, not a graft. Smaller debits: typed zoom uses window.prompt(), which sandboxed Hyperdrive iframes block; dragging a splitter re-lays out the grid and therefore resizes the engine surface every frame; segmented items are 18 to 20 px tall and the splitters 7 px wide (keyboard alternatives exist). The canvas share is 75 % at 1920 and 70.6 % at 1440 with the inspector floating over tissue, so the workbench promise is only fully realised at 4K; the top bar is crowded enough that container queries have to drop the worklist chip, slide and meta below 1600 px. Accessibility is strong: real buttons for accordions, role=separator with arrow keys, toolbar and listbox roles, polite/assertive regions, two-click measure. The Dx gate as a six-row checklist, the live non-modal sign-out section that updates its '2 slides not opened' warning while screening, and the 'AI-flagged regions viewed at >= 10x' line are ideas worth keeping regardless of the winner.",
+              "graft_ideas": [
+                "Dx gate rendered as a checklist (build, window, tier, attestation, QA, self-check) with the first failure's exact refusal string, reused by the strip and live region",
+                "Sign-out hand-off as a live-updating non-modal section with the unviewed-slide warning and an 'Open A1-2' action, not only a modal",
+                "The 70 % canvas floor as an explicit per-surface layout table (static, decided at breakpoint) rather than a runtime measurer; keep the dock header note that says what collapsed and why",
+                "No keys bound inside the EHR iframe; Ctrl+K there shows the companion-window notice",
+                "'AI-flagged regions viewed at >= 10x' via geometry pointInPolygon x viewChanged, surfaced in the sign-out evidence",
+                "Collapsed Explorer as a slide strip (label thumbnail, accession, slide thumbnails) so identity and tray never disappear",
+                "Layer visibility set to the Dx default (AI off, label image not collapsible) on Dx entry, with the 'pinned \u00b7 Dx' marker"
+              ]
+            },
+            {
+              "concept": "clinical-signout-c",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 8,
+              "distinctiveness": 7,
+              "rationale": "Task-flow is the most buildable concept that still shows the whole must-show list: one standard rail/dock frame from base.css, one dock whose five step panels are static markup toggled by a class, per-step tool visibility done with the hidden attribute, the step list rendered from one array into rail, flow bar and dialog, dialogs cloned from templates, and every control mapped to a named contract (flow.goto on the command bus is shell-only state). It implements .is-gesturing on drag, wheel and flyTo, forces transition:none on the canvas, keeps chrome geometry fixed during gestures (probe: zero chrome geometry change at all five viewports), and its measured canvas share is 73.7 % at 1920, 84.2 % at 4K, 86.6 % at 1440 (drawer closed) and 85.7 % on the tablet. The one performance fault is that paintView writes dock state every frame (216 attribute writes in a short drag plus six notches: preset aria-pressed, presetCount text, canvas aria-label, strip indicator class); in the product those writes move to settle, a small fix, but the design should state that only HUD text updates per frame. The TAT timer and 'received 09:41' need LIS timestamps that are not in the launch-context contract, and the preliminary note write-back is Clinical-IH-only FR-I6 (v1), both correctly labelled; keys remain bound inside the iframe variant, which is acceptable for the embedded compact viewer (Design note D7) but not for the controller iframe. Workflow fit is the strongest: identity before pixels as step 1, a coverage contract in the Screen step, AI overlays off by default in Dx with vendor/status/marker rows, a sign-out checklist that warns about A2-1 and offers to open it first, and a frozen consult that is the same flow with two steps renamed; nothing is gated and Shift+G collapses the flow to plain tabs for experts. Device fit is the best of the three: 84 px rail at 4K, flow bar plus 44 px bottom bar plus a <= 40 % sheet on tablet portrait, pen draws while a finger pans with pinch handled, and the phone collapses the flow bar to numbers with the current label. Clarity and accessibility are good (aria-current=step, shape not colour for attention, focus trap in dialogs, live regions, reduced motion disables flyTo), with five 22 px segmented buttons and 10 px uppercase rail labels as the main target/legibility debits. Its ideas are less novel than A's or B's, which is partly why it is cheaper.",
+              "graft_ideas": [
+                "Five-step reading order (Open, Screen, Examine, Annotate, Sign-out) as the default dock tab order even without the step header, so power users get plain tabs with the same contents",
+                "Identity card as the first panel: label image, launch user/role/purpose, identity-check line and display attestation line",
+                "Screen step coverage contract: per-slide coverage bars, 'A2-1 not yet viewed' status line and Next-unviewed-slide action; viewed state returned at sign-out",
+                "Sign-out checklist listing exactly what returns to the LIS (status, viewed state, SR/ANN evidence, AI accept/reject, render mode and display record, audit) mirrored in the hand-off dialog",
+                "AI overlay classes drawn in palette slots the pathologist's own classes never use (teal/amber dashed), with the lab-validated marker beside the FR-R11 marker",
+                "Embedded iframe collapse to a step chip plus tray chips plus 'Open on diagnostic display'",
+                "Frozen consult as the same flow with Note/Send steps and templates; Dx refused with the Tier-2 string"
+              ]
+            }
+          ],
+          "verdict": "Recommend Concept C (Task-flow) as the base for the final clinical sign-out screen, with grafts from A and B. From the front-end/engine lens C is the design that covers the entire must-show list on one standard rail/dock frame with the least custom component work that still has a credible tablet/pen story: a single dock, static step panels, per-step tool visibility by attribute, templated dialogs, .is-gesturing implemented on drag/wheel/flyTo, and no chrome geometry change during gestures at any of the five viewports (headless probe). Its one performance defect (paintView writing dock button state every frame, 216 attribute writes per short gesture) is a one-afternoon fix: only HUD text may update per frame, everything else at settle. Concept A is the cheapest shell (40 custom classes, 92.6 % canvas at 1920) and its single command registry, command echo and summon-tab key hints should be carried over, but it depends on an engine-drawn radial for tool access, grows a HUD box during gestures, rebuilds drawers per wheel notch, binds keys inside the iframe, and leaves AI-assisted screening and the unviewed-slide hazard weak. Concept B is the best-structured mock (HUD-only updates during drag, no keys in the iframe) and contributes the Dx-gate checklist, the live non-modal hand-off section and the AI-flagged-regions-viewed line, but as an MVP shell it is the most expensive by a wide margin (two docks, movable sections, resizers that resize the engine surface per frame, a runtime governor, five persisted presets, analytics) and two of its panels assume a clinical-context/timestamp read API that the launch-context contract does not provide; its 70 to 75 % canvas on 1440/1920 displays is also the weakest of the three. Design notes for the final: replace C's per-frame dock writes with settle-time updates, adopt B's no-keys-in-iframe rule for the controller iframe, treat the TAT/clinical-context data as a new integration-service contract to be filed with an FR- id, and keep A's radial as a static-time, DOM-only, post-MVP option."
+        }
+      ],
+      "synthesis": {
+        "summary": "Final clinical sign-out viewer (Stoipath Clinical-IH / Dx) written to /home/user/Stoipath/wsi-viewer/design/screens/final/clinical-signout.html (240 KB, self-contained, links ../../design-system/tokens.css and base.css by relative path, no network, 88 data-live markers, 21 data-synthetic markers). Structure is Concept C's five-step flow (Open \u2192 Screen \u2192 Examine \u2192 Annotate \u2192 Sign-out: 72 px step rail with per-step tools, one dock panel per step, N/Shift+N, Shift+G to plain tabs, K for the panel; flow bar + 44 px bottom bar + \u226440 % sheet on touch; Hyperdrive iframe as step chip + tray chips + hand-off). Grafts from B: static per-surface layout policy (panel open at \u22651600 px, closed on laptop/iPad with the reason printed in the dock header and the measured share in the review header), seven-row Dx gate checklist with the verbatim refusal string and a disabled Enter, the Sign-out step as a live non-modal hand-off list that updates while screening (confirm dialog focuses \"Open A2-1 first\" when a slide is unviewed, \"Return to LIS\" otherwise), runtime device-class gating (coarse pointer / <1080 px / iframe \u2192 NAV, ~20\u00d7, Pitch unknown, QA chip dropped), clinical context from the LIS and the frozen TAT timer (marked as a proposed read contract), palette rows for slides with viewed state/bookmarks/steps/layouts, registry-generated keymap with filter and presets, no keys bound inside the iframe (Ctrl+K shows the companion-window notice). Grafts from A: the navigator becomes the corner cluster (viewport + trail, label image, three slide thumbnails with viewed state, five summon tabs with printed keys on a 3+2 grid) whenever the panel is closed, a fixed-height command-echo HUD slot, the in-viewport AI legend with the FR-R11 marker, the measure-tool status line, and the 24 px strip sign-out button. All dialogs are anchored over the dock column (palette over the rail column) with widths chosen per breakpoint so they never cross the central 50 % zone; the dialog layer is non-blocking and click-outside closes. Twelve degraded states are switchable (cold 4G, offline pack, slow translator, tile errors, Dx refused, QA overdue, Dx dropped, identity mismatch, session expired, manifest 503, GPU context loss) using the principles \u00a75 microcopy verbatim; one strip notice at a time. A collapsed \"Design decisions\" section lists what was taken from which concept and why, the judge disagreements and their resolution, fixes applied across all three concepts, the engine-contract map, canvas shares per surface, design notes DN-F1 to DN-F9 and known mock weaknesses. Screenshots at the six required viewports plus twelve state shots are in /home/user/Stoipath/wsi-viewer/design/screens/final/shots/; every screenshot was inspected and the problems found were fixed before finishing.",
+        "files": [
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/clinical-signout.html",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-3840x2160.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1440x900.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1024x1366.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1366x1024.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-390x844.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-cluster.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-signout-dialog.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-dxgate-refused.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-keymap.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-palette.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-overlay-tabs.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-tileerror-dx.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1920x1080-mismatch.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1440x900-drawer-open.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1440x900-embedded.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-1024x1366-sheet.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/clinical-signout-390x844-sheet.png"
+        ],
+        "notes": [
+          "Measured canvas share at rest (headless Chromium, app frame excluding review chrome): 4K 84.0 % (panel open), 1920 73.2 % (panel open; 86 % with the cluster), 1440 85.8 % (panel closed by policy), 1366x1024 touch 86.2 %, 1024x1366 touch 84.8 %, 390x844 81.8 %; embedded iframe 91.8 %. Defaults on touch surfaces select the frozen-consult variant (Consultation \u00b7 preliminary only), NAV, ~20\u00d7 and Pitch unknown.",
+          "Headless audit at all 18 shots: no console or page errors, no horizontal overflow, no visible target under 24 px (44 px under pointer: coarse), no UI in the central 50 % x 50 % zone except the user-opened dock sheet on portrait tablet/phone (documented as DN-F5). Gesture probe (drag + six wheel notches at 1920): zero chrome geometry change, zero dock/top-bar/navigator mutations; the only chrome writes are the strip indicator flipping to Rendering\u2026/Sharpening (class + label) at gesture start; tray, checklist, preset state and aria labels update at settle only. A gesture now cancels any pending settle timer.",
+          "Behaviour verified by probe: N/Shift+N move steps without reopening the laptop drawer; Shift+G yields plain tabs with all 17 tools; K closes the panel and the navigator grows into the 320 px cluster; Shift+Enter opens the anchored sign-out dialog with focus on 'Open A2-1 first' (focus trapped; Esc returns focus to the canvas); after all slides are viewed the warning disappears and focus lands on 'Return to LIS'; Shift+D leaves Dx, a second Shift+D opens the 7-row gate (Enter disabled when a row fails: QA overdue, no attestation, tablet, iframe, RUO, mismatch); Ctrl+K palette finds 'Open slide A2-1 \u00b7 not viewed'; ? opens the keymap on its filter; right-click opens the context menu at the pointer; in the iframe variant N, Shift+Enter and Ctrl+K do nothing except the companion-window notice; resizing 1920\u21921440 closes the panel by policy and 1440\u21921920 reopens it; tile errors in Dx switch the strip to 'Not complete \u2014 do not interpret' after 2 s with an assertive announcement.",
+          "Judge disagreements decided: laptop drawer closed by default (static policy table replaces C's DN-C4 and B's runtime governor); all dialogs anchored, none centred (ux-a11y condition 1); one dock, not B's two (DN-B1); the step rail stays but nothing is gated (pathologist's wizard concern); B's clinical context and TAT kept but labelled as a proposed integration-service contract (engineering).",
+          "Design notes to file (listed in the page): DN-F1 new bindings N, Shift+N, Shift+G, K (and Shift+Q from map B) against the command registry; DN-F2 scale bar 100 \u00b5m at 20\u00d7 under the 80\u2013200 px rule (the brief's '200 \u00b5m at 20\u00d7' cannot hold at DPR 1); DN-F3 LIS clinical context and frozen timestamps need an FR- id (PHI, outside the launch-context contract); DN-F4 layout policy table makes principles \u00a77 explicit; DN-F5 sheets on touch cover the lower central zone while open; DN-F6 A's radial deferred, plan \u00a74.1 context menu shipped; DN-F7 label-image tier on an in-lab iPad; DN-F8 preset ladder per D8; DN-F9 RUO product shows the launch-refused plate.",
+          "Mock limitations (also in the page): synthetic SVG tissue; sharpening/Dx verifier simulated by timers; rotation, curtain, snapshot, B/C/\u03b3 panel are toast stubs; only lock sync honoured; coverage not computed from true viewport union; measurement labels scale with zoom; tested in headless Chromium only (mouse, keyboard, touch taps), no Apple Pencil hover or pressure. Screenshot and probe scripts live in the session scratchpad (/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/final/shoot.js and probe.js), not in the repo. No git commands were run."
+        ]
+      },
+      "ranking": [
+        {
+          "concept": "clinical-signout-c",
+          "angle": "Task-flow",
+          "weighted": 8.03,
+          "judges": 3,
+          "by_judge": {
+            "pathologist": 8.25,
+            "ux-a11y": 8.05,
+            "engineering": 7.8
+          },
+          "criteria_mean": {
+            "workflow_fit": 8.33,
+            "clarity": 8.33,
+            "accessibility": 7.67,
+            "feasibility": 7.33,
+            "device_fit": 8.0,
+            "distinctiveness": 8.33
+          }
+        },
+        {
+          "concept": "clinical-signout-b",
+          "angle": "Workbench",
+          "weighted": 7.32,
+          "judges": 3,
+          "by_judge": {
+            "pathologist": 7.55,
+            "ux-a11y": 7.35,
+            "engineering": 7.05
+          },
+          "criteria_mean": {
+            "workflow_fit": 7.67,
+            "clarity": 7.33,
+            "accessibility": 7.67,
+            "feasibility": 6.67,
+            "device_fit": 6.67,
+            "distinctiveness": 8.0
+          }
+        },
+        {
+          "concept": "clinical-signout-a",
+          "angle": "Canvas-maximal",
+          "weighted": 7.2,
+          "judges": 3,
+          "by_judge": {
+            "pathologist": 7.2,
+            "ux-a11y": 7.2,
+            "engineering": 7.2
+          },
+          "criteria_mean": {
+            "workflow_fit": 7.0,
+            "clarity": 7.0,
+            "accessibility": 6.67,
+            "feasibility": 8.33,
+            "device_fit": 7.0,
+            "distinctiveness": 8.0
+          }
+        }
+      ],
+      "winner": "clinical-signout-c"
+    },
+    {
+      "screen": "education-module",
+      "run": "wf_2dca9dfb-777",
+      "judges": [
+        {
+          "judge": "pathologist",
+          "scores": [
+            {
+              "concept": "education-module-a",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 7,
+              "feasibility": 8,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "As the 4K reader this is the concept I would reach for first: 92 % canvas at 1920 and 96 % at 3840 (measured), two labelled edge handles, a radial tool wheel under the pointer with its keys printed, and one fixed reading surface (the bottom-centre step card) that doubles as the caption track and the polite live region, so I never hunt for the question. The keyboard path works end to end (Shift+Enter opens six candidates with Fly there, Enter commits, Shift+R reveals, and the live region speaks 'Revealed. Your mark overlapped the lesion by 62 percent'); the palette's 'Not in this build' group that answers 'dx' with 'Dx mode is not part of Stoipath Learn' is the clearest mode statement of the three. For teaching, though, the course hierarchy is hidden behind Shift+K, the stepper is a 4 px rail of ticks a student will not notice and a thumb cannot hit (28 px tall under a coarse pointer), and the design's own Shift+R overload (reveal while committed, rotate otherwise, DN-A2) is exactly the kind of muscle-memory trap a resident who alternates between the Learn and clinical builds will fall into. Measured misses: the step card intrudes into the central 50 % zone at 1440\u00d7900 and on the phone, where the sheet takes 41 % of the viewport; the confidence buttons are 18 px tall (SC 2.5.8) and the card toolbar is 40 px on touch; the candidates dialog lands focus on the Close button rather than the list; and after a fly-to the mock exposes a dark-grey uncovered strip beside tissue (a mock artefact, but it is the one 'blank canvas' a pathologist will see in the review). Feasibility is good because there is so little chrome and panels only change between gestures, but the Pencil-squeeze radial depends on Pencil Pro hardware. Phone resident variant (differential chips, timer, offline chip in the HUD, sharpness dot) is well judged. Director analytics drawn as a layer over the actual slide is the view I would use in a resident meeting.",
+              "graft_ideas": [
+                "Step card as a caption track at bottom-centre: tour text, item stem, feedback and reveal all appear in the same fixed place and are the same string the live region speaks",
+                "Edge handles that stay visible and print their key (Module \u21e7K, Step K) so folded chrome is never a mystery",
+                "Radial tool wheel at the pointer (right-click / long-press / Pencil) with each tool's key printed, as the 4K expert mode where the rail is folded",
+                "Command palette group 'Not in this build' that answers a Dx/sign-out query with the refusal microcopy",
+                "Director analytics as overlay layers on the real slide (dwell as luminance, expert path, cohort median path) with an aggregate-only guard",
+                "Offline-pack and sharpness state shown in the HUD on the phone where the strip has no room",
+                "'Choose a region instead' button on the item card itself, not only behind a shortcut"
+              ]
+            },
+            {
+              "concept": "education-module-b",
+              "workflow_fit": 6,
+              "clarity": 6,
+              "accessibility": 7,
+              "feasibility": 8,
+              "device_fit": 6,
+              "distinctiveness": 6,
+              "rationale": "The Workbench is the safest engineering bet and the one whose grammar transfers directly from the clinical and research builds: rail, left panel, dock, status strip, Ctrl+K palette with everything (40 entries) and a keymap that greys out the site's reserved dictation keys. Its keyboard path is the smoothest of the three (Enter inside the candidates dialog commits, Shift+R reveals, and the assertive region announces 'Revealed ... Posted to gradebook'), the resizers are keyboard-operable separators, and the laptop context bar that keeps the stem, gate and Commit in one neutral 36 px line is a genuinely good idea. As an educator I would refuse the default learner dock as shown: while item 4 'Mark the metastatic focus' is live, the Review queue sits directly under it listing 'Tingible-body macrophages vs metastasis', 'ITC vs micrometastasis threshold' and 'Sinus histiocytosis pattern', which is a differential handed to the student mid-assessment; spaced-retrieval content must never share a screen with a graded item. Clarity suffers from density: the dock body runs at 12 px, the canvas is 74 % at 1920 (passing, but the concept's own look needs \u22652560 px to appear), and the schematic tissue reads as a diagram at every magnification, with the expert path drawn as black lines across the 20\u00d7 field. Measured target misses: Captions/Transcript/Fly-to chips at 22 px, confidence at 18 px, and on an iPad the sheet's Skip, Text alternative and expand/collapse buttons stay 24 px. The phone is the weakest surface of all nine screens I compared: at 0.2\u00d7 the slide is a small thumbnail in a dark field that reads as a blank canvas, and the navigator is hidden. Feasibility is high (fixed grid tracks, panels as details, resize deferred while gesturing). The publish lint that blocks publishing a region item without candidates and a rubric, and the role-swapped Author/Director panel sets, are worth keeping.",
+              "graft_ideas": [
+                "Laptop context bar: when the dock folds, the item stem, zoom gate, text-alternative key and Commit survive as one neutral line outside the central zone",
+                "Enter inside the candidates dialog commits the chosen candidate directly; reveal announces score and gradebook status in the assertive live region in one sentence",
+                "Publish lint in the author studio: keyboard alternative present, text rubric present, no red\u2013green-only meaning, licence and determination logged, captions required before publish",
+                "Palette groups for Fly-to candidates, layout presets and settings so every learner action is reachable by search with its key shown",
+                "Keymap sheet that greys out keys reserved at the site (dictation push-to-talk) and names the active preset",
+                "IoU distribution histogram and item p/discrimination table in the director view, computed only for n \u2265 30",
+                "Keyboard-resizable panels (role=separator with arrow keys)"
+              ]
+            },
+            {
+              "concept": "education-module-c",
+              "workflow_fit": 9,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 9,
+              "distinctiveness": 9,
+              "rationale": "This is how I actually teach a sentinel node: survey at low power, examine the sinus, decide, compare with the attending. The step rail (Open \u2192 Screen \u2192 Examine \u2192 Decide \u2192 Complete) makes that sequence the shell, discloses only the tools each phase needs (no polygon tool during the survey, a real mode-error reducer), and ends every card in one 56 px primary action a thumb or Pencil can hit without looking. The pedagogy details are the best in the set: 'Low-power coverage 64 %' during Screen (scanning rate, not zoom rate, predicts accuracy), an explicit gate rule ('commit now for half credit, or press 5 to jump to 20\u00d7'), a stale-tile reveal guard that honours plan 01's 'a region-marking item with a soft tile is an unfair item', a card header that says GRADED \u00b7 CANVAS or Practice \u00b7 not graded, confidence that 'feeds your review queue, not your grade', the review queue kept to the Complete phase rather than beside a live item, and 'Fly to what you missed' in the compare step, which is the one feature I would demand in any final design. The resident unknown (ranked differential with move up/down buttons, 'Diagnosis recorded 06:12 into the case', reveal as a layer-ACL gate) and the record-a-tour studio (view + ink + voice, a pause over 2 s cuts a step) are both credible, and the Dx-refused variant with DX badge, NAV indicator, 'Consultation \u00b7 preliminary only' chip, label image and the hand-off-to-attested-display dialog proves the shell does not fork per build. The keyboard path completes (Shift+Enter \u2192 C \u2192 Enter \u2192 Enter \u2192 Shift+R \u2192 'Revealed \u00b7 candidate C \u00b7 1/1, modality: keyboard') and announce() is wired to commit, reveal, dialog open, step change and layer toggles. The dents are measurable: the canvas is 70.3 % at 1920 standalone (no P1 margin) because the rail is 84 px and the dock 360; the expanded bottom sheet intrudes into the central zone by the concept's own admission; on an iPad the navigator pan buttons stay 24\u00d724 and the phase buttons are 30\u201338 px wide, which is odd for a tablet-first concept; and the dotted-pattern tissue mock reads as wallpaper at 20\u00d7, the least convincing of the three. Feasibility is a notch lower than A and B because of per-audience step lists, per-phase tool filtering and the peek/expand sheet, but nothing here needs more than the state document, layer ACLs, geometry services and the command bus already in the contracts, and the code already zeroes chrome transitions while gesturing and uses contain: layout paint style.",
+              "graft_ideas": [
+                "Phase rail Open \u2192 Screen \u2192 Examine \u2192 Decide \u2192 Complete with tools disclosed per phase and an 'All tools' switch for experts",
+                "One primary action per step (56 px CTA at the card foot) with Previous / Skip to the question / All keys as a secondary row",
+                "Card header states graded vs practice vs CME post-test vs ungraded unknown, and the LMS/gradebook destination",
+                "Low-power coverage % during the survey step and 'did you view the lower border' feedback; 'Fly to what you missed' in the compare step",
+                "Explicit zoom-gate economics: half credit below 20\u00d7 with 'press 5 to jump to 20\u00d7', highest magnification reached over the focus reported live",
+                "Reveal refused while a tile under the mark is stale (honest pixels inside the item engine)",
+                "Ranked differential with move up/down buttons as the SC 2.5.7 alternative to drag; 'Diagnosis recorded mm:ss into the case'",
+                "Record-a-tour with VIEW/INK/MIC chips, pause-cuts-a-step, and caption requirement before publish",
+                "'Marked by keyboard \u00b7 C' chip and director KPI 'completed by keyboard path / text answer \u00b7 scores identical by modality'",
+                "Hand-off-for-sign-out dialog on a non-attested device in the clinical variant, showing the shell scales without forking"
+              ]
+            }
+          ],
+          "verdict": "Concept C (Task-flow) wins for the practising pathologist-educator: it is the only one whose shell is the teaching method itself (survey \u2192 examine \u2192 decide \u2192 compare), it keeps assessment hygiene (no review-queue hints beside a live item, graded/practice stated on the card, stale-tile reveal guard, explicit half-credit gate), it is the strongest on the iPad with a Pencil and on the phone, and its keyboard path, announcements and Dx-refusal handling are correct. Its fixes are concrete: bring the navigator pan buttons and phase buttons to 44 px under a coarse pointer, buy back canvas at 1920 (64 px rail with labels on hover, or a 320 px dock) so P1 has margin, replace the expanding bottom sheet with a side sheet in landscape, and give the tissue mock a convincing 20\u00d7 field before the owner reviews it. Graft from A the 4K expert mode (fold the rail and dock into labelled edge handles, keep the caption-track step card at bottom-centre, add the radial at the pointer and the palette's 'Not in this build' answer for Dx), and from B the laptop context bar, Enter-commits-from-the-candidates-dialog with the assertive one-sentence reveal announcement, the publish lint, and the keyboard-resizable panels. Cross-concept design note for the principles owner: all three bind Shift+R to reveal while map A binds it to rotate anticlockwise; resolve it once (reveal should take a key that no clinical action uses) before any final screen is built."
+        },
+        {
+          "judge": "ux-a11y",
+          "scores": [
+            {
+              "concept": "education-module-a",
+              "workflow_fit": 6,
+              "clarity": 6,
+              "accessibility": 5,
+              "feasibility": 7,
+              "device_fit": 6,
+              "distinctiveness": 7,
+              "rationale": "The canvas-maximal angle serves the resident and the 4K reader superbly (96 % canvas measured at 3840x2160, 93 % at 1920) and the single bottom-centre step card is a sound idea: tour text, stem, feedback and reveal always appear in one place and the card is the literal twin of the polite live region (the N key announces 'Step 5 of 9. Confirm with IHC.' correctly). For the Learn persona, though, the top task gets slower before it gets faster: the module list, review queue and settings sit behind two 28 px edge handles and a 4 px stepper rail, tools are behind right-click/long-press, and the rationale itself concedes a formative test is needed. The card floats over tissue and, at 1440x900, overlaps the central 50 % zone (11.6k px\u00b2 measured) despite the claim that it never does; on the phone the sheet is 44 % of the viewport at rest and the navigator is still shown. Accessibility is the weakest of the three in the runtime checks: the candidates dialog does not trap focus (Tab walks out of an aria-modal dialog), initial focus lands on Close, candidates are not an arrow-key radiogroup, the stepper ticks' only focus indicator is a 4 px bar turning the same grey as the current step (weak 2.4.7), the confidence segments are 18 px tall (2.5.8), and on coarse pointers 22 of 31 targets are under 44 px including the primary Commit button at 24 px and the tour controls at 40 px. There are no headings in the DOM, so screen-reader users cannot jump to the item. Product and mode are unmistakable on desktop, but the full Learn string disappears at 1024 wide where the IA keeps it. Reduced motion is handled well (transitions zeroed, a HUD chip says 'fly-to jumps'), degraded states live honestly in the strip, and the keymap, palette and launch-refusal plate are complete. A strong expert viewer; not yet a safe first-run learner shell.",
+              "graft_ideas": [
+                "Radial tool menu at the pointer with the key printed on each item, as the pen/touch transient layer (Pencil squeeze, long-press)",
+                "HUD chip 'Reduced motion \u00b7 fly-to jumps' so learners see why a fly-to became a cut",
+                "Card text and polite live region share one string (captions are the SR text)",
+                "'Score pending \u00b7 posts to the gradebook on reveal' line before S27, then 'Posting\u2026' in the strip",
+                "Launch-refusal plate for a wrong-product launch that keeps the LEARN badge above it",
+                "Thin progress rail along the canvas top edge with per-step tooltips (rebuild with 24 px targets and a real focus ring)",
+                "Keymap sheet lists 'Never bound: F1\u2013F12, Alt' explicitly and names the preset"
+              ]
+            },
+            {
+              "concept": "education-module-b",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 7,
+              "feasibility": 8,
+              "device_fit": 8,
+              "distinctiveness": 7,
+              "rationale": "The Workbench is the most conventional and the best-engineered shell: panels are grid tracks beside the canvas rather than DOM over it, resizing is deferred while gesturing, the dock is a keyboard-resizable role=separator, and the measured canvas share holds P1 at every width (74 % at 1920, 87 % at 1440, 88 % tablet, 85 % phone). Its laptop story is the strongest of the three: when the dock folds, a one-line context bar keeps the stem, the zoom gate, the \u21e7\u21b5 text alternative and Commit visible, and the zoom-gate chip sits next to the magnification readout where the eye already is. The keyboard model passed every runtime check: visible focus on all 40 tab stops, the candidates dialog traps focus, opens on the current candidate, moves and checks with arrow keys, Escape returns focus to the canvas, and the Ctrl+K palette surfaces steps, candidates, layout presets and settings with their keys, which is the discoverability layer the IA asks for. Hierarchy is the cost: the item card is third in a dock stack under the tour player, Commit is pinned to the dock foot (about 900 px below the stem at 4K), and the author page is dense. State communication is good but incomplete for screen readers: pressing N announces 'Flew to 40\u00d7' and not the new step title. Target sizes slip in the small print: chips 22 px and confidence segments 18 px tall on desktop, and on tablet the 'Text alternative' and 'Skip' buttons are 24 px tall while the expand/collapse icons are 24 px squares; the expanded phone sheet reaches 66 %. The module title truncates at 1440 and is dropped below 1024 (only 'PATH 611 \u00b7 4/9' remains), which weakens P4 on tablets. Degraded states use the \u00a75 strings verbatim with a Retry chip, captions default on with a transcript, and the CVD and reduced-motion toggles are in both Settings and the palette. A safe, learnable choice whose main risk is that the learner's question competes with five other panels for attention.",
+              "graft_ideas": [
+                "Context bar in the banner slot when the dock folds on laptops: stem \u00b7 zoom gate \u00b7 \u21e7\u21b5 \u00b7 Commit in one neutral line",
+                "Zoom-gate chip anchored beside the magnification readout ('now 5\u00d7 \u00b7 need \u2265 20\u00d7 [5]')",
+                "Command palette rows for every candidate region, step, layer and layout preset with their keys",
+                "Keyboard-resizable dock via role=separator with arrow keys; pin as a logged user choice",
+                "Candidates dialog pattern: focus opens on the current candidate, arrow keys move and check, Fly there per row",
+                "Sheet 'peek' state with grabber plus an Expand button (drag alternative) at about 230 px",
+                "'Expert's view' collapsible with thumbnail, legend and your-vs-expert stats, unlocked at reveal",
+                "Author studio button 'Sign-out annotations \u2192 teaching layers' and the publish lint tagging candidates A\u2013F as required"
+              ]
+            },
+            {
+              "concept": "education-module-c",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 8,
+              "distinctiveness": 9,
+              "rationale": "Task-flow makes the learner's top task both faster and safer: every step has exactly one primary action at a fixed place (a 52\u201356 px CTA that \u21b5 also runs), the card states the item's status in two chips ('Awaiting your answer', 'Zoom gate 20\u00d7 met'), the zoom gate is reported honestly as the highest magnification reached over the focus, reveal is a gate on itemAnswered that refuses while a tile under the mark is stale, and confidence is labelled 'feeds your review queue, not your grade' with a calibration line at reveal. 'Mark without a pointer' is a visible secondary button in the card and a tool in the rail, not a hint in small print, and the author cannot publish a region item without an alternative, which is NFR-A5 enforced rather than recommended. It is the only concept with zero sub-24 px targets on desktop; every tab stop shows a ring; the candidates dialog has an h2, tabs for 'Answer in text', a focus-trapped arrow-key radiogroup opening on the current candidate, and Escape returns focus to the canvas; on a step change focus moves to the task card's h2 (tabindex -1), a sound screen-reader pattern, though the polite region stays empty so a user not following focus hears nothing. The resident phone variant reorders a ranked differential with up/down buttons (SC 2.5.7) and the tablet peek sheet is 12 % with the CTA thumb-reachable. The costs are real: the stem is not visible in the peek state on tablet or phone (title and CTA only), the expanded sheet reaches 70 % on the phone and enters the central zone, the 84 px step rail squeezes P1 to about 71 % at 1920, at 4K the CTA sits far below the content in a mostly empty 400 px card, and the sharpness indicator is an unlabeled span that reduces to a bare dot at rest (A and B make it a labelled button). The linear flow will annoy free-roaming residents even with Skip to the question and the All tools switch. Product, mode and degraded states are unmistakable, the director page is a legible dashboard with an aggregate-only guard and a keyboard-path column, and the Dx-refusal variant proves the shell scales to clinical without forking. On a UX and accessibility lens this is the concept to build from.",
+              "graft_ideas": [
+                "One primary action per step at the card foot, 52\u201356 px tall, bound to \u21b5; secondary actions in a smaller row beneath",
+                "'Mark without a pointer \u21e7\u21b5' as a visible button in the item card and as a tool in the rail",
+                "Honest zoom-gate rule (highest magnification reached over the focus) with the met/unmet chip",
+                "Reveal as a gate: hidden layer ACL revealOn(itemAnswered) plus refusal while a tile under the mark is stale",
+                "Calibration feedback line: 'You said Fairly sure and were right: this item comes back in 9 days'",
+                "Move focus to the task heading (h2 tabindex=-1) on step change, and also announce the step in the polite region",
+                "Publish checks that block a region item without a keyboard or text alternative",
+                "Ranked differential reordered with up/down buttons on the phone (SC 2.5.7 alternative to drag)",
+                "'Skip to the question' and an 'All tools' switch as the power-user escape hatches",
+                "Director analytics as a separate page with KPI tiles, an aggregate-only guard and a keyboard-path column in item statistics",
+                "'Fly to what you missed' in the compare-with-expert step"
+              ]
+            }
+          ],
+          "verdict": "Concept C (Task-flow) wins on the UX and accessibility lens, with B (Workbench) a close second and A (Canvas-maximal) third. C is the only concept that passed the target-size check cleanly on desktop, has the most complete dialog semantics (heading, tabs, focus trap, arrow-key radiogroup) and the clearest hierarchy for the learner: one status line, one question, one action, with the non-pointer path a first-class button. B has the best keyboard engineering and the best laptop and desktop fit (context bar, zoom-gate chip at the readout, palette as discoverability layer) and should donate those to the final design; its weakness is that the learner's item competes with a five-section dock. A is the expert's viewer and the 4K share is unmatched, but it fails focus trapping, has weak focus indication on the stepper, under-sizes its primary action on touch and hides the course shell behind edge handles; its radial, reduced-motion chip and caption-track card are the pieces worth carrying. Design notes for the plan owner regardless of winner: (1) the design-system HUD backdrop at alpha 0.62 leaves 11 px secondary lines at 3.48:1 over tissue in all three; raise the alpha or the text size; (2) chrome text has a median of 11\u201312 px at 4K DPR 1 in all three against the IA's 13\u201314 px; (3) all three hide the full Learn string below 1080 px wide although IA \u00a77 keeps it at 1024; (4) the 'quiet' sharpness label (opacity 0) leaves a bare dot at rest, which is colour-and-shape only for sighted users; keep a low-emphasis label; (5) expanded bottom sheets exceed the 40 % rule on phones in all three and C's peek hides the stem; show the stem in the peek; (6) the \u21e7R rotate/reveal conflict flagged by A's DN-A2 needs resolving in principles \u00a74.5. Recommended final: C's flow shell and item engine, with B's context bar, zoom-gate chip, palette coverage and dialog focus model, A's radial for pen and touch, and a stem-visible peek sheet."
+        },
+        {
+          "judge": "engineering",
+          "scores": [
+            {
+              "concept": "education-module-a",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 6,
+              "feasibility": 5,
+              "device_fit": 8,
+              "distinctiveness": 8,
+              "rationale": "Canvas-maximal folds regions C and D into edge handles, a 4 px step rail on the canvas top edge, a bottom-centre step card and a pointer-anchored radial, giving a 92-96 % canvas and the best 4K experience of the three. Its engine-contract map is complete and it is the only concept that renders the FR-R0 wrong-product refusal plate (launch asks Dx or Clinical-IH) with the LEARN badge kept above it. From the shell engineer's seat it is the costliest to make frame-safe: 133 non-SVG DOM nodes live inside the canvas region (step rail with tooltips, pins, handles, card, drawer, recording bar, radial), the card is a scrolling text-selectable panel over tissue re-rendered by innerHTML, and the mock measures its own height in rAF to lift the HUD; none of this is forbidden between gestures but it is the most DOM a shell must keep still, and the mock never pans or wheel-zooms, so P2 is untested rather than demonstrated. The radial takes contextmenu and a 450 ms long-press on the canvas, which needs pointer-capture arbitration against the engine's touch/pen pan start and only gets the Pencil-squeeze trigger on the native shell. It reuses none of the design-system dock/rail/bottombar components; radial menu, step rail, edge handles, step-card composite and recording bar are all net-new, so it implies the most custom work for v0.7. Accessibility is weaker in the probe: the candidates dialog does not trap focus, the confidence chips are 18 px, and under a coarse pointer the 28 px rail ticks and handles fail 44 px. The mock-only backdrop-filter on missing tiles and the CSS-blur softness must not be carried into the product. Honest about its risks (discoverability, hidden hierarchy, two new keys K and Shift+K) and about the Shift+R reveal/rotate conflict that all three inherit from the principles document.",
+              "graft_ideas": [
+                "Wrong-product launch refusal plate (FR-R0 build matrix) with badge and label string kept visible above it",
+                "'Reduced motion \u00b7 fly-to jumps' HUD chip that states the reduced-motion behaviour on the canvas",
+                "Director analytics (dwell heat, expert and cohort paths) drawn as engine layers over the slide rather than only as a dashboard thumbnail",
+                "Every folded surface shows its key on the handle; strip hint '? keys \u00b7 Ctrl K commands'",
+                "Step card auto-summons itself on any step that carries content, so the reading surface has one fixed place",
+                "Typed zoom by pressing Enter on the magnification readout"
+              ]
+            },
+            {
+              "concept": "education-module-b",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 8,
+              "feasibility": 8,
+              "device_fit": 7,
+              "distinctiveness": 5,
+              "rationale": "Workbench is the design system's own grid (rail, optional left panel, canvas, dock, strip) with persistent, resizable, pinnable panels and the command palette as the universal entry point, so it reuses the dock, rail, bottombar, sheet, palette, keymap, tabs, layer-row, item-card and candidate components and adds only a left panel with a keyboard-operable role=separator resizer, a one-line context bar in the banner slot, and a details-stack dock. It is the only concept whose script actually guards chrome against gestures (the resizer is deferred while .is-gesturing) and it implements cursor-anchored wheel zoom in the mock, so its P2 claim is demonstrated rather than asserted; the canvas region carries only 33 DOM nodes (HUD, navigator, context bar). Its P1 arithmetic is explicit and honest: both panels pinned at 1920 x 1080 gives 64 %, so the left panel defaults to the rail there and pins by default only from 2560 px. Panel pin/unpin changes grid tracks and resizes the canvas, which is allowed between gestures but costs a viewport resize frame; the build switch in the demo is the same attribute-flag pattern the plan forbids as a legal boundary, though B states the Learn build never carries those surfaces. The dock is a long top-down stack (player, item, expert's view, review queue, gradebook, accessibility) that reads well on 4K and 1920 but is dense, and on laptops confidence and expert's view sit one click behind the context bar. Accessibility probes are clean: focus trap holds, zero targets under 24 px, candidates answer A-F by letter, aria-keyshortcuts on the palette button, author-side deuteranopia simulation; the 24 px navigator pan buttons under touch are a design-system defect shared with C. One keymap note: the dock key I collides with map A's I (identity panel) if the shell is shared with the clinical builds. It shows v1 features (spaced-retrieval queue, Anki, CME claim, exam timer) now, tagged DB-7, which is fine for settling the dock rhythm but must be hidden at v0.7. The least distinctive of the three; the context bar and the palette groups are the parts worth stealing.",
+              "graft_ideas": [
+                "Build on the design-system grid with a stated P1 arithmetic table per viewport and a pin-by-default threshold (2560 px) instead of inventing new regions",
+                "Panel resizers as role=separator with arrow-key resizing, deferred while .is-gesturing",
+                "Context bar in the banner slot when the dock folds (step, stem, zoom gate, Commit, text alternative) so the prompt is never lost on laptops",
+                "Palette groups (Panels, Layout, Fly to candidates, Settings) with aria-keyshortcuts on the visible search button",
+                "Expert's view block with learner-vs-expert time-to-first-zoom and dwell numbers after reveal",
+                "Layer rows that print the ACL (revealOn(itemAnswered), authorOnly) and provenance line",
+                "Gradebook status line 'Posted within 60 s (AGS)' with the xAPI statement list"
+              ]
+            },
+            {
+              "concept": "education-module-c",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 8,
+              "distinctiveness": 8,
+              "rationale": "Task-flow turns region C into a step rail (Open, Screen, Examine, Decide, Complete) that discloses tools per phase and region D into a task card that always ends in one 56 px primary action; on laptops the card closes and a one-line task bar keeps step, stem and CTA visible, on tablets and phones the rail becomes a flow bar and the card a peek sheet (title plus CTA) above the central zone. The learner's top task is the fastest and safest here: readiness check (streaming or pack, link, captions, keys), gate box reporting the highest magnification reached over the focus, Skip to the question, confidence that feeds the queue not the grade, reveal as an ACL gate, grades queued when offline, and the resident variant with button-reordered differential (SC 2.5.7). Engineering-wise the canvas region stays lean (40 DOM nodes), the task bar is contained (contain: layout paint style), the OS reduced-motion query is honoured and fly-to becomes a cut, the canvas aria-label updates with magnification, and every CTA maps to one command id, which is the cleanest command-bus story of the three. Three feasibility flags: the shell is one DOM switched by html[data-product] across all four builds, which as shipped would be exactly the runtime flag plan 12 section 2 rules out, so the final must compile per product and keep C's flow as shared components; 'will not reveal while a tile under the mark is stale' needs a per-ROI settle query that the quality record (per-frame NTF) does not provide, so it is an FR- backlog item on geometry services; and per-phase tool disclosure requires a phase-aware allowlist in the module schema and the command registry. P1 passes at 1920 x 1080 by 0.3 points with the 84 px rail docked, so there is no margin for widening, and the expanded sheet on tablets intrudes on the central zone (DN-C5, honest). The page is the heaviest (6.6k nodes, 90 inline SVGs) but most of that is demo variants and the director dashboard. Accessibility probes are clean (focus trap, zero small targets at 24 px, tabs with arrow keys in the candidates dialog, caption region aria-live=off); the Tier chip at 24 px and the shared navigator pan buttons fail 44 px under touch. The LMS host frame and the cookieless Platform Storage note make it the only mock that is reviewed in its real iframe context.",
+              "graft_ideas": [
+                "One primary action per step bound to a single command-bus id, with the keyboard key printed on it; task bar at laptop widths carrying step, stem and CTA",
+                "Gate box: 'Zoom to at least 20x' with 'highest magnification over the focus so far' and the half-credit warning on commit",
+                "Readiness check card (slides streaming or from pack, captions, keys, link) before the first tile",
+                "Sheet peek = title + CTA only, with HUD corners lifted above the sheet and a grabber plus Expand button pair",
+                "'Grades queued' offline chip and the 'Posted to gradebook' / failure strings in the same status line",
+                "Author record-a-tour with VIEW/INK/MIC indicators and pause-cut steps; publish blocker for a region item without a keyboard or text alternative",
+                "Director dashboard: 'never viewed at >= 10x' missed-region callout and a keyboard-path count column in item statistics",
+                "Live canvas aria-label that includes the current magnification; caption region with aria-live=off",
+                "Simulated LMS host frame in every education mock so iframe fit is reviewed, not assumed",
+                "contain: layout paint style on fixed chrome bars"
+              ]
+            }
+          ],
+          "verdict": "From the shell-and-engine lens: Concept C (Task-flow) wins on balance (47/60) because it makes the learner's top task fastest, has the best tablet and phone story, and maps every live element onto a contract, with three items to fix before it is the MVP shell: build it per product rather than switching html[data-product], file a per-ROI tile-settle query against geometry services for the 'no reveal on a stale tile' rule, and add a phase-aware tool allowlist to the module schema; P1 at 1920 must be re-checked once the step rail's width is final. Concept B (Workbench, 42/60) is the most buildable shell as drawn: it reuses the design-system grid, adds the fewest custom components, keeps only 33 DOM nodes over the canvas and is the only mock that guards chrome against gestures, so the final design should carry C's flow on B's grid mechanics (pin thresholds, gesture-guarded resizers, context bar when the dock folds). Concept A (Canvas-maximal, 41/60) is the most distinctive and the best on a 4K display, but it is the costliest to make frame-safe (133 DOM nodes over the canvas, radial and long-press arbitration with the engine's pointer model, no design-system region reuse, no pan or zoom in the mock), and it has the accessibility defects (focus trap, 18 px chips, 28 px touch targets); take its refusal plate, reduced-motion HUD chip and analytics-as-layers idea. Design notes for the plan owner: the Shift+R reveal-versus-rotate conflict is in the principles document, not the concepts; the design-system navigator pan buttons are 24 px under touch; B's I key collides with the clinical identity panel if the shell is shared."
+        }
+      ],
+      "synthesis": {
+        "summary": "Wrote the final education-module screen /home/user/Stoipath/wsi-viewer/design/screens/final/education-module.html (314 KB, self-contained, links ../../design-system/tokens.css and base.css by relative path, no network). Base is concept C (Task-flow: phase rail Open\u2192Screen\u2192Examine\u2192Decide\u2192Complete with per-phase tools, one 56 px primary action per step bound to Enter, graded/practice/CME/ungraded card header, honest zoom gate with half-credit rule, readiness check, coverage %, reveal as layer-ACL gate refused on stale tiles, review queue only in Complete, 'Fly to what you missed', resident ranked differential with up/down buttons, record-a-tour, Dx-refused clinical variant). Grafts from B: context bar when the card folds (as a grid row under the top bar, not DOM over the canvas), zoom-gate chip beside the magnification readout, candidates dialog focus model (h2, tabs, focus-trapped arrow-key radiogroup, Enter commits, Escape returns focus to the canvas), one-sentence assertive reveal announcement, keyboard-resizable dock (role=separator, 320\u2013520, deferred while gesturing), palette coverage with aria-keyshortcuts, publish lint, IoU histogram + n\u226530 item stats + keyboard-path column. Grafts from A: Focus mode (Shift+K; labelled edge handles + caption-track card at bottom centre, desktop \u22651600 only), radial at the pointer (right-click/long-press/squeeze, Esc closes, clamped to the canvas), 'Not in this build' palette group with the Learn refusal microcopy, wrong-product launch refusal plate (FR-R0) with the badge kept above, 'Reduced motion \u00b7 fly-to jumps' HUD chip, cohort analytics as layers on the real slide. Judge-measured fixes applied: rail 64 px (80 at 4K) and card 320 px (440 at 4K) so P1 has margin (measured 73.2 % at 1920\u00d71080 with the LMS frame, 83.0 % at 4K); 44 px phase and navigator pan buttons under a coarse pointer; sheet peek shows title+stem+CTA on tablets and a 64 px stem+CTA bar on phones (74.8 % canvas); expanded sheets capped at 40 % on tablets and phones (measured 36.6 % / 40.0 %), landscape uses the side drawer; CTA follows content on pointer surfaces and is pinned on touch sheets; seeded non-lattice H&E tissue (dense lymphocyte cortex, mantle/germinal-centre follicles, sinus histiocytes, capsule, cohesive nest of large vesicular-nucleus tumour cells; DAB recolour for CK AE1/AE3) with the default 20\u00d7 view on the nest edge so the mark and the sinus are both visible; HUD backdrop 0.78 and 12 px secondary lines; sharpness label kept at low emphasis (never a bare dot); Shift+R reveal/rotate conflict resolved by moving reveal to U. Demo strip kept (product, audience, step, item, network, device, launch-asks-for, tile errors, Dx refused, gradebook fails, LTI failed, LMS frame, reduced motion, 44 px, light chrome, CVD, focus mode, radial, live markers, guides) plus URL-hash presets; collapsed 'Design decisions' section lists sources per element, the judges' disagreements and resolutions, the engine-contract map, the measured P1 table and design notes DF-1..DF-8. Screenshots at the six required viewports plus 15 state shots are in /home/user/Stoipath/wsi-viewer/design/screens/final/shots/; a Playwright keyboard-path test (Shift+Enter \u2192 arrows \u2192 Enter commits \u2192 U reveals with assertive sentence \u2192 N/Shift+N \u2192 K \u2192 Shift+K \u2192 Ctrl+K 'dx' refusal \u2192 Shift+R rotates) passes with no console errors, and the DOM measurement reports no central-zone intruders and no targets under 24 px at any of the six viewports.",
+        "files": [
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/education-module.html",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-3840x2160.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1440x900.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1024x1366.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1366x1024.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-390x844.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-3840x2160-focus-mode.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-candidates.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-revealed.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-author-publish.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-director.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-keymap.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-palette-dx.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-cold4g-tileerr-committed.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-radial-reduced-motion.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1920x1080-launch-refused.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1440x900-drawer-compare.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1366x1024-clinical-dx-refused.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1024x1366-tour-expanded-pack.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-1024x1366-light-ug.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/education-module-390x844-res-revealed.png"
+        ],
+        "notes": [
+          "Measured canvas share at rest (app frame, LMS host bar on, review chrome excluded): 3840\u00d72160 83.0 %, 1920\u00d71080 73.2 %, 1440\u00d7900 80.6 %, 1366\u00d71024 82.0 %, 1024\u00d71366 72.8 % (180 px peek), 390\u00d7844 74.8 % (64 px peek). No HUD item, navigator, sheet or drawer intersects the central 50 % zone at rest; no target under 24 px at any viewport; 44 px targets under a coarse pointer.",
+          "Design notes for the plan owner (also in the page's Design decisions section): DF-1 reveal is now U, Shift+R stays rotate (principles \u00a74.5 to amend; Learn additions become N, Shift+N, Space, Shift+Enter, U, Shift+E, K, Shift+K); DF-2 region C is a step/tool rail (64/80 px) and the module schema needs a phase-aware tool allowlist; DF-3 'no reveal on a stale tile' needs a per-ROI settle query on geometry services (FR backlog); DF-4 Tier chip shown as information in Learn, owner to confirm; DF-5 HUD backdrop 0.78, 12 px HUD secondary text, 14 px chrome body at 4K and --target-driven navigator pan buttons should move into tokens.css/base.css; DF-6 base.css allows 60 vh phone sheets while this screen caps at 40 %; DF-7 last step is a completion marker, AGS posts per item; DF-8 mock liberties (seeded SVG tissue, CSS blur for soft, DOM overlays, Machado deutan matrix).",
+          "Judge disagreements resolved as recorded in the page: 4K docked by default with A's layout as Focus mode; B's context-bar content on C's grid-row mechanics; linear flow kept with escape hatches; peek shows the stem, expanded sheets \u2264 40 % everywhere, landscape = side drawer; CTA follows content on pointer surfaces and is pinned on touch; product switch is review-only (separate build per product, stated in About and the decisions section).",
+          "The product/mode variants (Learn, Viewer RUO, Clinical-IH consult, Dx refused/active) and audiences (undergraduate, medical student, resident unknown, CME) remain switchable from the demo strip; URL-hash presets (e.g. #view=director, #item=revealed, #focus=1, #cand=1, #launch=dx, #aud=res&peek=0) drive the screenshot script.",
+          "Review tooling (not part of the deliverable) is in the scratchpad: /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/final-edu/shoot.mjs (six viewports with P1/target measurement), states.mjs (15 state shots), kbtest.mjs (keyboard path and sheet caps), polite.mjs (live-region trace). No git commands were run.",
+          "Known limitations: the tissue is a wireframe stand-in (procedural patterns), not scanner pixels; the fuzzy palette matcher is substring-first; the clinical and RUO cards are proofs that the flow shell does not fork, not the owning screens."
+        ]
+      },
+      "ranking": [
+        {
+          "concept": "education-module-c",
+          "angle": "Task-flow",
+          "weighted": 8.03,
+          "judges": 3,
+          "by_judge": {
+            "pathologist": 8.35,
+            "ux-a11y": 7.9,
+            "engineering": 7.85
+          },
+          "criteria_mean": {
+            "workflow_fit": 8.33,
+            "clarity": 8.0,
+            "accessibility": 8.0,
+            "feasibility": 7.0,
+            "device_fit": 8.33,
+            "distinctiveness": 8.67
+          }
+        },
+        {
+          "concept": "education-module-b",
+          "angle": "Workbench",
+          "weighted": 6.98,
+          "judges": 3,
+          "by_judge": {
+            "pathologist": 6.45,
+            "ux-a11y": 7.3,
+            "engineering": 7.2
+          },
+          "criteria_mean": {
+            "workflow_fit": 6.67,
+            "clarity": 6.67,
+            "accessibility": 7.33,
+            "feasibility": 8.0,
+            "device_fit": 7.0,
+            "distinctiveness": 6.0
+          }
+        },
+        {
+          "concept": "education-module-a",
+          "angle": "Canvas-maximal",
+          "weighted": 6.67,
+          "judges": 3,
+          "by_judge": {
+            "pathologist": 7.2,
+            "ux-a11y": 6.05,
+            "engineering": 6.75
+          },
+          "criteria_mean": {
+            "workflow_fit": 6.67,
+            "clarity": 6.67,
+            "accessibility": 6.0,
+            "feasibility": 6.67,
+            "device_fit": 7.0,
+            "distinctiveness": 7.67
+          }
+        }
+      ],
+      "winner": "education-module-c"
+    },
+    {
+      "screen": "research-annotation",
+      "run": "wf_42384c06-41d",
+      "judges": [
+        {
+          "judge": "ux-a11y",
+          "scores": [
+            {
+              "concept": "research-annotation-a",
+              "workflow_fit": 7,
+              "clarity": 6,
+              "accessibility": 5,
+              "feasibility": 8,
+              "device_fit": 6,
+              "distinctiveness": 8,
+              "rationale": "Canvas-maximal gives the expert annotator the largest working area (84 % at 1920\u00d71080 measured, more at 4K) and the HUD tool line plus one-key drawers (I/K/\u21e7K/U/\u21e7E) make the draw\u2013classify loop fast once learned; the pin-chrome escape hatch reusing the same dock element is a cheap, honest answer to the discoverability risk the concept itself names. Clarity suffers from the top-left stack of three small HUD lines (tool line, first-run hint, LOD notice) at 10\u201312 px that do not scale at 3840\u00d72160 (no 4K shot was shipped; the one I rendered is hard to read), from the drawer tab bar wrapping into two rows at 360 px, and from the legend HUD occluding tissue, including the selected tumour polygon at 1024\u00d71366. Accessibility is the weak lens: the 11 legend buttons are 22 px tall (SC 2.5.8 fail, stacked so no spacing exception) and carry role=listitem, which removes their button semantics; the keymap declares aria-modal=true but does not trap focus; the tool wheel opens dead-centre over the slide and its only keyboard twin is 'the keys themselves'; the tablet sheet covers the scale bar and magnification (confirmed by measurement). Positives: Esc returns focus to the canvas, the curtain handle is a keyboard-operable slider, the live regions are pre-populated, every sampled string is above 5:1 and motion tokens zero under reduced-motion. Feasibility is high because the chrome is thin, the drawer is absolutely positioned (no canvas re-layout) and the wheel/legend are declared GPU layers; degraded states (Soft, tile retry with a Retry button, W60 channel cap explained per row) are the most complete of the three. Device fit is uneven: phone is excellent and minimal, tablet drawing is routed through a long-press wheel rather than visible pen tools, and 4K is unaddressed beyond a wider drawer.",
+              "graft_ideas": [
+                "Tool wheel at the pen tip / right-click with the class ring in the centre (Q, 1\u20139), as a transient GPU layer",
+                "HUD tool line that states what the next click will do: active tool + key, active class + swatch, undo depth",
+                "Class legend with per-class counts, detection-layer totals and LOD state, click-a-class-to-jump",
+                "First-run hint line retired by the telemetry commandInvoked event rather than a coach-mark tour",
+                "Pin-chrome escape hatch that turns the transient drawer into the classic rail + dock without a second implementation",
+                "Per-channel 'cap reached on this device class' explanations in the multiplex panel and a Retry button in the tile-error strip state"
+              ]
+            },
+            {
+              "concept": "research-annotation-b",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 6,
+              "feasibility": 8,
+              "device_fit": 8,
+              "distinctiveness": 7,
+              "rationale": "The Workbench is the most complete answer to US-R1/R2/R3 for long desktop sessions: Library (cohort, slides with coverage bars, layers) and Context (inspector with geometry, QuPath GeoJSON properties, model jobs with a 'Retry at 8-bit tier' failure path, channels, export with byte-identity) each have a fixed home, and the always-visible palette field indexes commands, slides, layers and classes so the keymap is learned by use. Hierarchy and labelling are clear and the product/mode story is strong: full RUO string, H&E/CC0 chips, and a Dx-refusal banner at the top edge with role=status that also reaches the assertive live region. The costs are canvas share (68 % measured at 1920\u00d71080, 61 % with the Library pinned) and density: five Context tabs crowd at 320 px, the laptop panel strip uses rotated vertical text, and the touch bottom bar is eight icon-only 44 px buttons with no visible labels. Accessibility has real strengths (keyboard-resizable dock separators with aria-valuenow, roving arrow keys across tabs, a keyboard-operable curtain slider, focus-mode '\\') and real defects: aria-modal=true on the keymap with no focus trap and focus dropping to body on Esc, aria-selected on plain buttons in the panel strip, two role=listitem buttons, 27 hover-only title tooltips, and a pen hint rendered inside the central 50 % on tablets. Feasibility is good because dock widths are fixed grid tracks so panel re-renders never re-lay out the canvas, and the compare gutter is a 1 px chrome track. Device fit is the best-balanced of the three on paper (4K both docks, laptop drawers plus panel strip, portrait sheets, phone at 80 % canvas, a convincing 1200\u00d7640 widget), held back only by the unlabelled touch bar.",
+              "graft_ideas": [
+                "Always-visible search/palette field in the top bar that indexes commands, slides, layers, classes and bookmarks and shows every shortcut",
+                "Keyboard-resizable docks as role=separator with aria-valuemin/max/now and 16 px arrow steps",
+                "Inspector showing selected-object geometry (area, perimeter, nuclei inside, mean p) and the QuPath GeoJSON properties with the 'RGB restored on export' note",
+                "Slide-tray coverage bars from the engine's visibleCoverage service",
+                "Laptop panel strip so every Context panel stays one click away when the dock is a drawer",
+                "Dx-refusal banner at the top canvas edge with role=status mirrored into the assertive live region",
+                "Failed-job remediation rows ('worker out of memory \u00b7 Retry at 8-bit tier') in the model panel"
+              ]
+            },
+            {
+              "concept": "research-annotation-c",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 8,
+              "distinctiveness": 8,
+              "rationale": "Task-flow organises the workspace around the cohort loop a computational pathologist actually runs (Open \u2192 Screen \u2192 Examine \u2192 Annotate \u2192 Export, 'Slide 14 of 48 \u00b7 3 done', candidate-region queue with Fly there and reviewed marks, a single primary action per step ending in 'Mark slide complete'), and the all-steps toggle and global keys keep the steps from becoming gates; the stated cost is one click between Examine and Annotate and channels sitting one level deeper for the spatial-biology persona. Hierarchy is the strongest of the three (eyebrow, title, purpose, footer action) and product/mode is unmistakable across RUO, Clinical-IH (purpose chip, accession, label image, QA chip, not-validated marker) and the launch-refused plate; the misses are the full RUO string disappearing at exactly 1024 px portrait (the container-query bug A documented and fixed), 9\u201310 px key hints, and a measured 66 % canvas at 1920\u00d71080 against a claimed 71 %. It is the best concept under the accessibility lens: real listboxes with Tab/Space, a radiogroup class picker with keys 1\u20138, the curtain as a native range input (SC 2.5.7), keymap and About as in-panel non-modal overlays that never cover the slide and return focus to the canvas, a canvas aria-label that updates with the step, a sheet grab button with aria-expanded that works from the keyboard, 44 px tools and rows under pointer: coarse, deutan and protan simulation applied to swatches as well as the canvas, and a user reduce-motion toggle. Remaining gaps are small: 18 px CVD segmented buttons, a 20 px sheet handle, a 30 px-wide phone search button, an empty polite live region at load, and no focus trap (though none is claimed). Feasibility is sound (one step registry drives rail, bottom bar, tray, panel, footer and aria-label; the laptop drawer is absolutely positioned) with one caveat: the in-flow sheet changes canvas height on expand, which is a user-invoked re-layout between gestures and must stay out of the gesture path. Device fit is the most considered: it is the only concept that scales rail, panel and body text at 4K, the pen variant shows labelled 44 px tools and a pen-tip palette, portrait yields height instead of covering the slide, and the phone keeps the sharpness state in the HUD, at the price of the lowest phone canvas share at rest (64 % measured).",
+              "graft_ideas": [
+                "Step registry that drives rail, bottom bar, tool tray, panel, footer action and the canvas aria-label from one source",
+                "Candidate-region queue with 'Fly there' buttons and reviewed marks, reusing the Learn keyboard-alternative pattern as the SC 2.5.7 path for screening",
+                "Curtain position as a native range input beside the canvas divider",
+                "Keymap and About rendered as in-panel overlays (aria-modal=false) that never cover the slide and hand focus back to the canvas",
+                "In-flow peeking sheet below 1080 px so the canvas yields height rather than being covered, with a keyboard-operable grab button",
+                "Deuteranopia and protanopia simulation applied to palette swatches as well as the canvas, with the \u0394E00 guarantee stated in the panel",
+                "4K scaling rule: rail 112, panel 460, body 14 px so chrome stays legible at DPR 1",
+                "Export step as a target checklist with manifest preview and byte-identity badge per job"
+              ]
+            }
+          ],
+          "verdict": "Winner under the UX and accessibility lens: research-annotation-c (Task-flow), by a clear margin on accessibility and device fit and level with B on workflow fit and clarity. C is the only concept whose keyboard, pen and touch paths were designed together (native range for the curtain, radiogroup class picker, listboxes with Space-to-fly, non-modal in-panel keymap, aria-expanded sheet, 44 px coarse-pointer targets, 4K text scaling) and whose state communication (step eyebrow, single primary action, RUO/Clinical-IH/Dx variants, launch-refused plate, honest sharpness strip) is readable without hovering. B (Workbench) is the strongest desktop power-user shell and should donate its palette field, keyboard-resizable separators, inspector and laptop panel strip; A (Canvas-maximal) is the boldest idea but fails SC 2.5.8 on its legend, misuses role=listitem on buttons, declares a modal it does not trap, occludes tissue with its HUD legend and sheet, and does not scale at 4K, so it should donate the tool wheel, HUD tool line, legend counts and the pin-chrome escape hatch rather than be the base. Fixes required of the winner before the final screen: restore the full RUO string at \u2265 1024 px (container-query bug D-A7), bring the CVD segmented control, sheet handle and phone search button to 24/44 px, pre-populate the polite live region at load, keep the sheet-expand re-layout out of the gesture path, and add 44 px navigator pan buttons on touch in base.css (a defect shared by all three)."
+        },
+        {
+          "judge": "engineering",
+          "scores": [
+            {
+              "concept": "research-annotation-a",
+              "workflow_fit": 7,
+              "clarity": 6,
+              "accessibility": 6,
+              "feasibility": 5,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "Geometry is the most engine-friendly of the three: the single drawer is position:absolute over the canvas edge so the WebGL canvas never resizes when a panel opens, the page declares zero CSS transitions, and the probe found no element with motion under prefers-reduced-motion; canvas share measured 92 % at 1920, 96 % at 4K (I rendered the missing 4K shot), 87 % phone, 88 % tablet. Every command goes through one run() dispatcher and the palette (45 commands with keys), keymap and tool wheel read from it, which is the command-bus shape plan 04 \u00a78 wants, and the data-live map (62 markers) covers state document, layer API, annotation API, event bus, launch context, telemetry and the proposed commandInvoked event. The mock's own shell discipline is the weakest, though: each command calls render() which rebuilds the whole chrome, so a zoom burst produced 304 chrome mutations, 44 root-class toggles (renderZoom flips a class on the app root per magnification change) and 4 layout-shift entries, versus 31 textContent updates for C; this is exactly the pattern a thin TypeScript shell over the engine must not use. It also writes state into the URL with history.replaceState on every command, which inside anywidget (same document as JupyterLab) or an iframe mutates the host's URL. More of its UI lives as interactive DOM over the canvas than the other concepts (legend panel with 11 buttons, HUD tool line buttons, tool wheel, compare bar, curtain handle), so the product owes the most custom GPU-layer work, and the legend rows are 22 px tall: 11 targets under 24 px on desktop and tablet, the only concept failing SC 2.5.8 at rest. Seven new bindings (K, \u21e7K, U, \u21e7E, \u21e7G, \u21e7V, backtick) plus the K/\u21e7H clash with the component sheet add registry churn, and 116 page-defined classes (about 95 product-facing: radial, legend-hud, compare-bar, panes, drawer modes) sit outside base.css. The transient-drawer model also means the layers list, which annotators keep open all day, occludes tissue when open and hides the bottom HUD under the sheet on tablet and phone. The inline typed-zoom field, the quality sheet behind the sharpness indicator and the channel-cap reason text on W60 are the right patterns and should be kept whichever concept wins.",
+              "graft_ideas": [
+                "Inline typed-zoom input on the magnification readout (\u00d7 or \u00b5m/px) instead of prompt()",
+                "Quality sheet behind the sharpness indicator showing NTF %, resolution deficit and link state from the telemetry record",
+                "Tool wheel at the pen tip / long-press / right-click as a user-invoked GPU layer, with letters as the keyboard twin",
+                "Class legend with per-class counts and detection totals plus click-to-jump, but as a 24 px-row dock section or collapsible HUD, not a 22 px panel over the canvas",
+                "Pin-chrome (backtick) toggle that turns transient drawers into the classic rail+dock layout with one implementation",
+                "First-run HUD hint line retired by the commandInvoked telemetry event",
+                "Channel rows that state the device-class cap reason when a channel cannot be enabled on W60/phone",
+                "Strip notice priority order (transient > error > Dx > tiler) as a documented rule"
+              ]
+            },
+            {
+              "concept": "research-annotation-b",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 8,
+              "device_fit": 8,
+              "distinctiveness": 6,
+              "rationale": "From the shell-engineering lens this is the most buildable MVP: docks are fixed grid tracks whose widths are CSS custom properties, the resizers are focusable separators that change one variable (arrow keys, 16 px steps) and add the base.css is-gesturing class to zero every transition while dragging, so panel work never touches the canvas during a gesture; at 1080\u20131599 both docks become absolute drawers over the canvas edge and the Context tabs survive as a 36 px panel strip. It reuses the design system most heavily (101 page-defined classes, the fewest, and the shortest script at 320 lines), proposes only two new bindings (backslash focus mode, \u21e7G) and keeps Ctrl to K only, Alt and F-keys ignored, which satisfies the Hyperdrive rule by construction. One registry (50 entries covering commands, panels, slides, classes, layers and bookmarks) drives the always-visible search field, the keys and the panel buttons, and the keymap sheet shows presets with reserved keys greyed. The contract map is complete (66 markers) and the Inspector is the best mapping of plan 04 \u00a78 GeometryService and the QuPath adapter: area, perimeter, nuclei inside, detections inside, mean p, raw GeoJSON properties with the colour-remap note; the Model tab maps aiResultArrived/Accepted/Rejected and the uncertainty queue, and the widget is the same shell with docks removed. The caveat is that zoom and pan are not simulated at all, so the probe's zero mutations during the gesture burst prove nothing; P2 is asserted by architecture, not demonstrated. Docks as grid tracks at \u22651600 px resize the WebGL canvas on every open/close (allowed between gestures, but each is a swapchain resize and tile refetch), pinning the Library at 1920 drops the canvas to 58\u201361 % below P1, and the pen hint callout sits in the central zone on tablet portrait. Targets: one under 24 px (the 6 px resizer, which has the keyboard path), phone 0 under 24. Clarity and completeness are bought with chrome, which is the honest trade the rationale states.",
+              "graft_ideas": [
+                "Search field in the top bar as the command palette entry point (Ctrl K), indexing commands, slides, layers, classes and bookmarks with shortcuts shown",
+                "Panel strip: Context tab labels stay visible as a 36 px column when the dock collapses at laptop width",
+                "Count badges on rail panel icons (3 slides, 5 layers) so state is readable with panels closed",
+                "Keyboard-resizable dock separators implemented as CSS custom properties with is-gesturing zeroing transitions",
+                "Inspector block: geometry-service values (area, perimeter, nuclei inside, detections inside, mean p) plus raw GeoJSON properties with the on-screen colour remap note",
+                "Model jobs list with per-job provenance and the 'worker out of memory (16-bit tiles) \u2192 Retry at 8-bit tier' recovery action",
+                "Viewed-coverage bar per slide in the tray from the engine's visibleCoverage service",
+                "Canvas-share readout per surface as a CI assertion for P1"
+              ]
+            },
+            {
+              "concept": "research-annotation-c",
+              "workflow_fit": 7,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 7,
+              "distinctiveness": 8,
+              "rationale": "This concept demonstrates the gesture discipline the plan requires rather than asserting it: it binds wheel on the canvas with passive:false and a pointer-anchored zoom (the FR-V1 shape), sets is-gesturing on drag, skips its 120 ms fly-to tween under reduced motion, and during the probe's burst every chrome rect stayed byte-identical while the only non-HUD chrome mutations were 31 textContent updates to the LOD label; HUD, navigator and strip updated by textContent and style only, and the live region is debounced to settle. Its contract map is the richest (76 markers) and goes beyond the others with geometry:visibleCoverage, events:displayQaStatus, telemetry:switch, export jobs and the Clinical-IH/Dx identity fields, and its degraded-state set is the fullest (cold 4G, offline with and without pack, tile errors keeping the ancestor with a Retry chip, server slow, soft level, Tier 2, GPU reset, manifest and launch-refused plates) with \u00a75 strings verbatim. The cost is custom component work: 133 page-defined classes (about 118 product-facing: step rail, step bar, step tray, five step panels, in-flow sheet with grab handle, panel overlays, pen palette, flow chips), the widget variant is a second DOM copy of the top bar, rail and canvas rather than the same component in a compact mode, and the step/progress state ('Slide 14 of 48 \u00b7 3 done') needs a new research-package store that is not an engine contract (correctly flagged in C-1). The in-flow sheet on tablet and phone keeps the centre uncovered but changes the canvas height on every expand/collapse, which is a WebGL resize and tile refetch, and on W60 that is a dropped frame each time; the overlay sheets of A and B avoid it. The typed zoom uses prompt(), which sandboxed iframes without allow-modals suppress, and the probe logged 23 small layout-shift entries from HUD readouts changing width, so readouts need reserved widths. Canvas share is at the P1 floor at 1920 (71 %) and on phone (70 %, four chrome bands), and three segmented controls plus the 20 px sheet grab handle are under 24 px. Only three new bindings (N, \u21e7N, backslash) and N shared with Learn keep the registry clean.",
+              "graft_ideas": [
+                "The canvas input pattern as shell code: pointer-anchored wheel with preventDefault, is-gesturing on pointerdown/up, HUD updated by textContent only, live region announced at settle (500 ms debounce)",
+                "Reserve fixed widths (tabular numerals, min-width) for magnification, scale-bar and position readouts so text updates never produce layout shifts",
+                "Export step: target checklist (GeoJSON QuPath dialect, DICOM ANN, patches+labels, region OME-TIFF), manifest preview, jobs with byte-identity badge, Cancel and Download",
+                "Strip Retry chip for tile errors and the complete \u00a76 state inventory with verbatim microcopy, including GPU-reset and launch-refused plates",
+                "Keymap and About as in-dock panel overlays that never cover the slide, with the preset selector and reserved keys greyed",
+                "Candidate regions R1\u2013R4 as a real list with Fly there and Space to fly, reused by Learn's region-marking alternative",
+                "Flow chip 'Slide 14 of 48 \u00b7 3 done' and a per-step primary footer action (Next / Mark slide complete) driven by the collection store",
+                "Pen-tip tool palette on Pencil squeeze as a transient GPU layer"
+              ]
+            }
+          ],
+          "verdict": "Engineering verdict: Concept B (Workbench) is the strongest base for the MVP shell. It is the thinnest layer over the engine contracts and the design system (fewest custom classes, fixed grid tracks with CSS-variable resizing, one command registry driving search field, keys and buttons, two new bindings, same shell for the Jupyter widget) and it already maps GeometryService, the QuPath adapter, the layer provenance tuple and the aiResult events in the places users will look. Its one gap is that P2 is asserted rather than demonstrated; Concept C (Task-flow) is the one that measurably holds chrome geometry fixed during a zoom burst (31 textContent mutations, no rect changes) with a pointer-anchored wheel handler and settle-debounced announcements, so its canvas input pattern, export step, state inventory and in-dock keymap/About overlays should be grafted into B. Concept A (Canvas-maximal) has the most engine-friendly geometry (constant canvas size, no transitions, 92\u201396 % canvas) and the most ideas worth stealing (inline typed zoom, quality sheet, pin-chrome toggle, legend with counts, tool wheel), but its mock shell rebuilds the whole chrome on every command (304 chrome mutations and 44 root-class toggles per zoom burst), writes state into the URL on every command (embed-hostile), places interactive 22 px DOM over the canvas (fails SC 2.5.8) and implies the most custom GPU-layer work and the largest discoverability risk. Design notes for the plan owner: docks as grid tracks (B at \u22651600, C at \u22651600) and C's in-flow sheet resize the WebGL canvas between gestures, which costs a frame on W60 and should be measured against NFR-P9; \"Run model on ROI\" in all three concepts is a research-package job service, not an engine contract, and belongs on the v0.9 backlog; and no concept may ship URL-hash state or prompt() inside anywidget or an iframe."
+        },
+        {
+          "judge": "pathologist",
+          "scores": [
+            {
+              "concept": "research-annotation-a",
+              "workflow_fit": 7,
+              "clarity": 7,
+              "accessibility": 6,
+              "feasibility": 8,
+              "device_fit": 6,
+              "distinctiveness": 9,
+              "rationale": "As a keyboard-first reader this is the concept I would reach for on a 4K display: 93 % canvas at 1920 and 96 % at 4K, a top-left HUD line that says what the next click does (tool, class, undo depth, LOD), and a class legend with live counts that answers 'what is on this slide' without opening a panel. Every drawer is one key and the backtick pin collapses it into the classic three-column layout, so the expert path is fast. But for the persona's actual job here, annotating a cohort for hours and reviewing model output, the chrome is hidden when I need it most: the annotation list, layer rows and job progress live in a transient drawer that covers 360 px of tissue (verified: the canvas rect does not change when K opens, so it occludes rather than pushes), and there is no slide progress, coverage or 'done' state anywhere, which is the wrong-slide/missed-area gap I care about most. Safety and mode: RUO badge and string are correct, but the Clinical-IH variant shows a 'Research session \u00b7 RUO' purpose chip that is not one of Design note D1's four fixed strings (flag as Design note), and the keymap dialog is centred over the canvas (980 \u00d7 499 at 1920, covers the canvas centre), which fails P1's 'including dialogs' test. Accessibility is the weakest of the three on measurement: the 11 legend rows are 22 px high at every viewport (SC 2.5.8 fails on desktop and badly on touch), the HUD tool/class buttons stay 24 px on tablet where 44 px is required, the bottom sheet covers the scale bar and magnification on tablet and phone, drawer tab key hints are still shown on the phone sheet, and the tool wheel's only keyboard twin is 'the keys themselves'. Feasibility is good: overlay drawer, textContent HUD, GPU wheel and curtain all respect P2, and the pinned mode is the design system's dock. Device fit suffers on tablet (legend overlaps tissue at 1024 portrait, sheet hides HUD) and in the widget, where the drawer eats a third of a 1200 \u00d7 640 cell. Fatigue-wise it is the quietest screen of the three, and the W60 channel-cap explanation ('Channel cap reached (4 on this device class) \u2014 hide another channel to enable') is the most honest degraded state in the set.",
+              "graft_ideas": [
+                "HUD tool line (active tool + key, active class swatch, undo depth, detection LOD state) as the collapsed-chrome toolbar; both items are 24 px buttons so pointer users are never stranded",
+                "Class legend as a HUD under the navigator with annotation counts and detection class totals; click-a-class jumps to its first object",
+                "Per-device-class channel cap rows that say why the fifth channel cannot be enabled on W60/phones, and the '8-bit preview tier while moving \u00b7 16-bit at settle' line in the strip",
+                "Pin/unpin chrome as the single escape hatch between canvas-maximal and classic dock (same dock element, no second implementation)",
+                "First-run HUD hint line that disappears after the first command (telemetry commandInvoked decides), never a modal tour",
+                "Tool wheel at the pointer / pen squeeze as a user-invoked GPU layer exempt from the central-50 % rule, with Q turning it into the class ring (1\u20139)"
+              ]
+            },
+            {
+              "concept": "research-annotation-b",
+              "workflow_fit": 8,
+              "clarity": 8,
+              "accessibility": 7,
+              "feasibility": 8,
+              "device_fit": 7,
+              "distinctiveness": 7,
+              "rationale": "This is the bench I would actually sit at for a 200-slide annotation session: Library (what am I looking at) and Context (what is selected, what can I do) have fixed homes that never swap sides, so muscle memory survives across surfaces, and the always-visible palette field (Ctrl+K: 'heat', 'ck', 'stroma', 'export' each reach a toggle, a slide, a class and a panel; '40 of 53' rows) teaches the keymap by use. Its panel content is the most complete and the most useful to a pathologist: the Inspector shows area, perimeter, nuclei inside, detections inside and mean p for the selected polygon plus the QuPath GeoJSON properties verbatim; the Model tab has run-on-ROI, a failed job with 'Retry at 8-bit tier' and an uncertainty queue reviewed with Space; Channels has histograms, auto-window p1\u2013p99 and reset-to-omero; Compare shows the registration residual (affine \u00b7 VALIS \u00b7 3.1 \u00b5m). The Slides tray carries a coverage bar from the geometry service, which is the one missed-area guard in the set besides C's. Clarity is strong (RUO badge, string, counts on the collapsed rail icons, \u00a75 strings verbatim in the degraded states), but two things fail the plan's own tests: the keymap dialog is centred over the canvas (880 \u00d7 484, covers the centre point, P1 'including dialogs'), and on tablet the pen hint HUD (318 \u00d7 72) sits inside the central 50 % of the canvas. The chrome appetite is real and honestly reported: 72 % at 1920 with the Library collapsed, 58 % with it pinned, and a 56 % laptop canvas if the annotation list stays open; the 1440 panel strip and focus mode (89 %) are the mitigations and they work. Accessibility measures well on desktop (only the 6 px resizers are under 24 px, and they are keyboard separators), but on touch the bottom bar is eight unlabelled icons, the pan buttons stay 24 px (a base.css defect shared by all three), the sheet covers the scale bar and magnification, and the phone offline variant shows no offline text, only the sharpness dot. Feasibility is clean: dock widths are grid tracks so a panel re-render never re-lays out the canvas, compare is a state not a screen, and the widget is the same shell with docks removed. Device fit is best at 4K and 1920 and weakest on tablet/phone, which matters because the persona consults on an iPad.",
+              "graft_ideas": [
+                "Two-dock split with fixed homes (Library: cohort/slides/layers; Context: inspector/annotations/model/channels/export) and count badges on the rail switchers when a dock is collapsed",
+                "Always-visible palette field in the top bar as the discoverability layer, indexing commands, slides, layers, classes and bookmarks with shortcuts shown",
+                "Inspector card for the selected annotation: \u00b5m geometry, nuclei/detections inside, mean model probability, GeoJSON (QuPath dialect) properties verbatim, Fly to (Space)",
+                "Model tab: region segmented control (viewport / selected annotation / whole slide), tile and time estimate, job list with failure recovery ('Retry at 8-bit tier'), uncertainty queue with 'Review next (Space)' and 'Export queue as labels'",
+                "Channels panel with per-channel histogram, 16-bit tag, auto-window (p1\u2013p99) and reset-to-omero; channel grid view (\u21e7G)",
+                "Compare bar with lock / affine / none, 'B follows A', curtain, and the registration method + residual in \u00b5m; the second view's magnification readout says 'linked'",
+                "Laptop panel strip: vertical tab names stay visible when the Context dock collapses so completeness survives the drawer",
+                "Visible-area coverage bar in the slide tray, driven by the geometry service"
+              ]
+            },
+            {
+              "concept": "research-annotation-c",
+              "workflow_fit": 7,
+              "clarity": 8,
+              "accessibility": 8,
+              "feasibility": 7,
+              "device_fit": 8,
+              "distinctiveness": 8,
+              "rationale": "This is the concept that takes wrong-slide and missed-area risk seriously: 'Slide 14 of 48 \u00b7 3 done' sits in the top bar at every width, the Open step's cohort list has To do / In progress / Done chips, the Screen step shows coverage (62 %), an HPF grid and 'Next candidate', and the Export footer ends with 'Mark slide complete (N)', so a resident working a 48-slide set cannot lose their place; that is exactly what I would want when teaching annotation. Product and mode are the most unmistakable of the three: the Clinical-IH variant uses a D1-conformant purpose chip ('QA review \u00b7 blinded'), accession, label image in the navigator, NAV indicator and the QA chip; the launch-refused plate opens nothing; the Dx refusal string is verbatim; the CVD simulation recolours the whole canvas and the swatches, not just the overlays. It also honours P1 where A and B do not: the keymap is a panel overlay (359 \u00d7 926, replaces the dock, never touches the slide) and the palette anchors under the Commands field, and on tablet the step sheet is in-flow, so the canvas shrinks from 960 to 510 px rather than being covered and the scale bar and magnification stay visible (verified in the headless pass). The cost is the step metaphor itself: Examine and Annotate interleave constantly in real annotation, the rail's tools change with the step (a muscle-memory tax even though keys stay global), multiplex is a section inside Examine, and the palette's 'export' search returned only 'Go to step 5 \u00b7 Export' and 'Submit export', not the direct GeoJSON/DICOM ANN commands B exposes. All-steps mode fixes most of this, but then C is a conventional dock with a progress rail, and that is the mode an expert would live in. Accessibility is the strongest in practice (labelled 44 px tool tray, real listboxes, radiogroup class picker with 1\u20138, canvas aria-label updated per step, reduced-motion toggle), with small misses: the CVD segmented control is 18 px high, the sheet grab handle is 20 px on touch, keyboard hints are shown on the phone sheet, and the measured phone canvas share was 64 % against the claimed 71 %. Feasibility is slightly lower than A/B because the in-flow sheet resizes the canvas (allowed between gestures but a resize path the engine must own), one registry must drive rail, panel, footer and aria-label together, and all-steps is a second layout to keep in sync. Device fit is the best in the set: one IA scales from 4K (82 %) to the phone without a second information architecture, and the pen-tip palette plus 'finger pans \u00b7 pen draws' is shown on the tablet variants.",
+              "graft_ideas": [
+                "Cohort progress scaffolding: 'Slide N of M \u00b7 k done' in the top bar, To do / In progress / Done filter chips in the slide list, and a 'Mark slide complete' action as the export step's terminal command",
+                "Coverage % plus HPF grid and 'Next candidate' as the screening-step guard against missed areas",
+                "Keymap as a panel overlay that replaces the dock, never a dialog over the canvas; palette anchored under the top-bar search field, outside the central 50 %",
+                "In-flow peeking sheet on tablet/phone that pushes the canvas rather than covering it, so the scale bar and magnification stay visible with the sheet expanded",
+                "Whole-canvas deuteranopia/protanopia simulation that also recolours the swatches and legend",
+                "Clinical-IH / Dx variants with the D1 purpose chip, accession, label image in the navigator and the fixed not-validated marker, so the same research screen demonstrates every build's labelling",
+                "Export step with explicit targets (GeoJSON, DICOM ANN, patches + labels, OME-TIFF region), a manifest preview, and jobs with DONE / RUNNING / QUEUED plus the byte-identity badge",
+                "Canvas aria-label that names the slide, magnification and current step, driven by the same registry as the rail and footer"
+              ]
+            }
+          ],
+          "verdict": "Narrow win for research-annotation-c (46) over research-annotation-b (45), with research-annotation-a (43) as the HUD donor. From the sign-out pathologist's chair the deciding factor is safety on a cohort: C is the only concept that keeps 'which slide, how many done, how much of this slide have I seen, and is it finished' on screen at every width, and it is the only one whose keymap, palette and tablet sheet never cover the slide centre (A and B both centre the keymap dialog over the canvas, failing P1's 'including dialogs' test; B's tablet pen hint sits in the central zone). B is the better desktop bench for a long expert session (fixed panel homes, always-visible palette, the richest Inspector/Model/Channels/Compare content, coverage bar) and I would refuse C's step-locked tool rail as a daily driver unless all-steps mode is the default for experts on \u22651920 displays; so the final design should be C's IA and responsive geometry with all-steps as the expert default, B's panel content and two-dock discipline inside it, and A's HUD tool line and counted legend as the collapsed-chrome mode. Design notes to carry forward: A's 'Research session \u00b7 RUO' purpose chip is not one of D1's four strings; the navigator pan buttons (24 px) and the phone badge (34 \u00d7 24) are below the coarse-pointer target size in the shared base.css for all three concepts; C's CVD segmented control (18 px) and A's legend rows (22 px) fail SC 2.5.8; B's phone offline state shows no offline text; C's palette lacks direct import/export commands; the measured phone canvas share for C was 64 % against its claimed 71 %."
+        }
+      ],
+      "synthesis": {
+        "summary": "Final design for the research annotation and overlay workspace (Stoipath Viewer, RUO) written to /home/user/Stoipath/wsi-viewer/design/screens/final/research-annotation.html (273 KB, self-contained, links ../../design-system/tokens.css and base.css by relative path, no network). Base is the weighted winner B \"Workbench\" (Library left: Cohort/Slides/Layers; Context right: Inspector/Annotations/Model/Channels/Export; always-visible search field; rail with counted panel switchers; keyboard-resizable docks as grid tracks; laptop panel strip; widget = same node in a notebook cell). Grafted from C: \"Slide 14 of 48 \u00b7 3 done\" chip at every width, To do/In progress/Done filters and cohort progress, coverage bar, candidate-region queue with Fly there/reviewed marks, \"Mark slide complete \u00b7 next (N)\", in-dock keymap/About/quality overlays (aria-modal=false, never over the slide), palette dropping over the Context column, in-flow peeking sheet below 1080 px with a 44 px labelled grab row and Library|Context switch, pointer-anchored wheel/is-gesturing/textContent-only HUD with reserved readout widths, explicit export targets + manifest + byte-identity jobs, full degraded-state inventory with \u00a75 strings verbatim, whole-canvas deutan/protan simulation incl. swatches, Clinical-IH/Dx variants with the D1 \"QA review \u00b7 blinded\" chip, accession, synthetic patient line, label image, NAV/DX, not-validated marker, launch-refused plate. Grafted from A: focus mode (\\) as the canvas-maximal escape hatch with the HUD tool line and 24 px counted class legend, tool wheel at the pointer with class ring, inline typed zoom (no prompt()), quality sheet, per-device channel-cap reasons, first-run hint retired by commandInvoked. Demo controls kept (build, surface, slide, view, 13 states, panels, focus/legend, keymap/palette/wheel, mouse/pen, CVD, live markers, centre guide, hide review chrome, canvas-share readout) plus query parameters for screenshots. Collapsed \"Design decisions\" section lists provenance per element, the judges' disagreements and resolutions, fixes applied, design notes D-F1\u2013D-F11 and the engine-contract map. Screenshots (DPR 1) at 3840x2160, 1920x1080, 1440x900, 1024x1366, 1366x1024, 390x844 plus 21 state variants in design/screens/final/shots/; all were viewed and problems fixed (nested-button boot error, Clinical-IH top-bar overflow, navigator intrusion with the laptop drawer, hidden layer rows removed by base.css .is-hidden, sub-24 px targets, curtain/side-by-side label collisions, channel-row truncation, palette double truncation, launch-refused panel content, widget placeholder). Measured canvas share of the product frame at rest: 76 % (4K), 72 % (1920), 85 % (1440), 85 % (1366 pen), 81 % (1024 portrait), 76 % (phone); 92 % in focus mode.",
+        "files": [
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/research-annotation.html",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-3840x2160.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1440x900.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1024x1366.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1366x1024.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-390x844.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-focus.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-keymap.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-palette.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-compare-curtain.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-compare-side.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-if-channels.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-if-grid.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-clinical-dxrefused.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-dx.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-launch-refused.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-cold4g-cvd.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-tileerr-wheel.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-live-guides.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-widget.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1440x900-drawer.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1366x1024-drawer.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1024x1366-sheet.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-390x844-sheet.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-390x844-offline.png",
+          "/home/user/Stoipath/wsi-viewer/design/screens/final/shots/research-annotation-1920x1080-decisions.png"
+        ],
+        "notes": [
+          "Judges' disagreement resolved as documented in the page's Design decisions section: B's IA (weighted winner, engineering pick) carries C's safety scaffolding and accessibility (pathologist and UX picks) and A's collapsed-chrome mode; the step metaphor itself is not kept because the pathologist's own condition ('all-steps default') reduces C to a dock plus progress indicator.",
+          "In-flow sheet (C) chosen over overlay sheets (A/B) on tablets and phones; the engineering cost (canvas resize on expand) is carried as Design note D-F2 with a defer-while-gesturing mitigation, to be measured against NFR-P9 on W60.",
+          "Design notes for the plan/design-system owner (D-F1\u2013D-F11 in the page): docks as grid tracks resize the canvas between gestures; model jobs, uncertainty queue, 'Mark slide complete' and collection state are research-package services, not engine contracts; base.css defects: navigator pan buttons 24 px hover-only, phone badge below 44 px, .segmented__item computes to 18 px, and .layer-row.is-hidden is killed by the .is-hidden utility (all three concepts carried it; this page uses .is-off); four proposed bindings (\\ focus, \u21e7G grid, \u21e7V wheel, N mark complete); D1 purpose chip 'QA review \u00b7 blinded' used instead of A's non-D1 string; channel pseudo-colours need the same \u0394E00 warning; strip notice priority transient > error > Dx > multiplex > tiler.",
+          "Canvas share is reported two ways in the demo readout: of the product frame (P1 test) and of the viewport including the review header/demo strip; 1920\u00d71080 is 72 % / 68 %, so the viewport figure dips below 70 % only because of review chrome; 'Hide review chrome' (or ?chrome=0) removes it.",
+          "By-design central-50 % exemptions remaining in the audit: the per-pane labels in the channel grid (a user-invoked canvas mode) and the tool wheel when opened from the keyboard/demo at the canvas centre (a transient, user-invoked GPU layer, exempt like the pen-tip palette). 6 px dock resizers are keyboard separators, as the judges accepted.",
+          "Query parameters for screenshots/review: product (ruo|clinical|dx), surface=widget, slide (he|ihc|if), view (single|side|curtain|grid), state (normal, cold4g, offline-pack, offline-nopack, tile-error, server-slow, soft-level, tier2, dx-refused, context-loss, manifest-fail, launch-refused, py-sync), lib/ctx (tab or 0), sheet=1, focus=1, legend=1, pen=1, cvd (deutan|protan), heat=1, grid=1, mag, fly, tool, keymap=1, about=1, quality=1, palette=1&q=, wheel=1, live=1, guides=1, theme=light, chrome=0, decisions=1, hint=0. The mock reads the URL but never writes it and never calls prompt() (anywidget/iframe hosts).",
+          "Screenshot tooling: Playwright (/opt/node-tools, browsers in /opt/pw-browsers), script at /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/ra-final/shoot.js; touch viewports used hasTouch/isMobile so (pointer: coarse) rules applied; reducedMotion: 'reduce'. A DOM/runtime check (domcheck.js) found no duplicate ids, no nested or unlabelled buttons, no external resources and no errors while exercising keys, palette, overlays, products, slides, views and viewport changes.",
+          "Known mock limitations are stated in the page: SVG tissue patterns, 3,200 generated centroids for 1.24 M detections, pinch/pen pressure not simulated, jobs/queue/tiler shown as states; content is synthetic (CAMELYON16 identifiers are public CC0; patient line and label image are placeholders marked data-synthetic).",
+          "Other agents wrote clinical-signout.html and education-module.html plus their shots into the same final folder during this run; they were not touched."
+        ]
+      },
+      "ranking": [
+        {
+          "concept": "research-annotation-b",
+          "angle": "Workbench",
+          "weighted": 7.73,
+          "judges": 3,
+          "by_judge": {
+            "ux-a11y": 7.65,
+            "engineering": 7.9,
+            "pathologist": 7.65
+          },
+          "criteria_mean": {
+            "workflow_fit": 8.0,
+            "clarity": 8.0,
+            "accessibility": 7.0,
+            "feasibility": 8.0,
+            "device_fit": 7.67,
+            "distinctiveness": 6.67
+          }
+        },
+        {
+          "concept": "research-annotation-c",
+          "angle": "Task-flow",
+          "weighted": 7.6,
+          "judges": 3,
+          "by_judge": {
+            "ux-a11y": 7.85,
+            "engineering": 7.4,
+            "pathologist": 7.55
+          },
+          "criteria_mean": {
+            "workflow_fit": 7.33,
+            "clarity": 8.0,
+            "accessibility": 8.0,
+            "feasibility": 7.0,
+            "device_fit": 7.67,
+            "distinctiveness": 8.0
+          }
+        },
+        {
+          "concept": "research-annotation-a",
+          "angle": "Canvas-maximal",
+          "weighted": 6.63,
+          "judges": 3,
+          "by_judge": {
+            "ux-a11y": 6.55,
+            "engineering": 6.4,
+            "pathologist": 6.95
+          },
+          "criteria_mean": {
+            "workflow_fit": 7.0,
+            "clarity": 6.33,
+            "accessibility": 5.67,
+            "feasibility": 7.0,
+            "device_fit": 6.33,
+            "distinctiveness": 8.33
+          }
+        }
+      ],
+      "winner": "research-annotation-b"
+    }
+  ]
+}

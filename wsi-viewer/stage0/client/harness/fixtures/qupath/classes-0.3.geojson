@@ -1,0 +1,68 @@
+[
+  {
+    "type": "Feature",
+    "id": "PathAnnotationObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[3000, 3000], [3600, 3000], [3600, 3400], [3000, 3400], [3000, 3000]]]
+    },
+    "properties": {
+      "object_type": "annotation",
+      "classification": {"name": "Tumor", "colorRGB": -3670016},
+      "isLocked": false
+    }
+  },
+  {
+    "type": "Feature",
+    "id": "PathAnnotationObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[200, 7000], [2200, 7000], [2200, 9000], [200, 9000], [200, 7000]]]
+    },
+    "properties": {
+      "object_type": "annotation",
+      "name": "ROI 1",
+      "classification": {"name": "Region*", "colorRGB": -16777036},
+      "isLocked": true
+    }
+  },
+  {
+    "type": "Feature",
+    "id": "PathAnnotationObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[11000, 500], [11500, 500], [11500, 900], [11000, 900], [11000, 500]]]
+    },
+    "properties": {
+      "object_type": "annotation",
+      "classification": {"name": "Fat", "colorRGB": -14236},
+      "isLocked": false
+    }
+  },
+  {
+    "type": "Feature",
+    "id": "PathDetectionObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[3100, 3100], [3110, 3100], [3110, 3112], [3100, 3112], [3100, 3100]]]
+    },
+    "properties": {
+      "object_type": "detection",
+      "classification": {"name": "Positive", "colorRGB": -3657166},
+      "isLocked": false
+    }
+  },
+  {
+    "type": "Feature",
+    "id": "PathDetectionObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[3200, 3150], [3209, 3150], [3209, 3161], [3200, 3161], [3200, 3150]]]
+    },
+    "properties": {
+      "object_type": "detection",
+      "classification": {"name": "Negative", "colorRGB": -9408287},
+      "isLocked": false
+    }
+  }
+]

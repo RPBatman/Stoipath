@@ -1,0 +1,912 @@
+[
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The regulatory/QMS/free-distribution section the programme context requires does not exist, and every section defers to it. 02 (FR-R7/FR-R8 are placeholders), 05, 06, 08, 09 (\"keeps regulation at risk-register and summary level\u2026 defers the full programme\u2026 to the section 'Regulatory pathway to FDA clearance and the free-distribution model'\"), 12 (\"belongs to section 13\") and 03/04 (\"Funding and sustainability\", \"Deployment, operations and the free-distribution model\") cite a 13th section that is not in plan/. All twelve sections also state that research note 11-gap-8 \"does not exist\" \u2014 it does (research/11-gap-8-fda-pathway-and-free-distribution.md, written 19:58, after the sections). Consequently nothing in the plan covers: the legal-manufacturer decision (only OQ-04), QMS stand-up plan, predicate/pairing strategy and Pre-Sub questions, PCCP scope, validation-study design, labelling/UDI, post-market processes, the qualification criteria for \"requests/qualifies\" (placeholder FR-R7, OQ-25), the distribution agreement and liability/indemnification, and funding/sustainability (grants, UT System, philanthropy, service model) \u2014 the last appears nowhere except as 'Unpriced' in 09 \u00a76 and risk M6.",
+  "fix": "Write section 13 (\"Regulatory pathway, QMS and free distribution\") from gap-8: \u00a74.1 manufacturer decision matrix (UT institution holds the 510(k), UT-affiliated 501(c)(3) stewards the core), \u00a74.2 phased roadmap with cost ranges ($1.5\u20133 M to clearance, FDA fees $0\u201345 k), \u00a73.5 Pre-Sub five questions (incl. whether no-charge State distribution is 'commercial distribution'), F7 cleared-configuration enforcement (configuration hash in the Dx gate, signed builds, trademark), F8 eligibility template (REDCap model: CLIA/CAP, CAP WSI validation, cleared/PCCP pairings, display QA, security attestation, training, agreement) and funding table (ITCR U24, CPRIT, ARPA-H, philanthropy, dues, paid services). Replace FR-R7/FR-R8 with real requirements, make OQ-01/OQ-03 (counsel on no-charge distribution and the lab-tool analogy) explicit predecessors of 07's CAP-1/INH milestones, delete the nine 'gap-8 does not exist' notes, and reconcile every cross-reference title to the real section titles.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "TSP facts contradict the owner's verified facts and each other, and one schedule is impossible. 07 \u00a76: \"the 106th is expected in early February 2027 [unverified], i.e. weeks 14\u201315, two weeks after M1\" and \"Data freeze for the meeting: T1 = M1 (week 13, 2027-01-29)\" \u2014 the meeting is 22\u201324 January 2027, so the data freeze is dated five days after the meeting ends. 01 \u00a79 and 07 give the deadline as 29 Oct (\"task 7\"), 09 as 2026-10-29, 10 as \"2026-10-29/30\"; 01 reviewer note 3 says eligibility is unverified and may need \"a trainee first author\u2026 or a different TSP track\" although the owner is a confirmed eligible resident. Only 11 Part B carries the correct facts (30 Oct 17:00 CT, 22\u201324 Jan, Hyatt Regency Austin, 350 words, no names).",
+  "fix": "Put one TSP fact block (from 11 B1) in 01 \u00a79 and 07 \u00a76 and cite it from 09/10. In 07 \u00a73/\u00a76 set T1 (data freeze for the January talk) to \u2248 2027-01-15, state that the presentation carries M0 plus the Tier-2 nightly trend and M1 only if green by then (as 11 B7 already says), and remove the February/M1 reasoning. Delete 01 reviewer note 3. Keep 29 Oct as the internal submit-one-day-early target, labelled as such.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "512-px logical tile grid versus byte-for-byte passthrough of 240/256-px vendor frames is unresolved and the sections silently assume different answers. 02 FR-S4 requires a \"512\u00b2 grid\" and FR-S2 \"frame-byte hash identity against vendor tiles\"; 04 \u00a75 fixes `tile: 512` and a single `(object, offset, length)` per TileKey; recommended \u00a74.4 and 05 \u00a72 price every cold fill as \"20 tiles \u00d7 ~80 KB\" 512\u00b2 tiles; wsidicomizer passthrough copies frames at the vendor's tile size (research 01: SVS \"usually 240x240\", GT450 256x256; research 02 OQ5 lists the regrouping question as open). 03 \u00a79.2 reviewer note says this \"is reconciled nowhere\" and must be settled \"before the Manifest schema is frozen\", yet 10 S2-09 freezes Manifest v0 against the already-512-px CAMELYON static pyramid, so its DoD never exercises the case. With four 256\u00b2 frames per logical tile the W-4G request/decode/upload counts in \u00a74.4 roughly quadruple per logical tile.",
+  "fix": "Decide in the architecture (ADR) that a Manifest/Range-Index entry may hold \u22644 byte ranges per TileKey (or that `levels[].tile` may be 240/256 for passthrough levels with L*/budget arithmetic expressed per device-pixel area, not per tile), add an explicit Stage-0/M0 item measuring 4\u00d7256\u00b2 vs 1\u00d7512\u00b2 decode+upload on the W-4G device, make S2-09's DoD include a 256-px-tile SVS fixture, and restate the \u00a74.4 decode/upload rows for the passthrough case.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The Dx pixel pathway's colour handling is specified in two mutually exclusive ways. recommended \u00a75, 01 \u00a71, 02 FR-V8 (\"scanner ICC \u2192 sRGB baked server-side for JPEG tiles\"), 04 \u00a76 (\"ICC profile kept and baked to sRGB for JPEG delivery\") and 08 \u00a74 (\"Brightfield tiles are served with the scanner ICC baked to sRGB at ingest\u2026 test (a) the server transform against a LittleCMS reference\") assume baked pixels; 05 \u00a712 correctly observes that baking is impossible for byte-passthrough tiles without breaking FR-S2 byte identity and reintroducing the second copy, and specifies untagged tiles + a server-computed 33\u00b3 LUT applied in the shader, plus gamma-space `Rgba8Unorm` filtering. 02 schedules the shader LUT at v1 although under 05's design it is needed at MVP for >90 % of volume. This is the thing NFR-D2 says must be frozen and versioned.",
+  "fix": "Adopt 05 \u00a712 as the decision via ADR: FR-V8 \u2192 'per-slide server-computed ICC\u2192sRGB LUT applied in-shader (MVP); baking only for re-encoded/synthesised levels'; rewrite 08 \u00a74(a) to test LUT output and the passthrough/synthesised level-boundary \u0394E; amend recommended \u00a75 'server-baked ICC' to 'server-computed, client-applied'; record the filtering-space choice (Rgba8Unorm) in the Dx pathway version.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "\"No request-time transcoding, ever\" (01 \u00a71) contradicts the moving tier and codec variants. The moving tier (q75 4:2:0 for H&E during gestures, q90 at settle), the HTJ2K\u2192JPEG fallback for W-4G/W-iPad (recommended risk 15) and the opt-in WebP/AVIF variants (02 \u00a74.2) all require re-encoding; 04 \u00a75 says \"the translator never transcodes except the moving tier and HTJ2K\u2192JPEG\", i.e. request-time transcoding exists. No section says where moving-tier bytes live (a derived L5 object would be a partial second pixel copy; an L4-only cache would put a JPEG encode on the cold path), whether the p99 \u2264 10 ms hot gate covers that path, or \u2014 outside a 04 reviewer note \u2014 that Dx mode must refuse transcoded tiles.",
+  "fix": "Decide and state once: moving-tier (`enc=m`) and variant tiles are either (a) generated at ingest as derived objects for H&E only with the storage overhead quantified, or (b) generated on first request and cached at L4/L3 with the translator gate split into 'passthrough' and 'transcode' rows. Amend 01 \u00a71 to 'no request-time transcoding on the settled/Dx path'; add the Dx refusal of `enc=m`/HTJ2K\u2192JPEG tiles to FR-V4 and NFR-D2.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "Three incompatible calendars for Stage 0 and M0, and lab devices scheduled after the gates that need them. recommended and 08 \u00a79: Stage 0 = weeks 0\u20132; 07: weeks 0\u20133, M0 = 2026-11-20; 09: T0 = 2026-11-02, Stage 0 exit 2026-11-13, M0 = 2026-11-30; 10: three two-week sprints, M0 scorecard 2026-12-05; 11 B7: \"roughly 12 weeks of work against a Stage 0 budgeted at weeks 0\u20132\". G3\u2013G6 and G12 require the W-4G phone, 2020 iPad and iPhone 12 in November, but 07's Gantt places \"Device lab and WALT rig\" at 2027-02-01 and 06 \u00a78 says \"the lab is bought in M1\".",
+  "fix": "Adopt 10's six-week Stage 0 (the only one that accounts for stoi-render-gl not existing) as the single calendar: M0 = 2026-12-05, with 07 \u00a71\u2013\u00a73 and 09's date anchors re-derived from it. Make procurement of the Stage-0 device set (floor Android, iPad 8th gen, iPhone 12, Xclipse Galaxy, 240 fps camera) a week-0 purchase (10's Sprint-3 procurement gate moved to Sprint 1), WALT by M2 as 07 already says.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The agent execution loop and repository conventions \u2014 which agents will encode in week 1 (10 S1-01/S1-02/S1-13) \u2014 are specified twice, incompatibly. 10: backlog/ YAML items, gates A/H1/H2/D, 'second-agent review', `docs/provenance/runs.jsonl`, `Agent-Run` trailer, `docs/design-controls/requirements.yaml`, ADR-0001\u20260013 (0001 = monorepo layout; 0007 = \"Dx edition and enterprise edge commercial\"). 11: GitHub issues labelled `agent-ready`, Planner/Implementer/Verifier/Reviewer/Release roles, `plan.md`/`verification.md`, `provenance/runs/YYYY-MM.jsonl` + `provenance/changes/<pr>.json`, `requirements/REQ-*.yaml`, `risk/HAZ-*.yaml`, `gates/*.toml` (05 and 08 say `gates/*.json`), ADR-0001\u20260020 derived from recommended.md. 09: ADR 001\u2013022 with a third numbering and content (ADR-010 = regulated-release channel, contradicting 10's 0007). 04 \u00a712 gives a repo layout (`api/`, `shells/`, `server/{translator,ingest,integration,metadata,education}`, `sdk/python`, `qa/`) that differs from 10's (`crates/`, `packages/`, `apps/`, `python/`, `testdata/`). Requirement IDs: 02 defines FR-/NFR- and says \"an agent picking up work cites the FR/NFR ID\"; 08, 10 and 11 use REQ-G1/REQ-ZOOM-012/REQ-*.",
+  "fix": "Assign ownership: 10 owns paths, filenames, ID namespaces and the ADR register; 11 owns roles and the loop semantics; 09 and 11 cite 10's ADR numbers. Concretely: one requirement namespace (02's FR-/NFR-, with Stage-0 gates as NFR-G1\u2026G13), `gates/*.json`, `docs/provenance/runs.jsonl` + per-PR roll-up, one ADR list seeded from 09's 001\u2013022 (0007/010 wording = 'regulated-release channel, free to qualifying systems'), and 04 \u00a712's layout replaced by a pointer to 10 \u00a71.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Release timing of pillar features disagrees across 01, 02, 07 and 12. HL7 status sync: 02 FR-I6 v1, 09 ADR-020 v1, 01 v1, 07 v0.7 (W39), 12 v0.9. SMART adapter: 02 v1, 07 v0.7, 12 v0.9. Display QA: 02 FR-I10 v1 and 07 Phase 4, yet 07 CLIN-1 (W52) requires \"display-QA logging live\" and 12 puts it at v0.9. CAP-validation tooling: 02 FR-R1 v1, 01 v1, 07 v1 (and 'never cut\u2026 before v1'), 12 \u00a73.2/\u00a73.4 MVP. PyO3 wheel: 02 v0.9, 06/07 MVP, 01 v1. LTI certification: 02/01 v1, 12 v0.9, 07 EDU-1 at W44. Education 'first usable': 02/12 MVP, 07 v0.7. 08 \u00a79 equates \"M2 mobile web beta = MVP\" while 07 separates M2 (W26) from MVP (W30).",
+  "fix": "Make 07's milestone table the single schedule owner; regenerate 02's Release column, 01 \u00a77.4's 'When' column and 12's per-release tables from it (or cite it instead of restating), and resolve each listed item explicitly (recommend: HL7 sync + SMART v0.9, display QA v0.9 since CLIN-1 depends on it, CAP tooling v0.9 since CLIN-1 QA workflows use it, wheel MVP-lite/v0.9 full, LTI certified v0.9).",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "The Manifest definition is arithmetically impossible as written in four sections and corrected in one. 02 FR-S3, 03 \u00a74, 05 \u00a75 step 1 and 10 (`stoi-manifest`, S2-09 \"Manifest \u2264 100 KB for the 15k slide\") specify one \u2264100 KB Manifest holding `TileIndex \u2192 (object, offset, length, codec, provenance)` for every tile; a 100k\u00b2 slide has \u224851k tiles across levels (\u22480.8 MB at 16 B each, the figure recommended \u00a73.1 itself quotes for the EOT). 04 \u00a75 reviewer note splits it into Manifest (\u2264100 KB, geometry + per-level object refs + Base-Bundle offsets) and an edge-resident Range Index, but nobody else adopted the split, and S2-09's DoD passes trivially on a 1,210-tile slide.",
+  "fix": "Propagate 04's Manifest + Range Index split into 02 FR-S3, 03 \u00a74, 05 \u00a75 and 10's crate table; amend recommended \u00a73.1/\u00a75 by ADR; change S2-09's DoD to 'Manifest \u2264 100 KB for the 100k\u00b2 synthetic slide; Range Index size recorded'.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Base Bundle byte budget ignores the plan's own measurement. recommended \u00a74.2, 02 FR-V3/NFR-P12, 04 \u00a75 (`base.bundle`), 05 \u00a75 all budget levels \u22644096 px at 2\u20135 MB; 11 Reviewer note 1 reports a measured 9.50 MB for 85 tiles at q85 4:2:0 (coarse levels heavier per tile than level 0) and asks that \"the open-time prefetch budget on cellular should be planned against ~10 MB, not 2 MB\". At 5 Mbps (W-4G p95-low) 10 MB is 16 s, which breaks 01's TTFI (W-4G \u22641.5/3.0 s) and NFR-P12 (\u22643 s W-4G) unless only the Pinned Base is on the first-frame path.",
+  "fix": "Re-budget the Base Bundle at 5\u201310 MB (glass-aware, measured per level in M0), make only Manifest + Pinned Base bundle (1.5\u20132 MB) the first-frame dependency in 01/02/05, and re-derive TTFI/TTFSV and NFR-O2's '\u224810 MB/slide for levels \u22654' from measured per-level sizes.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Slide-open latency is three differently named, differently valued metrics with no owning gate. 01 \u00a77.1 'TTFI' W-LAN \u22640.4/0.8 s, W-BB \u22640.8/1.5, W-4G \u22641.5/3.0 ('to be ratified by the Instant-zoom section at M1'); 02 NFR-P12 'TTFSV' \u22641 s W-LAN/W-BB, \u22643 s W-4G; US-C1 'launch to first pixels \u22641 s on W-LAN with pre-warm; \u22643 s cold'; 12 \u00a73.5 'launch click \u2192 first L*-sharp viewport \u22641.5 s p50, \u22643 s p95'. 05 \u00a715 and 08 \u00a79 define no open-time gate at all.",
+  "fix": "Define in recommended \u00a75 / 05 \u00a715 one open metric (URL/launch \u2192 first frame drawing Pinned Base, input accepted) and one launch-inclusive metric (worklist click incl. token exchange \u2192 first L*-sharp frame), with one value set per class; add them to the M1/M2 gate rows in 05 \u00a715 and 08 \u00a79; cite from 01, 02 and 12.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Fidelity tiers are defined differently in 02 and 06, and the tier is logged in telemetry and selects gates. 02 \u00a75.1: W+ requires L0 \u2265 512 MiB and \u22654 GB RAM; W\u2212 = floor Android (128 MiB, DPR cap); Firefox desktop = Tier 1/W+; macOS Tauri at MVP = Tier 1. 06 \u00a71/\u00a73: W+ = \"128 MiB\u20131 GiB L0\" and Chrome Android on Mali/Adreno at 128 MiB is W+; W\u2212 = \"WebGL2-only, no WebGPU path possible\" including Firefox Linux desktop and WebKitGTK; macOS Tauri at MVP = W60.",
+  "fix": "Use 02 \u00a75.1's definition (cadence, L0 budget, device class) everywhere; in 06 drop 'no WebGPU path' as a tier criterion (WebGPU is an enhancement, not a tier), reclassify Chrome Android 3\u20134 GB as W\u2212, Firefox Linux desktop as W+, and macOS Tauri-in-WKWebView at MVP as W60 in 02 \u00a75.3 (06 is right on that one).",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "09-risks-compliance-licensing",
+  "severity": "medium",
+  "issue": "Wrong FDA product code. \u00a73 states 864.3700 viewers are \"Class II, product code PSY\" and R2 refers to \"PSY clearances\"; gap-8 corrects note 09 (\"software-only viewers carry product code QKQ, not PSY\") and the FDA record for PathPresenter K250968 lists QKQ, 'digital pathology image viewing and management software', under 21 CFR 864.3700 (https://fda.innolitics.com/device/K250968 ; https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpcd/classification.cfm?id=QKQ). 01 reviewer note 1 left the QKQ/PSY conflict open; the K250968 summary also notes the cleared intended use excludes frozen sections and cytology, which matters for the plan's frozen-section emphasis.",
+  "fix": "Replace PSY with QKQ in 09 \u00a73, R2 and the new regulatory section; take the predicate list and 'viewer-only sponsors cleared with pairings, no clinical study' finding from gap-8 F1; note that a frozen-section Dx claim is a separate indication (07 \u00a77 already treats frozen as a separate CAP application).",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "IEC 62304 class and build segregation are asserted without rationale against the only corpus note on the subject. 01 \u00a77.5, 02 NFR-D6, 08 \u00a711 and 11 A10 assume \"IEC 62304 Class B\"; 12 \u00a72 and 04 \u00a78 separate clinical/research/education by a `mode: dx|ruo|edu` flag in one build. gap-8 \u00a73 recommends a Class C pixel pathway and case/slide identity segregated per IEC 62304 \u00a74.3 as \"an architectural fact (process/module boundary, no shared mutable state)\" and separate names/builds/claims for RUO and education \"not a flag, or the RUO guidance's totality test bites\".",
+  "fix": "Add an ADR deciding safety class and segregation boundary (candidate Class C set: stoi-codec, stoi-draw/resampler, Dx gate, slide identity; everything else A/B), with the crate layering test in 10 \u00a71 enforcing it; add an open question with counsel on whether `mode` flags or separate builds satisfy the RUO totality test, and reflect the answer in 04 \u00a78/12 \u00a72.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "04-system-architecture",
+  "severity": "medium",
+  "issue": "`sid` immutability conflicts with two-pass ingest and lazy level synthesis. \u00a75: \"`sid` = BLAKE3 of canonical pixel bytes + pyramid version, so every URL under it is immutable\"; \u00a76/\u00a77: pass 2 and every lazily synthesised level \"write a new object and swap the Manifest pointer\". Either the Manifest changes under an immutable URL, or sid changes and every L2/L3 entry for the slide goes cold at the moment the slide becomes canonical (the view-while-scanning frozen-section path). The launch context carries `slideIds`, but no `slideId \u2192 sid` resolver appears in the endpoint table.",
+  "fix": "Add a short-TTL `GET /v1/slides/{slideId}` resolver returning the current `sid`/Manifest URL; version per level (per-level object hashes in the Manifest) so adding a synthesised level bumps `pyramid_version` without invalidating tile URLs of unchanged levels; state the cache consequences of pass 2 explicitly.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "NFR-P8 (BER) and NFR-P14 (pan edge pop-in) are requirements with verification 'gate' that no gate implements, and BER/CHS values disagree. 05 \u00a715 and 08 \u00a79 M1/M2 rows contain neither metric (08 only recommends BER in a reviewer note); 02 \u00a77 item 3 asks both sections to carry them. BER W-4G: 01 \u226580 % within 500 ms, 02 NFR-P8 \u226570 %, 08 note \u226580 %. CHS N-iPad: 01 \u226595 %, 02 NFR-P7 \u226590 %. 01 reviewer note 5 asks for pan-specific gate rows that 05 never adds.",
+  "fix": "Add BER and pan-pop-in rows to the M1 and M2 gates in 05 \u00a715 and 08 \u00a79 using 02's values; align 01 \u00a77.1 to 02 (02 is the requirements owner).",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "Decode-pool size contradicts the rest of the plan. \u00a78 says \"`clamp(hardwareConcurrency \u2212 1, 1, 3)` Web Workers (6 on desktop)\" and \u00a713 budgets \"6 \u00d7 12 \u2248 72\" MiB of decoder heaps for W-LAN/W-BB; recommended \u00a73, 04 \u00a74.6, 06 \u00a72 and 10 all specify clamp(\u2026, 1, 3) with no desktop exception, and the measured 2.2\u00d7 figure is for three workers.",
+  "fix": "Decide one rule (e.g. clamp(hc\u22121, 1, 3) on phones, clamp(hc\u22121, 1, 6) on desktop classes) and state it in recommended \u00a73 and 04 \u00a74.6; re-derive the \u00a713 decoder-heap row and the G9 target accordingly.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Effort baseline for the TSP cost comparison is inconsistent. 01 \u00a71/\u00a79(2) and 09 \u00a76 cite \"\u2248 55\u201365 PM to MVP, \u2248 150\u2013170 PM to v1\" as the programme estimate; 07 \u00a79 totals the programme at \u224870\u201385 PM to MVP and \u2248195\u2013230 PM to v1 (platform + education + clinical integration + regulatory + reader study). 11 B5 E5 says the cost comparison has no public comparable but the plan's own baseline must be one number.",
+  "fix": "Cite 07 \u00a79's programme totals in 01 \u00a79(2), 09 \u00a76 and 11 B5 as the comparison baseline, keeping the platform-only figure as a sub-line.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "'Stage 1', 'Stage 2' and 'Stage 3' are used as gates and dates but never defined. 02 FR-R6 and 05/07/08 use 'Stage-1' for the reader study and prefetch-waste acceptance; 03 \u00a76 and 06 \u00a74.2/P4 gate the Tauri native window on a 'Stage 2' measurement; 03 \u00a75.4 and D8 revisit direct Metal at \"Stage 3 month 3\". These are gap-2/gap-4 staging labels; recommended \u00a75 defines only Stage 0 (G1\u2013G13) and M0\u2013M5.",
+  "fix": "Define Stage 1/2/3 in recommended \u00a75 and 07 \u00a71 in terms of the M-milestones (e.g. Stage 1 = M1\u2192M2 window incl. the reader study weeks 14\u201324; Stage 2 = native desktop window gate before v0.9; Stage 3 = M3 native shells), or replace each use with the milestone name.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "IIIF off-grid slow path uses libvips (LGPL) inside the Edge Translator. 02 FR-S8, 03 \u00a74 and 04 \u00a75 route off-grid IIIF regions to \"a rate-limited libvips slow path\"; 09 \u00a75.2 places the Edge Translator in the permissive-only licence class enforced by `cargo deny`, and 10 \u00a71 makes `server/ingest/` the only place LGPL may appear.",
+  "fix": "State that off-grid IIIF resampling runs in a separate LGPL worker image (or use a permissive Rust resampler on the translator's slow path); add it to 09 \u00a75.2's class table.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "low",
+  "issue": "The late-October schedules disagree in detail. 10 starts Sprint 1 on Tue 27 Oct with the first device number on \"days 2\u20133\" (28\u201329 Oct) while 11 B3 measures Mon 26\u2013Tue 27, freezes Wed 28 18:00 CT and submits Thu 29; 07 T0 lists \"a 240 fps camera for I2P\" in the evidence pack while 11 B2 says \"Input-to-photon is not claimed (no photodiode rig before January)\"; 11 B6/A9 count \"[17] research notes\" (now 18 with gap-8).",
+  "fix": "Make 11 B3 the operative calendar (S1-07a = Mon 26\u2013Tue 27), state in 07 T0 and 10 S1-07a that the pack reports input-to-swap/I2FC proxies, not I2P, and update the note count.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "low",
+  "issue": "Staffing dates conflict with Sprint-1 role assignments. 10 Sprint 1 makes RA the owner/reviewer of S1-11/S1-12 (\"RA has reviewed wording\") in week 1\u20132, while 09 \u00a71 and 11 A2 have RA at 0.5 FTE \"from v0.9\" and 07 \u00a78 at 0.5 from W30 (0.2 under the agent roster). 06 reviewer note 2 wants the iOS hire \"by month 6\" (\u2248W26); 07 adds iOS \"from week 34\".",
+  "fix": "In 07 \u00a78 show the fractional RA/QA (0.2) from week 0 that 10 assumes, and set the iOS hire at W26 per 06, or amend 06.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "01-vision-goals-metrics",
+  "severity": "low",
+  "issue": "Browser floor stated as \"Safari 15+\" in \u00a77.2 while 02 \u00a75.2 sets the Tier-2-or-better minimum at Safari 16.4 (15.2\u201316.3 are Tier 3 best-effort).",
+  "fix": "Change \u00a77.2 to 'Safari 16.4+ (15.2\u201316.3 best-effort)' and cite 02 \u00a75.2.",
+  "critic": "completeness-consistency"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "high",
+  "issue": "The upload budget does not close on the floor devices. \u00a73 time-boxes uploads at \u22643.0 ms/frame; \u00a78 sets a byte budget of 2\u20134 MiB/frame on W-4G (2\u20134 tiles); Stage 0 G5 accepts \u22642 ms per 512\u00b2 upload. At the G5 ceiling, 2\u20134 tiles cost 4\u20138 ms, i.e. the time box admits only ONE tile per frame, so a cold 20-tile level takes 20 frames (333 ms), not the \"5\u201310 frames, 83\u2013167 ms\" in \u00a72 and RA \u00a74.4, and the M2 gate \"cold 20-tile upload \u226410 frames\" requires 2 tiles/frame = 4 ms > the 3 ms box. The W-LAN row (\"\u226416 MiB/frame \u2192 2 frames, 33 ms\") assumes 16 tiles inside a 3 ms box = 0.19 ms/tile, 3\u20135\u00d7 faster than Chrome's renderer\u2192GPU-process copy of 1 MiB per texSubImage typically allows on an Intel iGPU.",
+  "fix": "Define the effective per-frame upload as min(byte cap, time box \u00f7 measured per-tile cost) and recompute every cold-fill row from it; set G5 so that \u22652 tiles fit the time box on the floor phone (\u22641.2 ms/tile) or widen the time box and shrink the overlay/UI partition explicitly; make G12's measured per-tile cost (p95, into an in-use array, see the TBDR issue) the input to \u00a72 rather than a footnote; state the W-LAN upload throughput as a measured number from M0, not a byte cap.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The byte model is contradicted by the project's own data and the sections disagree. 05 \u00a72/\u00a75, 01 \u00a77.1, 02 NFR-B1/P12 and RA \u00a74.3 use \"20 tiles \u00d7 ~80 KB (q85\u201390 4:4:4) \u2248 1.6 MB\", Pinned Base \"1.5\u20132 MB\", Base Bundle \"2\u20135 MB\". The staged CAMELYON pyramid (stage0/data, q85 4:2:0, 95 % tissue) measures 70 KB median at level 0 but 103\u2013123 KB at levels 1\u20134 \u2014 the magnifications pathologists spend most time at \u2014 and 4:4:4 adds +24 %, so q85\u201390 4:4:4 tissue tiles are ~90\u2013150 KB; the Base Bundle measured 9.5 MB (85 tiles) and the Pinned Base \u22482.4 MB. Section 11 (reviewer note 1) already flagged this; 05/01/02/RA were not updated. Consequence: W-4G destination transfer 510 \u2192 ~850\u2013950 ms p50 (p95 2.6 \u2192 4\u20135 s), W-BB 130 \u2192 210\u2013240 ms, open-time Base Bundle prefetch on 4G 1.5 s \u2192 ~3 s p50 / 15 s p95; the moving tier's claimed saving and the DPR-cap arithmetic shift with it.",
+  "fix": "Replace the flat 80 KB with a per-level byte model taken from the measured manifest (`bytes.perLevelMedian`), separately for q85 4:2:0 and q90 4:4:4; recompute the \u00a72 cold-fill rows, the \u00a75 slide-open table, TTFI and NFR-B1; carry a 'bytes per tile at L*' field in the quality record so the model is re-fitted from telemetry; reconcile 01/02/05/RA to the same numbers in one PR.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "high",
+  "issue": "The in-flight and prefetch budgets ignore the bandwidth-delay product and therefore self-inflict the queueing they are meant to prevent, while simultaneously starving prefetch. W-4G: BDP = 25 Mbps \u00d7 45 ms \u2248 140 KB (\u22482 tiles); the 24-slot cap \u2248 1.9 MB \u2248 14 BDP \u2248 600 ms of bytes committed ahead of any new request; the prefetch budget `0.5\u00b7bw_ewma\u00b70.5 s` \u2248 780 KB \u2248 250 ms of queue in front of a tier-0 request at p50. W-BB: 3.1 MB prefetch budget vs 312 KB BDP, again \u2248250 ms. `AbortController` below 30 % bytes stops the server sending more but cannot reclaim bytes already in the socket buffer and radio queue; Safari sends no priority signal (\u00a77). So the common case 'tier-0 fires during a prefetch burst' costs \u2248 the whole W-4G TTS p50 budget and \u22482.5\u00d7 the W-BB p50 budget, and no \u00a72 row models it. Conversely, the slot share (25 % of 24 = 6) and byte share cannot carry the 40\u201350 tier-1 wants \u00a76 generates per frame (ring 14\u201324 + adjacent window 9\u201320 + cone \u226415), so on W-4G prefetch cannot lead the gesture and CHS \u2265 85 % has no mechanism.",
+  "fix": "Pace by bytes, not slots: total in-flight \u2264 ~2\u00d7BDP (bw_ewma \u00d7 rtt_p50, both already tracked), prefetch \u2264 ~1 BDP, tier-0 always admitted; derive the ring/window/cone set sizes per class from the byte budget and the gate they must achieve (residency at burst end) instead of fixed fractions; add a 'queueing behind own prefetch' row to \u00a72 and a Tier-2 test: tier-0 issued while prefetch saturates the budget must see first byte within RTT + 1 BDP on the W-4G and W-BB profiles; keep h2/h3 priorities as a second line, never the first.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "high",
+  "issue": "A documented cause of jank on exactly the floor GPUs is missing from \u00a714's 37 causes and from G12's protocol: modifying a texture that in-flight draws still reference. On tile-based deferred renderers the previous frame's draws have not executed when the next frame's `texSubImage3D` is issued; Arm's GPU Best Practices guide states the driver then either ghost-copies the whole resource (copy-on-write) or inserts a pipeline bubble, and recommends N-buffered copies of volatile resources (https://documentation-service.arm.com/static/67a62b17091bfc3e0a947695 ; https://developer.arm.com/community/arm-community-blogs/b/mobile-graphics-and-gaming-blog/posts/mali-performance-6-efficiently-updating-dynamic-resources). The plan's \u00a79 design writes every frame into 64-layer, 64 MiB arrays that were bound by the previous frame's instanced draws; a ghost copy is a 64 MiB memcpy per upload on a 3 GB phone, a stall is a lost frame. \u00a78's \"Fencing: on WebGL2 the implicit command ordering makes a texSubImage3D issued after the previous frame's draw safe\" is a correctness statement, not a performance one. The same class applies on Apple TBDR through ANGLE-Metal in Safari. S1-10/G12 measure upload cost into a texture, not into an array referenced by the previous frame's draw, so Stage 0 as specified will not detect it.",
+  "fix": "Add cause #38 with its countermeasure: rotate uploads across arrays so a layer is written only into an array not drawn in the last 2\u20133 frames (add a `cooling` slot state; use more, smaller arrays, e.g. 16 layers = 16 MiB, so any ghost copy is cheap), or `texStorage3D` + fence-gated writes where available; make G12 measure (a) upload into an idle array and (b) upload into an array bound by the previous frame's draw, with the gate on (b); run G4/G12 on Mali-G52, Adreno 610 and A12 Safari; record per-upload GPU-side cost via the frame-time controller as the detector in production.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The W-4G (and N-And) gate set is internally inconsistent. 01 \u00a77.1, 02 NFR-P2/P7, 05 \u00a72 and 08 \u00a79 gate TTS p50/p95 \u2264 250/700 ms AND CHS \u2265 85 % AND state the cold destination fill as \u2248650/3,000 ms. With 15 % of settles cold, the overall TTS p95 lies at the ~67th percentile of the cold-fill distribution (\u22481.0\u20131.3 s for a p50 650 / p95 3,000 distribution), not \u2264700 ms. W-BB (5 % cold, cold p50 230) and W-iPad (10 % cold, cold p50 250) do close, which is why the problem is specific to the radio classes.",
+  "fix": "Choose one: (a) CHS \u2265 97 % on W-4G (not credible on 4G), (b) TTS p95 gate \u2248 1.2\u20131.5 s on W-4G/N-And with the p50 unchanged, or (c) split the gate into warm-settle TTS (\u2264250/700, measured on settles with CHS hit) plus a cold-fill distribution gate (\u2264650/3,000) plus a CHS floor; state the choice in 01/02/05/08 and in `gates/*.json`.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "high",
+  "issue": "The 128 MiB L0 budget in \u00a79/\u00a713 is undercounted and its protection (the DPR cap) is keyed to the wrong variable. The worked W-4G budget (\"\u224811 L* + 4 parent + 14 ring + 9 window + 21 pinned \u2248 59 of 128\") uses average not worst-case tile counts (a 780\u00d71688 px viewport spans up to 3\u00d75 = 15 tiles) and counts only the parent, while \u00a79's eviction never evicts `ancestor_of_visible` \u2014 the whole chain up to the Pinned Base (\u224810\u201313 more slots on a 100k\u00b2 slide at high power). Recounted at DPR 2: \u224888 slots, not 59. At DPR 3 \u2014 which applies on any unmetered link, e.g. a 3 GB phone on classroom or hospital Wi-Fi, since \u00a74 caps DPR \"on metered links\" only \u2014 the set is \u224824 L* + 8 + 13 ancestors + 24 ring + 12\u201320 window + 21 pinned \u2248 100\u2013110 of 128, above the 85 % eviction target before a single revisit tile. RA risk 2 (\"phone memory does not close\") is therefore live with the plan's own mitigation disabled in the education pillar's main configuration.",
+  "fix": "Key the DPR cap to the L0 budget (choose the largest DPR for which un-evictable + working set \u2264 ~60 % of slots), independent of network class; define `ancestor_of_visible` precisely (full chain vs parent-only) and recompute \u00a79 with worst-case tile counts; add a proptest 'working set on a 128 MiB L0 at DPR 3 and DPR 2 \u2264 85 %' to the engine tests and a W-4G-on-Wi-Fi lab profile to M2.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The 16-bit multichannel path has no residency or bandwidth model, yet 08 \u00a79 M5 and 12 gate \"8-channel 16-bit fluorescence meets M1/M2 gates on the same devices\". 8 \u00d7 R16 \u00d7 512\u00b2 = 4 MiB per tile; a 20-tile viewport is 80 MiB, parents 20 MiB, and a Pinned Base of 21 tiles \u00d7 8 channels is 84 MiB \u2014 the pinned set alone does not fit the 128 MiB W-4G or comfortably the 256 MiB W-iPad budget (05 \u00a713 lists brightfield only). Bytes per destination fill are ~20 \u00d7 2 MB zstd \u2248 40 MB (25\u00d7 brightfield), \u22483.2 s on W-BB. The \"8-bit windowed first paint then 16-bit at settle\" (05 \u00a78, 04 \u00a79) has no defined source: a server-side windowed preview is either request-time transcoding (excluded by 01 \u00a71 and the p99 \u226410 ms target) or a second pixel copy (excluded by RA \u00a79).",
+  "fix": "Add a multichannel table to 05 \u00a713 per class (visible-channel cap, Pinned Base as a precomputed 8-bit composite derived at ingest and declared as a derived tier with provenance, bytes per fill); define the 8-bit preview tier explicitly (ingest-time derived pyramid, not request-time); restrict M5's 'same devices' to W-LAN/W-BB/N-Desk/N-iPad and state a phone policy (e.g. \u22643 visible channels, 8-bit composite only, 16-bit on settle for the centre tiles).",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "TTS, Rendering Complete and the \u2264100 ms cross-fade are defined so that the W-LAN/N-Desk TTS p50 \u2264 50 ms gate is unreachable whenever any tile lands after the last input: \u00a74 says Rendering Complete requires \"no cross-fade is in progress\" and \"TTS = last input \u2192 first such frame\", while every tile that \"replaces a magnified ancestor\" fades over \u2264100 ms (6 frames). \u00a74's two landing cases are also self-contradictory: a tile landing \"into a fractional-blend slot (parent already drawn at the correct weight) \u2192 no fade\" cannot occur, because while the child was missing the parent was drawn at weight 1 as the magnified ancestor, not at weight f, so its weight drops abruptly when the child lands \u2014 that is a pop by the plan's own definition.",
+  "fix": "Define TTS at fade start (first frame in which every visible pixel is sampled from L* or its blended parent with the fade merely finishing) and keep pop-in count as the separate metric; shorten the fade to \u22643 frames (50 ms) on a settled frame; rewrite the two landing cases as one rule: any change of drawn level at a pixel after the last input is faded, and the fade length is excluded from TTS but counted in BAT.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "NTF% and the \"sharp at rest\" invariant are undefined under the fractional-LOD blend. 08 \u00a73.3 defines NTF% as frames \"with any visible pixel sampled from a level coarser than L*\"; \u00a74's trilinear blend samples the parent (coarser than L*) at weight f = \u2212log2 s on every rest frame with s < 1 (f = 0.74 at s = 0.6, parent magnified 1.67\u00d7). Either NTF% \u2248 100 % at rest by its own definition, or the blended parent is silently exempt and the metric is blind to the softness trilinear introduces \u2014 the exact blur a pathologist at 20\u201340\u00d7 will report. No gate bounds at-rest blended deficit.",
+  "fix": "Define resolution deficit per pixel including the blend weight (f\u00b7log2 s_parent) and gate the at-rest area-weighted value (e.g. \u22640.15 octave) alongside NTF% = 0 for unblended coarse pixels; measure trilinear vs pure-L* bilinear at s \u2208 [0.5, 0.75] on the Siemens-star goldens and in a reader-study arm (gap-1 F9); consider blending only below s \u2248 0.75 (f = clamp((0.75 \u2212 s)/0.25, 0, 1)) if the study shows the softness is perceptible.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "The fragment-cost estimate for transients is 5\u201310\u00d7 low and endangers G3. \u00a711 budgets Catmull-Rom bicubic at \"\u22480.3\u20131 ms at 1080p on Mali-G52\". Mali-G52 executes 2 texels/clock/core (Arm, https://documentation-service.arm.com/static/620e22c90ca305732a3a5dd0); an MC2 at ~0.85 GHz is \u22483.4 Gtexel/s peak. 1080p \u00d7 9 taps = 18.7 M fetches \u2248 5.5 ms at peak; at the G3 geometry (DPR 3, 2.96 MP) \u2248 7.8 ms at peak and realistically 10\u201315 ms with cache misses \u2014 plus the trilinear base pass and the 3 ms upload box inside a 16.7 ms frame. 01 \u00a77.2 defines W\u2212 as \"floor Android\" (bilinear per \u00a711) while 06 \u00a71 defines W\u2212 as Xclipse/Firefox/WebKitGTK and puts Mali/Adreno Chrome in W+, so whether the floor phone gets bicubic is undetermined.",
+  "fix": "Budget shaders by texel rate per device class in \u00a711; make the transient kernel bilinear on W-4G and W-iPad and bicubic only on W+/N; reconcile the W\u2212 definition between 01, 02 and 06; add a G3 variant with transients active (ancestor magnification over 50 % of the viewport), not only 60 blended tiles.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "02 NFR-P10 gates \"decode p95 \u2264 4 ms per worker (WASM libjpeg-turbo, measured at G13)\" on the floor phone, while 05 \u00a78 estimates 9\u201315 ms per 512\u00b2 tile on an A55 and gap-2 measured a 2.1\u20132.9\u00d7 WASM penalty on top of note 04's 3\u20135 ms native low-end-ARM estimate (so 7\u201315 ms is the plausible band and 4 ms is not). An impossible gate in the requirements register will be waived at M2, which is the behaviour the agent-loop section says must never happen.",
+  "fix": "Rewrite NFR-P10 as relative to the Stage-0 measurement (e.g. \u22641.2\u00d7 the G13 p95 per worker, ratio to x86 recorded) and move the absolute number into the \u00a72 table as [measured] after G13; keep the wall-time budget for 20 tiles across the pool as the gate that matters.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "\"20 tiles\" is a 1080p/DPR-1 laptop viewport; the sign-out persona in 01 \u00a73 uses a 27\" 4K display (44\u201354 L* tiles per level, note 03 \u00a72.8) and W-LAN/N-Desk gates are evaluated on that persona. At 4K the W-LAN cold fill is decode 44 \u00d7 3 ms / 6 workers \u2248 22 ms + upload 44 MiB at a realistic 3\u20138 tiles/frame \u2248 90\u2013250 ms \u2248 120\u2013280 ms, against TTS \u2264 50/100. A slow pan at the pathologist ceiling (1 viewport / 500 ms) on 4K needs ~88 tiles/s \u2248 7 MB/s \u2248 56\u201380 Mbps with measured tile bytes, 3\u20134\u00d7 the W-BB p95-low 20 Mbps, so 02 NFR-P14 (\"edge pop-in during slow pans = 0 at \u2264 1 viewport/500 ms on W-LAN/W-BB\") cannot hold for the remote 4K reporter.",
+  "fix": "Add a viewport-geometry column (1080p/DPR1, iPad DPR2, 4K DPR1.5\u20132) to the \u00a72 table and to the gate definitions; evaluate W-LAN and N-Desk on the 4K/DPR-2 workstation and W-BB on both 1080p and 4K; add a pan bandwidth row per class and set NFR-P14's W-BB clause to the bandwidth at which it is actually achievable (or to 1080p only).",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "04-system-architecture",
+  "severity": "medium",
+  "issue": "\"Service Worker off the hot path\" (04 \u00a74.6/\u00a74.7, 05 \u00a77, 06 \u00a74.1) has no mechanism. A PWA service worker with a fetch handler intercepts every fetch issued by the controlled page, including cross-origin tile-host requests, so a separate `{tile-host}` does not keep it off the path; the 50/250 ms cold start and a per-request hop land on the first zoom after idle. Chrome 123+ offers the Static Routing API (`event.addRoutes`, source 'network') to bypass the SW for URL patterns (https://developer.chrome.com/blog/service-worker-static-routing); no Safari or Firefox equivalent was found, and W-iPad is the class most exposed.",
+  "fix": "Specify the mechanism: either no fetch handler in the SW at all (app shell cached via HTTP caching and the manifest), or `addRoutes` where available and a no-fetch-handler SW elsewhere; add a Tier-2 assertion on WebKit and Chromium that no tile request shows a service-worker timing span; add this as cause #39 in \u00a714.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Stage 0 cannot measure what it is chartered to measure on the dates given. 10 \u00a78 needs the floor phone on days 2\u20133 (S1-07a, 2026-10-28/29) and G12/G13 by Sprint 1, the A12 iPad, Xclipse device and 240 fps camera/WALT rig before Sprint 3 (G11, 2026-11-24); 07 \u00a72 says Stage 0 has \"one week of buffer for device procurement\" and WALT \"by M2\"; 06 \u00a78 says \"the lab is bought in M1, before the first mobile claim\". The TSP T0 number (29 Oct) depends on a phone being on the bench on 28 Oct.",
+  "fix": "Publish one dated procurement list in 07 and 10: floor phone + 240 fps camera before 2026-10-28; A12 iPad + Xclipse device + photodiode rig before 2026-11-24; WALT by M1; amend 06 \u00a78 accordingly; make the T0 evidence pack state explicitly which device was measured and that REF was measured on it the same day.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "08-quality-testing-performance-qa",
+  "severity": "medium",
+  "issue": "The golden gesture replay \u2014 \"the single most important test\" \u2014 is platform-dependent as specified. The shell's frame-time AIMD controller (05 \u00a78) changes the upload budget per device every frame via `set_budget`, which changes how many uploads each `tick` emits, hence L0 slot state and the draw list on frame N. The .sgr recording captures \"memory budget\" once (08 \u00a73.2), not the budget timeline, so byte-identical FrameOut across wasm/native/shells is either false or holds only when uploads are not budget-limited.",
+  "fix": "Record every `set_budget`/`upload_per_frame` change with its timestamp in the .sgr and replay it; define the semantic golden on policy-level fields (TileKey, level, blend weight, request/cancel order) rather than (array, layer) slot ids; keep the slot-level diff as a per-platform snapshot, not a cross-platform assertion.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "Sparse vendor pyramids break the L* contract at first view and the frozen-section acceptance ignores it. SVS/SCN step 4\u00d7 between native levels (04 \u00a77 step 4: \"this path is the norm\"); index-in-place serving (\"viewable seconds after upload\") offers no level with s \u2208 [0.5, 1.0] for half the zoom range until lazy synthesis (+25\u2013120 ms server-side per tile, \u00a74 table) has run for that region. 02 US-C2 nonetheless asserts W-BB/W-iPad TTS \u2264 100/300 ms on a slide \"viewable \u2264 30 s after the scanner finishes\".",
+  "fix": "Define the L* policy on sparse pyramids (draw the finer native level minified up to 4\u00d7 with the blend spanning two octaves, or the coarser level magnified \u22642\u00d7, and say which); synthesise the ROI's intermediate level synchronously in the frozen-section path and the \u22644096 levels at index time; add a 'first view after ingest' row to \u00a72 and exclude it from the TTS gate or gate it separately.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "The moving tier (q75 4:2:0 during bursts, q90 at settle; \u00a713 rung 2, 03 D13) is either request-time transcoding \u2014 which 01 \u00a71 forbids (\"No request-time transcoding, ever\") and which cannot fit the translator's p99 \u2264 10 ms (a 9-tile decode+re-encode is \u224845\u201390 ms on one core) \u2014 or a second derived pyramid, which RA \u00a79 counts as a storage cost. Its bandwidth arithmetic is also unmodelled: with refine-at-settle every level the user stops on is downloaded twice (q75 + q90 \u2248 +60 % bytes), so the tier only pays on levels passed through, and the waste metric excludes it.",
+  "fix": "Decide explicitly: a precomputed derived H&E moving pyramid at ingest (state the storage cost) or drop the tier; model total bytes per gesture with and without it against the Bruny\u00e9 burst-amplitude distribution before implementation; include moving-tier bytes in the waste and bytes-per-gesture metrics; keep Dx mode excluded as already stated.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "\u00a713's memory table counts GPU textures inconsistently and does not say which process it budgets. W-4G 'Peak RSS \u2264250' includes L0 128 MiB (128 + 32 + 36 + 48 = 244); W-iPad 'Peak RSS \u2264300' cannot include L0 256 MiB (256 + 64 + 36 + 64 = 420). On iOS 17+ WebGL textures live in the GPU process, not WebContent, and both are jetsam targets; G6 'RSS \u2264300 MB' names neither.",
+  "fix": "Budget per process (WebContent heap/JS/wasm, GPU-process texture memory) per class, name the counter each soak reads (`os_proc_available_memory`, JetsamEvent logs, `dumpsys meminfo`, Web Inspector), and make M2's '\u226460 % of measured kill threshold' apply to each process separately.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "01-vision-goals-metrics",
+  "severity": "medium",
+  "issue": "TTFI p95 \u2264 3.0 s on W-4G does not close at the class's own p95-low bandwidth (5 Mbps): 1.0 MB gz floor module + 0.1 MB Manifest + \u22482.4 MB measured Pinned Base = 3.5 MB \u2248 5.6 s, plus \u22640.3 s compile. The slide-open sequence (05 \u00a75) also fetches the whole Pinned Base before any L* tile, which delays a launch-context jump to a saved high-power view.",
+  "fix": "First frame on thumbnail + levels \u22641024 px (5 tiles \u2248 0.5 MB), then the rest of the Pinned Base; when the launch context lands at high power, order the L* viewport tiles before the remaining base; set the W-4G TTFI p95 from the measured bytes (\u22486 s) or state the module-cached assumption explicitly.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "08-quality-testing-performance-qa",
+  "severity": "medium",
+  "issue": "Correlated-burst loads are absent from the network profiles although two pillars depend on them: a 30-seat classroom following an instructor (12 \u00a79 'M2 gates hold on W-4G in a 30-seat classroom profile') and a 30-viewer follow-me tumour board (01 \u00a73). 30 clients \u00d7 \u22482.5 MB per synchronised zoom \u2248 75 MB per instructor gesture \u2248 6 s on a 100 Mbps access point regardless of edge-cache hit rate; the \u00a73.7 profiles are all single-client.",
+  "fix": "Add a shared-bottleneck profile (N clients behind 100/300 Mbps, tc netem on the bridge) and a follow-me scenario to Tier 2/3; consider presenter-driven pre-push (broadcast of the presenter's prefetch list to followers) as a policy feature with its own waste accounting.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "low",
+  "issue": "\"A pinch crosses s = 1.0 \u2248155 ms after it starts\" is the mean of a 0\u2013300 ms distribution (the starting s is uniform in [0.5, 1.0] at 3.3 levels/s); the 10th percentile is \u224830 ms, below the W-BB first-byte + adjacent-window transfer (19 ms + 40\u201380 ms). Roughly a third of W-BB pinches therefore begin with a \u22641-level transient irrespective of prefetch quality, which the text presents as the exception.",
+  "fix": "State the lead-time distribution rather than its mean; derive the NTF% gate from it; name hover/pointer-down prefetch (\u00a76 item 4) as the mitigation and log its hit rate.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "low",
+  "issue": "Constants revised in one section were not propagated: 05 \u00a78 makes the upload controller frame-time AIMD with timer queries as telemetry only, but 01 \u00a77.1, 02 NFR-M3 and 08 \u00a73.5 still say 'online budget from timer queries'; M0 main-thread task limit is 50 ms in 08 \u00a79 but 8 ms in 05 \u00a73 and 08 Stage 0; BER on W-4G is \u226570 % in 02 NFR-P8 but \u226580 % within 500 ms in 01 \u00a77.1 and 08's reviewer note; the 1 M-object layer gate is 'on W-4G and N-iPad' in 12 but 'N-Desk and W-LAN, centroid LOD elsewhere' in 02 NFR-P15.",
+  "fix": "Make `gates/*.json` the single source and generate the tables in 01/02/05/08/12 from it; reconcile the four values above to 05's and 02's definitions in the assembly pass.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "04-system-architecture",
+  "severity": "low",
+  "issue": "04 \u00a74.3 describes L* as s \u2208 [0.5, 1.0] with \"one level of hysteresis\"; 05 \u00a74 correctly notes the range is a partition (exactly one level qualifies at any k) and that the only hysteresis is the \u03b5 = 0.03 octave guard band. The wording in 04 will mislead an implementer into adding a dead band.",
+  "fix": "Replace 'one level of hysteresis' in 04 with 'a partition with an \u03b5 = 0.03 octave guard band (05 \u00a74)'.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "low",
+  "issue": "The decode and upload rows assume one 512\u00b2 JPEG per tile, but SVS/Aperio (the dominant TCGA and clinical format) stores 256- or 240-px frames; 03's reviewer note makes a logical 512\u00b2 TileKey = up to four vendor frames, i.e. four decodes and four sub-uploads per slot (~1.3\u00d7 decode cost from per-image overhead), and the Pinned Base contiguity claim in \u00a75 holds for the canonical DICOM only, not for in-place vendor files.",
+  "fix": "Add a '4 \u00d7 256\u00b2 frames' variant to G12/G13 and to the \u00a72 decode row for tier-B passthrough slides; state that \u00a75's 'all 21 tiles contiguous' applies after canonical write, not during index-in-place serving.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "low",
+  "issue": "\u00a74 states the Base Bundle \"halves that [worst-case blur] within one decode round (\u224860\u2013200 ms by class)\"; 64 tiles at the plan's own 9\u201315 ms/tile (or more, see G13) across 3 workers is 190\u2013320 ms on an A55, and 2\u20135 MB (measured 9.5 MB) of transfer precedes it on 4G.",
+  "fix": "Recompute per class from the \u00a78 decode figures and the measured bundle size; decode the Base Bundle lazily by ROI on phones rather than in one round.",
+  "critic": "perf-realism"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "Stage 0 / M0 / T0 anchors disagree across sections, so every downstream gate date is ambiguous. \u00a707: week 0 = 2026-10-26, Stage 0 weeks 0\u20133, M0 = 2026-11-20, Phase 1 starts 2026-11-16. \u00a709 'Date anchors': T0 = 2026-11-02, Stage 0 exit 2026-11-13, M0 2026-11-30. \u00a710 \u00a78: three sprints 2026-10-27 \u2192 2026-12-05 with the M0 scorecard/ADR-0013 on 2026-12-05 (week 6), and its Reviewer note 1 admits 'This is a schedule stretch'. \u00a708 \u00a79, \u00a705 \u00a715, \u00a706 \u00a76, \u00a701 \u00a71 and recommended.md \u00a78 all still say 'Stage 0 (weeks 0\u20132)', and \u00a708 \u00a711 says 'end of Stage 0 plus M0 (\u2248 month 2)'. \u00a707 claims it 'does not change any figure' yet M1 (2027-01-29) is only 7.5 weeks after \u00a710's M0.",
+  "fix": "Adopt \u00a710's sprint calendar as canonical (it is the only one with itemised work and gates): M0 = 2026-12-05 (week 6). Either shift \u00a707 Phase 1 to weeks 6\u201316 (M1 \u2192 2027-02-19) and re-derive every later date, or keep M1 = 2027-01-29 and explicitly cut Phase 1 scope to fit 7.5 weeks. Delete the \u00a709 'T0 = 2026-11-02' anchor and the 'weeks 0\u20132' wording in \u00a701/\u00a705/\u00a706/\u00a708 and recommended.md \u00a78 (an ADR superseding the figure, per \u00a711 A6). Add a single `docs/plan/calendar.yaml` that every section references so dates cannot drift again.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "07-roadmap-milestones",
+  "severity": "high",
+  "issue": "The TSP milestone is scheduled against an unverified and wrong meeting date. \u00a707 \u00a76: 'the 106th is expected in early February 2027 [unverified], i.e. weeks 14\u201315, two weeks after M1' and 'Data freeze for the meeting: T1 = M1 (week 13, 2027-01-29)'. The verified facts (brief; also \u00a711 B1) are 22\u201324 January 2027 = week 12, which ENDS five days before M1. \u00a707 also says the TSP deadline 'could not be read ... and must be confirmed by the owner' when the brief gives it (Fri 30 Oct 2026, 17:00 CT, 350 words, no names, residents'/fellows' competition). \u00a701 Reviewer note 3 still questions eligibility that the brief resolves. \u00a711 B7 gets it right ('M1 ... presented only if its gates are green by 15 January').",
+  "fix": "Rewrite \u00a707 \u00a76 and the T1 row of the milestone table: T1 = presentation data freeze 2027-01-15 (week 11), content = M0 scorecard (G1\u2013G13 on real floor devices) + Tier-2 nightly trend + OSD comparator; M1 is explicitly NOT presentable. Replace the unverified sentences with the verified facts and the deadline Fri 30 Oct 2026 17:00 CT; keep the internal submit target Thu 29 Oct. Delete \u00a701 Reviewer note 3. Make \u00a711 Part B the single owner of TSP facts and have \u00a707 reference it.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "07-roadmap-milestones",
+  "severity": "high",
+  "issue": "The staffing and funding model is not the programme's actual situation, and the plan has no funding gate. \u00a707 \u00a72 Phase 0: '5.5 FTE: tech lead 1, Rust/graphics 2, Rust systems 1, performance/QA 1, backend 0.5 ... hired before week 0 or Stage 0 does not start' with week 0 two days away; \u00a78: human roster under agent execution '\u22484.5 FTE at Stage 0 rising to \u22487\u20138 by v1' yet 'the calendar is not shortened' \u2014 i.e. the schedule silently assumes agents supply the missing ~50 % of a 9\u201316 FTE team's work content at the reference team's calendar, which \u00a707 itself calls 'uncalibrated'. No section names who pays the 4.5\u20138 FTE, the USD 8\u201312k device lab due before Sprint 3 (\u00a710 'Procurement gate before this sprint'), the Mac mini/runner boxes (USD 4\u20135k, \u00a708 \u00a73.6), hosted CI (USD 1\u20131.6k/month, \u00a708 \u00a78) or agent tokens. gap-8 F8 names the realistic sources (NCI ITCR R21/U01/U24, CPRIT SEED/CFSA, philanthropy) and their cycles are quarters, not weeks.",
+  "fix": "Add a \u00a707 \u00a78a with two explicit execution scenarios and make the choice an M0 human decision: (A) funded reference team (current plan); (B) owner-plus-agents, zero payroll, borrowed devices \u2014 state what B can reach (Stage 0 measurements on owned devices, M0 core + golden replay, desktop web alpha, TSP evidence) and what it cannot (device lab, reader study, clinical pilot, QMS, native shells). Put a 'funding secured' gate on the dependency graph before Phase 2 with the grant calendar (ITCR/CPRIT submission dates) as lead items, and a 'device lab PO issued' gate before Sprint 3. Replace 'hired before week 0' with 'tech lead and graphics/perf reviewer identified (paid or volunteer) before Sprint 2'. Record in \u00a711 A6 the per-phase agent-token budget as a number (e.g. Stage 0 \u2264 USD X) so the ledger has a target to burn against.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The MVP is not minimal and Phase 1 is overloaded, so M2 (the only milestone that validates goal 1 on real devices) is at risk from scope that does not serve it. \u00a702 tags 32 Must requirements at MVP, including FR-V7 fluorescence \u22648 ch, FR-A3 vector-tile path, FR-A4 raster overlays, FR-S3 both canonical stores, FR-S5 PHI tiers, FR-S7 desktop local files, FR-S8 DICOMweb/IIIF/DZI fa\u00e7ades, FR-S9 conformance statement, and six education Musts (FR-E1/E2/E3/E7/E8/E12: collections, tours, region-marking items, case modules, unknown archive, authoring). \u00a707 Phase 2 adds Tauri desktop, PyO3 wheel, OpenSlide worker, OSD TileSource, Hyperdrive launch, reader study, dashboard, device lab and WALT. \u00a707 Phase 1 (10 weeks, or 7.5 after the M0 fix) carries both canonical stores, Cloudflare Worker AND regional binary, bundles, tokens, PHI bucket, Orthanc/dcm4chee reader CI, full policy, render-gl, telemetry, replay, 4-browser alpha, Tier-2 nightly and 24 h fuzzing. \u00a707 \u00a710's cut list leaves MVP scope almost untouched (only IIIF/DZI).",
+  "fix": "Redefine MVP 0.5 as 'M2 + what M2 needs': web viewer (W+/W60/W\u2212), DICOM brightfield passthrough canonical + regional translator, Manifest/bundles/tokens, npm + anywidget, launch-context contract v1 (mock-verified), GeoJSON import/export, quality record + dashboard. Move to v0.7/v0.9: OME-Zarr multichannel canonical and fluorescence, Cloudflare Worker build, Tauri desktop, PyO3 wheel, IIIF/DZI/Iris fa\u00e7ades, OSD TileSource, OpenSlide worker, raster overlays, all FR-E* features (keep only the API freeze). In \u00a702 re-tag those rows to v0.7/v0.9 and cap MVP Musts at ~15. In \u00a707 Phase 1 keep only DICOM passthrough + regional binary + core + render-gl + replay + Tier-1/2 harness; defer multichannel ingest and the Worker to Phase 2.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "09-risks-compliance-licensing",
+  "severity": "high",
+  "issue": "The licence decision is taken by the wrong people at the wrong time. \u00a710 S1-02 has 'LICENSE Apache-2.0 ... ADR-0001\u20260012' accepted at gate H2 by 'PO, TL' in Sprint 1; \u00a709 \u00a75.1 'Apache-2.0 for the core ... (ADR-010)' and OQ-04 (legal entity) answered only by v0.9. gap-8 F6: 'Regents' Rule 90101: the Board owns software created by employees; creators cannot license it themselves; UT Austin and UT Southwestern have procedures that permit open-source release ... An Apache-2.0 release needs the campus technology-commercialisation office to approve the licence choice.' The owner is a UT resident; the repository already exists and \u00a711 B6 drafts an abstract calling the project open-source. Publishing to npm/PyPI (M2) and the public perf dashboard (Phase 2) are distribution acts.",
+  "fix": "Add OQ-00 to \u00a709 \u00a78: 'IP ownership determination and OTC open-source release approval for Apache-2.0', owner PO+LC, answer-by Sprint 1 end (2026-11-07), tracked risk if unanswered. Make S1-02's H2 gate 'PO + TL + OTC written approval' and keep the repository private (or the licence file as 'proposed') until it lands; gate any registry publish or public dashboard on it. Decide the manufacturer/steward model (gap-8 \u00a74.1 hybrid: UT institution holds the 510(k), UT-affiliated 501(c)(3) stewards the code) by M1, not v0.9, because it determines who may sign the licence and the distribution agreement.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "Research note gap-8 (present in the corpus, 19:58) contradicts the regulatory assumptions baked into \u00a702, \u00a707, \u00a708, \u00a709, \u00a711 and \u00a712, all of which say gap-8 'does not exist'. (a) Class: \u00a702 NFR-D6, \u00a708 \u00a711, \u00a709 \u00a73, \u00a711 A10 'IEC 62304 Class B assumed'; gap-8 F4: 'expect Enhanced documentation and plan IEC 62304 Class C for the pixel pathway ... Use \u00a74.3 segregation to keep the education/collaboration/research modules at Class A/B'. The ~10 % design-control overhead and the 3\u20134 PM (MVP) / 10\u201314 PM (v1) regulatory line in \u00a707 \u00a79 are Class-B numbers. (b) Builds: \u00a712 \u00a72 'The mode field ... is the one switch that separates the pillars legally'; gap-8 F3: 'an RUO build must differ from the Dx build in more than a flag: no LIS sign-out integration, no Dx-mode display gating, distinct name, distinct website claims ... Keep the education module a separate product with its own name'. \u00a707 CLIN-1 then uses an 'RUO-labelled' build for 'frozen-section preliminary consult' \u2014 clinical use under a label that says 'Not for use in diagnostic procedures'. (c) Product code: \u00a709 \u00a73 'product code PSY'; gap-8: 'software-only viewers carry product code QKQ, not PSY'. (d) Timing: gap-8 \u00a74.3 'Commission the Pre-Sub (free) in H1 2027 ... Stand up the QMS on documented, free tooling now ... Approach Hamamatsu and Leica for test files/display loaners'; \u00a707 puts QMS at W84\u2013104 and the design partner post-v1.",
+  "fix": "Issue one ADR ('Regulatory baseline from gap-8') and propagate: assume Class C for stoi-core/stoi-codec/stoi-render(-gl)/Manifest/Edge Translator pixel path and Class A/B for stoi-annot, education and research packages, with the crate boundary as the IEC 62304 \u00a74.3 segregation (already natural in \u00a710's layout); re-estimate the regulatory line at roughly 1.5\u20132\u00d7 (unit-level verification evidence and detailed design for the Class C crates). Replace the mode flag with three artefacts from one commit set \u2014 RUO/research build, education product (own name, no PHI), in-house clinical build (lab-validated labelling for CLIN-1), plus the later Dx edition \u2014 and fix the CLIN-1 row accordingly. Correct PSY\u2192QKQ in \u00a709 and \u00a701. Schedule in \u00a707: Pre-Sub drafted by M2 and submitted H1 2027; lightweight QMS (qmsOS/OpenRegulatory templates) stood up in Phase 2\u20133; scanner/display vendor outreach (S360MD, GT 450 DX, Barco MDPC-8127) in Phase 1.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "07-roadmap-milestones",
+  "severity": "medium",
+  "issue": "The Dx-track critical path is self-contradictory. \u00a707 \u00a75: 'The two items that can slip everything are the graphics hires ... and the design partner with a cleared scanner (gates DX-1)', yet Phase 5 starts the 'design partner with a cleared scanner' at W84+, and cut #10 only moves the search to v0.9. \u00a707 \u00a72 Phase 5 schedules 'QMS and legal manufacturer entity (W84\u2013W104)' and \u00a709 R4 decides the entity form at v0.9. gap-8 F1 shows viewer-only clearances are bench-plus-pairing with no reader study (PathPresenter: 81 FDA days), so the pacing items are the QMS, the entity and vendor cooperation for test files \u2014 exactly the items the plan starts last.",
+  "fix": "Move onto the \u00a707 dependency graph as early nodes: entity decision (M1), Pre-Sub (M2 \u2192 H1 2027), vendor test-file/loaner agreements (Phase 1\u20132), QMS stand-up (Phase 3, formal procedures by v1). Re-plan Phase 5 as: 510(k) assembly starts the day v1's DHF audit passes (W84), submission \u2264 W96, clearance \u2248 W110\u2013118; keep the current W117/W135\u2013143 as the pessimistic bound. Note explicitly that CAP-1 (in-house use) and the 510(k) are independent paths and should not be serialised ('INH --> K510' in the mermaid graph is not a real dependency).",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Release tags for the same deliverable differ between sections. HL7 v2 status sync + prefetch and SMART adapter: \u00a702 FR-I6/FR-I7 'S | v1' (matching gap-7 \u00a74), \u00a712 \u00a73.2 'v0.9', \u00a707 'v0.7 (W39)'. 1EdTech LTI certification: \u00a702 FR-E4 'v1 (certified)', \u00a712 \u00a75.5 'by v0.9', \u00a707 EDU-1 (W44, 2027-08-30) requires '1EdTech certification, VPAT' with only 5 weeks allotted (gantt ed2). CAP-validation tooling: \u00a702 FR-R1 and \u00a707 'v1', \u00a712 \u00a73.2/\u00a73.4 'at MVP'. PyO3 wheel: \u00a707 MVP, \u00a702 FR-I3/FR-S7 'v0.9'. Education features: \u00a702 Must at MVP, \u00a707 v0.7. Raster overlays: \u00a712 Reviewer note 2 says the roadmap must name them at MVP; \u00a707 does not. Certification also requires paid 1EdTech membership (Alliance minimum) that no budget line carries (https://community.1edtech.org/viewdocument/introduction-to-lti-advantage, https://www.1edtech.org/certification/lti).",
+  "fix": "Make \u00a702's target-release column canonical and reconcile \u00a707 and \u00a712 to it: HL7/SMART at v1 (v0.9 only if a UT site has signed an interface-engine work order by M2); LTI 1.3 launch + AGS at v0.7 verified against the 1EdTech reference platform, formal certification at v0.9 with membership budgeted and the EDU-1 gate reworded to 'conformance tests pass; certification filed'; CAP tooling v1 (blinded re-review alone may ship v0.9 for the reader study); PyO3 wheel v0.9; education features v0.7. Add raster overlay layers to \u00a707's MVP row.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "12-product-pillars-clinical-research-education",
+  "severity": "medium",
+  "issue": "No section mentions TX-RAMP, yet it gates every UT deployment of a cloud-hosted service. Texas Government Code \u00a72054.0593 requires institutions of higher education to contract only for cloud computing services that are TX-RAMP certified (Level 2 for confidential/regulated data such as FERPA records or PHI), with an 18-month provisional path (https://dir.texas.gov/information-security/texas-risk-and-authorization-management-program-tx-ramp/tx-ramp-eligibility ; https://www.utsouthwestern.edu/employees/information-security/tx-ramp/ ; https://www.winstead.com/Knowledge-Events/News-Alerts/401802/TX-RAMP-Requirements-for-Higher-Education). The architecture's hosting default is 'Cloudflare (first-class)' (recommended.md \u00a73.1), the fall-2027 pilot (EDU-1, W44) launches from UT Canvas/Brightspace into that service, and CLIN-1 (W52) is at a UT site \u2014 but the 'on-prem edge binary behind Caddy/nginx' is scheduled at v0.9 (W52), AFTER EDU-1. \u00a709 M5 covers SOC 2/BAA generically but not this Texas-specific gate.",
+  "fix": "Add TX-RAMP to \u00a709 \u00a72.3 (market/adoption) and \u00a712 \u00a72 with an early-warning indicator ('pilot topology not UT-hosted by W30'). Declare the pilot topology as UT-operated infrastructure (the Phase 1 regional binary on UT VMs + object store) so TX-RAMP does not apply, and pull the 'same binary behind Caddy/nginx on-prem' packaging from v0.9 into MVP (it is the same binary; only the packaging and docs move). If any Cloudflare/AWS path is used by a UT institution, file for TX-RAMP provisional status by M2 and add the cost. Verify applicability with UT ISO before M1 (OQ).",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "07-roadmap-milestones",
+  "severity": "medium",
+  "issue": "The Stage-1 reader study is scheduled without its human lead items. \u00a707: 'the Stage-1 reader study (gap-1 F9, n \u2248 8\u201312, weeks 14\u201324) whose calibrated constants replace estimates at M2'; gap-1 F9: '8\u201312 pathologists stratified by experience ... two 60-min sessions, \u2265 1 week apart'. This is human-subjects research requiring IRB review (expedited/exempt still needs a protocol, consent and a determination), recruitment of \u22654 attendings and \u22654 residents, and a built replay harness; \u00a711 B8 mentions IRB only for the abstract. The pathologist advisor is 0.3 FTE in weeks 3\u201313 and no one owns protocol writing. M2's gate ('reader-study constants adopted') therefore depends on an unscheduled 6\u201310-week IRB/recruitment path starting ~week 6.",
+  "fix": "Add to \u00a707 Phase 1 deliverables: reader-study protocol + IRB submission by week 8 (owner: PATH + PO), recruitment list by week 10, harness ready by week 13; add 'IRB approval' as a node before RS in the dependency graph. Decouple the M2 gate from the study's completion: M2 adopts calibrated constants if available, otherwise records the corpus defaults with a waiver; the study then recalibrates at v0.7.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "12-product-pillars-clinical-research-education",
+  "severity": "medium",
+  "issue": "Clinical integration milestones assume partner access the programme does not have. \u00a707 Phase 2 'clinical MVP integration (IID-style context launch + SSO + DICOMweb client + iframe embedding that survives Epic Hyperdrive)' and \u00a712 \u00a73.5 verifies it with 'Playwright against a Beaker-shaped launch harness' (a mock). gap-7 \u00a75: 'Exact Beaker launch mechanics ... needs an Epic analyst and open.epic access'; \u00a709 OQ-15 (which UT sites, which IMS/LIS pairs) is answered only by M1 and no site is named. HL7 status sync at v0.7 (W39) and CLIN-1 at W52 require an interface-engine project, BAA/security review and site compliance approval that hospital IT typically takes 6\u201312 months to schedule; none appear as lead items.",
+  "fix": "Relabel the MVP deliverable 'Hyperdrive-compatible by construction (no cookies/COOP/COEP; mock-verified)' and move 'verified inside a real Hyperdrive sandbox' to a CLIN-0 node requiring a named UT site, Epic analyst and open.epic access by M1 (OQ-15 becomes a gate, not a question). Add 'site agreement + IT security review + interface-engine work order signed' as a dependency of HL7 sync and CLIN-1, with a start date \u2264 M2; if unsigned by M2, HL7 moves to v1 (its \u00a702 tag).",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "11-autonomous-execution-and-dissemination",
+  "severity": "medium",
+  "issue": "Agent compute and reviewer time, the programme's real cost lines, have no budget anywhere. \u00a707 \u00a79 'External, non-labour costs are not in the table'; \u00a709 \u00a76 'Agent compute and review time: Unmeasured'; \u00a711 A5 'monthly programme cap; kill switch owned by the Owner' with no figure; \u00a711 A8 'Cost per merged change (reported, not targeted)'. A 195\u2013230 PM programme executed by agents at even a few dollars per merged PR-attempt is tens of thousands of dollars of tokens per phase, and \u00a707's '1.5\u20133\u00d7 [estimate, uncalibrated]' compression assumes unlimited retries.",
+  "fix": "Set provisional caps now and calibrate at M0/M1: per-phase token budget (Stage 0, Phase 1) and per-PR hard cap in \u00a711 A5 as numbers; record the price list used; report burn vs cap weekly in the provenance summary (\u00a710 S1-13 already builds the script). Add a 'cost-per-gate-pass' metric to \u00a711 A8 and make exceeding a phase cap a human decision point in \u00a707 \u00a73. Also add the human roster cost (even if volunteer time) so the TSP cost comparison is honest about what 'free' omitted.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "07-roadmap-milestones",
+  "severity": "medium",
+  "issue": "Phases 3 and 4 are loaded with no slack and the cut list is optional rather than default. Phase 3 (22 weeks, 11 FTE \u2248 55 PM): education package + LTI + fall pilot + HL7 + SMART + vector tiles + WebGPU module + native wgpu desktop + iPad beta + on-prem + Rust TILED_FULL writer + 62304 formalisation + VPAT + 1EdTech certification. Phase 4 (32 weeks, 12\u201313 FTE \u2248 95 PM): Android + C ABI/Qt/Maven/adapters + 10\u2076 layers + ANN/SEG/SR + multi-slide + z/t + ICC + conformance corpus + offline packs + FHIR + STOW-RS + connectathon + display QA + audit/RBAC + collaboration + CAP tooling + research export/active learning/omics + education spaced practice/offline/analytics/QTI/CME + signed desktop + DHF. The iOS hire is '+1 iOS from week 34' in \u00a707 but \u00a706 Reviewer note 2 says 'needs the iOS hire by month 6' (W26) for a month-12 beta. These are the phases where slip will concentrate, and the delivery judge already flagged the platform estimate at \u00b125 %.",
+  "fix": "Make \u00a707 \u00a710 cuts #1\u2013#5 and #7\u2013#8 the DEFAULT v1 scope (Android, WebGPU module, native wgpu window, 10\u2076 layers, z/t and affine registration, Qt/adapters, QTI/SCORM/CME PDF deferred) and re-add each only when the preceding milestone lands on time (a recorded 'add-back' decision at v0.9). Align the iOS hire/assignment to W26. Add 15 % schedule buffer per phase explicitly rather than implicitly in the W78\u2013W87 range.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "10-repo-structure-and-first-sprints",
+  "severity": "medium",
+  "issue": "The two TSP fast-track schedules do not match each other or the repository. \u00a710 S1-07a: 'First device number (days 2\u20133)' = 28\u201329 Oct, with the sprint starting 27 Oct and submission the same day the second device run completes \u2014 no time for validity checks or the claims-ledger check that \u00a711 B3 requires. \u00a711 B3 has device sessions Mon 26/Tue 27, 'measurement freeze 18:00 CT' Wed 28, submit Thu 29. \u00a711 B3 also states 'the prototype's main.ts and harness do not exist at the time of writing', but the repository already holds client/src/main.ts (13.8 KB), harness/run.mjs and serve.mjs, and headless SwiftShader results from 2026-10-24 19:58 and 23:44; conversely the brief's 'currently empty apart from a README' is stale. Both documents assume a floor-class Android phone and an iPad are physically available to the owner this week, which nothing confirms.",
+  "fix": "Make \u00a711 B3 the single TSP schedule and have \u00a710 S1-07a reference it (device runs Sun 25\u2013Tue 27, freeze Wed 28, submit Thu 29); update \u00a711 B3's risk paragraph to the actual repo state (main.ts and harness exist; headless baseline runs committed) and list the exact devices on hand. If no floor-class device is available by Tue 27, the abstract reports laptop + whatever phone/tablet exists, labelled by class, per \u00a711 B4's 'insufficient runs' rule.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "08-quality-testing-performance-qa",
+  "severity": "low",
+  "issue": "The M0 gate is defined differently in \u00a707 and \u00a708/\u00a705. \u00a707 M0 = 'Stage 0 exit: G1\u2013G13' on floor devices; \u00a708 \u00a79 and \u00a705 \u00a715 define M0 as a separate 'renderer spike (desktop Chrome, synthetic)' gate on an Intel-iGPU laptop with 'golden replay identical native vs wasm' and translator p99, listed after Stage 0. \u00a710 merges both into the Sprint-3 scorecard. Since \u00a707 says these names 'are those of arch/recommended.md', but recommended.md \u00a78 defines only Stage 0 and leaves M0\u2013M5 to note 10, the gate set an agent must evaluate for 'M0' is ambiguous.",
+  "fix": "Define M0 once in \u00a708 \u00a79 as 'Stage 0 G1\u2013G13 (floor devices) + the renderer/policy criteria (desktop, Tier 0\u20131) + translator p99 recorded', and have \u00a707 and \u00a710 cite that definition; encode it as `gates/m0.json` so the ambiguity cannot recur.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "07-roadmap-milestones",
+  "severity": "low",
+  "issue": "The RA/QA role is needed from Sprint 1 but staffed from week 30\u201339. \u00a710 S1-11 and S1-12 name 'RA' as owner ('RA has reviewed wording'), S3-10's ADR-0013 needs 'PO, TL, RA'; \u00a707's reference table has RA/QA = 0 until W30\u201352 ('RA/QA by week 39'), the agent-model roster '0.2\u21922.0', and \u00a709/\u00a711 say '0.5 FTE from v0.9'. gap-8 \u00a74.2 Phase 0 prices exactly this: 'fractional regulatory consultant (20\u201340 h), $15\u201340 k'.",
+  "fix": "Add a 20\u201340 h regulatory consultant line to Stage 0/Phase 1 in \u00a707 \u00a78\u2013\u00a79 (the only Phase-0 cost gap-8 identifies), make RA 0.2 FTE from Sprint 1 in both rosters, and reconcile \u00a709/\u00a711's 'from v0.9' wording.",
+  "critic": "feasibility-delivery"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The clinical pillar is built on an RUO label that the plan then uses for diagnostic work. 12 \u00a72 puts \"consultation, tumour board, QA, in-house CLIA-validated use\" under mode `ruo`; FR-R3 says \"every build labelled RUO until a Dx edition exists\"; 07 CLIN-1 ships a \"frozen-section preliminary consult ... RUO-labelled, in-house\"; US-C1 ships LIS launch, `signoutRequested` events and STOW-RS write-back in the RUO MVP. Research note 11-gap-8 F3 (now in the corpus) says FDA judges RUO status on the totality of circumstances and that \"an RUO build must differ from the Dx build in more than a flag: no LIS sign-out integration, no Dx-mode display gating, distinct name, distinct website claims.\" A product labelled \"Not for use in diagnostic procedures\" that issues frozen-section preliminaries and signs out cases is self-contradictory and jeopardises both the RUO channel and the later 510(k).",
+  "fix": "Split the labelling into three legal bases, not one flag: (a) RUO build for research distribution \u2014 no LIS sign-out integration, no Dx gating, distinct name; (b) an in-house lab-validated tool build for the UT CLIA lab (CAP \u226560-case validation, lab's own labelling, LDT-rule enforcement discretion per gap-7/gap-8) \u2014 this is what CLIN-1 and US-C2 actually are; (c) the cleared Dx edition. Rewrite 12 \u00a72, FR-R3, 07 CLIN-1/\u00a77, 06 P13 and 09 \u00a73 Phase 0/1 accordingly, and make the mode engine refuse clinical integration surfaces (HL7 write-back, signout events) in the RUO build so the boundary is machine-checked.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The 512-px logical tile grid and the \"byte-for-byte passthrough\" promise for Aperio SVS contradict each other and the contradiction is frozen into the Manifest. Note 01 confirms SVS tiles are 240\u00d7240 (GT450 256\u00d7256); 02 \u00a74.1 lists SVS-JPEG as Tier B lossless at MVP; 04 \u00a77 defines Tier B as \"prepends the JPEGTables segment\" and asserts \"the hash of every served tier-A/B tile equals the hash of the vendor tile\"; 04 \u00a75 fixes `tile: 512` in the Manifest schema and one `(object, offset, length)` per TileKey; 03 Reviewer note 3 admits this is \"reconciled nowhere\". A 512\u00b2 tile cannot be assembled from 240\u00b2 tiles without a DCT-domain re-mux (Tier C, as opentile does), so for TCGA's SVS corpus the byte-identity CI assertion, the Tier-B classification and US-R1's \"bit-identical to what the viewer draws\" patch export are all false as written.",
+  "fix": "Decide before M1 and encode it: either (i) make tile size a per-layer Manifest field (240/256/512/1024) with the L0 atlas packing 4\u00d7256\u00b2 per 512\u00b2 layer (240 wastes ~78 % of a layer, so re-mux 240\u2192512 at ingest instead), or (ii) classify SVS as Tier C (lossless re-mux) and drop the vendor-hash identity claim for it, replacing it with a decoded-pixel identity oracle against tifffile. Update FR-S2/\u00a74.1 tiers, 04 \u00a75 schema and \u00a77 step 3, and run the 03 \u00a79.2 cost measurement (4\u00d7256\u00b2 vs 1\u00d7512\u00b2 decode+upload on W-4G) in Stage 0.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The research pillar's headline fluorescence gate is infeasible as designed. The multichannel canonical is 16-bit zstd core codecs only (recommended \u00a73.1); note 02 measured bitshuffle+zstd at 52 % of raw, i.e. ~270 KB per 512\u00b2 channel-tile (gap-5: 100\u2013250 KB). A 20-tile viewport with 6 visible channels is ~30 MB per destination fill versus 1.6 MB for brightfield \u2014 ~2.4 s on W-BB (100 Mbps) and ~10 s on W-4G \u2014 yet M5 requires \"8-channel 16-bit fluorescence meets the M1/M2 gates on the same devices\" (TTS \u2264100/300 ms on W-BB). FR-V7 and 05 \u00a78 promise an \"8-bit windowed first paint then 16-bit on settle\" but no 8-bit tier exists anywhere in the store or translator; note 02's HTJ2K delivery variant was dropped with the move to core codecs and never replaced. No section computes a multichannel byte budget.",
+  "fix": "Add a derived, never-canonical multichannel delivery tier (analogous to the brightfield moving tier): per-channel 8-bit windowed JPEG or lossy HTJ2K/AVIF-12 tiles (note 02 measured 4 % of raw for 12-bit AVIF q80), generated at ingest from the `omero` default windows and served under `enc=m`, with 16-bit zstd fetched only at settle in Dx/analysis contexts. Add a multichannel row to recommended \u00a74.3/05 \u00a72 (bytes per visible channel, by class), and restate the M5 gate as 'N visible channels at Q window on class X' with N and Q chosen from that budget.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "Wrong-slide / wrong-patient display \u2014 the number-one hazard of a clinical viewer, and one gap-8 F4 explicitly lists \u2014 is absent from every hazard list (01 \u00a77.5: \"magnified tile at rest\", \"wrong tile identity\", \"overlay misregistration\"; 09 \u00a73: \"blur at \u226520\u00d7, pop-in, stale tile identity, PHI leak\"). The plan correctly puts label/macro in PHI Tier 2, but never requires the clinical viewer to show the slide label and accession/part/block identifiers, nor to verify that the slides opened match the launch context. A pathologist signing out from a Hyperdrive iframe has no mandated way to confirm slide identity.",
+  "fix": "Add HAZ 'wrong slide or patient displayed' with controls and REQ IDs: (1) clinical and Dx modes display the Tier-2 label image and the launch-context identifiers (accession, part, block, slide label text) by default via the `/assoc/label` token scope; (2) the shell verifies `LaunchContext.slideIds`/`studyUID` against the Manifest `sid` and DICOM UIDs before drawing and emits an `identityMismatch` event; (3) a contract test with mismatched launch/manifest pairs. Add to FR-I1/FR-R3 and to the ISO 14971 seed in 10 S1-12.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "Dx mode is defined as refusing \"unvalidated displays\" (FR-V4, FR-I10, 02 \u00a75.1 allows Dx on W-LAN/W-BB browsers), but a browser cannot identify the physical display: no EDID, no monitor identity, Window Management API is Chromium-only and permission-gated, and a Hyperdrive iframe exposes neither. The display-QA module (\"per-display ICC, test pattern, logged pass/fail\") therefore reduces to user self-attestation in exactly the tier where the clinical persona lives, which cannot satisfy the 864.3700 pairing special controls gap-8 F1 describes.",
+  "fix": "Restrict Dx mode to surfaces that can attest the display: the Tauri/N-Desk native shell (EDID/monitor enumeration + ICC) or a browser session whose device is MDM-managed and whose display pairing is pushed as configuration (`dx_profile.json`) by the hospital, with the attestation source recorded in the quality record. Change 02 \u00a75.1 Tier 1 Dx column and 06 \u00a710 accordingly; make the v0.9 native desktop window a hard prerequisite for the Dx edition rather than 'polish' (07 \u00a710 cut #3).",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The Dx pixel pathway's colour step is specified three incompatible ways. recommended \u00a75 and FR-V8 say scanner ICC \u2192 sRGB is \"baked server-side for JPEG tiles\"; 08 \u00a74 tests \"the server transform against a LittleCMS reference ... \u0394E2000 \u2264 1.0\" on served tiles; 05 \u00a712 states baking is \"impossible for byte-passthrough tiles without re-encoding them\" and redefines it as a server-computed 33\u00b3 LUT applied in the shader, with untagged tiles. For the >90 % of volume that is passthrough, 08's test and 02's requirement describe a mechanism that does not exist, and the Dx pathway (a design-control artefact) has no single definition.",
+  "fix": "Adopt 05 \u00a712 as canonical: untagged passthrough tiles + versioned server-computed LUT applied in one shader; baking only for re-encoded/synthesised levels. Rewrite FR-V8, 08 \u00a74 colour tests (test the LUT path end-to-end to \u22641 LSB and the \u0394E target on the composited frame, not on served bytes), and amend recommended \u00a75 'server-baked ICC' \u2192 'server-computed ICC LUT'. Record the choice as an ADR because it fixes the Dx pathway.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "Every section states that research note `11-gap-8-fda-pathway-and-free-distribution` does not exist; it now does (written 19:58, after the sections) and it contradicts the plan in load-bearing places: the viewer product code is QKQ (13 clearances since 2020), not the PSY that 09 \u00a73 asserts (01 flagged the conflict but 09 resolved it the wrong way); gap-8 recommends a free Pre-Sub in H1 2027 whereas the roadmap's first regulatory engagement is DX-0 at W104; gap-8 \u00a71.4 shows a UT institution can be the manufacturer with fee waivers but \"a state agency cannot indemnify (Tex. Const. art. III \u00a749)\", which collides with the \"liability/indemnification terms\" the Device Distribution Agreement in 03 \u00a711/09 \u00a75.1 relies on; gap-8 F8 supplies the qualification criteria FR-R7/FR-R8 and OQ-25 leave as placeholders. 11 B6 also counts \"[17] research notes\".",
+  "fix": "Run a gap-8 reconciliation pass before assembly: set product code QKQ everywhere (09 \u00a73, 01 note 1, 12 \u00a72); schedule the Pre-Sub (five questions from gap-8 \u00a73.5) in H1 2027 as a human gate in 07; add 'manufacturer entity cannot indemnify if UT' to OQ-04 and the agreement design; fill FR-R7/FR-R8 and OQ-25 from gap-8 F8's eligibility template; correct the note count and remove the 'does not exist' caveats.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The dissemination plan rests on two different calendars. 07 \u00a76 says the TSP meeting is \"expected in early February 2027 [unverified], i.e. weeks 14\u201315, two weeks after M1\" and sets the presentation data freeze T1 = M1 (2027-01-29); 01 \u00a79 calls the deadline a \"working\" 29 Oct and eligibility unverified. The owner-verified facts (and 11 B1) are 22\u201324 January 2027 and a 30 Oct 17:00 CT deadline: the meeting falls in week 12\u201313, before M1. The January talk as planned would present data that does not yet exist.",
+  "fix": "Adopt 11 B1's verified facts in 01 \u00a79 and 07 \u00a76; move T1 to a date \u22657 days before 22 Jan 2027 (\u2248 week 11, 2027-01-11); state that the presentation carries M0 (G1\u2013G13 on named devices) plus the Tier-2 nightly trend, and that M1 figures appear only in the follow-up (TSP 2028 or a journal). Make 11 B7's option (ii) explicitly the carrier for M1/M2 evidence.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "05-instant-zoom-engineering",
+  "severity": "medium",
+  "issue": "All latency and upload rows assume a 20-tile destination fill (1.6 MB, 20 MiB upload), i.e. a 1080p viewport, while the primary clinical persona (01 \u00a73) sits at a 27\" 4K / \u22658 MP display and the lab (02 \u00a75.4) includes a 4K 120 Hz desktop. Note 03 puts a 4K viewport at ~54 tiles per level: 2.7\u00d7 the modelled bytes, decode and upload (54 MiB per level, 3\u20134 frames at the 16 MiB/frame desktop budget), and the \u00a79 L0 arithmetic (two 64-layer arrays hold two levels of 20 tiles) does not hold at 4K. The gate viewport is never stated.",
+  "fix": "Define the gate viewport per class in \u00a715 and `gates/*.json` (W-LAN/N-Desk at 3840\u00d72160 DPR 1 and 3280\u00d72048; W-BB 1920\u00d71080; phones at their DPR-2 cap), add a 4K column to \u00a72 and \u00a79 with recomputed bytes/upload/L0 rows, and run the W-LAN/N-Desk gates on the 4K lab display. Re-examine the 1024-px tile experiment for 4K in that light.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Open-time byte budgets are understated against the plan's own measurement. 05 \u00a75 budgets the Pinned Base at 1.5\u20132 MB and the Base Bundle at 2\u20135 MB; NFR-P12, 01 TTFI and the W-4G '700 ms' Pinned-Base figure derive from them. 11 A10 reports the Stage-0 build measured 9.50 MB for the 85 \u22644096-px tiles at q85 4:2:0, with coarse tiles heavier (105\u2013123 kB) than base tiles, so the Pinned Base is \u22482.4 MB and the Base Bundle \u22482\u20134\u00d7 the budget; on W-4G that is seconds, not 700 ms.",
+  "fix": "Re-pin 05 \u00a75, NFR-P12 and 01 \u00a77.1 TTFI to per-level measured tile sizes (tissue-dense worst case and glass-weighted typical), make the Base Bundle prefetch metered-link-gated, and add 'bytes per level' to the quality record so the budget is recalibrated from field data at M1.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "The Manifest definition is inconsistent across sections. 04 \u00a75 splits it into a \u2264100 KB Manifest plus an edge-resident Range Index because \"the arithmetic does not close\" (\u22480.6\u20130.8 MB of offsets per base level); FR-S3 and 05 \u00a75 step 1 still define \"one Manifest `TileIndex \u2192 (object, offset, length, codec, provenance)` \u2264100 KB\", and recommended \u00a73.1/\u00a75 is unamended. An agent implementing FR-S3 and one implementing 04 \u00a75 will build different objects.",
+  "fix": "Adopt 04's Manifest + Range Index split as canonical: amend recommended \u00a73.1/\u00a75, FR-S3, 05 \u00a75 and 10 \u00a72 (`stoi-manifest`) wording, and publish both JSON Schemas under `api/`.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Three different M0 dates and Stage-0 durations: 07 has week 0 = 2026-10-26, Stage 0 weeks 0\u20133, M0 2026-11-20; 09 assumes T0 = 2026-11-02, Stage-0 exit 2026-11-13, M0 2026-11-30; 10 schedules three sprints ending 2026-12-05 with M0 at the end (\"a schedule stretch\"); recommended \u00a78 says weeks 0\u20132; 11 B7 says ~12 weeks of work for the January presentation. A machine-checkable roadmap needs one calendar.",
+  "fix": "Make 07 the single calendar owner; align 10 \u00a78 sprint dates and 09's date anchors to it (or move 07's M0 to 2026-12-05 if the six-week reading is accepted), and have every other section reference milestone IDs rather than dates.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Pillar features are assigned to different releases in different sections. HL7 status sync with prefetch-on-ready-for-review: v0.7 in 07 (W39), v0.9 in 12 \u00a73.2/\u00a73.3, v1 in FR-I6 and 01 \u00a77.4. CAP-validation tooling: MVP in 12 \u00a73.2/\u00a73.4 (\"at MVP\"), v1 in FR-R1 and 07 (cl4, 2028). LTI launch: MVP in FR-E4 and 12, v0.7 in 07 \u00a77. An integrator or education lead reading 12 would plan a 2027 go-live the roadmap does not fund.",
+  "fix": "Treat 07 as release authority and 02 as requirement authority: fix each feature's release once in 02 (FR-I6, FR-R1, FR-E4) and make 12 \u00a73.2/\u00a74.2/\u00a75.2 and 01 \u00a77.4 cite those IDs instead of restating releases.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "10-repo-structure-and-first-sprints",
+  "severity": "medium",
+  "issue": "S1-02 seeds the repository's ADR record with \"0007 Apache-2.0 + DCO, Dx edition and enterprise edge commercial\", the exact wording 09 ADR-010 proposes to replace with a no-charge regulated-release channel (and which 01 note 4, 03 note 2 and 09 note 1 all flag). 12 \u00a72's licence row hedges with \"commercial or regulated-release channel\". Because agents treat ADRs as settled decisions, Sprint 1 would encode the wrong distribution model into the single source of truth.",
+  "fix": "Reword 10 \u00a76 ADR-0007 to 09's ADR-010 text (regulated-release channel at no charge; commercial terms only for OEM embedding/non-qualifying systems as an optional funding line), make 12 \u00a72 and recommended \u00a77 match, and mark the decision H2 for the owner at S1-02.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "12-product-pillars-clinical-research-education",
+  "severity": "medium",
+  "issue": "The sign-out workflow assumes a Hyperdrive iframe (gap-7: Epic launches external web apps \"usually in an iframe\"), but a sign-out pathologist works with the LIS on one monitor and the slide on a dedicated diagnostic display. An iframe is confined to the Hyperdrive window; \"multi-monitor placement (v0.9)\" names no mechanism, and the Window Management API gap-7 cites is Chromium-only, permission-gated and unavailable inside a third-party iframe.",
+  "fix": "Specify the companion-window pattern: the Hyperdrive activity hosts a thin controller iframe that opens (or hands off to) the viewer in a top-level window or the Tauri shell on the diagnostic display via the IID URL, with the two kept in sync through the launch-context token and the event bus; add it to FR-I2/FR-I10, to the Beaker contract tests and to the display-QA design, and verify with an Epic analyst (OQ-15).",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "02-requirements",
+  "severity": "medium",
+  "issue": "US-C2 promises the slide is \"viewable \u226430 s after the scanner finishes level 0 of the region (index-in-place, lazy levels)\" and 04 \u00a77 calls index-in-place the basis of \"view while scanning\". For the TIFF family (SVS, NDPI, Philips) the IFD with tile offsets is written when the file is finalised, so a partially written vendor file has no index to read; only DICOM-output scanners deliver complete instances (per level or concatenation) incrementally.",
+  "fix": "Scope the claim: 'view within seconds of file close' for TIFF-family scanners; 'view as each DICOM instance/concatenation arrives via C-STORE/STOW-RS' for DICOM-output scanners (GT 450 DX, the predicate pairing gap-8 recommends); drop 'level 0 of the region' unless a scanner API is identified (gap-7 found none). Adjust the frozen-section TAT acceptance accordingly.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "12-product-pillars-clinical-research-education",
+  "severity": "medium",
+  "issue": "The education pillar's primary surface is an LTI 1.3 tool launched inside an LMS iframe, with iPad/Safari named as a target device. LTI 1.3's OIDC third-party-initiated login relies on a state/nonce cookie set in the iframe, which Safari and partitioned-cookie Chrome block \u2014 a well-known failure that 1EdTech's LTI Platform Storage (postMessage) spec exists to fix. Neither 12 \u00a75.3, FR-E4 nor gap-6 mention platform storage or a new-window fallback, and whether `ltijs` 7.0.7 implements it is unverified.",
+  "fix": "Add to FR-E4: launches must succeed with third-party cookies blocked (Safari iPad, Chrome partitioned) via LTI Platform Storage, with a same-window/new-window fallback; add a cookieless-WebKit launch to the `contract` tests against the 1EdTech reference platform; verify ltijs's platform-storage support before committing to it (or implement it in the TypeScript service).",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "For the ML engineer, the 10\u2076-polygon path only exists as a server ingest job: FR-A3 cuts vector tiles \"at ingest\" into a PMTiles-style sidecar, and 12 \u00a74.3's export table makes the Translator the only cutter. A model-development loop produces new polygon sets every iteration, often locally in Jupyter; `layers.addVector({ url | buffers })` admits raw buffers but no section states the in-memory limit or a local tiler, so the research persona either round-trips every run through server ingest or hits an unspecified cliff.",
+  "fix": "Specify a local tiler in the in-process translator (PyO3 wheel and Tauri) that cuts GeoArrow/GeoParquet to MVT on demand with the same cutter crate as ingest, document the untiled-buffer ceiling (e.g. \u226410\u2075 features) with a hard warning, and add a Jupyter acceptance row to US-R2 ('1 M detections from a local Parquet render within the frame budget without a server job').",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "02-requirements",
+  "severity": "medium",
+  "issue": "Brightfield image adjustment is missing from the viewing core. Pathologists routinely use brightness/contrast/gamma (and 'glass-like' presets) and every cleared QKQ viewer exposes them; FR-V7/FR-V8 define transfer functions only for fluorescence and CVD remap, so the clinical persona has no requirement, and Dx mode has no rule for logging or resetting adjustments (which the pixel-pathway determinism and audit trail need).",
+  "fix": "Add FR-V14: per-view brightness/contrast/gamma as a 1-D LUT uniform (one-frame update, no refetch), presets, visible on-screen indicator when non-default, recorded in the quality record and State Document, reset-to-default on Dx-mode entry and logged in the AuditEvent; verify with `golden` and `contract`.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "recommended.md is declared canonical (\"the figures and names in \u00a74\u2013\u00a75 are canonical for every later plan section\") yet five sections override it in reviewer notes without an amendment: design controls at v0.9 \u2192 week 0 (07, 12), server-baked ICC \u2192 computed LUT (05), Manifest \u2192 Manifest + Range Index (04), 'commercial' Dx edition \u2192 regulated channel (09), product code, and 11 A10's measured Base Bundle. An agent pipeline that treats recommended.md as the source of truth will re-introduce the superseded positions.",
+  "fix": "Issue 'Amendment 2' to recommended.md before assembly covering the six points above (and the gap-8 facts), and require in 11 A6 that any later divergence is an ADR superseding the architecture rather than a reviewer note in a plan section.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "02-requirements",
+  "severity": "low",
+  "issue": "Safari macOS is placed in two tiers: \u00a75.1 defines Tier 2 as \"W60 (Safari/WKWebView ...)\" while \u00a75.2's row says Safari macOS is \"Tier 1 / W+ at 60 Hz\", and 06 \u00a71 puts Safari macOS in W60. Because \u00a75.1 denies Dx mode to Tier 2, this decides whether Mac-based academic pathologists can ever use Dx mode in the browser.",
+  "fix": "Pick one (W60 is the consistent choice given the 60 Hz cap and WASM-only Dx decode), fix \u00a75.2 and the tier flowchart, and state explicitly that the v0.9 Tauri native window is the macOS Dx path.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "08-quality-testing-performance-qa",
+  "severity": "low",
+  "issue": "02 \u00a77 note 3 asks that the pan metrics (NFR-P8 BER, NFR-P14 pan pop-in) appear identically in 05 and 08 so the gate set matches across sections; 08 \u00a79's milestone gate tables omit NFR-P14 and carry BER only as a reviewer-note recommendation, and 01 \u00a77.1 lists BER but not pan pop-in.",
+  "fix": "Add NFR-P14 (edge pop-in during slow pans = 0 at \u22641 viewport/500 ms) and the BER cut-offs to the M1/M2 rows of 08 \u00a79 and 05 \u00a715 and to `gates/*.json`.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "01-vision-goals-metrics",
+  "severity": "low",
+  "issue": "\u00a77.3 schedules the standards fa\u00e7ades as \"MVP (client), v1 (fa\u00e7ades)\" while FR-S8 (Must, MVP), 04 \u00a75, 06 \u00a76 and 07 Phase 2 all deliver DICOMweb/IIIF/DZI fa\u00e7ades at MVP; integrators reading the vision section will plan for a v1 DICOMweb endpoint.",
+  "fix": "Change \u00a77.3 to 'MVP (client and DICOMweb/IIIF/DZI fa\u00e7ades), v0.9 (Iris), M5 (conformance 100 %)' to match FR-S8.",
+  "critic": "user-integrator"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "critic": "orchestrator",
+  "issue": "Several sections (notably 07 and 01) inferred or questioned TSP facts because texpath.org was unreachable from the sandbox: an \"early February 2027\" meeting, unconfirmed eligibility, unconfirmed deadline.",
+  "fix": "Use the verified facts everywhere (texpath.org, checked 2026-10-24): 106th TSP Annual Meeting 22-24 January 2027, Hyatt Regency Austin; 41st Annual John R. Rainey, MD Residents'/Fellows' Seminar; abstract deadline Friday 30 October 2026 17:00 CT; website submission; max 350 words; no author/co-author/institution names in the file; the owner is an eligible resident and will be first author. Section 11 Part B owns these facts; other sections reference it and drop their own inferences and eligibility caveats."
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "critic": "orchestrator",
+  "issue": "Sections 01/03/07/09/10/11/12 were drafted before research note 11-gap-8 (FDA pathway and free distribution) existed and say so in reviewer notes; section 13 now exists and is the owner of the regulatory programme.",
+  "fix": "Remove the \"gap-8 absent\" reviewer notes; align IEC 62304 class, product code, RUO/Dx/Edu build-vs-mode-flag, Pre-Sub/QMS timing and the legal-manufacturer model with section 13 and research/11-gap-8; replace any remaining \"Dx edition commercial\" wording with the free regulated-release channel."
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "The section identifies the real critical path and then refuses to act on it. \u00a72.2 (iv): 'the critical path is our QMS, our evidence and a scanner partner, not FDA'; \u00a77 totals: 'DX-1 moves earlier only if the QMS, the scanner partner's test corpora and CAP-1 move earlier ... drafting QMS procedures during v1 (W52\u201384) is the lever'. Yet \u00a77 opens with 'Aligned to Roadmap \u00a71\u2013\u00a73; nothing there moves', the Gantt starts 'QMS procedures drafted' on 2028-01-03 (W62, not W52) and 'QMS live' at W87, the design partner is 'chosen at v1' (W84), and vendor outreach is only 'approached' in W30\u201352 with the early warning for RX-4 set at v1. This contradicts the fixes already demanded by existing issues 53 and 54 (entity decision at M1, Pre-Sub in H1 2027, vendor test-file/loaner agreements in Phase 1\u20132, QMS stand-up in Phase 3, 510(k) assembly starting the day the v1 DHF audit passes, submission \u2264W96, W117 kept only as the pessimistic bound) and gap-8 \u00a74.3 items 3 and 5 ('Stand up the QMS ... now'; approach Hamamatsu/Leica/Barco as an immediate action). From v1 (W84) the only hard post-v1 items are the 20-week bench programme, a 16-week HF summative on a frozen UI and 100\u2013200 h of eSTAR assembly, i.e. DX-1 \u2248 W104\u2013108 is reachable if corpora, displays and SOPs are in hand at W84.",
+  "fix": "Replace 'nothing there moves' with 'Roadmap \u00a73 dates are the pessimistic bound; this section's target dates are:' and give targets: QMS SOP drafting W39\u201352 (when RA/QA 0.5 arrives and is already writing the 62304 process document), remaining SOPs W52\u201384, QMS operating from v1 (W84); signed scanner-corpus/loaner agreement or own-scanner plan by v0.9 (W52), Barco MDPC-8127 purchased at v0.9; Dx 1.0 release-candidate freeze at \u2248W96; bench W84\u2013104; DX-1 target W104\u2013108 with W117 as the bound. Ask the roadmap owner to move 'design partner' from v1 to a v0.9 gate and to redraw the \u00a75 dependency graph accordingly (and drop the false INH \u2192 K510 edge, per issue 54).",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "The Pre-Sub is sequenced before the decision it depends on, and the single largest non-technical dependency has no task, owner or date. OQ-26 submits the Pre-Sub at \u2248W40 (2027-08) while OQ-04/OQ-29 (who is the manufacturer; UT OGC position) are answered at v0.9 (W52) \u2014 the Gantt places 'Pre-Sub feedback' and 'Manufacturer model decided' on the same day (2027-10-29) with zero slack. Pre-Sub question 5 (is free distribution by a State entity 'commercial distribution' for 379j) only makes sense if a State entity is the submitter, so the sponsor identity must precede the filing. More fundamentally, 'the UT component institution ... registers as specification developer and holds the first 510(k)' (Decision 7) is a dean/president/OGC-level institutional commitment to become a device manufacturer with national free distribution and post-market duties \u2014 not a project decision \u2014 and the HeartSee precedent is a single-lab research product. The plan never schedules obtaining that commitment; RX-12 only supplies a 'default'. If the institution declines at W52, the fallback (501(c)(3) files) loses the fee exemption and sovereign immunity and needs a QMS from zero, and the Pre-Sub answers on fees become moot.",
+  "fix": "Add a task 'Institutional sponsor commitment' owned by PO+LC: engagement with the candidate component institution's RA/compliance office, OGC and the department chair starts at M1 (W13) using the gap-8 \u00a74.1 matrix and the HeartSee precedent; a signed letter of intent to act as specification developer by v0.7 (W39); a formal institutional decision (with the fallback explicitly priced) by v0.9 (W52) as a hard DX-0 gate. Ratify the default (UT institution holds; nonprofit stewards) as an ADR at M1 so the Pre-Sub is drafted and filed under that sponsor. Add RX-13 'component institution declines to be manufacturer' (L3, I5) with the 501(c)(3) fallback and its cost delta ($28,653 + $13,785/yr fees, insurance, QMS stand-up without institutional compliance infrastructure).",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "The two most expensive validation items are scheduled before their own prerequisites and finish after the submission they are meant to support. (a) The confirmatory reader study runs W95\u2013W125 (\u00a74.2 item 3; Gantt d3 2028-09-04 + 30 w \u2192 2029-04-02 = W126), but the phase table puts 'reader-study protocol IRB-approved' at the END of the W84\u2013104 phase \u2014 the study starts \u22487 weeks before IRB approval is due, and two UT sites imply two IRBs or a reliance agreement plus data-use agreements and archival scanning on both scanners (2\u20134 months lead). (b) DX-1 is W117, so the study's data arrive \u22659 weeks after submission: a $150\u2013400 k study that is 'complete or near-complete' at filing cannot be the 'cheap insurance' against FDA asking for one (RX-2) \u2014 it would reach FDA only as an Additional Information response, pausing the review clock and making the '81 FDA days' argument moot. (c) The HF summative 'on the frozen Dx edition' (\u00a73.5) runs 2028-10-02 + 16 w and ends exactly on DX-1 (2029-01-22) \u2014 zero time for use-error root-cause analysis and the report, and the 'frozen Dx edition' does not exist until DX-1 itself. (d) The \u00a74.2 power statement ('\u2248300 reads per arm ... 1,200\u20131,600 paired reads, so 300\u2013400 cases is conservative') uses an unpaired, unclustered approximation; with 4 readers reading every case, reads are clustered by case and reader and the effective sample size can fall well below 1,200, so 'conservative' is unsupported and a biostatistician could double the case count and cost.",
+  "fix": "Insert a milestone 'Dx 1.0 RC freeze' at \u2248W96 (Class C pathway frozen at v1/W84; UI frozen at W96) that gates both the HF summative (W96\u2013W112) and any reader study; file the IRB protocol at v1 (W84) with approval targeted W92. Make the reader study conditional: the decision to run it is taken at Pre-Sub feedback (W50); if FDA says it is needed, run it W96\u2013W126 and set DX-1 to study report + 4 weeks (\u2248W132), explicitly trading 15 weeks for the claim; if not needed, cut the $150\u2013400 k and keep DX-1 at the \u00a77 target. Replace the power paragraph with a clustered (reader \u00d7 case) calculation signed by the biostatistician, or state the case count as 'to be set by the statistical analysis plan, 300\u2013600 cases'.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "high",
+  "issue": "The in-house clinical build demanded by existing issue 64 is missing, and the section contradicts itself about it. Decision 3 names exactly three products (Dx, Viewer/RUO, Learn). \u00a72.5 then says CLIN-1 and CAP-1 run 'under the laboratory's validated-system labelling and CLIA/CAP', while the \u00a77 v0.x row calls the same thing the 'Lab's RUO-labelled in-house tool' \u2014 a tool labelled 'Not for use in diagnostic procedures' that issues frozen-section preliminaries (CLIN-1) and signs out routine H&E (CAP-1). gap-8 F3 (the section's own basis) says the RUO build must have 'no LIS sign-out integration, no Dx-mode display gating, distinct name', yet the roadmap ships IID launch/SSO/DICOMweb in RUO MVP 0.5 and HL7 sync at v0.7, and \u00a72.6 places 'Edge Translator Dx profile', 'launch-context (mode=dx)' and audit events inside the device boundary without saying which pre-clearance artefact carries them. Issue 64's fix (three legal bases plus the cleared edition; the mode engine refuses clinical integration surfaces in the RUO build) is not reflected, so 12 \u00a72, FR-R3, 07 CLIN-1 and this section would all be fixed to different answers.",
+  "fix": "Amend Decision 3 to four artefacts from one commit set: Stoipath Viewer (RUO distribution build: no LIS write-back, no sign-out events, no Dx gate, RUO string asserted by CI), Stoipath Learn, the in-house clinical build for the validating UT lab (Dx mode capable; labelled under the lab's validated-system labelling and CLIA/CAP; the only pre-clearance build with HL7/FHIR write-back and sign-out events; distributed to no other institution), and Stoipath Dx (cleared). Fix the \u00a77 v0.x wording, state that CLIN-1/CAP-1 use the in-house clinical build, and add a CI assertion (build-flag matrix) as the machine check. Propagate to 12 \u00a72, 02 FR-R3/US-C1, 07 CLIN-1/\u00a77 and 09 \u00a73 Phase 0/1.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "Post-market funding is checked only after the obligations attach. \u00a71 says a free product 'must fund' every post-market duty and \u00a75.3 prices them at $350\u2013700 k/yr plus $0.5\u20130.8 M/yr maintenance (\u2248$1.0\u20131.6 M/yr), but the DX-0 'Board decision to submit' gate (\u00a77, roadmap \u00a73) lists QMS audit, entity and PCCP draft \u2014 not funding \u2014 and RX-6's early warning is 'no signed dues or service revenue by DX-2', i.e. after the 510(k) is filed and the registration, MDR, 806 and \u00a7524B duties exist. The mitigation 'Dues programme launched at v1' and the \u00a75.4 arithmetic '20 members \u00d7 $50 k = $1 M/yr' assume 20 member health systems when FREE-1 delivers 2\u20135 sites in 2029; no hospital pays dues for a product it does not yet run. \u00a75.4 also lists grant sources without cycle dates, although NIH/CPRIT awards lag submission by 9\u201312 months and the v0.x/v1 regulatory staffing ($150\u2013300 k, then $500\u2013900 k/yr) starts W39 (2027-07), implying applications in late 2026/early 2027 that nothing schedules (issue 50 asked the roadmap for a funding gate; this section owns the regulatory programme's funding and must supply its calendar).",
+  "fix": "Add to the DX-0 gate: 'committed funding covering \u226524 months of \u00a75.3 fixed post-market cost (UT System MOU, grant award letters, philanthropy pledge) \u2014 no commitment, no filing'. Move RX-6's early warning to DX-0 \u2212 6 months. Add a funding calendar table to \u00a75.4: source, RFA/cycle date, amount, which \u00a77 phase it funds, decision date (e.g. ITCR R21/U01 due dates 2027-02/06 \u2192 funds 2027-12/2028-04 for v1 RA/QA; CPRIT CFSA/SEED FY2027 cycle via the 501(c)(3) \u2192 DX-0/DX-2 operations; UT System programme budget \u2192 Stage 0\u2013v0.9). Re-time dues to FREE-1 + 12 months with a realistic ramp (5 members in 2030, 20 in 2032) and state what funds 2029\u20132031 (UT System anchor + grants + philanthropy-with-cleared-product).",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "The steward entity is load-bearing but unscheduled, and the two-entity hybrid has no allocation of regulatory roles. The 501(c)(3) must hold the trademark, sign regulated-release agreements (FREE-1, W143), carry $5 M product-liability/E&O/cyber cover (DX-2), raise philanthropy and be the 'Texas company' for CPRIT product-development awards, yet no phase row or Gantt bar creates it; gap-8 \u00a74.1 itself estimates 6\u20139 months to stand up a new 501(c)(3) (IRS determination plus, for a 'UT-affiliated' body, Board of Regents approval under the affiliated-organisation rules \u2014 [unverified] lead time, counsel to confirm). \u00a75.3 assigns FTEs but not entities: under the hybrid, who is the 807 registrant, whose complaint file (ISO 13485 \u00a78.2.2) receives the intake the 501(c)(3)'s agreement mandates, who is the Part 803 reporter and Part 806 filer, who is the UDI labeler, who owns the \u00a7524B plan, and whether the 501(c)(3) that distributes a device it does not manufacture is a 'distributor' with its own recordkeeping duties \u2014 all undefined. Insurers will also ask why a non-manufacturer nonprofit is insuring another entity's device.",
+  "fix": "Add 'Steward entity formation' to \u00a77 and the Gantt: decision at v0.9 (with OQ-04), incorporation and IRS filing W52\u201360, Regents' affiliated-organisation approval and insurance binding by DX-0 (W104), trademark assignment/licence from UT by DX-2. Add a RACI table by regulation (807 registration/listing; 820/ISO 13485 complaint file, CAPA, management review; 803 MDR; 806 corrections/removals; 801/UDI labeler; \u00a7524B plan owner; agreement counterparty; insurance named insured) with the UT institution and the 501(c)(3) as columns, marked [unverified; OGC/FDA counsel], due at DX-0. Add OQ-35: can a non-manufacturer nonprofit obtain product-liability cover for a device whose 510(k) a State entity holds, and does the hybrid require the 501(c)(3) to register as a distributor/relabeler?",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Dx 1.0 is not minimal, and the section does not say what it runs on. \u00a73.4 classifies browsers, WKWebView, OS and GPU drivers as Class C 'uncontrolled updates' SOUP and lists both renderers (`web-sys` WebGL2 and wgpu/naga) as 'C (Dx render path)', so the first submission would carry two renderers across the whole browser/OS matrix plus three Translator topologies \u2014 doubling the Class C verification surface (goldens on four GPU families, nightly browser matrix) for a first-time sponsor. The section never states the labelled platform set for Dx 1.0, which topology is in the first filing (the \u00a72.4 'Deployment' PCCP category implies others come later, but which one is first is unsaid), or how a web page verifies its own 'cleared-configuration hash' (a served bundle cannot trust itself; the gate is only enforceable on a signed native installer or via server-side signed manifests). Existing issue 68's fix \u2014 Dx mode only on surfaces that can attest the display (Tauri/N-Desk native with EDID, or an MDM-managed browser with a hospital-pushed `dx_profile.json`) and the v0.9 native desktop window as a hard Dx prerequisite instead of roadmap cut #3 \u2014 is not reflected here, although it decides the Dx 1.0 platform.",
+  "fix": "Add a \u00a72.7 'Dx 1.0 scope': one platform family (recommended: the signed Tauri native desktop installer on Windows 11, wgpu/DX12 or Vulkan, EDID display identity; alternatively managed Chrome/Edge on Windows under an MDM-pushed profile), one topology (on-prem Edge Translator behind Caddy/nginx), two scanners (S360MD, GT 450 DX), two displays; hash verification by OS code-signing for the installer and by Translator-side signed manifest for served bundles. Everything else (macOS, browsers, cloud topology, air-gapped media) enters via the PCCP 'Deployment' category or letter-to-file. Align 02 \u00a75.1 Tier-1 Dx column and 06 \u00a710; tell the roadmap owner that cut #3 (native wgpu window) is withdrawn because it is now a Dx prerequisite.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "QMS procedures arrive after the records they must govern, and the QMS is audited before it has operated. \u00a73.2 has a 'design-input baseline signed per train' and 'formal review minutes at baseline' from MVP 0.5 (W30), but the document-control and design-control SOPs that define what a valid signature, approver and review record are, are drafted W62\u201388 ('QMS procedures drafted', Gantt c1 2028-01-03); only the IEC 62304 process document is written W39\u201352. Records signed at W30 under no procedure need retrospective re-approval. 'QMS live, registered, internally audited' is a single 17-week bar (W87\u2013104): an ISO 13485 internal audit and management review need months of operating records (complaint handling, CAPA, supplier controls, training) to audit, so a W104 audit of a W87 QMS is a paper exercise. gap-8 \u00a74.3 item 3 (the section's basis) says 'Stand up the QMS ... now'. Missing entirely: validation of the QMS software itself (ISO 13485 \u00a74.1.6, retained by the QMSR) \u2014 GitHub/CI, the DHF generator, the traceability-matrix generator, the evidence-archive signer and the e-signature scheme that \u00a7A10 relies on \u2014 which Tidepool had to do for Jira/Confluence and which is routinely underestimated.",
+  "fix": "Split the QMS stand-up: (1) document-control, design-control and software-development (62304) SOPs drafted by agents from OpenRegulatory/qmsOS templates and approved by the regulatory consultant by M1 (W13) \u2014 cheap, and it makes every signature from W30 valid; (2) risk, usability, supplier, training, CAPA, complaint, MDR/806, release SOPs during v0.x\u2013v1 (W39\u201384); (3) QMS operating from v1 (W84), first management review at W96, internal audit at DX-0 with \u22655 months of records. Add a deliverable 'QMS tool validation (ISO 13485 \u00a74.1.6): GitHub, CI runners, DHF/traceability generators, evidence-archive signing, e-signature identity' with 2\u20134 PM at v1 and name it in \u00a7A10 of the autonomous-execution section.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The pairing evidence depends on a lab and scanners the plan has not secured. Decision 2 pairs S360MD (NDPI) and GT 450 DX (SVS/DICOM); the RX-4 fallback is 'UT-owned scanners at the validating lab', and \u00a74.2 wants CAP-1 to 'pilot the reader-study instrument' and serve as the IEC 62366 formative evaluation in the real environment. Nothing requires the CLIN-1/CAP-1 lab to own an S360MD or GT 450 DX in clinical service; if it scans on Philips or 3DHISTECH, CAP-1's concordance and HF data are collected on a pairing outside the Dx label and are useless for the submission, and the 300\u2013400 reader-study cases ('scanned on S360MD and GT 450 DX, half each') have no scanner. 'Design partner' is used in \u00a77 and the roadmap without definition; for a viewer whose pairings are to cleared scanners, the partner is a UT lab that owns them plus the vendor's test slides, not a co-development vendor. Separately, the \u00a72.4 verification protocol 'byte-passthrough proof (frame-byte hash against vendor tiles)' cannot be run for the first-named pairing: NDPI stores restart-marker strips and `recommended.md` \u00a73.1 tier C re-muxes them in the DCT domain, so tile bytes differ from the vendor file and only decoded-pixel identity after the lossless transform can be shown.",
+  "fix": "Define 'design partner' = a UT CLIA lab with an S360MD and/or GT 450 DX in clinical service that agrees to host CLIN-1, CAP-1 and the reader study; make scanner inventory a site-selection criterion decided by M2 (W26) and confirmed at v0.9; if no UT lab has both, pick one scanner for Dx 1.0 and add the second via PCCP. Put 'signed test-slide/corpus access (vendor or own scanner) + Barco MDPC-8127 purchased or loaned' as a v0.9 gate, not a v1 early warning. Make the PCCP scanner protocol format-specific: byte identity for SVS/DICOM passthrough; decoded-pixel identity against the vendor strips (and against the G7 reference decoder) for NDPI and any re-muxed format.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Steady-state cost is understated by a misread of the roadmap and by unitemised lines. \u00a75.3 and Decision 10 take 'Engineering maintenance ... 20\u201330 PM/yr (Roadmap \u00a79)', but roadmap \u00a79's 20\u201330 PM is the additional platform effort for the whole post-v1-to-clearance period (W84\u2013W143, \u22481.1 yr) and explicitly includes streaming mode and the upstream programme \u2014 it is not a per-year maintenance figure for a cleared product. Steady state must carry: quarterly Dx release trains with full regression and letter-to-file memos; the continuing RUO train; monthly browser and quarterly wgpu SOUP bumps with goldens on four GPU families and the browser/OS matrix; security fixes \u226430 days; 2\u20136 PM per PCCP pairing (several per year once hospitals bring their scanners); annual third-party penetration test on two topologies ($30\u201380 k external, not itemised); device-lab and photometry upkeep (09 \u00a76: 0.2 FTE); eQMS at DX-0+ ($10\u201330 k/yr). A 30\u201350 PM/yr engineering figure [estimate] is more defensible, pushing the \u00a75.4 'honest arithmetic' from \u2248$1.0\u20131.6 M/yr to \u2248$1.3\u20132.0 M/yr and the implied endowment higher.",
+  "fix": "Replace the borrowed number with a cadence table (item, frequency, PM per event, PM/yr) split into RUO-shared platform maintenance and Dx-specific regulatory maintenance (trains, PCCP validations, labelling/UDI/GUDID updates, SOUP bumps with Class C re-verification); itemise pen test, lab upkeep and eQMS; restate \u00a75.4 and RX-6 from the new total; ask the roadmap owner to label \u00a79's 20\u201330 PM as period-total, not per-year.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "The section's staffing and cost figures are not propagated and the Class C uplift is unquantified. \u00a77 v1 row staffs RA 1.0 + QA 0.5 + clinical affairs 0.5 + cyber 0.5 (2.5 FTE, '$500\u2013900 k/yr') for W52\u201384, but roadmap \u00a78 budgets RA/QA = 1.0 and pathologist 0.5 in that window and has no cybersecurity line at all, so 1.0 FTE is unfunded; roadmap \u00a79's regulatory line (3\u20134 PM to MVP, 10\u201314 PM to v1, 30\u201345 PM after) is a Class-B estimate, 09 \u00a76 still carries '$0.5\u20132 M, 12\u201324 months', and reviewer note 3 says to carry $1.5\u20133 M without converting it into PM so the roadmap's effort table can absorb it. Existing issue 53 asked for the regulatory line to be re-estimated at roughly 1.5\u20132\u00d7 for Class C; reviewer note 2 answers only that 'documentation volume for the Class C crates rises'. Without PM numbers the two sections cannot be reconciled at assembly.",
+  "fix": "Add a PM-denominated table to \u00a77: per phase, RA/QA/clinical-affairs/cyber FTE-weeks, external hours, and the Class C delta (detailed-design documents and unit-level verification records for `stoi-codec`, the Dx paths of `stoi-draw`/`stoi-render(-gl)` and identity; a defensible one-off of \u22484\u20138 PM plus \u22481\u20132 PM per Dx train [estimate]); state that the $1.5\u20133 M excludes the engineering of regulatory product features (display-QA module, CAP tooling, FR-R7/FR-R8, registry, Dx train pipeline), which sit in roadmap \u00a79's platform and clinical lines. Update roadmap \u00a78 (add cyber 0.5 from W52, QA 0.5 from W52) and \u00a79, and replace 09 \u00a76's '$0.5\u20132 M' row with the \u00a77 total.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Pre-Sub timing is later than its inputs allow and leaves no slack before the decisions it informs. OQ-26 submits at \u2248W40 (2027-08) with feedback \u2248W50; gap-8 \u00a74.3 item 1 and existing issues 53/54 ask for drafting by M2 and submission in H1 2027. Every Pre-Sub input exists by M2 (W26): intended-use statements are signed at M1, the predicate and special controls are in \u00a72, the test plan is \u00a73.7, the architecture is `recommended.md`. Feedback at W50 lands two weeks before the v0.9 decisions it governs (OQ-04 entity model, OQ-25 qualification criteria, display-QA module design starting at W52, Class C documentation scope for v1 work), and any FDA request for a second Q-Sub round (common) pushes those decisions into v1.",
+  "fix": "Draft the Pre-Sub at M2 (W26) and submit by W30 (2027-05) so written feedback arrives \u2248W40 (v0.7), giving a full quarter before v0.9; keep the five questions; add a sixth asking FDA to confirm the Dx 1.0 platform/topology scope (\u00a72.7) and the format-specific pairing protocol. Update OQ-26, \u00a77 v0.x row and the Gantt.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The \u00a77 phase table is not machine-checkable, contrary to the programme context and to the section's own \u00a73.7 discipline. 'Must exist by the end of the phase' lists documents and decisions (strategy memo, Class C boundary 'defined in code', SOPs drafted, QMS live, PCCP drafted, insurance quotes) with no artefact, schema or CI check an agent can produce or a Verifier can read, unlike G1\u2013G13/M0\u2013M5. Agents will therefore mark these items done on prose.",
+  "fix": "Define regulatory gates R0\u2013R6 with JSON evidence committed to the repository and listed in the milestone table: R0 (M1) REQ-0001 intended-use statements signed, SOP set A approved (lint: approver, date, version on every `docs/qms/*.md`), OTC approval record present; R1 (MVP) Class C crate boundary enforced by the layering test and `cargo deny` features, traceability \u226595 %, SBOM/signing on all channels, build-flag matrix proves the RUO build has no clinical surfaces; R2 (v0.9) 62304/14971/62366 files generated from `requirements/`, `risk/` with 0 orphan hazards, Pre-Sub feedback filed, sponsor LOI, corpus agreement; R3 (v1) DHF generator output passes the independent RA audit checklist, security risk report, pen-test report, tool-validation records; R4 (DX-0) QMS records \u22655 months, management-review minutes, funding commitment artefacts, RACI; R5 (DX-1) eSTAR checklist 100 %, verification evidence archive hash referenced in the submission; R6 (DX-2/FREE-1) registry live, cleared-configuration register published, mock-recall record.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Continuity of the human owner is a programme risk the register omits. The owner is a UT resident (eligible for the TSP residents' competition); residency ends within the 3-year horizon to clearance, while the plan makes a UT component institution the manufacturer and relies on a 'signing pathologist' for residual-risk acceptance (\u00a73.3), CAP-1 sign-off and the agreement programme. No faculty PI, department chair or institutional sponsor is named as the durable owner of the device, the QMS or the free-distribution programme; RX-12 covers the entity decision but not the person.",
+  "fix": "Add RX-13 'Owner/clinical champion leaves UT or loses protected time' (L3, I4): mitigation = a named faculty PI/medical director as co-owner and management representative (ISO 13485 \u00a75.5.2) by M1, departmental ownership of the QMS recorded in the quality manual, and succession named in the design and development plan; early warning = no faculty co-owner on the M1 strategy memo.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "FREE-1 (first free deployment W143\u2013156, 13 weeks after clearance) is realistic only for UT System hospitals, and the section does not say so. The \u00a76.1\u20136.2 pipeline requires per site: eligibility review, legal review of a novel no-indemnity device agreement from a State entity plus a 501(c)(3) counterparty (hospital contracting for clinical software typically takes 3\u20136 months [estimate]), IT security attestation and \u2014 for any hosted option \u2014 TX-RAMP certification (existing issue 56), interface-engine work (priced as a paid service), training, and a \u226560-case CAP validation per application with \u22652-week washout before Dx-mode activation. External hospitals cannot validate the uncleared Dx edition before DX-2 (that would be distribution of an uncleared device), so for non-UT sites the realistic clearance-to-activation lead time is 6\u201312 months. The free tier's SLA (P1 workaround \u22645 business days, business-hours channel) also needs the qualification criteria to require a documented glass/downtime procedure, which \u00a76.1 omits.",
+  "fix": "Define FREE-1 as 2\u20133 UT System sites with conditional agreements signed pre-clearance under standard UT terms (RX-7 already notes this route) and CAP validation starting the week of clearance; add FREE-2 (first non-UT system) at DX-2 + 6\u201312 months with onboarding capacity stated (2\u20133 sites per quarter per onboarding engineer); add 'documented downtime/glass fallback procedure' to \u00a76.1; note that a hosted option for Texas public institutions requires TX-RAMP and that on-prem is the default for FREE-1.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "External consultant effort is sized for an experienced sponsor. \u00a77 budgets 'Pre-Sub 40\u201380 h; submission 100\u2013200 h; $50\u2013150 k' for a first-time manufacturer filing an Enhanced-documentation Class C software 510(k) with a PCCP (display class is novel), a \u00a7524B cybersecurity file, an HF summative report and an open-source, agent-authored codebase (RX-11). Even with agents drafting, consultant review of that package is commonly 200\u2013400 h [estimate], and FDA counsel for the 'free distribution' and PCCP questions is listed in \u00a77 'external roles' but unpriced.",
+  "fix": "Budget the 510(k)/eSTAR consultant at 200\u2013400 h ($100\u2013250 k) and add an FDA-counsel line ($30\u201360 k for the Pre-Sub position paper, PCCP and agreement review); keep the lower figures as the best case.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "Registration timing is stated twice, differently: \u00a77 CAP-1/DX-0 row has 'manufacturer entity registered' (W104), the DX-1 row has 'registration and listing' (W117), and \u00a75.2 says 'before the first Dx distribution'. A 510(k) submission does not require prior establishment registration; registering at W104 with first distribution at W143+ buys an extra fiscal year of the $13,785 establishment fee if the 379j exemption does not apply.",
+  "fix": "State once: register as specification developer \u226430 days before the first Dx distribution (FREE-1) and list the device on clearance; remove 'registered' from the DX-0 row and keep the entity's legal existence (not FDA registration) as the DX-0 criterion.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "Two qualification/activation details are internally inconsistent or unworkable. \u00a76.1 asks for the 'validation summary returned to the holder within 90 days of go-live', but \u00a76.2 gates Dx-mode activation on the completed site CAP validation (CAP \u2192 GO), so the summary exists before go-live. \u00a76.2 makes activation a registry-driven gate ('gate opens; registry entry') and \u00a76.4 says a site that stops attesting for 30 days is contacted, but no activation or re-attestation path is described for the air-gapped topology the labelling will name, and a manufacturer-controlled remote activation on a cleared diagnostic device is itself an availability hazard (\u00a73.3 'Unavailability') that the risk table does not list as caused by the gate.",
+  "fix": "Change \u00a76.1 to 'validation summary returned before Dx-mode activation (and within 90 days of any revalidation)'; specify offline activation for air-gapped sites (signed activation file bound to the configuration hash and display-QA records, renewed per Dx train); add a HAZ row 'gate or registry outage blocks clinical use' with the control 'gate decisions cached locally for \u226530 days; glass fallback in labelling'.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "OTC approval of the Apache-2.0 release is dated M1 (\u00a77 Stage 0 \u2192 M1 row; RX-10 early warning 'No OTC approval by M1'), whereas existing issue 52 requires OTC written approval by the end of Sprint 1 (2026-11-07) because the repository, the TSP abstract ('open-source') and later registry publishes are distribution acts under Regents' Rule 90101. The section therefore encodes a later date than the fix already demanded.",
+  "fix": "Set the OTC process to start week 0 with written approval targeted 2026-11-07 and hard-gating any public registry publish or public dashboard; make RX-10's early warning 'no OTC approval by Sprint 1 end'; note that until approval the abstract must say 'intended for open-source release'.",
+  "critic": "feasibility-delivery:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "The section decides 'three named products on one codebase' (Decision 3: Stoipath Dx / Viewer (RUO) / Learn) but never defines the fourth artefact its own roadmap depends on: the pre-clearance in-house clinical build used at CLIN-1 (W52) and CAP-1 (W87\u2013104). \u00a72.5 says in-house use 'runs under the laboratory's validated-system labelling', \u00a77 says CLIN-1 is the 'Lab's RUO-labelled in-house tool', and the \u00a72.6 boundary diagram has no box for it. If it is the RUO build, the RUO totality test (gap-8 F3) bites exactly as issue #64 warned (LIS launch, sign-out events, Dx-mode gating in a build labelled 'Not for use in diagnostic procedures'); if it is the Dx build pre-clearance, it is an uncleared device labelled for primary diagnosis and needs its own label ('in-house validated tool, not FDA cleared'). Section 13 is now the owner of this boundary and leaves it undefined, so FR-R3, 07 CLIN-1 and 12 \u00a72 cannot be fixed from it.",
+  "fix": "Add a fourth artefact to Decision 3 and \u00a72.6: 'Stoipath Dx (in-house, pre-clearance)' = the Dx-pathway build with labelling 'In-house laboratory-validated tool. Not FDA cleared. For use only within <lab> under CLIA/CAP validation', distributed only to the validating UT lab(s), with the Dx-mode gate keyed to that lab's dx_profile. State in \u00a72.5 that CLIN-1 and CAP-1 run on it, not on Stoipath Viewer, and that Stoipath Viewer carries no LIS sign-out/status-write-back surfaces (machine-checked by a build-feature test). List FR-R3, 07 \u00a73 CLIN-1/\u00a77 and 12 \u00a72 as sections that must change accordingly.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "high",
+  "issue": "The IEC 62304 boundary (\u00a72.6, \u00a73.4) is not a valid \u00a74.3 segregation and cannot be enforced by the mechanism the plan has. (a) 'stoi-draw / stoi-render(-gl) in Dx mode' is placed in Class C while the same crates in Nav mode are Class B: a software item cannot be half Class C, and 10 \u00a71's crate-layering test (the only enforcement named) works at crate granularity, not render-mode granularity. (b) stoi-sched and stoi-cache are classed B as 'navigation machinery', yet HAZ-1 ('magnified or stale tile presented as final image') is caused by exactly those items, and the Rendering Complete flag is computed from the draw list/`deficit` that stoi-draw derives from stoi-sched's L* and stoi-cache's residency (04 \u00a73 step 6, 05 \u00a715 quality record). A Class B item whose failure causes the Class C hazard must itself be Class C unless the Class C item independently verifies its output; no such independent check is specified. gap-8 F4 recommends segregating education/collaboration/research modules, not the engine's scheduler. The narrow boundary also underwrites RX-5's mitigation and Reviewer note 2's 'documentation volume for the Class C crates only'.",
+  "fix": "Either (i) classify the whole deterministic engine core (stoi-core: camera, sched, cache, draw, codec, manifest/identity, render Dx path) as Class C and keep shells, stoi-annot display, education, research adapters, telemetry and server management at B/A, re-sizing the documentation estimate accordingly; or (ii) keep the narrow boundary but specify the independent check that makes it valid: Rendering Complete asserted only after a Class C verifier recomputes, from the camera scale and each drawn tile's self-identifying metadata (level, x, y from the decoded tile/fiducial, not from scheduler bookkeeping), that every visible pixel is at L* \u2014 and add that verifier as a REQ with a fault-injection test. In both cases make the boundary a crate boundary (split stoi-render into Nav and Dx crates if needed) so 10 \u00a71's layering test can enforce it, and record the choice in the ADR issue #13 asks for.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Validation activities are scheduled on a build that is only frozen at submission. \u00a73.5 requires the HF summative 'on the frozen Dx edition'; \u00a72.5/\u00a74 require bench and reader-study data on the device as submitted; yet the only freeze named is DX-1 (W117, the submission). The gantt runs the bench programme W93\u2013113, the HF summative W101\u2013117 and the reader study W97\u2013127, so the reader study ends 8\u201310 weeks after DX-1 while the DX-1 row says 'reader study complete or near-complete'. The CAP-1/DX-0 row lists 'reader-study protocol IRB-approved' as a deliverable by W104, after the study starts (W95\u201397). A confirmatory study that finishes after filing is not the insurance RX-2 relies on unless it is explicitly planned as an AI-response supplement (which adds to the FDA clock).",
+  "fix": "Add a design-freeze milestone (e.g. DX-F \u2248 W96, 2028-08) for the Dx 1.0 candidate \u2014 pixel pathway, identity, gate, labelling draft \u2014 and run bench, HF summative and the reader study on that candidate; define DX-1 as 'submission of the DX-F candidate with verification evidence'. Move IRB approval of the reader-study protocol to before W95 (v1 row). Either finish the reader study before DX-1 (start at W90, 6-month design) or state that it is filed as an AI response and budget the extra FDA time in the DX-2 estimate. Update \u00a74.2, \u00a77 and the gantt consistently.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The reader study design (2 UT sites: e.g. UTHealth Houston and UT Southwestern, separate legal entities) ships an uncleared Dx-labelled build to a second institution before clearance. 09 R1's early-warning indicator is 'any distribution of a Dx-labelled build outside the first CLIA lab before clearance', and the plan's own \u00a75.1 says nothing public addresses non-commercial distribution. The section notes IDE exemption under 812.2(c)(3) [unverified] but does not say what label the study build carries (an exempt or NSR investigational device still needs investigational labelling; the pathologist-responsibility Dx label would be wrong), nor who is the sponsor, nor that R1 must be amended.",
+  "fix": "Add to \u00a74.2(3) an 'Investigational build' row: a signed study build labelled 'CAUTION \u2014 Investigational device. Limited by Federal law to investigational use' (or counsel's wording), sponsor = the manufacturer entity, site agreements with both UT institutions, data not used for patient care; make OQ-33 cover the labelling and sponsor questions; amend 09 R1's early-warning text to exclude IRB-approved investigational use.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The section keeps the browser as a Dx-edition delivery surface (SOUP table: 'Browsers \u2026 C (platform, uncontrolled updates) \u2026 Safari per-major allow-list'; labelling \u00a73.8 'supported platforms with minimum versions'; HAZ-8 control 'Dx gate: display-QA record') without saying how a browser session establishes which physical display it is on. Issue #68 (high) requires Dx mode to be restricted to surfaces that can attest the display (native Tauri/N-Desk shell or an MDM-managed browser whose pairing is pushed as `dx_profile.json`). The pairing claim (Decision 2), the PCCP display category (\u00a72.4) and the labelled platform list all depend on that decision, and \u00a72.4 cites 'Cross-platform delivery \u00a710 \u2026 the `mode` field' as the enforcement, but 06 \u00a710 contains no `mode` field; it says qualification is enforced 'by shell configuration keys delivered through MDM'.",
+  "fix": "Add a \u00a72.4 paragraph 'Dx delivery surfaces': Dx mode is available only in (a) the native desktop shell (EDID/monitor enumeration + ICC) and (b) MDM-managed browser sessions whose `dx_profile.json` (04 \u00a712) names the display and is delivered by the hospital; the attestation source is recorded in the quality record. Reword the SOUP browser row and \u00a73.8's platform list to that set; make the v0.9 native desktop window a Dx-edition prerequisite (not 07 cut #3); replace the 06 \u00a710 citation with the MDM-configuration-key mechanism it actually describes.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The schedule contradicts fixes already demanded while claiming 'nothing there moves'. (a) Pre-Sub submitted \u2248W40 (2027-08, H2) vs gap-8 \u00a74.3 and issues #53/#70 (H1 2027; drafted by M2); its answers (class, reader study, PCCP display class, 'free' status) gate v0.x work, so later is costlier. (b) Manufacturer-model decision (OQ-04) at v0.9 (Decision 7, \u00a75.1, gantt b3, RX-12) vs issues #52/#54 (M1), which matter because the entity determines who may sign the licence, the distribution agreement and the Pre-Sub cover letter. (c) Decision 6 and \u00a74.2 serialise CAP-1 \u2192 reader study \u2192 DX-1 ('run after CAP-1'; CAP-1 'pilots the reader-study instrument') although issue #54 asks that CAP-1 and the 510(k) not be serialised. (d) \u00a77 does move items 07 does not have (QMS procedures drafted from W62, vendor outreach in v0.x, OQ-03 not listed as CAP-1 predecessor) without flagging them as 07 amendments.",
+  "fix": "Set Pre-Sub drafting at M2 (W30) and submission by 2027-06-30 with feedback \u2248W44, before the 62304/14971/62366 formalisation (W39\u201352) so documentation level and class are known; move OQ-04 (default: UT institution holds, 501(c)(3) stewards) to an M1 board decision with v0.9 as the latest re-open; decouple the reader-study start from CAP-1 completion (pilot the instrument in CLIN-1 instead); add OQ-01/OQ-03 as explicit predecessors of CAP-1; replace 'nothing there moves' with an explicit list of 07 \u00a72/\u00a73/\u00a75 edits (QMS drafting W62\u201388, vendor outreach W30\u201352, Pre-Sub node, entity node at M1).",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Campus OTC approval of the Apache-2.0 release is placed at M1 (2027-01-29; \u00a77 Stage 0\u2192M1 row; RX-10 early warning 'No OTC approval by M1'), but issue #52 requires it by Sprint 1 end (2026-11-07) because the repository push (task 4 'final assembly into repo, commit and push'), the public perf dashboard, M2 registry publishing and the TSP abstract (2026-10-30) calling the project open-source are all distribution acts by a UT employee under Regents' Rule 90101. Section 13 repeats the Rule 90101 facts (\u00a75.1) but adopts the later date without rationale.",
+  "fix": "Move 'OSS release approved by the campus OTC' to Sprint 1 (by 2026-11-07) with 'repository private / LICENSE marked proposed until approval' as the interim state, and make it RX-10's early warning; note in \u00a75.6 that trademark filing for 'Stoipath' names needs an owner now (UT via OTC until the 501(c)(3) exists).",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "\u00a72.1 asserts that for third-party AI overlays 'the algorithm's own clearance carries the rendering-fidelity obligation' and that displaying them is image management under QKQ. Cleared AI devices (e.g. Paige Prostate DEN200080 with FullFocus) are cleared with a named viewer; rendering their output in Stoipath Dx is outside the AI vendor's cleared configuration unless the vendor validates on Stoipath (09 OQ-18, open; 09 R12). The section therefore asserts a position 09 leaves open, with no rationale and no consequence for the Dx-mode overlay path (\u00a72.6 'AI-overlay rendering with provenance' in Class B).",
+  "fix": "Rewrite \u00a72.1: in Dx mode, AI overlays render only for algorithms whose vendor has validated and labelled Stoipath Dx as a compatible viewer (vendor validation contract per 09 OQ-18); otherwise the overlay layer is shown with a 'not validated for diagnostic use on this viewer' marker or suppressed in Dx mode. Add this as a Pre-Sub question (OQ-26 item 6) and a REQ with a golden test on the overlay provenance tuple's `regulatoryStatus`.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Forced security updates (\u00a73.6 'forced-update path', \u00a75.3 recall row, \u00a76.3 'quarterly Dx release train') conflict with the configuration-hash mechanism and with site revalidation. The Dx gate checks 'a matching configuration hash' (\u00a72.6, \u00a75.6); every patch changes the build hash, so each quarterly or forced release requires a new register entry, re-attestation at every site and, under CAP (revalidate on material change), a site decision about revalidation. The section never says whether the hash covers the whole build or only the frozen pixel pathway, nor who classifies a release as 'material' for the hospital.",
+  "fix": "Specify a two-level identity: `pathway_hash` (stoi-codec, Dx resampler/colour, Rendering Complete, identity \u2014 the frozen Class C set) and `build_hash` (whole artefact). The Dx gate requires a registered `build_hash`; the cleared-configuration register and the site's CAP revalidation trigger key on `pathway_hash` (unchanged pathway = letter-to-file + no revalidation; changed pathway = new register entry, site notice, revalidation recommended). State that forced security updates never change `pathway_hash`. Add REQs and a CI check that a Dx-train release with a changed `pathway_hash` fails without a signed change-assessment memo.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The section introduces product mechanisms that no requirement implements or tests, although it says FR-R7/FR-R8 'are placeholders this section fills' and never supplies their text: UDI in plain text at start-up and in an About screen (\u00a73.8; FR-R5 only says 'UDI-ready identifiers'); cleared-configuration hash checked by the Dx gate; PHI-free start-up attestation to the installed-base registry and the 'unverified build' banner (\u00a75.6); end-of-support enforcement in the gate (RX-8); complaint intake from the About screen (\u00a75.3); signed export from air-gapped sites (\u00a76.4); accession/slide-ID echo and check at open (HAZ-3; issue #67 asked for REQ IDs); display-pitch-based \u00b5m accuracy per display class (HAZ-6); Dx-mode notice banner keyed to the configuration hash (\u00a75.3 Part 806 row). The HAZ table's 'Control (REQ)' column contains no REQ IDs.",
+  "fix": "Write FR-R7 (deployment self-check: config hash, display-QA record/dx_profile, IdP reachability, telemetry endpoint, PHI-tier config, training record; verification `contract`) and FR-R8 (post-market hooks: UDI/About screen, attestation + banner, complaint intake, field-notice display, forced-update channel, air-gapped signed export, installed-base inventory; verification `contract`, `scan`) as full rows for 02, and add FR-R9 (identity echo and `identityMismatch` event) and FR-R10 (scale-bar/\u00b5m accuracy per display class). Put REQ IDs in the HAZ table's control column and in 10 S1-12's risk-register seed.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Three overlapping mechanisms for 'is this Dx session allowed' are named across sections without reconciliation, and section 13 adds a third vocabulary: 04 \u00a712 uses `dx_profile.json` of validated scanner/display pairings checked at open; 02 FR-V4/FR-I10 use 'display-QA record' and tier refusal; 13 uses 'cleared-configuration register' + 'configuration hash' + 'display-QA record' and never mentions `dx_profile.json`. Likewise Decision 3 says products differ by build 'not a flag' while \u00a72.4/\u00a72.6 rely on the launch-context `mode` field (`mode=dx`), the same field 12 \u00a72 calls 'the one switch that separates the pillars legally' and issues #13/#53/#64 require replacing for the product split.",
+  "fix": "Add a \u00a72.4 sub-table 'Dx-mode gate inputs' naming one mechanism: build identity (`build_hash` in the cleared-configuration register), site pairing profile (`dx_profile.json`, hospital-delivered via MDM, lists scanner formats and display IDs), display-QA record freshness, and render `mode` \u2208 {nav, dx} as a per-session render mode inside the Dx build only. State that launch-context `mode: dx|ruo|edu` (04 \u00a78, 12 \u00a72) is re-specified as a product identifier that must match the running build's product (RUO build refuses `dx`), and list 02 FR-V4/FR-I10, 04 \u00a78/\u00a712 and 12 \u00a72 as the sections to align.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The Pre-Sub question list (OQ-26, five questions) omits two questions 09 explicitly routes 'via pre-sub': OQ-17 (regulatory stance on client-side resampling, mipmaps, cross-level blend and bicubic transients in a Dx viewer \u2014 which 'could force a pixel-faithful-at-\u22651:1 mode and reshape the LOD policy', i.e. goal 1's core) and OQ-02 (display-agnostic claim via PCCP, only partly covered by item 4). Section 13 instead asserts the answer to OQ-17 (\u00a72.4 'the moving image is navigation; the Dx image is the settled frame'; HAZ-5 'bicubic transients only') without the FDA feedback 09 says is needed.",
+  "fix": "Add to OQ-26: (6) acceptability of the 'moving image = navigation, settled frame = diagnostic image' framing, with transient bicubic/cross-level blend outside the Rendering Complete state (OQ-17); (7) AI-overlay display compatibility question (see the overlay issue). Mark OQ-02 and OQ-17 as closed by OQ-26 in 09 \u00a78.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "The QMS tooling decision ('the repository itself \u2026 electronic signatures recorded per \u00a7A10'; 'the agent toolchain as a qualified tool') lacks the two positions a reviewer will ask for. (a) ISO 13485 \u00a74.1.6 requires validation of software used in the QMS (git hosting, CI, the trace generator, the e-signature mechanism) and 11 A10 says signatures are 'Part 11-style'; neither section says who validates the repository/CI as the record system, how audit trails and signature manifestations are preserved across history rewrites/squash merges, or how records are retained independent of GitHub. (b) RX-11's mitigation is a 'tool qualification record for the agent toolchain', but hosted LLMs cannot be version-pinned; 11 A6 records `model_id/model_version/prompt_template_sha` yet nothing defines what qualification means for a tool that changes under the project.",
+  "fix": "Add \u00a73.1a 'QMS software validation and electronic records': validation plan for the record system (intended use, risk-based, re-validated on major platform change) under ISO 13485 \u00a74.1.6; signed, squash-immune record exports (signed tags + evidence archive mirrored off-platform); Part 11 position (apply to QMS records and study data; or document why not). State the agent-toolchain position explicitly: agents are not qualified tools whose output is trusted; they are untrusted generators whose output is verified by qualified deterministic checks (goldens, replay, G7, trace gate), with model/prompt identity recorded for reproducibility only. Make that the RX-11 mitigation and align 11 A6/A10 wording.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Cost figures are internally inconsistent and one is a mis-citation. \u00a75.3 says engineering maintenance 'adds 20\u201330 PM/yr (\"Roadmap\" \u00a79) \u2248 $0.5\u20130.8 M/yr'; 07 \u00a79 gives 20\u201330 PM as the total 'post-v1 to Dx clearance, additional' for maintenance + streaming mode + upstream programme (\u224860 weeks), not an annual maintenance rate. \u00a75.4 then derives a steady state of $1.0\u20131.6 M/yr (and RX-6 repeats it), while \u00a77's FREE-1 row says '$0.6\u20131.2 M/yr all-in', Decision 10 lists $350\u2013700 k + insurance + 20\u201330 PM/yr, and gap-8 \u00a71.7 says $0.4\u20130.8 M/yr. The \u00a77 cost column also mixes per-year rates ('$500\u2013900 k/yr' for the 32-week v1 phase) with per-phase totals ('$0.6\u20131.0 M (people)' for the 20-week CAP-1/DX-0 phase, a run-rate 2\u20133\u00d7 the v1 phase with no explanation).",
+  "fix": "Derive one steady-state figure from stated inputs (FTE list \u00d7 loaded rate + tooling + fees + insurance + a stated annual maintenance PM figure agreed with 07 \u00a79) and use it in Decision 10, \u00a75.3, \u00a75.4, \u00a77 FREE-1 and RX-6. Make every \u00a77 cost cell a per-phase total and show that the column sums to the $1.5\u20133 M headline. Correct the 07 \u00a79 citation or ask 07 to add an explicit 'annual maintenance after clearance' line.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "medium",
+  "issue": "Two Texas public-law constraints on 'a UT institution gives software and services to private hospitals' are missing from \u00a75. (a) Tex. Const. art. III \u00a7\u00a751\u201352 (gift of public funds/things of value to private corporations; public-purpose, control and return-benefit test) is the doctrine OGC will apply to a state institution distributing a supported device to private non-profit hospitals; the section cites only \u00a749 (indemnity). (b) TX-RAMP (Tex. Gov't Code \u00a72054.0593; issue #56) applies to the \u00a76.3 'Hosting with BAA' cost-recovery service when the UT System is the anchor customer and to any Cloudflare-hosted Edge Translator (PCCP deployment category 'Cloud') used by a UT institution; neither the qualification criteria nor the cost table mentions it. [Both are domain knowledge for counsel; untagged assertion would violate the section's own tagging rule.]",
+  "fix": "Add to \u00a75.1/\u00a75.5 a '[unverified; OGC]' paragraph on the public-funds doctrine and the public-purpose findings the regulated-release agreement must recite (or route distribution through the 501(c)(3) for that reason), and add it to OQ-29. Add TX-RAMP Level 2 certification (or provisional status) as a prerequisite for the hosted service in \u00a76.3, with cost and timeline, and 'UT-operated topology' as the default for UT sites.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "cross-cutting",
+  "severity": "medium",
+  "issue": "Section 13 changes decisions other sections encode but lists only the PSY\u2192QKQ amendment (Reviewer note 1) as a propagation item. Other sections that must change to match 13: 01 \u00a77.5/02 NFR-D6/08 \u00a711/09 \u00a73 & ADR-014/11 line 29 'IEC 62304 Class B assumed' \u2192 Class C per the final boundary; 07 \u00a79 and 09 \u00a76 '$0.5\u20132 M, 12\u201324 months' \u2192 '$1.5\u20133 M to clearance + steady-state post-market' (13 Reviewer note 3 says so but no edit list); 12 \u00a72 licence row 'Dx edition and enterprise edge features commercial or regulated-release channel' \u2192 regulated-release only; 09 OQ-04/OQ-25 dates; 07 \u00a72 Phase 5 and \u00a73 CLIN-1 row ('RUO-labelled') \u2192 in-house build; 09 R1 early warning (investigational use); 09 R2 'PSY clearances'; 02 FR-R3 'every build labelled RUO until a Dx edition exists'; 01 line 219 'RUO labelling on every artefact until a Dx edition exists'; 06 P13. Without an explicit list the assembly pass will miss them (issue #88 asks for alignment but not which lines).",
+  "fix": "Replace Reviewer notes 1\u20133 with one 'Propagation list' table: section, line/row, current text, replacement text, owner \u2014 covering every item above plus the schedule edits to 07 identified in this review.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "The PCCP scanner/file-format protocol (\u00a72.4) makes 'byte-passthrough proof (frame-byte hash against vendor tiles)' an acceptance criterion for all added formats, but the 512-px logical grid vs 240/256-px SVS frames question (issues #2/#65) is unresolved, and the first pairing itself (GT 450 DX, SVS) is the affected format. The same row allows 'a new transfer syntax (HTJ2K)' under the PCCP while the exclusion list says 'a new decoder or resampler at rest' needs a new 510(k); recommended \u00a77 keeps lossy HTJ2K out of Dx.",
+  "fix": "Split the acceptance criterion: byte identity where the vendor frame is served unchanged; for re-tiled or re-encoded formats, decoded-pixel identity (\u22641 LSB) against the vendor frames decoded by the reference pathway plus a lossless re-tiling proof. Restrict the HTJ2K line to reversible HTJ2K through the already-pinned OpenJPH build and state that lossy HTJ2K is outside the PCCP.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "When the ISO 14971 risk file opens is stated three ways: Decision 5 'from week 0 as repository artefacts (\u2026 risk register \u2026)'; \u00a73.3 'The risk file opens at M1 (\"Quality\" \u00a711)'; \u00a77 Stage 0\u2192M1 row 'risk register opened at M1'. 10 S1-12 seeds `risk-register.yaml` in Sprint 1 (week 1\u20132) and 08 \u00a711 links requirements to risk controls from day one; 09 \u00a73 says 'Hazard list opened at M1'. The section also uses a third phase vocabulary (Stage 0\u2192M1, MVP, v0.x, v1, CAP-1 and DX-0 \u2026) alongside 07's Phase 0\u20135 and 09's Phase 0\u20133, a third REQ namespace (`REQ-0001`) alongside 10's `REQ-G1`/`REQ-ZOOM-*`, and repository paths (`docs/qms/`, `requirements/REQ-*.yaml`, `risk/`, `provenance/`) that match 11 but not 10's `docs/design-controls/requirements.yaml`, `risk-register.yaml`, `docs/provenance/runs.jsonl` (issue #6).",
+  "fix": "State 'risk register seeded at Sprint 1 (10 S1-12), formally baselined at M1' everywhere; use 07's Phase numbers in \u00a77; name the intended-use requirement in whatever namespace #6 settles (e.g. `REQ-REG-001`); add `docs/qms/` and `docs/qms/ddp-<train>.md` to 10 \u00a71's tree and use 10's paths in \u00a73.1/\u00a73.2.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "Decision 2 names 'Barco MDPC-8127 plus one Dell medical display' but the Dell is never identified; the only Dell in the predicate chain (Sectra K193054's MR2416, 24\u2033 1920\u00d71200 \u22482.3 MP) fails the \u00a72.4 display class (\u22658 MP 27\u2033 4K), so the second named pairing is either undefined or inconsistent with the class the PCCP proposes. The reader study also assumes archival cases can be 'scanned on S360MD and GT 450 DX (half each)' without saying which UT lab owns both scanners (RX-4 assumes 'UT-owned scanners at the validating lab'; 09 OQ-24 asks the format mix but not scanner ownership).",
+  "fix": "Name the second display (a \u22658 MP medical-grade Dell, e.g. the current 8 MP MR-series model, verified against its 510(k) pairing list) or drop to one display; add 'which cleared scanners the validating UT lab(s) own' to OQ-24/OQ-29 and to RX-4's early warning.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "Establishment registration is dated three ways: \u00a75.2 'Register and list before the first Dx distribution'; \u00a77 CAP-1/DX-0 row 'manufacturer entity registered' (W104); DX-1 row 'registration and listing' (W117). Registering at W104 starts the annual establishment fee ($13,785 unless exempt) 9\u201312 months before any distribution. Separately, \u00a76.4 says 'a site that stops attesting for 30 days is contacted' while the same paragraph says air-gapped sites 'report by signed export at each update', i.e. they cannot attest for months by design.",
+  "fix": "Pick one registration point (initial registration and listing within the 30 days after DX-2 clearance, before FREE-1) and use it in \u00a75.2 and \u00a77; add an air-gapped exception to the 30-day rule (contact if no signed export within one support-window quarter).",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "RX-1's fallback ('if FDA declines to review a voluntary 510(k), the 501(c)(3) files as the manufacturer') silently changes Decision 7 (UT institution holds the first 510(k) and the fee exemption) into a different programme (nonprofit QMS from zero, fees payable, no sovereign immunity) with no cost or timeline, and Decision 7 cites 'precedent UTHealth/McGovern HeartSee' inside the fee-exemption clause although HeartSee's later versions were filed by Bracco commercially, so the precedent evidences only that a UT institution can hold a 510(k), not that it was fee-exempt.",
+  "fix": "State the fallback's consequences (entity formation 6\u20139 months, QMS stand-up, fees $28,653 + $13,785/yr, insurance) and its decision point (Pre-Sub feedback at W44\u201350); move the HeartSee citation to the 'UT can hold a 510(k)' claim and tag the fee-exemption applicability as OQ-26(5).",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ },
+ {
+  "section": "13-regulatory-pathway-and-free-distribution",
+  "severity": "low",
+  "issue": "The TSP timeline is not reconciled with the regulatory deliverables: the regulatory strategy memo and the three intended-use statements are 'signed at M1' (2027-01-29), five days after the verified meeting (22\u201324 Jan 2027), so the presentation cannot show them; and the section does not say what the abstract/presentation may claim about design controls (at the 2026-10-30 deadline no REQ IDs, SBOM or risk register exist yet \u2014 S1-11/S1-12 land in Sprint 1\u20132). The MVP row also introduces 'traceability \u226595 %' without a source (08 \u00a711 defines \u226590 % at M1 and 100 % for Dx).",
+  "fix": "Date the strategy memo and intended-use statements before 2027-01-22 (they need no code) and list them as presentation evidence; add one sentence to \u00a74.2's closing paragraph on what the abstract may say about regulation ('run under design controls from the first sprint' only if S1-12 is merged before the data freeze; otherwise 'designed to'); either source the 95 % MVP threshold from 08 \u00a79 or remove it.",
+  "critic": "completeness-consistency:13-regulatory-pathway-and-free-distribution"
+ }
+]

@@ -1,0 +1,16 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "id": "7a8b9c0d-1e2f-4a4b-9c6d-7e8f9a0b1c23", "geometry": {"type": "Point", "coordinates": [100, 100]}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": {"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [10, 10]}]}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": null, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": []}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": {"type": "MultiPoint", "coordinates": []}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[10, 10]]}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": ["10", "20"]}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "geometry": {"type": "MultiLineString", "coordinates": [[[0, 0], [10, 10]], [[20, 20], [30, 30]]]}, "properties": {"objectType": "annotation"}},
+    {"type": "Polygon", "coordinates": [[[0, 0], [10, 0], [10, 10], [0, 0]]]},
+    {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[20000, 20000], [20100, 20000], [20100, 20100], [20000, 20000]]]}, "properties": {"objectType": "annotation"}},
+    {"type": "Feature", "id": "8b9c0d1e-2f3a-4b5c-8d7e-8f9a0b1c2d34", "geometry": {"type": "Polygon", "coordinates": [[[15300, 15300], [15400, 15300], [15400, 15400], [15300, 15300]]]}, "properties": {"objectType": "annotation", "classification": {"name": "Tumor", "color": [200, 0, 0]}}}
+  ]
+}

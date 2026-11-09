@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/1/options/0/correct",
+      "value": true
+    }
+  ],
+  "expect": [
+    {
+      "rule": "mcq-one-correct",
+      "severity": "error",
+      "path": "/items/1/options",
+      "message": "Item q-sinus needs exactly one correct option"
+    }
+  ],
+  "alsoAllowed": []
+}

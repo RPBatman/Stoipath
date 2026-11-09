@@ -1,0 +1,24 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/answerKeys/0/targets/0/subtract",
+      "value": {
+        "className": "Exclsion"
+      }
+    }
+  ],
+  "expect": [
+    {
+      "rule": "key-resolves",
+      "severity": "error",
+      "path": "/answerKeys/0/targets/0/subtract",
+      "message": "Key camelyon16-reference: className \"Exclsion\" matches no feature"
+    }
+  ],
+  "alsoAllowed": [
+    "candidate-scores"
+  ]
+}

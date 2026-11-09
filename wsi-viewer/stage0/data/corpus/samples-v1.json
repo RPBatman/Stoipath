@@ -1,0 +1,4781 @@
+{
+ "schema": "stoipath-corpus-registry/1",
+ "corpus": "samples-v1",
+ "release": {
+  "repo": "RPBatman/Stoipath",
+  "tag": "samples-v1",
+  "name": "Format test corpus v1",
+  "url": "https://github.com/RPBatman/Stoipath/releases/tag/samples-v1",
+  "prerelease": true,
+  "publishedAt": "2026-11-01T17:08:03Z",
+  "assetCount": 13,
+  "assetsNotInManifest": []
+ },
+ "manifest": {
+  "file": "samples-manifest.json",
+  "sha256": "3fa8bcc9a2b14941d1108146a554db6208d24e4ef6995d4bffd41ff7ca5cc99a",
+  "entries": 11,
+  "sha256MatchesGithubDigest": true
+ },
+ "privacy": "values of identifying metadata fields (dates, user GUIDs, scanner serials, embedded file names, patient/accession/container attributes, label text) are not copied, only their presence; member file names are kept as published in the release manifest; label/macro pixels are never decoded",
+ "coverage": {
+  "formatFamilies": ["Aperio SVS", "DICOM WSI"],
+  "vendors": [
+   "Aperio SVS: Leica Biosystems (Aperio)",
+   "DICOM WSI: 3DHISTECH",
+   "DICOM WSI: Aperio (converted to DICOM)",
+   "DICOM WSI: Hamamatsu",
+   "DICOM WSI: Leica Biosystems"
+  ],
+  "missingFromPlanMatrix": [
+   "Hamamatsu NDPI (S360MD; Tier C JPEG / D JPEG XR levels)",
+   "3DHISTECH MRXS (Tier D)",
+   "Leica SCN (Tier B per region / D fluorescence)",
+   "Roche/Ventana BIF (Tier D at level 0)",
+   "Philips TIFF export (Tier B)",
+   "Philips iSyntax / i2Syntax (Tier D)",
+   "Aperio GT 450 SVS with 256² tiles from a GT 450 itself (Tier B; the 256² SVS files here are 2009 ScanScope exports)",
+   "DICOM WSI with HTJ2K, JPEG-LS or JPEG XL frames, and DICOM with concatenations or multiple optical paths/focal planes",
+   "Zeiss CZI, Olympus/Evident VSI, OME-TIFF/QPTIFF, OME-Zarr (fluorescence roadmap)",
+   "Huron/Motic/Mikroscan/ARGOS TIFF, Sakura svslide, Trestle, VMS/VMU, Zeiss ZVI (legacy/niche)"
+  ]
+ },
+ "assets": [
+  {
+   "asset": "CMU-1-JP2K-33005.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Export of CMU-1.svs, brightfield, JPEG 2000, ICT",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-1-JP2K-33005.svs",
+   "openslidePath": "Aperio/CMU-1-JP2K-33005.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-JP2K-33005.svs",
+   "bytes": 132565343,
+   "sha256": "9a1923cd9bcb260ba4d99d64f8d6e32550648c332ba48817f920662f3a513420",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 6,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [32893, 46000, 3],
+      "levels": 3
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [732, 1024, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [463, 387, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [431, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 46000,
+      "height": 32893,
+      "tiled": true,
+      "compression": "APERIO_JP2000_RGB",
+      "compressionTag": 33005,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 0,
+      "tileWidth": 240,
+      "tileHeight": 240,
+      "tiles": 26496,
+      "emptyTiles": 0,
+      "medianTileBytes": 5180,
+      "compressedBytes": 121216816,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [240, 240],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 1, "dy": 1}
+       ],
+       "chroma": "4:4:4",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 1,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 1024,
+      "height": 732,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "level",
+      "width": 11500,
+      "height": 8223,
+      "tiled": true,
+      "compression": "APERIO_JP2000_RGB",
+      "compressionTag": 33005,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 1,
+      "tileWidth": 240,
+      "tileHeight": 240,
+      "tiles": 1680,
+      "emptyTiles": 0,
+      "medianTileBytes": 6399,
+      "compressedBytes": 9895315,
+      "downsampleX": 4.0,
+      "downsampleY": 4.000122,
+      "descriptionSummary": "46000x32914 [0,0 46000x32893] (240x240) -> 11500x8223 J2K/KDU Q=30",
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [240, 240],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 1, "dy": 1}
+       ],
+       "chroma": "4:4:4",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 1,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 3,
+      "role": "level",
+      "width": 2875,
+      "height": 2055,
+      "tiled": true,
+      "compression": "APERIO_JP2000_RGB",
+      "compressionTag": 33005,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 2,
+      "tileWidth": 240,
+      "tileHeight": 240,
+      "tiles": 108,
+      "emptyTiles": 0,
+      "medianTileBytes": 6371,
+      "compressedBytes": 615656,
+      "downsampleX": 16.0,
+      "downsampleY": 16.006326,
+      "descriptionSummary": "46000x32914 [0,0 46000x32893] (240x240) -> 2875x2055 J2K/KDU Q=30",
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [240, 240],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 1, "dy": 1}
+       ],
+       "chroma": "4:4:4",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 1,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 4,
+      "role": "label",
+      "width": 387,
+      "height": 463,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 5,
+      "role": "macro",
+      "width": 1280,
+      "height": 431,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [46000, 32893],
+     [11500, 8223],
+     [2875, 2055]
+    ],
+    "levelSteps": [4.0, 4.0],
+    "tileSize": [240, 240],
+    "compression": "APERIO_JP2000_RGB",
+    "associatedImages": {
+     "thumbnail": {"width": 1024, "height": 732, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 387, "height": 463, "compression": "LZW", "photometric": "RGB", "page": 4},
+     "macro": {"width": 1280, "height": 431, "compression": "JPEG", "photometric": "RGB", "page": 5}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v11.2.1",
+     "summary": "46000x32914 [0,0 46000x32893] (240x240) J2K/KDU Q=30",
+     "technicalFields": {
+      "AppMag": "20",
+      "StripeWidth": "2040",
+      "Parmset": "USM Filter",
+      "MPP": "0.4990",
+      "Left": "25.691574",
+      "Top": "23.449873",
+      "LineCameraSkew": "-0.000424",
+      "LineAreaXOffset": "0.019265",
+      "LineAreaYOffset": "-0.000313",
+      "Focus Offset": "0.000000",
+      "OriginalWidth": "46000",
+      "Originalheight": "33014",
+      "Filtered": "5",
+      "OriginalHeight": "32914"
+     },
+     "identifyingFieldsPresent": ["Date", "Filename", "ImageID", "ScanScope ID", "Time", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": ["OriginalWidth"],
+     "embeddedEarlierDescription": true
+    },
+    "mppLevel0": 0.499,
+    "appMag": 20.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 3,
+    "levelDimensions": [
+     [46000, 32893],
+     [11500, 8223],
+     [2875, 2055]
+    ],
+    "levelDownsamples": [1.0, 4.000061, 16.003163],
+    "tileSize": [
+     [240, 240],
+     [240, 240],
+     [240, 240]
+    ],
+    "propertiesCount": 50,
+    "associatedImages": {
+     "label": [387, 463],
+     "macro": [1280, 431],
+     "thumbnail": [1024, 732]
+    },
+    "mppX": 0.499,
+    "mppY": 0.499,
+    "objectivePower": "20",
+    "iccProfileBytes": null,
+    "quickhash1": "6a3d9c6e59cddd6b057b87b21284034b7ef07834730523b17636d60d6da922fd"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [29280, 1440, 512, 512],
+     "selection": "tissue-densest 512px window on level 2 (2875x2055), snapped to the level-0 tile grid",
+     "tissueFraction": 1.0,
+     "contextLevel": 2
+    },
+    "level0": {
+     "x": 29280,
+     "y": 1440,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"skipped": "wsi_source.read_region needs a region that is a multiple of the 240px tile"}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 6960,
+     "y": 0,
+     "size": 512,
+     "readerDownsample": [4.0, 4.000122],
+     "openSlideDownsample": 4.000061,
+     "vsOpenSlide": {
+      "level0Location": [27840, 0],
+      "subPixelOffset": [-0.1058, 0.0],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 21,
+      "meanAbsDiff": 0.3487,
+      "psnrDb": 46.74,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [27840, -2],
+      "subPixelOffset": [-0.1058, -0.5],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 21,
+      "meanAbsDiff": 0.3487,
+      "psnrDb": 46.74,
+      "identical": false
+     }
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg2k_decode (OpenJPEG, numthreads=1)",
+    "tiles": 20,
+    "tileSize": [240, 240],
+    "medianMs": 1.943,
+    "minMs": 1.852,
+    "maxMs": 2.23,
+    "medianMsPerMegapixel": 33.729,
+    "medianCompressedBytes": 6417,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 122,6"
+   },
+   "ingest": {
+    "tier": "A bytes, not browser-decodable -> transcode once",
+    "planRow": "Aperio SVS, JPEG 2000 (TCGA-era): A bytes, not browser-decodable -> transcode once",
+    "reason": "JPEG 2000 tiles (33005 (RGB with irreversible MCT), 240²): no browser decodes J2K; transcode once to JPEG q>=90 (or reversible HTJ2K where tooling proves it) into our 512² grid; record one lossy generation",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.0, 4.0]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "derivedFrom": {
+    "parent": "CMU-1.svs",
+    "offsetInParent": [0, 0],
+    "offsetSource": "ImageDescription '[x,y WxH]'",
+    "level0VsParent": {"comparedPixels": 262144, "maxAbsDiff": 83, "meanAbsDiff": 7.9903, "psnrDb": 27.55, "identical": false},
+    "note": "measures the generation loss of the export (re-encode), not a reader disagreement"
+   },
+   "quirks": [
+    "sparse vendor pyramid: level steps [4.0, 4.0] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide level-1 downsample 4.000061 is the mean of the width ratio 4.000000 and height ratio 4.000122; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  },
+  {
+   "asset": "CMU-1-Small-Region.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Exported region from CMU-1.svs, brightfield, JPEG, small enough to have a single pyramid level",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-1-Small-Region.svs",
+   "openslidePath": "Aperio/CMU-1-Small-Region.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1-Small-Region.svs",
+   "bytes": 1938955,
+   "sha256": "ed92d5a9f2e86df67640d6f92ce3e231419ce127131697fbbce42ad5e002c8a7",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 4,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [2967, 2220, 3],
+      "levels": 1
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [768, 574, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [463, 387, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [431, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 2220,
+      "height": 2967,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 0,
+      "tileWidth": 240,
+      "tileHeight": 240,
+      "tiles": 130,
+      "emptyTiles": 0,
+      "medianTileBytes": 4098,
+      "compressedBytes": 1275934,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 574,
+      "height": 768,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "label",
+      "width": 387,
+      "height": 463,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 3,
+      "role": "macro",
+      "width": 1280,
+      "height": 431,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [2220, 2967]
+    ],
+    "levelSteps": [],
+    "tileSize": [240, 240],
+    "compression": "JPEG",
+    "associatedImages": {
+     "thumbnail": {"width": 574, "height": 768, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 387, "height": 463, "compression": "LZW", "photometric": "RGB", "page": 2},
+     "macro": {"width": 1280, "height": 431, "compression": "JPEG", "photometric": "RGB", "page": 3}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v11.2.1",
+     "summary": "46000x32914 [42673,5576 2220x2967] (240x240) JPEG/RGB Q=30",
+     "technicalFields": {
+      "AppMag": "20",
+      "StripeWidth": "2040",
+      "Parmset": "USM Filter",
+      "MPP": "0.4990",
+      "Left": "25.691574",
+      "Top": "23.449873",
+      "LineCameraSkew": "-0.000424",
+      "LineAreaXOffset": "0.019265",
+      "LineAreaYOffset": "-0.000313",
+      "Focus Offset": "0.000000",
+      "OriginalWidth": "46000",
+      "Originalheight": "33014",
+      "Filtered": "5",
+      "OriginalHeight": "32914"
+     },
+     "identifyingFieldsPresent": ["Date", "Filename", "ImageID", "ScanScope ID", "Time", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": ["OriginalWidth"],
+     "embeddedEarlierDescription": true
+    },
+    "mppLevel0": 0.499,
+    "appMag": 20.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 1,
+    "levelDimensions": [
+     [2220, 2967]
+    ],
+    "levelDownsamples": [1.0],
+    "tileSize": [
+     [240, 240]
+    ],
+    "propertiesCount": 40,
+    "associatedImages": {
+     "label": [387, 463],
+     "macro": [1280, 431],
+     "thumbnail": [574, 768]
+    },
+    "mppX": 0.499,
+    "mppY": 0.499,
+    "objectivePower": "20",
+    "iccProfileBytes": null,
+    "quickhash1": "6335ea0e6cc54c2cba64bb265d3c713a50cd84484924e3a9c109558c13521d5c"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [960, 720, 512, 512],
+     "selection": "tissue-densest 512px window on level 0 (2220x2967), snapped to the level-0 tile grid",
+     "tissueFraction": 0.906,
+     "contextLevel": 0
+    },
+    "level0": {
+     "x": 960,
+     "y": 720,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"skipped": "wsi_source.read_region needs a region that is a multiple of the 240px tile"}
+    },
+    "coarse": {"skipped": "single-level file"}
+   },
+   "rgbJpegSpliceCheck": {
+    "tile": [5, 6],
+    "naiveSpliceVsTifffile": {"comparedPixels": 57600, "maxAbsDiff": 229, "meanAbsDiff": 52.2911, "psnrDb": 11.5, "identical": false},
+    "app14SpliceVsTifffile": {"comparedPixels": 57600, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true},
+    "note": "decoded with libjpeg-turbo default colour handling, i.e. what an <img>/createImageBitmap decoder sees"
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo) with JPEGTables, colorspace=RGB",
+    "tiles": 20,
+    "tileSize": [240, 240],
+    "medianMs": 0.411,
+    "minMs": 0.192,
+    "maxMs": 0.622,
+    "medianMsPerMegapixel": 7.131,
+    "medianCompressedBytes": 17922,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 4,3",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "C",
+    "planRow": "Aperio SVS, JPEG - classic (240²): Tier C",
+    "reason": "240² JPEG tiles do not divide 512: lossless DCT-domain re-mux to 512² frames; tiles are unsubsampled RGB-in-JPEG without an APP14 marker, so the splice must add Adobe APP14 transform=0",
+    "actions": ["derive a 2x pyramid down to one 512 px tile (single native level)"]
+   },
+   "derivedFrom": {
+    "parent": "CMU-1.svs",
+    "offsetInParent": [42673, 5576],
+    "offsetSource": "ImageDescription '[x,y WxH]'",
+    "level0VsParent": {"comparedPixels": 262144, "maxAbsDiff": 61, "meanAbsDiff": 5.2952, "psnrDb": 30.89, "identical": false},
+    "note": "measures the generation loss of the export (re-encode), not a reader disagreement"
+   },
+   "quirks": [
+    "JPEG tiles hold RGB samples (TIFF Photometric=RGB) but carry no JFIF/Adobe APP14 marker and component ids 0,1,2, so any plain JPEG decoder (libjpeg default, browsers) treats them as YCbCr; a header splice for the browser must inject an Adobe APP14 marker with transform=0 (see rgbJpegSpliceCheck)",
+    "TIFF YCbCrSubSampling tag says [2, 2] (tifffile reports subsampling [2, 2]) but the JPEG SOF has three 1x1 components: the stream is unsubsampled RGB; trust the codestream, not the tag",
+    "single pyramid level: the viewer needs a derived pyramid"
+   ]
+  },
+  {
+   "asset": "CMU-1.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Brightfield, JPEG",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-1.svs",
+   "openslidePath": "Aperio/CMU-1.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-1.svs",
+   "bytes": 177552579,
+   "sha256": "00a3d54482cd707abf254fe69dccc8d06b8ff757a1663f1290c23418c480eb30",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 6,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [32914, 46000, 3],
+      "levels": 3
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [732, 1024, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [463, 387, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [431, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 46000,
+      "height": 32914,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": 141992,
+      "level": 0,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 23220,
+      "emptyTiles": 0,
+      "medianTileBytes": 2541,
+      "compressedBytes": 157121023,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 1024,
+      "height": 732,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "level",
+      "width": 11500,
+      "height": 8228,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 1,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 1485,
+      "emptyTiles": 0,
+      "medianTileBytes": 2708,
+      "compressedBytes": 17819091,
+      "downsampleX": 4.0,
+      "downsampleY": 4.000243,
+      "descriptionSummary": "46920x33014 [0,100 46000x32914] (256x256) -> 11500x8228 JPEG/RGB Q=65",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 3,
+      "role": "level",
+      "width": 2875,
+      "height": 2057,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 2,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 108,
+      "emptyTiles": 0,
+      "medianTileBytes": 4168,
+      "compressedBytes": 1661307,
+      "downsampleX": 16.0,
+      "downsampleY": 16.000972,
+      "descriptionSummary": "46920x33014 [0,100 46000x32914] (256x256) -> 2875x2057 JPEG/RGB Q=82",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 4,
+      "role": "label",
+      "width": 387,
+      "height": 463,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 5,
+      "role": "macro",
+      "width": 1280,
+      "height": 431,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [46000, 32914],
+     [11500, 8228],
+     [2875, 2057]
+    ],
+    "levelSteps": [4.0, 4.0],
+    "tileSize": [256, 256],
+    "compression": "JPEG",
+    "associatedImages": {
+     "thumbnail": {"width": 1024, "height": 732, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 387, "height": 463, "compression": "LZW", "photometric": "RGB", "page": 4},
+     "macro": {"width": 1280, "height": 431, "compression": "JPEG", "photometric": "RGB", "page": 5}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v10.0.51",
+     "summary": "46920x33014 [0,100 46000x32914] (256x256) JPEG/RGB Q=30",
+     "technicalFields": {
+      "AppMag": "20",
+      "StripeWidth": "2040",
+      "Parmset": "USM Filter",
+      "MPP": "0.4990",
+      "Left": "25.691574",
+      "Top": "23.449873",
+      "LineCameraSkew": "-0.000424",
+      "LineAreaXOffset": "0.019265",
+      "LineAreaYOffset": "-0.000313",
+      "Focus Offset": "0.000000",
+      "OriginalWidth": "46920",
+      "Originalheight": "33014",
+      "Filtered": "5",
+      "ICC Profile": "ScanScope v1"
+     },
+     "identifyingFieldsPresent": ["Date", "Filename", "ImageID", "ScanScope ID", "Time", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": [],
+     "embeddedEarlierDescription": false
+    },
+    "mppLevel0": 0.499,
+    "appMag": 20.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 3,
+    "levelDimensions": [
+     [46000, 32914],
+     [11500, 8228],
+     [2875, 2057]
+    ],
+    "levelDownsamples": [1.0, 4.000122, 16.000486],
+    "tileSize": [
+     [256, 256],
+     [256, 256],
+     [256, 256]
+    ],
+    "propertiesCount": 52,
+    "associatedImages": {
+     "label": [387, 463],
+     "macro": [1280, 431],
+     "thumbnail": [1024, 732]
+    },
+    "mppX": 0.499,
+    "mppY": 0.499,
+    "objectivePower": "20",
+    "iccProfileBytes": 141992,
+    "quickhash1": "30f1a38031fc0e21d81f9d01435ac4af848f6fe2bbf8f7768184336ee5d7e796"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [29440, 1536, 512, 512],
+     "selection": "tissue-densest 512px window on level 2 (2875x2057), snapped to the level-0 tile grid",
+     "tissueFraction": 1.0,
+     "contextLevel": 2
+    },
+    "level0": {
+     "x": 29440,
+     "y": 1536,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 7168,
+     "y": 0,
+     "size": 512,
+     "readerDownsample": [4.0, 4.000243],
+     "openSlideDownsample": 4.000122,
+     "vsOpenSlide": {
+      "level0Location": [28673, 0],
+      "subPixelOffset": [0.0322, 0.0],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 7,
+      "meanAbsDiff": 0.1569,
+      "psnrDb": 53.92,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [28673, -2],
+      "subPixelOffset": [0.0322, -0.5],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 7,
+      "meanAbsDiff": 0.1569,
+      "psnrDb": 53.92,
+      "identical": false
+     }
+    }
+   },
+   "rgbJpegSpliceCheck": {
+    "tile": [90, 64],
+    "naiveSpliceVsTifffile": {"comparedPixels": 65536, "maxAbsDiff": 134, "meanAbsDiff": 47.6943, "psnrDb": 10.94, "identical": false},
+    "app14SpliceVsTifffile": {"comparedPixels": 65536, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true},
+    "note": "decoded with libjpeg-turbo default colour handling, i.e. what an <img>/createImageBitmap decoder sees"
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo) with JPEGTables, colorspace=RGB",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 0.493,
+    "minMs": 0.313,
+    "maxMs": 0.597,
+    "medianMsPerMegapixel": 7.523,
+    "medianCompressedBytes": 22903,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 115,6",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "B",
+    "planRow": "Aperio SVS, JPEG - GT 450 (256²): Tier B",
+    "reason": "256² JPEG tiles divide 512: four vendor tiles per logical 512² tile, served by header splice (TIFF JPEGTables + tile entropy data); tiles are unsubsampled RGB-in-JPEG without an APP14 marker, so the splice must add Adobe APP14 transform=0. These are 2009 ScanScope files, so the plan's 'classic SVS = 240²' assumption does not hold for every pre-GT 450 file: the tier follows the tile size, not the scanner generation",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.0, 4.0]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "quirks": [
+    "JPEG tiles hold RGB samples (TIFF Photometric=RGB) but carry no JFIF/Adobe APP14 marker and component ids 0,1,2, so any plain JPEG decoder (libjpeg default, browsers) treats them as YCbCr; a header splice for the browser must inject an Adobe APP14 marker with transform=0 (see rgbJpegSpliceCheck)",
+    "TIFF YCbCrSubSampling tag says [2, 2] (tifffile reports subsampling [2, 2]) but the JPEG SOF has three 1x1 components: the stream is unsubsampled RGB; trust the codestream, not the tag",
+    "sparse vendor pyramid: level steps [4.0, 4.0] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide level-1 downsample 4.000122 is the mean of the width ratio 4.000000 and height ratio 4.000243; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  },
+  {
+   "asset": "CMU-2.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Brightfield, JPEG",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-2.svs",
+   "openslidePath": "Aperio/CMU-2.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-2.svs",
+   "bytes": 390750635,
+   "sha256": "fb6df83bfd91a252185c9652aebeb00deff84e49329f7ff8f75744f31f475b08",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 7,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [30462, 78000, 3],
+      "levels": 4
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [399, 1024, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [463, 387, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [431, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 78000,
+      "height": 30462,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": 141992,
+      "level": 0,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 36295,
+      "emptyTiles": 0,
+      "medianTileBytes": 2611,
+      "compressedBytes": 341084994,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 1024,
+      "height": 399,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "level",
+      "width": 19500,
+      "height": 7615,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 1,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 2310,
+      "emptyTiles": 0,
+      "medianTileBytes": 2711,
+      "compressedBytes": 43303652,
+      "downsampleX": 4.0,
+      "downsampleY": 4.000263,
+      "descriptionSummary": "79560x30562 [0,100 78000x30462] (256x256) -> 19500x7615 JPEG/RGB Q=65",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 3,
+      "role": "level",
+      "width": 4875,
+      "height": 1903,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 2,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 160,
+      "emptyTiles": 0,
+      "medianTileBytes": 4210,
+      "compressedBytes": 3927126,
+      "downsampleX": 16.0,
+      "downsampleY": 16.007357,
+      "descriptionSummary": "79560x30562 [0,100 78000x30462] (256x256) -> 4875x1903 JPEG/RGB Q=82",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 4,
+      "role": "level",
+      "width": 2437,
+      "height": 951,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 3,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 40,
+      "emptyTiles": 0,
+      "medianTileBytes": 16112,
+      "compressedBytes": 1381383,
+      "downsampleX": 32.006565,
+      "downsampleY": 32.031546,
+      "descriptionSummary": "79560x30562 [0,100 78000x30462] (256x256) -> 2437x951 JPEG/RGB Q=91",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 5,
+      "role": "label",
+      "width": 387,
+      "height": 463,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 6,
+      "role": "macro",
+      "width": 1280,
+      "height": 431,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [78000, 30462],
+     [19500, 7615],
+     [4875, 1903],
+     [2437, 951]
+    ],
+    "levelSteps": [4.0, 4.0, 2.0],
+    "tileSize": [256, 256],
+    "compression": "JPEG",
+    "associatedImages": {
+     "thumbnail": {"width": 1024, "height": 399, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 387, "height": 463, "compression": "LZW", "photometric": "RGB", "page": 5},
+     "macro": {"width": 1280, "height": 431, "compression": "JPEG", "photometric": "RGB", "page": 6}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v10.0.51",
+     "summary": "79560x30562 [0,100 78000x30462] (256x256) JPEG/RGB Q=30",
+     "technicalFields": {
+      "AppMag": "20",
+      "StripeWidth": "2040",
+      "Parmset": "USM Filter",
+      "MPP": "0.4990",
+      "Left": "27.409658",
+      "Top": "20.522137",
+      "LineCameraSkew": "-0.000424",
+      "LineAreaXOffset": "0.019265",
+      "LineAreaYOffset": "-0.000313",
+      "Focus Offset": "0.000000",
+      "OriginalWidth": "79560",
+      "Originalheight": "30562",
+      "Filtered": "5",
+      "ICC Profile": "ScanScope v1"
+     },
+     "identifyingFieldsPresent": ["Date", "Filename", "ImageID", "ScanScope ID", "Time", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": [],
+     "embeddedEarlierDescription": false
+    },
+    "mppLevel0": 0.499,
+    "appMag": 20.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 4,
+    "levelDimensions": [
+     [78000, 30462],
+     [19500, 7615],
+     [4875, 1903],
+     [2437, 951]
+    ],
+    "levelDownsamples": [1.0, 4.000131, 16.003678, 32.019056],
+    "tileSize": [
+     [256, 256],
+     [256, 256],
+     [256, 256],
+     [256, 256]
+    ],
+    "propertiesCount": 57,
+    "associatedImages": {
+     "label": [387, 463],
+     "macro": [1280, 431],
+     "thumbnail": [1024, 399]
+    },
+    "mppX": 0.499,
+    "mppY": 0.499,
+    "objectivePower": "20",
+    "iccProfileBytes": 141992,
+    "quickhash1": "7e1447a7510094d7c84aaadb88e5a3c824fb6f7137050e44a9e642886acbfa0f"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [21504, 2304, 512, 512],
+     "selection": "tissue-densest 512px window on level 3 (2437x951), snapped to the level-0 tile grid",
+     "tissueFraction": 1.0,
+     "contextLevel": 3
+    },
+    "level0": {
+     "x": 21504,
+     "y": 2304,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 5120,
+     "y": 256,
+     "size": 512,
+     "readerDownsample": [4.0, 4.000263],
+     "openSlideDownsample": 4.000131,
+     "vsOpenSlide": {
+      "level0Location": [20481, 1024],
+      "subPixelOffset": [0.0819, -0.0084],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 18,
+      "meanAbsDiff": 0.5868,
+      "psnrDb": 44.91,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [20481, 1024],
+      "subPixelOffset": [0.0819, -0.0084],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 18,
+      "meanAbsDiff": 0.5868,
+      "psnrDb": 44.91,
+      "identical": false
+     }
+    }
+   },
+   "rgbJpegSpliceCheck": {
+    "tile": [152, 59],
+    "naiveSpliceVsTifffile": {"comparedPixels": 65536, "maxAbsDiff": 128, "meanAbsDiff": 48.4187, "psnrDb": 11.09, "identical": false},
+    "app14SpliceVsTifffile": {"comparedPixels": 65536, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true},
+    "note": "decoded with libjpeg-turbo default colour handling, i.e. what an <img>/createImageBitmap decoder sees"
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo) with JPEGTables, colorspace=RGB",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 0.527,
+    "minMs": 0.292,
+    "maxMs": 0.624,
+    "medianMsPerMegapixel": 8.049,
+    "medianCompressedBytes": 25156,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 84,9",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "B",
+    "planRow": "Aperio SVS, JPEG - GT 450 (256²): Tier B",
+    "reason": "256² JPEG tiles divide 512: four vendor tiles per logical 512² tile, served by header splice (TIFF JPEGTables + tile entropy data); tiles are unsubsampled RGB-in-JPEG without an APP14 marker, so the splice must add Adobe APP14 transform=0. These are 2009 ScanScope files, so the plan's 'classic SVS = 240²' assumption does not hold for every pre-GT 450 file: the tier follows the tile size, not the scanner generation",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.0, 4.0, 2.0]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "quirks": [
+    "JPEG tiles hold RGB samples (TIFF Photometric=RGB) but carry no JFIF/Adobe APP14 marker and component ids 0,1,2, so any plain JPEG decoder (libjpeg default, browsers) treats them as YCbCr; a header splice for the browser must inject an Adobe APP14 marker with transform=0 (see rgbJpegSpliceCheck)",
+    "TIFF YCbCrSubSampling tag says [2, 2] (tifffile reports subsampling [2, 2]) but the JPEG SOF has three 1x1 components: the stream is unsubsampled RGB; trust the codestream, not the tag",
+    "sparse vendor pyramid: level steps [4.0, 4.0, 2.0] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide level-1 downsample 4.000131 is the mean of the width ratio 4.000000 and height ratio 4.000263; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  },
+  {
+   "asset": "CMU-3.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Brightfield, JPEG",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-3.svs",
+   "openslidePath": "Aperio/CMU-3.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-3.svs",
+   "bytes": 253815723,
+   "sha256": "fd52a0069a55bc3b0e50892f62e01e8c945109707797389cc1b877494ccece91",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 7,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [45402, 66000, 3],
+      "levels": 4
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [704, 1024, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [463, 387, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [431, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 66000,
+      "height": 45402,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": 141992,
+      "level": 0,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 45924,
+      "emptyTiles": 0,
+      "medianTileBytes": 2433,
+      "compressedBytes": 226186731,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 1024,
+      "height": 704,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "level",
+      "width": 16500,
+      "height": 11350,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 1,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 2925,
+      "emptyTiles": 0,
+      "medianTileBytes": 2473,
+      "compressedBytes": 23516397,
+      "downsampleX": 4.0,
+      "downsampleY": 4.000176,
+      "descriptionSummary": "67320x45502 [0,100 66000x45402] (256x256) -> 16500x11350 JPEG/RGB Q=65",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 3,
+      "role": "level",
+      "width": 4125,
+      "height": 2837,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 2,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 204,
+      "emptyTiles": 0,
+      "medianTileBytes": 2856,
+      "compressedBytes": 2168089,
+      "downsampleX": 16.0,
+      "downsampleY": 16.003525,
+      "descriptionSummary": "67320x45502 [0,100 66000x45402] (256x256) -> 4125x2837 JPEG/RGB Q=82",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 4,
+      "role": "level",
+      "width": 2062,
+      "height": 1418,
+      "tiled": true,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null,
+      "level": 3,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 54,
+      "emptyTiles": 0,
+      "medianTileBytes": 5538,
+      "compressedBytes": 847455,
+      "downsampleX": 32.007759,
+      "downsampleY": 32.018336,
+      "descriptionSummary": "67320x45502 [0,100 66000x45402] (256x256) -> 2062x1418 JPEG/RGB Q=91",
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 1, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:4:4",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      }
+     },
+     {
+      "page": 5,
+      "role": "label",
+      "width": 387,
+      "height": 463,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 6,
+      "role": "macro",
+      "width": 1280,
+      "height": 431,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [66000, 45402],
+     [16500, 11350],
+     [4125, 2837],
+     [2062, 1418]
+    ],
+    "levelSteps": [4.0, 4.0, 2.0],
+    "tileSize": [256, 256],
+    "compression": "JPEG",
+    "associatedImages": {
+     "thumbnail": {"width": 1024, "height": 704, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 387, "height": 463, "compression": "LZW", "photometric": "RGB", "page": 5},
+     "macro": {"width": 1280, "height": 431, "compression": "JPEG", "photometric": "RGB", "page": 6}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v10.0.51",
+     "summary": "67320x45502 [0,100 66000x45402] (256x256) JPEG/RGB Q=30",
+     "technicalFields": {
+      "AppMag": "20",
+      "StripeWidth": "2040",
+      "Parmset": "USM Filter",
+      "MPP": "0.4990",
+      "Left": "22.445614",
+      "Top": "24.084003",
+      "LineCameraSkew": "-0.000424",
+      "LineAreaXOffset": "0.019265",
+      "LineAreaYOffset": "-0.000313",
+      "Focus Offset": "0.000000",
+      "OriginalWidth": "67320",
+      "Originalheight": "45502",
+      "Filtered": "5",
+      "ICC Profile": "ScanScope v1"
+     },
+     "identifyingFieldsPresent": ["Date", "Filename", "ImageID", "ScanScope ID", "Time", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": [],
+     "embeddedEarlierDescription": false
+    },
+    "mppLevel0": 0.499,
+    "appMag": 20.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 4,
+    "levelDimensions": [
+     [66000, 45402],
+     [16500, 11350],
+     [4125, 2837],
+     [2062, 1418]
+    ],
+    "levelDownsamples": [1.0, 4.000088, 16.001762, 32.013048],
+    "tileSize": [
+     [256, 256],
+     [256, 256],
+     [256, 256],
+     [256, 256]
+    ],
+    "propertiesCount": 57,
+    "associatedImages": {
+     "label": [387, 463],
+     "macro": [1280, 431],
+     "thumbnail": [1024, 704]
+    },
+    "mppX": 0.499,
+    "mppY": 0.499,
+    "objectivePower": "20",
+    "iccProfileBytes": 141992,
+    "quickhash1": "7fc5524d92252b3c132f2a94af5eca63061643985ed029dda6e73f42ca8390c1"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [47104, 8960, 512, 512],
+     "selection": "tissue-densest 512px window on level 3 (2062x1418), snapped to the level-0 tile grid",
+     "tissueFraction": 1.0,
+     "contextLevel": 3
+    },
+    "level0": {
+     "x": 47104,
+     "y": 8960,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 11520,
+     "y": 1792,
+     "size": 512,
+     "readerDownsample": [4.0, 4.000176],
+     "openSlideDownsample": 4.000088,
+     "vsOpenSlide": {
+      "level0Location": [46081, 7168],
+      "subPixelOffset": [-0.0037, -0.0395],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 8,
+      "meanAbsDiff": 0.2564,
+      "psnrDb": 51.35,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [46081, 7168],
+      "subPixelOffset": [-0.0037, -0.0395],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 8,
+      "meanAbsDiff": 0.2564,
+      "psnrDb": 51.35,
+      "identical": false
+     }
+    }
+   },
+   "rgbJpegSpliceCheck": {
+    "tile": [129, 89],
+    "naiveSpliceVsTifffile": {"comparedPixels": 65536, "maxAbsDiff": 132, "meanAbsDiff": 48.5267, "psnrDb": 11.09, "identical": false},
+    "app14SpliceVsTifffile": {"comparedPixels": 65536, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true},
+    "note": "decoded with libjpeg-turbo default colour handling, i.e. what an <img>/createImageBitmap decoder sees"
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo) with JPEGTables, colorspace=RGB",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 0.531,
+    "minMs": 0.439,
+    "maxMs": 0.727,
+    "medianMsPerMegapixel": 8.099,
+    "medianCompressedBytes": 25393,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 184,35",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "B",
+    "planRow": "Aperio SVS, JPEG - GT 450 (256²): Tier B",
+    "reason": "256² JPEG tiles divide 512: four vendor tiles per logical 512² tile, served by header splice (TIFF JPEGTables + tile entropy data); tiles are unsubsampled RGB-in-JPEG without an APP14 marker, so the splice must add Adobe APP14 transform=0. These are 2009 ScanScope files, so the plan's 'classic SVS = 240²' assumption does not hold for every pre-GT 450 file: the tier follows the tile size, not the scanner generation",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.0, 4.0, 2.0]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "quirks": [
+    "JPEG tiles hold RGB samples (TIFF Photometric=RGB) but carry no JFIF/Adobe APP14 marker and component ids 0,1,2, so any plain JPEG decoder (libjpeg default, browsers) treats them as YCbCr; a header splice for the browser must inject an Adobe APP14 marker with transform=0 (see rgbJpegSpliceCheck)",
+    "TIFF YCbCrSubSampling tag says [2, 2] (tifffile reports subsampling [2, 2]) but the JPEG SOF has three 1x1 components: the stream is unsubsampled RGB; trust the codestream, not the tag",
+    "sparse vendor pyramid: level steps [4.0, 4.0, 2.0] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide level-1 downsample 4.000088 is the mean of the width ratio 4.000000 and height ratio 4.000176; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  },
+  {
+   "asset": "JP2K-33003-1.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Aorta tissue, brightfield, JPEG 2000, YCbCr",
+   "licence": "distributable",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/JP2K-33003-1.svs",
+   "openslidePath": "Aperio/JP2K-33003-1.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1.svs",
+   "bytes": 63847265,
+   "sha256": "6205ccf75a8fa6c32df7c5c04b7377398971a490fb6b320d50d91f7ba6a0e6fd",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 6,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [17497, 15374, 3],
+      "levels": 3
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [768, 674, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [422, 415, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [421, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 15374,
+      "height": 17497,
+      "tiled": true,
+      "compression": "APERIO_JP2000_YCBC",
+      "compressionTag": 33003,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": 141992,
+      "level": 0,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 4209,
+      "emptyTiles": 0,
+      "medianTileBytes": 13245,
+      "compressedBytes": 60114990,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 674,
+      "height": 768,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "level",
+      "width": 3843,
+      "height": 4374,
+      "tiled": true,
+      "compression": "APERIO_JP2000_YCBC",
+      "compressionTag": 33003,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 1,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 288,
+      "emptyTiles": 0,
+      "medianTileBytes": 4912,
+      "compressedBytes": 2358110,
+      "downsampleX": 4.00052,
+      "downsampleY": 4.000229,
+      "descriptionSummary": "16000x17597 [0,100 15374x17497] (256x256) -> 3843x4374 J2K/YUV16 Q=70",
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 3,
+      "role": "level",
+      "width": 1921,
+      "height": 2187,
+      "tiled": true,
+      "compression": "APERIO_JP2000_YCBC",
+      "compressionTag": 33003,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 2,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 72,
+      "emptyTiles": 0,
+      "medianTileBytes": 5363,
+      "compressedBytes": 650250,
+      "downsampleX": 8.003123,
+      "downsampleY": 8.000457,
+      "descriptionSummary": "16000x17597 [0,100 15374x17497] (256x256) -> 1921x2187 J2K/YUV16 Q=70",
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 4,
+      "role": "label",
+      "width": 415,
+      "height": 422,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 5,
+      "role": "macro",
+      "width": 1280,
+      "height": 421,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [15374, 17497],
+     [3843, 4374],
+     [1921, 2187]
+    ],
+    "levelSteps": [4.001, 2.001],
+    "tileSize": [256, 256],
+    "compression": "APERIO_JP2000_YCBC",
+    "associatedImages": {
+     "thumbnail": {"width": 674, "height": 768, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 415, "height": 422, "compression": "LZW", "photometric": "RGB", "page": 4},
+     "macro": {"width": 1280, "height": 421, "compression": "JPEG", "photometric": "RGB", "page": 5}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v10.0.50",
+     "summary": "16000x17597 [0,100 15374x17497] (256x256) J2K/YUV16 Q=70",
+     "technicalFields": {
+      "AppMag": "40",
+      "StripeWidth": "1000",
+      "MPP": "0.2498",
+      "Left": "39.010742",
+      "Top": "14.299895",
+      "LineCameraSkew": "-0.003035",
+      "LineAreaXOffset": "0.000000",
+      "LineAreaYOffset": "0.000000",
+      "Focus Offset": "-0.001000",
+      "OriginalWidth": "16000",
+      "Originalheight": "17597",
+      "Filtered": "3",
+      "ICC Profile": "ScanScope v1"
+     },
+     "identifyingFieldsPresent": ["DSR ID", "Date", "Filename", "ImageID", "ScanScope ID", "Time", "Title", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": [],
+     "embeddedEarlierDescription": false
+    },
+    "mppLevel0": 0.2498,
+    "appMag": 40.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 3,
+    "levelDimensions": [
+     [15374, 17497],
+     [3843, 4374],
+     [1921, 2187]
+    ],
+    "levelDownsamples": [1.0, 4.000375, 8.00179],
+    "tileSize": [
+     [256, 256],
+     [256, 256],
+     [256, 256]
+    ],
+    "propertiesCount": 53,
+    "associatedImages": {
+     "label": [415, 422],
+     "macro": [1280, 421],
+     "thumbnail": [674, 768]
+    },
+    "mppX": 0.2498,
+    "mppY": 0.2498,
+    "objectivePower": "40",
+    "iccProfileBytes": 141992,
+    "quickhash1": "3380de13dab8823ca49131e7ed031bd8c0dbacda93909facdbd45d641a1453ac"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [8448, 2816, 512, 512],
+     "selection": "tissue-densest 512px window on level 2 (1921x2187), snapped to the level-0 tile grid",
+     "tissueFraction": 0.999,
+     "contextLevel": 2
+    },
+    "level0": {
+     "x": 8448,
+     "y": 2816,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 1, "meanAbsDiff": 0.4825, "psnrDb": 51.3, "identical": false, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 1792,
+     "y": 256,
+     "size": 512,
+     "readerDownsample": [4.00052, 4.000229],
+     "openSlideDownsample": 4.000375,
+     "vsOpenSlide": {
+      "level0Location": [7169, 1024],
+      "subPixelOffset": [0.0822, -0.024],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 16,
+      "meanAbsDiff": 0.9534,
+      "psnrDb": 44.52,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [7169, 1024],
+      "subPixelOffset": [0.0822, -0.024],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 16,
+      "meanAbsDiff": 0.9534,
+      "psnrDb": 44.52,
+      "identical": false
+     }
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg2k_decode (OpenJPEG, numthreads=1)",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 4.768,
+    "minMs": 3.432,
+    "maxMs": 7.011,
+    "medianMsPerMegapixel": 72.76,
+    "medianCompressedBytes": 22293,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 33,11"
+   },
+   "ingest": {
+    "tier": "A bytes, not browser-decodable -> transcode once",
+    "planRow": "Aperio SVS, JPEG 2000 (TCGA-era): A bytes, not browser-decodable -> transcode once",
+    "reason": "JPEG 2000 tiles (33003 (YCbCr, no MCT, chroma 4:2:2), 256²): no browser decodes J2K; transcode once to JPEG q>=90 (or reversible HTJ2K where tooling proves it) into our 512² grid; record one lossy generation",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.001, 2.001]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "quirks": [
+    "sparse vendor pyramid: level steps [4.001, 2.001] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide level-1 downsample 4.000375 is the mean of the width ratio 4.000520 and height ratio 4.000229; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  },
+  {
+   "asset": "JP2K-33003-2.svs",
+   "formatFamily": "Aperio SVS",
+   "vendor": "Leica Biosystems (Aperio)",
+   "description": "Heart tissue, brightfield, JPEG 2000, YCbCr",
+   "licence": "distributable",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/JP2K-33003-2.svs",
+   "openslidePath": "Aperio/JP2K-33003-2.svs",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-2.svs",
+   "bytes": 289250433,
+   "sha256": "1a13cef86b55b51127cebd94a1f6069f7de494c98e3e708640d1ce7181d9e3fd",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "structure": {
+    "container": "TIFF (Aperio SVS)",
+    "bigtiff": false,
+    "tifffileIsSvs": true,
+    "pageCount": 6,
+    "series": [
+     {
+      "name": "Baseline",
+      "shape": [47076, 32671, 3],
+      "levels": 3
+     },
+     {
+      "name": "Thumbnail",
+      "shape": [768, 532, 3],
+      "levels": 1
+     },
+     {
+      "name": "Label",
+      "shape": [422, 415, 3],
+      "levels": 1
+     },
+     {
+      "name": "Macro",
+      "shape": [421, 1280, 3],
+      "levels": 1
+     }
+    ],
+    "pages": [
+     {
+      "page": 0,
+      "role": "level",
+      "width": 32671,
+      "height": 47076,
+      "tiled": true,
+      "compression": "APERIO_JP2000_YCBC",
+      "compressionTag": 33003,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": 141992,
+      "level": 0,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 23552,
+      "emptyTiles": 0,
+      "medianTileBytes": 6899,
+      "compressedBytes": 276918336,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "descriptionSummary": null,
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 1,
+      "role": "thumbnail",
+      "width": 532,
+      "height": 768,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 2,
+      "role": "level",
+      "width": 8167,
+      "height": 11769,
+      "tiled": true,
+      "compression": "APERIO_JP2000_YCBC",
+      "compressionTag": 33003,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 1,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 1472,
+      "emptyTiles": 0,
+      "medianTileBytes": 699,
+      "compressedBytes": 10874852,
+      "downsampleX": 4.000367,
+      "downsampleY": 4.0,
+      "descriptionSummary": "34000x47176 [0,100 32671x47076] (256x256) -> 8167x11769 J2K/YUV16 Q=70",
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 3,
+      "role": "level",
+      "width": 2041,
+      "height": 2942,
+      "tiled": true,
+      "compression": "APERIO_JP2000_YCBC",
+      "compressionTag": 33003,
+      "photometric": "RGB",
+      "subfileType": 0,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null,
+      "level": 2,
+      "tileWidth": 256,
+      "tileHeight": 256,
+      "tiles": 96,
+      "emptyTiles": 0,
+      "medianTileBytes": 1372,
+      "compressedBytes": 659169,
+      "downsampleX": 16.007349,
+      "downsampleY": 16.00136,
+      "descriptionSummary": "34000x47176 [0,100 32671x47076] (256x256) -> 2041x2942 J2K/YUV16 Q=70",
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "page": 4,
+      "role": "label",
+      "width": 415,
+      "height": 422,
+      "tiled": false,
+      "compression": "LZW",
+      "compressionTag": 5,
+      "photometric": "RGB",
+      "subfileType": 1,
+      "tiffYCbCrSubSampling": null,
+      "jpegTablesBytes": null,
+      "iccProfileBytes": null
+     },
+     {
+      "page": 5,
+      "role": "macro",
+      "width": 1280,
+      "height": 421,
+      "tiled": false,
+      "compression": "JPEG",
+      "compressionTag": 7,
+      "photometric": "RGB",
+      "subfileType": 9,
+      "tiffYCbCrSubSampling": [2, 2],
+      "jpegTablesBytes": 289,
+      "iccProfileBytes": null
+     }
+    ],
+    "levels": [
+     [32671, 47076],
+     [8167, 11769],
+     [2041, 2942]
+    ],
+    "levelSteps": [4.0, 4.001],
+    "tileSize": [256, 256],
+    "compression": "APERIO_JP2000_YCBC",
+    "associatedImages": {
+     "thumbnail": {"width": 532, "height": 768, "compression": "JPEG", "photometric": "RGB", "page": 1},
+     "label": {"width": 415, "height": 422, "compression": "LZW", "photometric": "RGB", "page": 4},
+     "macro": {"width": 1280, "height": 421, "compression": "JPEG", "photometric": "RGB", "page": 5}
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "imageDescription": {
+     "software": "Aperio Image Library v10.0.50",
+     "summary": "34000x47176 [0,100 32671x47076] (256x256) J2K/YUV16 Q=70",
+     "technicalFields": {
+      "AppMag": "40",
+      "StripeWidth": "1000",
+      "MPP": "0.2498",
+      "Left": "44.815720",
+      "Top": "18.114859",
+      "LineCameraSkew": "-0.003035",
+      "LineAreaXOffset": "0.000000",
+      "LineAreaYOffset": "0.000000",
+      "Focus Offset": "-0.001000",
+      "OriginalWidth": "34000",
+      "Originalheight": "47176",
+      "Filtered": "3",
+      "ICC Profile": "ScanScope v1"
+     },
+     "identifyingFieldsPresent": ["DSR ID", "Date", "Filename", "ImageID", "ScanScope ID", "Time", "Title", "User"],
+     "dateFieldPresent": true,
+     "userFieldPresent": true,
+     "duplicateKeys": [],
+     "embeddedEarlierDescription": false
+    },
+    "mppLevel0": 0.2498,
+    "appMag": 40.0
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "aperio",
+    "levelCount": 3,
+    "levelDimensions": [
+     [32671, 47076],
+     [8167, 11769],
+     [2041, 2942]
+    ],
+    "levelDownsamples": [1.0, 4.000184, 16.004354],
+    "tileSize": [
+     [256, 256],
+     [256, 256],
+     [256, 256]
+    ],
+    "propertiesCount": 53,
+    "associatedImages": {
+     "label": [415, 422],
+     "macro": [1280, 421],
+     "thumbnail": [532, 768]
+    },
+    "mppX": 0.2498,
+    "mppY": 0.2498,
+    "objectivePower": "40",
+    "iccProfileBytes": 141992,
+    "quickhash1": "56c2b6b5ae0e82a08feece9489b86945aca7aef2d8eea222f1654a1121ccd822"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [19968, 30720, 512, 512],
+     "selection": "tissue-densest 512px window on level 2 (2041x2942), snapped to the level-0 tile grid",
+     "tissueFraction": 0.998,
+     "contextLevel": 2
+    },
+    "level0": {
+     "x": 19968,
+     "y": 30720,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 1, "meanAbsDiff": 0.4967, "psnrDb": 51.17, "identical": false, "transparentPixels": 0},
+     "vsStage0WsiSourceReadRegion": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 4608,
+     "y": 7424,
+     "size": 512,
+     "readerDownsample": [4.000367, 4.0],
+     "openSlideDownsample": 4.000184,
+     "vsOpenSlide": {
+      "level0Location": [18433, 29697],
+      "subPixelOffset": [0.0384, -0.0909],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 22,
+      "meanAbsDiff": 2.1286,
+      "psnrDb": 39.2,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [18433, 29697],
+      "subPixelOffset": [0.0384, -0.0909],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 22,
+      "meanAbsDiff": 2.1286,
+      "psnrDb": 39.2,
+      "identical": false
+     }
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg2k_decode (OpenJPEG, numthreads=1)",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 4.901,
+    "minMs": 4.704,
+    "maxMs": 6.1,
+    "medianMsPerMegapixel": 74.781,
+    "medianCompressedBytes": 23777,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 78,120"
+   },
+   "ingest": {
+    "tier": "A bytes, not browser-decodable -> transcode once",
+    "planRow": "Aperio SVS, JPEG 2000 (TCGA-era): A bytes, not browser-decodable -> transcode once",
+    "reason": "JPEG 2000 tiles (33003 (YCbCr, no MCT, chroma 4:2:2), 256²): no browser decodes J2K; transcode once to JPEG q>=90 (or reversible HTJ2K where tooling proves it) into our 512² grid; record one lossy generation",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.0, 4.001]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "quirks": [
+    "sparse vendor pyramid: level steps [4.0, 4.001] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide level-1 downsample 4.000184 is the mean of the width ratio 4.000367 and height ratio 4.000000; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  },
+  {
+   "asset": "3DHISTECH-1.zip",
+   "formatFamily": "DICOM WSI",
+   "vendor": "3DHISTECH",
+   "description": "Small intestine, brightfield, TILED_FULL, JPEG, from WG26 2021 hackathon",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/DICOM/3DHISTECH-1.zip",
+   "openslidePath": "DICOM/3DHISTECH-1.zip",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/3DHISTECH-1.zip",
+   "bytes": 361504059,
+   "sha256": "f7306843363c08ab86539f52acbe492917c440df50231d06b9b2e1657ac9e6a8",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "members": [
+    {"file": "000001.dcm", "bytes": 1081642, "sha256": "fc89d375687ae95dd387864d88b139c7364e8589ce972b2f2b39e5c424f39be5", "matchesManifest": true},
+    {"file": "000002.dcm", "bytes": 37176, "sha256": "ba63085d29465710c52391f4cb6b5895e3765b2fada0c32d8d0e7faf0e68842c", "matchesManifest": true},
+    {"file": "000003.dcm", "bytes": 374224, "sha256": "f631fe7d1817ae732aaf650ed575c73b505dbe3c1da12410cf6eba0c7439d95f", "matchesManifest": true},
+    {"file": "000004.dcm", "bytes": 781294, "sha256": "4e62f7f3b3a71f3720e88904bbd35cc46aa2f1fb5bb458ddf95a876e83d33233", "matchesManifest": true},
+    {"file": "000005.dcm", "bytes": 283389672, "sha256": "6c81c78d0f0220397746ede19b354fd5ea8081af5f65ed01abb3c626c5780a96", "matchesManifest": true},
+    {"file": "000006.dcm", "bytes": 73067056, "sha256": "29cbc3b8f6cfb2c19ffbe1531051be8b459a49bded2ea6f1bf25503a41926e0b", "matchesManifest": true},
+    {"file": "000007.dcm", "bytes": 21884186, "sha256": "5d4a6c129d4fcbac824659bb301de15481a728bb632d650f4066a05488b202b6", "matchesManifest": true},
+    {"file": "000008.dcm", "bytes": 6831376, "sha256": "ad2591e09f61fe119dceec5c619d9dfdfc73eb196ff8b852c2661854a86555c2", "matchesManifest": true},
+    {"file": "000009.dcm", "bytes": 2121948, "sha256": "e12a5b4819dfb984c8701cdeec85a20ef27031d2593bba71023485ecb62f0925", "matchesManifest": true},
+    {"file": "000010.dcm", "bytes": 638220, "sha256": "3219815e3d14c4d8fe694bc3602d7cd821133efdaf9adb2fbe7ce60e96c9c404", "matchesManifest": true},
+    {"file": "000011.dcm", "bytes": 215204, "sha256": "5ea855d2eb66b0d11dbfa3d4517a60e72a30e2dbd63288602fa9852309a785ce", "matchesManifest": true},
+    {"file": "000012.dcm", "bytes": 122090, "sha256": "853c4f226e1b3a17dc36ba0d6f021641534da8886158d2a1c047c4298c9f993e", "matchesManifest": true},
+    {"file": "000013.dcm", "bytes": 98452, "sha256": "78dd739146225de7905b4b22c5c8f2489c9ca9686ab2627a042d95c36b166c2a", "matchesManifest": true},
+    {"file": "000014.dcm", "bytes": 92476, "sha256": "2aad7d79f4ab131534a5604e458799e91ede727b0a62ced23939589844b8b6e5", "matchesManifest": true}
+   ],
+   "wsidicom": {
+    "opened": true,
+    "version": "0.36.1",
+    "levels": [
+     {
+      "level": 0,
+      "size": [57344, 60416],
+      "tileSize": [1024, 1024],
+      "mppUm": 0.1213
+     },
+     {
+      "level": 1,
+      "size": [28672, 30208],
+      "tileSize": [1024, 1024],
+      "mppUm": 0.2425
+     },
+     {
+      "level": 2,
+      "size": [14336, 15104],
+      "tileSize": [1024, 1024],
+      "mppUm": 0.4851
+     },
+     {
+      "level": 3,
+      "size": [7168, 7552],
+      "tileSize": [1024, 1024],
+      "mppUm": 0.9701
+     },
+     {
+      "level": 4,
+      "size": [3584, 3776],
+      "tileSize": [1024, 1024],
+      "mppUm": 1.9403
+     },
+     {
+      "level": 5,
+      "size": [1792, 1888],
+      "tileSize": [1024, 1024],
+      "mppUm": 3.8806
+     },
+     {
+      "level": 6,
+      "size": [896, 944],
+      "tileSize": [1024, 1024],
+      "mppUm": 7.7611
+     },
+     {
+      "level": 7,
+      "size": [448, 472],
+      "tileSize": [1024, 1024],
+      "mppUm": 15.5222
+     },
+     {
+      "level": 8,
+      "size": [224, 236],
+      "tileSize": [1024, 1024],
+      "mppUm": 31.0444
+     },
+     {
+      "level": 9,
+      "size": [112, 118],
+      "tileSize": [1024, 1024],
+      "mppUm": 62.0889
+     }
+    ],
+    "labels": 1,
+    "overviews": 1,
+    "encodedTileIdentity": {"tiles": 20, "identicalToOurFrameBytes": 20, "note": "pad byte to even length ignored"}
+   },
+   "structure": {
+    "container": "DICOM WSI (VL Whole Slide Microscopy Image Storage)",
+    "instances": [
+     {
+      "file": "000001.dcm",
+      "bytes": 1081642,
+      "imageType": ["DERIVED", "PRIMARY", "LOCALIZER", "RESAMPLED"],
+      "flavour": "LOCALIZER",
+      "frameSize": [726, 768],
+      "totalPixelMatrix": [896, 944],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 13.2520504],
+      "pixelSpacingUm": [7.7647, 7.7611],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 1,
+      "fragments": 1,
+      "medianFrameBytes": 126570,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": true,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000002.dcm",
+      "bytes": 37176,
+      "imageType": ["DERIVED", "PRIMARY", "REGIONLOCALIZER", "RESAMPLED"],
+      "flavour": "REGIONLOCALIZER",
+      "frameSize": [1066, 1150],
+      "totalPixelMatrix": null,
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [15.4, 128.7286377],
+      "pixelSpacingUm": null,
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": null, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 1,
+      "medianFrameBytes": 28624,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": true,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000003.dcm",
+      "bytes": 374224,
+      "imageType": ["ORIGINAL", "PRIMARY", "LABEL", "NONE"],
+      "flavour": "LABEL",
+      "frameSize": [1786, 1393],
+      "totalPixelMatrix": [1786, 1393],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [24.4933109],
+      "pixelSpacingUm": [100.0, 100.0],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 1,
+      "fragments": 1,
+      "medianFrameBytes": 305066,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000004.dcm",
+      "bytes": 781294,
+      "imageType": ["ORIGINAL", "PRIMARY", "OVERVIEW", "NONE"],
+      "flavour": "OVERVIEW",
+      "frameSize": [1381, 3866],
+      "totalPixelMatrix": [1381, 3866],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [22.5396156],
+      "pixelSpacingUm": [100.0, 100.0],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 1,
+      "fragments": 1,
+      "medianFrameBytes": 712152,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000005.dcm",
+      "bytes": 283389672,
+      "imageType": ["ORIGINAL", "PRIMARY", "VOLUME", "NONE"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [57344, 60416],
+      "numberOfFrames": 3304,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [0.1213, 0.1213],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 3304,
+      "medianFrameBytes": 65322,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 335
+     },
+     {
+      "file": "000006.dcm",
+      "bytes": 73067056,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [28672, 30208],
+      "numberOfFrames": 840,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [0.2426, 0.2425],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 840,
+      "medianFrameBytes": 38736,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 73
+     },
+     {
+      "file": "000007.dcm",
+      "bytes": 21884186,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [14336, 15104],
+      "numberOfFrames": 210,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [0.4853, 0.4851],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 210,
+      "medianFrameBytes": 32458,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 11
+     },
+     {
+      "file": "000008.dcm",
+      "bytes": 6831376,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [7168, 7552],
+      "numberOfFrames": 56,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [0.9706, 0.9701],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 56,
+      "medianFrameBytes": 47646,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 2
+     },
+     {
+      "file": "000009.dcm",
+      "bytes": 2121948,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [3584, 3776],
+      "numberOfFrames": 16,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [1.9412, 1.9403],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 16,
+      "medianFrameBytes": 122462,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000010.dcm",
+      "bytes": 638220,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [1792, 1888],
+      "numberOfFrames": 4,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [3.8824, 3.8806],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 4,
+      "medianFrameBytes": 176002,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000011.dcm",
+      "bytes": 215204,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [896, 944],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [7.7647, 7.7611],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 1,
+      "medianFrameBytes": 146134,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000012.dcm",
+      "bytes": 122090,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [448, 472],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [15.5294, 15.5222],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 1,
+      "medianFrameBytes": 53020,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000013.dcm",
+      "bytes": 98452,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [224, 236],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [31.0588, 31.0444],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 1,
+      "medianFrameBytes": 29382,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "000014.dcm",
+      "bytes": 92476,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [1024, 1024],
+      "totalPixelMatrix": [112, 118],
+      "numberOfFrames": 1,
+      "lossyMethod": ["ISO_10918_1", "ISO_10918_1"],
+      "lossyRatio": [24.91, 24.91],
+      "pixelSpacingUm": [62.1176, 62.0889],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 63928, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 0,
+      "fragments": 1,
+      "medianFrameBytes": 23406,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 0, "h": 2, "v": 1},
+        {"id": 1, "h": 1, "v": 1},
+        {"id": 2, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:2",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     }
+    ],
+    "dicomdir": null,
+    "levels": [
+     [57344, 60416],
+     [28672, 30208],
+     [14336, 15104],
+     [7168, 7552],
+     [3584, 3776],
+     [1792, 1888],
+     [896, 944],
+     [448, 472],
+     [224, 236],
+     [112, 118]
+    ],
+    "levelDetail": [
+     {
+      "width": 57344,
+      "height": 60416,
+      "frameSize": [1024, 1024],
+      "frames": 3304,
+      "instances": 1,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "pixelSpacingUm": [0.1213, 0.1213],
+      "imageType": ["ORIGINAL", "PRIMARY", "VOLUME", "NONE"]
+     },
+     {
+      "width": 28672,
+      "height": 30208,
+      "frameSize": [1024, 1024],
+      "frames": 840,
+      "instances": 1,
+      "downsampleX": 2.0,
+      "downsampleY": 2.0,
+      "pixelSpacingUm": [0.2426, 0.2425],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 14336,
+      "height": 15104,
+      "frameSize": [1024, 1024],
+      "frames": 210,
+      "instances": 1,
+      "downsampleX": 4.0,
+      "downsampleY": 4.0,
+      "pixelSpacingUm": [0.4853, 0.4851],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 7168,
+      "height": 7552,
+      "frameSize": [1024, 1024],
+      "frames": 56,
+      "instances": 1,
+      "downsampleX": 8.0,
+      "downsampleY": 8.0,
+      "pixelSpacingUm": [0.9706, 0.9701],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 3584,
+      "height": 3776,
+      "frameSize": [1024, 1024],
+      "frames": 16,
+      "instances": 1,
+      "downsampleX": 16.0,
+      "downsampleY": 16.0,
+      "pixelSpacingUm": [1.9412, 1.9403],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 1792,
+      "height": 1888,
+      "frameSize": [1024, 1024],
+      "frames": 4,
+      "instances": 1,
+      "downsampleX": 32.0,
+      "downsampleY": 32.0,
+      "pixelSpacingUm": [3.8824, 3.8806],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 896,
+      "height": 944,
+      "frameSize": [1024, 1024],
+      "frames": 1,
+      "instances": 1,
+      "downsampleX": 64.0,
+      "downsampleY": 64.0,
+      "pixelSpacingUm": [7.7647, 7.7611],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 448,
+      "height": 472,
+      "frameSize": [1024, 1024],
+      "frames": 1,
+      "instances": 1,
+      "downsampleX": 128.0,
+      "downsampleY": 128.0,
+      "pixelSpacingUm": [15.5294, 15.5222],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 224,
+      "height": 236,
+      "frameSize": [1024, 1024],
+      "frames": 1,
+      "instances": 1,
+      "downsampleX": 256.0,
+      "downsampleY": 256.0,
+      "pixelSpacingUm": [31.0588, 31.0444],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 112,
+      "height": 118,
+      "frameSize": [1024, 1024],
+      "frames": 1,
+      "instances": 1,
+      "downsampleX": 512.0,
+      "downsampleY": 512.0,
+      "pixelSpacingUm": [62.1176, 62.0889],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     }
+    ],
+    "levelSteps": [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+    "frameSize": [1024, 1024],
+    "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+    "dimensionOrganizationType": "TILED_FULL",
+    "concatenations": false,
+    "opticalPaths": 1,
+    "focalPlanes": 1,
+    "associatedImages": {
+     "localizer": [
+      {"file": "000001.dcm", "width": 726, "height": 768, "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)", "photometric": "YBR_FULL_422"}
+     ],
+     "regionlocalizer": [
+      {"file": "000002.dcm", "width": 1066, "height": 1150, "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)", "photometric": "YBR_FULL_422"}
+     ],
+     "label": [
+      {"file": "000003.dcm", "width": 1786, "height": 1393, "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)", "photometric": "YBR_FULL_422"}
+     ],
+     "overview": [
+      {"file": "000004.dcm", "width": 1381, "height": 3866, "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)", "photometric": "YBR_FULL_422"}
+     ]
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": false,
+    "mppLevel0": 0.1213,
+    "manufacturer": "3DHISTECH Kft.",
+    "model": "Pannoramic 1000",
+    "software": ["3.1.0.133553", "2.4.1.2236", "fo-dicom 4.0.3"],
+    "identifyingAttributes": {
+     "AccessionNumber": "non-empty",
+     "AcquisitionDateTime": "non-empty",
+     "BarcodeValue": "empty",
+     "ContainerIdentifier": "non-empty",
+     "ContentDate": "non-empty",
+     "ContentTime": "non-empty",
+     "DeviceSerialNumber": "non-empty",
+     "LabelText": "empty",
+     "PatientBirthDate": "empty",
+     "PatientID": "non-empty",
+     "PatientName": "non-empty",
+     "PatientSex": "empty",
+     "ReferringPhysicianName": "empty",
+     "SpecimenDescriptionSequence": "non-empty",
+     "StudyDate": "non-empty",
+     "StudyID": "non-empty",
+     "StudyTime": "empty"
+    },
+    "dateAttributesPresent": ["AcquisitionDateTime", "ContentDate", "ContentTime", "PatientBirthDate", "StudyDate", "StudyTime"],
+    "level0ImageTypeOriginal": true,
+    "instanceCommon": {
+     "sopClass": "VL Whole Slide Microscopy Image Storage",
+     "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+     "dimensionOrganizationType": "TILED_FULL",
+     "concatenation": null,
+     "photometric": "YBR_FULL_422",
+     "samplesPerPixel": 3,
+     "bitsStored": 8,
+     "planarConfiguration": 0,
+     "lossyImageCompression": "01",
+     "numberOfOpticalPaths": 1,
+     "focalPlanes": 1,
+     "extendedOffsetTable": false,
+     "dualPersonalityTiff": false,
+     "manufacturer": "3DHISTECH Kft.",
+     "model": "Pannoramic 1000",
+     "software": ["3.1.0.133553", "2.4.1.2236", "fo-dicom 4.0.3"],
+     "basicOffsetTableBytes": 0
+    },
+    "level0FramesSingleFragment": true
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "dicom",
+    "levelCount": 10,
+    "levelDimensions": [
+     [57344, 60416],
+     [28672, 30208],
+     [14336, 15104],
+     [7168, 7552],
+     [3584, 3776],
+     [1792, 1888],
+     [896, 944],
+     [448, 472],
+     [224, 236],
+     [112, 118]
+    ],
+    "levelDownsamples": [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0],
+    "tileSize": [
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024],
+     [1024, 1024]
+    ],
+    "propertiesCount": 247,
+    "associatedImages": {
+     "label": [1786, 1393],
+     "macro": [1381, 3866]
+    },
+    "mppX": 0.12129999999999999,
+    "mppY": 0.12129999999999999,
+    "objectivePower": null,
+    "iccProfileBytes": 63928,
+    "quickhash1": "95620a2bd3ca53b8bdc0830fe99ad5f9f150d80e202c5e74aec3c905ebbad0cb"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [27648, 12288, 512, 512],
+     "selection": "tissue-densest 512px window on level 5 (1792x1888), snapped to the level-0 tile grid",
+     "tissueFraction": 1.0,
+     "contextLevel": 5
+    },
+    "level0": {
+     "x": 27648,
+     "y": 12288,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsWsidicom": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 13312,
+     "y": 5120,
+     "size": 512,
+     "readerDownsample": [2.0, 2.0],
+     "openSlideDownsample": 2.0,
+     "vsOpenSlide": {
+      "level0Location": [26624, 10240],
+      "subPixelOffset": [0.0, 0.0],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 0,
+      "meanAbsDiff": 0.0,
+      "psnrDb": null,
+      "identical": true
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [26624, 10240],
+      "subPixelOffset": [0.0, 0.0],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 0,
+      "meanAbsDiff": 0.0,
+      "psnrDb": null,
+      "identical": true
+     },
+     "vsWsidicom": {"wsidicomLevel": 1, "comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo)",
+    "tiles": 20,
+    "tileSize": [1024, 1024],
+    "medianMs": 4.254,
+    "minMs": 3.104,
+    "maxMs": 5.787,
+    "medianMsPerMegapixel": 4.057,
+    "medianCompressedBytes": 180247,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 27,12",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "C",
+    "planRow": "DICOM WSI, JPEG baseline: Tier A / B (256² frames as four ranges)",
+    "reason": "1024² JPEG frames do not divide 512 (each frame covers 2x2 logical tiles): the plan's Tier A/B wording does not cover frames larger than 512; a lossless DCT-domain crop into four 512² frames (Tier C) keeps the grid, or the layer is served at its native frame size (Manifest carries `tile` per layer)",
+    "actions": []
+   },
+   "quirks": [
+    "335 of 3304 level-0 frames are progressive JPEG (SOF2) although the transfer syntax is JPEG Baseline (Process 1); browsers decode them, a baseline-only decoder would not",
+    "no Basic or Extended Offset Table on the VOLUME instances: frame offsets need one sequential scan of the item headers when the range index is built"
+   ]
+  },
+  {
+   "asset": "Hamamatsu-2.zip",
+   "formatFamily": "DICOM WSI",
+   "vendor": "Hamamatsu",
+   "description": "H&E stain, brightfield, TILED_FULL, scanned on Hamamatsu NanoZoomer S20MD, 2026",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/DICOM/Hamamatsu-2.zip",
+   "openslidePath": "DICOM/Hamamatsu-2.zip",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Hamamatsu-2.zip",
+   "bytes": 200221637,
+   "sha256": "4e5eb397622044167b83b33bd047ded1ea7e35f08146893948d4b1a79dced470",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "members": [
+    {
+     "file": "A1 - 2026-05-29 10.08.06.1.dcm",
+     "bytes": 159957588,
+     "sha256": "5a883359b4d684f1532ae0ca08357a2b9fcb3fa662b01ea39214a02284520e8b",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.2.dcm",
+     "bytes": 35573120,
+     "sha256": "81691b651af3ebc959c3ced10ca6fe197fa08357ceebfbdba4f235b7d63e6f2b",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.3.dcm",
+     "bytes": 8536034,
+     "sha256": "b6f28bdfc479511c2f385563c70aeb8252ffd26cded51a7564328d9b7bbaf0d4",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.4.dcm",
+     "bytes": 2279590,
+     "sha256": "426c6d34b146db00a06a361ec70c6d75ccfa53457341ba6098f2aa3e61c07f32",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.5.dcm",
+     "bytes": 606586,
+     "sha256": "a4041247948d0ce392ab7092bc18ec6a443888fd68d09ebc1ff7faaab93403fb",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.6.dcm",
+     "bytes": 163092,
+     "sha256": "c8ea3ccb3f089584065a8f8d249bb4ded38ecabaca3fb10c85bdf7ff9dbd6fa6",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.7.dcm",
+     "bytes": 47438,
+     "sha256": "ddfbc65094ca5b73fe6cc6729b47a3dccf7990c6477fcbd442478c971814cc0d",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06.8.dcm",
+     "bytes": 18508,
+     "sha256": "b208c94c06beb0b95aa85969260a7d1b5493a949d1f5a5278f930e36bdba1ebc",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06_label.dcm",
+     "bytes": 53796,
+     "sha256": "ee484bc5752f64e80912b63c283c8e695f9ec00949c43485cb849a86286504da",
+     "matchesManifest": true
+    },
+    {
+     "file": "A1 - 2026-05-29 10.08.06_slide.dcm",
+     "bytes": 120454,
+     "sha256": "9bf5c2d18643c636c9f23e52d2caa5ce04f22bf7e2313b17640fd2f0e83b47de",
+     "matchesManifest": true
+    }
+   ],
+   "wsidicom": {
+    "opened": true,
+    "version": "0.36.1",
+    "levels": [
+     {
+      "level": 0,
+      "size": [30720, 39168],
+      "tileSize": [512, 512],
+      "mppUm": 0.22865
+     },
+     {
+      "level": 1,
+      "size": [15360, 19584],
+      "tileSize": [512, 512],
+      "mppUm": 0.4573
+     },
+     {
+      "level": 2,
+      "size": [7680, 9792],
+      "tileSize": [512, 512],
+      "mppUm": 0.914599
+     },
+     {
+      "level": 3,
+      "size": [3840, 4896],
+      "tileSize": [512, 512],
+      "mppUm": 1.8292
+     },
+     {
+      "level": 4,
+      "size": [1920, 2448],
+      "tileSize": [512, 512],
+      "mppUm": 3.6584
+     },
+     {
+      "level": 5,
+      "size": [960, 1224],
+      "tileSize": [512, 512],
+      "mppUm": 7.31679
+     },
+     {
+      "level": 6,
+      "size": [480, 612],
+      "tileSize": [512, 512],
+      "mppUm": 14.6336
+     },
+     {
+      "level": 7,
+      "size": [240, 306],
+      "tileSize": [512, 512],
+      "mppUm": 29.2672
+     }
+    ],
+    "labels": 1,
+    "overviews": 1,
+    "encodedTileIdentity": {"tiles": 20, "identicalToOurFrameBytes": 20, "note": "pad byte to even length ignored"}
+   },
+   "structure": {
+    "container": "DICOM WSI (VL Whole Slide Microscopy Image Storage)",
+    "instances": [
+     {
+      "file": "A1 - 2026-05-29 10.08.06.1.dcm",
+      "bytes": 159957588,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "NONE"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [30720, 39168],
+      "numberOfFrames": 4620,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [0.22865, 0.22865],
+      "fragments": 4620,
+      "medianFrameBytes": 23856
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.2.dcm",
+      "bytes": 35573120,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [15360, 19584],
+      "numberOfFrames": 1170,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [0.4573, 0.4573],
+      "fragments": 1170,
+      "medianFrameBytes": 13958
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.3.dcm",
+      "bytes": 8536034,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [7680, 9792],
+      "numberOfFrames": 300,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [0.914599, 0.914599],
+      "fragments": 300,
+      "medianFrameBytes": 8966
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.4.dcm",
+      "bytes": 2279590,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [3840, 4896],
+      "numberOfFrames": 80,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [1.8292, 1.8292],
+      "fragments": 80,
+      "medianFrameBytes": 8300
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.5.dcm",
+      "bytes": 606586,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [1920, 2448],
+      "numberOfFrames": 20,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [3.6584, 3.6584],
+      "fragments": 20,
+      "medianFrameBytes": 13188
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.6.dcm",
+      "bytes": 163092,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [960, 1224],
+      "numberOfFrames": 6,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [7.31679, 7.31679],
+      "fragments": 6,
+      "medianFrameBytes": 32176
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.7.dcm",
+      "bytes": 47438,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [480, 612],
+      "numberOfFrames": 2,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [14.6336, 14.6336],
+      "fragments": 2,
+      "medianFrameBytes": 35004
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06.8.dcm",
+      "bytes": 18508,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "frameSize": [512, 512],
+      "totalPixelMatrix": [240, 306],
+      "numberOfFrames": 1,
+      "lossyRatio": [24.0],
+      "pixelSpacingUm": [29.2672, 29.2672],
+      "fragments": 1,
+      "medianFrameBytes": 15352
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06_label.dcm",
+      "bytes": 53796,
+      "imageType": ["DERIVED", "PRIMARY", "LABEL", "NONE"],
+      "flavour": "LABEL",
+      "frameSize": [630, 648],
+      "totalPixelMatrix": [630, 648],
+      "numberOfFrames": 1,
+      "lossyRatio": [24.2],
+      "pixelSpacingUm": [40.1606, 40.3226],
+      "fragments": 1,
+      "medianFrameBytes": 50634
+     },
+     {
+      "file": "A1 - 2026-05-29 10.08.06_slide.dcm",
+      "bytes": 120454,
+      "imageType": ["DERIVED", "PRIMARY", "OVERVIEW", "NONE"],
+      "flavour": "OVERVIEW",
+      "frameSize": [1890, 648],
+      "totalPixelMatrix": [1890, 648],
+      "numberOfFrames": 1,
+      "lossyRatio": [31.3],
+      "pixelSpacingUm": [40.1606, 40.3226],
+      "fragments": 1,
+      "medianFrameBytes": 117284
+     }
+    ],
+    "dicomdir": null,
+    "levels": [
+     [30720, 39168],
+     [15360, 19584],
+     [7680, 9792],
+     [3840, 4896],
+     [1920, 2448],
+     [960, 1224],
+     [480, 612],
+     [240, 306]
+    ],
+    "levelDetail": [
+     {
+      "width": 30720,
+      "height": 39168,
+      "frameSize": [512, 512],
+      "frames": 4620,
+      "instances": 1,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "pixelSpacingUm": [0.22865, 0.22865],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "NONE"]
+     },
+     {
+      "width": 15360,
+      "height": 19584,
+      "frameSize": [512, 512],
+      "frames": 1170,
+      "instances": 1,
+      "downsampleX": 2.0,
+      "downsampleY": 2.0,
+      "pixelSpacingUm": [0.4573, 0.4573],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 7680,
+      "height": 9792,
+      "frameSize": [512, 512],
+      "frames": 300,
+      "instances": 1,
+      "downsampleX": 4.0,
+      "downsampleY": 4.0,
+      "pixelSpacingUm": [0.914599, 0.914599],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 3840,
+      "height": 4896,
+      "frameSize": [512, 512],
+      "frames": 80,
+      "instances": 1,
+      "downsampleX": 8.0,
+      "downsampleY": 8.0,
+      "pixelSpacingUm": [1.8292, 1.8292],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 1920,
+      "height": 2448,
+      "frameSize": [512, 512],
+      "frames": 20,
+      "instances": 1,
+      "downsampleX": 16.0,
+      "downsampleY": 16.0,
+      "pixelSpacingUm": [3.6584, 3.6584],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 960,
+      "height": 1224,
+      "frameSize": [512, 512],
+      "frames": 6,
+      "instances": 1,
+      "downsampleX": 32.0,
+      "downsampleY": 32.0,
+      "pixelSpacingUm": [7.31679, 7.31679],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 480,
+      "height": 612,
+      "frameSize": [512, 512],
+      "frames": 2,
+      "instances": 1,
+      "downsampleX": 64.0,
+      "downsampleY": 64.0,
+      "pixelSpacingUm": [14.6336, 14.6336],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 240,
+      "height": 306,
+      "frameSize": [512, 512],
+      "frames": 1,
+      "instances": 1,
+      "downsampleX": 128.0,
+      "downsampleY": 128.0,
+      "pixelSpacingUm": [29.2672, 29.2672],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     }
+    ],
+    "levelSteps": [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+    "frameSize": [512, 512],
+    "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+    "dimensionOrganizationType": "TILED_FULL",
+    "concatenations": false,
+    "opticalPaths": 1,
+    "focalPlanes": 1,
+    "associatedImages": {
+     "label": [
+      {
+       "file": "A1 - 2026-05-29 10.08.06_label.dcm",
+       "width": 630,
+       "height": 648,
+       "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+       "photometric": "YBR_FULL_422"
+      }
+     ],
+     "overview": [
+      {
+       "file": "A1 - 2026-05-29 10.08.06_slide.dcm",
+       "width": 1890,
+       "height": 648,
+       "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+       "photometric": "YBR_FULL_422"
+      }
+     ]
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": false,
+    "mppLevel0": 0.22865,
+    "manufacturer": "Hamamatsu Photonics K.K.",
+    "model": "C16300-21MDEU",
+    "software": ["NZAcquireMD 1.4.50", "DICOM WSI 1.10.14", "NZDicomMD 1.1.0.5"],
+    "identifyingAttributes": {
+     "AccessionNumber": "empty",
+     "AcquisitionDateTime": "non-empty",
+     "BarcodeValue": "non-empty",
+     "ContainerIdentifier": "non-empty",
+     "ContentDate": "non-empty",
+     "ContentTime": "non-empty",
+     "DeviceSerialNumber": "non-empty",
+     "LabelText": "empty",
+     "PatientBirthDate": "empty",
+     "PatientID": "empty",
+     "PatientName": "empty",
+     "PatientSex": "empty",
+     "ReferringPhysicianName": "empty",
+     "SpecimenDescriptionSequence": "non-empty",
+     "StudyDate": "non-empty",
+     "StudyID": "empty",
+     "StudyTime": "non-empty"
+    },
+    "dateAttributesPresent": ["AcquisitionDateTime", "ContentDate", "ContentTime", "PatientBirthDate", "StudyDate", "StudyTime"],
+    "level0ImageTypeOriginal": false,
+    "instanceCommon": {
+     "sopClass": "VL Whole Slide Microscopy Image Storage",
+     "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+     "dimensionOrganizationType": "TILED_FULL",
+     "concatenation": null,
+     "photometric": "YBR_FULL_422",
+     "samplesPerPixel": 3,
+     "bitsStored": 8,
+     "planarConfiguration": 0,
+     "lossyImageCompression": "01",
+     "lossyMethod": ["ISO_10918_1"],
+     "opticalPaths": [
+      {"id": "1", "iccProfileBytes": 752, "illumination": "Brightfield illumination"}
+     ],
+     "numberOfOpticalPaths": 1,
+     "focalPlanes": 1,
+     "perFrameFunctionalGroups": 0,
+     "extendedOffsetTable": true,
+     "dualPersonalityTiff": false,
+     "manufacturer": "Hamamatsu Photonics K.K.",
+     "model": "C16300-21MDEU",
+     "software": ["NZAcquireMD 1.4.50", "DICOM WSI 1.10.14", "NZDicomMD 1.1.0.5"],
+     "basicOffsetTableBytes": 0,
+     "codestream": {
+      "sof": "SOF0 baseline",
+      "components": [
+       {"id": 1, "h": 1, "v": 1},
+       {"id": 2, "h": 1, "v": 1},
+       {"id": 3, "h": 1, "v": 1}
+      ],
+      "jfif": false,
+      "adobeApp14": false,
+      "adobeTransform": null,
+      "chroma": "4:4:4",
+      "componentIdsRGB": false,
+      "implicitColourSpace": "YCbCr"
+     },
+     "progressiveFrames": 0
+    },
+    "level0FramesSingleFragment": true
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "dicom",
+    "levelCount": 8,
+    "levelDimensions": [
+     [30720, 39168],
+     [15360, 19584],
+     [7680, 9792],
+     [3840, 4896],
+     [1920, 2448],
+     [960, 1224],
+     [480, 612],
+     [240, 306]
+    ],
+    "levelDownsamples": [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0],
+    "tileSize": [
+     [512, 512],
+     [512, 512],
+     [512, 512],
+     [512, 512],
+     [512, 512],
+     [512, 512],
+     [512, 512],
+     [512, 512]
+    ],
+    "propertiesCount": 148,
+    "associatedImages": {
+     "label": [630, 648],
+     "macro": [1890, 648]
+    },
+    "mppX": 0.22865,
+    "mppY": 0.22865,
+    "objectivePower": null,
+    "iccProfileBytes": 752,
+    "quickhash1": "c58ca76446cb4acba31c32a46c9511dfcb7b3c4393709cff36b739fabe69d251"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [16384, 5632, 512, 512],
+     "selection": "tissue-densest 512px window on level 5 (960x1224), snapped to the level-0 tile grid",
+     "tissueFraction": 1.0,
+     "contextLevel": 5
+    },
+    "level0": {
+     "x": 16384,
+     "y": 5632,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsWsidicom": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 7680,
+     "y": 2560,
+     "size": 512,
+     "readerDownsample": [2.0, 2.0],
+     "openSlideDownsample": 2.0,
+     "vsOpenSlide": {
+      "level0Location": [15360, 5120],
+      "subPixelOffset": [0.0, 0.0],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 0,
+      "meanAbsDiff": 0.0,
+      "psnrDb": null,
+      "identical": true
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [15360, 5120],
+      "subPixelOffset": [0.0, 0.0],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 0,
+      "meanAbsDiff": 0.0,
+      "psnrDb": null,
+      "identical": true
+     },
+     "vsWsidicom": {"wsidicomLevel": 1, "comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo)",
+    "tiles": 20,
+    "tileSize": [512, 512],
+    "medianMs": 1.449,
+    "minMs": 1.313,
+    "maxMs": 1.638,
+    "medianMsPerMegapixel": 5.528,
+    "medianCompressedBytes": 63681,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 32,11",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "A",
+    "planRow": "DICOM WSI, JPEG baseline: Tier A / B (256² frames as four ranges)",
+    "reason": "512² JPEG frames: one vendor frame per logical tile, served as-is (each frame is a complete JPEG)",
+    "actions": []
+   },
+   "quirks": [
+    "PhotometricInterpretation YBR_FULL_422 but the level-0 codestream is 4:4:4 (the attribute is not a reliable guide to chroma subsampling; read the SOF/SIZ)",
+    "level-0 ImageType is ['DERIVED', 'PRIMARY', 'VOLUME', 'NONE'] (no ORIGINAL VOLUME instance in this set)",
+    "member file names embed a scan date/time; a de-identifying ingest must rename files, not only clean attributes"
+   ]
+  },
+  {
+   "asset": "JP2K-33003-1-v2.zip",
+   "formatFamily": "DICOM WSI",
+   "vendor": "Aperio (converted to DICOM)",
+   "description": "Conversion of JP2K-33003-1.svs, aorta tissue, brightfield, TILED_FULL, JPEG 2000, YBR_FULL_422, dual-personality BigTIFF",
+   "licence": "distributable",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/DICOM/JP2K-33003-1-v2.zip",
+   "openslidePath": "DICOM/JP2K-33003-1-v2.zip",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/JP2K-33003-1-v2.zip",
+   "bytes": 65504913,
+   "sha256": "e298c9f75656836c540022748b3d729c1488fca620f069fc0bb3886b82e34143",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "members": [
+    {"file": "DCM_0.dcm", "bytes": 60508342, "sha256": "05c7adcaf562716f97817b4eff505762cd82999c3616f28c27e5af5599823a5b", "matchesManifest": true},
+    {"file": "DCM_1.dcm", "bytes": 1843062, "sha256": "c2ffa90d44feabc77e4a25687ab93001b771df23e3c485727b332c294b784536", "matchesManifest": true},
+    {"file": "DCM_2.dcm", "bytes": 2654946, "sha256": "575978b0667de505769fe9c30a88bf4730be27a95e0dcdc19f3baf71499d28e7", "matchesManifest": true},
+    {"file": "DCM_3.dcm", "bytes": 941804, "sha256": "40ea836d5243d1ab2e31e4bc40c5cc600545147b77843fc71f15cb0c6e305eca", "matchesManifest": true},
+    {"file": "DCM_4.dcm", "bytes": 814824, "sha256": "6a5e317f25b2929c1f82abb1c06ef308e0137f6117bd6b8575ea11e9bc4c1232", "matchesManifest": true},
+    {"file": "DCM_5.dcm", "bytes": 1906246, "sha256": "d2a80bc9fe1eecabb97a1081fdcceb58e697b9c0cfa21cfc03dca61195fc8f17", "matchesManifest": true}
+   ],
+   "wsidicom": {
+    "opened": true,
+    "version": "0.36.1",
+    "levels": [
+     {
+      "level": 0,
+      "size": [15374, 17497],
+      "tileSize": [256, 256],
+      "mppUm": 0.2498
+     },
+     {
+      "level": 2,
+      "size": [3843, 4374],
+      "tileSize": [256, 256],
+      "mppUm": 0.99933
+     },
+     {
+      "level": 3,
+      "size": [1921, 2187],
+      "tileSize": [256, 256],
+      "mppUm": 1.99918
+     }
+    ],
+    "labels": 1,
+    "overviews": 1,
+    "encodedTileIdentity": {"tiles": 20, "identicalToOurFrameBytes": 20, "note": "pad byte to even length ignored"}
+   },
+   "structure": {
+    "container": "DICOM WSI (VL Whole Slide Microscopy Image Storage)",
+    "instances": [
+     {
+      "file": "DCM_0.dcm",
+      "bytes": 60508342,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "NONE"],
+      "flavour": "VOLUME",
+      "transferSyntax": "JPEG 2000 Image Compression (1.2.840.10008.1.2.4.91)",
+      "frameSize": [256, 256],
+      "totalPixelMatrix": [15374, 17497],
+      "numberOfFrames": 4209,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_15444_1"],
+      "lossyRatio": [13.424],
+      "pixelSpacingUm": [0.2498, 0.2498],
+      "basicOffsetTableBytes": 0,
+      "fragments": 4209,
+      "medianFrameBytes": 13246,
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "file": "DCM_1.dcm",
+      "bytes": 1843062,
+      "imageType": ["DERIVED", "PRIMARY", "THUMBNAIL", "RESAMPLED"],
+      "flavour": "THUMBNAIL",
+      "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)",
+      "frameSize": [674, 768],
+      "totalPixelMatrix": [674, 768],
+      "numberOfFrames": 1,
+      "photometric": "RGB",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [10.777],
+      "pixelSpacingUm": [5.69796, 5.69796],
+      "codestream": "uncompressed"
+     },
+     {
+      "file": "DCM_2.dcm",
+      "bytes": 2654946,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "transferSyntax": "JPEG 2000 Image Compression (1.2.840.10008.1.2.4.91)",
+      "frameSize": [256, 256],
+      "totalPixelMatrix": [3843, 4374],
+      "numberOfFrames": 288,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_15444_1"],
+      "lossyRatio": [21.384],
+      "pixelSpacingUm": [0.99933, 0.99933],
+      "basicOffsetTableBytes": 0,
+      "fragments": 288,
+      "medianFrameBytes": 5038,
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "file": "DCM_3.dcm",
+      "bytes": 941804,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "transferSyntax": "JPEG 2000 Image Compression (1.2.840.10008.1.2.4.91)",
+      "frameSize": [256, 256],
+      "totalPixelMatrix": [1921, 2187],
+      "numberOfFrames": 72,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_15444_1"],
+      "lossyRatio": [19.382],
+      "pixelSpacingUm": [1.99918, 1.99918],
+      "basicOffsetTableBytes": 0,
+      "fragments": 72,
+      "medianFrameBytes": 5532,
+      "codestream": {
+       "codestream": "J2K (SOC FF4F)",
+       "size": [256, 256],
+       "components": [
+        {"bits": 8, "dx": 1, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1},
+        {"bits": 8, "dx": 2, "dy": 1}
+       ],
+       "chroma": "4:2:2",
+       "progressionOrder": "LRCP",
+       "layers": 1,
+       "mct": 0,
+       "decompositionLevels": 5,
+       "codeBlock": [64, 64],
+       "wavelet": "9/7 irreversible"
+      }
+     },
+     {
+      "file": "DCM_4.dcm",
+      "bytes": 814824,
+      "imageType": ["DERIVED", "PRIMARY", "LABEL", "NONE"],
+      "flavour": "LABEL",
+      "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)",
+      "frameSize": [415, 422],
+      "totalPixelMatrix": [415, 422],
+      "numberOfFrames": 1,
+      "photometric": "RGB",
+      "lossyImageCompression": "00",
+      "lossyMethod": null,
+      "lossyRatio": null,
+      "pixelSpacingUm": null,
+      "codestream": "uncompressed"
+     },
+     {
+      "file": "DCM_5.dcm",
+      "bytes": 1906246,
+      "imageType": ["DERIVED", "PRIMARY", "OVERVIEW", "NONE"],
+      "flavour": "OVERVIEW",
+      "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)",
+      "frameSize": [1280, 421],
+      "totalPixelMatrix": [1280, 421],
+      "numberOfFrames": 1,
+      "photometric": "RGB",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [26.62],
+      "pixelSpacingUm": [60.332542, 60.332542],
+      "codestream": "uncompressed"
+     }
+    ],
+    "dicomdir": null,
+    "levels": [
+     [15374, 17497],
+     [3843, 4374],
+     [1921, 2187]
+    ],
+    "levelDetail": [
+     {
+      "width": 15374,
+      "height": 17497,
+      "frameSize": [256, 256],
+      "frames": 4209,
+      "instances": 1,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "pixelSpacingUm": [0.2498, 0.2498],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "NONE"]
+     },
+     {
+      "width": 3843,
+      "height": 4374,
+      "frameSize": [256, 256],
+      "frames": 288,
+      "instances": 1,
+      "downsampleX": 4.00052,
+      "downsampleY": 4.000229,
+      "pixelSpacingUm": [0.99933, 0.99933],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 1921,
+      "height": 2187,
+      "frameSize": [256, 256],
+      "frames": 72,
+      "instances": 1,
+      "downsampleX": 8.003123,
+      "downsampleY": 8.000457,
+      "pixelSpacingUm": [1.99918, 1.99918],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     }
+    ],
+    "levelSteps": [4.001, 2.001],
+    "frameSize": [256, 256],
+    "transferSyntax": "JPEG 2000 Image Compression (1.2.840.10008.1.2.4.91)",
+    "dimensionOrganizationType": "TILED_FULL",
+    "concatenations": false,
+    "opticalPaths": 1,
+    "focalPlanes": 1,
+    "associatedImages": {
+     "thumbnail": [
+      {"file": "DCM_1.dcm", "width": 674, "height": 768, "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)", "photometric": "RGB"}
+     ],
+     "label": [
+      {"file": "DCM_4.dcm", "width": 415, "height": 422, "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)", "photometric": "RGB"}
+     ],
+     "overview": [
+      {"file": "DCM_5.dcm", "width": 1280, "height": 421, "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)", "photometric": "RGB"}
+     ]
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "mppLevel0": 0.2498,
+    "manufacturer": "Leica Biosystems",
+    "model": "Aperio converted by com.pixelmed.convert.TIFFToDicom",
+    "software": ["v10.0.50", "Fri Jul 17 11:33:56 EDT 2026"],
+    "identifyingAttributes": {
+     "AccessionNumber": "non-empty",
+     "AcquisitionDateTime": "non-empty",
+     "BarcodeValue": "empty",
+     "ContainerIdentifier": "non-empty",
+     "ContentDate": "non-empty",
+     "ContentTime": "non-empty",
+     "DeviceSerialNumber": "non-empty",
+     "InstanceCreationDate": "non-empty",
+     "LabelText": "empty",
+     "PatientBirthDate": "empty",
+     "PatientID": "non-empty",
+     "PatientName": "non-empty",
+     "PatientSex": "empty",
+     "ReferringPhysicianName": "non-empty",
+     "SeriesDate": "non-empty",
+     "SeriesTime": "non-empty",
+     "SpecimenDescriptionSequence": "non-empty",
+     "StudyDate": "non-empty",
+     "StudyID": "non-empty",
+     "StudyTime": "non-empty"
+    },
+    "dateAttributesPresent": ["AcquisitionDateTime", "ContentDate", "ContentTime", "InstanceCreationDate", "PatientBirthDate", "SeriesDate", "SeriesTime", "StudyDate", "StudyTime"],
+    "level0ImageTypeOriginal": false,
+    "instanceCommon": {
+     "sopClass": "VL Whole Slide Microscopy Image Storage",
+     "dimensionOrganizationType": "TILED_FULL",
+     "concatenation": null,
+     "samplesPerPixel": 3,
+     "bitsStored": 8,
+     "planarConfiguration": 0,
+     "opticalPaths": [
+      {"id": "1", "iccProfileBytes": 141992, "illumination": "Brightfield illumination"}
+     ],
+     "numberOfOpticalPaths": 1,
+     "focalPlanes": 1,
+     "perFrameFunctionalGroups": 0,
+     "extendedOffsetTable": false,
+     "dualPersonalityTiff": true,
+     "manufacturer": "Leica Biosystems",
+     "model": "Aperio converted by com.pixelmed.convert.TIFFToDicom",
+     "software": ["v10.0.50", "Fri Jul 17 11:33:56 EDT 2026"]
+    },
+    "level0FramesSingleFragment": true
+   },
+   "openslide": {"opened": false, "error": "OpenSlideError: Reading <dir>/DCM_0.dcm: Unsupported photometric interpretation YBR_FULL_422 for 1.2.840.10008.1.2.4.91"},
+   "pixelAgreement": {
+    "region": {
+     "level0": [8448, 2816, 512, 512],
+     "selection": "tissue-densest 512px window on level 2 (1921x2187), snapped to the level-0 tile grid",
+     "tissueFraction": 0.999,
+     "contextLevel": 2
+    },
+    "level0": {
+     "x": 8448,
+     "y": 2816,
+     "size": 512,
+     "vsWsidicom": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 1792,
+     "y": 256,
+     "size": 512,
+     "readerDownsample": [4.00052, 4.000229],
+     "vsWsidicom": {"wsidicomLevel": 2, "comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg2k_decode (OpenJPEG, numthreads=1)",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 4.457,
+    "minMs": 3.31,
+    "maxMs": 5.299,
+    "medianMsPerMegapixel": 68.015,
+    "medianCompressedBytes": 22294,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 33,11"
+   },
+   "ingest": {
+    "tier": "A (bytes), not browser-decodable -> WASM decode or transcode once",
+    "planRow": "DICOM WSI, HTJ2K / J2K / JPEG-LS / JXL frames: Tier A, WASM decode or transcode to JPEG",
+    "reason": "256² JPEG 2000 frames: Tier A for the canonical store; the Stage-0 static viewer needs a one-time transcode to JPEG (W-4G/W-iPad never get a WASM J2K path)",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.001, 2.001]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "derivedFrom": {
+    "parent": "JP2K-33003-1.svs",
+    "levels": [
+     {"level": 0, "tiles": 4209, "byteIdentical": 2075, "identicalExceptOneEvenLengthPadByte": 2134, "different": 0},
+     {"level": 1, "tiles": 288, "byteIdentical": 154, "identicalExceptOneEvenLengthPadByte": 134, "different": 0},
+     {"level": 2, "tiles": 72, "byteIdentical": 34, "identicalExceptOneEvenLengthPadByte": 38, "different": 0}
+    ]
+   },
+   "quirks": [
+    "no Basic or Extended Offset Table on the VOLUME instances: frame offsets need one sequential scan of the item headers when the range index is built",
+    "level-0 ImageType is ['DERIVED', 'PRIMARY', 'VOLUME', 'NONE'] (no ORIGINAL VOLUME instance in this set)",
+    "dual-personality file: the DICOM preamble is a BigTIFF header, tifffile opens the same bytes as a TIFF",
+    "sparse vendor pyramid: level steps [4.001, 2.001] (plan FR-V2: synthesise the missing 2x levels)",
+    "OpenSlide 4.0.1 cannot open it: OpenSlideError: Reading <dir>/DCM_0.dcm: Unsupported photometric interpretation YBR_FULL_422 for 1.2.840.10008.1.2.4.91"
+   ]
+  },
+  {
+   "asset": "Leica-4.zip",
+   "formatFamily": "DICOM WSI",
+   "vendor": "Leica Biosystems",
+   "description": "Brightfield, TILED_SPARSE, JPEG, scanned on Leica GT450, from WG26 PV22 connectathon",
+   "licence": "CC0-1.0",
+   "source": "https://openslide.cs.cmu.edu/download/openslide-testdata/DICOM/Leica-4.zip",
+   "openslidePath": "DICOM/Leica-4.zip",
+   "releaseUrl": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Leica-4.zip",
+   "bytes": 85348848,
+   "sha256": "71bd6db778d8565b28aa358d1abce0c55985c149183630c2ed31d1f8757185bb",
+   "bytesMatchManifest": true,
+   "sha256MatchesManifest": true,
+   "sha256MatchesGithubDigest": true,
+   "members": [
+    {
+     "file": "1.3.6.1.4.1.36533.116129230228107214763613716719238114924751.dcm",
+     "bytes": 128116,
+     "sha256": "8686256901b3403cb185a5c6253e1561b17cf1d13342a6bf8345c412d8c31c30",
+     "matchesManifest": true
+    },
+    {
+     "file": "1.3.6.1.4.1.36533.1881662823325113479691652532302192524914036.dcm",
+     "bytes": 13367590,
+     "sha256": "aee44c12b51d76ca5e63de681dd86490c6ccc572507fcf32e04241de105f57ec",
+     "matchesManifest": true
+    },
+    {
+     "file": "1.3.6.1.4.1.36533.21773233891171386611617621819013191107166.dcm",
+     "bytes": 68172052,
+     "sha256": "334407908d16d629d3f0b2c7e782fdf223bcc3761ab23ec8d810922d50e205fc",
+     "matchesManifest": true
+    },
+    {
+     "file": "1.3.6.1.4.1.36533.2391938919943337319712912711949255392271.dcm",
+     "bytes": 16729978,
+     "sha256": "d88f2d7dac3cd21122f71acaf8efcb25dcd22d940745c3543e56833f0d687702",
+     "matchesManifest": true
+    },
+    {
+     "file": "1.3.6.1.4.1.36533.2411761230176195652241589819186191207215116.dcm",
+     "bytes": 13338328,
+     "sha256": "953927614b4e7698f5fb8ff8a9da099010af205ed091e11c9ca3733db65f08c0",
+     "matchesManifest": true
+    },
+    {
+     "file": "1.3.6.1.4.1.36533.2642199142199497125516614013324167247234250.dcm",
+     "bytes": 1001624,
+     "sha256": "25c901e3556d2f78a88127b536ed9e7c8909e8eb6358db0e0891b7fc3ee112d0",
+     "matchesManifest": true
+    },
+    {"file": "DICOMDIR", "bytes": 1268, "sha256": "ca2a9c9b164b14dbd8842d30828677d53d8c5441363c3b73d0d0bf87d17a8774", "matchesManifest": true}
+   ],
+   "wsidicom": {
+    "opened": true,
+    "version": "0.36.1",
+    "levels": [
+     {
+      "level": 0,
+      "size": [23374, 22079],
+      "tileSize": [256, 256],
+      "mppUm": 1.051054
+     },
+     {
+      "level": 2,
+      "size": [5843, 5519],
+      "tileSize": [256, 256],
+      "mppUm": 4.204215
+     },
+     {
+      "level": 4,
+      "size": [1460, 1379],
+      "tileSize": [256, 256],
+      "mppUm": 16.816862
+     }
+    ],
+    "labels": 1,
+    "overviews": 1,
+    "encodedTileIdentity": {"tiles": 20, "identicalToOurFrameBytes": 20, "note": "pad byte to even length ignored"}
+   },
+   "structure": {
+    "container": "DICOM WSI (VL Whole Slide Microscopy Image Storage)",
+    "instances": [
+     {
+      "file": "1.3.6.1.4.1.36533.116129230228107214763613716719238114924751.dcm",
+      "bytes": 128116,
+      "imageType": ["ORIGINAL", "PRIMARY", "OVERVIEW", "NONE"],
+      "flavour": "OVERVIEW",
+      "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+      "frameSize": [1491, 605],
+      "totalPixelMatrix": [1491, 605],
+      "numberOfFrames": 1,
+      "photometric": "RGB",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [21.801933534743],
+      "pixelSpacingUm": [39.267018, 39.267018],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": null, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 1,
+      "basicOffsetTableBytes": 0,
+      "fragments": 1,
+      "medianFrameBytes": 124126,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 82, "h": 1, "v": 1},
+        {"id": 71, "h": 1, "v": 1},
+        {"id": 66, "h": 1, "v": 1}
+       ],
+       "jfif": false,
+       "adobeApp14": true,
+       "adobeTransform": 0,
+       "chroma": "4:4:4",
+       "componentIdsRGB": true,
+       "implicitColourSpace": "RGB"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "1.3.6.1.4.1.36533.1881662823325113479691652532302192524914036.dcm",
+      "bytes": 13367590,
+      "imageType": ["DERIVED", "PRIMARY", "THUMBNAIL", "RESAMPLED"],
+      "flavour": "THUMBNAIL",
+      "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+      "frameSize": [1920, 1813],
+      "totalPixelMatrix": [1920, 1813],
+      "numberOfFrames": 1,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": null,
+      "pixelSpacingUm": [22.751709, 22.751709],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 13113264, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 1,
+      "basicOffsetTableBytes": 0,
+      "fragments": 1,
+      "medianFrameBytes": 249348,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 1, "h": 2, "v": 2},
+        {"id": 2, "h": 1, "v": 1},
+        {"id": 3, "h": 1, "v": 1}
+       ],
+       "jfif": true,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:0",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "1.3.6.1.4.1.36533.21773233891171386611617621819013191107166.dcm",
+      "bytes": 68172052,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+      "frameSize": [256, 256],
+      "totalPixelMatrix": [23374, 22079],
+      "numberOfFrames": 8004,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [10.0],
+      "pixelSpacingUm": [1.051054, 1.051054],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 13113264, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 8004,
+      "basicOffsetTableBytes": 0,
+      "fragments": 8004,
+      "medianFrameBytes": 2068,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 1, "h": 2, "v": 2},
+        {"id": 2, "h": 1, "v": 1},
+        {"id": 3, "h": 1, "v": 1}
+       ],
+       "jfif": true,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:0",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "1.3.6.1.4.1.36533.2391938919943337319712912711949255392271.dcm",
+      "bytes": 16729978,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+      "frameSize": [256, 256],
+      "totalPixelMatrix": [5843, 5519],
+      "numberOfFrames": 506,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [10.0],
+      "pixelSpacingUm": [4.204215, 4.204215],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 13113264, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 506,
+      "basicOffsetTableBytes": 0,
+      "fragments": 506,
+      "medianFrameBytes": 2172,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 1, "h": 2, "v": 2},
+        {"id": 2, "h": 1, "v": 1},
+        {"id": 3, "h": 1, "v": 1}
+       ],
+       "jfif": true,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:0",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "1.3.6.1.4.1.36533.2411761230176195652241589819186191207215116.dcm",
+      "bytes": 13338328,
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"],
+      "flavour": "VOLUME",
+      "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+      "frameSize": [256, 256],
+      "totalPixelMatrix": [1460, 1379],
+      "numberOfFrames": 36,
+      "photometric": "YBR_FULL_422",
+      "lossyImageCompression": "01",
+      "lossyMethod": ["ISO_10918_1"],
+      "lossyRatio": [10.0],
+      "pixelSpacingUm": [16.816862, 16.816862],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": 13113264, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 36,
+      "basicOffsetTableBytes": 0,
+      "fragments": 36,
+      "medianFrameBytes": 3374,
+      "codestream": {
+       "sof": "SOF0 baseline",
+       "components": [
+        {"id": 1, "h": 2, "v": 2},
+        {"id": 2, "h": 1, "v": 1},
+        {"id": 3, "h": 1, "v": 1}
+       ],
+       "jfif": true,
+       "adobeApp14": false,
+       "adobeTransform": null,
+       "chroma": "4:2:0",
+       "componentIdsRGB": false,
+       "implicitColourSpace": "YCbCr"
+      },
+      "progressiveFrames": 0
+     },
+     {
+      "file": "1.3.6.1.4.1.36533.2642199142199497125516614013324167247234250.dcm",
+      "bytes": 1001624,
+      "imageType": ["ORIGINAL", "PRIMARY", "LABEL", "NONE"],
+      "flavour": "LABEL",
+      "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)",
+      "frameSize": [608, 547],
+      "totalPixelMatrix": [608, 547],
+      "numberOfFrames": 1,
+      "photometric": "RGB",
+      "lossyImageCompression": "00",
+      "lossyMethod": null,
+      "lossyRatio": null,
+      "pixelSpacingUm": [39.267018, 39.267018],
+      "opticalPaths": [
+       {"id": "0", "iccProfileBytes": null, "illumination": "Brightfield illumination"}
+      ],
+      "perFrameFunctionalGroups": 1,
+      "codestream": "uncompressed"
+     }
+    ],
+    "dicomdir": {"present": true, "records": 4},
+    "levels": [
+     [23374, 22079],
+     [5843, 5519],
+     [1460, 1379]
+    ],
+    "levelDetail": [
+     {
+      "width": 23374,
+      "height": 22079,
+      "frameSize": [256, 256],
+      "frames": 8004,
+      "instances": 1,
+      "downsampleX": 1.0,
+      "downsampleY": 1.0,
+      "pixelSpacingUm": [1.051054, 1.051054],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 5843,
+      "height": 5519,
+      "frameSize": [256, 256],
+      "frames": 506,
+      "instances": 1,
+      "downsampleX": 4.000342,
+      "downsampleY": 4.000544,
+      "pixelSpacingUm": [4.204215, 4.204215],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     },
+     {
+      "width": 1460,
+      "height": 1379,
+      "frameSize": [256, 256],
+      "frames": 36,
+      "instances": 1,
+      "downsampleX": 16.009589,
+      "downsampleY": 16.010877,
+      "pixelSpacingUm": [16.816862, 16.816862],
+      "imageType": ["DERIVED", "PRIMARY", "VOLUME", "RESAMPLED"]
+     }
+    ],
+    "levelSteps": [4.0, 4.002],
+    "frameSize": [256, 256],
+    "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+    "dimensionOrganizationType": "TILED_SPARSE",
+    "concatenations": false,
+    "opticalPaths": 1,
+    "focalPlanes": null,
+    "associatedImages": {
+     "overview": [
+      {
+       "file": "1.3.6.1.4.1.36533.116129230228107214763613716719238114924751.dcm",
+       "width": 1491,
+       "height": 605,
+       "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+       "photometric": "RGB"
+      }
+     ],
+     "thumbnail": [
+      {
+       "file": "1.3.6.1.4.1.36533.1881662823325113479691652532302192524914036.dcm",
+       "width": 1920,
+       "height": 1813,
+       "transferSyntax": "JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)",
+       "photometric": "YBR_FULL_422"
+      }
+     ],
+     "label": [
+      {
+       "file": "1.3.6.1.4.1.36533.2642199142199497125516614013324167247234250.dcm",
+       "width": 608,
+       "height": 547,
+       "transferSyntax": "Explicit VR Little Endian (1.2.840.10008.1.2.1)",
+       "photometric": "RGB"
+      }
+     ]
+    },
+    "hasLabel": true,
+    "hasMacro": true,
+    "hasThumbnail": true,
+    "mppLevel0": 1.051054,
+    "manufacturer": "Leica Biosystems",
+    "model": "GT450",
+    "software": ["1.0.1"],
+    "identifyingAttributes": {
+     "AccessionNumber": "non-empty",
+     "AcquisitionDateTime": "non-empty",
+     "BarcodeValue": "non-empty",
+     "ContainerIdentifier": "non-empty",
+     "ContentDate": "non-empty",
+     "ContentTime": "non-empty",
+     "DeviceSerialNumber": "non-empty",
+     "LabelText": "empty",
+     "PatientBirthDate": "non-empty",
+     "PatientID": "non-empty",
+     "PatientName": "non-empty",
+     "PatientSex": "empty",
+     "ReferringPhysicianName": "empty",
+     "SpecimenDescriptionSequence": "non-empty",
+     "StudyDate": "non-empty",
+     "StudyID": "empty",
+     "StudyTime": "empty"
+    },
+    "dateAttributesPresent": ["AcquisitionDateTime", "ContentDate", "ContentTime", "PatientBirthDate", "StudyDate", "StudyTime"],
+    "level0ImageTypeOriginal": false,
+    "instanceCommon": {
+     "sopClass": "VL Whole Slide Microscopy Image Storage",
+     "dimensionOrganizationType": "TILED_SPARSE",
+     "concatenation": null,
+     "samplesPerPixel": 3,
+     "bitsStored": 8,
+     "planarConfiguration": 0,
+     "numberOfOpticalPaths": null,
+     "focalPlanes": null,
+     "extendedOffsetTable": false,
+     "dualPersonalityTiff": false,
+     "manufacturer": "Leica Biosystems",
+     "model": "GT450",
+     "software": ["1.0.1"]
+    },
+    "level0FramesSingleFragment": true,
+    "sparse": {"positions": 8004, "gridCells": 8004, "unalignedPositions": 0, "rowMajorOrder": false}
+   },
+   "openslide": {
+    "opened": true,
+    "vendor": "dicom",
+    "levelCount": 3,
+    "levelDimensions": [
+     [23374, 22079],
+     [5843, 5519],
+     [1460, 1379]
+    ],
+    "levelDownsamples": [1.0, 4.000443, 16.010233],
+    "tileSize": [
+     [256, 256],
+     [256, 256],
+     [256, 256]
+    ],
+    "propertiesCount": 208,
+    "associatedImages": {
+     "label": [608, 547],
+     "macro": [1491, 605],
+     "thumbnail": [1920, 1813]
+    },
+    "mppX": 1.05105387047,
+    "mppY": 1.05105387047,
+    "objectivePower": "40",
+    "iccProfileBytes": 13113264,
+    "quickhash1": "7ca87626aa9842b867f284a4ac0c9474f5de295455c8bb25be2ed837efcc5b10"
+   },
+   "pixelAgreement": {
+    "region": {
+     "level0": [15616, 11008, 512, 512],
+     "selection": "tissue-densest 512px window on level 2 (1460x1379), snapped to the level-0 tile grid",
+     "tissueFraction": 0.132,
+     "contextLevel": 2
+    },
+    "level0": {
+     "x": 15616,
+     "y": 11008,
+     "size": 512,
+     "vsOpenSlide": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true, "transparentPixels": 0},
+     "vsWsidicom": {"comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    },
+    "coarse": {
+     "level": 1,
+     "x": 3584,
+     "y": 2304,
+     "size": 512,
+     "readerDownsample": [4.000342, 4.000544],
+     "openSlideDownsample": 4.000443,
+     "vsOpenSlide": {
+      "level0Location": [14338, 9217],
+      "subPixelOffset": [0.1031, -0.0051],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 12,
+      "meanAbsDiff": 1.7279,
+      "psnrDb": 40.98,
+      "identical": false
+     },
+     "vsOpenSlideBestOf5x5": {
+      "level0Location": [14338, 9217],
+      "subPixelOffset": [0.1031, -0.0051],
+      "comparedPixels": 262144,
+      "maxAbsDiff": 12,
+      "meanAbsDiff": 1.7279,
+      "psnrDb": 40.98,
+      "identical": false
+     },
+     "vsWsidicom": {"wsidicomLevel": 2, "comparedPixels": 262144, "maxAbsDiff": 0, "meanAbsDiff": 0.0, "psnrDb": null, "identical": true}
+    }
+   },
+   "decodeTiming": {
+    "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo)",
+    "tiles": 20,
+    "tileSize": [256, 256],
+    "medianMs": 0.538,
+    "minMs": 0.458,
+    "maxMs": 0.832,
+    "medianMsPerMegapixel": 8.215,
+    "medianCompressedBytes": 33477,
+    "method": "single thread, min of 3 runs per tile, median over tiles; tiles = row-major block from level-0 tile 61,43",
+    "progressiveTiles": 0
+   },
+   "ingest": {
+    "tier": "B",
+    "planRow": "DICOM WSI, JPEG baseline: Tier A / B (256² frames as four ranges)",
+    "reason": "256² JPEG frames divide 512: four frames (byte ranges) per logical 512² tile; TILED_SPARSE, so the range index maps grid cells through the per-frame plane positions",
+    "actions": [
+     "synthesise intermediate 2x levels (native steps [4.0, 4.002]; plan FR-V2 sparse vendor pyramid)"
+    ]
+   },
+   "quirks": [
+    "PhotometricInterpretation YBR_FULL_422 but the level-0 codestream is 4:2:0 (the attribute is not a reliable guide to chroma subsampling; read the SOF/SIZ)",
+    "no Basic or Extended Offset Table on the VOLUME instances: frame offsets need one sequential scan of the item headers when the range index is built",
+    "TILED_SPARSE: frame positions come from PerFrameFunctionalGroupsSequence/PlanePositionSlideSequence",
+    "level-0 ImageType is ['DERIVED', 'PRIMARY', 'VOLUME', 'RESAMPLED'] (no ORIGINAL VOLUME instance in this set)",
+    "the finest VOLUME level is itself RESAMPLED (1.051054 µm/px): the scanner's native-resolution level is not part of this set",
+    "sparse vendor pyramid: level steps [4.0, 4.002] (plan FR-V2: synthesise the missing 2x levels)",
+    "TILED_SPARSE frames are not stored in row-major order (frame index != grid position)",
+    "OpenSlide level-1 downsample 4.000443 is the mean of the width ratio 4.000342 and height ratio 4.000544; read_region maps level-0 coordinates through it, so coarse-level reads land at sub-pixel offsets from the native tile grid"
+   ]
+  }
+ ],
+ "referenceTiming": {
+  "tilesDir": "stage0/data/tiles/0",
+  "tiles": 20,
+  "tileSize": [512, 512],
+  "codestream": "SOF0 baseline, 4:2:0",
+  "decoder": "imagecodecs.jpeg_decode (libjpeg-turbo)",
+  "medianMs": 1.148,
+  "minMs": 1.052,
+  "maxMs": 1.283,
+  "medianMsPerMegapixel": 4.379,
+  "medianCompressedBytes": 72701
+ },
+ "generated": {
+  "date": "2026-11-01T17:43:59+00:00",
+  "tool": "stage0/tools/probe_corpus.py",
+  "command": "probe_corpus.py <samples-dir> --unzip-dir <scratch> --release-json <release.json> --out stage0/data/corpus/samples-v1.json",
+  "durationSec": 37.6,
+  "machine": {
+   "label": "this container's CPU (shared cloud VM; timings are relative, not a device class)",
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+   "logicalCpus": 4,
+   "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+   "loadAverage1mBefore": 1.43,
+   "loadAverage1mAfter": 1.98
+  },
+  "versions": {
+   "python": "3.13.17",
+   "numpy": "2.5.4",
+   "tifffile": "2026.10.15",
+   "imagecodecs": "2026.10.10",
+   "libjpeg-turbo": "libjpeg_turbo 3.2.0/8.0",
+   "openjpeg": "openjpeg 2.5.4",
+   "openslide-python": "1.4.7",
+   "openslide": "4.0.1",
+   "pydicom": "3.0.2",
+   "wsidicom": "0.36.1"
+  }
+ }
+}

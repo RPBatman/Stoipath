@@ -1,0 +1,15 @@
+{
+  "note": "a /2 file",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/schema",
+      "value": "stoipath.learn.module/2"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/schema"
+  }
+}

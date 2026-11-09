@@ -1,0 +1,3168 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "checksDir": "/home/user/Stoipath/wsi-viewer/stage0/client/harness/tools",
+ "seconds": 564,
+ "modules": [
+  "annotations",
+  "compare",
+  "core",
+  "draw-tools",
+  "layers",
+  "library",
+  "overlay",
+  "share"
+ ],
+ "moduleCounts": {
+  "annotations": 81,
+  "compare": 79,
+  "core": 54,
+  "draw-tools": 108,
+  "layers": 61,
+  "library": 93,
+  "overlay": 60,
+  "share": 76
+ },
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-1 index.html's built chunks (index.html, _viewer-CFs_O7wW.js) include nothing under src/shell/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-1 src/main.ts's module graph (16 modules) reaches nothing under src/shell/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-2 command registry: 116 commands, 64 with key bindings, no conflict (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-2 shell.html opens with no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-3 desktop 1440x900: the tool rail's one Tab stop is the pressed tool (tool:select at load; tool:polygon after P; Tab from the canvas lands on tool:polygon)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-3 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-3 desktop-1366 1366x768: the tool rail's one Tab stop is the pressed tool (tool:select at load; tool:polygon after P; Tab from the canvas lands on tool:polygon)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-3 desktop-1366 1366x768: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-3 desktop-wide 1920x1080: the tool rail's one Tab stop is the pressed tool (tool:select at load; tool:polygon after P; Tab from the canvas lands on tool:polygon)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-3 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-4: after a failed open nothing names the disposed slide (title \"No slide open · Stoipath Viewer (RUO)\", identity \"No slide open\", HUD \"No slide open\", navigator hidden, strip \"No slide open\", \"Tiles –\", Cohort aria-selected 0, \"open in view A\" 0; canvas \"Slide canvas, no slide open: this slide could not be opened …\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-4: the next open restores the identity (\"tumor_014 · Stoipath Viewer (RUO)\"), the navigator, the strip (\"Sharp\") and the Cohort selection (1); plate hidden"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-4: no page error beyond the failed manifest request (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-5 desktop-wide 1920x1080: canvas B's accessible name carries its slide, stain, magnification and counts (\"Slide canvas B, OpenSlide test data CMU-1-Small-Region, H and E, about 4.8 times. 0 annotations, 0 overlays sh…\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-5: with view B focused, a zoom in B is spoken at settle as B's sentence (\"B: about 4.8 times, 2.09 micrometres per pixel. CMU-1-Small-Region, H and E. Tool: Select.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "I-5: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1 desktop 1440x900: group heads [\"Tumor · 2 · 0.08 mm²\",\"Stroma · 1 · 0.25 mm²\",\"Lymphocytes · 2 points\",\"Measurements · 1\"] = [\"Tumor · 2 · 0.08 mm²\",\"Stroma · 1 · 0.25 mm²\",\"Lymphocytes · 2 points\",\"Measurements · 1\"] (shoelace × mpp², formatArea)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1: rows in group order with kind, area / length and meta: A1 \"Rectangle · 0.04 mm²\" rect | A3 \"Polygon · 0.04 mm²\" 5 vtx | A2 \"Ellipse · 0.25 mm²\" ellipse | A4 \"Point\"  | A5 \"Point\"  | M1 \"Measurement · 243.1 µm\" "
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1: the 64-gon's own shoelace area formats as the exact ellipse area the row shows (0.25 mm² = 0.25 mm²; the exact π·rx·ry comes from stoipath.shape, G4)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1: the Annotations tab count is 6 (6)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1: the listbox name \"Annotations on tumor_014, 6 objects; Tab moves, Space flies to the item\""
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1: summary() total 6, measurement length 243.094 µm (243.094)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1 desktop 1440x900 Annotations tab: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-1 desktop 1440x900 Annotations tab: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2 desktop 1440x900: create, update (move), create, reclassify transaction (\"A1, A2 → Stroma\"), delete: 5 undo steps, 1 feature left (5, 1)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: Ctrl+Z #1 restores the exact state before step 5 (\"Restored A2\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: Ctrl+Z #2 restores the exact state before step 4 (\"Undid A1, A2\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: Ctrl+Z #3 restores the exact state before step 3 (\"Undid A2\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: Ctrl+Z #4 restores the exact state before step 2 (\"Undid A1\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: Ctrl+Z #5 restores the exact state before step 1 (\"Undid A1\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: a sixth undo says \"Nothing to undo\""
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: redo #1 (Control+y) restores step 1 exactly and writes \"Restored A1\" in the strip and the polite region (spoken true; replaces \"Nothing to undo\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: redo #2 (Control+Shift+z) restores step 2 exactly and writes \"Redid A1\" in the strip and the polite region (spoken true; replaces \"Restored A1\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: redo #3 (palette Redo) restores step 3 exactly and writes \"Restored A2\" in the strip and the polite region (spoken true; replaces \"Redid A1\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: redo #4 (Control+y) restores step 4 exactly and writes \"Redid A1, A2\" in the strip and the polite region (spoken true; replaces \"Restored A2\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: redo #5 (Control+y) restores step 5 exactly and writes \"Deleted A2 · Ctrl+Z to undo\" in the strip and the polite region (spoken true; replaces \"Redid A1, A2\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: ⌫ with nothing selected writes \"Nothing selected\" and deletes nothing (1 → 1)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-2: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3 desktop 1440x900: saved after the debounce (\"Saved in this browser · 3 annotations · 1.5 KB · export GeoJSON to keep a copy\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3: a reload restores them (same ids, labels and geometry: A1, A2, M1)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3: a switch to CMU-1-Small-Region (0 annotations there) and back restores them"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3: a 2.42 MB store gives persistence.state \"over-cap\" and the exact text in the footer (\"Not saved: annotations on tumor_014 exceed 2 MB in this browser. Export GeoJSON to keep them.\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3: nothing is evicted: 38 annotations stay in memory and the stored copy still holds the last 3 that fitted"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3 desktop 1440x900 over-cap footer: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-3 desktop 1440x900 over-cap footer: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4 desktop 1440x900: Export downloads tumor_014.region.geojson: a FeatureCollection of 4 with QuPath properties (objectType, isLocked) and classification colours per the class table (Tumor=200,0,0; Lymphocytes=160,90,160; Region*=0,0,180; unclassified)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: the name and the stoipath member travel (pyramid-level0, 15360x15360@0.243094@36864,66560@)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: \"Source slide\" exports tumor_014.source.geojson with every coordinate + (36,864, 66,560)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: no console or page error on export (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: importing tumor_014.region.geojson into an empty store reproduces all() (same ids, labels, classes, deep-equal geometry) and says \"Imported 4 annotations from tumor_014.region.geojson\""
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: importing tumor_014.source.geojson into an empty store reproduces all() (same ids, labels, classes, deep-equal geometry; source-level0 detected by auto) and says \"Imported 4 annotations from tumor_014.source.geojson\""
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4 desktop 1440x900 after import: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4 desktop 1440x900 after import: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: a whole-source QuPath file with one feature off the region imports 4 under Auto (\"Imported 4 annotations from tumor_014-whole-source.geojson (1 skipped: outside this region). Read as source-slide coordinates (Auto); Import coordinates changes this.\"); the skip marks Import and the drop zone aria-invalid (true, true)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: Import coordinates \"This pyramid\" (aria-checked true) reads the next file as pyramid coordinates (\"Imported 4 annotations from tumor_014.region.geojson. Read as this pyramid’s coordinates; Import coordinates changes this.\"); a clean import clears aria-invalid (null, null)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4: a refused import marks Import and the drop zone aria-invalid (true, true) with the report \"Not a GeoJSON file: the text is not valid JSON; nothing imported\""
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4 desktop 1440x900 import refused (aria-invalid): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-4 desktop 1440x900 import refused (aria-invalid): no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5 desktop 1440x900: q on the slide opens #classMenu with 8 classes and focus in it (aria-expanded true)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: then 3 sets Lymphocytes, closes the menu, returns focus to #view; rail aria-label \"Class picker (Q): current class Lymphocytes\" at rest"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: Esc closes the menu and focus returns to the canvas (view)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: a pointer-down outside closes it and picks nothing (Lymphocytes)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: with A1 selected, q 2 reclassifies it (Stroma, \"A1 → Stroma\") in one undo step (depth 1 → 2); Ctrl+Z gives Lymphocytes back"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: radiogroup: → moves focus Stroma → Lymphocytes without checking (aria-checked false, 1 Tab stop), Space checks it (active Lymphocytes, checked Lymphocytes, focus Lymphocytes)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: with the Point tool, q 2 right after placing A2 sets the class for the next shape only (A2 stays Lymphocytes, depth 2 → 2, active Stroma)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5: after choosing A2 in the list, q 4 reclassifies it (\"A2 → Necrosis\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5 desktop 1440x900 class menu open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-5 desktop 1440x900 class menu open: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6 desktop 1440x900: Tab enters the list on the first row (option); ↓ moves to the next (A2)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6: Space flies to A2 (camera centre (13042, 3152) inside its bbox after 930 ms, eased) and selects it (aria-selected true)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6: fly-to fits the bbox to 60.0 % of the uncovered span 56–1104 (60 %) and centres it there (bbox centre x 580.0, span centre 580.0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6: Del deletes A2 (\"Deleted A2 · Ctrl+Z to undo\") and focus moves to the next row (A3)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6 desktop 1440x900 list focused: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6 desktop 1440x900 list focused: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6 desktop 1440x900 reduced-motion: Tab enters the list on the first row (option); ↓ moves to the next (A2)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6: Space flies to A2 (camera centre (13044, 3150) inside its bbox after 131 ms, instant under reduced motion) and selects it (aria-selected true)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6: fly-to fits the bbox to 60.0 % of the uncovered span 56–1104 (60 %) and centres it there (bbox centre x 580.0, span centre 580.0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6 desktop 1440x900 reduced-motion: a wide feature flies wholly into the uncovered span (bbox 266–894 within 56–1104, 60.0 %)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6: Del deletes A2 (\"Deleted A2 · Ctrl+Z to undo\") and focus moves to the next row (A3)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-6 reduced motion: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: Annotations tab: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7: the Inspector shows \"Selected · polygon A1\", class Tumor, kv Area, Perimeter, Vertices, Kind, Created, Version, Source, a 4-button Move pad"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: Inspector with a selection: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7: Move pad → moves A1 by 10 CSS px (187.32 level-0 px; 187.32 expected) in one undo step (\"Moved A1\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: class menu open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: 1 s drag with 3 annotations drawn and both panels built: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: 1 s drag with 3 annotations drawn and both panels built: no redundant DOM write (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: 1 s drag with 3 annotations drawn and both panels built: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: 1 s drag with 3 annotations drawn and both panels built: CDP LayoutCount 61 ≤ 185 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 phone 390x844 coarse: the sheet shows the Annotations tab with 2 rows"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 phone 390x844 coarse: the list hint reads whole on touch (\"QuPath class names are kept verbatim; QuPath RGB is restored on export (FR-A2). Tap an item to fly to it and select it.\")"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 phone 390x844 coarse: Annotations sheet: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 phone 390x844 coarse: Inspector sheet with a selection: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7: the class menu opens on the phone as a bottom sheet (390 × 197 px, bottom 788 of 844)"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 phone 390x844 coarse: class menu open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "annotations",
+   "ok": true,
+   "msg": "ANN-7 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 C opens view B on the same slide: state on, .app.compare-on true, 2 engine canvases (#view and #viewB)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 two engines: live WebGL contexts 1 → 2, workers 3 → 5"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 window.__stage0 answers for view A: viewW 771 == #view backing width 771 (B's is 771), camera (10444.8, -3.941) is A's"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 B opens at A's camera with lock, offset 0, ratio 1 (B 10444.8, 9062.4, lz -3.941; offset 0,0, ratio 1)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 notice \"Compare · tumor_014 with tumor_014\", bar status \"B follows A\", pane label \"B · tumor_014 · H&E\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync none: pane A scale bar \"500 µm\" == \"500 µm\", drawn 133.90 px == L / s 133.91 px (± 1) for its own engine (s = 3.7339 µm/CSS px)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync none: pane A readout \"2.7×\" / \"3.73 µm/px · derived\" == \"2.7×\" / \"3.73 µm/px · derived\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync none: pane A position \"x 2.54 mm · y 2.20 mm\" == \"x 2.54 mm · y 2.20 mm\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync none: pane B scale bar \"200 µm\" == \"200 µm\", drawn 160.68 px == L / s 160.69 px (± 1) for its own engine (s = 1.2446 µm/CSS px)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync none: pane B readout \"8×\" / \"1.24 µm/px · derived\" == \"8×\" / \"1.24 µm/px · derived\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync none: pane B position \"x 1.78 mm · y 2.64 mm\" == \"x 1.78 mm · y 2.64 mm\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync lock: pane B scale bar \"200 µm\" == \"200 µm\", drawn 160.68 px == L / s 160.69 px (± 1) for its own engine (s = 1.2446 µm/CSS px)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync lock: pane B readout \"8×\" / \"1.24 µm/px · linked\" == \"8×\" / \"1.24 µm/px · linked\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 sync lock: pane B position \"x 1.78 mm · y 2.64 mm\" == \"x 1.78 mm · y 2.64 mm\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 compare bar [989,60,1336,134] clears the navigator [1348,1588] and pane A's identity [68,199], inside the top quarter of the canvas"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 compare open, same slide: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-1 compare open, same slide: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 Realign (same slide) zeroes the offset and B shows A's view (offset 0,0, ratio 1; B − A = 0.000 px)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 a 1 s drag in A moves B by the same µm: A (672.11, 336.05) µm, B (672.11, 336.05) µm (± 1.87 µm = 0.5 CSS px × scale)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 on every one of 196 sampled frames B matched A's camera of the same or the previous frame (0 frames off)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 A led the drag; bar status at rest \"B follows A\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 while B leads (wheel zoom in B) A matched B's camera of the same or the previous frame on every one of 26 sampled frames (0 off)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 a wheel zoom in B (+1.20 levels) moves A: leader B, A − B 0.01 µm (≤ 0.5 CSS px × scale), zoom A − B -7.0e-5 levels; status \"A follows B\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 → on the radiogroup focuses affine without checking it (mode lock); Space on it refuses \"No registration for this pair in Phase A\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 → again checks none: mode none, status \"Independent views\", B line 2 \"1.63 µm/px · derived\", radios lock:false:-1 affine:false:-1 none:true:0"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 after none a drag in A leaves B unchanged (B 12537.35, 11312.22 → 12537.35, 11312.22)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 lock captures the offset B − A = (-292.55, -146.28) µm; status \"B follows A · offset -0.29 mm, -0.15 mm\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 the relative lock keeps the offset through a drag in A (error 0 µm)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-2 Realign zeroes the offset (offset 0,0; B − A 0.000 px; status \"B follows A\")"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 synced 1 s drag in A: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 synced 1 s drag in A: no redundant DOM write (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 synced 1 s drag in A: 260 of 270 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 synced 1 s drag in A: CDP LayoutCount 26 ≤ 197 frames + 2 and RecalcStyleCount 67 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 pane B's HUD was written during the synced drag, inside .hud (childList div#hudPosB.hud__item)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 frame interval p95: single view (three 1 s drags before compare opens, three after it closes) 33.4 ms (1202 frames), compare (three synced drags) 50.0 ms (602 frames) ≤ 1.5 × single = 50.1 ms (SwiftShader-relative); p50 16.7 / 16.7 ms"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-6 the follower was moved on 327 leader frames in this page"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 compare:with:openslide.CMU-1-Small-Region opens B on it at its fit (lz -1.569 vs fit -1.569, centre 1110.0, 1483.5)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 the lock offset is captured from A's view and B's fit: offset (-904.67, -1204.49) µm, ratio 0.7930; status \"B follows A · offset -0.90 mm, -1.20 mm · B at 1.26× A's magnification\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 pane label \"B · CMU-1-Small-Region · H&E\", status names the offset and the magnification ratio"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 after a drag and a wheel zoom in A, B keeps the relation: B − A − offset 0 µm, s_B / s_A 0.7930 == ratio 0.7930"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 compare open, another slide: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 compare open, another slide: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 Swap exchanges slides and cameras: A shows CMU-1-Small-Region at B's camera (0 µm), B shows tumor_014 at A's (0 µm)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 Swap inverts the lock: offset (904.67, 1204.49) µm, ratio 1.2610"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 after Swap the top bar names A's slide (\"CMU-1-Small-Region · Stoipath Viewer (RUO)\") and pane B's label \"B · tumor_014 · H&E\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-3 Swap: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by C key frees view B: live contexts 2 → 1, live workers 5 → 3 == pane A's pool 3"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by C key: pane A's cssW 1544 → 771 → 1544 (canvas area 1544), no engine canvas in pane B, .compare-on removed"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by Close button frees view B: live contexts 2 → 1, live workers 5 → 3 == pane A's pool 3"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by Close button: pane A's cssW 1544 → 771 → 1544 (canvas area 1544), no engine canvas in pane B, .compare-on removed"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 the bar's Close button hands the focus to view A's canvas (#view); notice \"Compare closed\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by C key frees view B: live contexts 2 → 1, live workers 5 → 3 == pane A's pool 3"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by C key: pane A's cssW 1544 → 771 → 1544 (canvas area 1544), no engine canvas in pane B, .compare-on removed"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by Close button frees view B: live contexts 2 → 1, live workers 5 → 3 == pane A's pool 3"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 close by Close button: pane A's cssW 1544 → 771 → 1544 (canvas area 1544), no engine canvas in pane B, .compare-on removed"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4 the bar's Close button hands the focus to view A's canvas (#view); notice \"Compare closed\""
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4: closing frees view B's engine: after 3 more open / close cycles WebGL2RenderingContext heap nodes 5 → 5, heap incl. backing stores 17.3 → 17.5 MB (Δ 0.2 ≤ 6 MB; backing 10.3 → 10.3)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-4: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 phone (engine device class phone): C refuses \"Compare needs a desktop browser: two slide engines need two GPU tile arrays, more than a phone's budget\"; 1 engine canvas, 1 context, state off"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 phone: compare.open() refuses too (\"Compare needs a desktop browser: two slide engines need two GPU tile arrays, more than a phone's budget\", 1 canvas)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 phone refusal: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 phone refusal: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 tablet (engine device class phone): C refuses \"Compare needs a desktop browser: two tile arrays exceed a tablet's GPU budget\"; 1 engine canvas, 1 context, state off"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 tablet: compare.open() refuses too (\"Compare needs a desktop browser: two tile arrays exceed a tablet's GPU budget\", 1 canvas)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 tablet refusal: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 tablet refusal: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 1280 × 800 with the Context dock closed: compare available (canvas area 1224 px)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 1280 × 800 with the Context dock open: canvas area 918 px < 960, C refuses \"Compare needs a wider window: two panes of at least 480 px\" (1 canvas)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 narrow refusal: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "CMP-5 narrow refusal: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare bar at 1440, dock closed: [834,60,1176,119] clears the navigator, pane A's identity and the open drawers"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare at 1440, dock closed: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare at 1440, dock closed: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare bar at 1440, Context drawer open: [581,60,923,119] clears the navigator, pane A's identity and the open drawers"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare at 1440, Context drawer open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare at 1440, Context drawer open: no console or page error (0)"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare bar at 1440, Library drawer open too: [762,60,923,195] clears the navigator, pane A's identity and the open drawers"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare at 1440, Library drawer open too: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "compare",
+   "ok": true,
+   "msg": "compare at 1440, Library drawer open too: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1 desktop 1440x900: __shell.openSlide(openslide.CMU-1-Small-Region) → __stage0.state().baseLoaded in 500 ms (≤ 15 s)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1: no reload (navigation entries 1 → 1; window.__marker survived)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1: exactly one canvas#view (1), one engine canvas in pane A (1), inserted before #overlayA (overlayA)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1: document.title \"CMU-1-Small-Region · Stoipath Viewer (RUO)\" starts with CMU-1-Small-Region"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1: the canvas had focus and the new canvas has it (view → view)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1: view A is open on openslide.CMU-1-Small-Region (opens 2, last open 50 ms to the first frame)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4 desktop 1440x900: viewChanged fired 60 times = 60 frames with moved (of 230 frames) during a 1 s drag and its settle"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4: one payload object for view A, reused by every viewChanged and viewSettled (1 distinct, WeakSet)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4: viewSettled fired once (1) with moving false"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4: an atRest() queued from the first moving frame ran 4336 ms later, on the settled frame, after viewSettled (settled true, viewSettled seen 1)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4 1 s drag desktop 1440x900 (206 frames): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4 1 s drag desktop 1440x900 (206 frames): no redundant DOM write (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4 1 s drag desktop 1440x900 (206 frames): 272 of 281 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-4 1 s drag desktop 1440x900 (206 frames): CDP LayoutCount 25 ≤ 206 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1/4 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-1/4 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2 desktop 1440x900: after 10 switches live workers 3 = the pool size 3 (33 created in all)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2: live WebGL contexts 1 = 1 (11 created), one canvas#view, 11 opens"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2: heap incl. backing stores after the 10th switch is within +15 MB of the heap after the first (11.3 → 11.8 MB, Δ 0.5 MB; JS 3.6 → 4.2, backing 5.3 → 5.5, embedder 2.3 → 2.1); switches 609, 457, 822, 393, 532, 425, 467, 415, 549 ms"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2: no disposed engine is retained: WebGL2RenderingContext heap nodes 4 → 4 after 9 more switches; snapshot 11.3 → 12.1 MB"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2 view B: a second engine opens in pane B (contexts 2, workers 5, state open, canvas viewB)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2 view B: window.__stage0 still answers for view A (cx 7680.0 = tumor_014's centre; B is at 1110.0 px of CMU-1-Small-Region)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2 view B: compareChanged off disposes B (contexts 1, workers 3 = A's pool 3, no canvas left in pane B)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-2 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3 desktop 1440x900: #st=1&s=openslide.CMU-1&… opens CMU-1 (openslide.CMU-1)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3: lands at center_um (11500.00, 8228.00) within 0.5 CSS px × u (Δ 0.000, 0.000 µm) and |log2(u′/2)| = 0.00000 < 0.01"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3: the state codec writes the same view back (st=1&s=openslide.CMU-1&x=11500.00&y=8228.00&u=2.000&l=demo-heatmap~h~100~o~50,my-annotations~v~100)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3: an unknown s= opens the default slide (tumor_014, camelyon16.tumor_014.r36864_66560) and shows \"This link names a slide that is not in the catalogue; opened tumor_014 instead\""
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3 an unknown s=: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3: m=javascript: opens the default slide (tumor_014, camelyon16.tumor_014.r36864_66560) and shows \"Part of this link could not be read; opened what could be\""
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-3 m=javascript:: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5 desktop 1440x900: with indexedDB.open throwing the shell opens (open) and storage is unavailable (SecurityError: The user denied permission to access the database.)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5: the persistent notice is shown (\"This browser does not allow saving here; annotations and vie…\")"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5: and spoken once (polite region 1×, notices 1)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5: a point annotation is created in memory (c6a0731d-3cb0-447b-b676-4732bbfae891)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5: storage calls still resolve (put false, get null)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5b desktop 1440x900: a write refused for quota keeps storage available (true; last write error \"QuotaExceededError: The quota has been exceeded.\") and the slide says \"Not saved (browser storage is full). Export GeoJSON to keep your annotations.\" (state error), not the storage-unavailable notice"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5b: a small write on CMU-1-Small-Region afterwards is saved (state saved, \"Saved in this browser · 1 annotation · 722 B · export GeoJSON to keep a copy\"); last write error cleared (null)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-5b: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-8 desktop 1440x900: the research shell is product viewer-ruo, database stoipath-shell, prefs prefix stoipath.shell.v1."
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-8: a write lands in stoipath-shell and no Learn database exists (databases: [\"stoipath-shell\"])"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-8: prefs are written under stoipath.shell.v1. and no Learn key exists (keys: stoipath.shell.v1.core8.check)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-8: no console or page error (0)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-6 phone 390x844 coarse: with the polygon tool (real) a two-finger pinch zooms (logZoom -3.000 → -0.930) and creates nothing (taps 0, pointerDowns 0, busy false)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-6: a one-finger drag pans (139 device px) and creates nothing (taps 0, busy false)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-6: a tap creates a vertex (the polygon tool is busy: true)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-6: a double tap zooms (logZoom -0.930 → 0.060)"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-6 phone 390x844 coarse: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "core",
+   "ok": true,
+   "msg": "CORE-6 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1 desktop 1440x900: T selects the point tool (point)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1: HUD tool line \"Point: click to place · Enter places at the centre\""
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1: a click creates a point at clientToWorld (12833.00, 12834.00): (12833.00, 12834.00) (± 0.5 CSS px = 2.01 px)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1: the click did not move the camera"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1: Enter places a point at exactly the centre (12500.0000, 13000.0000): (12500.00, 13000.00) (the store keeps 0.01 px)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1: each point is one undo step (2) and the new point is selected"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1: a drag with the point tool pans (288 px) and places nothing (2 features)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1 point tool: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-1 point tool: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2 desktop 1440x900: X selects the rectangle tool (rect)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: a click without travel places corner 1 and waits (click)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: a drag P1 → P2 gives rect {\"type\":\"rect\",\"x\":11858,\"y\":12639,\"w\":1125,\"h\":643} = {\"x\":11858,\"y\":12639,\"w\":1125,\"h\":643} (± 2.01 px)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: click P1, click P2 gives the same geometry as the drag ({\"type\":\"rect\",\"x\":11858,\"y\":12639,\"w\":1125,\"h\":643})"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: keyboard Enter, →, Enter gives a box 10 % of the viewport wide: w 553.6 = 553.60 px, corner 1 at the crosshair"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: a keyboard corner on corner 1's row makes a square (h 553.6, DT2)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: ⇧-drag gives a square with the larger side (320 × 320)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: a zero-size rectangle is discarded with \"Zero-size rectangle discarded\" (Zero-size rectangle discarded)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: E, drag gives the ellipse inscribed in the dragged box {\"type\":\"ellipse\",\"cx\":13293.6,\"cy\":12680,\"rx\":480,\"ry\":240}"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: the ellipse polygon has 64 vertices (64)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2: the Inspector shows the ellipse's area π·rx·ry × mpp² \"0.02 mm²\": \"0.02 mm²\""
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2 rectangle / ellipse with the Inspector: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-2 rectangle / ellipse with the Inspector: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3 desktop 1440x900: P selects the polygon tool (polygon)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: the HUD tool line gives the pointer hint"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: four clicks + Enter make a closed quad at the clicked points ((11900.00, 12600.00) (13022.00, 12680.00) (13140.00, 13361.00) (12020.00, 13440.00) (11900.00, 12600.00))"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: a mouse-drawn polygon closed with Enter records stoipath.input \"mouse\" (mouse)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: ⌫ before closing removes the last vertex (3 → 2) and deletes nothing"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: Esc cancels the polygon (\"Polygon cancelled\")"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: two vertices + Enter says \"A polygon needs 3 points\" and keeps drawing (A polygon needs 3 points)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: a click within 10 CSS px of the first vertex closes it (3 vertices)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: a double click closes the polygon (3 vertices) and does not zoom (logZoom -2 → -2)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: a keyboard-started polygon shows the keyboard hint (\"Polygon (keyboard): Enter adds a point at the centre · arrows pan · Enter twice closes · ⌫ removes the last\")"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: Enter, →, Enter, ↓, Enter, Enter makes a triangle at the crosshair positions (12500.00, 13000.00) (13053.60, 13000.00) (13053.60, 13328.00): (12500.00, 13000.00) (13053.60, 13000.00) (13053.60, 13328.00) (12500.00, 13000.00)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: the keyboard-drawn triangle records stoipath.input \"keyboard\" (keyboard)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3: Enter twice right after an eased pan closes the keyboard polygon (the crosshair within the 4 CSS px slop of the last vertex counts as not panned; 5 features)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3 polygon in progress: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-3 polygon in progress: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 desktop 1440x900: F selects the brush (brush)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: a straight mouse stroke creates one Polygon of kind brush (Polygon, 1 ring)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: its area 82976 px² is within 5 % of 2rL + πr² = 84038 px² (r 48 px, L 800 px; -1.26 %)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: an overlapping stroke with the first selected merges into it (features 1, area 82976 → 147812 px², undo steps +1)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: one Ctrl+Z restores the first stroke exactly"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: the mask is at the start zoom (0.25 mask px per px = k0 / dpr) and ≤ 1024² (228 × 198; trace 7.5 ms)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: a pen stroke at pressure 1 paints at the set radius (r 12 CSS px, area 82976 ≈ 84038)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: pressure 0.2 scales the radius by 0.25 + 0.75p (r 4.8 CSS px, area 30676 ≈ 31878)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4: Enter with the brush names the keyboard alternative (\"Brush has no keyboard path: Polygon (P) adds points at the centre with Enter\")"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 brush (hover circle): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 brush (hover circle): no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 phone 390x844 coarse: with no pen or mouse the brush hint says \"Brush needs a pen or a mouse; use Polygon with taps\""
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 phone 390x844 coarse: a touch stroke with the brush pans (528 px) and creates nothing (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 phone 390x844 coarse: a tap with the brush says why it paints nothing (\"Brush needs a pen or a mouse; use Polygon with taps\")"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 phone 390x844 coarse brush: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-4 phone 390x844 coarse brush: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5 desktop 1440x900: V selects the select tool (select)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a click inside selects it ([\"99d6f674-59a3-46ca-8b83-52b6bcffc2bd\"])"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a body drag moves it by the drag's world delta ((240.00, 160.00) px): vertex 0 (11900.00, 12600.00) → (12140.00, 12760.00), undo steps +1"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a vertex-handle drag moves that vertex only: (13340.00, 12760.00) → (13460.00, 12680.00), undo steps +1"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a click on a vertex handle picks it up (vertex/carry-pointer) and the next click drops it there: (13622.00, 13741.00) = (13622.00, 13741.00), undo steps +1"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: keyboard carry (Enter, →, Enter) moves the feature by 10 % of the viewport (553.60 px): (12140.00, 12760.00) → (12693.60, 12760.00), undo steps +1"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: one Ctrl+Z undoes the carry exactly"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a midpoint-handle drag inserts a vertex (4 → 5 vertices), undo steps +1"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: Enter on a vertex picks it up (vertex) and ⌫ removes it (5 → 4 vertices), undo steps +1"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: ⇧-click adds a feature to the selection (2)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a click on empty canvas clears the selection"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: dragging a rectangle's corner handle resizes it, still a rect ({\"type\":\"rect\",\"x\":10980,\"y\":13600,\"w\":640,\"h\":440}), one undo step"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: a click selects a reference-layer feature ([\"ref-feature-1\"])"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5: dragging it is refused with \"Read-only layer: Copy to my annotations to edit it\" and changes nothing"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5 select with the Inspector: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-5 select with the Inspector: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 desktop 1440x900: Measure is draw-tools' tool and command"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 desktop 1440x900: M selects the measure tool (measure)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6: click-click measurement 294.29 µm == 294.29 µm within 1 %, camera unmoved"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6: \"Measured M1 · …\" is spoken at settle (\"Measured M1 · 294.3 µm\")"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6: keyboard measurement 134.58 µm == 10 % of the viewport 134.58 µm within 1 %"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6: the Stage-0 measure hint"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6: Enter on the rail's Measure button selects the tool and moves focus to the slide (#view)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 desktop 1440x900 measure: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 desktop 1440x900 measure: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 phone 390x844 coarse: Measure is draw-tools' tool and command"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 phone 390x844 coarse: M selects the measure tool (measure)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 phone 390x844 coarse: touch tap-tap measurement 196.65 µm == 196.65 µm within 1 %"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 phone 390x844 coarse: a pinch with the measure tool zooms (logZoom -3.000 → -0.930) and measures nothing (1)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 phone 390x844 coarse measure: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-6 phone 390x844 coarse measure: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: Space-held drag with point pans (103 % of the drag) and draws nothing (0 new, busy false)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: Space-held drag with rect pans (104 % of the drag) and draws nothing (0 new, busy false)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: Space-held drag with ellipse pans (100 % of the drag) and draws nothing (0 new, busy false)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: Space-held drag with polygon pans (104 % of the drag) and draws nothing (0 new, busy false)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: Space-held drag with brush pans (104 % of the drag) and draws nothing (0 new, busy false)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: Space-held drag with measure pans (103 % of the drag) and draws nothing (0 new, busy false)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 Space-held drag, polygon tool with a preview: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 Space-held drag, polygon tool with a preview: no redundant DOM write (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 Space-held drag, polygon tool with a preview: 271 of 282 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 Space-held drag, polygon tool with a preview: CDP LayoutCount 28 ≤ 200 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: the polygon in progress survives the pan (vertices 2, preview true)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 desktop: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 desktop: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 phone 390x844 coarse: a pinch with the polygon tool zooms (logZoom -3.000 → -0.930) and creates nothing (0 features, 0 vertices)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 phone 390x844 coarse: taps add vertices (3) and a tap on the first one closes the polygon (1 feature)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7: the coarse polygon hint names taps"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 phone 390x844 coarse: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW-7 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW commands: draw-tools registers 16 commands (16: tool:select, tool:point, tool:rect, tool:ellipse, tool:polygon, tool:brush, tool:measure, tool:freehand, tool:area, polygon:close, brush:larger, brush:smaller, selection:move:left, selection:move:right, selection:move:up, selection:move:down)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW commands: no registry conflict (none)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW commands: the \"not in this build\" drawing row is gone (T X E P F are bound)"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW commands: ⇧M says \"Area: draw a polygon (P), rectangle (X) or ellipse (E); the Annotations list shows its area\""
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW commands: brush:larger steps the radius 12 → 16 px"
+  },
+  {
+   "tag": "draw-tools",
+   "ok": true,
+   "msg": "DRW commands: no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the CAMELYON16 layer holds 10 features (Tumor 4, Exclusion 6) with 11367 vertices (10, 4, 6, 11,367)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 defaults (owner decision 5): the expert outline is visible (true) and the demo heatmap hidden (false) and not fetched (idle)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the reference layer is origin reference, \"reference · vector\", with no FR-R11 marker (owner decision 1): marker null"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the XML (https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/annotations/tumor_014.xml, 974424 bytes) has sha256 d94db5bbd45b…, the layer's inputHash (sha256:d94db5bbd45b…) and version (d94db5bb)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 vertex 0 of Annotation 3: XML (47138.3984, 74217.5) − (36,864, 66,560) = GeoJSON (10274.4, 7657.5), error 0.0016 px (≤ 0.01); all 10 kept annotations' vertex 0 within 0.0031 px"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 desktop 1440x900 L0: the overlay has --ann-8 stroke pixels 0.25 device px from Annotation 3's vertex 0 projected by the engine camera to (654.50, 431.25) (≤ 1)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 desktop 1440x900 L1: the overlay has --ann-8 stroke pixels 0.45 device px from Annotation 3's vertex 0 projected by the engine camera to (737.13, 379.25) (≤ 1)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the provenance row has the CC0 link to …/CAMELYON16/license.txt (CC0 → https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/license.txt)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the provenance spans read \"producer CAMELYON16 expert annotation (ASAP XML)version d94db5bbinputHash d94d…6da52022-09-28 09:16 UTCCC0reference\" and the row carries no FR-R11 marker (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the legend reads \"Tumor · 4 · 3.37 mm²\", \"Exclusion · 6 · dash\" and the Exclusion note (Exclusion: non-tumour tissue inside a tumour outline (CAMELYON16 convention)Tumor · 4 · 3.37 mm²Exclusion · 6 · dash)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 the legend's Tumor button flies to the largest Tumor outline: the camera centre (3426, 6106) lies in its bbox (1175, 1534, 11912, 10675)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 desktop 1440x900 (Layers tab open): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-1 desktop 1440x900 (Layers tab open): no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 the demo row contains exactly \"Demo overlay — not a model output\" and \"Not validated for diagnostic use on this viewer\" (on the name line: true)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 the demo legend contains both strings and reads \"outline · value ≥ 0.50 · 104 regions · dash\" and \"heat 0.50 – 1.00\" (Demo overlay — not a model outputoutline · value ≥ 0.50 · 104 regions · dashheat 0.50 – 1.00Not validated for diagnostic use on this viewer)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 the default presentation is Outline (Outline:true, Heatmap:false) and the hidden row is .is-off"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 #hudMarker is hidden while the demo layer is hidden (true) and shows \"Demo overlay — not a model output · Not validated for diagnostic use on this viewer\" in pane A's HUD while it is visible"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 showing it speaks \"Demo heatmap shown. Demo overlay, not a model output. Not validated for diagnostic use on this viewer.\" (1 polite writes: Demo heatmap shown. Demo overlay, not a model output. Not validated for diagnostic use on this viewer.)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 ⇧H switches to Heatmap: radio aria-checked true, the Heatmap button aria-pressed true, layers() presentation heatmap"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 \",\" lowers the demo opacity by 10 % (slider 90, state 0.9, notice true); \", . .\" brings it back to 100 % (slider 100, state 1, notice true)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 a selected row (camelyon16-expert, aria-pressed true) is the target of \",\": CAMELYON16 opacity 0.9, demo unchanged 1"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 H hides every layer (true; button aria-pressed true, 3 rows .is-off, HUD marker hidden true, notice true) and H again restores exactly demo-heatmap:true,camelyon16-expert:true,my-annotations:false → demo-heatmap:true,camelyon16-expert:true,my-annotations:false (notice true)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 ⇧H again returns the visible demo layer to Outline (outline)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 keyboard: → in the presentation radiogroup checks and focuses Heatmap (heatmap, true); → on the threshold slider sets 0.51 and the legend follows (value ≥ 0.51)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 desktop 1440x900 (heatmap shown, Layers tab open): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-2 desktop 1440x900 (heatmap shown, Layers tab open): no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-3 hiding CAMELYON16 removes its source from the next exact draw: stats.features 270 → 260 (−10), visible sources demo-heatmap, camelyon16-expert, my-annotations, my-measurements → demo-heatmap, my-annotations, my-measurements"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-3 hiding the demo outline removes its 260 isoline rings (104 regions and their holes): stats.features 260 → 0"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-3 the 2 .is-off rows keep text contrast ≥ 4.5:1 (lowest 5.24: camelyon16-expert name 6.09; camelyon16-expert kind 6.09; camelyon16-expert opacity 6.09; camelyon16-expert provenance 6.09; camelyon16-expert hidden chip 6.09; demo-heatmap name 5.24; demo-heatmap kind 5.24; demo-heatmap opacity 5.24; demo-heatmap provenance 5.24; demo-heatmap hidden chip 5.24), carry the \"hidden\" chip and are never dimmed by opacity (1, 1)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-3 desktop 1440x900 (two rows hidden): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-3 desktop 1440x900 (two rows hidden): no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-4 the tumor_014 heatmap grid is 120 × 120 with cellPx 128, 14400 values, 14248 valid cells (0 < n < 14,400)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-4 every catalogued overlay (6) records inputHash sha256:<64 hex> and the fingerprint and id of its slide (all)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 fit 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 fit 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: no redundant DOM write (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 fit 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: 249 of 260 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 fit 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: CDP LayoutCount 61 ≤ 204 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 OVL-4 desktop 1440x900 fit 1 s drag: 60 overlay draws (60 exact, 0 blits), gesture p95 1.40 ms; the screen ends on an exact render of the last moved frame (297 → 297)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 OVL-4 desktop 1440x900 fit wheel burst: 54 overlay draws (54 exact, 0 blits), gesture p95 1.80 ms; the screen ends on an exact render of the last moved frame (381 → 381)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 L1 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 L1 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: no redundant DOM write (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 L1 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: 252 of 261 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900 L1 1 s drag with CAMELYON16 and the demo heatmap (Heatmap) visible and the Layers tab open: CDP LayoutCount 16 ≤ 199 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 OVL-4 desktop 1440x900 L1 1 s drag: 60 overlay draws (60 exact, 0 blits), gesture p95 0.40 ms; the screen ends on an exact render of the last moved frame (610 → 610)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 OVL-4 desktop 1440x900 L1 wheel burst: 46 overlay draws (46 exact, 0 blits), gesture p95 0.40 ms; the screen ends on an exact render of the last moved frame (687 → 687)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 at rest with both layers visible the surface draws nothing: stats.draws 227 → 227 over 90 engine frames"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY-5 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY switch: on CMU-1-Small-Region the tab shows its rows (my-annotations,demo-heatmap; count 2); its demo layer is hidden, so the HUD marker is too (true)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY switch: the registry holds heat@layers, layer:camelyon16-expert@layers, layer:demo-heatmap@layers, layer:my-annotations@layers, opacity.down@layers, opacity.up@layers, overlays@layers; \"layer:camelyon16-expert\" on CMU-1-Small-Region is refused with its reason (true)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY switch: back on tumor_014 the demo layer is still visible at 60 % (true, 0.6, ready, attached to A) and the HUD marker shows (true)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY switch desktop-wide 1920x1080 (Layers tab, demo outline): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY switch desktop-wide 1920x1080 (Layers tab, demo outline): no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY reload: the demo layer's visibility and opacity come back from the preferences (true, 0.6)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY marker B desktop-wide 1920x1080: the demo heatmap shown only in pane B puts the FR-R11 marker in pane B's HUD (#hudMarkerB shown inside pane B: true; pane A's hidden; 1 visible .marker-notvalidated; \"Demo overlay — not a model output · Not validated for diagnostic use on this viewer\")"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY marker B: hiding the demo layer of pane B's slide hides pane B's marker line (hidden)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY marker B desktop-wide 1920x1080 (compare, heatmap in B): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY marker B desktop-wide 1920x1080 (compare, heatmap in B): no console or page error (0)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY phone phone 390x844 coarse: the Layers sheet fits the width (overflowing none; page scroll 0) and every control is ≥ 24 px (all)"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY phone phone 390x844 coarse (Layers sheet, heatmap): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "layers",
+   "ok": true,
+   "msg": "LAY phone phone 390x844 coarse (Layers sheet, heatmap): no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 the catalogue loads from the built site (http://127.0.0.1:42843/data/catalogue.json; http://127.0.0.1:42843/data/catalogue.json: 5 slides)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 5 slides in the documented order (tumor_014 first, then PUBLISH order): camelyon16.tumor_014.r36864_66560, openslide.CMU-1-Small-Region, openslide.CMU-1, openslide.Hamamatsu-2, openslide.JP2K-33003-1"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 every thumbnail reaches naturalWidth > 0 (480, 278, 360, 240, 241)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 thumbnails are <img alt=\"\" loading=\"lazy\" decoding=\"async\" width height> (the pyramid's top level: tiles/5/0_0.jpg, tiles/3/0_0.jpg, tiles/7/0_0.jpg, tiles/7/0_0.jpg, tiles/6/0_0.jpg)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 the Cohort listbox has the 5 slides in order (camelyon16.tumor_014.r36864_66560, openslide.CMU-1-Small-Region, openslide.CMU-1, openslide.Hamamatsu-2, openslide.JP2K-33003-1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 tumor_014: the option's accessible name contains the name, dataset, stain and licence (\"tumor_014 · CAMELYON16 · H&E · 0.24 µm/px · 15,360 × 15,360 px · 6 levels · licence CC0 1.0 Universal · not viewed · open in view A\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 CMU-1-Small-Region: the option's accessible name contains the name, dataset, stain and licence (\"CMU-1-Small-Region · OpenSlide test data · H&E · 0.50 µm/px · 2,220 × 2,967 px · 4 levels · licence CC0 1.0 Universal · not viewed\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 CMU-1: the option's accessible name contains the name, dataset, stain and licence (\"CMU-1 · OpenSlide test data · H&E · 0.50 µm/px · 46,000 × 32,914 px · 8 levels · licence CC0 1.0 Universal · not viewed\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 Hamamatsu-2: the option's accessible name contains the name, dataset, stain and licence (\"Hamamatsu-2 · OpenSlide test data · H&E · 0.23 µm/px · 30,720 × 39,168 px · 8 levels · licence CC0 1.0 Universal · not viewed\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 JP2K-33003-1: the option's accessible name contains the name, dataset, stain and licence (\"JP2K-33003-1 · OpenSlide test data · H&E · 0.25 µm/px · 15,374 × 17,497 px · 7 levels · licence distributable (licence field of the OpenSlide test data entry, as recorded in samples-manifest.json) · not viewed\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 header \"Stage-0 public slides · 5\", Cohort tab count 5"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 filter chips All · 5|true, CAMELYON16 · 1|false, OpenSlide · 4|false, CC0 · 4|false, distributable · 1|false"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 search box and listbox name (\"Filter slides · name, dataset, stain…\", \"Slides in the collection\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 the current slide is aria-selected (camelyon16.tumor_014.r36864_66560); state tags not viewed, not viewed, not viewed, not viewed, not viewed; licence chips carry the licence text as title"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 the Cohort note"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 filters: OpenSlide → 4 rows, + \"hamamatsu\" → openslide.Hamamatsu-2 (spoken \"1 of 5 slides shown\": true), no match → the empty state, Show all → 5"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 Cohort open (desktop 1440x900): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-1 Cohort open (desktop 1440x900): no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 a click on CMU-1 switches in place in 618 ms (navigation entries 1 → 1, window.__marker kept, 1 canvas#view)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 identity \"CMU-1\", document.title \"CMU-1 · Stoipath Viewer (RUO)\", top bar title \"0.50 µm/px · whole slide\" (was \"Sentinel lymph node with breast-carcinoma macrometastasis · 0.24 µm/px · 15,360 px region\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 the navigator image (CMU-1/tiles/7/0_0.jpg) and the Slide facts follow the switch"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 the polite sentence \"CMU-1 opened. OpenSlide test data, H and E.\" (writes: [\"CMU-1 opened. OpenSlide test data, H and E.\",\"Sharp. About 0.5 times, 20.03 micrometres per pixel. CMU-1, H and E. Tool: Select.\"])"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 working set openslide.CMU-1, camelyon16.tumor_014.r36864_66560 (CMU-1 first); the Cohort marks CMU-1 selected"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 the tray: openslide.CMU-1|true|H&E · 46,000 × 32,914 px · 8 levels · viewed 0 % / camelyon16.tumor_014.r36864_66560|false|H&E · 15,360 × 15,360 px · 6 levels · viewed 0 %; tab count 2"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 the tray note and row actions (Compare CMU-1 with view A; Remove CMU-1 from the working set; Compare tumor_014 with view A; Remove tumor_014 from the working set)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 Enter on a tray row reopens it (working set camelyon16.tumor_014.r36864_66560, openslide.CMU-1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 \"Remove from set\" removes CMU-1 (camelyon16.tumor_014.r36864_66560; notice true)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 keyboard: Delete on a row removes it, focus to the next row (camelyon16.tumor_014.r36864_66560); Enter on a Remove action keeps the focus in the toolbar (\"Remove tumor_014 from the working set\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 after the switch (desktop 1440x900): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-2 after the switch (desktop 1440x900): no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 ] from tumor_014 opens CMU-1-Small-Region (the next in order)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 [ at the first slide shows \"First slide in the collection\" and opens nothing (slideOpening 2 → 2, current camelyon16.tumor_014.r36864_66560)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 ] at the last slide shows \"Last slide in the collection\" and opens nothing"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 ] ] in a burst lands on CMU-1 (two steps from tumor_014; pending null)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 commands: nextSlide ], prevSlide [ (scope slide), open:<id> × 5, no conflict"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 after stepping (desktop 1440x900): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-3 after stepping (desktop 1440x900): no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 opened at fit: nothing is viewed (coverage 0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 a settle at 3.89 µm/px (< 5×) marks nothing"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 four L1 views: coverage 7.68 % (313 of 4076 tissue cells) = the test's own 7.68 % (313 of 4076) ± 1 %; level partial"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 the tray shows is-partial, \"Partly viewed\", --coverage 7.7% and \"H&E · 15,360 × 15,360 px · 6 levels · viewed 7 %\""
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 the Cohort state-tag reads \"partly viewed\""
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 after a reload: 313 cells, is-partial, \"Partly viewed\", --coverage 7.7%"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 CMU-1-Small-Region opened at fit (1.81 µm/px): nothing marked until the camera moves (0 cells)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 after a pan at 1.81 µm/px the view counts (1216 cells, 100.0 %, viewed)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 tray with coverage (desktop 1440x900): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-4 tray with coverage (desktop 1440x900): no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 cohort: Z1 the drawer stays outside the central zone; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 cohort: 24 Library targets ≥ 24 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 cohort open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 slides: Z1 the drawer stays outside the central zone; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 slides: 8 Library targets ≥ 24 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 slides open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 listbox keyboard: ↓ ↓ → openslide.CMU-1, End → openslide.JP2K-33003-1, Home → camelyon16.tumor_014.r36864_66560; 1 Tab stop"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 openurl focuses the field; javascript: is refused with aria-invalid and the error text (\"An https:// address, or a path relative to this page ending in manifest.json (a Stage-0 pyramid manifest). | Not a manifest URL: use https://… or a relative path ending in manifest.json\")"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900 manifest URL error: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 a relative manifest URL opens the slide (matched to its catalogue entry)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 Esc on the slide closes the Library drawer"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080 cohort: Z1 the drawer stays outside the central zone; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080 cohort: 24 Library targets ≥ 24 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080 cohort open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080 slides: Z1 the drawer stays outside the central zone; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080 slides: 8 Library targets ≥ 24 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080 slides open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse cohort: Z1 the Library is the in-flow sheet, outside the canvas; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse cohort: 21 Library targets ≥ 44 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse cohort open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse slides: Z1 the Library is the in-flow sheet, outside the canvas; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse slides: 9 Library targets ≥ 44 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse slides open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse cohort: Z1 the Library is the in-flow sheet, outside the canvas; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse cohort: 21 Library targets ≥ 44 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse cohort open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse slides: Z1 the Library is the in-flow sheet, outside the canvas; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse slides: 9 Library targets ≥ 44 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse slides open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse cohort: Z1 the drawer stays outside the central zone; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse cohort: 19 Library targets ≥ 44 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse cohort open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse slides: Z1 the drawer stays outside the central zone; 0 intrusions"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse slides: 7 Library targets ≥ 44 px (A1)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse slides open: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB-5 laptop-touch 1366x1024 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB drag at L1 with the Slides tab open (205 frames): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB drag at L1 with the Slides tab open (205 frames): no redundant DOM write (0)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB drag at L1 with the Slides tab open (205 frames): 252 of 262 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB drag at L1 with the Slides tab open (205 frames): CDP LayoutCount 17 ≤ 205 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB the settle after the drag marked 91 cells (at rest, outside the gesture)"
+  },
+  {
+   "tag": "library",
+   "ok": true,
+   "msg": "LIB frame cost: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1 desktop 1440x900 fit: a test point's overlay pixel is --ann-3 at the engine-projected device position, within 1 device px (3 points; p-centre (692.02, 410.03): 66 px, centroid error 0.17; p-off (495.56, 480.51): 69 px, centroid error 0.06; p-corner (976.04, 112.12): 66 px, centroid error 0.16)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1 desktop 1440x900 L0: a test point's overlay pixel is --ann-3 at the engine-projected device position, within 1 device px (1 points; p-centre (480.50, 543.25): 65 px, centroid error 0.07)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 (DSF 1 extension) desktop 1440x900 fit: colour stroke 1.50 device px (1.5 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 (DSF 1 extension) desktop 1440x900 logZoom −4: colour stroke 1.50 device px (1.5 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 (DSF 1 extension) desktop 1440x900 logZoom −2: colour stroke 1.50 device px (1.5 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 (DSF 1 extension) desktop 1440x900 L1 (−1): colour stroke 1.50 device px (1.5 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 (DSF 1 extension) desktop 1440x900 L0: colour stroke 1.50 device px (1.5 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 (DSF 1 extension) desktop 1440x900 max: colour stroke 1.50 device px (1.5 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1/2 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1/2 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1 desktop-dsf2 1280x800 DSF 2 fit: a test point's overlay pixel is --ann-3 at the engine-projected device position, within 1 device px (3 points; p-centre (1224.03, 720.06): 285 px, centroid error 0.06; p-off (879.02, 843.82): 285 px, centroid error 0.03; p-corner (1722.80, 196.90): 285 px, centroid error 0.07)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1 desktop-dsf2 1280x800 DSF 2 L0: a test point's overlay pixel is --ann-3 at the engine-projected device position, within 1 device px (1 points; p-centre (1012.50, 853.25): 282 px, centroid error 0.05)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 desktop-dsf2 1280x800 DSF 2 fit: the line's colour stroke is 3.00 device px wide (1.5 CSS px × DPR 2 = 3 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 desktop-dsf2 1280x800 DSF 2 logZoom −4: the line's colour stroke is 3.00 device px wide (1.5 CSS px × DPR 2 = 3 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 desktop-dsf2 1280x800 DSF 2 logZoom −2: the line's colour stroke is 3.00 device px wide (1.5 CSS px × DPR 2 = 3 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 desktop-dsf2 1280x800 DSF 2 L1 (−1): the line's colour stroke is 3.00 device px wide (1.5 CSS px × DPR 2 = 3 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 desktop-dsf2 1280x800 DSF 2 L0: the line's colour stroke is 3.00 device px wide (1.5 CSS px × DPR 2 = 3 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-2 desktop-dsf2 1280x800 DSF 2 max: the line's colour stroke is 3.00 device px wide (1.5 CSS px × DPR 2 = 3 ± 1)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1/2 desktop-dsf2 1280x800 DSF 2: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-1/2 desktop-dsf2 1280x800 DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-3 desktop 1440x900: with 4 layers visible (heatmap outline, CAMELYON16, 200 polygons with one selected, a labelled measurement) and the crosshair on, stats.draws stays 5 → 5 over 2 s while the surface saw 120 engine frames"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-3 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-3 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 setup: CAMELYON16 layer (11367 vertices) + 200 synthetic 64-gons (35534 vertices in all)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 fit 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 fit 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 fit 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 fit 1 s drag: CDP LayoutCount 62 ≤ 209 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 fit 1 s drag: 61 overlay draws (1 exact, 60 blits), gesture p95 0.20 ms (stats.p95Ms 3.90), the blit gesture's settle frame 303 redrawn exactly 0 frame(s) later; the screen ends on an exact render of the last moved frame (300 → 303); exact-render average 10.10 ms; 4202 vertices drawn, 0 culled"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 fit wheel burst: 55 overlay draws (11 exact, 44 blits), gesture p95 2.40 ms (stats.p95Ms 2.40), the blit gesture's settle frame 373 redrawn exactly 0 frame(s) later; the screen ends on an exact render of the last moved frame (383 → 383); exact-render average 2.30 ms; 4202 vertices drawn, 0 culled"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 L1 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 L1 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 L1 1 s drag: 252 of 261 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 L1 1 s drag: CDP LayoutCount 16 ≤ 206 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 L1 1 s drag: 60 overlay draws (60 exact, 0 blits), gesture p95 0.40 ms (stats.p95Ms 2.30); the screen ends on an exact render of the last moved frame (614 → 614); exact-render average 0.23 ms; 691 vertices drawn, 195 culled"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900 L1 wheel burst: 54 overlay draws (54 exact, 0 blits), gesture p95 1.50 ms (stats.p95Ms 2.10); the screen ends on an exact render of the last moved frame (696 → 696); exact-render average 0.30 ms; 691 vertices drawn, 195 culled"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-4 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: a point inside the unfilled polygon is a body hit (body poly at 0.0 px)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: a point inside its hole is a miss, even-odd (miss)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: 6 CSS px off an edge, outside and inside, is an edge hit (edge poly ring 0 v3 at 6.0 px; edge poly ring 0 v3 at 6.0 px)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: 12 CSS px off is a miss (miss)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: with the polygon selected, its vertex handle wins over the body within the handle radius (vertex poly ring 0 v0 at 6.4 px); 30 px in, features-only and both are body hits (body poly at 0.0 px; body poly at 0.0 px)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: a point inside the unfilled polygon is a body hit (body poly at 0.0 px)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: a point inside its hole is a miss, even-odd (miss)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: 6 CSS px off an edge, outside and inside, is an edge hit (edge poly ring 0 v3 at 6.0 px; edge poly ring 0 v3 at 6.0 px)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: coarse tolerance 16 CSS px: 12 px off is an edge hit, 20 px off a miss (edge poly ring 0 v3 at 12.0 px; miss)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: with the polygon selected, its vertex handle wins over the body within the handle radius (vertex poly ring 0 v0 at 6.4 px); 30 px in, features-only and both are body hits (body poly at 0.0 px; body poly at 0.0 px)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-5 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop 1440x900: renderTo into a same-size canvas reproduces the on-screen overlay (heatmap, CAMELYON16, 200 filled polygons with a selection and its handles, a labelled measurement): mean |Δ| 0.0000 / 255 (< 1), max 0, 0 differing of 1134880 px, 471122 drawn"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop 1440x900: with a preview and the crosshair on screen (1259 px differ from renderTo), renderTo still equals the screen without them: mean |Δ| 0.0000 / 255 against the 471122-px copy kept before"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop-dsf2 1280x800 DSF 2: renderTo into a same-size canvas reproduces the on-screen overlay (heatmap, CAMELYON16, 200 filled polygons with a selection and its handles, a labelled measurement): mean |Δ| 0.0000 / 255 (< 1), max 0, 0 differing of 3525120 px, 1454849 drawn"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop-dsf2 1280x800 DSF 2: with a preview and the crosshair on screen (4030 px differ from renderTo), renderTo still equals the screen without them: mean |Δ| 0.0000 / 255 against the 1454849-px copy kept before"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop-dsf2 1280x800 DSF 2: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "overlay",
+   "ok": true,
+   "msg": "OVL-6 desktop-dsf2 1280x800 DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: ⇧S downloaded a PNG 1384 × 864 = viewW 1384 × (viewH 820 + footer 44)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: decoded in the page (createImageBitmap) at 1384 × 864"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: tEXt stoipath.state deep-equals __shell.state() (622 chars)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: tEXt Disclaimer is the RUO string verbatim; Software \"Stoipath Viewer (RUO) · Stage-0 research shell · build 2026-11-04T05:17:49Z\"; Source \"tumor_014 · CAMELYON16 · CC0 1.0 Universal\"; chunks IHDR,tEXt,tEXt,tEXt,tEXt,IDAT"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: BurnInRecord.strings holds the RUO string verbatim, the identity line \"tumor_014 · H&E · CAMELYON16 · CC0\" and the HUD's scale-bar label \"500 µm\" ([\"tumor_014 · H&E · CAMELYON16 · CC0\",\"500 µm\",\"For Research Use Only. Not for use in diagnostic procedures.\",\"Stoipath Viewer (RUO) · ~2.2× · 4.55 µm/px (derived) · x 1.87 mm · y 1.87 mm · build 2026-11-04T05:17:49Z · 2026-11-04T05:29:00Z\"])"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: burned bar 110 device px = __shell.hud().bar.px × dpr 109.80 (± 1)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: the bar measured in the PNG is 110 light device px (want 109.80 ± 1), dark edge before it (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: 6 slide pixels equal the engine canvas read in the same frame (± 2/255), 4 outline pixels equal the overlay over it, and 2 pixels under the HUD readout / navigator show the slide, not the DOM (all equal)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: the footer band is --grey-6 (20,20,20)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: file name \"stoipath_tumor_014_1.87mm_1.87mm_2.2x_20261104-052900.png\" = stoipath_{name}_{x}mm_{y}mm_{mag}x_{stamp}.png"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: notice \"Snapshot saved · PNG · tumor_014 · scale bar and the footer \"For Research Use Only. Not for use in diagnostic procedures.\" burned in (FR-V10)\"; shareCreated [{\"kind\":\"snapshot\",\"bytes\":1849246}] (file 1849246 bytes)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: the Inspector's View section has Copy view link and Snapshot ⇧S (copylink:Copy view link:false | snapshot:Snapshot⇧S:false)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900: the Inspector's Snapshot button downloads the same kind of PNG (stoipath_tumor_014_1.87mm_1.87mm_2.2x_20261104-052901.png)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900 (Inspector with the View section, after two snapshots): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop 1440x900 (Inspector with the View section, after two snapshots): no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: ⇧S downloaded a PNG 2448 × 1528 = viewW 2448 × (viewH 1440 + footer 88)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: decoded in the page (createImageBitmap) at 2448 × 1528"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: tEXt stoipath.state deep-equals __shell.state() (622 chars)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: tEXt Disclaimer is the RUO string verbatim; Software \"Stoipath Viewer (RUO) · Stage-0 research shell · build 2026-11-04T05:17:49Z\"; Source \"tumor_014 · CAMELYON16 · CC0 1.0 Universal\"; chunks IHDR,tEXt,tEXt,tEXt,tEXt,IDAT"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: BurnInRecord.strings holds the RUO string verbatim, the identity line \"tumor_014 · H&E · CAMELYON16 · CC0\" and the HUD's scale-bar label \"1 mm\" ([\"tumor_014 · H&E · CAMELYON16 · CC0\",\"1 mm\",\"For Research Use Only. Not for use in diagnostic procedures.\",\"Stoipath Viewer (RUO) · ~1.93× · 5.19 µm/px (derived) · x 1.87 mm · y 1.87 mm · build 2026-11-04T05:17:49Z · 2026-11-04T05:29:06Z\"])"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: burned bar 386 device px = __shell.hud().bar.px × dpr 385.65 (± 1)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: the bar measured in the PNG is 386 light device px (want 385.65 ± 1), dark edge before it (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: 6 slide pixels equal the engine canvas read in the same frame (± 2/255), 4 outline pixels equal the overlay over it, and 2 pixels under the HUD readout / navigator show the slide, not the DOM (all equal)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: the footer band is --grey-6 (20,20,20)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: file name \"stoipath_tumor_014_1.87mm_1.87mm_1.93x_20261104-052906.png\" = stoipath_{name}_{x}mm_{y}mm_{mag}x_{stamp}.png"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: notice \"Snapshot saved · PNG · tumor_014 · scale bar and the footer \"For Research Use Only. Not for use in diagnostic procedures.\" burned in (FR-V10)\"; shareCreated [{\"kind\":\"snapshot\",\"bytes\":5842626}] (file 5842626 bytes)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: the Inspector's View section has Copy view link and Snapshot ⇧S (copylink:Copy view link:false | snapshot:Snapshot⇧S:false)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2: the Inspector's Snapshot button downloads the same kind of PNG (stoipath_tumor_014_1.87mm_1.87mm_1.93x_20261104-052908.png)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2 (Inspector with the View section, after two snapshots): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 desktop-dsf2 1280x800 DSF 2 (Inspector with the View section, after two snapshots): no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 rest: ⇧S during an eased zoom waited for the rest (captured k 0.106771 = settled 0.106771, started at 0.053385)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 crosshair: the Point tool's crosshair is on screen at the centre (α 253) and not in the PNG (png 178,115,141 = engine 178,115,141)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 rest desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 rest desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 too large: at 4700 × 520 DSF 2 (canvas 8488 × 880 device px) ⇧S is refused with \"Snapshot too large for this browser (8,488 × 968 px); use a smaller window\" and nothing is downloaded"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 too large: no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 phone: the palette's Snapshot gives 390 × 813 (viewH 744 + a 69 px footer: line 2 wraps at 390 px), the RUO string and the marker line are in the record"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 phone: the View section's buttons are 44, 44 px tall (≥ 44 under a coarse pointer) and their key hint is hidden"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 phone 390x844 coarse (Inspector sheet): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-1 phone 390x844 coarse (Inspector sheet): no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-2: with the reference layer only (no FR-R11 marker, owner decision 1) the record has no marker line"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-2: with the demo heatmap visible the record contains \"Demo overlay — not a model output · Not validated for diagnostic use on this viewer\" under the identity line ([\"tumor_014 · H&E · CAMELYON16 · CC0\",\"Demo overlay — not a model output · Not validated for diagnostic use on this viewer\",\"500 µm\"]; stoipath_tumor_014_1.87mm_1.87mm_2.2x_20261104-052927.png)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-2: in Heatmap presentation (⇧H) the marker line is burned in too"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-2: with every overlay hidden (H) no marker line is burned in"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-2 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-2 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3: the compare PNG is two panes plus one footer: 1544 × 1044 = (B at 773 + 771) × (1000 + 44)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3: two scale bars in the record (A 500 µm 134 px, B 200 µm 135 px) matching the panes' HUD labels (500 µm, 200 µm)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3: one footer (the RUO string once) and an identity line per pane (A · tumor_014 · H&E · CAMELYON16 · CC0 | B · CMU-1-Small-Region · H&E · OpenSlide test data · CC0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3: tEXt stoipath.state holds both views and the sync (A:camelyon16.tumor_014.r36864_66560, B:openslide.CMU-1-Small-Region, sync lock)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3: file \"stoipath_tumor_014_with_CMU-1-Small-Region_1.87mm_1.87mm_2.7x_20261104-052933.png\" and the notice name both slides"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3: pane B's pixels are B's engine canvas (png 54,32,71 = 54,32,71)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3 desktop-wide 1920x1080 (compare): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-3 desktop-wide 1920x1080 (compare): no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4: Copy view link put the share URL on the clipboard (254 chars, no harness parameters) and said \"View link copied · Compact state document in the URL · Tier 0 (no label image)\""
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4: shareCreated {kind: 'link'} with the URL's bytes ([{\"kind\":\"link\",\"bytes\":254}])"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4: the new page lands on the same slide and view A (camelyon16.tumor_014.r36864_66560 at 2400.50,1900.25 µm, 0.9000 µm/px; was 2400.50,1900.25, 0.9000)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4: layers restored: demo heatmap visible heatmap at 55 %, threshold 0.6; reference hidden"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4: compare restored: B on openslide.CMU-1-Small-Region at 600.00,700.00 µm (was 600.00,700.00), sync none"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4 desktop-wide 1920x1080 (Inspector, after Copy view link): axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4 desktop-wide 1920x1080 (Inspector, after Copy view link): no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4: the linked page opens with no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4 refused: a failed copy says \"Could not copy the link; it is in the address bar\", the address bar holds the view's fragment (true) and the focus stays on the button (copylink)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-4 refused: no console or page error (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5: after the startup open the address bar carries the view's fragment (#st=1&s=camelyon16.tumor_014.r36864_66560&x=1866.96&y=1866.96&u=4.554&l=demo-hea…)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5 1 s drag with the upkeep listening: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5 1 s drag with the upkeep listening: no redundant DOM write (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5 1 s drag with the upkeep listening: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5 1 s drag with the upkeep listening: CDP LayoutCount 63 ≤ 210 frames + 2 and RecalcStyleCount 65 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5: after the pan settled, location.hash updated in 1000 ms (≤ 1,500) to the new centre (x=2686.60&y=2276.78)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5: history.length unchanged (2 → 2); pushState never used (0)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5: nothing written while moving (1 replaceState call(s), 0 during motion)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5: ] (next slide) put s=openslide.CMU-1-Small-Region in the fragment; history.length still 2"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5: a reload restores the slide and the view from the fragment (openslide.CMU-1-Small-Region at 553.89,740.27 µm; was 553.89,740.27)"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5 desktop 1440x900: axe-core WCAG 2.2 AA: 0 violations"
+  },
+  {
+   "tag": "share",
+   "ok": true,
+   "msg": "SHR-5 desktop 1440x900: no console or page error (0)"
+  }
+ ]
+}

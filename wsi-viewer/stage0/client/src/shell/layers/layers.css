@@ -1,0 +1,86 @@
+/* layers module (TOOLS.md §4.3): page-scoped classes the design system lacks, copied from the research final
+   design/screens/final/research-annotation.html (source lines cited), scoped under the module's roots (#tp-layers,
+   #hudMarker), tokens only. base.css provides .layer-row*, .legend*, .swatch*, .marker-notvalidated, .segmented*,
+   .chip--licence, .btn*, .key, .empty, .stack, .visually-hidden; shell.css .note. */
+
+/* ---- Layers tab (#tp-layers) -------------------------------------------------------------------------------------- */
+/* research-annotation.html 330 (.toolsrow; annotations scopes its own copy under #tp-ann) */
+#tp-layers .toolsrow { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-5); flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--color-divider); }
+#tp-layers .layers-heat[hidden] { display: none; }
+/* The two toggles' pressed state (base.css has none for .btn): the selected look of base.css .segmented__item, whose
+   indicator bar is a shape cue, not colour alone (SC 1.4.1). Screenshot review: "Heatmap" looked off while on. */
+#tp-layers .toolsrow .btn[aria-pressed="true"] { background: var(--color-control-selected); color: var(--color-text); box-shadow: inset 0 -2px 0 var(--color-control-selected-indicator); }
+
+/* research-annotation.html 311–317: the name line wraps; threshold row; provenance and legend rows below it */
+#tp-layers .layer-row__name { flex-wrap: wrap; row-gap: var(--space-1); }
+#tp-layers .layer-row .thr { grid-row: 3; grid-column: 2 / span 2; display: grid; grid-template-columns: auto auto 1fr 4ch; gap: var(--space-3); align-items: center; font-size: var(--text-xs); color: var(--color-text-secondary); }
+#tp-layers .layer-row .thr input[type="range"] { height: 24px; min-width: 0; }
+#tp-layers .layer-row .thr .num { text-align: right; color: var(--color-text-secondary); }
+#tp-layers .layer-row.has-thr .layer-row__provenance { grid-row: 4; }
+#tp-layers .layer-row.has-thr .layer-row__legend { grid-row: 5; }
+#tp-layers .layer-row:not(.has-thr) .layer-row__legend { grid-row: 4; }
+#tp-layers .layer-row__foot { grid-row: 5; grid-column: 2 / span 2; }
+#tp-layers .layer-row.has-thr .layer-row__foot { grid-row: 6; }
+#tp-layers .layer-row__name .kind { white-space: nowrap; }
+#tp-layers .layer-row__legend { grid-column: 2 / span 2; min-width: 0; }
+#tp-layers .layer-row__legend[hidden] { display: none; }
+#tp-layers .layer-row__legend .legend { align-items: center; }
+/* "100 %" on one line: base.css gives the readout 4ch, which wraps "100 %" (screenshot review) */
+#tp-layers .layer-row__opacity { grid-template-columns: minmax(0, 1fr) 5.5ch; }
+#tp-layers .layer-row__opacity .num { white-space: nowrap; }
+#tp-layers .layer-row__opacity input[type="range"] { min-width: 0; width: 100%; }
+/* the provenance line wraps between spans and never inside a value (hash, time); free text (the producer) wraps */
+#tp-layers .layer-row__provenance > * { white-space: nowrap; }
+#tp-layers .layer-row__provenance > .is-text { white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+#tp-layers .layer-row__provenance .chip { min-height: 18px; font-size: var(--text-2xs); padding: 0 6px; }   /* 304 */
+#tp-layers .layer-row__provenance a.chip { min-height: 24px; color: var(--color-text); text-decoration: underline; text-underline-offset: 2px; }   /* a 24 px target (SC 2.5.8) */
+
+/* The row name is a toggle button (the selected row is the target of , and .): it reads as the design's name text. */
+#tp-layers .layer-row__pick { min-width: 0; max-width: 100%; overflow-wrap: anywhere; min-height: var(--target-control); padding: 0 var(--space-1); margin-left: calc(-1 * var(--space-1)); background: none; border: 0; border-radius: var(--radius-1); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+#tp-layers .layer-row__pick:hover { background: var(--color-control-bg-hover); }
+#tp-layers .layer-row__pick:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
+#tp-layers .layer-row.is-selected .layer-row__pick { box-shadow: inset 0 -2px 0 var(--color-control-selected-indicator); }
+#tp-layers .layer-row.is-selected .layer-row__pick:focus-visible { box-shadow: inset 0 -2px 0 var(--color-control-selected-indicator), var(--focus-shadow); }
+
+/* research-annotation.html 307–309: state tags (the library scopes its own copy under #tp-cohort) */
+#tp-layers .state-tag { font: 600 var(--text-2xs)/18px var(--font-mono); padding: 0 6px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-1); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+
+/* Notes inside a row (the demo note, the Exclusion convention, loading and error lines): shell.css .note sizes */
+#tp-layers .layer-row__note { margin: 0; font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5; }
+#tp-layers .layer-row__note.is-error { color: var(--color-text); }
+#tp-layers .layer-row__note .btn { margin-left: var(--space-2); }
+#tp-layers .layers-note[hidden], #tp-layers .layers-empty[hidden] { display: none; }
+
+/* The heatmap ramp swatch (--ann-3 → --ann-2, §6.7): the design's heat swatch as a gradient of the two ramp tokens. */
+#tp-layers .swatch--ramp { width: 24px; background: linear-gradient(90deg, var(--ann-3), var(--ann-2)); }
+#tp-layers .legend__item .count { font-family: var(--font-mono); color: var(--color-text-secondary); }
+#tp-layers .legend__item .legend__text { min-width: 0; }
+#tp-layers .legend__item .pattern { white-space: nowrap; }
+#tp-layers button.legend__item { border: 0; font: inherit; font-size: var(--text-xs); cursor: pointer; }
+#tp-layers button.legend__item:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
+
+/* research-annotation.html 562: keyboard-only hints leave under a coarse pointer */
+@media (pointer: coarse) {
+  #tp-layers .hint--kbd, #tp-layers .btn .key { display: none; }
+  #tp-layers .layer-row .thr input[type="range"] { height: var(--target); }
+  /* 44 px targets under a coarse pointer (SC 2.5.8, layout-check A1 at 1024 and 1366 coarse): base.css draws 40 px
+     segmented items inside a 44 px control, and the licence chip is a link */
+  #tp-layers .segmented__item { min-height: var(--target); }
+  #tp-layers .layer-row__provenance a.chip { min-height: var(--target); min-width: var(--target); justify-content: center; }
+  /* the reference tag beside the 44 px licence link keeps its own height (Wave 4 screenshot review) */
+  #tp-layers .layer-row__provenance { align-items: center; }
+}
+
+/* ---- #hudMarker (pane A's HUD, under the identity line) and #hudMarkerB (pane B's, under its label) ------------- */
+/* The FR-R11 marker over the HUD backdrop: the HUD's own text tokens (base.css .hud__item, .hud__secondary). */
+/* Two lines (note, then the marker), the box as wide as the wider line; the HUD column caps it at 25 % of the canvas. */
+#hudMarker, #hudMarkerB { flex-direction: column; align-items: flex-start; gap: var(--space-1); font-family: var(--font-ui); font-size: var(--text-xs); color: var(--grey-91); white-space: normal; max-width: 100%; }
+#hudMarker[hidden], #hudMarker .hud-marker__note[hidden], #hudMarkerB[hidden], #hudMarkerB .hud-marker__note[hidden] { display: none; }
+#hudMarker .marker-notvalidated, #hudMarkerB .marker-notvalidated { color: var(--grey-95); border-color: var(--grey-83); }
+/* pane B's HUD column is the bottom-right one: its lines align right, as the label and the readout do */
+#hudMarkerB { align-items: flex-end; }
+/* Phones: the HUD column is 48 % wide, where the two parts wrapped to four lines and reached the central zone
+   (layout-check Z1 at 390 coarse); the marker may span the canvas width instead, as two lines in the top band. */
+@media (max-width: 599px) {
+  #hudMarker { width: max-content; max-width: calc(100vw - 2 * var(--layout-hud-inset)); }
+}

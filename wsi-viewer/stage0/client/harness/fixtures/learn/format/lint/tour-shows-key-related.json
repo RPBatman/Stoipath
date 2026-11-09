@@ -1,0 +1,23 @@
+{
+  "note": "the hotspot sits on small focus 'Annotation 6', a credited related feature (owner default (a))",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/hotspots/0/geometry/coordinates",
+      "value": [
+        11041.8,
+        6592.2
+      ]
+    }
+  ],
+  "expect": [
+    {
+      "rule": "tour-shows-key",
+      "severity": "warning",
+      "path": "/steps/2/highlights/0",
+      "message": "Step 3 shows the answer of q-region before it is asked"
+    }
+  ],
+  "alsoAllowed": []
+}

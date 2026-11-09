@@ -1,0 +1,15 @@
+{
+  "note": "step kind \"summary\" (the summary is appended by the player, D9)",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/8/kind",
+      "value": "summary"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/steps/8/kind"
+  }
+}

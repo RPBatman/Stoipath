@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/textRubric/passMin",
+      "value": 4
+    }
+  ],
+  "expect": [
+    {
+      "rule": "rubric-passable",
+      "severity": "error",
+      "path": "/items/0/textRubric",
+      "message": "The text rubric of q-region cannot be passed"
+    }
+  ],
+  "alsoAllowed": []
+}

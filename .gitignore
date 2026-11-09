@@ -1,0 +1,27 @@
+# dependencies and build output
+node_modules/
+dist/
+target/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Stage-0 prototype: the tile pyramid is reproducible with wsi-viewer/stage0/tools/build_pyramid.py
+# and is published on the deploy branch, not in the source history
+wsi-viewer/stage0/data/tiles/
+wsi-viewer/stage0/client/harness/results/screens/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Format test corpus: originals live in the GitHub release samples-v1; local copies and derived pyramids are caches
+wsi-viewer/stage0/data/samples/
+
+# Benchmark TLS pairs are generated locally (see docs/verification/artifacts/*/TLS-KEYS.md)
+wsi-viewer/docs/verification/artifacts/*/key.pem
+wsi-viewer/docs/verification/artifacts/*/cert.pem
+
+# Learn build rig output (a build product, like client/dist)
+wsi-viewer/stage0/client/rig-dist/

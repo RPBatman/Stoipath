@@ -1,0 +1,36 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "3c4d5e6f-7a8b-4c0d-9e2f-3a4b5c6d7e8f",
+      "geometry": {"type": "LineString", "coordinates": [[5120.25, 5120.75], [6330.5, 5121]]},
+      "properties": {
+        "objectType": "annotation",
+        "name": "Greatest dimension",
+        "isLocked": false,
+        "measurements": {"Length µm": 294.27}
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "4d5e6f7a-8b9c-4d1e-8f3a-4b5c6d7e8f90",
+      "geometry": {"type": "LineString", "coordinates": [[1000, 14000], [1500, 14200], [2100, 14150], [2600, 14400]]},
+      "properties": {
+        "objectType": "annotation",
+        "classification": {"name": "Other", "color": [255, 200, 0]},
+        "isLocked": false
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "5e6f7a8b-9c0d-4e2f-9a4b-5c6d7e8f9a01",
+      "geometry": {"type": "LineString", "coordinates": [[9000, 1000, 0], [9500, 1250, 0], [9900, 1100, 0]]},
+      "properties": {
+        "objectType": "annotation",
+        "name": "Capsule line (z-plane 0)",
+        "isLocked": false
+      }
+    }
+  ]
+}

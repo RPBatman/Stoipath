@@ -1,0 +1,15 @@
+{
+  "note": "related credit must be a boolean",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/answerKeys/0/related/0/credit",
+      "value": "yes"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/answerKeys/0/related/0/credit"
+  }
+}

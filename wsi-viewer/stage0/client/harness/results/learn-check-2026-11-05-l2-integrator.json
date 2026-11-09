@@ -1,0 +1,1655 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "refDist": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/learn/integrator/baseline-dist",
+ "seconds": 110,
+ "files": [
+  "integrator.check.mjs"
+ ],
+ "moduleCounts": {
+  "integrator": 328
+ },
+ "gates": [],
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 index.html's built graph (index.html, _viewer-Boi_vjEQ.js) holds no src/learn/ module (none) and no chunk carrying a Learn string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 shell.html's built graph (shell.html, _sharpness-C21y_iqY.js, _viewer-Boi_vjEQ.js) holds no src/learn/ module (none) and no chunk carrying a Learn string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 the measurement page's graph is still index.html + the viewer chunk only (index.html, _viewer-Boi_vjEQ.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 learn.html is its own entry (assets/learn-ByAMWVv1.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/main.ts's module graph (16 modules) reaches nothing under src/learn/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/shell/main.ts's module graph (53 modules) reaches nothing under src/learn/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 learn.html's module graph (src/learn/main.ts + 7 Learn module(s), 152 modules) holds nothing from src/shell/{layers,compare,share}/ and only catalogue.ts of src/shell/library/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/main.ts sha256 eaeb9c0797a2b00e… equals the value recorded at Wave L1 start (eaeb9c0797a2b00e…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1 src/shell/main.ts sha256 d5a2dc7ebb7a8ccb… equals the value recorded at Wave L1 start (d5a2dc7ebb7a8ccb…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b desktop 1440x900: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b desktop-wide 1920x1080: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-1b phone 390x844 coarse: shell.html's computed styles (522 elements × 30 properties) equal the reference build's (0 differ)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: document.title \"Sentinel lymph node: find the metastasis · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: __learn.product \"learn\", mode \"learner\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: command registry conflicts() empty (67 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (379 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 learner: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: document.title \"Author studio · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: __learn.product \"learn\", mode \"studio\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: command registry conflicts() empty (71 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (311 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 studio: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: the label string is real, visible text with role=\"note\" (\"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: document.title \"Preview · Stoipath Learn\" ends with \" · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: __learn.product \"learn\", mode \"preview\", tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: command registry conflicts() empty (67 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview axe-core WCAG 2.2 AA (plate, no slide): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (256 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: the slide identity is the module label, never the catalogue title or stain line (LI-10 prerequisite; 0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview axe-core WCAG 2.2 AA (slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-3 preview: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 seed: the research shell stored its annotation in stoipath-shell (2 record(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: the research annotation is not loaded or drawn (store 0, overlay features 0; database stoipath-learn)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: indexedDB.databases() lists stoipath-learn (stoipath-learn, stoipath-shell); the mark (stored in 2 annotation records) and the progress record are in it (session keys learn.course/stage0-l1, learn.progress/li-4-check)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: stoipath-shell is untouched (annotations identical: true; no learn.* key in its session store)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: the active class is Stroma (--ann-5, D17): Stroma"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: every localStorage key written starts with stoipath.learn.v1. (stoipath.learn.v1.class.active; new keys stoipath.learn.v1.class.active; others none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 learner: no sessionStorage write (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 studio: writes go to stoipath-learn-studio (stoipath-learn, stoipath-learn-studio, stoipath-shell; session keys learn.draft/d-li4check01)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 studio: localStorage keys written start with stoipath.learn-studio.v1. (none written)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: stoipath-learn-preview is empty at start (a record written before the reload is gone: true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: drafts are read from the studio database read-only (got d-li4check01; put resolved false; the studio record unchanged)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: the persistent notice \"Preview · progress is not kept\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4 preview: localStorage keys written start with stoipath.learn-preview.v1. (none written)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4: after the learner, studio and preview runs stoipath-shell annotations are byte-identical to the seed"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-4: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 ? opens \"Keyboard map · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the four Learn groups in order (The flow (Learn) · Navigate · Mark and measure · Help and reserved)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the integrator and Phase A rows of §9 are present with their keycaps (29 rows; all present)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the \"Not in this build\" rows are struck through (9 of 9)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I D20: the learner keymap has no class picker or GeoJSON rows (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 axe-core WCAG 2.2 AA (keymap open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 ⇧D writes \"Dx mode — not part of Stoipath Learn (educational use)\" to the strip and says it assertively (\"Dx mode — not part of Stoipath Learn (educational use)\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I D20: learner mode drops 12 registrations (class:*, import/export:geojson, tool:area); no #classMenu in the page"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I palette: placeholder \"Type a command, step, candidate, layer or setting…\", groups The flow (Learn) · Navigate · Mark and measure · Help and reserved, the task dock inert while open (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I axe-core WCAG 2.2 AA (palette open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I About: Product \"Stoipath Learn\", Launch \"Standalone · no LMS launch in this build · product learn\", Data \"No protected health information. Slides:…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I axe-core WCAG 2.2 AA (About open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I hud.setGate: \"Zoom gate · now 2.1× · need ≥ 20× 5\" with keycap 5; null hides it"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I host.plate (fingerprint): \"Sentinel lymph node: find the metastasis was written for a different build of tumor_014 · H&E; it was not opened.\" (alert)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I host.toast: \"Not yetFinish the current phase first; Skip to the question is in the card.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 / LI-I: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: the task card is docked, open at load (want docked, open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: K closes it (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: a docked column covers no canvas (right 0 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080 axe-core WCAG 2.2 AA (slide open, task card docked): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: the task card is drawer, closed at load (want drawer, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: K opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: visibleInsets counts the open drawer (right 340 px)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: Esc closes the drawer (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900 axe-core WCAG 2.2 AA (slide open, task card drawer): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: the task card is sheet, closed at load (want sheet, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: the sheet toggle opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: Esc closes the sheet (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse axe-core WCAG 2.2 AA (slide open, task card sheet): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: the task card is sheet, closed at load (want sheet, closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: the sheet toggle opens it (open)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: Esc closes the sheet (closed)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse axe-core WCAG 2.2 AA (slide open, task card sheet): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-I phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: CDP LayoutCount 62 ≤ 174 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: 386 of 386 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: CDP LayoutCount 45 ≤ 49 frames + 2 and RecalcStyleCount 46 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: 249 of 258 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: CDP LayoutCount 62 ≤ 184 frames + 2 and RecalcStyleCount 64 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: 344 of 344 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: CDP LayoutCount 40 ≤ 43 frames + 2 and RecalcStyleCount 40 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the default course opened sln-find-metastasis at step 1"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the course outline is open on the Open card with 2 modules"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no DOM text, attribute or title names \"breast-carcinoma macrometastasis\" on the Open card"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: Open card with the course outline open: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 the flow rows of §9 are present with their keycaps (7 rows; all present)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-9 \"The flow (Learn)\" is the first group and holds the step, item, expert, tour and card rows (card:toggle, flow:enter, expert:toggle, item:reveal, item:alternatives, step:next, step:prev, tour:play)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens the tour step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: tour step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N × 2 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no leak on the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the candidates panel is open (aria-modal=\"false\", tabs Candidate regions · Answer in text)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: region item awaiting, candidates panel, Candidate regions tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the Answer in text tab selects"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: region item awaiting, candidates panel, Answer in text tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-region by candidate C, Fly there, Commit, U: {\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the card reads \"Revealed · inside the outline · 1 / 1\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no leak with q-region revealed (before q-size)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: region item revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: no leak on q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-sinus by B, ↵, U: {\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: MCQ revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens q-size"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 desktop 1440x900: before q-size is revealed no DOM string, document.title or canvas aria-label names \"breast-carcinoma macrometastasis\" (0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-size by C, ↵, U: {\"itemId\":\"q-size\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens q-features"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: q-features by A, B, C, ↵, U: {\"itemId\":\"q-features\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: multi-select revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N opens the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: reveal step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: N × 2 reaches the summary"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: the summary \"Your results\" totals \"Score 4 of 4\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900 axe: summary: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the default course opened sln-find-metastasis at step 1"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the course outline is open on the Open card with 2 modules"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no DOM text, attribute or title names \"breast-carcinoma macrometastasis\" on the Open card"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: Open card with the course outline open: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens the tour step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: tour step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N × 2 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no leak on the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the candidates panel is open (aria-modal=\"false\", tabs Candidate regions · Answer in text)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: region item awaiting, candidates panel, Candidate regions tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the Answer in text tab selects"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: region item awaiting, candidates panel, Answer in text tab: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-region by candidate C, Fly there, Commit, U: {\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the card reads \"Revealed · inside the outline · 1 / 1\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no leak with q-region revealed (before q-size)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: region item revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: no leak on q-sinus"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-sinus by B, ↵, U: {\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: MCQ revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens q-size"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-10 phone 390x844 coarse: before q-size is revealed no DOM string, document.title or canvas aria-label names \"breast-carcinoma macrometastasis\" (0 leak)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-size by C, ↵, U: {\"itemId\":\"q-size\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens q-features"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: q-features by A, B, C, ↵, U: {\"itemId\":\"q-features\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null}"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: multi-select revealed: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N opens the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: reveal step: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: N × 2 reaches the summary"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: the summary \"Your results\" totals \"Score 4 of 4\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse axe: summary: 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-8 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 design/design-system/layout-check.mjs's in-page rules (T1, Z1, S1, A1–A3) are reused (8821 chars)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: the canvas is 83 % of the frame at rest (task card drawer, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: the context bar shows the stem and the CTA (\"Before you look…\" / \"Start the case N\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: A1 every operable control ≥ 24 px (18 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: the task card is open (drawer)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: A1 every operable control ≥ 24 px (22 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: A1 every operable control ≥ 24 px (39 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900 region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: the canvas is 74 % of the frame at rest (task card docked, open; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: A1 every operable control ≥ 24 px (20 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: the task card is open (docked)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: A1 every operable control ≥ 24 px (20 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: A1 every operable control ≥ 24 px (36 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080 region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: the canvas is 81 % of the frame at rest (task card drawer, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: A1 every operable control ≥ 24 px (18 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: the task card is open (drawer)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: A1 every operable control ≥ 24 px (22 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: A1 every operable control ≥ 24 px (39 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2 region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 desktop-dsf2 1280x800 DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: the canvas is 76 % of the frame at rest (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: A1 every operable control ≥ 44 px (16 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: the task card is open (sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: A1 every operable control ≥ 44 px (19 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: A1 every operable control ≥ 44 px (42 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: the canvas is 81 % of the frame at rest (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: the peek bar shows the stem and the primary action (\"Start the case N\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: A1 every operable control ≥ 44 px (10 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card at rest: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: the task card is open (sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: A1 every operable control ≥ 44 px (13 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse Open card, task card open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: N × 3 opens the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: T1 top bar slots never clip (1 bar(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: Z1 no chrome intrudes on the central zone at rest (0; 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: S1 sheets ≤ 40 % of the viewport (no sheet)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: A1 every operable control ≥ 44 px (34 checked, 0 by spacing)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: A2 no focusable control is invisible (none; pan buttons fine)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse region item, candidates panel open: A3 the settled sharpness label keeps opacity ≥ 0.5 (0.70)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-7 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: q-region revealed ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: hotspots, the revealed key, the frozen mark and the expert view are drawn (learn-expert 10, learn-hotspots 2, learn-related 3, learn-key 7, learn-mark 1, learn-candidates 4)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: 306 of 316 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag with every Learn source visible: CDP LayoutCount 58 ≤ 204 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 1 s drag: 60 overlay draws, gesture p95 2.70 ms, exact-render average 1.61 ms, 0 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: 346 of 346 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst with every Learn source visible: CDP LayoutCount 40 ≤ 43 frames + 2 and RecalcStyleCount 40 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900 wheel burst: 68 overlay draws, gesture p95 1.80 ms, exact-render average 1.10 ms, 0 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no mutation inside #taskCard or #phaseRail while moving (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: the region item"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: q-region revealed ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: the reveal step"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: hotspots, the revealed key, the frozen mark and the expert view are drawn (learn-expert 10, learn-hotspots 2, learn-related 3, learn-key 7, learn-mark 1, learn-candidates 4)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: 303 of 313 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag with every Learn source visible: CDP LayoutCount 58 ≤ 187 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 1 s drag: 60 overlay draws, gesture p95 2.20 ms, exact-render average 1.75 ms, 0 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: 308 of 308 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst with every Learn source visible: CDP LayoutCount 35 ≤ 38 frames + 2 and RecalcStyleCount 35 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080 wheel burst: 57 overlay draws, gesture p95 2.70 ms, exact-render average 1.30 ms, 0 blits (OVL-4's p95 ≤ 3 ms or blits: met); the screen ends on an exact render of the last moved frame (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no mutation inside #taskCard or #phaseRail while moving (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-6 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 the CSP meta of D22 is present (\"connect-src 'self'; form-action 'none'; base-uri 'self'\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 fetch('https://example.org/') rejects (TypeError: Failed to fetch) and fires securitypolicyviolation (connect-src https://example.org/)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5: no page error beyond the blocked fetch's CSP report (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 across every page of these checks (2706 requests): all same-origin (0 other: none) and GET (0 other: none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "LI-5 no sendBeacon, WebSocket, EventSource, or fetch / XHR with a body or another method (0)"
+  }
+ ]
+}

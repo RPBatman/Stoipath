@@ -1,0 +1,7 @@
+   Compiling atomtest v0.1.0 (/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C18/atomtest)
+warning: unstable feature specified for `-Ctarget-feature`: `atomics`
+  |
+  = note: this feature is not stably supported; its behavior can change in the future
+
+warning: `atomtest` (lib) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 3.35s

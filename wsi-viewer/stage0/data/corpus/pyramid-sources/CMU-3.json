@@ -1,0 +1,18 @@
+{
+  "dataset": "OpenSlide test data (Aperio)",
+  "file": "Aperio/CMU-3.svs",
+  "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/CMU-3.svs",
+  "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-3.svs",
+  "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+  "releaseAssetDigest": "sha256:fd52a0069a55bc3b0e50892f62e01e8c945109707797389cc1b877494ccece91",
+  "sha256": "fd52a0069a55bc3b0e50892f62e01e8c945109707797389cc1b877494ccece91",
+  "description": "Brightfield, JPEG",
+  "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+  "licence": "CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)",
+  "licenceId": "CC0-1.0",
+  "stain": "H&E",
+  "stainNote": "H&E as registered for the samples-v1 corpus; the OpenSlide description itself says only 'brightfield'.",
+  "tissue": null,
+  "tissueNote": "not stated in the OpenSlide description ('Brightfield, JPEG'), so left out",
+  "deidentified": "Public OpenSlide test data. Only the tiled pyramid pages are read; the file's label, macro and thumbnail images are skipped and never published, and scan date, user, filename and title fields of the ImageDescription are not copied."
+}

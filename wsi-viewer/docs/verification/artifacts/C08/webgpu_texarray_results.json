@@ -1,0 +1,160 @@
+{
+ "env_start": {
+  "uptime": "00:13:43 up 33 min,  0 user,  load average: 5.48, 5.36, 3.34",
+  "nproc": "4",
+  "time": "2026-10-25T00:13:43.350Z"
+ },
+ "args": [
+  "--enable-unsafe-webgpu",
+  "--enable-features=Vulkan",
+  "--use-angle=swiftshader",
+  "--ignore-gpu-blocklist"
+ ],
+ "webgpu": {
+  "available": true,
+  "adapter": {
+   "vendor": "google",
+   "architecture": "swiftshader",
+   "device": "",
+   "description": ""
+  },
+  "limits": {
+   "maxTextureArrayLayers": 256,
+   "maxTextureDimension2D": 8192,
+   "maxBufferSize": 1073741824
+  },
+  "isCompatibilityMode": null,
+  "featureLevel": null,
+  "features": [
+   "depth32float-stencil8",
+   "rg11b10ufloat-renderable",
+   "bgra8unorm-storage",
+   "texture-compression-bc",
+   "core-features-and-limits",
+   "chromium-experimental-sampling-resource-table",
+   "chromium-experimental-timestamp-query-inside-passes",
+   "float32-filterable",
+   "indirect-first-instance",
+   "texture-compression-astc-sliced-3d",
+   "float32-blendable",
+   "subgroup-size-control",
+   "texture-compression-unaligned",
+   "texture-compression-astc",
+   "texture-compression-etc2",
+   "depth-clip-control",
+   "texture-compression-bc-sliced-3d",
+   "timestamp-query",
+   "clip-distances",
+   "texture-component-swizzle",
+   "subgroups"
+  ],
+  "readback_by_layer_count": {
+   "N1": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 1
+   },
+   "N2": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 2
+   },
+   "N3": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 3
+   },
+   "N15": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 15
+   },
+   "N16": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 16
+   },
+   "N17": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 17
+   },
+   "N63": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 63
+   },
+   "N64": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 64
+   },
+   "N128": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 128
+   },
+   "N256": {
+    "bad_layers": 0,
+    "ok": true,
+    "MiB": 256
+   }
+  },
+  "writeTexture_1MiB_layers": {
+   "batches": [
+    {
+     "per_layer_call_ms_median": 0.4000000001396984,
+     "per_layer_call_ms_max": 69.30000000004657,
+     "batch64_call_ms": 168.80000000004657,
+     "batch64_done_ms": 227.39999999990687
+    },
+    {
+     "per_layer_call_ms_median": 0.4000000001396984,
+     "per_layer_call_ms_max": 36.10000000009313,
+     "batch64_call_ms": 125.5,
+     "batch64_done_ms": 141.10000000009313
+    },
+    {
+     "per_layer_call_ms_median": 0.4000000001396984,
+     "per_layer_call_ms_max": 23.9000000001397,
+     "batch64_call_ms": 107.5,
+     "batch64_done_ms": 112.39999999990687
+    },
+    {
+     "per_layer_call_ms_median": 0.4000000001396984,
+     "per_layer_call_ms_max": 19.5999999998603,
+     "batch64_call_ms": 81.9000000001397,
+     "batch64_done_ms": 105.5
+    },
+    {
+     "per_layer_call_ms_median": 0.5,
+     "per_layer_call_ms_max": 17.299999999813735,
+     "batch64_call_ms": 91.69999999995343,
+     "batch64_done_ms": 106.5
+    },
+    {
+     "per_layer_call_ms_median": 0.4000000001396984,
+     "per_layer_call_ms_max": 16.699999999953434,
+     "batch64_call_ms": 73.5,
+     "batch64_done_ms": 86.5
+    },
+    {
+     "per_layer_call_ms_median": 0.39999999990686774,
+     "per_layer_call_ms_max": 15.399999999906868,
+     "batch64_call_ms": 73.80000000004657,
+     "batch64_done_ms": 87.19999999995343
+    }
+   ],
+   "median_per_layer_call_ms": 0.4000000001396984,
+   "median_batch64_call_ms": 91.69999999995343,
+   "median_batch64_done_ms": 106.5
+  },
+  "two_64_layer_textures_MiB": 128,
+  "deviceLost": null
+ },
+ "env_end": {
+  "uptime": "00:13:47 up 33 min,  0 user,  load average: 5.92, 5.45, 3.38",
+  "nproc": "4",
+  "time": "2026-10-25T00:13:47.238Z"
+ }
+}

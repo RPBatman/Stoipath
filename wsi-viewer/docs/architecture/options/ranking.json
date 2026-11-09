@@ -1,0 +1,108 @@
+{
+ "weights": {
+  "zoom": 0.35,
+  "reach": 0.2,
+  "versatility": 0.1,
+  "effort": 0.1,
+  "risk": 0.1,
+  "maintainability": 0.1,
+  "cost": 0.05
+ },
+ "ranking": [
+  {
+   "proposal": "B-rust-core",
+   "weighted_score": 7.09,
+   "judges": 3,
+   "per_judge_weighted": {
+    "perf": 6.62,
+    "product": 7.55,
+    "delivery": 7.1
+   },
+   "mean_per_criterion": {
+    "zoom": 7.17,
+    "reach": 9.0,
+    "versatility": 8.33,
+    "effort": 3.67,
+    "risk": 4.67,
+    "maintainability": 6.67,
+    "cost": 9.0
+   }
+  },
+  {
+   "proposal": "A-web-core",
+   "weighted_score": 7.07,
+   "judges": 3,
+   "per_judge_weighted": {
+    "perf": 6.9,
+    "product": 7.2,
+    "delivery": 7.1
+   },
+   "mean_per_criterion": {
+    "zoom": 7.0,
+    "reach": 6.33,
+    "versatility": 8.0,
+    "effort": 6.67,
+    "risk": 6.67,
+    "maintainability": 7.67,
+    "cost": 9.0
+   }
+  },
+  {
+   "proposal": "D-native-core",
+   "weighted_score": 6.62,
+   "judges": 3,
+   "per_judge_weighted": {
+    "perf": 6.5,
+    "product": 6.85,
+    "delivery": 6.5
+   },
+   "mean_per_criterion": {
+    "zoom": 7.33,
+    "reach": 8.67,
+    "versatility": 8.0,
+    "effort": 3.0,
+    "risk": 3.33,
+    "maintainability": 4.33,
+    "cost": 9.0
+   }
+  },
+  {
+   "proposal": "C-standards-incremental",
+   "weighted_score": 5.93,
+   "judges": 3,
+   "per_judge_weighted": {
+    "perf": 5.75,
+    "product": 6.15,
+    "delivery": 5.9
+   },
+   "mean_per_criterion": {
+    "zoom": 5.0,
+    "reach": 5.33,
+    "versatility": 7.0,
+    "effort": 8.33,
+    "risk": 5.67,
+    "maintainability": 6.0,
+    "cost": 8.33
+   }
+  },
+  {
+   "proposal": "E-server-render-stream",
+   "weighted_score": 4.38,
+   "judges": 3,
+   "per_judge_weighted": {
+    "perf": 4.25,
+    "product": 4.7,
+    "delivery": 4.2
+   },
+   "mean_per_criterion": {
+    "zoom": 3.67,
+    "reach": 4.67,
+    "versatility": 7.0,
+    "effort": 5.67,
+    "risk": 3.33,
+    "maintainability": 4.67,
+    "cost": 2.0
+   }
+  }
+ ]
+}

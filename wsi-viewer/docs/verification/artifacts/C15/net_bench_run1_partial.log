@@ -1,0 +1,15 @@
+h1_plain W-LAN 1ms 1000Mbps q85_444 {"bytes_total":1818993,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":131,"fill20_wall_ms_min":111,"ideal_bytes_over_bw_plus_1_latency_ms":16,"overhead_vs_ideal_ms":116,"first_byte_ms_median_of_medians":49,"single_tile_fetch_ms_median":13}
+h1_plain W-LAN 1ms 1000Mbps q80_420 {"bytes_total":1329054,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":106,"fill20_wall_ms_min":64,"ideal_bytes_over_bw_plus_1_latency_ms":12,"overhead_vs_ideal_ms":95,"first_byte_ms_median_of_medians":41,"single_tile_fetch_ms_median":8}
+h1_plain W-BB p50 25ms 100Mbps q85_444 {"bytes_total":1818993,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":246,"fill20_wall_ms_min":238,"ideal_bytes_over_bw_plus_1_latency_ms":171,"overhead_vs_ideal_ms":76,"first_byte_ms_median_of_medians":82,"single_tile_fetch_ms_median":42}
+h1_plain W-BB p50 25ms 100Mbps q80_420 {"bytes_total":1329054,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":195,"fill20_wall_ms_min":189,"ideal_bytes_over_bw_plus_1_latency_ms":131,"overhead_vs_ideal_ms":64,"first_byte_ms_median_of_medians":72,"single_tile_fetch_ms_median":38}
+h1_plain W-BB p95 50ms 20Mbps q85_444 {"bytes_total":1818993,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":853,"fill20_wall_ms_min":825,"ideal_bytes_over_bw_plus_1_latency_ms":778,"overhead_vs_ideal_ms":76,"first_byte_ms_median_of_medians":284,"single_tile_fetch_ms_median":95}
+h1_plain W-BB p95 50ms 20Mbps q80_420 {"bytes_total":1329054,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":674,"fill20_wall_ms_min":661,"ideal_bytes_over_bw_plus_1_latency_ms":582,"overhead_vs_ideal_ms":93,"first_byte_ms_median_of_medians":227,"single_tile_fetch_ms_median":82}
+h1_plain W-4G p50 45ms 25Mbps q85_444 {"bytes_total":1818993,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":686,"fill20_wall_ms_min":666,"ideal_bytes_over_bw_plus_1_latency_ms":627,"overhead_vs_ideal_ms":59,"first_byte_ms_median_of_medians":233,"single_tile_fetch_ms_median":83}
+h1_plain W-4G p50 45ms 25Mbps q80_420 {"bytes_total":1329054,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":555,"fill20_wall_ms_min":547,"ideal_bytes_over_bw_plus_1_latency_ms":470,"overhead_vs_ideal_ms":84,"first_byte_ms_median_of_medians":187,"single_tile_fetch_ms_median":76}
+h1_plain W-4G p95 200ms 5Mbps q85_444 {"bytes_total":1818993,"protocol_seen":["http/1.1"],"fill20_wall_ms_median":3318,"fill20_wall_ms_min":3252,"ideal_bytes_over_bw_plus_1_latency_ms":3110,"overhead_vs_ideal_ms":208,"first_byte_ms_median_of_medians":1103,"single_tile_fetch_ms_median":352}
+Warning: Detected unsettled top-level await at file:///tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C15/net_bench.mjs:15
+      const ctx = await browser.newContext({ ignoreHTTPSErrors: true }); const page = await ctx.newPage(); const cdp = await ctx.newCDPSession(page);
+                                                                                      ^
+
+
+

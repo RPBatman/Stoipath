@@ -1,0 +1,307 @@
+{
+ "env": {
+  "uptime": "00:30:45 up 50 min,  0 user,  load average: 6.68, 8.76, 7.81",
+  "nproc": 4,
+  "node": "v22.22.0",
+  "date": "2026-10-25T00:30:45.964Z"
+ },
+ "chromium": "153.0.8010.12",
+ "isolation": {
+  "plain_origin": {
+   "page": {
+    "sab": "undefined",
+    "coi": false,
+    "sharedMem": "ok",
+    "hc": 4
+   },
+   "worker": {
+    "type": "probe",
+    "sab": "undefined",
+    "coi": false,
+    "hc": 4,
+    "sharedMem": "ok"
+   }
+  },
+  "coop_coep_origin": {
+   "page": {
+    "sab": "function",
+    "coi": true,
+    "sharedMem": "ok",
+    "hc": 4
+   },
+   "worker": {
+    "type": "probe",
+    "sab": "function",
+    "coi": true,
+    "hc": 4,
+    "sharedMem": "ok"
+   }
+  }
+ },
+ "embed": {
+  "isolated_page_inside_plain_host": {
+   "page": {
+    "sab": "undefined",
+    "coi": false,
+    "sharedMem": "ok",
+    "hc": 4
+   },
+   "worker": {
+    "type": "probe",
+    "sab": "undefined",
+    "coi": false,
+    "hc": 4,
+    "sharedMem": "ok"
+   }
+  },
+  "plain_iframe_inside_coep_host": "frame blocked (not in frame tree)",
+  "coep_host_images": {
+   "nocorp": "error",
+   "corp": "load"
+  },
+  "plain_host_images_from_coep_origin": {
+   "nocorp": "load",
+   "corp": "load"
+  }
+ },
+ "opfs": {
+  "default_context": {
+   "type": "opfs",
+   "syncAccessHandle": "function",
+   "write_one_file_per_tile_ms": 2.098,
+   "read_open_read_close_ms": {
+    "p50": 1,
+    "p90": 1.5,
+    "p99": 4.4
+   },
+   "write_into_one_file_ms_per_tile": 1.111,
+   "read_kept_open_handle_ms": {
+    "p50": 0.2,
+    "p90": 0.4,
+    "p99": 0.5
+   },
+   "tile_bytes": 61453,
+   "n": 300,
+   "estimate": {
+    "quota": 3258143560,
+    "usage": 36918088,
+    "usageDetails": {
+     "fileSystem": 36918088
+    }
+   }
+  },
+  "persistent_profile": {
+   "type": "opfs",
+   "syncAccessHandle": "function",
+   "write_one_file_per_tile_ms": 3.205,
+   "read_open_read_close_ms": {
+    "p50": 1.2,
+    "p90": 1.8,
+    "p99": 3.2
+   },
+   "write_into_one_file_ms_per_tile": 0.115,
+   "read_kept_open_handle_ms": {
+    "p50": 0,
+    "p90": 0.1,
+    "p99": 0.1
+   },
+   "tile_bytes": 61453,
+   "n": 300,
+   "estimate": {
+    "quota": 10774336328,
+    "usage": 36918088,
+    "usageDetails": {
+     "fileSystem": 36918088
+    }
+   }
+  }
+ },
+ "quota": {
+  "default_context": {
+   "estimate": {
+    "quota": 3258143560,
+    "usage": 36918088,
+    "usageDetails": {
+     "fileSystem": 36918088
+    }
+   },
+   "persisted_before": false,
+   "persist": false,
+   "persisted_after": false,
+   "note": "Playwright newContext() is an ephemeral (incognito-like) profile"
+  },
+  "persistent_profile": {
+   "estimate": {
+    "quota": 10737418240,
+    "usage": 0,
+    "usageDetails": {}
+   },
+   "persisted_before": false,
+   "persist": false,
+   "persisted_after": false,
+   "disk_total_bytes": 270553174016,
+   "disk_free_bytes": 25507979264,
+   "quota_over_disk_total": 0.04,
+   "quota_over_disk_free": 0.421
+  }
+ },
+ "sw": {
+  "net_baseline_no_sw_ms": {
+   "p50": 3,
+   "min": 2.3
+  },
+  "controlled": true,
+  "warm_sw_ping_ms": {
+   "p50": 2.7,
+   "min": 1.5,
+   "p90": 4.7
+  },
+  "passthrough_ping_via_sw_ms": {
+   "p50": 3.3,
+   "min": 2.6
+  },
+  "cold_runs": [
+   11.9,
+   37.9,
+   31,
+   24.5,
+   8.7,
+   10,
+   9.8,
+   10.5,
+   17
+  ],
+  "cold_served_by_sw": true,
+  "cold_median_ms": 11.9,
+  "stopAllWorkers": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "sw_version_events": [
+   {
+    "t": 1792888254961,
+    "v": [
+     "stopping/activated"
+    ]
+   },
+   {
+    "t": 1792888254963,
+    "v": [
+     "stopped/activated"
+    ]
+   },
+   {
+    "t": 1792888255368,
+    "v": [
+     "starting/activated"
+    ]
+   },
+   {
+    "t": 1792888255368,
+    "v": [
+     "starting/activated"
+    ]
+   },
+   {
+    "t": 1792888255368,
+    "v": [
+     "starting/activated"
+    ]
+   },
+   {
+    "t": 1792888255373,
+    "v": [
+     "running/activated"
+    ]
+   },
+   {
+    "t": 1792888255377,
+    "v": [
+     "stopping/activated"
+    ]
+   },
+   {
+    "t": 1792888255379,
+    "v": [
+     "stopped/activated"
+    ]
+   },
+   {
+    "t": 1792888255795,
+    "v": [
+     "starting/activated"
+    ]
+   },
+   {
+    "t": 1792888255795,
+    "v": [
+     "starting/activated"
+    ]
+   },
+   {
+    "t": 1792888255795,
+    "v": [
+     "starting/activated"
+    ]
+   },
+   {
+    "t": 1792888255797,
+    "v": [
+     "running/activated"
+    ]
+   }
+  ],
+  "cold_start_overhead_ms": 9.2
+ },
+ "worker_pool": {
+  "pool_1": {
+   "pool": 1,
+   "single_tile": {
+    "roundtrip_median_ms": 3.1,
+    "in_worker_decode_median_ms": 2.5,
+    "in_worker_copy_out_median_ms": 0.4,
+    "messaging_overhead_ms": 0.2
+   },
+   "viewport_burst_20_tiles_wall_median_ms": 67.3,
+   "inline_main_thread_20_tiles_median_ms": 57.1,
+   "speedup": 0.85
+  },
+  "pool_2": {
+   "pool": 2,
+   "single_tile": {
+    "roundtrip_median_ms": 3.1,
+    "in_worker_decode_median_ms": 2.5,
+    "in_worker_copy_out_median_ms": 0.4,
+    "messaging_overhead_ms": 0.2
+   },
+   "viewport_burst_20_tiles_wall_median_ms": 35.9,
+   "inline_main_thread_20_tiles_median_ms": 59.2,
+   "speedup": 1.65
+  },
+  "pool_3": {
+   "pool": 3,
+   "single_tile": {
+    "roundtrip_median_ms": 2.9,
+    "in_worker_decode_median_ms": 2.4,
+    "in_worker_copy_out_median_ms": 0.4,
+    "messaging_overhead_ms": 0.1
+   },
+   "viewport_burst_20_tiles_wall_median_ms": 53.3,
+   "inline_main_thread_20_tiles_median_ms": 63.4,
+   "speedup": 1.19
+  }
+ },
+ "env_end": {
+  "uptime": "00:31:13 up 50 min,  0 user,  load average: 7.86, 8.84, 7.87",
+  "nproc": 4,
+  "node": "v22.22.0",
+  "date": "2026-10-25T00:31:13.767Z"
+ }
+}

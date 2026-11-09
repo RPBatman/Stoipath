@@ -1,0 +1,238 @@
+{
+  "psnrNull": "a null PSNR means MSE 0 (bit-identical)",
+  "data": "data/samples/pyramids/JP2K-33003-2",
+  "seed": 20261101,
+  "tissueCandidates": 1790,
+  "tiles": 5888,
+  "openslide": "4.0.1",
+  "reader": "tifffile",
+  "results": [
+    {
+      "sample": "tissue",
+      "tile": "0/6_74.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.979,
+      "ours_vs_openslide": 26.28,
+      "source_vs_openslide": 51.53,
+      "ours_vs_source": 26.38,
+      "luma_ours_vs_openslide": 33.77,
+      "alt444_vs_openslide": 29.24,
+      "ourBytes": 104988,
+      "alt444Bytes": 158735,
+      "maxAbs_ours_vs_openslide": 90,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "tissue",
+      "tile": "0/41_17.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.936,
+      "ours_vs_openslide": 26.48,
+      "source_vs_openslide": 51.49,
+      "ours_vs_source": 26.58,
+      "luma_ours_vs_openslide": 33.84,
+      "alt444_vs_openslide": 29.39,
+      "ourBytes": 108213,
+      "alt444Bytes": 160469,
+      "maxAbs_ours_vs_openslide": 89,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "tissue",
+      "tile": "0/51_19.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.942,
+      "ours_vs_openslide": 26.33,
+      "source_vs_openslide": 51.43,
+      "ours_vs_source": 26.43,
+      "luma_ours_vs_openslide": 33.8,
+      "alt444_vs_openslide": 29.29,
+      "ourBytes": 109436,
+      "alt444Bytes": 162955,
+      "maxAbs_ours_vs_openslide": 88,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "tissue",
+      "tile": "0/31_52.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.953,
+      "ours_vs_openslide": 26.22,
+      "source_vs_openslide": 51.31,
+      "ours_vs_source": 26.32,
+      "luma_ours_vs_openslide": 33.92,
+      "alt444_vs_openslide": 29.36,
+      "ourBytes": 108053,
+      "alt444Bytes": 161345,
+      "maxAbs_ours_vs_openslide": 90,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "tissue",
+      "tile": "0/37_14.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.741,
+      "ours_vs_openslide": 26.98,
+      "source_vs_openslide": 51.68,
+      "ours_vs_source": 27.1,
+      "luma_ours_vs_openslide": 33.86,
+      "alt444_vs_openslide": 29.68,
+      "ourBytes": 100073,
+      "alt444Bytes": 147505,
+      "maxAbs_ours_vs_openslide": 90,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "uniform",
+      "tile": "0/62_88.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.0,
+      "ours_vs_openslide": 34.05,
+      "source_vs_openslide": 51.8,
+      "ours_vs_source": 34.3,
+      "luma_ours_vs_openslide": 37.73,
+      "alt444_vs_openslide": 34.73,
+      "ourBytes": 34285,
+      "alt444Bytes": 48014,
+      "maxAbs_ours_vs_openslide": 51,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "uniform",
+      "tile": "0/35_5.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.0,
+      "ours_vs_openslide": 35.8,
+      "source_vs_openslide": 51.88,
+      "ours_vs_source": 36.05,
+      "luma_ours_vs_openslide": 39.37,
+      "alt444_vs_openslide": 36.39,
+      "ourBytes": 26548,
+      "alt444Bytes": 36834,
+      "maxAbs_ours_vs_openslide": 58,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "uniform",
+      "tile": "0/29_6.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.0,
+      "ours_vs_openslide": 37.35,
+      "source_vs_openslide": 51.9,
+      "ours_vs_source": 37.62,
+      "luma_ours_vs_openslide": 40.95,
+      "alt444_vs_openslide": 37.88,
+      "ourBytes": 22284,
+      "alt444Bytes": 30613,
+      "maxAbs_ours_vs_openslide": 37,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "uniform",
+      "tile": "0/23_83.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.988,
+      "ours_vs_openslide": 26.13,
+      "source_vs_openslide": 51.33,
+      "ours_vs_source": 26.23,
+      "luma_ours_vs_openslide": 33.97,
+      "alt444_vs_openslide": 29.39,
+      "ourBytes": 105152,
+      "alt444Bytes": 158744,
+      "maxAbs_ours_vs_openslide": 102,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "uniform",
+      "tile": "0/3_28.jpg",
+      "size": [
+        512,
+        512
+      ],
+      "tissueFraction": 0.0,
+      "ours_vs_openslide": 36.19,
+      "source_vs_openslide": 51.83,
+      "ours_vs_source": 36.45,
+      "luma_ours_vs_openslide": 39.98,
+      "alt444_vs_openslide": 36.79,
+      "ourBytes": 24912,
+      "alt444Bytes": 34908,
+      "maxAbs_ours_vs_openslide": 43,
+      "maxAbs_source_vs_openslide": 1
+    },
+    {
+      "sample": "edge",
+      "tile": "0/63_91.jpg",
+      "size": [
+        415,
+        484
+      ],
+      "tissueFraction": 0.0,
+      "ours_vs_openslide": 38.54,
+      "source_vs_openslide": 52.74,
+      "ours_vs_source": 38.82,
+      "luma_ours_vs_openslide": 42.27,
+      "alt444_vs_openslide": 39.09,
+      "ourBytes": 14474,
+      "alt444Bytes": 19773,
+      "maxAbs_ours_vs_openslide": 53,
+      "maxAbs_source_vs_openslide": 1
+    }
+  ],
+  "summary": {
+    "tissue": {
+      "n": 5,
+      "minPsnr": 26.22,
+      "meanPsnr": 26.46,
+      "meanLumaPsnr": 33.84,
+      "sourceVsOpenSlideMin": 51.31,
+      "alt444MeanPsnr": 29.39,
+      "alt444ByteRatio": 1.49
+    },
+    "uniform": {
+      "n": 5,
+      "minPsnr": 26.13,
+      "meanPsnr": 33.9,
+      "meanLumaPsnr": 38.4,
+      "sourceVsOpenSlideMin": 51.33,
+      "alt444MeanPsnr": 35.04,
+      "alt444ByteRatio": 1.45
+    },
+    "edge": {
+      "n": 1,
+      "minPsnr": 38.54,
+      "meanPsnr": 38.54,
+      "meanLumaPsnr": 42.27,
+      "sourceVsOpenSlideMin": 52.74,
+      "alt444MeanPsnr": 39.09,
+      "alt444ByteRatio": 1.37
+    }
+  }
+}

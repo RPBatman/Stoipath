@@ -1,0 +1,13 @@
+{
+  "note": "a version bump changes no item",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/version",
+      "value": "0.2.0"
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": []
+}

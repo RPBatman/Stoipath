@@ -1,0 +1,187 @@
+{
+ "about": "LEARN.md §6.3.5 examples (SCR-7) on Appendix A's q-region text rubric: position (required) = centre, size = macro, feature keywords (discriminating morphology only since the review fixes of 2026-11-08: 'tumour' is no longer one); passMin 2. A negated keyword (no, not, non- …) does not count.",
+ "cases": [
+  {
+   "fields": {
+    "position": "centre",
+    "size": "macro",
+    "feature": "cohesive sheets"
+   },
+   "expect": {
+    "correct": true,
+    "correctFields": [
+     "position",
+     "size",
+     "feature"
+    ],
+    "requiredMissing": []
+   }
+  },
+  {
+   "fields": {
+    "position": "centre",
+    "size": "micro",
+    "feature": "large pale cells"
+   },
+   "expect": {
+    "correct": true,
+    "correctFields": [
+     "position",
+     "feature"
+    ],
+    "requiredMissing": []
+   }
+  },
+  {
+   "fields": {
+    "position": "lower",
+    "size": "macro",
+    "feature": "tumour"
+   },
+   "expect": {
+    "correct": false,
+    "correctFields": [
+     "size"
+    ],
+    "requiredMissing": [
+     "position"
+    ]
+   }
+  },
+  {
+   "fields": {
+    "position": "centre",
+    "size": "itc",
+    "feature": "tumours everywhere"
+   },
+   "expect": {
+    "correct": false,
+    "correctFields": [
+     "position"
+    ],
+    "requiredMissing": []
+   }
+  },
+  {
+   "fields": {
+    "position": "centre"
+   },
+   "expect": {
+    "correct": false,
+    "correctFields": [
+     "position"
+    ],
+    "requiredMissing": []
+   }
+  },
+  {
+   "fields": {
+    "position": "centre",
+    "feature": "  LARGE\n  Cells  "
+   },
+   "expect": {
+    "correct": true,
+    "correctFields": [
+     "position",
+     "feature"
+    ],
+    "requiredMissing": []
+   }
+  },
+  {
+   "fields": {
+    "position": "centre",
+    "feature": "nonmetastatic"
+   },
+   "expect": {
+    "correct": false,
+    "correctFields": [
+     "position"
+    ],
+    "requiredMissing": []
+   }
+  }
+ ],
+ "keywords": [
+  {
+   "text": "tumour",
+   "keyword": "tumour",
+   "match": true
+  },
+  {
+   "text": "tumours",
+   "keyword": "tumour",
+   "match": false
+  },
+  {
+   "text": "a Tumour, here",
+   "keyword": "tumour",
+   "match": true
+  },
+  {
+   "text": "pretumour",
+   "keyword": "tumour",
+   "match": false
+  },
+  {
+   "text": "large   pale cells",
+   "keyword": "pale cells",
+   "match": true
+  },
+  {
+   "text": "pale cellular",
+   "keyword": "pale cells",
+   "match": false
+  },
+  {
+   "text": "metastatic carcinoma",
+   "keyword": "carcinoma",
+   "match": true
+  },
+  {
+   "text": "tumour_cells",
+   "keyword": "tumour",
+   "match": false
+  },
+  {
+   "text": "(sheet)",
+   "keyword": "sheet",
+   "match": true
+  },
+  {
+   "text": "sheets",
+   "keyword": "sheet",
+   "match": false
+  },
+  {
+   "text": "non-cohesive lymphocytes",
+   "keyword": "cohesive",
+   "match": false
+  },
+  {
+   "text": "not cohesive",
+   "keyword": "cohesive",
+   "match": false
+  },
+  {
+   "text": "no large cells seen",
+   "keyword": "large cells",
+   "match": false
+  },
+  {
+   "text": "no lymphocytes here, only large cells",
+   "keyword": "large cells",
+   "match": true
+  },
+  {
+   "text": "cells without nucleoli",
+   "keyword": "nucleoli",
+   "match": false
+  },
+  {
+   "text": "cohesive clusters, not lymphocytes",
+   "keyword": "cohesive",
+   "match": true
+  }
+ ]
+}

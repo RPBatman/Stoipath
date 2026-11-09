@@ -1,0 +1,13 @@
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-gap2/wgpusize/target/wasm32-unknown-unknown/release/wgpusize.wasm raw   3503333 gz9  1040159
+pkg_both/wgpusize_bg.wasm                                              raw   2203481 gz9   794682
+pkg_webgl/wgpusize_bg.wasm                                             raw   2118789 gz9   758556
+pkg_webgpu/wgpusize_bg.wasm                                            raw     95309 gz9    35754
+pkg_both/wgpusize_bg.opt.wasm                                          raw   2095470 gz9   801766
+pkg_webgl/wgpusize_bg.opt.wasm                                         raw   2011911 gz9   765225
+pkg_webgpu/wgpusize_bg.opt.wasm                                        raw     86844 gz9    34337
+pkg_both/wgpusize.js                                                   raw    114549 gz9    17346
+pkg_webgl/wgpusize.js                                                  raw     72414 gz9    10901
+pkg_webgpu/wgpusize.js                                                 raw     47795 gz9     9376
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-gap2/tiles/wgpusize_both.opt.wasm raw   3143639 gz9  1028041
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-gap2/tiles/wgpusize_webgl.opt.wasm raw   2782954 gz9   934936
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/bench-gap2/tiles/wgpusize_webgpu.opt.wasm raw    934753 gz9   223390

@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/slides/0/licence/url",
+      "value": "https://example.org/licence.txt"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "slide-licence",
+      "severity": "error",
+      "path": "/slides/0/licence",
+      "message": "The licence of he differs from the catalogue's"
+    }
+  ],
+  "alsoAllowed": []
+}

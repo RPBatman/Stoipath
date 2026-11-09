@@ -1,0 +1,15 @@
+{
+  "note": "gate label \"20x\" (a letter x, not ×)",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/gate/label",
+      "value": "20x"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/items/0/gate/label"
+  }
+}

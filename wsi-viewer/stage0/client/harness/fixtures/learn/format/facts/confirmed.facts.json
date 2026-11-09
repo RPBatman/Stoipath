@@ -1,0 +1,241 @@
+{
+  "schema": "stoipath.learn.facts/1",
+  "module": "sln-find-metastasis",
+  "version": "0.1.0",
+  "facts": [
+    {
+      "id": "F1",
+      "pointer": "/case/vignette/text",
+      "quote": "Sentinel lymph node from a patient with breast cancer, from the public CAMELYON16 dataset.",
+      "basis": "CAMELYON16 is a public set of H&E sentinel lymph node sections from breast cancer patients (Radboud UMC and UMC Utrecht; camelyon16.grand-challenge.org; Ehteshami Bejnordi et al., JAMA 2017).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F2",
+      "pointer": "/case/vignette/text",
+      "quote": "No clinical history is published with the slide.",
+      "basis": "The CAMELYON16 release has whole-slide images and lesion annotations, no per-slide clinical record (manifest source fields).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F3",
+      "pointer": "/case/vignette/text",
+      "quote": "You are looking at a 3.7 mm × 3.7 mm region inside the H&E section, not the whole section.",
+      "basis": "15,360 px × 0.243094 µm/px = 3.73 mm; manifest.source.regionLevel0 places the window at (36,864, 66,560) of a 97,792 × 214,016 px scan; tissue fraction of the window 0.953.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F4",
+      "pointer": "/steps/1/text",
+      "quote": "Most of this region is lymphoid tissue, which looks dense and dark at low power because lymphocytes have dark nuclei and little cytoplasm.",
+      "basis": "Standard histology. Area check: the largest deposit's outline covers 3.36 of 13.94 mm² (24 %) of the region.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F5",
+      "pointer": "/steps/2/text",
+      "quote": "This is the background: sheets of small lymphocytes with round, dark nuclei and very little cytoplasm.",
+      "basis": "Location (3181.6, 3181.6) µm at 20×, 1.44 mm from the deposit outline; level-2 tile tiles/2/6_6.jpg viewed by the spec author: dense small lymphocytes, a paler sinus-like area at its right edge.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F6",
+      "pointer": "/items/0/explanation",
+      "quote": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region.",
+      "basis": "The CAMELYON16 outline 'Annotation 3' (class Tumor) spans 2.61 × 2.22 mm around the region centre; tiles/2/3_2.jpg shows sheets of large cells with abundant cytoplasm.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F7",
+      "pointer": "/items/0/candidates/0/description",
+      "quote": "Upper border: round clear spaces between bands of dark lymphoid tissue",
+      "basis": "Point (9300, 1000) px, 522 µm outside the outline; tiles/3/2_0.jpg: clusters of round clear spaces (likely fat) between lymphoid bands.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F8",
+      "pointer": "/items/0/candidates/1/description",
+      "quote": "Lower right corner: dense, dark-staining lymphoid tissue",
+      "basis": "Point (13088, 13088) px, 1.44 mm outside the outline; tiles/2/6_6.jpg.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F9",
+      "pointer": "/items/0/candidates/2/description",
+      "quote": "Centre: sheets of large, pale cells with abundant pink cytoplasm",
+      "basis": "Point (7168, 5120) px, inside the outline, 459 µm from its edge, in no Exclusion; tiles/2/3_2.jpg.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F10",
+      "pointer": "/items/0/candidates/3/description",
+      "quote": "Lower edge: round and slit-like clear spaces within lymphoid tissue",
+      "basis": "Point (6400, 13900) px, 784 µm outside the outline; tiles/3/1_3.jpg.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F11",
+      "pointer": "/items/1/stem",
+      "quote": "Tumour cells that reach a lymph node through its afferent lymphatics usually lodge first in which compartment?",
+      "basis": "Standard: lymph-borne metastases arrive in the subcapsular (marginal) sinus first (option B marked correct).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F12",
+      "pointer": "/items/1/explanation",
+      "quote": "Afferent lymphatics open into the subcapsular sinus under the capsule, so lymph-borne tumour cells usually lodge there first and can then spread into the rest of the node.",
+      "basis": "Standard lymph node anatomy and the usual pattern of nodal metastasis.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F13",
+      "pointer": "/items/1/explanation",
+      "quote": "This region is a window inside the node, so the capsule may not be visible here.",
+      "basis": "Hedged: not verified whether the capsule lies inside the 3.7 mm window.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F14",
+      "pointer": "/items/2/explanation",
+      "quote": "By the CAMELYON16 reference outline, the largest deposit measures about 2.7 mm in greatest dimension, so it is a macrometastasis.",
+      "basis": "Maximum Feret diameter of the convex hull of 'Annotation 3' = 10,948 px × 0.243094 µm/px = 2.66 mm (minimum Feret 1.94 mm); the manifest's region was chosen around the slide's largest tumour outline.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F15",
+      "pointer": "/items/2/explanation",
+      "quote": "In the AJCC system for breast cancer, a nodal metastasis larger than 2.0 mm is a macrometastasis; one larger than 0.2 mm but not larger than 2.0 mm is a micrometastasis; clusters not larger than 0.2 mm are isolated tumour cells (AJCC also uses a 200-cell count for the two smaller categories).",
+      "basis": "AJCC Cancer Staging Manual, 8th edition, breast: pN definitions (macrometastasis > 2.0 mm; micrometastasis > 0.2 mm and/or > 200 cells, none > 2.0 mm; ITC ≤ 0.2 mm or < 200 cells in one cross-section).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F16",
+      "pointer": "/items/2/explanation",
+      "quote": "This item asks for the size category of the deposit, not the nodal stage, which also depends on how many nodes are involved.",
+      "basis": "AJCC pN categories combine deposit size with the number of positive nodes.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F17",
+      "pointer": "/items/3/options/0/text",
+      "quote": "Cells lying together in cohesive sheets or clusters",
+      "basis": "Marked correct: cohesion favours carcinoma over lymphocytes.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F18",
+      "pointer": "/items/3/options/1/text",
+      "quote": "Nuclei larger than those of the lymphocytes",
+      "basis": "Marked correct.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F19",
+      "pointer": "/items/3/options/2/text",
+      "quote": "More abundant cytoplasm",
+      "basis": "Marked correct (with the histiocyte caveat in F21).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F20",
+      "pointer": "/items/3/options/3/feedback",
+      "quote": "This describes the lymphocytes.",
+      "basis": "Option D (small, round, dark nuclei with very little cytoplasm) marked incorrect.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F21",
+      "pointer": "/items/3/explanation",
+      "quote": "Sinus histiocytes also have abundant cytoplasm, so cohesion and nuclear features matter; when the distinction is uncertain, immunohistochemistry for cytokeratin is commonly used to confirm epithelial tumour cells in a lymph node.",
+      "basis": "Standard practice (cytokeratin IHC, e.g. AE1/AE3, for nodal carcinoma).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F22",
+      "pointer": "/steps/7/text",
+      "quote": "The smaller outlined areas inside it are marked Exclusion: non-tumour tissue inside a tumour outline, by the dataset's convention.",
+      "basis": "CAMELYON16 ASAP annotation group 'Exclusion'; the six Exclusion polygons of this region all lie inside 'Annotation 3' (computed).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F23",
+      "pointer": "/case/expertView/text",
+      "quote": "three small separate tumour foci",
+      "basis": "Three further Tumor polygons in the region ('Annotation 4–6'): greatest dimensions 0.05, 0.07 and 0.15 mm, outside the main outline (70–950 µm away).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F24",
+      "pointer": "/steps/8/text",
+      "quote": "The carcinoma cells are larger than the lymphocytes, with more cytoplasm and larger nuclei, and they lie together in cohesive sheets.",
+      "basis": "Location (2738.2, 1369.1) µm at 20×, 33 µm inside the outline's right edge; tiles/2/5_2.jpg: large tumour cells left, lymphocytes right.",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F25",
+      "pointer": "/answerKeys/0/related/0/feedback",
+      "quote": "That is tumour too: one of three small separate foci in the CAMELYON16 outline, so a point on it counts.",
+      "basis": "As F23 (owner default rule (a), 2026-11-04: a point on any Tumor focus counts).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    },
+    {
+      "id": "F26",
+      "pointer": "/answerKeys/0/related/0/feedback",
+      "quote": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region.",
+      "basis": "As F6 (added 2026-11-04 so the feedback names the largest deposit, owner default rule (a)).",
+      "status": "confirmed",
+      "reviewer": "Format fixture reviewer",
+      "date": "2026-11-04"
+    }
+  ]
+}

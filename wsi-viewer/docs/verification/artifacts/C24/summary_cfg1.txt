@@ -1,0 +1,11 @@
+chromium 153.0.8010.12 osd 6.1.1 reps 3 env 00:38:42 up 58 min,  0 user,  load average: 8.15, 9.89, 9.09
+
+=== drawer=webgl (actual webgl) dpr=1 cpu_throttle=1x
+phase            frames drawn | update p50    p99 |  draw p50    p99 |  rAF p50    p99 |  tiles levels |  >16.7ms longtask settle ms
+idle                 62     0 |      0.005   0.05 |       nan    nan |    0.070   3.79 |    nan    nan |        0        0         0
+zoom_in_8x           47    47 |      0.590   4.00 |     5.755  28.33 |    6.310  28.82 |     13      2 |        7        0      6112
+settled_forced       41    40 |      0.005   0.01 |     0.505   5.25 |    0.590   6.08 |     24      1 |        0        0         0
+pan                  34    34 |      0.500   3.27 |     7.345  23.03 |    8.800  23.80 |     17      2 |        5        1      9767
+settled_forced2      41    40 |      0.005   0.04 |     0.520   4.38 |    0.610   4.47 |     24      1 |        0        0         0
+zoom_out_8x           5     5 |      0.225   1.91 |     0.405   1.12 |    0.680   3.94 |     12      1 |        0        0      1623
+idle2                24     0 |      0.005   0.01 |       nan    nan |    0.065   0.14 |    nan    nan |        0        0         0

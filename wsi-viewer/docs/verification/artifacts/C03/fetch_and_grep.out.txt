@@ -1,0 +1,73 @@
+fetched UnifiedWebPreferences.yaml 229732 bytes
+fetched Page.cpp 231652 bytes
+fetched WKPreferences.h 5941 bytes
+fetched WKPreferencesPrivate.h 27526 bytes
+fetched AnimationFrameRate.h 3180 bytes
+fetched AnimationFrameRate.cpp 5401 bytes
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json;d=json.load(open('main_commit.json'));print('ToT main commit',d['sha'],d['commit']['committer']['date'])
+                                                                              ~^^^^^^^
+KeyError: 'sha'
+=== UnifiedWebPreferences.yaml: PreferPageRenderingUpdatesNear60FPSEnabled block ===
+4944:PreferPageRenderingUpdatesNear60FPSEnabled:
+4945-  type: bool
+4946-  status: stable
+4947-  category: dom
+4948-  humanReadableName: "Prefer Page Rendering Updates near 60fps"
+4949-  humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than using the display's refresh rate"
+4950-  defaultValue:
+4951-    "PLATFORM(VISION)": false
+4952-    default: true
+4953-
+4954-PreferSpatialAudioExperience:
+4955-  type: bool
+4956-  status: internal
+4957-  category: media
+4958-  condition: HAVE(SPATIAL_AUDIO_EXPERIENCE)
+4959-  humanReadableName: "Prefer Spatial Audio Experience over Spatial Tracking Labels"
+4960-  humanReadableDescription: "Prefer Spatial Audio Experience over Spatial Tracking Labels"
+4961-  defaultValue:
+4962-    default: false
+4963-    WebKit: WebKit::defaultPreferSpatialAudioExperience()
+4964-  defaultsOverridable: true
+4965-  sharedPreferenceForWebProcess: true
+4966-
+=== Page.cpp consumers ===
+2335:    auto framesPerSecond = preferredRenderingUpdateFramesPerSecond();
+2851:        auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
+3027:std::optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> flags) const
+3038:    auto frameRate = preferredFramesPerSecond(throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
+3043:    auto unthrottledDefaultFrameRate = preferredRenderingUpdateFramesPerSecond({ });
+3058:        if (auto canvasPreferredFrameRate = canvasContext->preferredRenderingUpdateFramesPerSecond()) {
+3067:Seconds Page::preferredRenderingUpdateInterval() const
+3069:    return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
+=== AnimationFrameRate ===
+AnimationFrameRate.h:56:constexpr const FramesPerSecond FullSpeedFramesPerSecond = 60;
+AnimationFrameRate.h:57:constexpr const FramesPerSecond HalfSpeedThrottlingFramesPerSecond = 30;
+AnimationFrameRate.h:62:WEBCORE_EXPORT std::optional<FramesPerSecond> LEGACY_NODELETE preferredFramesPerSecond(OptionSet<ThrottlingReason>, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
+AnimationFrameRate.h:64:WEBCORE_EXPORT Seconds LEGACY_NODELETE preferredFrameInterval(OptionSet<ThrottlingReason>, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
+AnimationFrameRate.h:66:WEBCORE_EXPORT FramesPerSecond preferredFramesPerSecondFromInterval(Seconds);
+AnimationFrameRate.cpp:37:    if (nominalFramesPerSecond <= FullSpeedFramesPerSecond)
+AnimationFrameRate.cpp:40:    float fullSpeedRatio = nominalFramesPerSecond / FullSpeedFramesPerSecond;
+AnimationFrameRate.cpp:47:std::optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason> reasons, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
+AnimationFrameRate.cpp:52:    if (!nominalFramesPerSecond || *nominalFramesPerSecond == FullSpeedFramesPerSecond) {
+AnimationFrameRate.cpp:55:            return HalfSpeedThrottlingFramesPerSecond;
+AnimationFrameRate.cpp:57:        return FullSpeedFramesPerSecond;
+AnimationFrameRate.cpp:60:    auto framesPerSecond = preferFrameRatesNear60FPS ? framesPerSecondNearestFullSpeed(*nominalFramesPerSecond) : *nominalFramesPerSecond;
+AnimationFrameRate.cpp:67:Seconds preferredFrameInterval(OptionSet<ThrottlingReason> reasons, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
+AnimationFrameRate.cpp:72:    if (!nominalFramesPerSecond || *nominalFramesPerSecond == FullSpeedFramesPerSecond) {
+AnimationFrameRate.cpp:79:    auto framesPerSecond = preferFrameRatesNear60FPS ? framesPerSecondNearestFullSpeed(*nominalFramesPerSecond) : *nominalFramesPerSecond;
+AnimationFrameRate.cpp:88:FramesPerSecond preferredFramesPerSecondFromInterval(Seconds preferredFrameInterval)
+AnimationFrameRate.cpp:90:    if (preferredFrameInterval == FullSpeedAnimationInterval)
+AnimationFrameRate.cpp:91:        return FullSpeedFramesPerSecond;
+AnimationFrameRate.cpp:93:    if (preferredFrameInterval == HalfSpeedThrottlingAnimationInterval)
+AnimationFrameRate.cpp:94:        return HalfSpeedThrottlingFramesPerSecond;
+AnimationFrameRate.cpp:96:    return std::round(1 / preferredFrameInterval.seconds());
+=== public WKPreferences.h mentions? ===
+(none)
+=== WKPreferencesPrivate.h _WKFeature SPI ===
+70:@class _WKFeature;
+149:+ (NSArray<_WKFeature *> *)_features WK_API_AVAILABLE(macos(13.3), ios(16.4));
+150:- (BOOL)_isEnabledForFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
+151:- (void)_setEnabled:(BOOL)value forFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));

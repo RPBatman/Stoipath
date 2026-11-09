@@ -1,0 +1,151 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "sln-find-metastasis",
+  "version": "0.1.1",
+  "metadata": {
+    "title": "Sentinel lymph node: find the metastasis",
+    "summary": "Survey a region of a sentinel lymph node section at low power, find the largest metastatic deposit, confirm it at 20× and name its size category.",
+    "audience": ["medical-student", "resident"],
+    "objectives": [
+      "Survey a lymph node section systematically at low power before zooming in.",
+      "Recognise metastatic carcinoma in a lymph node on H&E and tell it apart from the surrounding lymphoid tissue.",
+      "Measure the greatest dimension of a nodal deposit and name its size category: isolated tumour cells, micrometastasis or macrometastasis."
+    ],
+    "tags": { "organ": ["lymph node"], "stain": ["H&E"], "difficulty": 2, "topics": ["sentinel lymph node", "breast cancer", "metastasis", "size category"] },
+    "authors": [{ "name": "Stoipath Learn L1 build (AI-assisted draft)", "role": "author" }],
+    "review": { "status": "draft", "notes": "Teaching text drafted for the owner's review; every factual statement is listed in stage0/client/LEARN.md §12." },
+    "textLicence": { "id": "CC-BY-4.0", "text": "Creative Commons Attribution 4.0 International", "url": "https://creativecommons.org/licenses/by/4.0/" },
+    "language": "en",
+    "estimatedMinutes": 15,
+    "created": "2026-11-04",
+    "updated": "2026-11-08"
+  },
+  "slides": [
+    {
+      "ref": "he",
+      "catalogueId": "camelyon16.tumor_014.r36864_66560",
+      "label": "tumor_014 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON16",
+      "licence": { "id": "CC0-1.0", "text": "CC0 1.0 Universal", "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/license.txt" },
+      "fingerprint": "15360x15360@0.243094@36864,66560@"
+    }
+  ],
+  "case": {
+    "vignette": {
+      "text": "Sentinel lymph node from a patient with breast cancer, from the public CAMELYON16 dataset. No clinical history is published with the slide. You are looking at a 3.7 mm × 3.7 mm region inside the H&E section, not the whole section.",
+      "synthetic": false,
+      "source": "CAMELYON16 dataset description and this slide's manifest"
+    },
+    "slides": ["he"],
+    "expertView": {
+      "view": { "slide": "he", "center_um": [1590.6, 1483.88], "scale_um_per_px": 3 },
+      "text": "The CAMELYON16 reference outlines in this region: the largest deposit with its Exclusion areas, and three small tumour areas the CAMELYON16 outline marks separately.",
+      "keys": ["camelyon16-reference"],
+      "unlockAfter": ["q-region"]
+    }
+  },
+  "hotspots": [
+    { "id": "hs-lymphoid", "slide": "he", "label": "Lymphoid tissue, lower right", "sub": "20× · fly there", "geometry": { "type": "Point", "coordinates": [13088, 13088] }, "view": { "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 } },
+    { "id": "hs-edge", "slide": "he", "label": "Edge of the deposit", "sub": "20× · fly there", "geometry": { "type": "Point", "coordinates": [11264, 5632] }, "view": { "slide": "he", "center_um": [2738.21, 1369.11], "scale_um_per_px": 0.5 } }
+  ],
+  "answerKeys": [
+    {
+      "id": "camelyon16-reference",
+      "slide": "he",
+      "label": "CAMELYON16 reference outline",
+      "source": { "kind": "reference-layer", "layer": "camelyon16-expert", "version": "d94db5bb" },
+      "targets": [
+        { "id": "largest-deposit", "label": "Largest deposit", "include": { "ids": ["f5049586-cbdd-54a7-a198-8aadd4f15d8a"] }, "subtract": { "className": "Exclusion" } }
+      ],
+      "related": [
+        { "id": "small-foci", "include": { "ids": ["a23671ad-a137-5b55-bc87-8fa11f1c993a", "ce4d072d-cf26-53c6-a4af-8fb4eb5ecd5a", "b4c7ae60-c725-5eec-b8a0-0ba8be2175ff"] }, "credit": true, "feedback": "That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts. The largest deposit is the large pale area of cohesive tumour cells in the centre of this region." }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "q-region",
+      "kind": "region",
+      "title": "Region marking",
+      "stem": "Find the metastatic carcinoma in this region: place one point on tumour, or outline the largest deposit.",
+      "points": 1,
+      "explanation": "The largest deposit is the large pale area of cohesive tumour cells in the centre of this region. A point counts when it falls on any outlined tumour focus or within 50 µm of one. An outline counts when its overlap with the outline of the largest deposit (IoU) is 0.50 or more, and earns half credit when at least 90 % of it lies on tumour. Full credit also needs a view of your mark at 20× or more.",
+      "slide": "he",
+      "key": "camelyon16-reference",
+      "target": "largest-deposit",
+      "accept": ["point", "polygon", "brush", "rect", "ellipse"],
+      "scoring": { "iouFull": 0.5, "pointTolerance_um": 50, "partialInside": { "fraction": 0.9, "factor": 0.5 } },
+      "gate": { "scale_um_per_px": 0.5, "label": "20×", "unmetFactor": 0.5 },
+      "candidatesTitle": "Mark the metastasis without a pointer",
+      "candidates": [
+        { "id": "A", "description": "Upper border of the region", "geometry": { "type": "Point", "coordinates": [9300, 1000] }, "view": { "slide": "he", "center_um": [2260.77, 243.09], "scale_um_per_px": 0.5 } },
+        { "id": "B", "description": "Lower right corner of the region", "geometry": { "type": "Point", "coordinates": [13088, 13088] }, "view": { "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 } },
+        { "id": "C", "description": "Centre of the region", "geometry": { "type": "Point", "coordinates": [7168, 5120] }, "view": { "slide": "he", "center_um": [1742.5, 1244.64], "scale_um_per_px": 0.5 } },
+        { "id": "D", "description": "Lower edge of the region", "geometry": { "type": "Point", "coordinates": [6400, 13900] }, "view": { "slide": "he", "center_um": [1555.8, 3379.01], "scale_um_per_px": 0.5 } }
+      ],
+      "textRubric": {
+        "fields": [
+          { "id": "position", "label": "Position", "kind": "choice", "required": true, "options": [ { "id": "centre", "text": "Centre of the region" }, { "id": "upper", "text": "Upper border" }, { "id": "lower-right", "text": "Lower right corner" }, { "id": "lower", "text": "Lower edge" }, { "id": "left", "text": "Left edge" } ], "correct": ["centre"] },
+          { "id": "size", "label": "Size", "kind": "choice", "options": [ { "id": "macro", "text": "> 2 mm" }, { "id": "micro", "text": "0.2–2 mm" }, { "id": "itc", "text": "≤ 0.2 mm" } ], "correct": ["macro"] },
+          { "id": "feature", "label": "Feature", "kind": "keywords", "keywords": ["cohesive", "clusters", "large cells", "larger cells", "pale cells", "large nuclei", "larger nuclei", "nucleoli", "more cytoplasm", "abundant cytoplasm"] }
+        ],
+        "passMin": 2
+      }
+    },
+    {
+      "id": "q-sinus",
+      "kind": "mcq",
+      "title": "Lymphatic route",
+      "stem": "Tumour cells that reach a lymph node through its afferent lymphatics usually lodge first in which compartment?",
+      "points": 1,
+      "options": [
+        { "id": "A", "text": "The germinal centres of the follicles", "correct": false },
+        { "id": "B", "text": "The subcapsular (marginal) sinus", "correct": true },
+        { "id": "C", "text": "The medullary cords", "correct": false },
+        { "id": "D", "text": "The hilar fat", "correct": false }
+      ],
+      "explanation": "Afferent lymphatics open into the subcapsular sinus under the capsule, so lymph-borne tumour cells usually lodge there first and can then spread into the rest of the node. This region is a window inside the node, so the capsule may not be visible here."
+    },
+    {
+      "id": "q-size",
+      "kind": "mcq",
+      "title": "Size category",
+      "stem": "Measure the greatest dimension of the largest deposit with the measure tool. Which size category is it?",
+      "points": 1,
+      "measureHint": { "slide": "he" },
+      "options": [
+        { "id": "A", "text": "Isolated tumour cells (≤ 0.2 mm)", "correct": false },
+        { "id": "B", "text": "Micrometastasis (> 0.2 mm to 2 mm)", "correct": false },
+        { "id": "C", "text": "Macrometastasis (> 2 mm)", "correct": true }
+      ],
+      "explanation": "By the CAMELYON16 reference outline, the largest deposit measures about 2.7 mm in greatest dimension, so it is a macrometastasis. In the AJCC system for breast cancer, a nodal metastasis larger than 2.0 mm is a macrometastasis; one larger than 0.2 mm but not larger than 2.0 mm is a micrometastasis; clusters not larger than 0.2 mm are isolated tumour cells (AJCC also uses a 200-cell count for the two smaller categories). This item asks for the size category of the deposit, not the nodal stage, which also depends on how many nodes are involved."
+    },
+    {
+      "id": "q-features",
+      "kind": "multi",
+      "title": "Tumour cells or lymphocytes?",
+      "stem": "At 20×, which features favour metastatic carcinoma over the surrounding lymphocytes? Select all that apply.",
+      "points": 1,
+      "scoring": "partial",
+      "options": [
+        { "id": "A", "text": "Cells lying together in cohesive sheets or clusters", "correct": true },
+        { "id": "B", "text": "Nuclei larger than those of the lymphocytes", "correct": true },
+        { "id": "C", "text": "More abundant cytoplasm", "correct": true },
+        { "id": "D", "text": "Small, round, dark nuclei with very little cytoplasm", "correct": false, "feedback": "This describes the lymphocytes." }
+      ],
+      "explanation": "Carcinoma cells are larger than lymphocytes, with more cytoplasm and larger nuclei, and they hold together in cohesive groups. Sinus histiocytes also have abundant cytoplasm, so cohesion and nuclear features matter; when the distinction is uncertain, immunohistochemistry for cytokeratin is commonly used to confirm epithelial tumour cells in a lymph node."
+    }
+  ],
+  "steps": [
+    { "id": "open", "kind": "tour", "phase": "open", "title": "Before you look", "text": "This module uses one public slide. Survey the region at low power, mark the largest metastatic deposit, then answer three questions and compare your answer with the CAMELYON16 reference outline.", "view": { "kind": "fit", "slide": "he" }, "transition": "cut", "tools": ["select"] },
+    { "id": "survey", "kind": "tour", "phase": "screen", "title": "Survey at low power", "text": "Look over the whole region before zooming in; {cmd:pan.viewport} steps one screen at a time. Most of this region is lymphoid tissue, which looks dense and dark at low power because lymphocytes have dark nuclei and little cytoplasm. Look for areas that look different.", "view": { "kind": "fit", "slide": "he" }, "transition": "fly", "tools": ["select", "measure"] },
+    { "id": "lymphoid", "kind": "tour", "phase": "examine", "title": "Lymphoid tissue at 20×", "text": "This is the background: a dense, non-cohesive population of small lymphocytes with round, dark nuclei and very little cytoplasm. Compare anything you find later with this picture.", "view": { "kind": "view", "slide": "he", "center_um": [3181.61, 3181.61], "scale_um_per_px": 0.5 }, "transition": "fly", "highlights": ["hs-lymphoid"], "tools": ["select", "measure"] },
+    { "id": "find", "kind": "item", "phase": "decide", "title": "Identify the metastasis", "item": "q-region", "view": null, "tools": ["select", "point", "polygon", "brush", "measure"] },
+    { "id": "sinus", "kind": "item", "phase": "decide", "title": "Where tumour cells arrive", "item": "q-sinus", "view": null, "tools": ["select"] },
+    { "id": "size", "kind": "item", "phase": "decide", "title": "Measure and classify", "item": "q-size", "view": null, "tools": ["select", "measure"] },
+    { "id": "features", "kind": "item", "phase": "decide", "title": "Tumour cells or lymphocytes?", "item": "q-features", "view": { "kind": "view", "slide": "he", "center_um": [2738.21, 1369.11], "scale_um_per_px": 0.5 }, "tools": ["select", "measure"] },
+    { "id": "compare", "kind": "reveal", "phase": "complete", "title": "Compare with the reference outline", "items": ["q-region"], "text": "The dashed outline is the CAMELYON16 reference annotation of the largest deposit in this region. The smaller outlined areas inside it are marked Exclusion: non-tumour areas such as vessel lumens and spaces, which the dataset excludes from the tumour outline. Your own mark is drawn beside it for comparison.", "view": { "kind": "key" }, "transition": "fly", "tools": ["select", "measure"] },
+    { "id": "edge", "kind": "tour", "phase": "complete", "title": "At the edge of the deposit", "text": "Here the deposit meets the lymphoid tissue. The carcinoma cells are larger than the lymphocytes, with more cytoplasm and larger nuclei, and they lie together in cohesive sheets.", "view": { "kind": "view", "slide": "he", "center_um": [2738.21, 1369.11], "scale_um_per_px": 0.5 }, "transition": "fly", "highlights": ["hs-edge"], "tools": ["select", "measure"] }
+  ]
+}

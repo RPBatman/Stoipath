@@ -1,0 +1,358 @@
+/* =============================================================================
+   Stoipath Viewer (RUO) · Stage-0 shell · page-scoped CSS
+   Everything visual comes from design/design-system/tokens.css + base.css (imported
+   by src/shell/main.ts). This file holds only what the system leaves to the page,
+   following design/screens/final/research-annotation.html where it already solved
+   it (dock internals, top-bar search ladder, bottom bar, reserved HUD widths), plus
+   the Stage-0 engine specifics (real canvas, overlay canvases, transform-only scale
+   bar and navigator rectangle). No transitions on anything over the canvas (P2).
+   ========================================================================== */
+
+/* ---- B. Canvas: one pane per view (TOOLS.md §12.2). Each engine's WebGL canvas fills its pane (not position: fixed;
+   the engine's ResizeObserver follows the pane), with the pane's one 2D overlay canvas above it (D2). ---- */
+.shell .panes { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.shell .pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+/* Compare (TOOLS.md §6.9): .app.compare-on (set by compare) gives two columns and a 2 px gutter; otherwise pane B,
+   the gutter and the compare bar take no room. Pane A's ResizeObserver resizes its engine on the toggle. */
+.app.shell:not(.compare-on) #paneB, .app.shell:not(.compare-on) #gutter, .app.shell:not(.compare-on) #compareBar { display: none; }
+.app.shell.compare-on .panes { grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr); }
+.shell .gutter { background: var(--color-border-strong); }
+.app.shell.compare-on .pane > .hud { max-width: 50%; }
+.shell .pane .hud__item:empty { display: none; }
+.shell .pane > .canvas { touch-action: none; -webkit-user-select: none; user-select: none; }
+.shell .pane > canvas:not(.overlay-layer) { cursor: grab; outline: none; }
+.shell .pane > canvas:not(.overlay-layer):active { cursor: grabbing; }
+.shell:not([data-tool="select"]) .pane > canvas:not(.overlay-layer) { cursor: crosshair; }
+/* Focus ring on the canvas itself: an outline drawn inside the cell (a canvas paints over inset box-shadows). */
+.shell .pane > canvas:not(.overlay-layer):focus-visible { box-shadow: none; outline: 2px solid var(--grey-95); outline-offset: -3px; border-radius: 0; z-index: 1; }
+.overlay-layer { pointer-events: none; z-index: 2; }
+
+/* ---- HUD: reserved widths so textContent updates never shift layout (research final's engineering graft) ---- */
+.shell .hud { z-index: var(--z-hud); }
+/* HUD items over the canvas are text, not targets (the measurement page's HUD is pointer-events: none too): a drag,
+   wheel zoom or measure click that starts on the identity line, the tool line, the scale bar or the position reaches
+   the canvas. base.css gives every .hud__item pointer-events: auto; only the magnification button and its typed-zoom
+   field are controls here. */
+.shell .hud__item { pointer-events: none; }
+.shell .magnification__value, .shell .magnification .zoom-input { pointer-events: auto; }
+.shell .magnification__value { display: inline-flex; align-items: baseline; justify-content: flex-end; min-width: 5.4ch; min-height: var(--target-control); background: none; color: inherit; border: 0; cursor: text; font-variant-numeric: tabular-nums lining-nums; }
+.shell .magnification__value .tilde { margin-right: 1px; }
+.shell .magnification__line2 { min-width: 20ch; text-align: right; }
+.shell .magnification input.zoom-input { width: 6ch; }
+.shell .magnification .zoom-input[hidden] { display: none; }
+.shell .hud__position { min-width: 22ch; }
+.shell .hud__identity { flex-direction: column; align-items: flex-start; gap: 0; }
+.shell .hud__toolline { font-family: var(--font-ui); font-size: var(--text-xs); white-space: normal; max-width: 100%; color: var(--grey-91); }
+.shell .hud__toolline[hidden] { display: none; }
+.shell .hud .hud__sharp .indicator__glyph { width: 9px; height: 9px; }
+
+/* Scale bar (handoff §5.2): a fixed 200 px track whose fill is scaled and whose right tick is translated, so a
+   zoom changes transforms only. The left tick is base.css's ::before; the ::after tick is replaced by .scalebar__end.
+   Shadows are axis-aligned so scaleX never smears them. */
+.shell .scalebar { min-width: calc(200px + 2 * var(--space-3)); }
+.shell .scalebar .scalebar__bar { width: 200px; background: transparent; box-shadow: none; margin-bottom: 6px; }
+.shell .scalebar .scalebar__bar::after { display: none; }
+.scalebar__fill { position: absolute; left: 0; top: 0; width: 200px; height: 4px; background: var(--grey-95); box-shadow: 0 1px 0 rgba(0,0,0,.8), 0 -1px 0 rgba(0,0,0,.8); transform-origin: 0 0; transform: scaleX(0.6); }
+.scalebar__end { position: absolute; left: 0; top: -4px; width: 2px; height: 12px; background: var(--grey-95); box-shadow: 0 0 0 1px rgba(0,0,0,.8); transform: translateX(118px); }
+.shell .scalebar__label { min-width: 7ch; }
+
+/* ---- F. Navigator: real top-level tile(s), rectangle from four transformed edges ---- */
+/* Its host shares the canvas grid cell but comes after the strip in the DOM, so Tab reaches the navigator last
+   (handoff §4.6: canvas → rail → dock → strip → navigator) while it is drawn exactly where it was. */
+.app.shell > .nav-host { grid-area: canvas; position: relative; z-index: var(--z-navigator); pointer-events: none; overflow: hidden; contain: layout paint style; min-width: 0; min-height: 0; }
+.shell .nav-host .navigator { pointer-events: auto; max-width: calc(25% - var(--layout-hud-inset)); }   /* base.css's .canvas-area .navigator cap */
+.shell .navigator { width: var(--layout-navigator); }
+.shell .navigator__thumb { aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; }
+.nav-tiles { position: absolute; inset: 0; }
+.nav-tiles img { position: absolute; display: block; max-width: none; image-rendering: auto; -webkit-user-drag: none; user-select: none; }
+.shell .navigator__viewport { inset: 0; border: 0; box-shadow: none; }
+.nav-edge { position: absolute; left: 0; top: 0; background: var(--color-canvas-viewport); transform-origin: 0 0; }
+.nav-edge--h { width: 1px; height: 2px; box-shadow: 0 1px 0 rgba(0,0,0,.7), 0 -1px 0 rgba(0,0,0,.7); }
+.nav-edge--v { width: 2px; height: 1px; box-shadow: 1px 0 0 rgba(0,0,0,.7), -1px 0 0 rgba(0,0,0,.7); }
+.app.shell.nav-hidden .navigator { display: none; }
+.shell .navigator__label .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/* One label row at every navigator width (a wrapped "O hide" made the 136 px drawer-state navigator 16 px taller). */
+.shell .navigator__label .nav-hint { flex: 0 0 auto; white-space: nowrap; }
+
+/* ---- A. Top bar: search button and its collapse ladder (research final's page rules, design-system thresholds) ---- */
+.topbar__identity .cohort { font-family: var(--font-mono); }
+.topbar__search {
+  flex: 0 100 300px; min-width: var(--target); display: flex; align-items: center; gap: var(--space-3);
+  min-height: max(28px, var(--target-control)); padding: 0 var(--space-4);
+  background: var(--color-surface--1); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2);
+  color: var(--color-text-secondary); font-size: var(--text-sm); text-align: left; white-space: nowrap; overflow: hidden;
+}
+.topbar__search:hover { border-color: var(--color-text-secondary); color: var(--color-text); }
+.topbar__search .ph { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.topbar__search .keys { display: inline-flex; gap: 2px; }
+.topbar__slot-mode { margin-left: 0; }
+.topbar__slot-mode .btn--icon { width: var(--target-control); height: var(--target-control); }
+/* The label is a prefix of the button's name (SC 2.5.3) and never cut mid-word: the long form at the 300 px step, "Search…"
+   at the 220 px step (≈ 118 px of text). */
+.topbar__search .ph-short { display: none; }
+@container topbar (max-width: 1599px) {
+  .topbar__search { flex-basis: 220px; }
+  .topbar__search .ph-long { display: none; }
+  .topbar__search .ph-short { display: inline; }
+}
+@container topbar (max-width: 1263px) {
+  .topbar__search { flex: 0 0 auto; width: var(--target-control); min-height: var(--target-control); padding: 0; justify-content: center; }
+  .topbar__search .ph, .topbar__search .keys { display: none; }
+}
+@container topbar (max-width: 1063px) { .topbar__search { display: none; } }   /* ≤ 1079 px the bottom bar carries Search */
+
+/* ---- C. Rail: tool sets (display: contents, so the buttons stay flex items of the toolbar), Library switchers,
+   magnification presets as text tools ---- */
+.rail { scrollbar-width: none; }
+.rail__set { display: contents; }
+/* Library switchers (research final lines 186–188): the open panel's switcher is marked like a pressed tool; the
+   count badge sits in the corner. */
+.shell .rail .tool[aria-expanded="true"] { background: var(--color-control-selected); color: var(--color-text); }
+.shell .rail .tool[aria-expanded="true"]::before { content: ""; position: absolute; left: -2px; top: 20%; height: 60%; width: 2px; border-radius: 1px; background: var(--color-control-selected-indicator); }
+.shell .rail .tool .badge-n { position: absolute; top: 1px; right: 1px; font: 600 8px/10px var(--font-mono); padding: 0 3px; border-radius: 5px; background: var(--color-control-bg); color: var(--color-text); }
+.shell .tool .swatch--lg { width: 18px; height: 18px; }
+.shell .bottombar .tool[aria-expanded="true"] { background: var(--color-control-selected); color: var(--color-text); }
+/* The rail fits 1366 × 768 (TOOLS.md §12.2, owner decision Q10): at ≤ 1366 px the zoom buttons and the presets leave it;
+   + − 0, the keys 1–6, the palette and typed zoom remain. */
+@media (max-width: 1366px) {
+  .shell .rail .rail__set--zoom, .shell .rail .presets, .shell .rail .rail__divider--presets { display: none; }
+}
+.tool.tool--text { width: calc(var(--layout-rail) - 12px); height: var(--target); font: 600 10px/1 var(--font-mono); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.rail__group.presets { gap: 2px; }
+
+/* ---- D. Dock internals (research final) ---- */
+.dock__head { flex: 0 0 auto; display: flex; align-items: center; gap: var(--space-2); min-height: 32px; padding: 0 var(--space-3) 0 var(--space-5); border-bottom: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); white-space: nowrap; }
+.dock__head .title { flex: 0 0 auto; }
+.dock__head .meta { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
+.dock .tabs .tab { padding: 0 var(--space-3); font-size: var(--text-xs); gap: 3px; flex: 1 1 0; justify-content: center; min-width: max-content; }
+/* Every tab stays reachable: equal widths while they fit, a scrolling strip when they do not (a narrow drawer). The
+   Context dock has four tabs since Wave 4 (Inspector · Annotations · Slide · Engine; Measurements folded into
+   Annotations, D7, TOOLS.md D10), so the Waves 2–3 five-tab compaction is gone. */
+.dock .tabs { overflow-x: auto; scrollbar-width: none; }
+.dock .tabs .tab .count { font-size: 9px; padding: 0 4px; }
+.dock__body { display: flex; flex-direction: column; }
+.tabpanel { display: none; padding: 0 0 var(--space-6); }
+.tabpanel.is-active { display: block; }
+.tabpanel:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring), inset 0 0 0 3px var(--focus-halo); }
+.sub { display: flex; align-items: center; gap: var(--space-2); min-height: 30px; padding: 0 var(--space-3) 0 var(--space-5); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); background: var(--color-surface--1); }
+.sub .title { flex: 0 0 auto; }
+.sub .meta { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; text-transform: none; letter-spacing: 0; font-family: var(--font-mono); }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-1) var(--space-4); font-size: var(--text-sm); padding: var(--space-3) var(--space-5); }
+.kv dt { color: var(--color-text-secondary); }
+.kv dd { font-family: var(--font-mono); min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums lining-nums; }
+.kv dd a { color: var(--color-text); }
+/* Facts links (licence, source) stand alone in their row, not inside a sentence: full target height (24 / 44 px). */
+.shell .kv dd a { display: inline-flex; align-items: center; min-height: var(--target); }
+.note { padding: var(--space-3) var(--space-5); font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5; }
+.note .key { vertical-align: baseline; }
+.dock-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-5); }
+pre.snippet { margin: var(--space-2) var(--space-5); padding: var(--space-3) var(--space-4); background: var(--color-surface--1); border: 1px solid var(--color-border); border-radius: var(--radius-2); font: var(--text-xs)/1.5 var(--font-mono); color: var(--color-text); overflow: auto; max-height: 240px; white-space: pre-wrap; overflow-wrap: anywhere; }
+pre.snippet:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
+.dock .section > summary { min-height: var(--target); }
+
+/* ---- Palette rows (research final's row layout; placement is base.css .palette-layer) ---- */
+.palette__item { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: 1px; align-items: center; cursor: pointer; }
+.palette__item .lbl { grid-column: 1; grid-row: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette__item .meta { grid-column: 1; grid-row: 2; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); margin: 0; }
+.palette__item .meta:empty { display: none; }
+.palette__item .keys { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+.palette__empty { padding: var(--space-5); }
+.pal-count { margin-left: auto; }
+
+/* ---- Keyboard map inside the dock-column dialog ---- */
+.shell .modal-layer .dialog__body { gap: var(--space-4); }
+.shell .keymap { grid-template-columns: 1fr; gap: var(--space-5); }
+.keymap__h { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-bottom: var(--space-2); font-weight: var(--weight-semibold); }
+.shell .keymap__row { align-items: flex-start; min-height: 24px; padding: 2px 0; }
+.shell .keymap__keys { flex: 0 0 132px; align-items: center; }
+.keymap__or { color: var(--color-text-secondary); font-size: var(--text-2xs); padding: 0 2px; }
+.keymap__what { flex: 1 1 auto; min-width: 0; }
+.about .label-text { font-size: var(--text-md); color: var(--color-text); line-height: 1.5; }
+.about .kv { padding: 0; }
+.about .note { padding: 0; }
+
+/* ---- Bottom bar (research final): labelled 44 px targets ---- */
+.bottombar { justify-content: space-around; padding: 0 var(--space-2); gap: var(--space-1); }
+.bottombar .tool { width: auto; min-width: var(--target); height: var(--target); padding: 0 var(--space-2); flex-direction: column; gap: 2px; }
+.bottombar .tool__label { font-size: 10px; line-height: 1; }
+
+/* ---- Strip ---- */
+.strip .chip .icon { width: 14px; height: 14px; }
+.strip .chip.num { font-variant-numeric: tabular-nums; min-width: 11ch; justify-content: center; }
+
+/* ---- Dock open / closed (panels.ts toggles only .dock-open on the Context dock #dock, .lib-open on the Library #lib) ---- */
+.app.shell:not(.dock-open) #dock { display: none; }
+@media (min-width: 1600px) { .app.shell:not(.dock-open) { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; } }
+/* The Library | Context switch of the in-flow sheet (≤ 1079 px, once a Library panel exists). */
+.shell .dock__switch { display: none; flex: 0 0 auto; }
+/* The dock and drawer close buttons: base.css's .btn--sm side padding comes after .btn--icon's padding: 0, which
+   squeezed the 16 px glyph of these 24 px buttons to 6 px (TOOLS-QUESTIONS library L5; a base.css fix is a design-system
+   change outside Phase A). */
+.shell .dock__head .btn--icon { flex: 0 0 auto; padding: 0; }
+
+/* ---- D-left. Library (TOOLS.md D10): a drawer over the left edge of the canvas at ≥ 1080 px (no grid column, so the
+   WebGL canvas never resizes on a toggle, H13), the in-flow sheet ≤ 1079 px. #lib rules carry an id so base.css's
+   .app.dock-open .dock drawer / sheet rules (meant for the Context dock) never move it. ---- */
+.app.shell { --lib-w: 300px; }
+.app.shell #lib { display: none; grid-area: auto; border-left: 0; border-right: 1px solid var(--color-border-strong); }
+.app.shell.lib-open #lib { display: flex; }
+@media (min-width: 1080px) {
+  .app.shell.lib-open #lib {
+    position: absolute; left: var(--layout-rail); right: auto; top: var(--layout-topbar); bottom: var(--layout-strip);
+    width: var(--lib-w); height: auto; z-index: var(--z-drawer); box-shadow: var(--shadow-3);
+  }
+  /* Pane A's identity, marker, tool line and scale bar move right of the open drawer (research final). */
+  .app.shell.lib-open #paneA > .hud--tl, .app.shell.lib-open #paneA > .hud--bl { left: calc(var(--lib-w) + var(--layout-hud-inset)); }
+}
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell { --lib-w: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
+}
+/* Compare with the Library open (TOOLS.md §15.15 F6; TOOLS-QUESTIONS compare C6): the drawer leaves pane A less width
+   than its scale bar plus its readout (measured at 1440: 355 px, #scalebar 404–616 over #magBox 575–735; 1280 and 1600
+   docked overlap too, 1920 docked does not). Pane A's readout then stands above its scale-bar and position lines, as
+   compare.css lifts pane B's under the Context drawer (§15.13 CP6): the bottom-left stack is 58 px tall (scale bar 35 +
+   gap 4 + position 19, measured), plus one gap. */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell.compare-on.lib-open #paneA #magBox { margin-bottom: calc(58px + var(--space-2)); }
+}
+@media (min-width: 1600px) and (max-width: 1799px) {
+  .app.shell.compare-on.lib-open.dock-open #paneA #magBox { margin-bottom: calc(58px + var(--space-2)); }
+}
+@media (min-width: 3200px) { .app.shell { --lib-w: 340px; } }
+
+/* ---- Class picker popover (annotations; TOOLS.md §6.5): beside the rail, right of an open Library, never central ---- */
+.shell .class-menu {
+  position: absolute; left: calc(var(--layout-rail) + var(--space-4)); top: calc(var(--layout-topbar) + var(--space-4));
+  z-index: var(--z-modal); min-width: 208px; max-width: calc(100vw - 2 * var(--space-4));
+  max-height: calc(100% - var(--layout-topbar) - var(--layout-strip) - 2 * var(--space-4)); overflow: auto;
+}
+.app.shell.lib-open .class-menu { left: calc(var(--layout-rail) + var(--lib-w) + var(--space-4)); }
+
+/* ---- Inspector: the View section shows only once share fills #shareActions ---- */
+.shell #shareActions:empty, .shell .insp-view:has(+ #shareActions:empty) { display: none; }
+
+/* ---- Bottom bar: the navigation buttons leave once the research bar's annotation set is in it, a drawing tool or the
+   class picker (research bottom bar; TOOLS.md §15.1 J9). With Class shown and the navigation buttons kept, the phone
+   bar had 7 targets and overflowed 320 px by 4 px (Wave 2). Pinch, double tap and Search keep zoom, fit and the
+   navigator. ---- */
+.shell .bottombar:has(:is([data-cmd="tool:point"], [data-cmd="class:pick"]):not([hidden])) .tool--nav { display: none; }
+
+/* =============================================================================
+   Responsive (base.css breakpoints; principles §7 collapse order)
+   ========================================================================== */
+@media (min-width: 3200px) {
+  .kv, .note { font-size: var(--text-md); }
+  .kv dd { font-size: var(--text-sm); }
+  .topbar__search { flex-basis: 360px; }
+}
+/* Laptop and tablet landscape: the dock is a drawer over the canvas edge (closed by default). While it is open the
+   navigator and the bottom-right HUD move left of it, and the navigator steps down to 180 px (research final). */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell { --layout-dock: clamp(272px, calc((100vw - var(--layout-rail)) / 4), 336px); }
+  /* An absolutely positioned grid item that keeps grid-area: dock resolves base.css's top: topbar / bottom: strip
+     against its grid area (row 2), which put the drawer 48 px low; without an area it resolves against the app. */
+  .app.shell.dock-open #dock { grid-area: auto; }
+  /* The drawer, the palette and the dock-column dialogs (keymap, About) all cover the right column: the navigator and
+     the bottom-right readout of the right-hand pane step left of it, so no focusable control sits under an open layer
+     (SC 2.4.11). The covered dock itself is made inert while a palette or dialog lies over it (main.ts). */
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) .navigator,
+  .app.shell:not(.compare-on):is(.dock-open, .palette-open, .dialog-open) #paneA > .hud--br,
+  .app.shell.compare-on:is(.dock-open, .palette-open, .dialog-open) #paneB > .hud--br,
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) #compareBar { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  /* Stepped left, the navigator is no longer at the canvas edge, so its bottom must stay above the central zone
+     (P1): thumbnail height ≤ 25 % of the canvas − inset − label row (canvas = 100dvh − top bar − strip), width
+     from the slide's aspect (--nav-ar, set once from the manifest); 180 px at most (research final's drawer step). */
+  .app.shell:is(.dock-open, .palette-open, .dialog-open) {
+    --layout-navigator: min(180px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 36px) * var(--nav-ar, 1)));
+  }
+}
+/* Docked width with the dock closed: the palette and dialogs use the empty dock column over the canvas edge. */
+@media (min-width: 1600px) {
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) .navigator,
+  .app.shell:not(.dock-open):not(.compare-on):is(.palette-open, .dialog-open) #paneA > .hud--br,
+  .app.shell:not(.dock-open).compare-on:is(.palette-open, .dialog-open) #paneB > .hud--br,
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) #compareBar { right: calc(var(--layout-dock) + var(--layout-hud-inset)); }
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) {
+    --layout-navigator: min(240px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 36px) * var(--nav-ar, 1)));
+  }
+}
+@media (min-width: 3200px) {
+  .app.shell:not(.dock-open):is(.palette-open, .dialog-open) {
+    --layout-navigator: min(320px, calc((25dvh - 0.25 * (var(--layout-topbar) + var(--layout-strip)) - var(--layout-hud-inset) - 40px) * var(--nav-ar, 1)));
+  }
+}
+/* Tablet portrait and phone: rail → bottom bar; the dock becomes the grid's in-flow sheet row (the canvas yields
+   height instead of being covered; base.css already reserves the auto "sheet" row for the palette). */
+@media (max-width: 1079px) {
+  .app.shell.dock-open #dock, .app.shell.lib-open #lib {
+    display: flex; grid-area: sheet; position: relative; left: auto; right: auto; bottom: auto; top: auto;
+    width: auto; height: var(--layout-sheet-max); max-height: var(--layout-sheet-max);
+    border-left: 0; border-top: 1px solid var(--color-border-strong); border-radius: var(--radius-5) var(--radius-5) 0 0;
+    box-shadow: 0 -6px 16px rgba(0,0,0,.25); z-index: var(--z-rail);
+  }
+  .app.shell.palette-open #dock, .app.shell.palette-open #lib { display: none; }
+  .app.shell.lib-open #lib { border-right: 0; }
+  .app.shell.has-library .dock__switch { display: inline-flex; }
+  /* The class menu sits above the bottom bar, and above the sheet when one is open. */
+  .shell .class-menu { left: var(--space-4); top: auto; bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--space-4)); }
+  .app.shell:is(.lib-open, .dock-open) .class-menu { left: var(--space-4); bottom: calc(var(--layout-bottombar) + var(--layout-strip) + var(--layout-sheet-max) + var(--space-4)); }
+  /* Keymap and About take the same in-flow sheet row as the palette (base.css .palette-layer), so the canvas and its
+     bottom HUD yield height instead of being covered (handoff §5.1 "the bottom HUD lifts above an open sheet"); the
+     dock sheet steps aside while one is open, as it does for the palette. */
+  .app.shell .modal-layer { position: static; grid-area: sheet; inset: auto; display: flex; flex-direction: column; padding: 0; z-index: auto; pointer-events: auto; min-height: 0; max-height: var(--layout-sheet-max); }
+  .app.shell .modal-layer[hidden] { display: none; }
+  .app.shell .modal-layer .dialog { width: 100%; max-height: var(--layout-sheet-max); border-left: 0; border-right: 0; border-bottom: 0; border-radius: var(--radius-5) var(--radius-5) 0 0; box-shadow: 0 -6px 16px rgba(0,0,0,.25); }
+  .app.shell.dialog-open #dock, .app.shell.dialog-open #lib { display: none; }
+}
+@media (max-width: 599px) {
+  .app.shell .hud { max-width: 48%; }
+  /* Phase A review: the class picker is a bottom sheet on phones (main.ts adds base.css .sheet), two columns of 44 px
+     rows above the bottom bar, over an open Library or Context sheet too: a transient layer outside the rest state,
+     never a popover reaching the slide's central zone (layout-check Z1 at 390 × 844 coarse; S1 bounds it at 40 %). */
+  .shell .class-menu.sheet, .app.shell:is(.lib-open, .dock-open) .class-menu.sheet {
+    left: 0; right: 0; top: auto; bottom: var(--layout-bottombar); width: auto; min-width: 0; max-width: none;
+    max-height: var(--layout-sheet-max); overflow: auto;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: var(--space-1) var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-3); border-left: 0; border-right: 0; border-bottom: 0;
+  }
+  .shell .class-menu.sheet .menu__item { min-height: var(--target); padding: var(--space-2) var(--space-3); }
+  /* Six labelled targets fit a 320 px phone (SC 1.4.10): Zoom in / out go (pinch, double tap, Search → Zoom). */
+  .shell .bottombar .tool--secondary { display: none; }
+  .shell .magnification__line2, .shell .hud__position { display: none; }
+  .shell .scalebar { min-width: 0; }
+  .topbar__identity .accession { font-size: var(--text-md); }
+  .dock .tabs { overflow-x: auto; }
+  .shell .keymap__keys { flex-basis: 104px; }
+}
+@media (pointer: coarse) {
+  .shell .rail .tool--secondary { display: none; }   /* 44 px tools: Rectangle and Ellipse stay in the palette and keys */
+  .shell .navigator__label .nav-hint { display: none; }   /* "O hide" is a keyboard hint; Nav in the bottom bar toggles it */
+  .tool.tool--text { height: var(--target); }
+  .note .key { display: none; }
+}
+@media (max-height: 760px) and (min-width: 1080px) {
+  .rail { gap: 0; }
+  .rail__group.presets { gap: 0; }
+}
+/* Short touch landscapes (iPad mini 1133 × 744): 44 px targets overflow the rail; the rail's keyboard map button goes
+   (the top bar's ? button is the same command), and since Phase A Wave 4 the Compare button too (TOOLS.md §15.15 F14:
+   with every Phase A tool the rail measured 694 px of content in 664 px, the Context button half under the edge).
+   Compare refuses tablets anyway (§6.9); C and the palette still give its reason. */
+@media (max-height: 760px) and (min-width: 1080px) and (pointer: coarse) {
+  .rail [data-cmd="keymap"], .rail [data-cmd="compare:side"] { display: none; }
+}
+@media print {
+  .overlay-layer { display: none; }
+}
+
+/* Palette input: shrink inside the 320 px column and drop the native clear button so the Esc hint stays visible;
+   a 44 px field under a coarse pointer (the drawer-width palette at 1080–1599 px measured 32). */
+.palette__input input { min-width: 0; min-height: max(var(--target-min), var(--target)); }
+.palette__input input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+
+/* Phone navigator (research final, decisions §4d): base.css's 25 % cap leaves ~89 px on a 390 px phone, too narrow for
+   three 44 px pads. On phones the navigator is a toggled overlay (behind O, hidden at rest), so it takes the ladder's
+   140 px phone step with only the canvas-edge cap; at 140 + 24 px tall it stays above the central zone. */
+@media (max-width: 599px) {
+  .shell .nav-host .navigator { width: 140px; max-width: calc(100% - 2 * var(--layout-hud-inset)); }
+}

@@ -1,0 +1,607 @@
+{
+ "env_start": {
+  "uptime": "00:34:43 up 54 min,  0 user,  load average: 12.85, 11.89, 9.32",
+  "nproc": "4",
+  "time": "2026-10-25T00:34:43.881Z"
+ },
+ "n_events": 40,
+ "spacing_ms": 50,
+ "vsync_ms": 16.666666666666668,
+ "runs": [
+  {
+   "mode": "REF",
+   "input": "mouseMoved",
+   "env": {
+    "uptime": "00:34:45 up 54 min,  0 user,  load average: 12.85, 11.89, 9.32",
+    "nproc": "4",
+    "time": "2026-10-25T00:34:45.380Z"
+   },
+   "frames_presented_pipeline_reporter": 41,
+   "display_frames": 40,
+   "gen_to_first_display_after_main_ms": {
+    "n": 40,
+    "p50": 6.973,
+    "p95": 12.019,
+    "p50_vsyncs": 0.41838,
+    "p95_vsyncs": 0.72114
+   },
+   "gen_to_main_end_ms": {
+    "p50": 1.102,
+    "p95": 1.575
+   },
+   "main_end_to_display_ms": {
+    "p50": 5.758,
+    "p95": 10.839
+   },
+   "frames_drawn_by_page": 40,
+   "beginframe_interval_ms_p50": 16.716,
+   "beginframe_ticks": 83,
+   "eventlatency_count": 40,
+   "presented_count": 0,
+   "summary": {
+    "MOUSE_MOVED_EVENT": {
+     "n": 40,
+     "presented": 0,
+     "total_ms_p50": null,
+     "total_ms_p95": null,
+     "total_vsyncs_p50": 0,
+     "total_vsyncs_p95": 0,
+     "stages_p50_ms": {}
+    }
+   },
+   "sample_presented": []
+  },
+  {
+   "mode": "REF",
+   "input": "mouseWheel",
+   "env": {
+    "uptime": "00:34:49 up 54 min,  0 user,  load average: 12.62, 11.86, 9.32",
+    "nproc": "4",
+    "time": "2026-10-25T00:34:49.514Z"
+   },
+   "frames_presented_pipeline_reporter": 41,
+   "display_frames": 40,
+   "gen_to_first_display_after_main_ms": {
+    "n": 80,
+    "p50": 33.1,
+    "p95": 38.035,
+    "p50_vsyncs": 1.986,
+    "p95_vsyncs": 2.2821
+   },
+   "gen_to_main_end_ms": {
+    "p50": 26.919,
+    "p95": 31.148
+   },
+   "main_end_to_display_ms": {
+    "p50": 5.587,
+    "p95": 8.303
+   },
+   "frames_drawn_by_page": 40,
+   "beginframe_interval_ms_p50": 16.667,
+   "beginframe_ticks": 199,
+   "eventlatency_count": 80,
+   "presented_count": 0,
+   "summary": {
+    "MOUSE_WHEEL": {
+     "n": 80,
+     "presented": 0,
+     "total_ms_p50": null,
+     "total_ms_p95": null,
+     "total_vsyncs_p50": 0,
+     "total_vsyncs_p95": 0,
+     "stages_p50_ms": {}
+    }
+   },
+   "sample_presented": []
+  },
+  {
+   "mode": "GLDIRECT",
+   "input": "mouseMoved",
+   "env": {
+    "uptime": "00:34:54 up 54 min,  0 user,  load average: 12.33, 11.81, 9.32",
+    "nproc": "4",
+    "time": "2026-10-25T00:34:54.849Z"
+   },
+   "frames_presented_pipeline_reporter": 40,
+   "display_frames": 40,
+   "gen_to_first_display_after_main_ms": {
+    "n": 40,
+    "p50": 11.848,
+    "p95": 16.985,
+    "p50_vsyncs": 0.71088,
+    "p95_vsyncs": 1.0191
+   },
+   "gen_to_main_end_ms": {
+    "p50": 1.111,
+    "p95": 2.364
+   },
+   "main_end_to_display_ms": {
+    "p50": 10.764,
+    "p95": 14.615
+   },
+   "frames_drawn_by_page": 40,
+   "beginframe_interval_ms_p50": 16.76,
+   "beginframe_ticks": 81,
+   "eventlatency_count": 40,
+   "presented_count": 40,
+   "summary": {
+    "MOUSE_MOVED_EVENT": {
+     "n": 40,
+     "presented": 40,
+     "total_ms_p50": 11.848,
+     "total_ms_p95": 16.985,
+     "total_vsyncs_p50": 0.71088,
+     "total_vsyncs_p95": 1.0191,
+     "stages_p50_ms": {
+      "BrowserMainToRendererCompositor": 0.159,
+      "RendererCompositorQueueingDelay": 0.009,
+      "RendererCompositorProcessing": 0.003,
+      "RendererCompositorToMain": 0.463,
+      "RendererMainProcessing": 0.347,
+      "RendererMainFinishedToCommit": 0.351,
+      "Commit": 0.057,
+      "EndCommitToActivation": 0.048,
+      "Activation": 0.033,
+      "EndActivateToSubmitCompositorFrame": 0.484,
+      "SubmitToReceiveCompositorFrame": 0.171,
+      "ReceiveCompositorFrameToStartDraw": 0.169,
+      "StartDrawToSwapStart": 1.403,
+      "SwapStartToPresentation": 8.133,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 9.692
+     }
+    }
+   },
+   "sample_presented": [
+    {
+     "type": "MOUSE_MOVED_EVENT",
+     "ts": 3255638630,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.536,
+      "RendererCompositorQueueingDelay": 0.016,
+      "RendererCompositorProcessing": 0.004,
+      "RendererCompositorToMain": 1.215,
+      "RendererMainProcessing": 0.256,
+      "RendererMainFinishedToCommit": 0.592,
+      "Commit": 0.083,
+      "EndCommitToActivation": 0.078,
+      "Activation": 0.067,
+      "EndActivateToSubmitCompositorFrame": 0.689,
+      "SubmitToReceiveCompositorFrame": 0.318,
+      "ReceiveCompositorFrameToStartDraw": 0.188,
+      "StartDrawToSwapStart": 0.947,
+      "SwapStartToPresentation": 8.688,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 10.141
+     },
+     "total_ms": 14.014
+    },
+    {
+     "type": "MOUSE_MOVED_EVENT",
+     "ts": 3255697264,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.129,
+      "RendererCompositorQueueingDelay": 0.031,
+      "RendererCompositorProcessing": 0.007,
+      "RendererCompositorToMain": 0.578,
+      "RendererMainProcessing": 0.393,
+      "RendererMainFinishedToCommit": 0.305,
+      "Commit": 0.057,
+      "EndCommitToActivation": 0.069,
+      "Activation": 0.046,
+      "EndActivateToSubmitCompositorFrame": 0.59,
+      "SubmitToReceiveCompositorFrame": 0.274,
+      "ReceiveCompositorFrameToStartDraw": 0.374,
+      "StartDrawToSwapStart": 1.412,
+      "SwapStartToPresentation": 8.193,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 10.253
+     },
+     "total_ms": 12.575
+    },
+    {
+     "type": "MOUSE_MOVED_EVENT",
+     "ts": 3255752131,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.165,
+      "RendererCompositorQueueingDelay": 0.009,
+      "RendererCompositorProcessing": 0.002,
+      "RendererCompositorToMain": 0.458,
+      "RendererMainProcessing": 0.369,
+      "RendererMainFinishedToCommit": 0.343,
+      "Commit": 0.057,
+      "EndCommitToActivation": 0.045,
+      "Activation": 0.028,
+      "EndActivateToSubmitCompositorFrame": 0.551,
+      "SubmitToReceiveCompositorFrame": 0.247,
+      "ReceiveCompositorFrameToStartDraw": 0.16,
+      "StartDrawToSwapStart": 0.643,
+      "SwapStartToPresentation": 9.266,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 10.316
+     },
+     "total_ms": 12.467
+    }
+   ]
+  },
+  {
+   "mode": "GLDIRECT",
+   "input": "mouseWheel",
+   "env": {
+    "uptime": "00:34:59 up 54 min,  0 user,  load average: 12.06, 11.76, 9.32",
+    "nproc": "4",
+    "time": "2026-10-25T00:34:59.102Z"
+   },
+   "frames_presented_pipeline_reporter": 42,
+   "display_frames": 40,
+   "gen_to_first_display_after_main_ms": {
+    "n": 80,
+    "p50": 38.499,
+    "p95": 44.763,
+    "p50_vsyncs": 2.30994,
+    "p95_vsyncs": 2.68578
+   },
+   "gen_to_main_end_ms": {
+    "p50": 27.155,
+    "p95": 31.123
+   },
+   "main_end_to_display_ms": {
+    "p50": 10.74,
+    "p95": 16.989
+   },
+   "frames_drawn_by_page": 40,
+   "beginframe_interval_ms_p50": 16.666,
+   "beginframe_ticks": 197,
+   "eventlatency_count": 80,
+   "presented_count": 40,
+   "summary": {
+    "MOUSE_WHEEL": {
+     "n": 80,
+     "presented": 40,
+     "total_ms_p50": 38.499,
+     "total_ms_p95": 44.763,
+     "total_vsyncs_p50": 2.30994,
+     "total_vsyncs_p95": 2.68578,
+     "stages_p50_ms": {
+      "BrowserMainToRendererCompositor": 0.173,
+      "RendererCompositorQueueingDelay": 0.008,
+      "RendererCompositorProcessing": 0.014,
+      "RendererCompositorToMain": 16.039,
+      "RendererMainProcessing": 0.179,
+      "RendererMainFinishedToCommit": 0.586,
+      "Commit": 0.058,
+      "EndCommitToActivation": 0.053,
+      "Activation": 0.034,
+      "EndActivateToSubmitCompositorFrame": 0.456,
+      "SubmitToReceiveCompositorFrame": 0.239,
+      "ReceiveCompositorFrameToStartDraw": 0.171,
+      "StartDrawToSwapStart": 1.48,
+      "SwapStartToPresentation": 7.756,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 9.574
+     }
+    }
+   },
+   "sample_presented": [
+    {
+     "type": "MOUSE_WHEEL",
+     "ts": 3259884910,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.196,
+      "RendererCompositorQueueingDelay": 0.011,
+      "RendererCompositorProcessing": 0.014,
+      "RendererCompositorToMain": 0.418,
+      "RendererMainProcessing": 0.128,
+      "RendererMainFinishedToCommit": 0.412,
+      "Commit": 0.058,
+      "EndCommitToActivation": 0.053,
+      "Activation": 0.034,
+      "EndActivateToSubmitCompositorFrame": 0.265,
+      "SubmitToReceiveCompositorFrame": 0.087,
+      "ReceiveCompositorFrameToStartDraw": 0.197,
+      "StartDrawToSwapStart": 1.741,
+      "SwapStartToPresentation": 7.632,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 9.657
+     },
+     "total_ms": 12.523
+    },
+    {
+     "type": "MOUSE_WHEEL",
+     "ts": 3259939006,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.066,
+      "RendererCompositorQueueingDelay": 0.004,
+      "RendererCompositorProcessing": 0.013,
+      "RendererCompositorToMain": 16.136,
+      "RendererMainProcessing": 0.152,
+      "RendererMainFinishedToCommit": 0.275,
+      "Commit": 0.053,
+      "EndCommitToActivation": 0.038,
+      "Activation": 0.026,
+      "EndActivateToSubmitCompositorFrame": 0.463,
+      "SubmitToReceiveCompositorFrame": 0.29,
+      "ReceiveCompositorFrameToStartDraw": 0.142,
+      "StartDrawToSwapStart": 1.596,
+      "SwapStartToPresentation": 4.818,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 6.846
+     },
+     "total_ms": 38.824
+    },
+    {
+     "type": "MOUSE_WHEEL",
+     "ts": 3260023326,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.192,
+      "RendererCompositorQueueingDelay": 0.008,
+      "RendererCompositorProcessing": 0.014,
+      "RendererCompositorToMain": 16.085,
+      "RendererMainProcessing": 0.157,
+      "RendererMainFinishedToCommit": 0.269,
+      "Commit": 0.068,
+      "EndCommitToActivation": 0.05,
+      "Activation": 0.033,
+      "EndActivateToSubmitCompositorFrame": 0.589,
+      "SubmitToReceiveCompositorFrame": 0.278,
+      "ReceiveCompositorFrameToStartDraw": 0.151,
+      "StartDrawToSwapStart": 1.48,
+      "SwapStartToPresentation": 7.822,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 9.731
+     },
+     "total_ms": 40.928
+    }
+   ]
+  },
+  {
+   "mode": "GLRAF",
+   "input": "mouseMoved",
+   "env": {
+    "uptime": "00:35:04 up 54 min,  0 user,  load average: 11.74, 11.70, 9.31",
+    "nproc": "4",
+    "time": "2026-10-25T00:35:04.402Z"
+   },
+   "frames_presented_pipeline_reporter": 41,
+   "display_frames": 40,
+   "gen_to_first_display_after_main_ms": {
+    "n": 40,
+    "p50": 16.726,
+    "p95": 32.204,
+    "p50_vsyncs": 1.0035599999999998,
+    "p95_vsyncs": 1.93224
+   },
+   "gen_to_main_end_ms": {
+    "p50": 4.465,
+    "p95": 14.417
+   },
+   "main_end_to_display_ms": {
+    "p50": 11.476,
+    "p95": 16.892
+   },
+   "frames_drawn_by_page": 40,
+   "beginframe_interval_ms_p50": 16.67,
+   "beginframe_ticks": 150,
+   "eventlatency_count": 40,
+   "presented_count": 40,
+   "summary": {
+    "MOUSE_MOVED_EVENT": {
+     "n": 40,
+     "presented": 40,
+     "total_ms_p50": 16.726,
+     "total_ms_p95": 32.204,
+     "total_vsyncs_p50": 1.0035599999999998,
+     "total_vsyncs_p95": 1.93224,
+     "stages_p50_ms": {
+      "BrowserMainToRendererCompositor": 0.174,
+      "RendererCompositorQueueingDelay": 0.009,
+      "RendererCompositorProcessing": 0.002,
+      "RendererCompositorToMain": 3.867,
+      "RendererMainProcessing": 0.356,
+      "RendererMainFinishedToCommit": 0.501,
+      "Commit": 0.061,
+      "EndCommitToActivation": 0.055,
+      "Activation": 0.035,
+      "EndActivateToSubmitCompositorFrame": 0.499,
+      "SubmitToReceiveCompositorFrame": 0.174,
+      "ReceiveCompositorFrameToStartDraw": 0.176,
+      "StartDrawToSwapStart": 1.512,
+      "SwapStartToPresentation": 8.406,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 10.183
+     }
+    }
+   },
+   "sample_presented": [
+    {
+     "type": "MOUSE_MOVED_EVENT",
+     "ts": 3265188471,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.285,
+      "RendererCompositorQueueingDelay": 0.011,
+      "RendererCompositorProcessing": 0.004,
+      "RendererCompositorToMain": 0.851,
+      "RendererMainProcessing": 0.482,
+      "RendererMainFinishedToCommit": 0.411,
+      "Commit": 0.062,
+      "EndCommitToActivation": 0.066,
+      "Activation": 0.035,
+      "EndActivateToSubmitCompositorFrame": 0.555,
+      "SubmitToReceiveCompositorFrame": 0.528,
+      "ReceiveCompositorFrameToStartDraw": 0.333,
+      "StartDrawToSwapStart": 2.524,
+      "SwapStartToPresentation": 10.163,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 13.548
+     },
+     "total_ms": 16.452
+    },
+    {
+     "type": "MOUSE_MOVED_EVENT",
+     "ts": 3265257910,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.167,
+      "RendererCompositorQueueingDelay": 0.009,
+      "RendererCompositorProcessing": 0.002,
+      "RendererCompositorToMain": 0.429,
+      "RendererMainProcessing": 0.309,
+      "RendererMainFinishedToCommit": 0.301,
+      "Commit": 0.047,
+      "EndCommitToActivation": 0.05,
+      "Activation": 0.055,
+      "EndActivateToSubmitCompositorFrame": 0.488,
+      "SubmitToReceiveCompositorFrame": 0.141,
+      "ReceiveCompositorFrameToStartDraw": 0.179,
+      "StartDrawToSwapStart": 0.549,
+      "SwapStartToPresentation": 6.403,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 7.272
+     },
+     "total_ms": 9.292
+    },
+    {
+     "type": "MOUSE_MOVED_EVENT",
+     "ts": 3265317024,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.119,
+      "RendererCompositorQueueingDelay": 0.009,
+      "RendererCompositorProcessing": 0.002,
+      "RendererCompositorToMain": 2.558,
+      "RendererMainProcessing": 0.484,
+      "RendererMainFinishedToCommit": 0.3,
+      "Commit": 0.054,
+      "EndCommitToActivation": 0.048,
+      "Activation": 0.069,
+      "EndActivateToSubmitCompositorFrame": 0.548,
+      "SubmitToReceiveCompositorFrame": 0.196,
+      "ReceiveCompositorFrameToStartDraw": 0.136,
+      "StartDrawToSwapStart": 0.625,
+      "SwapStartToPresentation": 10.051,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 11.008
+     },
+     "total_ms": 15.308
+    }
+   ]
+  },
+  {
+   "mode": "GLRAF",
+   "input": "mouseWheel",
+   "env": {
+    "uptime": "00:35:08 up 54 min,  0 user,  load average: 11.28, 11.60, 9.30",
+    "nproc": "4",
+    "time": "2026-10-25T00:35:08.873Z"
+   },
+   "frames_presented_pipeline_reporter": 41,
+   "display_frames": 40,
+   "gen_to_first_display_after_main_ms": {
+    "n": 80,
+    "p50": 36.144,
+    "p95": 46.036,
+    "p50_vsyncs": 2.16864,
+    "p95_vsyncs": 2.7621599999999997
+   },
+   "gen_to_main_end_ms": {
+    "p50": 24.898,
+    "p95": 30.835
+   },
+   "main_end_to_display_ms": {
+    "p50": 11.42,
+    "p95": 15.789
+   },
+   "frames_drawn_by_page": 40,
+   "beginframe_interval_ms_p50": 16.667,
+   "beginframe_ticks": 195,
+   "eventlatency_count": 80,
+   "presented_count": 40,
+   "summary": {
+    "MOUSE_WHEEL": {
+     "n": 80,
+     "presented": 40,
+     "total_ms_p50": 36.144,
+     "total_ms_p95": 46.036,
+     "total_vsyncs_p50": 2.16864,
+     "total_vsyncs_p95": 2.7621599999999997,
+     "stages_p50_ms": {
+      "BrowserMainToRendererCompositor": 0.178,
+      "RendererCompositorQueueingDelay": 0.008,
+      "RendererCompositorProcessing": 0.015,
+      "RendererCompositorToMain": 16.018,
+      "RendererMainProcessing": 0.178,
+      "RendererMainFinishedToCommit": 0.691,
+      "Commit": 0.056,
+      "EndCommitToActivation": 0.055,
+      "Activation": 0.037,
+      "EndActivateToSubmitCompositorFrame": 0.511,
+      "SubmitToReceiveCompositorFrame": 0.207,
+      "ReceiveCompositorFrameToStartDraw": 0.177,
+      "StartDrawToSwapStart": 1.399,
+      "SwapStartToPresentation": 8.367,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 10.004
+     }
+    }
+   },
+   "sample_presented": [
+    {
+     "type": "MOUSE_WHEEL",
+     "ts": 3269659553,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.155,
+      "RendererCompositorQueueingDelay": 0.011,
+      "RendererCompositorProcessing": 0.014,
+      "RendererCompositorToMain": 10.332,
+      "RendererMainProcessing": 0.183,
+      "RendererMainFinishedToCommit": 0.63,
+      "Commit": 0.069,
+      "EndCommitToActivation": 0.061,
+      "Activation": 0.035,
+      "EndActivateToSubmitCompositorFrame": 0.31,
+      "SubmitToReceiveCompositorFrame": 0.212,
+      "ReceiveCompositorFrameToStartDraw": 0.244,
+      "StartDrawToSwapStart": 1.544,
+      "SwapStartToPresentation": 7.979,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 9.979
+     },
+     "total_ms": 23.161
+    },
+    {
+     "type": "MOUSE_WHEEL",
+     "ts": 3269728988,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.09,
+      "RendererCompositorQueueingDelay": 0.007,
+      "RendererCompositorProcessing": 0.015,
+      "RendererCompositorToMain": 15.88,
+      "RendererMainProcessing": 0.165,
+      "RendererMainFinishedToCommit": 0.414,
+      "Commit": 0.051,
+      "EndCommitToActivation": 0.063,
+      "Activation": 0.04,
+      "EndActivateToSubmitCompositorFrame": 0.889,
+      "SubmitToReceiveCompositorFrame": 0.27,
+      "ReceiveCompositorFrameToStartDraw": 0.157,
+      "StartDrawToSwapStart": 0.67,
+      "SwapStartToPresentation": 8.866,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 9.963
+     },
+     "total_ms": 35.573
+    },
+    {
+     "type": "MOUSE_WHEEL",
+     "ts": 3269809055,
+     "stages": {
+      "BrowserMainToRendererCompositor": 0.266,
+      "RendererCompositorQueueingDelay": 0.006,
+      "RendererCompositorProcessing": 0.015,
+      "RendererCompositorToMain": 16.082,
+      "RendererMainProcessing": 0.148,
+      "RendererMainFinishedToCommit": 0.304,
+      "Commit": 0.049,
+      "EndCommitToActivation": 0.044,
+      "Activation": 0.027,
+      "EndActivateToSubmitCompositorFrame": 0.786,
+      "SubmitToReceiveCompositorFrame": 0.292,
+      "ReceiveCompositorFrameToStartDraw": 0.158,
+      "StartDrawToSwapStart": 1.493,
+      "SwapStartToPresentation": 8.284,
+      "SubmitCompositorFrameToPresentationCompositorFrame": 10.227
+     },
+     "total_ms": 38.802
+    }
+   ]
+  }
+ ],
+ "env_end": {
+  "uptime": "00:35:13 up 54 min,  0 user,  load average: 11.10, 11.56, 9.29",
+  "nproc": "4",
+  "time": "2026-10-25T00:35:13.649Z"
+ }
+}

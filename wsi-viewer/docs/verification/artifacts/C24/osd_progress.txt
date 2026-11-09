@@ -1,0 +1,14 @@
+cfg {"drawer":"webgl","dpr":1,"cpu":1} rep 0: drawer=webgl zoom settle 6509 ms, settled_forced update p50 0.005 draw p50 0.505 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":1,"cpu":1} rep 1: drawer=webgl zoom settle 6112 ms, settled_forced update p50 0.005 draw p50 0.515 tiles 24 levels 1
+cfg {"drawer":"webgl","dpr":1,"cpu":1} rep 2: drawer=webgl zoom settle 5846 ms, settled_forced update p50 0.005 draw p50 0.49 tiles 24 levels 1
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Timeout 30000ms exceeded.
+    at /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C24/osd_bench.mjs:53:16 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v22.22.0

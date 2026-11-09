@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/answerKeys/0/related/0/include/ids/1",
+      "value": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "key-resolves",
+      "severity": "error",
+      "path": "/answerKeys/0/related/0/include/ids/1",
+      "message": "Key camelyon16-reference: id 00000000-0000-0000-0000-000000000000 matches no feature"
+    }
+  ],
+  "alsoAllowed": []
+}

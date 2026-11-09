@@ -1,0 +1,16 @@
+{
+  "note": "a hotspot edit changes no item",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/hotspots/1/geometry/coordinates",
+      "value": [
+        11200,
+        5600
+      ]
+    }
+  ],
+  "contentChanges": true,
+  "itemsChanged": []
+}

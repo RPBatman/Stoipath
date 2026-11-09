@@ -1,0 +1,17 @@
+{
+  "note": "unknown top-level property: the parser warns and ignores it; the schema rejects it",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extras",
+      "value": {
+        "anything": true
+      }
+    }
+  ],
+  "expect": {
+    "parse": "warning",
+    "pointer": "/extras"
+  }
+}

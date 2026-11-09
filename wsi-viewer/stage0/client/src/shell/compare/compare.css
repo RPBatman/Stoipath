@@ -1,0 +1,81 @@
+/* compare module (TOOLS.md §4.3, §6.9): page-scoped classes the design system lacks, copied from the research final
+   design/screens/final/research-annotation.html (source lines cited), scoped under the module's roots (#compareBar,
+   #paneB's .panelabel), tokens only. The .panes / .gutter grid and the show / hide of pane B, the gutter and the bar
+   are integrator CSS (shell.css, .app.compare-on). base.css provides .segmented*, .btn*, .icon, .visually-hidden. */
+
+/* ---- Compare bar (#compareBar) ------------------------------------------------------------------------------------
+   research-annotation.html 258 (.compare-bar: top edge of the canvas, outside the central 50 %, on the HUD backdrop)
+   and 260 (side by side: anchored with `right:`). In this shell the navigator follows view A at the canvas area's
+   top-right corner, which in compare is pane B's, so the bar sits left of it (TOOLS.md §15.13 CP1): its right edge
+   clears the navigator (base.css caps it at 25 % of the canvas area), its left edge clears pane A's identity HUD (50 %
+   of pane A = 25 % of the area, shell.css), and it wraps rather than run under either. */
+.app.shell.compare-on #compareBar {
+  --cmp-nav: min(var(--layout-navigator), calc(25% - var(--layout-hud-inset)));
+  --cmp-right: calc(var(--cmp-nav) + 2 * var(--layout-hud-inset));
+  --cmp-left: calc(25% + 2 * var(--layout-hud-inset));
+  position: absolute; top: var(--layout-hud-inset); right: var(--cmp-right); left: auto; transform: none;
+  max-width: calc(100% - var(--cmp-right) - var(--cmp-left));
+  z-index: var(--z-hud);
+  display: flex; flex-direction: column; align-items: stretch; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-hud-backdrop); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2);
+  color: var(--color-text-on-canvas); font-size: var(--text-xs); white-space: nowrap;
+}
+/* Row 1, the controls (they wrap only when a drawer leaves too little room); row 2, the status sentence. */
+#compareBar .compare-bar__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+/* The navigator hidden (O): the bar takes the corner. */
+.app.shell.compare-on.nav-hidden #compareBar { --cmp-right: var(--layout-hud-inset); }
+/* An open Library drawer covers pane A's left edge; pane A's identity HUD moves right of it (shell.css J7). */
+@media (min-width: 1080px) {
+  .app.shell.compare-on.lib-open #compareBar { --cmp-left: calc(var(--lib-w) + 25% + 2 * var(--layout-hud-inset)); }
+}
+/* The Context drawer, the palette and the dock-column dialogs cover the right column (1080–1599 px; ≥ 1600 px only the
+   palette and dialogs over the closed dock's column): shell.css moves the navigator and this bar left of them by
+   --layout-dock with `right:`; these rules are one class more specific, so the bar also keeps clear of the navigator. */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell.compare-on:is(.dock-open, .palette-open, .dialog-open) #compareBar { --cmp-right: calc(var(--layout-dock) + var(--cmp-nav) + 2 * var(--layout-hud-inset)); right: var(--cmp-right); }
+  .app.shell.compare-on.nav-hidden:is(.dock-open, .palette-open, .dialog-open) #compareBar { --cmp-right: calc(var(--layout-dock) + var(--layout-hud-inset)); right: var(--cmp-right); }
+}
+@media (min-width: 1600px) {
+  .app.shell.compare-on:not(.dock-open):is(.palette-open, .dialog-open) #compareBar { --cmp-right: calc(var(--layout-dock) + var(--cmp-nav) + 2 * var(--layout-hud-inset)); right: var(--cmp-right); }
+  .app.shell.compare-on.nav-hidden:not(.dock-open):is(.palette-open, .dialog-open) #compareBar { --cmp-right: calc(var(--layout-dock) + var(--layout-hud-inset)); right: var(--cmp-right); }
+}
+
+#compareBar .compare-bar__label { color: var(--grey-83); }
+/* The status sentence wraps inside the bar's width rather than widening it past the controls by much. */
+#compareBar .compare-bar__status { white-space: normal; min-width: 0; max-width: 48ch; color: var(--color-text-on-canvas); line-height: 1.35; }
+
+/* research-annotation.html 261–263: the Sync segmented control on the HUD backdrop (raw rgba replaced by tokens) */
+#compareBar .segmented { background: transparent; border-color: var(--color-border-strong); }
+#compareBar .segmented__item { color: var(--grey-83); font-size: var(--text-xs); padding: 0 var(--space-3); }
+#compareBar .segmented__item[aria-checked="true"] { color: var(--grey-6); background: var(--grey-91); box-shadow: none; }
+/* affine: refused in Phase A (D9). A disabled control is exempt from SC 1.4.3; the dimmed text plus the pointer say so,
+   and the reason is the radio's description and title. */
+#compareBar .segmented__item[aria-disabled="true"] { color: var(--color-text-disabled); cursor: not-allowed; }
+#compareBar .segmented__item[aria-disabled="true"]:hover { background: transparent; color: var(--color-text-disabled); }
+
+/* research-annotation.html 264: buttons on the backdrop (raw rgba border replaced by the strong border token) */
+#compareBar .btn { color: var(--color-text-on-canvas); background: transparent; border-color: var(--color-border-strong); font-size: var(--text-xs); }
+#compareBar .btn:hover { background: var(--color-control-bg-hover); }
+/* An icon-only .btn--sm keeps .btn--sm's side padding after .btn--icon's reset (TOOLS-QUESTIONS library L5), so the
+   close button sets its own square box. */
+#compareBar .compare-bar__close { padding: 0; width: var(--target-control); min-width: var(--target-control); }
+
+/* ---- Pane B's label (#paneB .panelabel) -----------------------------------------------------------------------------
+   research-annotation.html 173: the second view's identity sits bottom-right above its magnification readout (here a
+   .hud__item inside pane B's .hud--br, so it stacks above the readout without its own positioning). */
+#paneB .panelabel { font-family: var(--font-mono); }
+/* The Context drawer (or the palette, or a dock-column dialog) over pane B at 1080–1599 px: shell.css moves pane B's
+   bottom-right readout left of it, but the pane's visible part (355 px at 1440) is narrower than its scale bar (212 px)
+   plus that readout, so they overlapped (measured: #magBoxB 932–1092 over #scalebarB 761–973). The label and the
+   readout then stand above the scale bar and position lines instead: the bottom-left stack is 58 px tall at these
+   widths (scale bar 35 + gap 4 + position 19, measured), plus one gap. */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.shell.compare-on:is(.dock-open, .palette-open, .dialog-open) #paneB #magBoxB { margin-bottom: calc(58px + var(--space-2)); }
+}
+
+/* Under a coarse pointer the Sync items are 44 px targets (layout-check A1 at 1024 c and 1366 c; TOOLS-QUESTIONS
+   2026-11-02 Wave 4, applied in the Phase A review fixes): base.css draws 40 px segmented items in a 44 px control. */
+@media (pointer: coarse) {
+  #compareBar .segmented__item { min-height: var(--target); }
+}

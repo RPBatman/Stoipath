@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/1/title",
+      "value": "DOB and history"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "no-phi",
+      "severity": "error",
+      "path": "/steps/1/title",
+      "message": "/steps/1/title looks like patient information (DOB)"
+    }
+  ],
+  "alsoAllowed": []
+}

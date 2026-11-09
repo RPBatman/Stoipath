@@ -1,0 +1,20 @@
+{
+  "note": "",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/0/text",
+      "value": "This section was cut on 03/11/2026."
+    }
+  ],
+  "expect": [
+    {
+      "rule": "no-phi",
+      "severity": "error",
+      "path": "/steps/0/text",
+      "message": "/steps/0/text looks like patient information (full date)"
+    }
+  ],
+  "alsoAllowed": []
+}

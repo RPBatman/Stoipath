@@ -1,0 +1,209 @@
+{
+ "chromium": "153.0.8010.12",
+ "env": {
+  "uptime": "00:56:56 up  1:16,  0 user,  load average: 5.96, 8.06, 8.62",
+  "nproc": 4
+ },
+ "sab_postmessage": {
+  "coi": false,
+  "sab_ctor": "undefined",
+  "memory_created": true,
+  "buffer_tag": "[object SharedArrayBuffer]",
+  "postMessage_shared_buffer": "ERR DataCloneError: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated.",
+  "postMessage_memory_object": "ERR DataCloneError: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated."
+ },
+ "pools": {
+  "pool_1": {
+   "reps": [
+    {
+     "rt": 3.099999999627471,
+     "dec": 2.400000000372529,
+     "copy": 0.5,
+     "burst": 63.200000000186265,
+     "inline": 59,
+     "overhead": 0.19999999925494194,
+     "speedup": 0.933544303794717,
+     "loadavg": "5.96 8.06 8.62"
+    },
+    {
+     "rt": 3.099999999627471,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 63.799999999813735,
+     "inline": 58.90000000037253,
+     "overhead": 0.09999999962747097,
+     "speedup": 0.9231974921715437,
+     "loadavg": "5.89 8.01 8.60"
+    },
+    {
+     "rt": 3.099999999627471,
+     "dec": 2.5,
+     "copy": 0.40000000037252903,
+     "burst": 63,
+     "inline": 57.5,
+     "overhead": 0.19999999925494194,
+     "speedup": 0.9126984126984127,
+     "loadavg": "5.82 7.96 8.58"
+    },
+    {
+     "rt": 3.099999999627471,
+     "dec": 2.5,
+     "copy": 0.40000000037252903,
+     "burst": 65.59999999962747,
+     "inline": 56.89999999944121,
+     "overhead": 0.19999999925494194,
+     "speedup": 0.8673780487768953,
+     "loadavg": "5.91 7.94 8.57"
+    },
+    {
+     "rt": 3.099999999627471,
+     "dec": 2.5,
+     "copy": 0.40000000037252903,
+     "burst": 60.59999999962747,
+     "inline": 61.59999999962747,
+     "overhead": 0.19999999925494194,
+     "speedup": 1.0165016501651178,
+     "loadavg": "5.84 7.89 8.55"
+    }
+   ],
+   "median": {
+    "roundtrip_ms": 3.1,
+    "decode_ms": 2.5,
+    "copy_ms": 0.4,
+    "messaging_overhead_ms": 0.2,
+    "burst20_ms": 63.2,
+    "inline20_ms": 58.9,
+    "speedup": 0.92
+   }
+  },
+  "pool_2": {
+   "reps": [
+    {
+     "rt": 3.2999999998137355,
+     "dec": 2.599999999627471,
+     "copy": 0.5,
+     "burst": 43.09999999962747,
+     "inline": 61.40000000037253,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.424593967538358,
+     "loadavg": "5.77 7.84 8.53"
+    },
+    {
+     "rt": 3.2000000001862645,
+     "dec": 2.5,
+     "copy": 0.40000000037252903,
+     "burst": 44,
+     "inline": 62,
+     "overhead": 0.2999999998137355,
+     "speedup": 1.4090909090909092,
+     "loadavg": "5.79 7.81 8.52"
+    },
+    {
+     "rt": 3.1000000005587935,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 39.59999999962747,
+     "inline": 57.40000000037253,
+     "overhead": 0.10000000055879354,
+     "speedup": 1.4494949495179925,
+     "loadavg": "5.81 7.78 8.50"
+    },
+    {
+     "rt": 3.2000000001862645,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 34.700000000186265,
+     "inline": 60,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.7291066282327934,
+     "loadavg": "5.74 7.74 8.48"
+    },
+    {
+     "rt": 3.2000000001862645,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 36.60000000055879,
+     "inline": 59.40000000037253,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.622950819657531,
+     "loadavg": "5.76 7.71 8.47"
+    }
+   ],
+   "median": {
+    "roundtrip_ms": 3.2,
+    "decode_ms": 2.5,
+    "copy_ms": 0.5,
+    "messaging_overhead_ms": 0.2,
+    "burst20_ms": 39.6,
+    "inline20_ms": 60,
+    "speedup": 1.45
+   }
+  },
+  "pool_3": {
+   "reps": [
+    {
+     "rt": 3.2000000001862645,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 38,
+     "inline": 59.299999999813735,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.560526315784572,
+     "loadavg": "5.78 7.68 8.46"
+    },
+    {
+     "rt": 3.199999999254942,
+     "dec": 2.5,
+     "copy": 0.40000000037252903,
+     "burst": 38.39999999944121,
+     "inline": 59,
+     "overhead": 0.2999999988824129,
+     "speedup": 1.5364583333556918,
+     "loadavg": "5.78 7.68 8.46"
+    },
+    {
+     "rt": 3.2000000001862645,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 35.10000000055879,
+     "inline": 57.700000000186265,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.64387464385378,
+     "loadavg": "5.80 7.65 8.44"
+    },
+    {
+     "rt": 3.2000000001862645,
+     "dec": 2.5,
+     "copy": 0.5,
+     "burst": 34.89999999944121,
+     "inline": 60.59999999962747,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.7363896848308813,
+     "loadavg": "5.81 7.62 8.43"
+    },
+    {
+     "rt": 3.2999999998137355,
+     "dec": 2.599999999627471,
+     "copy": 0.5,
+     "burst": 39.40000000037253,
+     "inline": 60.299999999813735,
+     "overhead": 0.20000000018626451,
+     "speedup": 1.53045685277268,
+     "loadavg": "5.99 7.63 8.43"
+    }
+   ],
+   "median": {
+    "roundtrip_ms": 3.2,
+    "decode_ms": 2.5,
+    "copy_ms": 0.5,
+    "messaging_overhead_ms": 0.2,
+    "burst20_ms": 38,
+    "inline20_ms": 59.3,
+    "speedup": 1.56
+   }
+  }
+ },
+ "env_end": {
+  "uptime": "00:58:05 up  1:17,  0 user,  load average: 5.83, 7.57, 8.40"
+ }
+}

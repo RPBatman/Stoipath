@@ -1,0 +1,25 @@
+{
+  "note": "multi-select with no correct option",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/3/options/0/correct",
+      "value": false
+    },
+    {
+      "op": "replace",
+      "path": "/items/3/options/1/correct",
+      "value": false
+    },
+    {
+      "op": "replace",
+      "path": "/items/3/options/2/correct",
+      "value": false
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/items/3/options"
+  }
+}

@@ -1,0 +1,843 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpbatman.github.io/Stoipath/client/learn/schema/module.schema.json",
+  "title": "Stoipath Learn module file (stoipath.learn.module/1)",
+  "description": "A Stoipath Learn module: metadata, slides (catalogue entries with their licence and fingerprint), an optional case, hotspots, answer keys, items and ordered steps. Geometry is in level-0 pixels of the loaded pyramid; views are in State Document units (center_um, scale_um_per_px). The TypeScript twin is stage0/client/src/learn/contracts.ts §1-§4; LEARN.md §5-§7 specifies semantics and the lint rules this schema cannot express. $defs/CourseFile, $defs/ResultsFile and $defs/FactsFile describe the course, results and fact-review files.",
+  "$ref": "#/$defs/ModuleFile",
+  "$defs": {
+    "ModuleFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "id", "version", "metadata", "slides", "items", "steps"],
+      "properties": {
+        "schema": { "const": "stoipath.learn.module/1" },
+        "id": { "$ref": "#/$defs/ModuleId" },
+        "version": { "$ref": "#/$defs/Semver" },
+        "metadata": { "$ref": "#/$defs/ModuleMetadata" },
+        "slides": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/ModuleSlide" } },
+        "case": { "$ref": "#/$defs/CaseSpec" },
+        "hotspots": { "type": "array", "items": { "$ref": "#/$defs/Hotspot" } },
+        "answerKeys": { "type": "array", "items": { "$ref": "#/$defs/AnswerKeySpec" } },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/Item" } },
+        "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Step" } },
+        "extensions": { "type": "object" }
+      }
+    },
+
+    "ModuleId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$" },
+    "LocalId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$" },
+    "SlideRef": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+    "Semver": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "IsoDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "IsoDateTime": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?Z$" },
+    "Sha256Ref": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "Text": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "ShortText": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "OptionId": { "enum": ["A", "B", "C", "D", "E", "F", "G", "H"] },
+    "CandidateId": { "enum": ["A", "B", "C", "D", "E", "F"] },
+    "Audience": { "enum": ["undergraduate", "medical-student", "resident", "cme"] },
+    "Phase": { "enum": ["open", "screen", "examine", "decide", "complete"] },
+    "ToolId": { "enum": ["select", "measure", "point", "rect", "ellipse", "polygon", "brush"] },
+    "MarkKind": { "enum": ["point", "polygon", "brush", "rect", "ellipse"] },
+
+    "LicenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "url"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "url": { "type": ["string", "null"] }
+      }
+    },
+
+    "Person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role"],
+      "properties": {
+        "name": { "$ref": "#/$defs/ShortText" },
+        "role": { "enum": ["author", "editor", "reviewer"] },
+        "affiliation": { "$ref": "#/$defs/ShortText" }
+      }
+    },
+
+    "Review": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status"],
+          "properties": { "status": { "const": "draft" }, "notes": { "$ref": "#/$defs/Text" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reviewer", "date"],
+          "properties": {
+            "status": { "const": "reviewed" },
+            "reviewer": { "$ref": "#/$defs/ShortText" },
+            "date": { "$ref": "#/$defs/IsoDate" },
+            "notes": { "$ref": "#/$defs/Text" }
+          }
+        }
+      ]
+    },
+
+    "ModuleMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "summary", "audience", "objectives", "tags", "authors", "review", "language", "estimatedMinutes", "created", "updated"],
+      "properties": {
+        "title": { "$ref": "#/$defs/ShortText" },
+        "summary": { "$ref": "#/$defs/Text" },
+        "audience": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/Audience" } },
+        "objectives": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Text" } },
+        "tags": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["organ", "stain", "difficulty"],
+          "properties": {
+            "organ": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/ShortText" } },
+            "stain": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/ShortText" } },
+            "difficulty": { "enum": [1, 2, 3, 4, 5] },
+            "topics": { "type": "array", "items": { "$ref": "#/$defs/ShortText" } }
+          }
+        },
+        "authors": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Person" } },
+        "review": { "$ref": "#/$defs/Review" },
+        "language": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$" },
+        "estimatedMinutes": { "type": "number", "exclusiveMinimum": 0, "maximum": 600 },
+        "created": { "$ref": "#/$defs/IsoDate" },
+        "updated": { "$ref": "#/$defs/IsoDate" },
+        "textLicence": { "$ref": "#/$defs/LicenceRef" }
+      }
+    },
+
+    "ModuleSlide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "catalogueId", "label", "stain", "dataset", "licence", "fingerprint"],
+      "properties": {
+        "ref": { "$ref": "#/$defs/SlideRef" },
+        "catalogueId": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+        "label": { "$ref": "#/$defs/ShortText" },
+        "stain": { "$ref": "#/$defs/ShortText" },
+        "dataset": { "$ref": "#/$defs/ShortText" },
+        "licence": { "$ref": "#/$defs/LicenceRef" },
+        "fingerprint": { "type": "string", "minLength": 1 },
+        "attribution": { "$ref": "#/$defs/Text" }
+      }
+    },
+
+    "Position": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "number" }
+    },
+    "Ring": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/Position" } },
+    "PointGeometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "coordinates"],
+      "properties": { "type": { "const": "Point" }, "coordinates": { "$ref": "#/$defs/Position" } }
+    },
+    "PolygonGeometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "coordinates"],
+      "properties": { "type": { "const": "Polygon" }, "coordinates": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Ring" } } }
+    },
+    "MultiPolygonGeometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": { "const": "MultiPolygon" },
+        "coordinates": { "type": "array", "minItems": 1, "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Ring" } } }
+      }
+    },
+    "AreaGeometry": { "oneOf": [{ "$ref": "#/$defs/PolygonGeometry" }, { "$ref": "#/$defs/MultiPolygonGeometry" }] },
+
+    "ViewPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slide", "center_um", "scale_um_per_px"],
+      "properties": {
+        "slide": { "$ref": "#/$defs/SlideRef" },
+        "center_um": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "minimum": 0 } },
+        "scale_um_per_px": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000 },
+        "capturedFrom": { "type": "string", "maxLength": 2000 }
+      }
+    },
+    "TourView": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "slide"],
+          "properties": { "kind": { "const": "fit" }, "slide": { "$ref": "#/$defs/SlideRef" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "slide", "center_um", "scale_um_per_px"],
+          "properties": {
+            "kind": { "const": "view" },
+            "slide": { "$ref": "#/$defs/SlideRef" },
+            "center_um": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "minimum": 0 } },
+            "scale_um_per_px": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000 },
+            "capturedFrom": { "type": "string", "maxLength": 2000 }
+          }
+        }
+      ]
+    },
+
+    "CaseSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vignette", "slides"],
+      "properties": {
+        "vignette": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["text", "synthetic", "source"],
+          "properties": {
+            "text": { "$ref": "#/$defs/Text" },
+            "synthetic": { "type": "boolean" },
+            "source": { "$ref": "#/$defs/ShortText" }
+          }
+        },
+        "slides": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/SlideRef" } },
+        "expertView": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["view", "text", "keys", "unlockAfter"],
+          "properties": {
+            "view": { "$ref": "#/$defs/ViewPoint" },
+            "text": { "$ref": "#/$defs/Text" },
+            "keys": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
+            "unlockAfter": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } }
+          }
+        }
+      }
+    },
+
+    "Hotspot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slide", "label", "geometry"],
+      "properties": {
+        "id": { "$ref": "#/$defs/LocalId" },
+        "slide": { "$ref": "#/$defs/SlideRef" },
+        "label": { "$ref": "#/$defs/ShortText" },
+        "sub": { "$ref": "#/$defs/ShortText" },
+        "geometry": { "oneOf": [{ "$ref": "#/$defs/PointGeometry" }, { "$ref": "#/$defs/PolygonGeometry" }, { "$ref": "#/$defs/MultiPolygonGeometry" }] },
+        "view": { "$ref": "#/$defs/ViewPoint" }
+      }
+    },
+
+    "FeatureSelector": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ids"],
+          "properties": { "ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["className"],
+          "properties": { "className": { "type": "string", "minLength": 1 } }
+        }
+      ]
+    },
+    "AnswerKeySpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slide", "label", "source", "targets"],
+      "properties": {
+        "id": { "$ref": "#/$defs/LocalId" },
+        "slide": { "$ref": "#/$defs/SlideRef" },
+        "label": { "$ref": "#/$defs/ShortText" },
+        "source": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "layer", "version"],
+              "properties": {
+                "kind": { "const": "reference-layer" },
+                "layer": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+                "version": { "type": "string", "minLength": 1 }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "features"],
+              "properties": {
+                "kind": { "const": "inline" },
+                "features": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["id", "geometry"],
+                    "properties": {
+                      "id": { "type": "string", "minLength": 1 },
+                      "geometry": { "$ref": "#/$defs/AreaGeometry" },
+                      "className": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "include"],
+            "properties": {
+              "id": { "$ref": "#/$defs/LocalId" },
+              "label": { "$ref": "#/$defs/ShortText" },
+              "include": { "$ref": "#/$defs/FeatureSelector" },
+              "subtract": { "$ref": "#/$defs/FeatureSelector" }
+            }
+          }
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "include", "feedback"],
+            "properties": {
+              "id": { "$ref": "#/$defs/LocalId" },
+              "include": { "$ref": "#/$defs/FeatureSelector" },
+              "feedback": { "$ref": "#/$defs/Text" },
+              "credit": {
+                "description": "Owner default 2026-11-04 (pending owner): a POINT mark inside these features, or within pointTolerance_um of their outline, is correct (feedback correct-related with this entry's feedback, which names the item's target); their area also counts as inside for partialInside.",
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "ChoiceOption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "correct"],
+      "properties": {
+        "id": { "$ref": "#/$defs/OptionId" },
+        "text": { "$ref": "#/$defs/Text" },
+        "correct": { "type": "boolean" },
+        "feedback": { "$ref": "#/$defs/Text" },
+        "fly": { "$ref": "#/$defs/ViewPoint" }
+      }
+    },
+    "ItemCommon": {
+      "$comment": "Shared item properties; every item kind lists them again because additionalProperties cannot see through $ref.",
+      "type": "object",
+      "required": ["id", "kind", "title", "stem", "points", "explanation"],
+      "properties": {
+        "id": { "$ref": "#/$defs/LocalId" },
+        "title": { "$ref": "#/$defs/ShortText" },
+        "stem": { "$ref": "#/$defs/Text" },
+        "points": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "explanation": { "$ref": "#/$defs/Text" },
+        "hint": { "$ref": "#/$defs/Text" }
+      }
+    },
+    "McqItem": {
+      "allOf": [{ "$ref": "#/$defs/ItemCommon" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["options"],
+      "properties": {
+        "id": true,
+        "kind": { "const": "mcq" },
+        "title": true, "stem": true, "hint": true, "points": true,
+        "measureHint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["slide"],
+          "properties": { "slide": { "$ref": "#/$defs/SlideRef" } }
+        },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": { "$ref": "#/$defs/ChoiceOption" },
+          "contains": { "type": "object", "properties": { "correct": { "const": true } }, "required": ["correct"] },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        "explanation": true
+      }
+    },
+    "MultiItem": {
+      "allOf": [{ "$ref": "#/$defs/ItemCommon" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["options", "scoring"],
+      "properties": {
+        "id": true,
+        "kind": { "const": "multi" },
+        "title": true, "stem": true, "hint": true, "points": true,
+        "scoring": { "enum": ["all-or-nothing", "partial"] },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": { "$ref": "#/$defs/ChoiceOption" },
+          "contains": { "type": "object", "properties": { "correct": { "const": true } }, "required": ["correct"] },
+          "minContains": 1
+        },
+        "explanation": true
+      }
+    },
+    "Candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "geometry", "view"],
+      "properties": {
+        "id": { "$ref": "#/$defs/CandidateId" },
+        "description": { "$ref": "#/$defs/ShortText" },
+        "geometry": { "oneOf": [{ "$ref": "#/$defs/PointGeometry" }, { "$ref": "#/$defs/PolygonGeometry" }] },
+        "view": { "$ref": "#/$defs/ViewPoint" }
+      }
+    },
+    "TextRubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fields", "passMin"],
+      "properties": {
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "label", "kind", "options", "correct"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/LocalId" },
+                  "label": { "$ref": "#/$defs/ShortText" },
+                  "required": { "type": "boolean" },
+                  "kind": { "const": "choice" },
+                  "options": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["id", "text"],
+                      "properties": { "id": { "$ref": "#/$defs/LocalId" }, "text": { "$ref": "#/$defs/ShortText" } }
+                    }
+                  },
+                  "correct": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "label", "kind", "keywords"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/LocalId" },
+                  "label": { "$ref": "#/$defs/ShortText" },
+                  "required": { "type": "boolean" },
+                  "kind": { "const": "keywords" },
+                  "keywords": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 2, "maxLength": 60 } }
+                }
+              }
+            ]
+          }
+        },
+        "passMin": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "RegionItem": {
+      "allOf": [
+        { "$ref": "#/$defs/ItemCommon" },
+        {
+          "$comment": "NFR-A5: every region item has a keyboard path (>= 2 candidates) or a text alternative; this is a blocker, not a warning.",
+          "anyOf": [
+            { "required": ["candidates"], "properties": { "candidates": { "minItems": 2 } } },
+            { "required": ["textRubric"] }
+          ]
+        }
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slide", "key", "accept", "scoring", "gate", "candidates"],
+      "properties": {
+        "id": true,
+        "kind": { "const": "region" },
+        "title": true, "stem": true, "hint": true, "points": true, "explanation": true,
+        "slide": { "$ref": "#/$defs/SlideRef" },
+        "key": { "$ref": "#/$defs/LocalId" },
+        "target": { "$ref": "#/$defs/LocalId" },
+        "accept": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/MarkKind" } },
+        "scoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["iouFull", "pointTolerance_um"],
+          "properties": {
+            "iouFull": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+            "pointTolerance_um": { "type": "number", "minimum": 0, "maximum": 500 },
+            "partialInside": {
+              "description": "Owner default 2026-11-04 (pending owner): an outline below iouFull earns points x factor (then x the gate factor) when at least `fraction` of its own area lies inside the target or a related feature with credit (feedback partial-inside, correct false). Absent: no partial credit.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["fraction", "factor"],
+              "properties": {
+                "fraction": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+                "factor": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 }
+              }
+            }
+          }
+        },
+        "gate": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["scale_um_per_px", "label", "unmetFactor"],
+              "properties": {
+                "scale_um_per_px": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+                "label": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?×$" },
+                "unmetFactor": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            }
+          ]
+        },
+        "candidatesTitle": { "$ref": "#/$defs/ShortText" },
+        "candidates": { "type": "array", "maxItems": 6, "items": { "$ref": "#/$defs/Candidate" } },
+        "textRubric": { "$ref": "#/$defs/TextRubric" }
+      }
+    },
+    "Item": {
+      "oneOf": [{ "$ref": "#/$defs/McqItem" }, { "$ref": "#/$defs/MultiItem" }, { "$ref": "#/$defs/RegionItem" }]
+    },
+
+    "StepCommon": {
+      "$comment": "Shared step properties; every step kind lists them again because additionalProperties cannot see through $ref.",
+      "type": "object",
+      "required": ["id", "kind", "phase", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/LocalId" },
+        "title": { "$ref": "#/$defs/ShortText" },
+        "tools": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/ToolId" } }
+      }
+    },
+    "TourStep": {
+      "allOf": [{ "$ref": "#/$defs/StepCommon" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "view", "transition"],
+      "properties": {
+        "id": true,
+        "kind": { "const": "tour" },
+        "phase": { "enum": ["open", "screen", "examine", "complete"] },
+        "title": true,
+        "text": { "$ref": "#/$defs/Text" },
+        "view": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/TourView" }] },
+        "transition": { "enum": ["fly", "cut"] },
+        "highlights": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
+        "dwellMs": { "type": "integer", "minimum": 2000, "maximum": 120000 },
+        "tools": true
+      }
+    },
+    "ItemStep": {
+      "allOf": [{ "$ref": "#/$defs/StepCommon" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["item", "view"],
+      "properties": {
+        "id": true,
+        "kind": { "const": "item" },
+        "phase": { "const": "decide" },
+        "title": true,
+        "item": { "$ref": "#/$defs/LocalId" },
+        "view": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/TourView" }] },
+        "tools": true
+      }
+    },
+    "RevealStep": {
+      "allOf": [{ "$ref": "#/$defs/StepCommon" }],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "text", "view", "transition"],
+      "properties": {
+        "id": true,
+        "kind": { "const": "reveal" },
+        "phase": { "enum": ["decide", "complete"] },
+        "title": true,
+        "items": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
+        "text": { "$ref": "#/$defs/Text" },
+        "view": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/TourView" },
+            { "type": "object", "additionalProperties": false, "required": ["kind"], "properties": { "kind": { "const": "key" } } }
+          ]
+        },
+        "transition": { "enum": ["fly", "cut"] },
+        "showExpert": { "type": "boolean" },
+        "highlights": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/LocalId" } },
+        "tools": true
+      }
+    },
+    "Step": {
+      "oneOf": [{ "$ref": "#/$defs/TourStep" }, { "$ref": "#/$defs/ItemStep" }, { "$ref": "#/$defs/RevealStep" }]
+    },
+
+    "CourseFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "id", "title", "summary", "audience", "modules"],
+      "properties": {
+        "schema": { "const": "stoipath.learn.course/1" },
+        "id": { "$ref": "#/$defs/ModuleId" },
+        "title": { "$ref": "#/$defs/ShortText" },
+        "summary": { "$ref": "#/$defs/Text" },
+        "audience": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/Audience" } },
+        "modules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "url", "title", "estimatedMinutes", "unlock"],
+            "properties": {
+              "id": { "$ref": "#/$defs/ModuleId" },
+              "url": { "type": "string", "pattern": "^(?![a-zA-Z][a-zA-Z0-9+.-]*:)(?!//)[^\\s]+\\.json$" },
+              "title": { "$ref": "#/$defs/ShortText" },
+              "estimatedMinutes": { "type": "number", "exclusiveMinimum": 0, "maximum": 600 },
+              "unlock": { "enum": ["always", "after-previous"] }
+            }
+          }
+        }
+      }
+    },
+
+    "FactsFile": {
+      "description": "The owner's review list for one module (data/learn/modules/<id>.facts.json): every factual statement in the module's learner-facing text, where it is (JSON Pointer), what it rests on, and its review status. Lint rule review-recorded refuses review.status = reviewed while any fact is pending.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "module", "version", "facts"],
+      "properties": {
+        "schema": { "const": "stoipath.learn.facts/1" },
+        "module": { "$ref": "#/$defs/ModuleId" },
+        "version": { "$ref": "#/$defs/Semver" },
+        "facts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "pointer", "quote", "basis", "status"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^F[0-9]{1,3}$" },
+              "pointer": { "type": "string", "pattern": "^(/[^/]*)+$" },
+              "quote": { "$ref": "#/$defs/Text" },
+              "basis": { "$ref": "#/$defs/Text" },
+              "status": { "enum": ["pending", "confirmed", "changed"] },
+              "reviewer": { "$ref": "#/$defs/ShortText" },
+              "date": { "$ref": "#/$defs/IsoDate" },
+              "note": { "$ref": "#/$defs/Text" }
+            }
+          }
+        }
+      }
+    },
+
+    "ScoreMetric": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "selected", "correct"],
+          "properties": {
+            "kind": { "const": "choice" },
+            "selected": { "type": "array", "items": { "$ref": "#/$defs/OptionId" } },
+            "correct": { "type": "array", "items": { "$ref": "#/$defs/OptionId" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "target", "iou", "intersection_px2", "mark_px2", "target_px2", "cellPx"],
+          "properties": {
+            "kind": { "const": "iou" },
+            "target": { "type": "string" },
+            "inside": { "type": "number", "minimum": 0, "maximum": 1 },
+            "iou": { "type": "number", "minimum": 0, "maximum": 1 },
+            "intersection_px2": { "type": "number", "minimum": 0 },
+            "mark_px2": { "type": "number", "minimum": 0 },
+            "target_px2": { "type": "number", "minimum": 0 },
+            "cellPx": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "inside", "distance_um", "inHole", "target"],
+          "properties": {
+            "kind": { "const": "point" },
+            "inside": { "type": "boolean" },
+            "distance_um": { "type": "number", "minimum": 0 },
+            "inHole": { "type": "boolean" },
+            "target": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "correctFields", "requiredMissing", "passMin"],
+          "properties": {
+            "kind": { "const": "rubric" },
+            "correctFields": { "type": "array", "items": { "type": "string" } },
+            "requiredMissing": { "type": "array", "items": { "type": "string" } },
+            "passMin": { "type": "integer", "minimum": 1 }
+          }
+        }
+      ]
+    },
+    "MarkGeometry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "geometry"],
+          "properties": { "kind": { "const": "point" }, "geometry": { "$ref": "#/$defs/PointGeometry" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "geometry"],
+          "properties": { "kind": { "enum": ["polygon", "brush", "rect", "ellipse"] }, "geometry": { "$ref": "#/$defs/AreaGeometry" } }
+        }
+      ]
+    },
+    "ResponseAnswer": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "selected"],
+          "properties": { "kind": { "const": "choice" }, "selected": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/OptionId" } } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "mark"],
+          "properties": { "kind": { "const": "mark" }, "mark": { "$ref": "#/$defs/MarkGeometry" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "candidate"],
+          "properties": { "kind": { "const": "candidate" }, "candidate": { "$ref": "#/$defs/CandidateId" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "fields"],
+          "properties": { "kind": { "const": "text" }, "fields": { "type": "object", "additionalProperties": { "type": "string", "maxLength": 500 } } }
+        }
+      ]
+    },
+    "ResultsFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "product", "labelString", "build", "exportedAt", "module", "course", "attempt", "items", "total", "privacy"],
+      "properties": {
+        "schema": { "const": "stoipath.learn.results/1" },
+        "product": { "const": "learn" },
+        "labelString": { "const": "For educational use. Not a medical device. Contains no protected health information." },
+        "build": { "type": "string", "minLength": 1 },
+        "exportedAt": { "$ref": "#/$defs/IsoDateTime" },
+        "module": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "contentHash", "title", "review"],
+          "properties": {
+            "id": { "$ref": "#/$defs/ModuleId" },
+            "version": { "$ref": "#/$defs/Semver" },
+            "contentHash": { "$ref": "#/$defs/Sha256Ref" },
+            "title": { "$ref": "#/$defs/ShortText" },
+            "review": { "$ref": "#/$defs/Review" }
+          }
+        },
+        "course": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "title"],
+              "properties": { "id": { "$ref": "#/$defs/ModuleId" }, "title": { "$ref": "#/$defs/ShortText" } }
+            }
+          ]
+        },
+        "attempt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["startedAt", "completedAt", "stepsReached", "steps"],
+          "properties": {
+            "startedAt": { "$ref": "#/$defs/IsoDateTime" },
+            "completedAt": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/IsoDateTime" }] },
+            "stepsReached": { "type": "integer", "minimum": 0 },
+            "steps": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["itemId", "title", "kind", "points", "score", "correct", "rule", "modality", "inputDevice", "confidence", "gateMet", "metric", "answer", "state", "committedAt", "revealedAt"],
+            "properties": {
+              "itemId": { "$ref": "#/$defs/LocalId" },
+              "title": { "$ref": "#/$defs/ShortText" },
+              "kind": { "enum": ["mcq", "multi", "region"] },
+              "points": { "type": "number", "exclusiveMinimum": 0 },
+              "score": { "type": ["number", "null"], "minimum": 0 },
+              "correct": { "type": ["boolean", "null"] },
+              "rule": { "enum": ["mcq", "multi-all-or-nothing", "multi-partial", "region-point", "region-iou", "region-text", null] },
+              "modality": { "enum": ["pointer", "keyboard", "text", null] },
+              "inputDevice": { "enum": ["mouse", "pen", "touch", "keyboard", "command", "file", "storage", null] },
+              "confidence": { "enum": ["guessing", "unsure", "fairly-sure", "certain", null] },
+              "gateMet": { "type": ["boolean", "null"] },
+              "metric": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/ScoreMetric" }] },
+              "answer": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/ResponseAnswer" }] },
+              "state": { "enum": ["awaiting", "committed", "revealed"] },
+              "committedAt": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/IsoDateTime" }] },
+              "revealedAt": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/IsoDateTime" }] }
+            }
+          }
+        },
+        "total": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["score", "points"],
+          "properties": { "score": { "type": "number", "minimum": 0 }, "points": { "type": "number", "minimum": 0 } }
+        },
+        "privacy": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "note": "candidate id \"G\"",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/items/0/candidates/0/id",
+      "value": "G"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/items/0/candidates/0/id"
+  }
+}

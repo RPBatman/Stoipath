@@ -1,0 +1,39 @@
+{
+  "schema": "stoipath.learn.course/1",
+  "id": "course-fixture-refused",
+  "title": "Course fixture · refused modules",
+  "summary": "A module written for another build of its slide, and an entry whose file is another module (LEARN.md §5.1 step 5).",
+  "audience": [
+    "medical-student"
+  ],
+  "modules": [
+    {
+      "id": "course-fixture-a",
+      "url": "course-fixture-a.module.json",
+      "title": "Fixture tour A",
+      "estimatedMinutes": 2,
+      "unlock": "always"
+    },
+    {
+      "id": "course-fixture-stale",
+      "url": "course-fixture-stale.module.json",
+      "title": "Fixture on another build",
+      "estimatedMinutes": 2,
+      "unlock": "always"
+    },
+    {
+      "id": "course-fixture-wrong",
+      "url": "course-fixture-b.module.json",
+      "title": "Fixture with the wrong file",
+      "estimatedMinutes": 2,
+      "unlock": "always"
+    },
+    {
+      "id": "course-fixture-missing",
+      "url": "course-fixture-missing.module.json",
+      "title": "Fixture that is not there",
+      "estimatedMinutes": 2,
+      "unlock": "always"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "dataset": "OpenSlide test data (DICOM)",
+  "file": "DICOM/Hamamatsu-2.zip",
+  "url": "https://github.com/RPBatman/Stoipath/releases/download/samples-v1/Hamamatsu-2.zip",
+  "upstreamUrl": "https://openslide.cs.cmu.edu/download/openslide-testdata/DICOM/Hamamatsu-2.zip",
+  "release": "samples-v1 (GitHub pre-release, RPBatman/Stoipath)",
+  "releaseAssetDigest": "sha256:4e5eb397622044167b83b33bd047ded1ea7e35f08146893948d4b1a79dced470",
+  "sha256": "4e5eb397622044167b83b33bd047ded1ea7e35f08146893948d4b1a79dced470",
+  "description": "H&E stain, brightfield, TILED_FULL, scanned on Hamamatsu NanoZoomer S20MD, 2026",
+  "descriptionSource": "samples-manifest.json of release samples-v1 (OpenSlide test data description)",
+  "licence": "CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)",
+  "licenceId": "CC0-1.0",
+  "stain": "H&E",
+  "stainNote": "from the OpenSlide description ('H&E stain')",
+  "tissue": null,
+  "tissueNote": "not stated in the OpenSlide description ('H&E stain, brightfield, TILED_FULL, scanned on Hamamatsu NanoZoomer S20MD, 2026'), so left out",
+  "deidentified": "Public OpenSlide test data. Only the VOLUME instances' pixels are read (through OpenSlide); the LABEL and OVERVIEW instances (label, macro) are skipped and never published, and no patient, specimen or container identifiers, UIDs, dates or file names are copied.",
+  "archiveMembers": 10,
+  "archiveNote": "The release asset is a zip of the DICOM instances; the build reads them unpacked in a scratch directory after checking every member against original_sha256 in samples-manifest.json."
+}

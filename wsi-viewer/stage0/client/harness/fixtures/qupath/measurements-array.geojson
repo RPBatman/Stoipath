@@ -1,0 +1,45 @@
+[
+  {
+    "type": "Feature",
+    "id": "PathAnnotationObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[4096, 8192], [5096, 8192], [5096, 8792], [4096, 8792], [4096, 8192]]]
+    },
+    "properties": {
+      "classification": {"name": "Tumor", "colorRGB": -3670016},
+      "isLocked": false,
+      "measurements": [
+        {"name": "Area µm^2", "value": 35457.8},
+        {"name": "Perimeter µm", "value": 777.8},
+        {"name": "Num Detections", "value": 412}
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "id": "PathAnnotationObject",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[9000, 9000], [9800, 9000], [9800, 9500], [9000, 9500], [9000, 9000]]]
+    },
+    "properties": {
+      "classification": {"name": "Immune cells", "colorRGB": -6268256},
+      "isLocked": false,
+      "measurements": []
+    }
+  },
+  {
+    "type": "Feature",
+    "id": "PathAnnotationObject",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [7000, 2000]
+    },
+    "properties": {
+      "classification": {"name": "Other", "colorRGB": -14336},
+      "isLocked": false,
+      "measurements": [{"name": "Score", "value": 0.5}, {"name": "Score", "value": 0.75}]
+    }
+  }
+]

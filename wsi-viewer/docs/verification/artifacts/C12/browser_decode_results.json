@@ -1,0 +1,39 @@
+{
+ "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+ "n_jpegs": 695,
+ "paths": {
+  "imageBitmap_none": {
+   "n": 695,
+   "identical_to_ljt_fancy_islow": 695
+  },
+  "imageBitmap_default": {
+   "n": 695,
+   "identical_to_ljt_fancy_islow": 695
+  },
+  "htmlImage": {
+   "n": 695,
+   "identical_to_ljt_fancy_islow": 695
+  },
+  "imageDecoder_rgba": {
+   "n": 695,
+   "identical_to_ljt_fancy_islow": 35
+  },
+  "imageDecoder_native_format": "I444"
+ },
+ "first_mismatches": {
+  "imageDecoder_rgba": [
+   "he_dense_000_t28140_q75_420.jpg",
+   "he_dense_000_t28140_q80_420.jpg",
+   "he_dense_000_t28140_q85_444.jpg",
+   "he_dense_000_t28140_q90_420.jpg",
+   "he_dense_000_t28140_q90_444.jpg"
+  ]
+ },
+ "gap2_tile_q80_420": {
+  "imageBitmap_none": "fancy",
+  "imageBitmap_default": "fancy",
+  "htmlImage": "fancy",
+  "imageDecoder_rgba": "097e27102d4244370221304ea530732727eb906b2830a830a35f3d10544a7b48",
+  "imageDecoder_native_format": "I420"
+ }
+}

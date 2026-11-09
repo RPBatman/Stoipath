@@ -1,0 +1,17 @@
+{
+  "dataset": "CAMELYON16 (Computational Pathology Group, Radboud University Medical Center, Nijmegen; AWS Open Data mirror)",
+  "file": "CAMELYON16/images/tumor_014.tif",
+  "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/images/tumor_014.tif",
+  "annotationUrl": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/annotations/tumor_014.xml",
+  "licence": "CC0 1.0 Universal (https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/license.txt)",
+  "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections; only WSI pixel data is used, the embedded macro photograph is never read.",
+  "stain": "H&E, sentinel lymph node with breast-carcinoma macrometastasis (CAMELYON16 'Tumor' annotation group)",
+  "scanner": "3DHistech Pannoramic 250 Flash II (DICOM_MANUFACTURER in the Philips TIFF header), exported as Philips-style BigTIFF by ASAP",
+  "sourceCompression": "JPEG q80, YCbCr 4:2:0, 512x512 tiles with shared JPEGTables (so the chroma is already subsampled 2x2 in the source)",
+  "fullFileSizeBytes": 2253898518,
+  "md5Official": "e60cce61d3b30f01d5b1f451ab7591b9",
+  "md5Downloaded": "e60cce61d3b30f01d5b1f451ab7591b9",
+  "sha256Downloaded": "82ae0b301533315dbf449536e2a9b881f945520947727f2757f2e2c726e06f9f",
+  "checksumVerifiedOn": "2026-10-24",
+  "s3LastModified": "see manifest.source.lastModified"
+}

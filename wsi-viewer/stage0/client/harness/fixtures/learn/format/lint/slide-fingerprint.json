@@ -1,0 +1,26 @@
+{
+  "note": "the reference layer was written for the catalogue build",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/slides/0/fingerprint",
+      "value": "15360x15360@0.243094@36864,66560@ffffffffffff"
+    }
+  ],
+  "expect": [
+    {
+      "rule": "slide-fingerprint",
+      "severity": "error",
+      "path": "/slides/0/fingerprint",
+      "message": "he was captured on a different build of the slide"
+    },
+    {
+      "rule": "key-resolves",
+      "severity": "error",
+      "path": "/answerKeys/0/source",
+      "message": "Key camelyon16-reference: camelyon16-expert belongs to a different build of he"
+    }
+  ],
+  "alsoAllowed": []
+}

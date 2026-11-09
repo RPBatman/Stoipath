@@ -1,0 +1,1931 @@
+{
+ "generated_at": "2026-11-04T06:58:16Z",
+ "as_of": "2026-11-04",
+ "inputs": {
+  "transcript_files": 217,
+  "transcript_lines": 53085,
+  "unique_assistant_messages": 8177,
+  "sessions": 1,
+  "workflows": 75,
+  "duplicate_lines_same_message": 16042,
+  "duplicate_messages_across_runs": 0,
+  "duplicate_messages_across_files": 72,
+  "cache_write_unsplit_tokens": 0,
+  "synthetic_with_usage": 0
+ },
+ "runs": {
+  "total": 213,
+  "by_kind": {
+   "main": 1,
+   "workflow-agent": 205,
+   "direct-subagent": 7
+  },
+  "outcomes": {
+   "in_progress": 5,
+   "result": 167,
+   "killed": 7,
+   "error": 34
+  }
+ },
+ "tokens": {
+  "in": 94122,
+  "out": 20560527,
+  "in_plus_out": 20654649,
+  "cache_write": 125737973,
+  "cache_read": 2418518273,
+  "all_kinds": 2564910895
+ },
+ "by_model": {
+  "claude-fable-5-1": {
+   "in": 83502,
+   "out": 12437491,
+   "cw": 89966951,
+   "cw5m": 87357437,
+   "cw1h": 2609514,
+   "cr": 662322766,
+   "messages": 2896,
+   "cost_usd": 1932.45
+  },
+  "claude-opus-5-5": {
+   "in": 10620,
+   "out": 8123036,
+   "cw": 35771022,
+   "cw5m": 30277721,
+   "cw1h": 5493301,
+   "cr": 1756195507,
+   "messages": 5217,
+   "cost_usd": 709.08
+  }
+ },
+ "cost_usd_total": 2641.53,
+ "unpriced_models": [],
+ "phases": {
+  "planning": {
+   "runs": 73,
+   "outcomes": {
+    "result": 64,
+    "killed": 2,
+    "error": 7
+   },
+   "tokens_in": 27380,
+   "tokens_out": 4778197,
+   "tokens_cache_write": 37409413,
+   "tokens_cache_read": 170705153,
+   "api_messages": 924,
+   "cost_usd": 749.48,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T15:05:08Z",
+   "last_end": "2026-10-25T15:14:34Z",
+   "agent_wall_clock_h": 20.15,
+   "workflow_count": 33
+  },
+  "verification": {
+   "runs": 29,
+   "outcomes": {
+    "result": 15,
+    "error": 13,
+    "in_progress": 1
+   },
+   "tokens_in": 11358,
+   "tokens_out": 1617537,
+   "tokens_cache_write": 9833608,
+   "tokens_cache_read": 185316338,
+   "api_messages": 802,
+   "cost_usd": 214.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:48Z",
+   "last_end": "2026-11-04T06:57:01Z",
+   "agent_wall_clock_h": 8.75,
+   "workflow_count": 18
+  },
+  "prototype": {
+   "runs": 12,
+   "outcomes": {
+    "result": 7,
+    "error": 5
+   },
+   "tokens_in": 5242,
+   "tokens_out": 902802,
+   "tokens_cache_write": 3351330,
+   "tokens_cache_read": 32782694,
+   "api_messages": 176,
+   "cost_usd": 95.28,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:15:08Z",
+   "last_end": "2026-10-25T13:47:43Z",
+   "agent_wall_clock_h": 3.73,
+   "workflow_count": 1
+  },
+  "design": {
+   "runs": 50,
+   "outcomes": {
+    "result": 41,
+    "error": 9
+   },
+   "tokens_in": 34640,
+   "tokens_out": 5562625,
+   "tokens_cache_write": 39861839,
+   "tokens_cache_read": 294716609,
+   "api_messages": 1265,
+   "cost_usd": 830.36,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T23:39:57Z",
+   "last_end": "2026-11-01T13:29:59Z",
+   "agent_wall_clock_h": 22.04,
+   "workflow_count": 14
+  },
+  "shell": {
+   "runs": 2,
+   "outcomes": {
+    "killed": 2
+   },
+   "tokens_in": 428,
+   "tokens_out": 368698,
+   "tokens_cache_write": 2532412,
+   "tokens_cache_read": 75037580,
+   "api_messages": 208,
+   "cost_usd": 35.05,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:04:01Z",
+   "last_end": "2026-11-01T16:52:30Z",
+   "agent_wall_clock_h": 1.03,
+   "workflow_count": 2
+  },
+  "dissemination": {
+   "runs": 7,
+   "outcomes": {
+    "result": 6,
+    "killed": 1
+   },
+   "tokens_in": 792,
+   "tokens_out": 460062,
+   "tokens_cache_write": 1491228,
+   "tokens_cache_read": 63065788,
+   "api_messages": 274,
+   "cost_usd": 31.71,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T15:15:29Z",
+   "last_end": "2026-11-01T17:23:21Z",
+   "agent_wall_clock_h": 1.55,
+   "workflow_count": 2
+  },
+  "main-session": {
+   "runs": 1,
+   "outcomes": {
+    "in_progress": 1
+   },
+   "tokens_in": 6498,
+   "tokens_out": 681358,
+   "tokens_cache_write": 8161055,
+   "tokens_cache_read": 266029198,
+   "api_messages": 605,
+   "cost_usd": 180.18,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T14:47:08Z",
+   "last_end": "2026-11-04T06:56:01Z",
+   "agent_wall_clock_h": 256.15,
+   "workflow_count": 0
+  },
+  "other": {
+   "runs": 39,
+   "outcomes": {
+    "result": 34,
+    "killed": 2,
+    "in_progress": 3
+   },
+   "tokens_in": 7784,
+   "tokens_out": 6189248,
+   "tokens_cache_write": 23097088,
+   "tokens_cache_read": 1330864913,
+   "api_messages": 3859,
+   "cost_usd": 505.47,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:52:57Z",
+   "last_end": "2026-11-04T06:56:06Z",
+   "agent_wall_clock_h": 22.86,
+   "workflow_count": 8
+  }
+ },
+ "workflows": {
+  "wf_010db20c-16a": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 2406,
+   "tokens_out": 152529,
+   "tokens_cache_write": 507608,
+   "tokens_cache_read": 16052342,
+   "api_messages": 78,
+   "cost_usd": 18.01,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T00:00:56Z",
+   "last_end": "2026-10-25T01:04:27Z",
+   "agent_wall_clock_h": 1.06,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 301358,
+   "harness_duration_s": 3813.5
+  },
+  "wf_0312b4af-957": {
+   "runs": 16,
+   "outcomes": {
+    "result": 15,
+    "killed": 1
+   },
+   "tokens_in": 7040,
+   "tokens_out": 1236113,
+   "tokens_cache_write": 7202584,
+   "tokens_cache_read": 35319095,
+   "api_messages": 235,
+   "cost_usd": 160.74,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T15:05:08Z",
+   "last_end": "2026-10-24T18:01:14Z",
+   "agent_wall_clock_h": 5.62,
+   "workflow_name": "wsi-viewer-plan",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 4564221,
+   "harness_duration_s": 10566.8
+  },
+  "wf_10e199eb-aeb": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 418,
+   "tokens_out": 57786,
+   "tokens_cache_write": 591162,
+   "tokens_cache_read": 2452452,
+   "api_messages": 14,
+   "cost_usd": 10.9,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T23:54:50Z",
+   "last_end": "2026-10-25T00:10:46Z",
+   "agent_wall_clock_h": 0.27,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 318625,
+   "harness_duration_s": 957.9
+  },
+  "wf_134c52e8-b55": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 162,
+   "tokens_out": 31876,
+   "tokens_cache_write": 617912,
+   "tokens_cache_read": 682983,
+   "api_messages": 6,
+   "cost_usd": 9.49,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:39:15Z",
+   "last_end": "2026-10-24T18:48:26Z",
+   "agent_wall_clock_h": 0.15,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "judge",
+   "status": "completed",
+   "harness_total_tokens": 339900,
+   "harness_duration_s": 552.8
+  },
+  "wf_14b806de-ea0": {
+   "runs": 1,
+   "outcomes": {
+    "error": 1
+   },
+   "tokens_in": 546,
+   "tokens_out": 81873,
+   "tokens_cache_write": 526950,
+   "tokens_cache_read": 3678036,
+   "api_messages": 18,
+   "cost_usd": 11.61,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T01:09:40Z",
+   "last_end": "2026-10-25T01:29:32Z",
+   "agent_wall_clock_h": 0.33,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify-report",
+   "status": "completed",
+   "harness_total_tokens": 526991,
+   "harness_duration_s": 1191.9
+  },
+  "wf_18f137a5-7e6": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 612,
+   "tokens_out": 159204,
+   "tokens_cache_write": 977754,
+   "tokens_cache_read": 3773730,
+   "api_messages": 21,
+   "cost_usd": 21.13,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T14:17:39Z",
+   "last_end": "2026-10-25T14:37:33Z",
+   "agent_wall_clock_h": 0.66,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 626930,
+   "harness_duration_s": 1195.8
+  },
+  "wf_1e6bff0f-508": {
+   "runs": 1,
+   "outcomes": {
+    "error": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:19:14Z",
+   "last_end": "2026-10-24T18:19:14Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "judge",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 3.1
+  },
+  "wf_1fcffe7f-faa": {
+   "runs": 3,
+   "outcomes": {
+    "result": 2,
+    "error": 1
+   },
+   "tokens_in": 2090,
+   "tokens_out": 450552,
+   "tokens_cache_write": 2848501,
+   "tokens_cache_read": 17074111,
+   "api_messages": 70,
+   "cost_usd": 62.42,
+   "has_unpriced": false,
+   "first_start": "2026-10-26T01:34:43Z",
+   "last_end": "2026-10-26T02:32:47Z",
+   "agent_wall_clock_h": 1.76,
+   "workflow_name": "ux-design-slice",
+   "stage": "concepts",
+   "status": "completed",
+   "harness_total_tokens": 1328950,
+   "harness_duration_s": 3486.5
+  },
+  "wf_233334ce-ea2": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 740,
+   "tokens_out": 144764,
+   "tokens_cache_write": 1724021,
+   "tokens_cache_read": 6793038,
+   "api_messages": 25,
+   "cost_usd": 30.49,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:47Z",
+   "last_end": "2026-10-24T19:57:55Z",
+   "agent_wall_clock_h": 0.57,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 986522,
+   "harness_duration_s": 1149.8
+  },
+  "wf_257113c8-90c": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 2122,
+   "tokens_out": 134054,
+   "tokens_cache_write": 513140,
+   "tokens_cache_read": 14357138,
+   "api_messages": 71,
+   "cost_usd": 16.73,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T00:00:56Z",
+   "last_end": "2026-10-25T00:59:15Z",
+   "agent_wall_clock_h": 0.97,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 299203,
+   "harness_duration_s": 3502.7
+  },
+  "wf_2dca9dfb-777": {
+   "runs": 5,
+   "outcomes": {
+    "result": 5
+   },
+   "tokens_in": 3420,
+   "tokens_out": 615444,
+   "tokens_cache_write": 4224230,
+   "tokens_cache_read": 33637437,
+   "api_messages": 119,
+   "cost_usd": 92.02,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T07:02:23Z",
+   "last_end": "2026-11-01T08:57:34Z",
+   "agent_wall_clock_h": 2.14,
+   "workflow_name": "ux-design-slice",
+   "stage": "screen",
+   "status": "completed",
+   "harness_total_tokens": 2412006,
+   "harness_duration_s": 6916.5
+  },
+  "wf_320f724b-cc8": {
+   "runs": 8,
+   "outcomes": {
+    "result": 8
+   },
+   "tokens_in": 6394,
+   "tokens_out": 887693,
+   "tokens_cache_write": 5948960,
+   "tokens_cache_read": 55904716,
+   "api_messages": 212,
+   "cost_usd": 132.79,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T08:58:01Z",
+   "last_end": "2026-11-01T11:38:37Z",
+   "agent_wall_clock_h": 4.16,
+   "workflow_name": "ux-design-slice",
+   "stage": "finish",
+   "status": "completed",
+   "harness_total_tokens": 3868171,
+   "harness_duration_s": 9638.7
+  },
+  "wf_34319e5d-772": {
+   "runs": 1,
+   "outcomes": {
+    "killed": 1
+   },
+   "tokens_in": 150,
+   "tokens_out": 176001,
+   "tokens_cache_write": 926427,
+   "tokens_cache_read": 22222819,
+   "api_messages": 74,
+   "cost_usd": 12.6,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:04:01Z",
+   "last_end": "2026-11-01T16:30:58Z",
+   "agent_wall_clock_h": 0.45,
+   "workflow_name": "integrate-shell",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 501620,
+   "harness_duration_s": 1562.7
+  },
+  "wf_3ad60ff3-b79": {
+   "runs": 1,
+   "outcomes": {
+    "error": 1
+   },
+   "tokens_in": 2,
+   "tokens_out": 387,
+   "tokens_cache_write": 63012,
+   "tokens_cache_read": 0,
+   "api_messages": 1,
+   "cost_usd": 0.81,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:19:11Z",
+   "last_end": "2026-10-24T18:19:21Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "judge",
+   "status": "completed",
+   "harness_total_tokens": 63024,
+   "harness_duration_s": 9.9
+  },
+  "wf_3bc5346d-9f6": {
+   "runs": 2,
+   "outcomes": {
+    "killed": 2
+   },
+   "tokens_in": 500,
+   "tokens_out": 435220,
+   "tokens_cache_write": 1319588,
+   "tokens_cache_read": 58423500,
+   "api_messages": 243,
+   "cost_usd": 26.99,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T17:12:08Z",
+   "last_end": "2026-11-01T17:47:36Z",
+   "agent_wall_clock_h": 1.15,
+   "workflow_name": "samples-corpus",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 618733,
+   "harness_duration_s": 1384.5
+  },
+  "wf_3ea4071f-681": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:59:02Z",
+   "last_end": "2026-10-24T19:59:02Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 0.5
+  },
+  "wf_3f32efdd-499": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 772,
+   "tokens_out": 161789,
+   "tokens_cache_write": 668253,
+   "tokens_cache_read": 3825838,
+   "api_messages": 26,
+   "cost_usd": 17.41,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T23:43:07Z",
+   "last_end": "2026-10-25T00:03:19Z",
+   "agent_wall_clock_h": 0.67,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 588333,
+   "harness_duration_s": 1216.7
+  },
+  "wf_42384c06-41d": {
+   "runs": 5,
+   "outcomes": {
+    "result": 5
+   },
+   "tokens_in": 4308,
+   "tokens_out": 583558,
+   "tokens_cache_write": 10297225,
+   "tokens_cache_read": 36333354,
+   "api_messages": 144,
+   "cost_usd": 167.02,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T07:02:23Z",
+   "last_end": "2026-11-01T08:50:05Z",
+   "agent_wall_clock_h": 2.16,
+   "workflow_name": "ux-design-slice",
+   "stage": "screen",
+   "status": "completed",
+   "harness_total_tokens": 2551502,
+   "harness_duration_s": 6467.9
+  },
+  "wf_44a48f4d-17e": {
+   "runs": 3,
+   "outcomes": {
+    "result": 2,
+    "killed": 1
+   },
+   "tokens_in": 54,
+   "tokens_out": 51240,
+   "tokens_cache_write": 284422,
+   "tokens_cache_read": 2134864,
+   "api_messages": 26,
+   "cost_usd": 2.87,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:20:18Z",
+   "last_end": "2026-11-01T16:31:05Z",
+   "agent_wall_clock_h": 0.2,
+   "workflow_name": "tsp-prep",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 327021,
+   "harness_duration_s": 646.4
+  },
+  "wf_48ba4e81-b95": {
+   "runs": 10,
+   "outcomes": {
+    "result": 9,
+    "error": 1
+   },
+   "tokens_in": 8170,
+   "tokens_out": 608861,
+   "tokens_cache_write": 2243361,
+   "tokens_cache_read": 45248102,
+   "api_messages": 275,
+   "cost_usd": 69.88,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T11:14:31Z",
+   "last_end": "2026-11-01T13:29:59Z",
+   "agent_wall_clock_h": 2.96,
+   "workflow_name": "ux-design-slice",
+   "stage": "sweep",
+   "status": "completed",
+   "harness_total_tokens": 2533053,
+   "harness_duration_s": 8127.6
+  },
+  "wf_4909ef62-cfb": {
+   "runs": 3,
+   "outcomes": {
+    "result": 3
+   },
+   "tokens_in": 480,
+   "tokens_out": 375413,
+   "tokens_cache_write": 1022549,
+   "tokens_cache_read": 59831217,
+   "api_messages": 239,
+   "cost_usd": 24.59,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:31:54Z",
+   "last_end": "2026-11-01T17:23:21Z",
+   "agent_wall_clock_h": 1.22,
+   "workflow_name": "tsp-prep",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 1065170,
+   "harness_duration_s": 3089.5
+  },
+  "wf_4bb421a9-ae8": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 708,
+   "tokens_out": 173581,
+   "tokens_cache_write": 1104987,
+   "tokens_cache_read": 4657443,
+   "api_messages": 24,
+   "cost_usd": 23.66,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T14:17:40Z",
+   "last_end": "2026-10-25T14:39:35Z",
+   "agent_wall_clock_h": 0.72,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 697861,
+   "harness_duration_s": 1318.0
+  },
+  "wf_52521047-493": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 388,
+   "tokens_out": 97121,
+   "tokens_cache_write": 442541,
+   "tokens_cache_read": 1840312,
+   "api_messages": 14,
+   "cost_usd": 10.85,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T00:11:24Z",
+   "last_end": "2026-10-25T00:25:01Z",
+   "agent_wall_clock_h": 0.43,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "critique-section",
+   "status": "completed",
+   "harness_total_tokens": 481929,
+   "harness_duration_s": 818.7
+  },
+  "wf_527f90c1-fdc": {
+   "runs": 19,
+   "outcomes": {
+    "result": 19
+   },
+   "tokens_in": 4564,
+   "tokens_out": 3261447,
+   "tokens_cache_write": 11459437,
+   "tokens_cache_read": 863031155,
+   "api_messages": 2266,
+   "cost_usd": 295.15,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T19:21:59Z",
+   "last_end": "2026-11-02T03:56:31Z",
+   "agent_wall_clock_h": 12.17,
+   "workflow_name": "phase-a-tools",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 9690145,
+   "harness_duration_s": 30874.4
+  },
+  "wf_57970b00-23a": {
+   "runs": 3,
+   "outcomes": {
+    "result": 1,
+    "error": 2
+   },
+   "tokens_in": 1742,
+   "tokens_out": 434208,
+   "tokens_cache_write": 2709744,
+   "tokens_cache_read": 14823224,
+   "api_messages": 59,
+   "cost_usd": 59.31,
+   "has_unpriced": false,
+   "first_start": "2026-10-26T01:34:40Z",
+   "last_end": "2026-10-26T02:31:49Z",
+   "agent_wall_clock_h": 1.89,
+   "workflow_name": "ux-design-slice",
+   "stage": "concepts",
+   "status": "completed",
+   "harness_total_tokens": 1308677,
+   "harness_duration_s": 3428.9
+  },
+  "wf_57cb5676-622": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 322,
+   "tokens_out": 42986,
+   "tokens_cache_write": 304569,
+   "tokens_cache_read": 2358517,
+   "api_messages": 11,
+   "cost_usd": 6.55,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:39:18Z",
+   "last_end": "2026-10-24T18:50:59Z",
+   "agent_wall_clock_h": 0.19,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "judge",
+   "status": "completed",
+   "harness_total_tokens": 343995,
+   "harness_duration_s": 705.4
+  },
+  "wf_598d5cac-3bf": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 166,
+   "tokens_out": 271847,
+   "tokens_cache_write": 1631771,
+   "tokens_cache_read": 27032807,
+   "api_messages": 83,
+   "cost_usd": 19.0,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T03:33:06Z",
+   "last_end": "2026-11-04T04:16:17Z",
+   "agent_wall_clock_h": 0.72,
+   "workflow_name": "learn-spec",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 635850,
+   "harness_duration_s": 2594.0
+  },
+  "wf_601c64ae-391": {
+   "runs": 12,
+   "outcomes": {
+    "result": 7,
+    "error": 5
+   },
+   "tokens_in": 5242,
+   "tokens_out": 902802,
+   "tokens_cache_write": 3351330,
+   "tokens_cache_read": 32782694,
+   "api_messages": 176,
+   "cost_usd": 95.28,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:15:08Z",
+   "last_end": "2026-10-25T13:47:43Z",
+   "agent_wall_clock_h": 3.73,
+   "workflow_name": "stage0-prototype",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 396664,
+   "harness_duration_s": 1387.4
+  },
+  "wf_61a44a31-862": {
+   "runs": 3,
+   "outcomes": {
+    "result": 2,
+    "error": 1
+   },
+   "tokens_in": 1902,
+   "tokens_out": 416603,
+   "tokens_cache_write": 2627479,
+   "tokens_cache_read": 18186003,
+   "api_messages": 65,
+   "cost_usd": 58.24,
+   "has_unpriced": false,
+   "first_start": "2026-10-26T01:34:43Z",
+   "last_end": "2026-10-26T02:30:03Z",
+   "agent_wall_clock_h": 1.67,
+   "workflow_name": "ux-design-slice",
+   "stage": "concepts",
+   "status": "completed",
+   "harness_total_tokens": 1314780,
+   "harness_duration_s": 3321.9
+  },
+  "wf_61a75c97-8b6": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 578,
+   "tokens_out": 153368,
+   "tokens_cache_write": 615422,
+   "tokens_cache_read": 4510715,
+   "api_messages": 19,
+   "cost_usd": 16.49,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:51:58Z",
+   "last_end": "2026-10-24T19:24:14Z",
+   "agent_wall_clock_h": 0.54,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "synth",
+   "status": "completed",
+   "harness_total_tokens": 384359,
+   "harness_duration_s": 1939.5
+  },
+  "wf_621faae6-037": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 644,
+   "tokens_out": 124152,
+   "tokens_cache_write": 1528832,
+   "tokens_cache_read": 5176016,
+   "api_messages": 22,
+   "cost_usd": 26.62,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:01:27Z",
+   "last_end": "2026-10-24T18:18:36Z",
+   "agent_wall_clock_h": 0.49,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "arch",
+   "status": "completed",
+   "harness_total_tokens": 865660,
+   "harness_duration_s": 1031.2
+  },
+  "wf_6b2d07c1-509": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 290,
+   "tokens_out": 58990,
+   "tokens_cache_write": 130948,
+   "tokens_cache_read": 1174089,
+   "api_messages": 10,
+   "cost_usd": 4.88,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:24:29Z",
+   "last_end": "2026-10-24T19:37:51Z",
+   "agent_wall_clock_h": 0.22,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "amend-architecture",
+   "status": "completed",
+   "harness_total_tokens": 170159,
+   "harness_duration_s": 804.0
+  },
+  "wf_6d62eef7-2f0": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 772,
+   "tokens_out": 114269,
+   "tokens_cache_write": 1647132,
+   "tokens_cache_read": 7262100,
+   "api_messages": 26,
+   "cost_usd": 28.13,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:47Z",
+   "last_end": "2026-10-24T19:55:51Z",
+   "agent_wall_clock_h": 0.48,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 946890,
+   "harness_duration_s": 1026.2
+  },
+  "wf_6fec47fb-ebb": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 868,
+   "tokens_out": 144015,
+   "tokens_cache_write": 1005228,
+   "tokens_cache_read": 5687945,
+   "api_messages": 29,
+   "cost_usd": 21.2,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T13:43:41Z",
+   "last_end": "2026-10-25T13:59:59Z",
+   "agent_wall_clock_h": 0.54,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 633240,
+   "harness_duration_s": 983.4
+  },
+  "wf_7450a8e5-4d3": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 418,
+   "tokens_out": 161666,
+   "tokens_cache_write": 1205295,
+   "tokens_cache_read": 2629514,
+   "api_messages": 14,
+   "cost_usd": 23.81,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T13:43:41Z",
+   "last_end": "2026-10-25T14:15:34Z",
+   "agent_wall_clock_h": 0.53,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 426567,
+   "harness_duration_s": 1919.3
+  },
+  "wf_748b9740-800": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 354,
+   "tokens_out": 54837,
+   "tokens_cache_write": 780522,
+   "tokens_cache_read": 3228594,
+   "api_messages": 12,
+   "cost_usd": 13.31,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:01:30Z",
+   "last_end": "2026-10-24T18:17:09Z",
+   "agent_wall_clock_h": 0.26,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "arch",
+   "status": "completed",
+   "harness_total_tokens": 443770,
+   "harness_duration_s": 944.0
+  },
+  "wf_7868541f-343": {
+   "runs": 1,
+   "outcomes": {
+    "error": 1
+   },
+   "tokens_in": 62,
+   "tokens_out": 73168,
+   "tokens_cache_write": 202096,
+   "tokens_cache_read": 4918086,
+   "api_messages": 31,
+   "cost_usd": 3.46,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T05:05:49Z",
+   "last_end": "2026-11-01T05:16:15Z",
+   "agent_wall_clock_h": 0.17,
+   "workflow_name": "ux-design-slice",
+   "stage": "screen",
+   "status": "completed",
+   "harness_total_tokens": 244620,
+   "harness_duration_s": 627.6
+  },
+  "wf_7d38fe31-dbf": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 482,
+   "tokens_out": 81219,
+   "tokens_cache_write": 586397,
+   "tokens_cache_read": 2648591,
+   "api_messages": 16,
+   "cost_usd": 12.06,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T13:24:37Z",
+   "last_end": "2026-10-25T13:42:58Z",
+   "agent_wall_clock_h": 0.31,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify-report",
+   "status": "completed",
+   "harness_total_tokens": 329945,
+   "harness_duration_s": 1103.8
+  },
+  "wf_7d743d6e-626": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 934,
+   "tokens_out": 201317,
+   "tokens_cache_write": 998719,
+   "tokens_cache_read": 6468705,
+   "api_messages": 32,
+   "cost_usd": 24.18,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T13:43:38Z",
+   "last_end": "2026-10-25T14:11:32Z",
+   "agent_wall_clock_h": 0.73,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 608230,
+   "harness_duration_s": 1676.3
+  },
+  "wf_807e4bb6-f1e": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 322,
+   "tokens_out": 46509,
+   "tokens_cache_write": 271019,
+   "tokens_cache_read": 1790918,
+   "api_messages": 11,
+   "cost_usd": 6.16,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T23:39:57Z",
+   "last_end": "2026-10-25T23:51:48Z",
+   "agent_wall_clock_h": 0.2,
+   "workflow_name": "ux-design-slice",
+   "stage": "research",
+   "status": "completed",
+   "harness_total_tokens": 271163,
+   "harness_duration_s": 712.6
+  },
+  "wf_84d422b3-0a5": {
+   "runs": 6,
+   "outcomes": {
+    "result": 6
+   },
+   "tokens_in": 4408,
+   "tokens_out": 662566,
+   "tokens_cache_write": 4188827,
+   "tokens_cache_read": 41192728,
+   "api_messages": 149,
+   "cost_usd": 95.83,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T07:02:20Z",
+   "last_end": "2026-11-01T08:38:34Z",
+   "agent_wall_clock_h": 2.4,
+   "workflow_name": "ux-design-slice",
+   "stage": "screen",
+   "status": "completed",
+   "harness_total_tokens": 2680290,
+   "harness_duration_s": 5777.4
+  },
+  "wf_85cbef15-573": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 612,
+   "tokens_out": 107140,
+   "tokens_cache_write": 1074861,
+   "tokens_cache_read": 4260138,
+   "api_messages": 21,
+   "cost_usd": 19.86,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T23:43:04Z",
+   "last_end": "2026-10-24T23:59:35Z",
+   "agent_wall_clock_h": 0.46,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "critique",
+   "status": "completed",
+   "harness_total_tokens": 877907,
+   "harness_duration_s": 992.2
+  },
+  "wf_97902b76-f13": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 354,
+   "tokens_out": 158889,
+   "tokens_cache_write": 869522,
+   "tokens_cache_read": 2478059,
+   "api_messages": 12,
+   "cost_usd": 19.44,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T13:43:38Z",
+   "last_end": "2026-10-25T14:17:12Z",
+   "agent_wall_clock_h": 0.56,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise-architecture",
+   "status": "completed",
+   "harness_total_tokens": 395498,
+   "harness_duration_s": 2017.0
+  },
+  "wf_9b5596d5-2b6": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 642,
+   "tokens_out": 79551,
+   "tokens_cache_write": 540778,
+   "tokens_cache_read": 5014409,
+   "api_messages": 21,
+   "cost_usd": 12.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T23:40:00Z",
+   "last_end": "2026-10-25T23:59:00Z",
+   "agent_wall_clock_h": 0.32,
+   "workflow_name": "ux-design-slice",
+   "stage": "principles",
+   "status": "completed",
+   "harness_total_tokens": 355593,
+   "harness_duration_s": 1144.3
+  },
+  "wf_9deb2f1e-875": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:59:02Z",
+   "last_end": "2026-10-24T19:59:02Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 0.5
+  },
+  "wf_a4fa8db1-aa1": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 1286,
+   "tokens_out": 97525,
+   "tokens_cache_write": 389932,
+   "tokens_cache_read": 7016872,
+   "api_messages": 43,
+   "cost_usd": 11.52,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T00:00:56Z",
+   "last_end": "2026-10-25T00:41:52Z",
+   "agent_wall_clock_h": 0.68,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 260953,
+   "harness_duration_s": 2458.5
+  },
+  "wf_adce8a09-963": {
+   "runs": 1,
+   "outcomes": {
+    "killed": 1
+   },
+   "tokens_in": 278,
+   "tokens_out": 192697,
+   "tokens_cache_write": 1605985,
+   "tokens_cache_read": 52814761,
+   "api_messages": 134,
+   "cost_usd": 22.45,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:17:34Z",
+   "last_end": "2026-11-01T16:52:30Z",
+   "agent_wall_clock_h": 0.58,
+   "workflow_name": "integrate-shell",
+   "stage": null,
+   "status": "killed",
+   "harness_total_tokens": 518571,
+   "harness_duration_s": 2096.2
+  },
+  "wf_b1ac0171-b71": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:59:02Z",
+   "last_end": "2026-10-24T19:59:02Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 0.4
+  },
+  "wf_b5358005-abb": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 228,
+   "tokens_out": 4625,
+   "tokens_cache_write": 271124,
+   "tokens_cache_read": 597500,
+   "api_messages": 9,
+   "cost_usd": 3.77,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:58:18Z",
+   "last_end": "2026-10-24T19:59:10Z",
+   "agent_wall_clock_h": 0.03,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "critique",
+   "status": "completed",
+   "harness_total_tokens": 310492,
+   "harness_duration_s": 51.4
+  },
+  "wf_bdacf0bf-98f": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:59:02Z",
+   "last_end": "2026-10-24T19:59:02Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 0.6
+  },
+  "wf_bfa07b92-34b": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 676,
+   "tokens_out": 100287,
+   "tokens_cache_write": 1311236,
+   "tokens_cache_read": 5033448,
+   "api_messages": 23,
+   "cost_usd": 22.67,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:48Z",
+   "last_end": "2026-10-24T19:53:29Z",
+   "agent_wall_clock_h": 0.44,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 768661,
+   "harness_duration_s": 883.6
+  },
+  "wf_c154d227-ade": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:59:01Z",
+   "last_end": "2026-10-24T19:59:02Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 0.7
+  },
+  "wf_c6bdd34a-343": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 196,
+   "tokens_out": 7018,
+   "tokens_cache_write": 170830,
+   "tokens_cache_read": 515342,
+   "api_messages": 8,
+   "cost_usd": 2.62,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:58:22Z",
+   "last_end": "2026-10-24T19:59:55Z",
+   "agent_wall_clock_h": 0.04,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "critique",
+   "status": "completed",
+   "harness_total_tokens": 249498,
+   "harness_duration_s": 96.6
+  },
+  "wf_c99f0036-656": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 1388,
+   "tokens_out": 191751,
+   "tokens_cache_write": 2796277,
+   "tokens_cache_read": 11782205,
+   "api_messages": 49,
+   "cost_usd": 47.5,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T23:43:07Z",
+   "last_end": "2026-10-25T01:08:53Z",
+   "agent_wall_clock_h": 1.65,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 827335,
+   "harness_duration_s": 5150.1
+  },
+  "wf_d09c7814-7ee": {
+   "runs": 6,
+   "outcomes": {
+    "result": 6
+   },
+   "tokens_in": 994,
+   "tokens_out": 613156,
+   "tokens_cache_write": 2168948,
+   "tokens_cache_read": 132824749,
+   "api_messages": 496,
+   "cost_usd": 49.68,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T16:52:57Z",
+   "last_end": "2026-11-01T19:20:41Z",
+   "agent_wall_clock_h": 2.85,
+   "workflow_name": "review-shell",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 2211644,
+   "harness_duration_s": 8865.7
+  },
+  "wf_d216cdb8-2bb": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 644,
+   "tokens_out": 74287,
+   "tokens_cache_write": 791095,
+   "tokens_cache_read": 4604239,
+   "api_messages": 22,
+   "cost_usd": 14.76,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T23:43:07Z",
+   "last_end": "2026-10-24T23:53:51Z",
+   "agent_wall_clock_h": 0.33,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "critique",
+   "status": "completed",
+   "harness_total_tokens": 869798,
+   "harness_duration_s": 648.0
+  },
+  "wf_d30f46c5-672": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 932,
+   "tokens_out": 102241,
+   "tokens_cache_write": 1072663,
+   "tokens_cache_read": 6400357,
+   "api_messages": 31,
+   "cost_usd": 20.13,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:48Z",
+   "last_end": "2026-10-24T19:54:19Z",
+   "agent_wall_clock_h": 0.48,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 650480,
+   "harness_duration_s": 933.0
+  },
+  "wf_d726a9be-dd5": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 110,
+   "tokens_out": 207446,
+   "tokens_cache_write": 970173,
+   "tokens_cache_read": 16211636,
+   "api_messages": 55,
+   "cost_usd": 12.24,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T17:59:27Z",
+   "last_end": "2026-11-01T18:32:29Z",
+   "agent_wall_clock_h": 0.55,
+   "workflow_name": "shell-tools-spec",
+   "stage": null,
+   "status": "completed",
+   "harness_total_tokens": 514533,
+   "harness_duration_s": 1985.3
+  },
+  "wf_dbcd9af8-b88": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 740,
+   "tokens_out": 206788,
+   "tokens_cache_write": 1657957,
+   "tokens_cache_read": 4887254,
+   "api_messages": 25,
+   "cost_usd": 32.29,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T14:17:39Z",
+   "last_end": "2026-10-25T14:46:12Z",
+   "agent_wall_clock_h": 0.78,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 783667,
+   "harness_duration_s": 1714.9
+  },
+  "wf_dc2d0f4a-630": {
+   "runs": 1,
+   "outcomes": {
+    "error": 1
+   },
+   "tokens_in": 50,
+   "tokens_out": 71714,
+   "tokens_cache_write": 380465,
+   "tokens_cache_read": 3663649,
+   "api_messages": 25,
+   "cost_usd": 4.07,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T05:05:49Z",
+   "last_end": "2026-11-01T05:16:35Z",
+   "agent_wall_clock_h": 0.18,
+   "workflow_name": "ux-design-slice",
+   "stage": "screen",
+   "status": "completed",
+   "harness_total_tokens": 262990,
+   "harness_duration_s": 647.8
+  },
+  "wf_e0390a8f-63d": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 616,
+   "tokens_out": 218179,
+   "tokens_cache_write": 1583565,
+   "tokens_cache_read": 3853540,
+   "api_messages": 22,
+   "cost_usd": 31.67,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T14:17:39Z",
+   "last_end": "2026-10-25T14:46:23Z",
+   "agent_wall_clock_h": 0.78,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "revise",
+   "status": "completed",
+   "harness_total_tokens": 732982,
+   "harness_duration_s": 1726.4
+  },
+  "wf_e081933a-80d": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 1030,
+   "tokens_out": 444298,
+   "tokens_cache_write": 2725529,
+   "tokens_cache_read": 9238089,
+   "api_messages": 34,
+   "cost_usd": 58.6,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T23:59:10Z",
+   "last_end": "2026-10-26T01:34:06Z",
+   "agent_wall_clock_h": 1.58,
+   "workflow_name": "ux-design-slice",
+   "stage": "design-system",
+   "status": "completed",
+   "harness_total_tokens": 510779,
+   "harness_duration_s": 5700.1
+  },
+  "wf_e99f4e0c-9e4": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 322,
+   "tokens_out": 36820,
+   "tokens_cache_write": 279250,
+   "tokens_cache_read": 2257615,
+   "api_messages": 11,
+   "cost_usd": 5.9,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:39:18Z",
+   "last_end": "2026-10-24T18:49:34Z",
+   "agent_wall_clock_h": 0.17,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "judge",
+   "status": "completed",
+   "harness_total_tokens": 318675,
+   "harness_duration_s": 621.0
+  },
+  "wf_ea847c77-1aa": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 772,
+   "tokens_out": 99060,
+   "tokens_cache_write": 1258158,
+   "tokens_cache_read": 5505877,
+   "api_messages": 26,
+   "cost_usd": 22.06,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:48Z",
+   "last_end": "2026-10-24T19:53:17Z",
+   "agent_wall_clock_h": 0.46,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 746385,
+   "harness_duration_s": 871.4
+  },
+  "wf_ecfbabae-4b1": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 1124,
+   "tokens_out": 107339,
+   "tokens_cache_write": 1317010,
+   "tokens_cache_read": 7809693,
+   "api_messages": 37,
+   "cost_usd": 23.79,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:47Z",
+   "last_end": "2026-10-24T19:55:50Z",
+   "agent_wall_clock_h": 0.49,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "draft",
+   "status": "completed",
+   "harness_total_tokens": 771617,
+   "harness_duration_s": 1024.6
+  },
+  "wf_f10e265d-b53": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 934,
+   "tokens_out": 142266,
+   "tokens_cache_write": 573974,
+   "tokens_cache_read": 4214532,
+   "api_messages": 32,
+   "cost_usd": 15.35,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T23:43:05Z",
+   "last_end": "2026-10-25T00:06:07Z",
+   "agent_wall_clock_h": 0.65,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 497370,
+   "harness_duration_s": 1384.6
+  },
+  "wf_f1f45276-b55": {
+   "runs": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 644,
+   "tokens_out": 104811,
+   "tokens_cache_write": 1526895,
+   "tokens_cache_read": 5276518,
+   "api_messages": 22,
+   "cost_usd": 25.65,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:01:30Z",
+   "last_end": "2026-10-24T18:17:07Z",
+   "agent_wall_clock_h": 0.47,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "arch",
+   "status": "completed",
+   "harness_total_tokens": 875434,
+   "harness_duration_s": 941.0
+  },
+  "wf_f30d346e-dc0": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:59:02Z",
+   "last_end": "2026-10-24T19:59:02Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "verify",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 0.6
+  },
+  "wf_f5a5e494-811": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 962,
+   "tokens_out": 123795,
+   "tokens_cache_write": 599252,
+   "tokens_cache_read": 9113282,
+   "api_messages": 31,
+   "cost_usd": 15.97,
+   "has_unpriced": false,
+   "first_start": "2026-10-25T14:46:59Z",
+   "last_end": "2026-10-25T15:14:34Z",
+   "agent_wall_clock_h": 0.46,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "final",
+   "status": "completed",
+   "harness_total_tokens": 599352,
+   "harness_duration_s": 1657.7
+  },
+  "wf_f761c187-2d3": {
+   "runs": 2,
+   "outcomes": {
+    "error": 2
+   },
+   "tokens_in": 100,
+   "tokens_out": 187900,
+   "tokens_cache_write": 653625,
+   "tokens_cache_read": 7691783,
+   "api_messages": 50,
+   "cost_usd": 8.56,
+   "has_unpriced": false,
+   "first_start": "2026-11-01T05:05:47Z",
+   "last_end": "2026-11-01T05:19:27Z",
+   "agent_wall_clock_h": 0.45,
+   "workflow_name": "ux-design-slice",
+   "stage": "screen",
+   "status": "completed",
+   "harness_total_tokens": 526709,
+   "harness_duration_s": 819.8
+  },
+  "wf_fa72069a-f66": {
+   "runs": 1,
+   "outcomes": {
+    "result": 1
+   },
+   "tokens_in": 514,
+   "tokens_out": 91242,
+   "tokens_cache_write": 1166013,
+   "tokens_cache_read": 2709315,
+   "api_messages": 17,
+   "cost_usd": 19.82,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T19:38:48Z",
+   "last_end": "2026-10-24T19:59:52Z",
+   "agent_wall_clock_h": 0.35,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "extract-claims",
+   "status": "completed",
+   "harness_total_tokens": 416888,
+   "harness_duration_s": 1266.6
+  },
+  "wf_fb36d66f-8ef": {
+   "runs": 1,
+   "outcomes": {
+    "error": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "tokens_cache_write": 0,
+   "tokens_cache_read": 0,
+   "api_messages": 0,
+   "cost_usd": 0.0,
+   "has_unpriced": false,
+   "first_start": "2026-10-24T18:19:14Z",
+   "last_end": "2026-10-24T18:19:14Z",
+   "agent_wall_clock_h": 0.0,
+   "workflow_name": "wsi-plan-slice",
+   "stage": "judge",
+   "status": "completed",
+   "harness_total_tokens": 0,
+   "harness_duration_s": 3.0
+  },
+  "wf_0f63ba88-ee5": {
+   "runs": 7,
+   "outcomes": {
+    "result": 6,
+    "in_progress": 1
+   },
+   "tokens_in": 1104,
+   "tokens_out": 666749,
+   "tokens_cache_write": 2338667,
+   "tokens_cache_read": 124965702,
+   "api_messages": 546,
+   "cost_usd": 50.03,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T05:04:13Z",
+   "last_end": "2026-11-04T06:57:01Z",
+   "agent_wall_clock_h": 2.81,
+   "workflow_name": null,
+   "stage": null,
+   "status": "running (no workflow record yet)"
+  },
+  "wf_148d6e0b-e06": {
+   "runs": 7,
+   "outcomes": {
+    "result": 5,
+    "in_progress": 2
+   },
+   "tokens_in": 1242,
+   "tokens_out": 1209843,
+   "tokens_cache_write": 5184582,
+   "tokens_cache_read": 226915625,
+   "api_messages": 616,
+   "cost_usd": 95.51,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T04:18:09Z",
+   "last_end": "2026-11-04T06:56:06Z",
+   "agent_wall_clock_h": 4.65,
+   "workflow_name": null,
+   "stage": null,
+   "status": "running (no workflow record yet)"
+  },
+  "wf_81e8fa28-c04": {
+   "runs": 1,
+   "outcomes": {
+    "in_progress": 1
+   },
+   "tokens_in": 12,
+   "tokens_out": 6829,
+   "tokens_cache_write": 128986,
+   "tokens_cache_read": 491208,
+   "api_messages": 6,
+   "cost_usd": 0.88,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T06:53:49Z",
+   "last_end": "2026-11-04T06:55:30Z",
+   "agent_wall_clock_h": 0.03,
+   "workflow_name": null,
+   "stage": null,
+   "status": "running (no workflow record yet)"
+  }
+ },
+ "wall_clock": {
+  "first": "2026-10-24T14:47:08Z",
+  "last": "2026-11-04T06:57:01Z",
+  "span_h": 256.2,
+  "span_days": 10.67,
+  "agent_active_union_h": 33.1,
+  "agent_wall_clock_sum_h": 80.1,
+  "agent_active_dates": [
+   "2026-10-24",
+   "2026-10-25",
+   "2026-10-26",
+   "2026-11-01",
+   "2026-11-02",
+   "2026-11-04"
+  ]
+ },
+ "days": {
+  "first_research_note_commit": "2026-10-24T18:30:11+00:00",
+  "to_date": "2026-11-04",
+  "elapsed_days": 11,
+  "calendar_days_inclusive": 12
+ },
+ "owner_messages": {
+  "count": 50,
+  "per_day": {
+   "2026-10-24": 15,
+   "2026-10-25": 12,
+   "2026-10-26": 2,
+   "2026-11-01": 14,
+   "2026-11-03": 1,
+   "2026-11-04": 6
+  },
+  "timestamps": [
+   "2026-10-24T14:47:08.550Z",
+   "2026-10-24T14:48:03.211Z",
+   "2026-10-24T14:50:19.509Z",
+   "2026-10-24T14:56:41.694Z",
+   "2026-10-24T15:11:52.040Z",
+   "2026-10-24T17:38:13.448Z",
+   "2026-10-24T17:48:09.127Z",
+   "2026-10-24T18:29:25.456Z",
+   "2026-10-24T18:38:06.175Z",
+   "2026-10-24T18:58:39.219Z",
+   "2026-10-24T19:02:04.942Z",
+   "2026-10-24T19:09:14.232Z",
+   "2026-10-24T19:15:54.498Z",
+   "2026-10-24T19:36:11.275Z",
+   "2026-10-24T23:43:43.943Z",
+   "2026-10-25T13:23:23.346Z",
+   "2026-10-25T13:25:34.471Z",
+   "2026-10-25T14:57:15.317Z",
+   "2026-10-25T16:01:12.592Z",
+   "2026-10-25T16:12:35.855Z",
+   "2026-10-25T16:37:21.737Z",
+   "2026-10-25T16:39:30.933Z",
+   "2026-10-25T16:41:40.617Z",
+   "2026-10-25T16:47:34.841Z",
+   "2026-10-25T23:14:58.078Z",
+   "2026-10-25T23:36:11.255Z",
+   "2026-10-25T23:47:11.196Z",
+   "2026-10-26T00:48:31.228Z",
+   "2026-10-26T00:52:15.884Z",
+   "2026-11-01T05:04:09.389Z",
+   "2026-11-01T06:02:50.991Z",
+   "2026-11-01T12:59:04.937Z",
+   "2026-11-01T14:10:33.553Z",
+   "2026-11-01T15:58:33.179Z",
+   "2026-11-01T16:01:28.128Z",
+   "2026-11-01T16:16:38.833Z",
+   "2026-11-01T16:16:52.489Z",
+   "2026-11-01T16:34:01.943Z",
+   "2026-11-01T17:21:16.587Z",
+   "2026-11-01T17:51:35.472Z",
+   "2026-11-01T17:55:02.115Z",
+   "2026-11-01T17:58:04.371Z",
+   "2026-11-01T18:19:50.114Z",
+   "2026-11-03T17:21:44.583Z",
+   "2026-11-04T02:43:25.911Z",
+   "2026-11-04T03:31:10.631Z",
+   "2026-11-04T04:12:28.019Z",
+   "2026-11-04T04:49:39.012Z",
+   "2026-11-04T04:53:43.563Z",
+   "2026-11-04T04:58:40.273Z"
+  ],
+  "slash_commands": {
+   "count": 5,
+   "timestamps": [
+    "2026-10-24T14:50:19.407Z",
+    "2026-11-01T06:01:07.057Z",
+    "2026-11-01T14:10:33.404Z",
+    "2026-11-01T16:16:38.720Z",
+    "2026-11-01T16:16:49.439Z"
+   ]
+  },
+  "rule": "type user, origin.kind == \"human\" in the main transcript; tool results, system, meta, task-notification and peer-agent text excluded; content not read into this file"
+ },
+ "harness_cost_state": {
+  "note": "Claude Code's own running total for the session (last cost-state record in the main transcript); it includes model calls made inside tools (e.g. web search / fetch on Haiku 5.5) and any call whose response was never written to a transcript, so it is the upper reference and the ledger the lower bound",
+  "record_written_after": "2026-11-04T02:44:57Z",
+  "total_cost_usd": 2519.98,
+  "ledger_same_cutoff": {
+   "claude-fable-5-1": {
+    "output": 12437491,
+    "cache_write": 89966951,
+    "cache_read": 662322766,
+    "cost_usd": 1932.45
+   },
+   "claude-opus-5-5": {
+    "output": 5855245,
+    "cache_write": 26031552,
+    "cache_read": 1342222871,
+    "cost_usd": 530.85
+   }
+  },
+  "models": {
+   "claude-fable-5-1": {
+    "input": 118158,
+    "output": 12771178,
+    "cache_write": 92077535,
+    "cache_read": 680490030,
+    "web_search_requests": 0,
+    "cost_usd": 1980.61
+   },
+   "claude-haiku-5-5": {
+    "input": 10839487,
+    "output": 813414,
+    "cache_write": 0,
+    "cache_read": 0,
+    "web_search_requests": 700,
+    "cost_usd": 8.49
+   },
+   "claude-opus-5-5": {
+    "input": 8930,
+    "output": 5855327,
+    "cache_write": 26031769,
+    "cache_read": 1342294241,
+    "web_search_requests": 0,
+    "cost_usd": 530.88
+   }
+  }
+ },
+ "human_minutes": null
+}

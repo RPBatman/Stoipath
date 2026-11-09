@@ -1,0 +1,23 @@
+{
+  "note": "the step-3 view centred on the deposit at 20×",
+  "base": "base.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/steps/2/view/center_um",
+      "value": [
+        1742.5,
+        1244.64
+      ]
+    }
+  ],
+  "expect": [
+    {
+      "rule": "tour-shows-key",
+      "severity": "warning",
+      "path": "/steps/2/view",
+      "message": "Step 3 shows the answer of q-region before it is asked"
+    }
+  ],
+  "alsoAllowed": []
+}

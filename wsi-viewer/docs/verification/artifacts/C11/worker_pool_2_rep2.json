@@ -1,0 +1,21 @@
+{
+ "node": "v22.22.0",
+ "pool_size": 2,
+ "single_tile": {
+  "roundtrip_median_ms": 2.839,
+  "in_worker_decode_median_ms": 2.386,
+  "in_worker_copy_out_median_ms": 0.381,
+  "messaging_overhead_ms": 0.072
+ },
+ "viewport_burst_pool": {
+  "tiles": 20,
+  "pool": 2,
+  "wall_median_ms": 35.34,
+  "wall_min_ms": 30.34
+ },
+ "viewport_inline_main_thread": {
+  "tiles": 20,
+  "wall_median_ms": 56.13
+ },
+ "speedup": 1.59
+}

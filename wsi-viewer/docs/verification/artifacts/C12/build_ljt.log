@@ -1,0 +1,85 @@
++ D=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src
++ '[' -f libjpeg-turbo-3.2.0.tar.gz ']'
++ curl -sSL -o libjpeg-turbo-3.2.0.tar.gz https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.0/libjpeg-turbo-3.2.0.tar.gz
++ ls -la libjpeg-turbo-3.2.0.tar.gz
+-rw-r--r-- 1 root root 2537858 Oct 25 00:07 libjpeg-turbo-3.2.0.tar.gz
++ sha256sum libjpeg-turbo-3.2.0.tar.gz
+6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e  libjpeg-turbo-3.2.0.tar.gz
++ tar xzf libjpeg-turbo-3.2.0.tar.gz
++ SRC=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/libjpeg-turbo-3.2.0
++ cat
++ build x86_simd
++ name=x86_simd
++ shift
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_simd
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_simd
++ cmake '-GUnix Makefiles' -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=0 -DCMAKE_EXE_LINKER_FLAGS=-static /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/libjpeg-turbo-3.2.0
++ make -j4 djpeg cjpeg tjbench
++ echo 'x86_simd exit 2'
+x86_simd exit 2
++ ls -la djpeg
++ build x86_nosimd -DWITH_SIMD=0
++ name=x86_nosimd
++ shift
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_nosimd
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_nosimd
++ cmake '-GUnix Makefiles' -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=0 -DCMAKE_EXE_LINKER_FLAGS=-static -DWITH_SIMD=0 /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/libjpeg-turbo-3.2.0
++ make -j4 djpeg cjpeg tjbench
++ echo 'x86_nosimd exit 2'
+x86_nosimd exit 2
++ ls -la djpeg
++ build arm64_simd -DCMAKE_TOOLCHAIN_FILE=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/aarch64.cmake
++ name=arm64_simd
++ shift
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd
++ cmake '-GUnix Makefiles' -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=0 -DCMAKE_EXE_LINKER_FLAGS=-static -DCMAKE_TOOLCHAIN_FILE=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/aarch64.cmake /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/libjpeg-turbo-3.2.0
++ make -j4 djpeg cjpeg tjbench
++ echo 'arm64_simd exit 2'
+arm64_simd exit 2
++ ls -la djpeg
++ build arm64_nosimd -DCMAKE_TOOLCHAIN_FILE=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/aarch64.cmake -DWITH_SIMD=0
++ name=arm64_nosimd
++ shift
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_nosimd
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_nosimd
++ cmake '-GUnix Makefiles' -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=0 -DCMAKE_EXE_LINKER_FLAGS=-static -DCMAKE_TOOLCHAIN_FILE=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/aarch64.cmake -DWITH_SIMD=0 /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/libjpeg-turbo-3.2.0
++ make -j4 djpeg cjpeg tjbench
++ echo 'arm64_nosimd exit 2'
+arm64_nosimd exit 2
++ ls -la djpeg
++ file '/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/*/djpeg'
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/*/djpeg: cannot open `/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/*/djpeg' (No such file or directory)
++ qemu-aarch64-static /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/arm64_simd/djpeg -version
++ /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_simd/djpeg -version
+/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build_ljt.sh: line 23: /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/x86_simd/djpeg: No such file or directory
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src
++ '[' -d OpenJPH ']'
++ git clone --depth 1 https://github.com/aous72/OpenJPH.git
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/OpenJPH
++ git log -1 '--format=%H %cd'
++ for arch in x86 arm64
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/ojph_x86
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/ojph_x86
++ extra=
++ '[' x86 = arm64 ']'
++ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_EXE_LINKER_FLAGS=-static -DOJPH_BUILD_TESTS=OFF /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/OpenJPH
++ make -j4 ojph_expand
++ echo 'ojph_x86 exit 0'
+ojph_x86 exit 0
++ find . -name ojph_expand -type f
+./src/apps/ojph_expand/ojph_expand
++ for arch in x86 arm64
++ mkdir -p /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/ojph_arm64
++ cd /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/ojph_arm64
++ extra=
++ '[' arm64 = arm64 ']'
++ extra='-DCMAKE_TOOLCHAIN_FILE=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/aarch64.cmake -DOJPH_DISABLE_SIMD=OFF'
++ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_EXE_LINKER_FLAGS=-static -DOJPH_BUILD_TESTS=OFF -DCMAKE_TOOLCHAIN_FILE=/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/build/aarch64.cmake -DOJPH_DISABLE_SIMD=OFF /tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/wsi-plan/verify/artifacts/C12/src/OpenJPH
++ make -j4 ojph_expand
++ echo 'ojph_arm64 exit 2'
+ojph_arm64 exit 2
++ find . -name ojph_expand -type f
++ echo CHAIN_BUILD_DONE
+CHAIN_BUILD_DONE

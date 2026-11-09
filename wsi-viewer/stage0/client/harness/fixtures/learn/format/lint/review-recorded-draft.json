@@ -1,0 +1,14 @@
+{
+  "note": "the base itself (draft)",
+  "base": "base.module.json",
+  "patch": [],
+  "expect": [
+    {
+      "rule": "review-recorded",
+      "severity": "warning",
+      "path": "/metadata/review",
+      "message": "Draft: learners will see \"Draft — pending pathologist review\""
+    }
+  ],
+  "alsoAllowed": []
+}
