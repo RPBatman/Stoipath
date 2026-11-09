@@ -651,3 +651,35 @@ The integrator's own files (`signout.html`, `signout.css`, `main.ts`, `integrato
 ### SO-P9 (2026-11-09, `--network`)
 
 `SIGNOUT_SO_P9_ONLY=1 node harness/signout-check.mjs --only integrator --network`, with the range cache at `<scratch>/signout/cache/net`. On `patient_086_node_3`, the first view completed in 1.09 s with 20 requests and 0.29 MB. The 20× jump completed in 1.38 s with 26 requests and 1.27 MB, including one level-1 array request of 187,072 B. Total: **1.57 MB** over 46 requests, under the 3 MB target (recorded, not gated). Every request was a GET with one closed Range, answered 206. Every response was read from the bucket once and cached; a re-run reads nothing.
+
+## 2026-11-09 · sign-out integrator: S3 review fixes (contract 4, a reviewed engine change, answers)
+
+The two S3 reviews (pathologist-educator / accessibility, engine regression) handed twelve findings to the integrator. Each one is listed with what was done in SIGNOUT.md §19.5. This section records what other owners need to know.
+
+### SI-1 after-S0 values (2026-11-09, revised by the S3 review fix to `src/scheduler.ts`)
+
+The engine-regression review found that a short outage of the slide host left 20× / 40× tiles failed for the rest of an open (SIGNOUT.md §19.5 E-R1). The fix is in `src/scheduler.ts` and is inert unless the pyramid has a `rangeSource`, so the measurement page's behaviour is unchanged (`check-metrics` 20 ok on the gate build). `integrator.check.mjs` now reads the **last** section whose heading names the after-S0 values, so this table supersedes the one of 2026-11-08 for `scheduler.ts`; the other two files are unchanged.
+
+| File | sha256 |
+|---|---|
+| `src/learn/host/commands.ts` | `33cd3993b527f25bb88b97f9d2528c5dd42e43849d4b2530d000f2c17659fb2f` |
+| `src/shell/navigator.ts` | `c0b06231be56e4991e22397b7b70e7227dfe60bd50641245c9d7c02939f9e027` |
+| `src/scheduler.ts` | `01de7e79bc0e5987eba60f6ff65a22a8e3a5f330d67a716e69120fce754e8b32` |
+
+### Contract 4 (additive; `SignoutApi.contract` 3 → 4)
+
+- `DepositCluster.largestPolygon_um?`: the Feret of the cluster's largest single polygon (the deposit size the comparison prints, PE-10). `feret_um` keeps its meaning (the merged-cluster span: annotation geometry).
+- `SignoutCaseNode.tissueCells?` and `TissueCells`: a coarse tissue mask of the node's slide (cells of 16 tissue-level px, 1,024 or 2,048 level-0 px), copied from the index's new `pixels.tissueGrid`. The pure helpers `viewMeetsTissue`, `tissueCellAt` and `validTissueCells` live in `contracts.ts`, so grading, review and feedback share one rule. Grading's GRD-6 purity test now allows this one runtime import of `../contracts`.
+- `CaseStatus.borderline?` on `submitted`: the case's class rests only on a borderline node pair.
+
+Older case files without the two new fields still read: the comparison falls back to `feret_um`, and "over tissue" falls back to the `tissueBbox` test of contract 3.
+
+### Answers and notes to owners (informational)
+
+- **content / casefmt**: `build_signout_pixels.py --grid-only` adds `pixels.tissueGrid` to the 50 committed indexes from the cached tissue-level bytes (0 bytes fetched; every other field byte-equal, checked). `build_signout_cases.py` copies it into each node as `tissueCells` and writes `largestPolygon_um` per cluster (`build_signout_overlays.measure`). The ten case files changed (so did their content hashes); the facts files and the worklist did not. Both schemas gained the fields; casefmt's byte-identical export test passes unchanged.
+- **grading**: `missType` takes a `borderline` flag: an itc call on a borderline micro node, once a deposit met the adequate gate, is null (a cell-count disagreement), and `classSentence` says `· borderline node (…)` instead of `(missed)`. The results file's `miss_type` definition says so. New export `borderlineOnly`.
+- **review**: the view a node opens on is logged once (REV-2b), held until Sharp like any settle; I-N4 still drops moves that began before the node opened. The HUD chip reads `Node {n} of 5 · report submitted` after submission and `· no tissue in this view (unscanned area or blank glass)` when the settled view meets no tissue cell.
+- **worklist**: `open()` captures "focus in the card" before the worklist card is torn down and lands focus on the phase title (SC 2.4.3). `statusText` has the borderline variant.
+- **feedback**: deposit rows print the largest single outline with the span as `({k} foci spanning about {µm} µm)`; more than five clusters → the three largest plus one collapsed row (`REST_ID`) whose Show me fits their extent; the borderline sentence; the neutral survey sentence on negative nodes; a coarse Show me is spoken as `at about 1.6×`.
+- **results**: the cohort counts line labels both breakdowns (`pN: …` and `case class: …`).
+- **source / engine**: array fetches report progress (`ArraysProgress`), and `RangeSource` aborts one only after 48 s with no progress. The stub gained `stream: true` (a slow link that streams its bytes), used by SO-P12.

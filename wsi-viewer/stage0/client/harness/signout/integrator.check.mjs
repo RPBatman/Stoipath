@@ -148,7 +148,16 @@ export async function run(ctx) {
       const now = sha(f);
       check(TAG, want !== null && want === now, `SI-1 ${f} sha256 ${now.slice(0, 16)}… equals the value recorded at Wave S0 start (${want === null ? 'not recorded' : want.slice(0, 16) + '…'})`);
     }
-    const afterText = section(/^#{2,3} .*SI-1 after-S0 values/m);
+    // the LAST section whose heading names the after-S0 values: a later dated section may revise one of them (the S3
+    // review fix's scheduler.ts change, SIGNOUT.md §19.5)
+    const lastSection = (re) => {
+      let i = -1;
+      for (const m of q.matchAll(new RegExp(re.source, 'gm'))) i = m.index;
+      if (i < 0) return null;
+      const j = q.indexOf('\n## ', i + 1);
+      return q.slice(i, j > 0 ? j : undefined);
+    };
+    const afterText = lastSection(/^#{2,3} .*SI-1 after-S0 values/m);
     if (afterText !== null) {
       for (const f of ['src/learn/host/commands.ts', 'src/shell/navigator.ts', 'src/scheduler.ts']) {
         const want = recorded(afterText, f);

@@ -700,6 +700,9 @@ export async function run(ctx) {
     const n5 = await page.evaluate(() => ({ rows: [...document.querySelectorAll('#taskCard [data-testid="node-4"] .so-fb__deposit > span')].map((x) => x.textContent), show: [...document.querySelectorAll('#taskCard [data-testid="node-4"] [data-showme]')].map((b) => [b.dataset.showme, b.getAttribute('aria-label')]), head: document.querySelector('#taskCard [data-testid="node-4"] h4 span')?.textContent }));
     check(TAG, n5.head === 'Node 5 · micrometastasis · about 190 µm' && n5.rows.length === 4 && /^Deposit 1 · about 190 µm \(37 foci spanning about 780 µm\) · /.test(n5.rows[0]) && /^and 12 smaller deposits \(about 32–130 µm\) · /.test(n5.rows[3]), `${tag}: Node 5 lists the three largest deposits by their largest outline and one row for 12 smaller ones (${n5.rows.join(' | ')})`);
     check(TAG, n5.show.length === 4 && n5.show[3][0] === '4:rest' && n5.show[3][1] === 'Show me the smaller deposits of node 5', `${tag}: the collapsed row has one Show me (${JSON.stringify(n5.show[3])})`);
+    await page.evaluate(() => document.querySelector('#taskCard [data-testid="node-4"]').scrollIntoView({ block: 'start' }));
+    const n5shot = await shot(page, 'compare-390-node5');
+    if (n5shot !== null) check(TAG, true, `${tag}: screenshot ${n5shot}`);
     await page.evaluate(() => document.querySelector('#taskCard [data-showme="4:rest"]').click());
     await waitFn(page, () => window.__signout.tools.feedback().lastShowMe?.cluster === 'rest', null, 20_000);
     const restSm = (await fv(page)).lastShowMe;

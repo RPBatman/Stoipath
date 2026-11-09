@@ -721,6 +721,63 @@ fetch(t.url, { headers: { Range: 'bytes=16-31' } }).then(() => (window.__main = 
     check('SO-P10', Object.keys(runs).length === 2, `soft-cancel policies at 40 ms emulated RTT and 10 Mbit/s per answer (stub: +40 ms per answer, +120 ms on a new connection, body after its transfer time): ${summary}`, runs);
   }
 
+  // ================================================================ SO-P12 / SO-P13 (S3 review fixes, SIGNOUT.md §19.5)
+  // SO-P12: a level-0 array of 1.2 MB over a 150 kbit/s link that streams its bytes (~65 s): the fetch is kept while it
+  // makes progress (the old fixed 48 s deadline aborted it in a loop) and level 0 becomes resident.
+  if (want('SO-P12')) {
+    const slide = 'patient_017_node_0';
+    const p = await openEngine(slide);
+    const [cx, cy] = tissueCentre(slide);
+    await jump(p.page, cx, cy, logZoomFor(slide, 0.5, 1));
+    await waitSharp(p.page);
+    const m = mark();
+    stub.setMode({ mode: 'ok', kbps: 150, stream: true });
+    await jump(p.page, cx + 4000, cy + 500, logZoomFor(slide, 0.25, 1));
+    const t0 = Date.now();
+    let s = await state(p.page);
+    while (Date.now() - t0 < 120_000) {
+      await sleep(2000);
+      s = await state(p.page);
+      if (s.lstar === 0 && s.sharpFraction >= 0.999) break;
+    }
+    stub.setMode({ mode: 'ok', kbps: 0, stream: false });
+    const a = arraysOf(since(m), slide);
+    const rangeLen = (r) => { const q = /^bytes=(\d+)-(\d+)$/.exec(r ?? ''); return q ? Number(q[2]) - Number(q[1]) + 1 : -1; };
+    const full = a.filter((e) => e.status === 206 && !e.closedEarly && e.bytes === rangeLen(e.range));
+    check('SO-P12', s.lstar === 0 && s.sharpFraction >= 0.999 && a.length === 1 && full.length === 1, `level-0 arrays at 150 kbit/s streamed: resident after ${((Date.now() - t0) / 1000).toFixed(0)} s with ${a.length} array request (${a.map((e) => `${e.status}/${e.bytes}${e.closedEarly ? '/closed' : ''}`).join(' ')}); L* ${s.lstar}, sharp ${s.sharpFraction.toFixed(3)}`);
+    consoleClean('SO-P12', p.errors);
+    await p.ctx.close();
+  }
+  // SO-P13: the host fails (503) for ~9 s while a 40× view of a new region loads, then answers again: the 40× tiles
+  // (not base tiles) are retried with a doubling wait and the view becomes sharp without a reload (the old cut-off of
+  // 3 attempts left it blurred for the rest of the open).
+  if (want('SO-P13')) {
+    const slide = 'patient_017_node_0';
+    const p = await openEngine(slide);
+    const [cx, cy] = tissueCentre(slide);
+    await jump(p.page, cx, cy, logZoomFor(slide, 0.25, 1));
+    await waitSharp(p.page);
+    stub.setMode({ mode: 'fail' });
+    await jump(p.page, cx + 2000, cy + 300, logZoomFor(slide, 0.25, 1));
+    await sleep(9000);
+    const during = await state(p.page);
+    stub.setMode({ mode: 'ok' });
+    const m = mark();
+    let ok = false;
+    const t0 = Date.now();
+    try {
+      await waitSharp(p.page, 40_000);
+      ok = true;
+    } catch {
+      ok = false;
+    }
+    const after = await state(p.page);
+    const tiles = since(m).filter((e) => e.kind === 'tile');
+    check('SO-P13', during.sharpFraction < 0.999 && ok && after.sharpFraction >= 0.999 && tiles.length > 0, `a 9 s outage of the host at 40×: sharp ${during.sharpFraction.toFixed(3)} during it; after the host answered again the view was sharp in ${((Date.now() - t0) / 1000).toFixed(1)} s (${tiles.length} tile requests, sharp ${after.sharpFraction.toFixed(3)}), no reload`);
+    consoleClean('SO-P13', p.errors, true);
+    await p.ctx.close();
+  }
+
   // ================================================================ whole-run guards: ENG-4 headers, SO-P4 concurrency
   if (want('ENG-4') || want('SO-P4')) {
     const log = stub.log().filter((e) => e.method === 'GET' || e.method === 'OPTIONS' || e.method === 'HEAD');
