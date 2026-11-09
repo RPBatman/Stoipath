@@ -1,0 +1,17 @@
+{
+  "note": "slideId differs from the file name in the slide index's source.url",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/nodes/1/slideId",
+      "value": "patient_017_node_3"
+    }
+  ],
+  "expect": {
+    "rule": "so-nodes-slides",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/1/slideId",
+    "message": "Node n1 names patient_017_node_3, but the slide index of n1 reads patient_017_node_1"
+  }
+}

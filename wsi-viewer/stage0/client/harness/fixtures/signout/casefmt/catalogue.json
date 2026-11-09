@@ -1,0 +1,545 @@
+{
+  "schema": "stoipath.catalogue/1",
+  "generated": "2026-11-08T00:00:00Z",
+  "generator": "casefmt fixture",
+  "collections": [
+    {
+      "id": "camelyon17-pilot",
+      "title": "CAMELYON17 pilot",
+      "slides": [
+        "camelyon17.c17s-0006",
+        "camelyon17.c17s-0007",
+        "camelyon17.c17s-0008",
+        "camelyon17.c17s-0009",
+        "camelyon17.c17s-0010",
+        "camelyon17.c17s-0016",
+        "camelyon17.c17s-0017",
+        "camelyon17.c17s-0018",
+        "camelyon17.c17s-0019",
+        "camelyon17.c17s-0020"
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "camelyon17.c17s-0006",
+      "name": "c17s-0006",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_017_node_0.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0006.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 94968,
+      "height": 210579,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2431,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 94968,
+        "height": 210579,
+        "fullSlide": true,
+        "sourceWidth": 94968,
+        "sourceHeight": 210579
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_017_node_0.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "94968x210579@0.2431@0,0@c36c84ddf372",
+      "tissue_mask": null,
+      "overlays": []
+    },
+    {
+      "id": "camelyon17.c17s-0007",
+      "name": "c17s-0007",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_017_node_1.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0007.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 96651,
+      "height": 197226,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2431,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 96651,
+        "height": 197226,
+        "fullSlide": true,
+        "sourceWidth": 96651,
+        "sourceHeight": 197226
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_017_node_1.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "96651x197226@0.2431@0,0@e9ecd1d28be5",
+      "tissue_mask": null,
+      "overlays": [
+        {
+          "id": "camelyon17-annotation",
+          "kind": "vector",
+          "title": "CAMELYON17 annotation",
+          "url": "overlays/camelyon17.c17s-0007/camelyon17-annotation.geojson",
+          "origin": "reference",
+          "defaultVisible": false,
+          "bytes": 1000
+        }
+      ]
+    },
+    {
+      "id": "camelyon17.c17s-0008",
+      "name": "c17s-0008",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_017_node_2.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0008.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 94968,
+      "height": 210579,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2431,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 94968,
+        "height": 210579,
+        "fullSlide": true,
+        "sourceWidth": 94968,
+        "sourceHeight": 210579
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_017_node_2.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "94968x210579@0.2431@0,0@d826cc6aee28",
+      "tissue_mask": null,
+      "overlays": [
+        {
+          "id": "camelyon17-annotation",
+          "kind": "vector",
+          "title": "CAMELYON17 annotation",
+          "url": "overlays/camelyon17.c17s-0008/camelyon17-annotation.geojson",
+          "origin": "reference",
+          "defaultVisible": false,
+          "bytes": 1000
+        }
+      ]
+    },
+    {
+      "id": "camelyon17.c17s-0009",
+      "name": "c17s-0009",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_017_node_3.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0009.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 94968,
+      "height": 210579,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2431,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 94968,
+        "height": 210579,
+        "fullSlide": true,
+        "sourceWidth": 94968,
+        "sourceHeight": 210579
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_017_node_3.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "94968x210579@0.2431@0,0@ff608cbcfa60",
+      "tissue_mask": null,
+      "overlays": []
+    },
+    {
+      "id": "camelyon17.c17s-0010",
+      "name": "c17s-0010",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_017_node_4.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0010.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 96651,
+      "height": 197226,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2431,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 96651,
+        "height": 197226,
+        "fullSlide": true,
+        "sourceWidth": 96651,
+        "sourceHeight": 197226
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_017_node_4.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "96651x197226@0.2431@0,0@340e9faabfb8",
+      "tissue_mask": null,
+      "overlays": [
+        {
+          "id": "camelyon17-annotation",
+          "kind": "vector",
+          "title": "CAMELYON17 annotation",
+          "url": "overlays/camelyon17.c17s-0010/camelyon17-annotation.geojson",
+          "origin": "reference",
+          "defaultVisible": false,
+          "bytes": 1000
+        }
+      ]
+    },
+    {
+      "id": "camelyon17.c17s-0016",
+      "name": "c17s-0016",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_046_node_0.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0016.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 97792,
+      "height": 221184,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2263,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 97792,
+        "height": 221184,
+        "fullSlide": true,
+        "sourceWidth": 97792,
+        "sourceHeight": 221184
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_046_node_0.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "97792x221184@0.2263@0,0@3983ca20633e",
+      "tissue_mask": null,
+      "overlays": []
+    },
+    {
+      "id": "camelyon17.c17s-0017",
+      "name": "c17s-0017",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_046_node_1.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0017.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 97792,
+      "height": 221184,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2263,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 97792,
+        "height": 221184,
+        "fullSlide": true,
+        "sourceWidth": 97792,
+        "sourceHeight": 221184
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_046_node_1.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "97792x221184@0.2263@0,0@f6007782ba5d",
+      "tissue_mask": null,
+      "overlays": []
+    },
+    {
+      "id": "camelyon17.c17s-0018",
+      "name": "c17s-0018",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_046_node_2.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0018.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 97792,
+      "height": 221184,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2263,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 97792,
+        "height": 221184,
+        "fullSlide": true,
+        "sourceWidth": 97792,
+        "sourceHeight": 221184
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_046_node_2.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "97792x221184@0.2263@0,0@3aa751e0ef34",
+      "tissue_mask": null,
+      "overlays": []
+    },
+    {
+      "id": "camelyon17.c17s-0019",
+      "name": "c17s-0019",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_046_node_3.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0019.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 97792,
+      "height": 221184,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2263,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 97792,
+        "height": 221184,
+        "fullSlide": true,
+        "sourceWidth": 97792,
+        "sourceHeight": 221184
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_046_node_3.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "97792x221184@0.2263@0,0@9f0bdbc4de68",
+      "tissue_mask": null,
+      "overlays": [
+        {
+          "id": "camelyon17-annotation",
+          "kind": "vector",
+          "title": "CAMELYON17 annotation",
+          "url": "overlays/camelyon17.c17s-0019/camelyon17-annotation.geojson",
+          "origin": "reference",
+          "defaultVisible": false,
+          "bytes": 1000
+        }
+      ]
+    },
+    {
+      "id": "camelyon17.c17s-0020",
+      "name": "c17s-0020",
+      "title": "Sentinel lymph node · H&E · CAMELYON17 pilot",
+      "dataset": "CAMELYON17",
+      "datasetLong": "CAMELYON17 (Computational Pathology Group, Radboud University Medical Center, Nijmegen)",
+      "stain": "H&E",
+      "stainLong": "Haematoxylin and eosin",
+      "tissue": "Lymph node",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "manifest": "slides/patient_046_node_4.index.json",
+      "thumbnail": {
+        "url": "slides/camelyon17.c17s-0020.thumb.jpg",
+        "width": 377,
+        "height": 770
+      },
+      "width": 97792,
+      "height": 221184,
+      "levels": 9,
+      "tileSize": 512,
+      "mpp": 0.2263,
+      "tiles": 97000,
+      "bytes": 3252359079,
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 97792,
+        "height": 221184,
+        "fullSlide": true,
+        "sourceWidth": 97792,
+        "sourceHeight": 221184
+      },
+      "source": {
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_046_node_4.tif",
+        "sha256": null,
+        "format": "BigTIFF · JPEG (tables in tag 347), 9 tiled levels"
+      },
+      "scanner": null,
+      "deidentified": "Public challenge data set of de-identified sentinel lymph node H&E sections.",
+      "fingerprint": "97792x221184@0.2263@0,0@532e6e34a575",
+      "tissue_mask": null,
+      "overlays": [
+        {
+          "id": "camelyon17-annotation",
+          "kind": "vector",
+          "title": "CAMELYON17 annotation",
+          "url": "overlays/camelyon17.c17s-0020/camelyon17-annotation.geojson",
+          "origin": "reference",
+          "defaultVisible": false,
+          "bytes": 1000
+        }
+      ]
+    }
+  ]
+}

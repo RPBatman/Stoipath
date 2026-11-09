@@ -1,0 +1,85 @@
+/* report · the practice report form, the submit dialog's checklist and the countdown prompt (SIGNOUT.md §4.5; tokens
+   only, dark chrome as Learn L1). Design-system classes first: `.item-card`, `.option` (base.css 1112–1119), `.field*`
+   (665–668), `.kv`, `.section` / `<details>` (761–771), `.banner--warning` (949–957), `.dialog__body` / `__footer`
+   (984–992), `.btn*`. Copied and scoped here:
+   - the hand-off checklist rows (dot · title · sub · action): design/screens/final/clinical-signout.html `.checklist`,
+     line 426 (with the `.g` glyph rules of lines 416–419), used as in panel-5, lines 1035–1058;
+   - the status glyph shapes (filled dot = ok, square = attention, dashed = information): clinical-signout.html 416–419. */
+
+/* ---------------------------------------------------------------- the form */
+.signout .so-report--form { gap: var(--space-5); }
+.signout .so-report--form p { margin: 0; line-height: var(--leading-body); }
+.signout .so-report .so-practice { font-weight: var(--weight-medium); }
+.signout .so-report__h { margin: 0 0 var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.signout .so-ajcc > summary { padding-left: 0; padding-right: 0; }
+.signout .so-ajcc .section__body { padding-top: 0; }
+.signout .so-ajcc__text { font-size: var(--text-sm); }
+.signout .so-report__nodes { display: flex; flex-direction: column; gap: var(--space-3); }
+.signout .so-report__defs { font-size: var(--text-xs); }
+.signout .so-node { border: 1px solid var(--color-border); border-radius: var(--radius-2); margin: 0; padding: var(--space-3) var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.signout .so-node__legend { padding: 0 var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.signout .so-node__options, .signout .so-pn__options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.signout .so-node__option { align-items: center; font-size: var(--text-sm); }
+.signout .so-node__open { align-self: flex-start; }
+.signout .so-node__open[hidden] { display: none; }
+.signout .so-report .option:has(input:disabled) { cursor: default; opacity: .85; }
+.signout .so-report__counts { font-size: var(--text-sm); display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: var(--space-1); margin: 0; }
+.signout .so-report__counts dt { color: var(--color-text-secondary); }
+.signout .so-report__counts dd { margin: 0; text-align: right; font-family: var(--font-mono); }
+/* the ENE row reads as a sentence under its term, full width */
+.signout .so-report__counts dt:nth-last-of-type(1) { grid-column: 1 / -1; margin-top: var(--space-2); }
+.signout .so-report__counts dd:nth-last-of-type(1) { grid-column: 1 / -1; text-align: left; font-family: inherit; }
+.signout .so-report__status { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.signout .so-report__status[hidden] { display: none; }
+.signout .so-report__deposit .so-report__mm { max-width: 12ch; }
+.signout .so-report__userow { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: flex-start; }
+.signout .so-report__userow[hidden] { display: none; }
+.signout .so-report .field__error[hidden] { display: none; }
+.signout .so-menu__wrap { position: relative; }
+.signout .so-menu { position: absolute; z-index: 2; top: calc(100% + 4px); left: 0; min-width: 16ch; display: flex; flex-direction: column; padding: var(--space-1); background: var(--color-surface-1); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); box-shadow: var(--shadow-2, 0 4px 16px rgba(0, 0, 0, .45)); }
+.signout .so-menu[hidden] { display: none; }
+.signout .so-menu__item { min-height: var(--target-control); padding: 0 var(--space-3); text-align: left; background: transparent; border: 0; border-radius: var(--radius-1); color: var(--color-text); font: inherit; font-size: var(--text-sm); font-family: var(--font-mono); cursor: pointer; }
+.signout .so-menu__item:hover, .signout .so-menu__item:focus-visible { background: var(--color-control-bg-hover); }
+.signout .so-menu__item:focus-visible { box-shadow: var(--focus-shadow); outline: none; }
+.signout .so-pn { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.signout .so-pn__legend { padding: 0; margin-bottom: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.signout .so-pn__options { grid-template-columns: minmax(0, 1fr); }
+.signout .so-pn__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.signout .so-pn__value { font-family: var(--font-mono); font-weight: var(--weight-semibold); }
+.signout .so-pn__desc { font-size: var(--text-xs); color: var(--color-text); line-height: var(--leading-body); }
+.signout .so-report__derived { font-size: var(--text-sm); }
+.signout .so-report__derived[hidden], .signout .so-report__warn[hidden] { display: none; }
+.signout .so-report__warn { border: 1px solid var(--color-warning); border-radius: var(--radius-2); align-items: flex-start; }
+.signout .so-report__warn .banner__glyph { color: var(--color-warning); }
+.signout .so-report__comment { width: 100%; min-height: 4.5em; resize: vertical; }
+.signout .so-report__preview { border-left: 2px solid var(--color-border-strong); padding-left: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.signout .so-report__previewtext { font-size: var(--text-sm); }
+@media (max-width: 599px) { .signout .so-node__options { grid-template-columns: minmax(0, 1fr); } }
+@media (pointer: coarse) { .signout .so-menu__item { min-height: var(--target); } }
+
+/* ---------------------------------------------------------------- the submit dialog (clinical-signout.html 416–419, 426) */
+.signout .so-submit__content { gap: var(--space-3); }
+.signout .so-submit__lead { margin: 0; line-height: var(--leading-body); }
+.signout .so-check { list-style: none; margin: 0; padding: var(--space-2) 0; display: flex; flex-direction: column; gap: 7px; font-size: var(--text-sm); }
+.signout .so-check li { display: flex; gap: 8px; align-items: flex-start; }
+.signout .so-check .g { flex: 0 0 16px; height: 16px; margin-top: 1px; display: grid; place-items: center; font: 700 10px/1 var(--font-mono); border-radius: 50%; border: 1.5px solid currentColor; }
+.signout .so-check .g.ok { background: var(--color-text); color: var(--color-surface-0); border-color: var(--color-text); }
+.signout .so-check .g.attn { border-radius: 2px; color: var(--color-warning); }
+.signout .so-check .g.off { border-style: dashed; color: var(--color-text-secondary); }
+.signout .so-check .sub { display: block; color: var(--color-text-secondary); font-size: var(--text-xs); }
+.signout .so-check .act { margin-left: auto; flex: 0 0 auto; }
+.signout .so-check li > .so-check__text { flex: 1 1 auto; min-width: 0; }
+.signout .so-check__warn { padding-left: var(--space-5); }
+
+/* ---------------------------------------------------------------- the countdown prompt (§5.9; role="alertdialog") */
+.signout .so-countdown { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-warning); border-radius: var(--radius-2); background: var(--color-surface-0); font-size: var(--text-sm); }
+.signout .so-countdown__glyph { flex: 0 0 auto; width: 18px; height: 18px; display: grid; place-items: center; font: 700 11px/1 var(--font-mono); border: 1.5px solid currentColor; border-radius: 2px; color: var(--color-warning); }
+.signout .so-countdown__text { flex: 1 1 auto; margin: 0; }
+.signout .so-countdown__extend[hidden] { display: none; }
+
+/* S3 review fix (R8): in the docked card at 1280–1920 px the node fieldsets are about 270–290 px wide, and two option
+   columns pushed "Micrometastasis" / "Macrometastasis" 3–17 px past their boxes. Below the width two columns need
+   (2 × 141 px options + gap + the fieldset's padding and border), the options stack in one column. */
+.signout .so-report__nodes { container: so-nodes / inline-size; }
+@container so-nodes (max-width: 303px) { .signout .so-node__options { grid-template-columns: minmax(0, 1fr); } }
+.signout .so-node__option > span { min-width: 0; overflow-wrap: break-word; }

@@ -1,0 +1,23 @@
+{
+  "note": "two steps",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/steps/-",
+      "value": {
+        "id": "more",
+        "kind": "tour",
+        "phase": "examine",
+        "title": "More",
+        "text": "More.",
+        "view": null,
+        "transition": "cut"
+      }
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/steps"
+  }
+}

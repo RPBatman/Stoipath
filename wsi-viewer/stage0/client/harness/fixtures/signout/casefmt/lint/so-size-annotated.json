@@ -1,0 +1,17 @@
+{
+  "note": "a size on a node without an annotation",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/nodes/3/reference/largestDeposit_um",
+      "value": 2500
+    }
+  ],
+  "expect": {
+    "rule": "so-size-annotated",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/3/reference/largestDeposit_um",
+    "message": "Node n3 has a size but no annotation"
+  }
+}

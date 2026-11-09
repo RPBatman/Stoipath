@@ -473,6 +473,7 @@ export class Scheduler {
         if (t < rec.tier) rec.tier = t;
         continue;
       }
+      if (pyr.levelReady !== undefined && !pyr.levelReady(keyLevel(key), tierOf(prio))) continue; // range level gate (SIGNOUT.md E9)
       if (this.failed.size > 0) {
         const f = this.failed.get(key);
         if (f !== undefined) {

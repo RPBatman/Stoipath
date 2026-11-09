@@ -1,0 +1,67 @@
+/* review · the node tray and the Open / Review card bodies (SIGNOUT.md §4.5; tokens only, dark chrome as Learn L1).
+   Design-system classes first: `.tray`, `.tray__slide`, `.tray__thumb`, `.tray__label` (base.css 789–806), `.option`
+   (base.css 1116–1119), `.btn*`, `.hintline`. What the system lacks is copied from the finals and scoped here:
+   - tray rows: design/screens/final/clinical-signout.html panel-2, lines 928–942 (markup) and 326–338 (`.cluster__tray`
+     row sizing: one row per slide, 44 px under coarse pointers, line 338);
+   - the hint line: clinical-signout.html line 370 (`.dock .hintline`);
+   - the vignette rows: education-module.html 233–238 via Learn's player.css lines 28–32 (same rules, re-rooted). */
+
+/* ---------------------------------------------------------------- the tray (#nodeTray; integrator places and scrolls it) */
+.signout .so-tray__heading { margin: 0; font-size: var(--text-2xs); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.signout .so-tray { list-style: none; margin: 0; padding: 0; gap: 2px; }
+.signout .so-tray__item { display: flex; align-items: center; gap: var(--space-2); }
+/* clinical-signout.html 326 / 338: one compact row per slide, the label beside the thumbnail */
+.signout .so-tray__row { flex: 1 1 auto; min-width: 0; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--space-3); min-height: var(--target-control); padding: 2px var(--space-2); text-align: left; border: 0; border-radius: var(--radius-1); background: transparent; color: var(--color-text); font: inherit; font-size: var(--text-sm); cursor: pointer; }
+.signout .so-tray__row:hover { background: var(--color-row-hover); }
+.signout .so-tray__row[aria-current="true"] { background: var(--color-control-selected); box-shadow: inset 2px 0 0 var(--color-control-selected-indicator); font-weight: var(--weight-medium); }
+.signout .so-tray__row:focus-visible { box-shadow: var(--focus-shadow); outline: none; }
+.signout .so-tray__thumb { width: 40px; height: 28px; flex: 0 0 auto; }
+.signout .so-tray__img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.signout .so-tray__row .tray__label { min-width: 0; }
+.signout .so-tray__row .tray__label .text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.signout .so-tray__fit { flex: 0 0 auto; }
+/* clinical-signout.html 370 */
+.signout .so-tray__hint { margin: 0; line-height: 1.55; font-size: var(--text-xs); color: var(--color-text-secondary); }
+.signout .so-tray__hint .key { vertical-align: middle; }
+@media (pointer: coarse) {
+  /* clinical-signout.html 338: rows at the touch target */
+  .signout .so-tray__row, .signout .so-tray__fit { min-height: var(--target); }
+}
+
+/* ---------------------------------------------------------------- the card head's timer slot */
+.signout .so-card__timer:empty { display: none; }
+.signout .so-card__phase:empty { display: none; }
+
+/* ---------------------------------------------------------------- the Review card body */
+.signout .so-review__body { display: flex; flex-direction: column; gap: var(--space-3); }
+.signout .so-review__headrow { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.signout .so-review__current { margin: 0; flex: 1 1 auto; min-width: 0; font-size: var(--text-md); font-weight: var(--weight-medium); }
+.signout .so-review__next { flex: 0 0 auto; }
+.signout .so-owner__timer { margin: 0; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.signout .so-owner__timer:empty { display: none; }
+.signout .so-review__readonly { margin: 0; font-size: var(--text-sm); color: var(--color-text-secondary); border-left: 2px solid var(--color-border-strong); padding-left: var(--space-3); }
+.signout .so-review__readonly[hidden] { display: none; }
+.signout .so-review-call { margin: 0; }
+.signout .so-review-call__fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.signout .so-review-call__legend { padding: 0; margin-bottom: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--color-text-secondary); }
+.signout .so-review-call__options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.signout .so-review-call__option { align-items: center; font-size: var(--text-sm); }
+.signout .so-review-call__option:has(input:disabled) { cursor: default; opacity: .8; }
+.signout .so-review__measure, .signout .so-review__flags, .signout .so-review__hint { margin: 0; font-size: var(--text-sm); }
+.signout .so-review__hint { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.signout .so-review__flagbox { display: flex; flex-direction: column; gap: 2px; }
+.signout .so-review__flaglist { list-style: none; margin: 0; padding: 0; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+.signout .so-review__flaglist[hidden] { display: none; }
+@media (max-width: 599px) { .signout .so-review-call__options { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------------------------------------------------------------- the Open card body (Learn player.css 28–32, re-rooted) */
+.signout .so-open__body { display: flex; flex-direction: column; gap: var(--space-3); }
+.signout .so-open__body p { margin: 0; line-height: var(--leading-body); }
+.signout .so-practice { font-weight: var(--weight-medium); }
+.signout .so-open__vignette { font-size: var(--font-size-body); line-height: var(--leading-body); margin: 0; }
+.signout .so-open__vignette dt { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); margin-top: var(--space-3); }
+.signout .so-open__vignette dt:first-child { margin-top: 0; }
+.signout .so-open__vignette dd { margin: 2px 0 0; }
+.signout .so-open__keys .key { vertical-align: middle; }
+.signout .so-open__attribution { font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; flex-direction: column; gap: var(--space-1); }
+.signout .so-countdown-slot:empty { display: none; }

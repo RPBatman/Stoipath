@@ -1,0 +1,17 @@
+{
+  "note": "teaching attributes the ITC rule to CAMELYON17",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/teaching/0/text",
+      "value": "Under the CAMELYON17 rule, ITC-only nodes do not count."
+    }
+  ],
+  "expect": {
+    "rule": "so-no-camelyon-itc-claim",
+    "severity": "error",
+    "path": "/extensions/signout/teaching/0/text",
+    "message": "/extensions/signout/teaching/0/text attributes the ITC rule to CAMELYON17; it is AJCC's"
+  }
+}

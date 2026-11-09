@@ -1,0 +1,113 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "f5ec1adf-09c6-4334-81b1-6c87e6da3480",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20000,
+              60000
+            ],
+            [
+              20200,
+              60000
+            ],
+            [
+              20200,
+              60150
+            ],
+            [
+              20000,
+              60150
+            ],
+            [
+              20000,
+              60000
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2d2eb551-063f-44f1-8995-e3964b351f8a",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20400,
+              60300
+            ],
+            [
+              20600,
+              60300
+            ],
+            [
+              20600,
+              60450
+            ],
+            [
+              20400,
+              60450
+            ],
+            [
+              20400,
+              60300
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    }
+  ],
+  "stoipath": {
+    "schema": "stoipath.layer/1",
+    "id": "camelyon17-annotation",
+    "title": "CAMELYON17 annotation",
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T00:00:00Z",
+      "inputHash": "sha256:d6f914d9623c255e992a559a38b07252a531ab33235ca4ab8f864958436ee01c",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "340e9faa"
+    },
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "source": {
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/x.xml",
+      "sha256": "d6f914d9623c255e992a559a38b07252a531ab33235ca4ab8f864958436ee01c",
+      "bytes": 1000,
+      "format": "ASAP XML"
+    },
+    "coordinateSpace": "pyramid-level0",
+    "regionOffset": [
+      0,
+      0
+    ],
+    "slide": {
+      "id": "camelyon17.c17s-0010",
+      "fingerprint": "96651x197226@0.2431@0,0@340e9faabfb8"
+    },
+    "conversion": "casefmt fixture stand-in",
+    "featuresDropped": 0,
+    "generator": "casefmt fixture"
+  }
+}

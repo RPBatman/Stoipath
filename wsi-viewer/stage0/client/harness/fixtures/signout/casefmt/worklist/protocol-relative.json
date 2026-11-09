@@ -1,0 +1,17 @@
+{
+  "note": "a protocol-relative entry",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/cases/1/url",
+      "value": "//example.org/c17-02.module.json"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/cases/1/url",
+    "message": null
+  }
+}

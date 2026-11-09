@@ -1,0 +1,380 @@
+{
+  "schema": "stoipath.signout.pyramid-before-s0/1",
+  "recorded": "2026-11-08",
+  "note": "parseManifest(data/manifest.json, \"../../data/manifest.json\") from the unmodified src/pyramid.ts under globalThis.document = {baseURI: \"http://127.0.0.1/client/dist/\"} (SIGNOUT.md E7, ENG-7).",
+  "pyramidTsSha256": "55c29c37e32fd5822828f253ddcfc929fb8511bd69b91c6d42a22d7f86042631",
+  "manifestSha256": "a35391166d4096257774d8d723dca3e9869b5ef482ecdec11cf0811f2cca5e30",
+  "baseURI": "http://127.0.0.1/client/dist/",
+  "manifestArg": "../../data/manifest.json",
+  "consoleWarn": [],
+  "fields": {
+    "name": "slide",
+    "width": 15360,
+    "height": 15360,
+    "tileSize": 512,
+    "mpp": 0.243094,
+    "levels": [
+      {
+        "index": 0,
+        "urlId": "0",
+        "width": 15360,
+        "height": 15360,
+        "tilesX": 30,
+        "tilesY": 30,
+        "scale": 1
+      },
+      {
+        "index": 1,
+        "urlId": "1",
+        "width": 7680,
+        "height": 7680,
+        "tilesX": 15,
+        "tilesY": 15,
+        "scale": 2
+      },
+      {
+        "index": 2,
+        "urlId": "2",
+        "width": 3840,
+        "height": 3840,
+        "tilesX": 8,
+        "tilesY": 8,
+        "scale": 4
+      },
+      {
+        "index": 3,
+        "urlId": "3",
+        "width": 1920,
+        "height": 1920,
+        "tilesX": 4,
+        "tilesY": 4,
+        "scale": 8
+      },
+      {
+        "index": 4,
+        "urlId": "4",
+        "width": 960,
+        "height": 960,
+        "tilesX": 2,
+        "tilesY": 2,
+        "scale": 16
+      },
+      {
+        "index": 5,
+        "urlId": "5",
+        "width": 480,
+        "height": 480,
+        "tilesX": 1,
+        "tilesY": 1,
+        "scale": 32
+      }
+    ],
+    "manifestUrl": "http://127.0.0.1/data/manifest.json",
+    "basePinLevel": 3,
+    "basePinTileCount": 21,
+    "warmBaseLevel": 2,
+    "warmBaseTileCount": 64
+  },
+  "tileUrls": [
+    {
+      "level": 0,
+      "x": 0,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/0/0_0.jpg"
+    },
+    {
+      "level": 0,
+      "x": 29,
+      "y": 29,
+      "url": "http://127.0.0.1/data/tiles/0/29_29.jpg"
+    },
+    {
+      "level": 0,
+      "x": 15,
+      "y": 15,
+      "url": "http://127.0.0.1/data/tiles/0/15_15.jpg"
+    },
+    {
+      "level": 1,
+      "x": 0,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/1/0_0.jpg"
+    },
+    {
+      "level": 1,
+      "x": 14,
+      "y": 14,
+      "url": "http://127.0.0.1/data/tiles/1/14_14.jpg"
+    },
+    {
+      "level": 1,
+      "x": 7,
+      "y": 7,
+      "url": "http://127.0.0.1/data/tiles/1/7_7.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/2/0_0.jpg"
+    },
+    {
+      "level": 2,
+      "x": 7,
+      "y": 7,
+      "url": "http://127.0.0.1/data/tiles/2/7_7.jpg"
+    },
+    {
+      "level": 2,
+      "x": 4,
+      "y": 4,
+      "url": "http://127.0.0.1/data/tiles/2/4_4.jpg"
+    },
+    {
+      "level": 3,
+      "x": 0,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/3/0_0.jpg"
+    },
+    {
+      "level": 3,
+      "x": 3,
+      "y": 3,
+      "url": "http://127.0.0.1/data/tiles/3/3_3.jpg"
+    },
+    {
+      "level": 3,
+      "x": 2,
+      "y": 2,
+      "url": "http://127.0.0.1/data/tiles/3/2_2.jpg"
+    },
+    {
+      "level": 4,
+      "x": 0,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/4/0_0.jpg"
+    },
+    {
+      "level": 4,
+      "x": 1,
+      "y": 1,
+      "url": "http://127.0.0.1/data/tiles/4/1_1.jpg"
+    },
+    {
+      "level": 5,
+      "x": 0,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/5/0_0.jpg"
+    },
+    {
+      "level": 0,
+      "x": 17,
+      "y": 9,
+      "url": "http://127.0.0.1/data/tiles/0/17_9.jpg"
+    },
+    {
+      "level": 1,
+      "x": 10,
+      "y": 7,
+      "url": "http://127.0.0.1/data/tiles/1/10_7.jpg"
+    },
+    {
+      "level": 0,
+      "x": 12,
+      "y": 20,
+      "url": "http://127.0.0.1/data/tiles/0/12_20.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 2,
+      "url": "http://127.0.0.1/data/tiles/2/0_2.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 6,
+      "url": "http://127.0.0.1/data/tiles/2/0_6.jpg"
+    },
+    {
+      "level": 0,
+      "x": 12,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/0/12_0.jpg"
+    },
+    {
+      "level": 2,
+      "x": 4,
+      "y": 6,
+      "url": "http://127.0.0.1/data/tiles/2/4_6.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 4,
+      "url": "http://127.0.0.1/data/tiles/2/0_4.jpg"
+    },
+    {
+      "level": 0,
+      "x": 0,
+      "y": 3,
+      "url": "http://127.0.0.1/data/tiles/0/0_3.jpg"
+    },
+    {
+      "level": 0,
+      "x": 18,
+      "y": 22,
+      "url": "http://127.0.0.1/data/tiles/0/18_22.jpg"
+    },
+    {
+      "level": 1,
+      "x": 4,
+      "y": 5,
+      "url": "http://127.0.0.1/data/tiles/1/4_5.jpg"
+    },
+    {
+      "level": 1,
+      "x": 10,
+      "y": 0,
+      "url": "http://127.0.0.1/data/tiles/1/10_0.jpg"
+    },
+    {
+      "level": 0,
+      "x": 0,
+      "y": 21,
+      "url": "http://127.0.0.1/data/tiles/0/0_21.jpg"
+    },
+    {
+      "level": 0,
+      "x": 13,
+      "y": 5,
+      "url": "http://127.0.0.1/data/tiles/0/13_5.jpg"
+    },
+    {
+      "level": 1,
+      "x": 10,
+      "y": 14,
+      "url": "http://127.0.0.1/data/tiles/1/10_14.jpg"
+    },
+    {
+      "level": 0,
+      "x": 12,
+      "y": 9,
+      "url": "http://127.0.0.1/data/tiles/0/12_9.jpg"
+    },
+    {
+      "level": 1,
+      "x": 4,
+      "y": 12,
+      "url": "http://127.0.0.1/data/tiles/1/4_12.jpg"
+    },
+    {
+      "level": 1,
+      "x": 13,
+      "y": 13,
+      "url": "http://127.0.0.1/data/tiles/1/13_13.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 1,
+      "url": "http://127.0.0.1/data/tiles/2/0_1.jpg"
+    },
+    {
+      "level": 0,
+      "x": 6,
+      "y": 11,
+      "url": "http://127.0.0.1/data/tiles/0/6_11.jpg"
+    },
+    {
+      "level": 0,
+      "x": 18,
+      "y": 12,
+      "url": "http://127.0.0.1/data/tiles/0/18_12.jpg"
+    },
+    {
+      "level": 0,
+      "x": 0,
+      "y": 10,
+      "url": "http://127.0.0.1/data/tiles/0/0_10.jpg"
+    },
+    {
+      "level": 1,
+      "x": 13,
+      "y": 8,
+      "url": "http://127.0.0.1/data/tiles/1/13_8.jpg"
+    },
+    {
+      "level": 0,
+      "x": 24,
+      "y": 16,
+      "url": "http://127.0.0.1/data/tiles/0/24_16.jpg"
+    },
+    {
+      "level": 1,
+      "x": 10,
+      "y": 13,
+      "url": "http://127.0.0.1/data/tiles/1/10_13.jpg"
+    },
+    {
+      "level": 1,
+      "x": 11,
+      "y": 1,
+      "url": "http://127.0.0.1/data/tiles/1/11_1.jpg"
+    },
+    {
+      "level": 0,
+      "x": 24,
+      "y": 22,
+      "url": "http://127.0.0.1/data/tiles/0/24_22.jpg"
+    },
+    {
+      "level": 1,
+      "x": 4,
+      "y": 2,
+      "url": "http://127.0.0.1/data/tiles/1/4_2.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 7,
+      "url": "http://127.0.0.1/data/tiles/2/0_7.jpg"
+    },
+    {
+      "level": 2,
+      "x": 4,
+      "y": 2,
+      "url": "http://127.0.0.1/data/tiles/2/4_2.jpg"
+    },
+    {
+      "level": 1,
+      "x": 4,
+      "y": 6,
+      "url": "http://127.0.0.1/data/tiles/1/4_6.jpg"
+    },
+    {
+      "level": 1,
+      "x": 7,
+      "y": 9,
+      "url": "http://127.0.0.1/data/tiles/1/7_9.jpg"
+    },
+    {
+      "level": 2,
+      "x": 0,
+      "y": 3,
+      "url": "http://127.0.0.1/data/tiles/2/0_3.jpg"
+    },
+    {
+      "level": 0,
+      "x": 18,
+      "y": 18,
+      "url": "http://127.0.0.1/data/tiles/0/18_18.jpg"
+    },
+    {
+      "level": 0,
+      "x": 0,
+      "y": 15,
+      "url": "http://127.0.0.1/data/tiles/0/0_15.jpg"
+    }
+  ]
+}

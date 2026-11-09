@@ -1,0 +1,14 @@
+{
+  "note": "extensions.signout missing",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "remove",
+      "path": "/extensions/signout"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout"
+  }
+}

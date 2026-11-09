@@ -1,0 +1,15 @@
+{
+  "note": "reference.pN 'pN3'",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/reference/pN",
+      "value": "pN3"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/reference/pN"
+  }
+}

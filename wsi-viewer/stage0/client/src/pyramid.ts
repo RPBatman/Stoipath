@@ -5,6 +5,7 @@
  * Tile keys pack (level, x, y) into one non-negative int32 so hot-path maps and typed arrays never allocate strings.
  */
 import { PINNED_BASE_MAX_PX, TEXTURE_LAYERS_RESERVE, TILE_SIZE_DEFAULT, WARM_BASE_MAX_PX, WARM_BASE_MIN_FREE_VIEWPORTS } from './constants';
+import { RangeSource } from './range-source';
 
 export interface Level {
   /** Index in our pyramid: 0 = finest. */
@@ -37,6 +38,20 @@ export interface Pyramid {
   warmBaseLevel: number;
   warmBaseTileCount: number;
   tileUrl(level: number, x: number, y: number): string;
+  /**
+   * Remote range source only (SIGNOUT.md §4.3 E1; undefined for today's manifests): the protocol the tile host speaks
+   * (D9: 'http/1.1' caps the scheduler at CONCURRENCY_H1 whatever protocol served the index).
+   */
+  readonly tileProtocol?: string;
+  /** The `bigtiff-jpeg-range` source (offset arrays, tables, worker message). */
+  readonly rangeSource?: RangeSource;
+  /** Same-origin overview image of the whole slide (the stitched top level, D28), URL resolved; the navigator draws it (E8). */
+  readonly thumbnail?: { readonly url: string; readonly width: number; readonly height: number };
+  /**
+   * Level gate (E9): true when tiles of `level` can be requested now (offset arrays resident). Otherwise false, and
+   * for tier <= 0 (demand, never prefetch) the level's arrays are fetched by a worker.
+   */
+  levelReady?(level: number, tier: number): boolean;
 }
 
 /** Index of the finest level whose longest side is <= maxPx (the last level when none is). */
@@ -204,8 +219,74 @@ function parseLevels(raw: unknown, width: number, height: number, tileSize: numb
   return out;
 }
 
+/**
+ * A `bigtiff-jpeg-range` slide index (SIGNOUT.md §8.1, Appendix B; E1): levels from `levels[]` (finest first,
+ * scale 2^i) with the effective size min(stored, ceil(W0 / 2^i)) so centre 4's padding is never drawn (ER-6),
+ * tilesX/tilesY from the effective size, a pure tileUrl over the resident offset arrays and the level gate.
+ */
+function parseRangeIndex(json: Record<string, unknown>, tiles: Record<string, unknown>, manifestUrl: string): Pyramid {
+  const width = pickNum(json, 'width');
+  const height = pickNum(json, 'height');
+  if (width === null || height === null) throw new Error('range index lacks width/height');
+  const tileSize = pickNum(json, 'tileSize') ?? TILE_SIZE_DEFAULT;
+  const rawLevels = json['levels'];
+  if (!Array.isArray(rawLevels) || rawLevels.length === 0) throw new Error('range index lacks levels');
+  const source = new RangeSource(tiles, rawLevels, width, height, tileSize);
+  const levels: Level[] = source.levels.map((l, i) => ({
+    index: i,
+    urlId: String(i),
+    width: l.width,
+    height: l.height,
+    tilesX: Math.ceil(l.width / tileSize),
+    tilesY: Math.ceil(l.height / tileSize),
+    scale: 2 ** i,
+  }));
+  // Sanity on the effective sizes (stored sizes of centre 4's padded levels are not 2x steps: 1536 -> 1024).
+  for (let i = 1; i < levels.length; i++) {
+    const prev = levels[i - 1];
+    const cur = levels[i];
+    if (prev !== undefined && cur !== undefined) {
+      const ratio = prev.width / cur.width;
+      if (ratio < 1.8 || ratio > 2.2) console.warn(`[pyramid] level ${i} is not a 2x step of level ${i - 1} (ratio ${ratio.toFixed(2)})`);
+    }
+  }
+  const basePinLevel = firstLevelWithin(levels, PINNED_BASE_MAX_PX);
+  const warmBaseLevel = Math.min(basePinLevel, firstLevelWithin(levels, WARM_BASE_MAX_PX));
+  const base = new URL(manifestUrl, document.baseURI);
+  const th = json['thumbnail'];
+  let thumbnail: { url: string; width: number; height: number } | undefined;
+  if (isRecord(th) && typeof th['url'] === 'string' && th['url'] !== '') {
+    thumbnail = { url: new URL(th['url'], base).href, width: num(th['width']) ?? levels[levels.length - 1]?.width ?? 1, height: num(th['height']) ?? levels[levels.length - 1]?.height ?? 1 };
+  }
+  const pyramid: Pyramid = {
+    name: pickStr(json, 'name', 'id') ?? 'slide',
+    width,
+    height,
+    tileSize,
+    mpp: pickNum(json, 'mpp'),
+    levels,
+    manifestUrl: base.href,
+    basePinLevel,
+    basePinTileCount: tilesFrom(levels, basePinLevel, levels.length),
+    warmBaseLevel,
+    warmBaseTileCount: tilesFrom(levels, warmBaseLevel, basePinLevel),
+    tileUrl: (level, x, y) => source.tileUrl(level, x, y),
+    tileProtocol: source.protocol,
+    rangeSource: source,
+    ...(thumbnail !== undefined ? { thumbnail } : {}),
+    levelReady(level: number, tier: number): boolean {
+      if (source.isResident(level)) return true;
+      if (tier <= 0) source.ensureLevel(level);
+      return false;
+    },
+  };
+  return pyramid;
+}
+
 export function parseManifest(json: Json, manifestUrl: string): Pyramid {
   if (!isRecord(json)) throw new Error('manifest is not a JSON object');
+  const tilesBlock = json['tiles'];
+  if (isRecord(tilesBlock) && tilesBlock['kind'] === 'bigtiff-jpeg-range') return parseRangeIndex(json, tilesBlock, manifestUrl);
   const width = pickNum(json, 'width', 'imageWidth', 'w');
   const height = pickNum(json, 'height', 'imageHeight', 'h');
   if (width === null || height === null) throw new Error('manifest lacks width/height');

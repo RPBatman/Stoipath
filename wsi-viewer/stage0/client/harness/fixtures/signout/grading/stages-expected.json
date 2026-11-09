@@ -1,0 +1,1616 @@
+{
+ "bytes": 18689,
+ "licence": "CC0-1.0",
+ "note": "Counted from stages.csv by an independent script; pN is the CSV patient row (never derived here).",
+ "patients": [
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_000",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_001",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_002",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_003",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_004",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 2,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "itc",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_005",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 2,
+   "labels": [
+    "negative",
+    "negative",
+    "itc",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_006",
+   "positive": 0
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_007",
+   "positive": 1
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_008",
+   "positive": 1
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "itc",
+    "micro",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_009",
+   "positive": 1
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "negative",
+    "negative",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 2,
+   "pN": "pN1mi",
+   "patient": "patient_010",
+   "positive": 2
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_011",
+   "positive": 1
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_012",
+   "positive": 1
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "macro",
+    "macro",
+    "micro"
+   ],
+   "macro": 2,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_013",
+   "positive": 3
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "negative",
+    "macro",
+    "itc",
+    "macro"
+   ],
+   "macro": 2,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_014",
+   "positive": 2
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "macro",
+    "macro",
+    "negative",
+    "itc"
+   ],
+   "macro": 2,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_015",
+   "positive": 2
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "macro",
+    "itc",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_016",
+   "positive": 1
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "itc",
+    "macro",
+    "macro",
+    "micro"
+   ],
+   "macro": 2,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_017",
+   "positive": 3
+  },
+  {
+   "centre": 0,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "micro",
+    "micro",
+    "macro",
+    "itc"
+   ],
+   "macro": 1,
+   "micro": 2,
+   "pN": "pN1",
+   "patient": "patient_018",
+   "positive": 3
+  },
+  {
+   "centre": 0,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "macro",
+    "macro",
+    "negative"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_019",
+   "positive": 4
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "micro",
+    "micro",
+    "negative",
+    "macro"
+   ],
+   "macro": 1,
+   "micro": 2,
+   "pN": "pN1",
+   "patient": "patient_020",
+   "positive": 3
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "negative",
+    "micro",
+    "micro"
+   ],
+   "macro": 2,
+   "micro": 2,
+   "pN": "pN2",
+   "patient": "patient_021",
+   "positive": 4
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "micro",
+    "negative",
+    "negative",
+    "macro"
+   ],
+   "macro": 1,
+   "micro": 2,
+   "pN": "pN1",
+   "patient": "patient_022",
+   "positive": 3
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_023",
+   "positive": 0
+  },
+  {
+   "centre": 1,
+   "itc": 3,
+   "labels": [
+    "negative",
+    "itc",
+    "itc",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_024",
+   "positive": 0
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_025",
+   "positive": 0
+  },
+  {
+   "centre": 1,
+   "itc": 1,
+   "labels": [
+    "itc",
+    "micro",
+    "macro",
+    "micro",
+    "macro"
+   ],
+   "macro": 2,
+   "micro": 2,
+   "pN": "pN2",
+   "patient": "patient_026",
+   "positive": 4
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "negative",
+    "micro",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 3,
+   "pN": "pN1mi",
+   "patient": "patient_027",
+   "positive": 3
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "micro",
+    "macro",
+    "micro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 3,
+   "pN": "pN2",
+   "patient": "patient_028",
+   "positive": 4
+  },
+  {
+   "centre": 1,
+   "itc": 1,
+   "labels": [
+    "micro",
+    "macro",
+    "itc",
+    "macro",
+    "negative"
+   ],
+   "macro": 2,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_029",
+   "positive": 3
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_030",
+   "positive": 1
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_031",
+   "positive": 0
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "micro",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_032",
+   "positive": 1
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "macro",
+    "micro",
+    "micro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 2,
+   "pN": "pN1",
+   "patient": "patient_033",
+   "positive": 3
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "macro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_034",
+   "positive": 1
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_035",
+   "positive": 0
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "micro",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_036",
+   "positive": 1
+  },
+  {
+   "centre": 1,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "itc",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_037",
+   "positive": 0
+  },
+  {
+   "centre": 1,
+   "itc": 1,
+   "labels": [
+    "micro",
+    "negative",
+    "micro",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 2,
+   "pN": "pN1mi",
+   "patient": "patient_038",
+   "positive": 2
+  },
+  {
+   "centre": 1,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "micro",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_039",
+   "positive": 2
+  },
+  {
+   "centre": 2,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "negative",
+    "itc",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_040",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 1,
+   "labels": [
+    "itc",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_041",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "macro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_042",
+   "positive": 1
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_043",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "macro",
+    "macro"
+   ],
+   "macro": 2,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_044",
+   "positive": 2
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "micro",
+    "negative",
+    "macro",
+    "macro"
+   ],
+   "macro": 3,
+   "micro": 1,
+   "pN": "pN2",
+   "patient": "patient_045",
+   "positive": 4
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "micro",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 2,
+   "pN": "pN1mi",
+   "patient": "patient_046",
+   "positive": 2
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "macro",
+    "negative",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_047",
+   "positive": 1
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "micro",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 2,
+   "pN": "pN1mi",
+   "patient": "patient_048",
+   "positive": 2
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "micro",
+    "micro",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 2,
+   "pN": "pN1mi",
+   "patient": "patient_049",
+   "positive": 2
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_050",
+   "positive": 1
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "macro",
+    "negative",
+    "macro"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_051",
+   "positive": 4
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "macro",
+    "macro",
+    "negative"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_052",
+   "positive": 4
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_053",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_054",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_055",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_056",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_057",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_058",
+   "positive": 0
+  },
+  {
+   "centre": 2,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_059",
+   "positive": 0
+  },
+  {
+   "centre": 3,
+   "itc": 1,
+   "labels": [
+    "micro",
+    "negative",
+    "negative",
+    "itc",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_060",
+   "positive": 1
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_061",
+   "positive": 1
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "micro",
+    "micro",
+    "macro",
+    "macro",
+    "negative"
+   ],
+   "macro": 2,
+   "micro": 2,
+   "pN": "pN2",
+   "patient": "patient_062",
+   "positive": 4
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "negative",
+    "macro",
+    "macro",
+    "macro"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_063",
+   "positive": 4
+  },
+  {
+   "centre": 3,
+   "itc": 2,
+   "labels": [
+    "itc",
+    "negative",
+    "negative",
+    "itc",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_064",
+   "positive": 0
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "negative",
+    "negative",
+    "negative",
+    "macro"
+   ],
+   "macro": 2,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_065",
+   "positive": 2
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "micro",
+    "macro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_066",
+   "positive": 2
+  },
+  {
+   "centre": 3,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "itc",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_067",
+   "positive": 1
+  },
+  {
+   "centre": 3,
+   "itc": 2,
+   "labels": [
+    "negative",
+    "itc",
+    "negative",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_068",
+   "positive": 0
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "micro",
+    "micro",
+    "negative"
+   ],
+   "macro": 2,
+   "micro": 2,
+   "pN": "pN2",
+   "patient": "patient_069",
+   "positive": 4
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "macro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_070",
+   "positive": 1
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_071",
+   "positive": 0
+  },
+  {
+   "centre": 3,
+   "itc": 1,
+   "labels": [
+    "itc",
+    "macro",
+    "macro",
+    "negative",
+    "micro"
+   ],
+   "macro": 2,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_072",
+   "positive": 3
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "macro",
+    "negative",
+    "micro",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_073",
+   "positive": 2
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "micro"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_074",
+   "positive": 1
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "macro"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_075",
+   "positive": 1
+  },
+  {
+   "centre": 3,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "macro",
+    "micro",
+    "micro",
+    "itc"
+   ],
+   "macro": 1,
+   "micro": 2,
+   "pN": "pN1",
+   "patient": "patient_076",
+   "positive": 3
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "macro",
+    "negative",
+    "macro"
+   ],
+   "macro": 2,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_077",
+   "positive": 2
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_078",
+   "positive": 0
+  },
+  {
+   "centre": 3,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_079",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 2,
+   "labels": [
+    "itc",
+    "itc",
+    "macro",
+    "macro",
+    "micro"
+   ],
+   "macro": 2,
+   "micro": 1,
+   "pN": "pN1",
+   "patient": "patient_080",
+   "positive": 3
+  },
+  {
+   "centre": 4,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "micro",
+    "micro",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 2,
+   "pN": "pN1mi",
+   "patient": "patient_081",
+   "positive": 2
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_082",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_083",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "macro",
+    "macro",
+    "negative"
+   ],
+   "macro": 2,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_084",
+   "positive": 2
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_085",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 2,
+   "labels": [
+    "itc",
+    "negative",
+    "negative",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_086",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 2,
+   "labels": [
+    "itc",
+    "itc",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0(i+)",
+   "patient": "patient_087",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 1,
+   "labels": [
+    "negative",
+    "micro",
+    "negative",
+    "negative",
+    "itc"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_088",
+   "positive": 1
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "micro",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 1,
+   "pN": "pN1mi",
+   "patient": "patient_089",
+   "positive": 1
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_090",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "macro",
+    "macro",
+    "macro"
+   ],
+   "macro": 3,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_091",
+   "positive": 3
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "negative",
+    "macro",
+    "macro"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_092",
+   "positive": 4
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "macro"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_093",
+   "positive": 1
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "macro",
+    "negative",
+    "macro"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_094",
+   "positive": 4
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_095",
+   "positive": 1
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "negative",
+    "macro",
+    "macro",
+    "macro"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_096",
+   "positive": 4
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "macro",
+    "macro",
+    "negative",
+    "macro",
+    "macro"
+   ],
+   "macro": 4,
+   "micro": 0,
+   "pN": "pN2",
+   "patient": "patient_097",
+   "positive": 4
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "negative"
+   ],
+   "macro": 0,
+   "micro": 0,
+   "pN": "pN0",
+   "patient": "patient_098",
+   "positive": 0
+  },
+  {
+   "centre": 4,
+   "itc": 0,
+   "labels": [
+    "negative",
+    "negative",
+    "negative",
+    "negative",
+    "macro"
+   ],
+   "macro": 1,
+   "micro": 0,
+   "pN": "pN1",
+   "patient": "patient_099",
+   "positive": 1
+  }
+ ],
+ "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+ "source": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv",
+ "totals": {
+  "pN0": 24,
+  "pN0(i+)": 11,
+  "pN1": 30,
+  "pN1mi": 21,
+  "pN2": 14
+ }
+}

@@ -1,0 +1,122 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [[12711.3,88778.1],[12612.8,88895.5],[12597.7,89050.8],[12703.7,89160.6],[12855.1,89130.3],[12938.4,89001.5],[12896.8,88853.9],[12760.5,88785.7],[12711.3,88778.1]]
+        ],
+        "type": "Polygon"
+      },
+      "id": "1d50190b-7191-5525-aa3b-0039eb8c1395",
+      "properties": {
+        "classification": {
+          "color": [255,0,0],
+          "name": "Tumor"
+        },
+        "isLocked": true,
+        "name": "Annotation 0",
+        "objectType": "annotation",
+        "stoipath": {
+          "createdAt": "2022-09-28T12:49:30Z",
+          "input": "file",
+          "kind": "polygon",
+          "label": "R1",
+          "schema": "stoipath.annotation/1",
+          "updatedAt": "2022-09-28T12:49:30Z",
+          "version": 1
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [[13357,87081.1],[13412,87057.5],[13464.4,87081.1],[13482.8,87170.2],[13477.5,87275],[13409.4,87356.2],[13307.2,87400.8],[13254.8,87437.5],[13173.5,87440.1],[13092.3,87372],[13121.1,87293.4],[13170.9,87235.7],[13194.5,87183.3],[13262.6,87149.2],[13304.6,87115.2],[13357,87081.1]]
+        ],
+        "type": "Polygon"
+      },
+      "id": "0ed97673-5959-5700-965f-6e6a84f6f25f",
+      "properties": {
+        "classification": {
+          "color": [255,0,0],
+          "name": "Tumor"
+        },
+        "isLocked": true,
+        "name": "Annotation 1",
+        "objectType": "annotation",
+        "stoipath": {
+          "createdAt": "2022-09-28T12:49:30Z",
+          "input": "file",
+          "kind": "polygon",
+          "label": "R2",
+          "schema": "stoipath.annotation/1",
+          "updatedAt": "2022-09-28T12:49:30Z",
+          "version": 1
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [[10754.3,75345.4],[10678.9,75413.3],[10641.2,75508.8],[10626.2,75609.3],[10626.2,75712.3],[10648.8,75807.8],[10701.5,75855.5],[10761.8,75787.7],[10784.5,75689.7],[10807.1,75591.7],[10809.6,75491.2],[10789.5,75390.7],[10754.3,75345.4]]
+        ],
+        "type": "Polygon"
+      },
+      "id": "9c0093d4-5312-5b12-b5cd-d96733008cdd",
+      "properties": {
+        "classification": {
+          "color": [255,0,0],
+          "name": "Tumor"
+        },
+        "isLocked": true,
+        "name": "Annotation 2",
+        "objectType": "annotation",
+        "stoipath": {
+          "createdAt": "2022-09-28T12:49:30Z",
+          "input": "file",
+          "kind": "polygon",
+          "label": "R3",
+          "schema": "stoipath.annotation/1",
+          "updatedAt": "2022-09-28T12:49:30Z",
+          "version": 1
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "stoipath": {
+    "conversion": "subtracted regionLevel0 (0, 0); dropped 0 of 3 annotations outside the 96,651 × 197,226 px pyramid; kept 3 (3 Tumor) with 35 vertices; none partly inside; coordinates rounded to 2 decimals, rings closed",
+    "coordinateSpace": "pyramid-level0",
+    "featuresDropped": 0,
+    "generator": "stage0/tools/convert_asap_annotations.py 1",
+    "id": "camelyon17-annotation",
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T12:49:30Z",
+      "inputHash": "sha256:f8d9e9f7a3cf952c085a5076b1be0bd72d0db8f16550fe45f9e2d11e2a5da716",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "f8d9e9f7"
+    },
+    "regionOffset": [0,0],
+    "schema": "stoipath.layer/1",
+    "slide": {
+      "fingerprint": "96651x197226@0.2431@0,0@a02c2e8af090",
+      "id": "camelyon17.c17s-0005"
+    },
+    "source": {
+      "bytes": 2647,
+      "format": "ASAP XML",
+      "sha256": "f8d9e9f7a3cf952c085a5076b1be0bd72d0db8f16550fe45f9e2d11e2a5da716",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/patient_004_node_4.xml"
+    },
+    "title": "CAMELYON17 annotation"
+  },
+  "type": "FeatureCollection"
+}

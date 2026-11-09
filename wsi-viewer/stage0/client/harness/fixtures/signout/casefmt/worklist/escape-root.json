@@ -1,0 +1,17 @@
+{
+  "note": "an entry that leaves the site root still resolves on this origin (allowed)",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/cases/2/url",
+      "value": "../../../../c17-03.module.json"
+    }
+  ],
+  "expect": {
+    "parse": "ok",
+    "rule": "so-worklist",
+    "path": "/cases/2/url",
+    "message": null
+  }
+}

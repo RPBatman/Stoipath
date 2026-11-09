@@ -1,0 +1,36 @@
+{
+  "note": "an item in a sign-out case",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/items/-",
+      "value": {
+        "id": "q-sinus",
+        "kind": "mcq",
+        "title": "Lymphatic route",
+        "stem": "Tumour cells that reach a lymph node through its afferent lymphatics usually lodge first in which compartment?",
+        "points": 1,
+        "options": [
+          {
+            "id": "A",
+            "text": "The germinal centres of the follicles",
+            "correct": false
+          },
+          {
+            "id": "B",
+            "text": "The subcapsular (marginal) sinus",
+            "correct": true
+          }
+        ],
+        "explanation": "Afferent lymphatics open into the subcapsular sinus under the capsule."
+      }
+    }
+  ],
+  "expect": {
+    "rule": "so-items-empty",
+    "severity": "error",
+    "path": "/items",
+    "message": "A sign-out case has no items and one Open step"
+  }
+}

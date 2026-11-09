@@ -71,8 +71,9 @@ export default defineConfig({
     // dist/.vite/manifest.json: the chunk graph tools-check reads to prove the measurement page (index.html) imports
     // nothing under src/shell/ (TOOLS.md §10).
     manifest: true,
-    // Two pages: index.html (the measurement page, the default) and shell.html (Stoipath Viewer (RUO) shell).
-    rollupOptions: { input: { index: resolve(__dirname, 'index.html'), shell: resolve(__dirname, 'shell.html'), learn: resolve(__dirname, 'learn.html') } },
+    // Pages: index.html (the measurement page, the default), shell.html (Stoipath Viewer (RUO) shell), learn.html (Stoipath
+    // Learn L1) and signout.html (Stoipath Learn L2, the practice report; SIGNOUT.md D1, its own entry).
+    rollupOptions: { input: { index: resolve(__dirname, 'index.html'), shell: resolve(__dirname, 'shell.html'), learn: resolve(__dirname, 'learn.html'), signout: resolve(__dirname, 'signout.html') } },
   },
   worker: { format: 'es' },
 });

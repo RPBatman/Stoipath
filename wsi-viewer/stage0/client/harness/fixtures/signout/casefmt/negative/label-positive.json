@@ -1,0 +1,15 @@
+{
+  "note": "a node label 'positive'",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/nodes/0/reference/label",
+      "value": "positive"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/nodes/0/reference/label"
+  }
+}

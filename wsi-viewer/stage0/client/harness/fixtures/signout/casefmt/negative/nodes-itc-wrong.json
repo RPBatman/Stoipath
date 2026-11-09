@@ -1,0 +1,15 @@
+{
+  "note": "nodesItc 0 for patient_017's labels",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/reference/nodesItc",
+      "value": 0
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/reference/nodesItc"
+  }
+}

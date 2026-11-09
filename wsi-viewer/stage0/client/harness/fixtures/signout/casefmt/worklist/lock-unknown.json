@@ -1,0 +1,19 @@
+{
+  "note": "lock 'comment'",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/options/lock",
+      "value": [
+        "comment"
+      ]
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/options/lock/0",
+    "message": null
+  }
+}

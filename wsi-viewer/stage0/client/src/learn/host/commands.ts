@@ -254,8 +254,11 @@ export class LearnCommands implements KeyScopeHost {
   /**
    * LEARN.md §8.1 "Not in this build" rows, registered AFTER every module installed, each with only the bindings
    * still free, and skipped when a module registered its id (an installed module always wins; nothing conflicts).
+   * `opts.slides: false` (SIGNOUT.md §4.3 S0b-1, additive) leaves out the `nib:slides` row (] / [), so the practice
+   * page can bind `node:next` / `node:prev` (SIGNOUT.md §10). Default true: learn.html registers it as before.
    */
-  registerRefusals(itemsInstalled: boolean): void {
+  registerRefusals(itemsInstalled: boolean, opts?: { slides?: boolean }): void {
+    const slides = opts?.slides ?? true;
     const d = this.d;
     const w = (key: string, shift = false): KeyBinding => (shift ? { key, scope: 'window', shift: true } : { key, scope: 'window' });
     const caps = (b: KeyBinding): string[] => [...(b.shift === true ? ['⇧'] : []), b.key.length === 1 ? b.key.toUpperCase() : b.key];
@@ -276,7 +279,7 @@ export class LearnCommands implements KeyScopeHost {
       ['nib:snapshot', 'Snapshot', [w('s', true)], refuse(REFUSALS.snapshot)],
       ['nib:compare', 'Compare', [w('c')], refuse(REFUSALS.compare)],
       ['nib:rotate', 'Rotate 90° clockwise / anticlockwise', [w('r'), w('r', true)], refuse(REFUSALS.rotate)],
-      ['nib:slides', 'Next / previous slide', [w(']'), w('[')], refuse(REFUSALS.slides)],
+      ...(slides ? [['nib:slides', 'Next / previous slide', [w(']'), w('[')], refuse(REFUSALS.slides)] as [string, string, KeyBinding[], () => void]] : []),
     ];
     for (const [id, label, bindings, run] of rows) fallback({ id, owner: OWNER, group: NIB, label, keys: bindings.map(caps), bindings, notInBuild: true, run });
     fallback({ id: 'nib:labelimage', owner: OWNER, group: NIB, label: 'Label image — no PHI in Learn', notInBuild: true, run: refuse(REFUSALS.labelImage) });

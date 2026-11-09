@@ -1,0 +1,14 @@
+{
+  "note": "nodesMacro missing (CAS-2: nodesMacro/Micro/Itc present)",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "remove",
+      "path": "/extensions/signout/reference/nodesMacro"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/reference/nodesMacro"
+  }
+}

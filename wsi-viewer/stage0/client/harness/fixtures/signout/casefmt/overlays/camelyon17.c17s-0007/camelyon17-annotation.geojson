@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "59ad9425-9c27-4a36-8064-add3c3f2c014",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20000,
+              60000
+            ],
+            [
+              20200,
+              60000
+            ],
+            [
+              20200,
+              60150
+            ],
+            [
+              20000,
+              60150
+            ],
+            [
+              20000,
+              60000
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    }
+  ],
+  "stoipath": {
+    "schema": "stoipath.layer/1",
+    "id": "camelyon17-annotation",
+    "title": "CAMELYON17 annotation",
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T00:00:00Z",
+      "inputHash": "sha256:d722cd2ab21d62e427fc8c269d9702750f42d19d6b6f0f6d707b24a628b1fe51",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "e9ecd1d2"
+    },
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "source": {
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/x.xml",
+      "sha256": "d722cd2ab21d62e427fc8c269d9702750f42d19d6b6f0f6d707b24a628b1fe51",
+      "bytes": 1000,
+      "format": "ASAP XML"
+    },
+    "coordinateSpace": "pyramid-level0",
+    "regionOffset": [
+      0,
+      0
+    ],
+    "slide": {
+      "id": "camelyon17.c17s-0007",
+      "fingerprint": "96651x197226@0.2431@0,0@e9ecd1d28be5"
+    },
+    "conversion": "casefmt fixture stand-in",
+    "featuresDropped": 0,
+    "generator": "casefmt fixture"
+  }
+}

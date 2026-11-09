@@ -1,0 +1,17 @@
+{
+  "note": "an unknown property is an error in lint (closed schema)",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/report/extra",
+      "value": 1
+    }
+  ],
+  "expect": {
+    "rule": "so-schema",
+    "severity": "error",
+    "path": "/extensions/signout/report/extra",
+    "message": "/extensions/signout/report/extra: is not a property of this object"
+  }
+}

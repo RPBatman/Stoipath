@@ -1,0 +1,15 @@
+{
+  "note": "a vignette without the 'Teaching vignette (invented):' label",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/case/vignette/text",
+      "value": "Five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules."
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/case/vignette/text"
+  }
+}

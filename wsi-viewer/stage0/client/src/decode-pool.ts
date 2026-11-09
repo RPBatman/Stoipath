@@ -17,9 +17,17 @@
  *    the watchdog; a late answer to one of them, should that worker still be running, is dropped as stale.
  */
 import { WORKERS_MAX, WORKERS_MIN } from './constants';
-import type { WorkerMessage, WorkerRequest, WorkerResponse } from './decode-messages';
+import { RANGE_CHANGED_MESSAGE } from './decode-messages';
+import type { ArraysError, ArraysResponse, ProbeResponse, WorkerMessage, WorkerRequest, WorkerResponse } from './decode-messages';
 
 export type TileHandler = (msg: WorkerResponse) => void;
+
+/** A pending ArraysFetch / ProbeRequest (SIGNOUT.md E5): answered by id, never seen by the TileHandler. */
+interface Pending {
+  worker: number;
+  resolve: (msg: ArraysResponse | ProbeResponse) => void;
+  reject: (err: Error) => void;
+}
 
 export function chooseWorkerCount(hardwareConcurrency: number | undefined, override: number | null): number {
   if (override !== null && override > 0) return override;
@@ -52,6 +60,11 @@ export class DecodePool {
   onError: ((message: string) => void) | null = null;
   /** A worker reported progress (headers or body bytes) on a slow request that is still current (the scheduler's watchdog). */
   onProgress: ((key: number) => void) | null = null;
+  /** Array fetches and probes in flight (range source only; empty on today's pages). */
+  private readonly pending = new Map<number, Pending>();
+  private pendingId = 0;
+  /** Set once an ETag mismatch was seen: every worker was told to fail range requests without a fetch (ER-9). */
+  rangeRevoked: string | null = null;
 
   constructor(size: number, onMessage: TileHandler) {
     this.size = size;
@@ -61,6 +74,10 @@ export class DecodePool {
       const w = new Worker(new URL('./decode-worker.ts', import.meta.url), { type: 'module', name: `decode-${i}` });
       w.onmessage = (ev: MessageEvent<WorkerMessage>) => {
         const data = ev.data;
+        if (data.type === 'arrays' || data.type === 'arrays-error' || data.type === 'probe') {
+          this.settle(data);
+          return;
+        }
         const o = this.owner.get(data.key);
         if (data.type === 'progress') {
           // Only for the request this worker currently holds; a note for an abandoned one means nothing.
@@ -81,6 +98,7 @@ export class DecodePool {
           this.load[o.worker] = (this.load[o.worker] ?? 1) - 1;
           this.owner.delete(msg.key);
         }
+        if (msg.type === 'error' && msg.message === RANGE_CHANGED_MESSAGE) this.revokeRange(msg.message);
         if (msg.type === 'tile' && (msg.bitmap === null || msg.bitmap === undefined)) {
           msg.mip?.close();
           msg = { type: 'error', key: msg.key, tier: msg.tier, kind: msg.kind, aborted: false, message: 'the decoded tile arrived empty (ImageBitmap null after transfer)', seq: msg.seq };
@@ -92,6 +110,11 @@ export class DecodePool {
         this.dead[i] = 1;
         this.onError?.(`decode worker ${i}: ${e.message || 'failed to load or crashed'}`);
         this.failPending(i, onMessage);
+        for (const [id, p] of this.pending) {
+          if (p.worker !== i) continue;
+          this.pending.delete(id);
+          p.reject(new Error(`decode worker ${i} failed`));
+        }
       };
       this.workers.push(w);
     }
@@ -175,6 +198,8 @@ export class DecodePool {
    * never calls it.
    */
   terminate(): void {
+    for (const p of this.pending.values()) p.reject(new Error('decode pool terminated'));
+    this.pending.clear();
     for (const w of this.workers) {
       w.onmessage = null;
       w.onerror = null;
@@ -184,5 +209,97 @@ export class DecodePool {
     this.owner.clear();
     this.avoid.clear();
     this.load.fill(0);
+  }
+
+  // ---------------------------------------------------------------- remote range source (SIGNOUT.md §4.3 E5)
+
+  /** Post one message to every live worker (the range source's `source` message; additive). */
+  broadcast(msg: WorkerRequest): void {
+    for (let i = 0; i < this.workers.length; i++) if (this.dead[i] !== 1) this.workers[i]?.postMessage(msg);
+  }
+
+  /** An ETag mismatch was reported (by a tile or an array fetch): tell every worker to stop fetching the source. */
+  revokeRange(message: string): void {
+    if (this.rangeRevoked !== null) return;
+    this.rangeRevoked = message;
+    this.broadcast({ type: 'source-revoke', message });
+  }
+
+  /** Least-loaded live worker, counting tiles in flight and pending array fetches / probes. */
+  private pickWorker(): number {
+    const extra = new Int32Array(this.size);
+    for (const p of this.pending.values()) extra[p.worker] = (extra[p.worker] ?? 0) + 1;
+    let best = -1;
+    for (let i = 0; i < this.size; i++) {
+      if (this.dead[i] === 1) continue;
+      const l = (this.load[i] ?? 0) + (extra[i] ?? 0);
+      if (best < 0 || l < (this.load[best] ?? 0) + (extra[best] ?? 0)) best = i;
+    }
+    return best < 0 ? 0 : best;
+  }
+
+  private settle(msg: ArraysResponse | ArraysError | ProbeResponse): void {
+    const p = this.pending.get(msg.id);
+    if (p === undefined) return; // cancelled or terminated
+    this.pending.delete(msg.id);
+    if (msg.type === 'arrays-error') {
+      if (msg.message === RANGE_CHANGED_MESSAGE) this.revokeRange(msg.message);
+      p.reject(new Error(msg.message));
+    } else p.resolve(msg);
+  }
+
+  /**
+   * One closed Range over a level's offset arrays, made by the least-loaded live worker (E5; the main thread never
+   * fetches cross-origin, ER-3). Resolves with the two Float64Arrays; rejects with the worker's message. `onId`
+   * receives the request id so the caller can cancel it with cancelArrays().
+   */
+  requestArrays(level: number, url: string, etag: string | null, start: number, length: number, onId?: (id: number) => void): Promise<{ counts: Float64Array; offsets: Float64Array }> {
+    if (this.workers.length === 0) return Promise.reject(new Error('decode pool terminated'));
+    if (this.rangeRevoked !== null) return Promise.reject(new Error(this.rangeRevoked));
+    const id = ++this.pendingId;
+    const worker = this.pickWorker();
+    onId?.(id);
+    return new Promise((resolve, reject) => {
+      this.pending.set(id, {
+        worker,
+        resolve: (m) => {
+          if (m.type !== 'arrays') return reject(new Error('unexpected answer'));
+          resolve({ counts: new Float64Array(m.counts), offsets: new Float64Array(m.offsets) });
+        },
+        reject,
+      });
+      const msg: WorkerRequest = { type: 'arrays', id, level, url, etag, start, length };
+      this.workers[worker]?.postMessage(msg);
+    });
+  }
+
+  /** Abandon an array fetch (timeout or dispose): the worker aborts it and the promise rejects with 'aborted'. */
+  cancelArrays(id: number): void {
+    const p = this.pending.get(id);
+    if (p === undefined) return;
+    this.pending.delete(id);
+    const msg: WorkerRequest = { type: 'arrays-cancel', id };
+    this.workers[p.worker]?.postMessage(msg);
+    p.reject(new Error('aborted'));
+  }
+
+  /** Decode one range / blank URL in a worker and return its RGBA (ENG-2; reachable only through debugProbe). */
+  probe(url: string): Promise<{ rgba: Uint8ClampedArray; w: number; h: number }> {
+    if (this.workers.length === 0) return Promise.reject(new Error('decode pool terminated'));
+    const id = ++this.pendingId;
+    const worker = this.pickWorker();
+    return new Promise((resolve, reject) => {
+      this.pending.set(id, {
+        worker,
+        resolve: (m) => {
+          if (m.type !== 'probe') return reject(new Error('unexpected answer'));
+          if (m.message !== undefined) return reject(new Error(m.message));
+          resolve({ rgba: new Uint8ClampedArray(m.rgba), w: m.w, h: m.h });
+        },
+        reject,
+      });
+      const msg: WorkerRequest = { type: 'probe', id, url };
+      this.workers[worker]?.postMessage(msg);
+    });
   }
 }

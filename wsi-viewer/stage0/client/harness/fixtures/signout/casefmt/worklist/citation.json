@@ -1,0 +1,17 @@
+{
+  "note": "another citation",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/attribution/citation",
+      "value": "Bandi P, et al. 2019."
+    }
+  ],
+  "expect": {
+    "parse": "lint",
+    "rule": "so-worklist",
+    "path": "/attribution/citation",
+    "message": "The attribution citation must be the CAMELYON17 citation of SIGNOUT.md §12 (PE-19)"
+  }
+}

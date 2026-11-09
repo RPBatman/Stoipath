@@ -1,0 +1,17 @@
+{
+  "note": "largestDepositNode is not the annotated node with the largest deposit",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/reference/largestDepositNode",
+      "value": "n4"
+    }
+  ],
+  "expect": {
+    "rule": "so-size-annotated",
+    "severity": "error",
+    "path": "/extensions/signout/reference/largestDepositNode",
+    "message": "The largest annotated deposit is in n2 (3158 µm), not n4"
+  }
+}

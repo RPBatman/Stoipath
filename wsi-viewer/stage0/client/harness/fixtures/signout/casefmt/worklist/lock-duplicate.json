@@ -1,0 +1,20 @@
+{
+  "note": "lock lists timer twice",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/options/lock",
+      "value": [
+        "timer",
+        "timer"
+      ]
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/options/lock",
+    "message": null
+  }
+}

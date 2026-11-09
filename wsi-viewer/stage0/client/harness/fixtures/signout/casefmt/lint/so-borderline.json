@@ -1,0 +1,19 @@
+{
+  "note": "borderline on a macro node",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/nodes/2/reference/borderline",
+      "value": {
+        "reason": "fixture"
+      }
+    }
+  ],
+  "expect": {
+    "rule": "so-borderline",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/2/reference/borderline",
+    "message": "Node n2: borderline is only for ITC or micro nodes with an annotation"
+  }
+}

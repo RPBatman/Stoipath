@@ -1,0 +1,1024 @@
+{
+ "layouts": {
+  "c17rgb": {
+   "file": "pool-c17rgb.bin",
+   "height": 197226,
+   "photometric": "rgb",
+   "size": 1192752,
+   "slide": "patient_004_node_4",
+   "tables": {
+    "at": 0,
+    "length": 289,
+    "md5": "a311df67f36d533387ac6e2f003d2784"
+   },
+   "thumbnail": {
+    "file": "thumb-c17rgb.jpg",
+    "height": 770,
+    "width": 377
+   },
+   "tiles": [
+    {
+     "at": 289,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "blank",
+     "length": 9327,
+     "level": 0,
+     "md5": "aa950cedb614cb2906cee0e62af885d3",
+     "rgbaSha256": "52140e3ce635ce4ac6ddf8b0eb6558c86a353a9cabaee54c1ef89f20214595d7",
+     "uniform": [
+      0,
+      0,
+      0
+     ],
+     "x": 11,
+     "y": 0
+    },
+    {
+     "at": 9616,
+     "crop": [
+      395,
+      512
+     ],
+     "kind": "edge",
+     "length": 49816,
+     "level": 0,
+     "md5": "a01207d74fb064881e00f5168f6370f5",
+     "rgbaSha256": "67040717259286730759402d991ef9fb47356b2cf501b87ebe7729fa18addab7",
+     "x": 188,
+     "y": 384
+    },
+    {
+     "at": 59432,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 21482,
+     "level": 0,
+     "md5": "b79dbac6ceb429eaaaa37f8a989d91f5",
+     "rgbaSha256": "2afadcf1529dbefdc6c004c202cc721f5f2eb3e6e76decda4ae15bf670990a13",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 80914,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 67059,
+     "level": 0,
+     "md5": "1ae7e99e946a05460381b04fc0384fbb",
+     "rgbaSha256": "bfc3e2a0de216fc7accb244eac86921d7806e446a8d08126ac80127208289e11",
+     "x": 2,
+     "y": 0
+    },
+    {
+     "at": 147973,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 46860,
+     "level": 0,
+     "md5": "97636a69869c5d52537b8b471e7ce173",
+     "rgbaSha256": "887f36b411cace6b3e74828dd4f2f3b04a0882589bf40941b1cbbb50a31286df",
+     "x": 3,
+     "y": 0
+    },
+    {
+     "at": 194833,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 47515,
+     "level": 0,
+     "md5": "0d8501de170662fd96fc8bdcbe9e5406",
+     "rgbaSha256": "4df820a628047c9e2a5322705f41ab8340c767932dbf7f0d9fe51bf982318a5a",
+     "x": 4,
+     "y": 0
+    },
+    {
+     "at": 242348,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 32858,
+     "level": 0,
+     "md5": "46b5c74c54b348cea42aab4b0efe4a24",
+     "rgbaSha256": "84764caf72df0e0f55d0eeb7ccdc6786806973d5f93c53d130cf347924f7668a",
+     "x": 10,
+     "y": 0
+    },
+    {
+     "at": 275206,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 28172,
+     "level": 0,
+     "md5": "ac00e14673db81cdb4235ccad9b70c2b",
+     "rgbaSha256": "21c8b6645a130072c0d6bd0ba8534cc08dd596e7c891da0f2f5fb2dd2a3bb79d",
+     "x": 0,
+     "y": 1
+    },
+    {
+     "at": 303378,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 68529,
+     "level": 0,
+     "md5": "1a6888e8098aba0e0d5449ef5ff1e792",
+     "rgbaSha256": "5ededb1dc4a27feabc3a1bf4936ec7caa0c225a29fcd78f8e6c9f2e64b45c670",
+     "x": 1,
+     "y": 1
+    },
+    {
+     "at": 371907,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 61681,
+     "level": 0,
+     "md5": "4ae9a2d2dd128450e9e522fc2846d804",
+     "rgbaSha256": "c84e77b7fb4a5f9f24b15283c961f6440b80d3ed535f5c3f8044ef1c71abce86",
+     "x": 20,
+     "y": 174
+    },
+    {
+     "at": 433588,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 52472,
+     "level": 0,
+     "md5": "1a40197f4625138f0d2d7582cc016d12",
+     "rgbaSha256": "05380efaf2062f99157c2688d7ce5d766beb9a87cbaa485326c16808997554cf",
+     "x": 21,
+     "y": 174
+    },
+    {
+     "at": 486060,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 50983,
+     "level": 0,
+     "md5": "1ebdce3d832a18ace69028a5a0260561",
+     "rgbaSha256": "8bdf1ce54664e20dd552a0e2aaa724dae8815eb907c55ff0ef7ae47c42de695f",
+     "x": 22,
+     "y": 174
+    },
+    {
+     "at": 537043,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 51207,
+     "level": 0,
+     "md5": "a34f13a3bbb8a05f7a794b50552679a6",
+     "rgbaSha256": "f546a2f65c2cb0fe676af42926c97ab8749385c61b136c89d7c817f7ec0bd966",
+     "x": 23,
+     "y": 174
+    },
+    {
+     "at": 588250,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 49612,
+     "level": 0,
+     "md5": "68b0a80dd20001af62db1aa2ec9dc0b3",
+     "rgbaSha256": "4364f84dc584332c686bfcc07c3255ea89ee585fca57a229e1c1ede816691af4",
+     "x": 185,
+     "y": 384
+    },
+    {
+     "at": 637862,
+     "crop": [
+      512,
+      154
+     ],
+     "kind": "edge",
+     "length": 22096,
+     "level": 2,
+     "md5": "7bffd66478ea0cd44384bc34cba7c1ae",
+     "rgbaSha256": "53324491bebaf08a7cdb382d860c3d2e6c2f9ec98e49ca13c9e071ce670e8cbe",
+     "x": 39,
+     "y": 96
+    },
+    {
+     "at": 659958,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 34013,
+     "level": 2,
+     "md5": "69d0030e5e647d5665a4b75833b8d6fd",
+     "rgbaSha256": "a3a97f72e42de0dd37008de758ab105302ecd0cf3c6ef61a7a154560b1d85f0c",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 693971,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 25787,
+     "level": 2,
+     "md5": "b3dac8ea8d89d16fa59360dcef0ae023",
+     "rgbaSha256": "a5aeacf7d9b55d47883a885857d48c52f0c0298f4fa32e70b9442be634e5721b",
+     "x": 1,
+     "y": 0
+    },
+    {
+     "at": 719758,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 19568,
+     "level": 2,
+     "md5": "a26e6363fdcd358aa3f251ac9fb1a5c9",
+     "rgbaSha256": "4f1a49be2005d29f570b41d5edc9f7f664de44b619506ce6c4cbf070fe7bfee7",
+     "x": 2,
+     "y": 0
+    },
+    {
+     "at": 739326,
+     "crop": [
+      512,
+      77
+     ],
+     "kind": "edge",
+     "length": 21633,
+     "level": 3,
+     "md5": "b8943d0ef26ecf09e58ca74fd45b5035",
+     "rgbaSha256": "a9fc02d51e5f4aac017a7a54d28c4eb428b0ad3105c9e67013be9ad7411c3e9d",
+     "x": 12,
+     "y": 48
+    },
+    {
+     "at": 760959,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 27819,
+     "level": 3,
+     "md5": "fe7bc3193e2f8f80a552de38ad115804",
+     "rgbaSha256": "0c879bf7eb79c795b736652305262de36b36ab78c6d8bc8c6cb0ccdf54f0153c",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 788778,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 15000,
+     "level": 3,
+     "md5": "532a6e77ef457f2a44caf36088a86008",
+     "rgbaSha256": "b131827c45360f6c07be671458dbf4300bc61c9ca71b311857dd5d9f9ecbacd9",
+     "x": 1,
+     "y": 0
+    },
+    {
+     "at": 803778,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 26167,
+     "level": 4,
+     "md5": "41dc34d2527a92f990581f1cbe921a90",
+     "rgbaSha256": "4efc97af406e8c6d3c9168e7683488229e4b45988c4b07a50e08e51555678fcd",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 829945,
+     "crop": [
+      460,
+      512
+     ],
+     "kind": "edge",
+     "length": 14144,
+     "level": 5,
+     "md5": "710eaa3e4c5a385e354002e3918fcc3b",
+     "rgbaSha256": "f2000ff7b3c747c7789c5ea27a0947de79b914f226c76599ca93a3b4e87e80f8",
+     "x": 5,
+     "y": 2
+    },
+    {
+     "at": 844089,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 21771,
+     "level": 5,
+     "md5": "a35ce8838c1c9ad619be5224d2ed0b72",
+     "rgbaSha256": "2011ff40f518834fc2faf127b51662861fe71fcd5e59b3c883f29cd9796b0811",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 865860,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 21220,
+     "level": 5,
+     "md5": "7bb7dec9f2c056fd6e0d305f82e30ec8",
+     "rgbaSha256": "86291de33f0502044e548ccd13bb9c37c2f76ebb08410e8c343f6855163bf648",
+     "x": 0,
+     "y": 1
+    },
+    {
+     "at": 887080,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 21190,
+     "level": 5,
+     "md5": "71d0f96aacd6d6e8461e3794a835a516",
+     "rgbaSha256": "c29b479eabb6d7824299b1784ecf87046d6c415a338a23c092f6d20be975426e",
+     "x": 0,
+     "y": 2
+    },
+    {
+     "at": 908270,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 25724,
+     "level": 5,
+     "md5": "1a748bf5016c4bdaf1abd5d82ad75a7e",
+     "rgbaSha256": "4b62457a3b1f009def7859f54d10dfbc6ca44ef334c2024f9972e6423d9c0c8b",
+     "x": 0,
+     "y": 3
+    },
+    {
+     "at": 933994,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 18253,
+     "level": 5,
+     "md5": "6b7d1870b34a10b03faef1f7bdd0f9d2",
+     "png": "truth/c17rgb_L5_1_11.png",
+     "rgbaSha256": "b2d0c3f43a68f846ba2df24fae2ca0953a4a33a586b11e908313b0dcc403c859",
+     "x": 1,
+     "y": 11
+    },
+    {
+     "at": 952247,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 18934,
+     "level": 6,
+     "md5": "95b2595453474064b3a3aac921dc58ab",
+     "rgbaSha256": "0d593e9a2d11dba16fdf209d8b0caf22bd061be637fddc5a432c3a7953e7b873",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 971181,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 27867,
+     "level": 6,
+     "md5": "159395ddac25caf7aad250508093f835",
+     "rgbaSha256": "014cce35dd1a337369e1b931514490c89b356e1dbc48cc822fa940ac714f0c4d",
+     "x": 0,
+     "y": 1
+    },
+    {
+     "at": 999048,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 14603,
+     "level": 6,
+     "md5": "77655b955a4de86dcec746802be9dc91",
+     "rgbaSha256": "a25180db64eacaccd7727f562683fdef60a7df4a8bb5ec16bf57b00e44764edb",
+     "x": 0,
+     "y": 4
+    },
+    {
+     "at": 1013651,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 18894,
+     "level": 6,
+     "md5": "344372c3d2ab085bbb7f0923dfebc78a",
+     "rgbaSha256": "f810c2cdb961427245d43cffd98e46bf9a62b8e44c032b8cb038e5815771c313",
+     "x": 0,
+     "y": 5
+    },
+    {
+     "at": 1032545,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 19678,
+     "level": 6,
+     "md5": "c4ea92d84e6085de0880c9ee68f1eaec",
+     "rgbaSha256": "1339990017566bc9051be5c74233111340a9d97efd46480373ef574ebb2829b5",
+     "x": 1,
+     "y": 5
+    },
+    {
+     "at": 1052223,
+     "crop": [
+      243,
+      512
+     ],
+     "kind": "edge",
+     "length": 16171,
+     "level": 7,
+     "md5": "00f347ab33c5f1c17b1b91817cd6660c",
+     "rgbaSha256": "1dcb7d729a39367947c04a78679389a537990f969647083113a334472a4375f1",
+     "x": 1,
+     "y": 0
+    },
+    {
+     "at": 1068394,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 24125,
+     "level": 7,
+     "md5": "11c97b463817dad0acc754799d26d24f",
+     "rgbaSha256": "ed62ee66b139f6382923b2268fd9ff2bae9dd80e5f11473af29e0c006de987ec",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 1092519,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 20941,
+     "level": 7,
+     "md5": "db094821d0a815153f2bef78e1a8be8e",
+     "rgbaSha256": "0341798f488affc0d01a89a7737f12ffc1b963623579c80758208777b982ecf9",
+     "x": 0,
+     "y": 2
+    },
+    {
+     "at": 1113460,
+     "crop": [
+      377,
+      512
+     ],
+     "kind": "top",
+     "length": 58727,
+     "level": 8,
+     "md5": "871f6687ca0f9a3907597a5cf5c1b8fd",
+     "rgbaSha256": "cf8c9f4191956c0e51bf5aa792be18d0a9ad4d8de05fe8fb9ee6576787396bcd",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 1172187,
+     "crop": [
+      377,
+      258
+     ],
+     "kind": "top",
+     "length": 20565,
+     "level": 8,
+     "md5": "4354c303d85fed90c1f99d4a40b951ec",
+     "rgbaSha256": "993faaf78b1797fac0213d6d1d71f99b238fb4d1660a015598215632d109efb6",
+     "x": 0,
+     "y": 1
+    }
+   ],
+   "width": 96651
+  },
+  "c17ycc": {
+   "file": "pool-c17ycc.bin",
+   "height": 93696,
+   "photometric": "ycbcr",
+   "size": 258619,
+   "slide": "patient_092_node_1",
+   "tables": {
+    "at": 0,
+    "length": 574,
+    "md5": "956a3b2452079b4b67417e408fe5e27b"
+   },
+   "thumbnail": {
+    "file": "thumb-c17ycc.jpg",
+    "height": 183,
+    "width": 360
+   },
+   "tiles": [
+    {
+     "at": 574,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 4647,
+     "level": 0,
+     "md5": "ab67fd032461f49e81409f094ae5c3f9",
+     "rgbaSha256": "ebc802c63abb575e6ff7e794709e29012bf9b598ed5ef7ea24c050c18fea5270",
+     "uniform": [
+      254,
+      254,
+      254
+     ],
+     "x": 148,
+     "y": 0
+    },
+    {
+     "at": 5221,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 6922,
+     "level": 0,
+     "md5": "8d6252d3be5c6211067d9e20a1a90b39",
+     "rgbaSha256": "9767df4cfe40369b31a4a6add7de1c3154608ab2a549504b1505d4b24494f131",
+     "x": 148,
+     "y": 47
+    },
+    {
+     "at": 12143,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 6830,
+     "level": 0,
+     "md5": "d027fb0c0564ab9c3c9b44e8882c80f5",
+     "rgbaSha256": "04f96e181d43dde25a4107ad2e4126006f47c0bb4e1b310818826b0233d63aaf",
+     "x": 149,
+     "y": 47
+    },
+    {
+     "at": 18973,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 6743,
+     "level": 0,
+     "md5": "7621dead307a6bfd58faed71b3f553b7",
+     "rgbaSha256": "5ecb229c27cfef01f7e62592fa9927d1e83c2759df1a9af10c07e97636411876",
+     "x": 150,
+     "y": 47
+    },
+    {
+     "at": 25716,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 6995,
+     "level": 0,
+     "md5": "ea12e101a17811ec027d1095d714ac2c",
+     "rgbaSha256": "105b46b001ec17d0a4bd3284ab334dabbe2ee761e5f7d449cae5706cd69aba20",
+     "x": 151,
+     "y": 47
+    },
+    {
+     "at": 32711,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 6909,
+     "level": 0,
+     "md5": "92f30aab4a593c1f9cf683720c942777",
+     "rgbaSha256": "7084e90638cb7a3f1ea265f4b93a2d6b7054db3945f9e7e054db24bcd137e84f",
+     "x": 152,
+     "y": 47
+    },
+    {
+     "at": 39620,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5491,
+     "level": 0,
+     "md5": "f0e301c7fef5baab0958a676b9a02f8b",
+     "rgbaSha256": "cac09128c38d90488210e98eff2cd593afa00842676c7006c3c45d49f2830de8",
+     "x": 153,
+     "y": 47
+    },
+    {
+     "at": 45111,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 7076,
+     "level": 0,
+     "md5": "ee874a7b0b1607415447fa72f792b0ad",
+     "rgbaSha256": "17f5397e06057c663a03a56f6d90f188afc229caef944ab0a147583b4fd499f6",
+     "x": 148,
+     "y": 48
+    },
+    {
+     "at": 52187,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 6755,
+     "level": 0,
+     "md5": "e1450c73763105de751d0dd24ce08873",
+     "rgbaSha256": "42919087d027ee63279e622a2ced487bec28ea55274e3970a39a0e937aef6d51",
+     "x": 149,
+     "y": 48
+    },
+    {
+     "at": 58942,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 7032,
+     "level": 0,
+     "md5": "1486c196c0193f31ad350f6f204ed9be",
+     "rgbaSha256": "9edb785e21b4576a9559ef3ec3d86d6dab662451df786b666e749101267f4e78",
+     "x": 150,
+     "y": 48
+    },
+    {
+     "at": 65974,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 4869,
+     "level": 1,
+     "md5": "1869248d5122081bf041af7b20e049d2",
+     "rgbaSha256": "3f0d0c04fbbb8c7b202cf5f9352588de2a8cd1efe66b3a2a765b11e8258b5a5d",
+     "x": 171,
+     "y": 62
+    },
+    {
+     "at": 70843,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5377,
+     "level": 1,
+     "md5": "dd0c2ae39ad8b0117b723f48d39b1172",
+     "rgbaSha256": "936eac9b9b2b86ca8d4953225460490e7a0f819f8ed384e4226091cf76e8fc65",
+     "x": 172,
+     "y": 62
+    },
+    {
+     "at": 76220,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5412,
+     "level": 1,
+     "md5": "05fae816aaba6118541692a87ab5c2e3",
+     "rgbaSha256": "705a13c6c250600ea55211a75c18499205905df4e0478cc0c7d018c3d211df22",
+     "x": 173,
+     "y": 62
+    },
+    {
+     "at": 81632,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 4744,
+     "level": 2,
+     "md5": "7c0ede91279f67822882b4c13565ce43",
+     "png": "truth/c17ycc_L2_85_31.png",
+     "rgbaSha256": "bf8317c91db406a999e5d0d08feecaafde496376aedfd2cd239ed9ebb346b1ee",
+     "x": 85,
+     "y": 31
+    },
+    {
+     "at": 86376,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5417,
+     "level": 2,
+     "md5": "bc55e741bef9b149de2403d688c6eed5",
+     "rgbaSha256": "c7a349956d48223f72037835ea054cf933e856b8d1a26e46cd0be7a4d70f244d",
+     "x": 86,
+     "y": 31
+    },
+    {
+     "at": 91793,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5372,
+     "level": 2,
+     "md5": "ccf75a49d7107243797ba24e1d91d1d9",
+     "rgbaSha256": "996b784a8f4a37e85aa5b305f8c612db3567ea915dd0b8965971d2a2f9d02394",
+     "x": 87,
+     "y": 31
+    },
+    {
+     "at": 97165,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5359,
+     "level": 2,
+     "md5": "bec7bb901b891467ac31177b065795ec",
+     "rgbaSha256": "63d11b013266f8d5cfcc560918796bec55e9c903b961156391c2a9d24d2ae5c7",
+     "x": 88,
+     "y": 31
+    },
+    {
+     "at": 102524,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5274,
+     "level": 2,
+     "md5": "c71cd7bcac03c842bf4e38dadcaeee3c",
+     "rgbaSha256": "c595e36dd5963d57438bf53c97b7e4a0177c3cc286f91b32a1d12b52e9fe045b",
+     "x": 89,
+     "y": 31
+    },
+    {
+     "at": 107798,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5863,
+     "level": 3,
+     "md5": "34abe5173835a470e3ed570e66c082c3",
+     "rgbaSha256": "6cccaef926285dc52a2dc9d38e5f15f7d1b09b9765377c51a00361f9f2f48970",
+     "x": 16,
+     "y": 5
+    },
+    {
+     "at": 113661,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5878,
+     "level": 3,
+     "md5": "fad3ca80ee4475d32d328bbebd09f64f",
+     "rgbaSha256": "7a9f9e838569cd3635a9829efb8a1c33da89c8b729545f5caa3d9dc5b7df2cd6",
+     "x": 17,
+     "y": 5
+    },
+    {
+     "at": 119539,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5723,
+     "level": 3,
+     "md5": "8c392d0595fffa44b353f0a67dceb0b0",
+     "rgbaSha256": "49fbdb1f3ffbac16c6afadbb41c6b6aba0f38e36c763bded773aec9af8214b0a",
+     "x": 16,
+     "y": 6
+    },
+    {
+     "at": 125262,
+     "crop": [
+      256,
+      512
+     ],
+     "kind": "edge",
+     "length": 5185,
+     "level": 4,
+     "md5": "33b62f95a7dac8613ae34b4975d407ea",
+     "rgbaSha256": "a9539ab332edb374a5d269e3d9ed5cbdd3e0c8c10176745eee7dae4969f7c709",
+     "x": 22,
+     "y": 6
+    },
+    {
+     "at": 130447,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5519,
+     "level": 4,
+     "md5": "42976815737d4cba5384358e451cb9e1",
+     "rgbaSha256": "d96d2858577f76364f63832adf79c07386937fe24018b6898779097f0e5faf87",
+     "x": 8,
+     "y": 2
+    },
+    {
+     "at": 135966,
+     "crop": [
+      128,
+      512
+     ],
+     "kind": "edge",
+     "length": 5325,
+     "level": 5,
+     "md5": "87b1a78977b8b6eca2c4007e00b6a0d0",
+     "rgbaSha256": "322237961df6e08a4c8f4c6a2c5436c3c36de610b8c2ab656b111ba865efed85",
+     "x": 11,
+     "y": 3
+    },
+    {
+     "at": 141291,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 5347,
+     "level": 5,
+     "md5": "f095943a4823baf6b194507366d11a36",
+     "rgbaSha256": "9dab29911288756aff62877f42562a31032d22650468065b7913636b426e5715",
+     "x": 4,
+     "y": 0
+    },
+    {
+     "at": 146638,
+     "crop": [
+      320,
+      512
+     ],
+     "kind": "edge",
+     "length": 5330,
+     "level": 6,
+     "md5": "89304f4cb78742c169c56bc68d3ae271",
+     "rgbaSha256": "aea3a798677d6f967ccc9d3ef6933094eb0bfbdde4a397a138d94a2a86824003",
+     "x": 5,
+     "y": 1
+    },
+    {
+     "at": 151968,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 21221,
+     "level": 6,
+     "md5": "c4012a08606cbac30226913b56e58a04",
+     "rgbaSha256": "ee6b2f46513663c863b4394138601ac41eff906cb1f826949172f82305846253",
+     "x": 2,
+     "y": 0
+    },
+    {
+     "at": 173189,
+     "crop": [
+      416,
+      512
+     ],
+     "kind": "edge",
+     "length": 17028,
+     "level": 7,
+     "md5": "4bddf9ab581df4d3b149c45811c65b1f",
+     "rgbaSha256": "5aabbe157c002b5bfa2e8e13b18b7189ddf563f2b8a249e96c2f0c5ab10e7043",
+     "x": 2,
+     "y": 0
+    },
+    {
+     "at": 190217,
+     "crop": [
+      512,
+      512
+     ],
+     "kind": "tissue",
+     "length": 40547,
+     "level": 7,
+     "md5": "7510683c36b0c42249d654c881454b27",
+     "rgbaSha256": "cb6c450d14621d1234bbb6b0fae0eb86783661abced5cc05885a7dacc46d009d",
+     "x": 1,
+     "y": 0
+    },
+    {
+     "at": 230764,
+     "crop": [
+      512,
+      366
+     ],
+     "kind": "edge",
+     "length": 17778,
+     "level": 8,
+     "md5": "8f09d07e8622066f8291a40a00879e78",
+     "rgbaSha256": "4a47c62c46fb616a80a02174692efe513aae6dee2d1a15f7c963a8f1193c029c",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "at": 248542,
+     "crop": [
+      360,
+      183
+     ],
+     "kind": "top",
+     "length": 10077,
+     "level": 9,
+     "md5": "6168c31c0f12b645d3ddedc42bb90670",
+     "rgbaSha256": "8c77f295d324ce3af7776bff136d85f35fc11fa1ddfcaa34edaa3df193831446",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "width": 184320
+  }
+ },
+ "note": "Real CAMELYON17 bytes (CC0 1.0, Radboud UMC), cut from the build cache; no request to the bucket was made to build this file.",
+ "schema": "stoipath.signout.fixture-pool/1"
+}

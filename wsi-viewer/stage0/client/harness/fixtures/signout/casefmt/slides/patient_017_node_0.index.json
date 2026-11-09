@@ -1,0 +1,18 @@
+{
+  "schema": "stoipath.slide-index/1",
+  "name": "camelyon17.c17s-0006",
+  "width": 94968,
+  "height": 210579,
+  "mpp": 0.2431,
+  "thumbnail": {
+    "url": "camelyon17.c17s-0006.thumb.jpg",
+    "width": 377,
+    "height": 770
+  },
+  "source": {
+    "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/images/patient_017_node_0.tif",
+    "sha256": null,
+    "md5": "c36c84ddf372641888d1aa41e8b4790b",
+    "format": "BigTIFF · JPEG"
+  }
+}

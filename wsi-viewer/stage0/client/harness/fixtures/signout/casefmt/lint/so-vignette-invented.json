@@ -1,0 +1,17 @@
+{
+  "note": "a vignette without the positive check sentence",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/case/vignette/text",
+      "value": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set treats each slide as a node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules."
+    }
+  ],
+  "expect": {
+    "rule": "so-vignette-invented",
+    "severity": "error",
+    "path": "/case/vignette/text",
+    "message": "The vignette must be invented, generic and labelled (D13)"
+  }
+}

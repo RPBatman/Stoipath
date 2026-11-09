@@ -1,0 +1,2484 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpbatman.github.io/Stoipath/client/learn/schema/signout.schema.json",
+  "title": "Stoipath Learn L2 practice report files (stoipath.learn.signout-case/1, stoipath.learn.worklist/1, stoipath.learn.signout-results/1)",
+  "description": "The closed schemas of the practice report's files (SIGNOUT.md §4, §7.1, §7.2, Appendix A-D; owner: casefmt from Wave S1, skeleton by the sign-out integrator). Entry points: $defs/SignoutCaseModule (a whole case file: Learn's ModuleFile plus the case-level rules), $defs/SignoutCase (extensions.signout), $defs/WorklistFile, $defs/SignoutResultsFile, $defs/SlideIndex ($ref to slide-index.schema.json, owned by source) and $defs/FactsFile ($ref to Learn's). Subschemas carrying the annotation keyword x-lint-rule mirror a semantic lint rule of §7.2: validators that do not know the keyword ignore it (JSON Schema 2020-12 annotations); src/signout/casefmt evaluates them after the structural pass so that its parser reports one error per fault, and its lint reports them under the named rule. The TypeScript twin is stage0/client/src/signout/contracts.ts §1, §2, §5; the TypeScript reader is src/signout/casefmt/parse.ts, which interprets this file itself.",
+  "$defs": {
+    "NodeLabel": {
+      "description": "CAMELYON17 node label, ordinal negative < itc < micro < macro (SIGNOUT.md §6.1).",
+      "enum": [
+        "negative",
+        "itc",
+        "micro",
+        "macro"
+      ]
+    },
+    "PnCategory": {
+      "description": "pN under CAMELYON17's simplified rules, ordinal pN0 < pN0(i+) < pN1mi < pN1 < pN2 (§6.1).",
+      "enum": [
+        "pN0",
+        "pN0(i+)",
+        "pN1mi",
+        "pN1",
+        "pN2"
+      ]
+    },
+    "NodeIndex": {
+      "description": "The data set's node index 0-4 (D29); learner-facing strings add one.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
+    "NodeRef": {
+      "type": "string",
+      "pattern": "^n[0-4]$"
+    },
+    "SlideRef": {
+      "description": "A ModuleSlide.ref of the case (module.schema.json SlideRef).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+    },
+    "SlideId": {
+      "description": "The data set's slide id (patient_017_node_0): used after submission and in exports only (D12).",
+      "type": "string",
+      "pattern": "^patient_[0-9]{3}_node_[0-4]$"
+    },
+    "Text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "ShortText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "IsoDateTime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?Z$"
+    },
+    "Sha256Ref": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "Semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "NonNegative": {
+      "type": "number",
+      "minimum": 0
+    },
+    "NumberOrNull": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ]
+    },
+    "NodeIndexOrNull": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/NodeIndex"
+        }
+      ]
+    },
+    "Bbox": {
+      "description": "Level-0 px [x0, y0, x1, y1].",
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "Count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "NeutralText": {
+      "description": "D12 / ER-15: a learner-visible identity that names no label, stage or patient id (lint so-labels-neutral).",
+      "x-lint-rule": "so-labels-neutral",
+      "not": {
+        "pattern": "[Nn][Ee][Gg][Aa][Tt][Ii][Vv][Ee]|[Ii][Tt][Cc]|[Mm][Ii][Cc][Rr][Oo]|[Mm][Aa][Cc][Rr][Oo]|[Pp][Nn]|[Mm][Ee][Tt][Aa][Ss][Tt][Aa]|[Pp][Aa][Tt][Ii][Ee][Nn][Tt]_"
+      }
+    },
+    "NodeReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "sentence"
+      ],
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/NodeLabel"
+        },
+        "sentence": {
+          "$ref": "#/$defs/Text"
+        },
+        "largestDeposit_um": {
+          "description": "Maximum Feret diameter of the largest single polygon, µm (§6.3).",
+          "$ref": "#/$defs/NonNegative"
+        },
+        "clusterSpan_um": {
+          "description": "Feret of the merged polygons within 100 µm: annotation geometry, never a deposit size.",
+          "$ref": "#/$defs/NonNegative"
+        },
+        "polygons": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "area_mm2": {
+          "$ref": "#/$defs/NonNegative"
+        },
+        "sizeBasis": {
+          "$ref": "#/$defs/Text"
+        },
+        "borderline": {
+          "description": "PE-3: only on an itc or micro node with an annotation.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reason"
+          ],
+          "properties": {
+            "reason": {
+              "$ref": "#/$defs/Text"
+            }
+          }
+        }
+      }
+    },
+    "DepositCluster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "featureIds",
+        "feret_um",
+        "bbox"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "featureIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "feret_um": {
+          "$ref": "#/$defs/NonNegative"
+        },
+        "bbox": {
+          "$ref": "#/$defs/Bbox"
+        }
+      }
+    },
+    "NodeAnnotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer",
+        "version",
+        "clusters"
+      ],
+      "properties": {
+        "layer": {
+          "description": "An overlay layer id of the slide's catalogue entry (camelyon17-annotation).",
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "version": {
+          "description": "The overlay file's provenance.version.",
+          "type": "string",
+          "minLength": 1
+        },
+        "clusters": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/DepositCluster"
+          }
+        }
+      }
+    },
+    "SignoutCaseNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "title",
+        "slide",
+        "slideId",
+        "reference",
+        "annotation",
+        "tissueBbox"
+      ],
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/NodeRef"
+        },
+        "title": {
+          "type": "string",
+          "pattern": "^Node [1-5]$"
+        },
+        "slide": {
+          "$ref": "#/$defs/SlideRef"
+        },
+        "slideId": {
+          "$ref": "#/$defs/SlideId"
+        },
+        "reference": {
+          "$ref": "#/$defs/NodeReference"
+        },
+        "annotation": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/NodeAnnotation"
+            }
+          ]
+        },
+        "tissueBbox": {
+          "$ref": "#/$defs/Bbox"
+        }
+      },
+      "allOf": [
+        {
+          "description": "A size appears only on a node with an annotation (lint so-size-annotated).",
+          "x-lint-rule": "so-size-annotated",
+          "if": {
+            "required": [
+              "annotation"
+            ],
+            "properties": {
+              "annotation": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reference": {
+                "properties": {
+                  "largestDeposit_um": {
+                    "not": {}
+                  },
+                  "clusterSpan_um": {
+                    "not": {}
+                  },
+                  "polygons": {
+                    "not": {}
+                  },
+                  "area_mm2": {
+                    "not": {}
+                  },
+                  "sizeBasis": {
+                    "not": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "borderline only on an itc or micro node that has an annotation (lint so-borderline).",
+          "x-lint-rule": "so-borderline",
+          "if": {
+            "anyOf": [
+              {
+                "required": [
+                  "annotation"
+                ],
+                "properties": {
+                  "annotation": {
+                    "type": "null"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "reference"
+                ],
+                "properties": {
+                  "reference": {
+                    "required": [
+                      "label"
+                    ],
+                    "properties": {
+                      "label": {
+                        "enum": [
+                          "negative",
+                          "macro"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "reference": {
+                "properties": {
+                  "borderline": {
+                    "not": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CaseReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pN",
+        "nodesExamined",
+        "nodesPositive",
+        "nodesMacro",
+        "nodesMicro",
+        "nodesItc",
+        "largestDeposit_um",
+        "largestDepositNode",
+        "sentence"
+      ],
+      "properties": {
+        "pN": {
+          "$ref": "#/$defs/PnCategory"
+        },
+        "nodesExamined": {
+          "const": 5
+        },
+        "nodesPositive": {
+          "$ref": "#/$defs/Count"
+        },
+        "nodesMacro": {
+          "$ref": "#/$defs/Count"
+        },
+        "nodesMicro": {
+          "$ref": "#/$defs/Count"
+        },
+        "nodesItc": {
+          "$ref": "#/$defs/Count"
+        },
+        "largestDeposit_um": {
+          "$ref": "#/$defs/NumberOrNull"
+        },
+        "largestDepositNode": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/NodeRef"
+            }
+          ]
+        },
+        "sentence": {
+          "$ref": "#/$defs/Text"
+        }
+      }
+    },
+    "NodeIsPositive": {
+      "description": "A case node whose reference label is micro or macro (used by the so-pn-derivable mirror).",
+      "required": [
+        "reference"
+      ],
+      "properties": {
+        "reference": {
+          "required": [
+            "label"
+          ],
+          "properties": {
+            "label": {
+              "enum": [
+                "micro",
+                "macro"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "NodeIsMacro": {
+      "description": "A case node whose reference label is macro (used by the so-pn-derivable mirror).",
+      "required": [
+        "reference"
+      ],
+      "properties": {
+        "reference": {
+          "required": [
+            "label"
+          ],
+          "properties": {
+            "label": {
+              "enum": [
+                "macro"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "NodeIsMicro": {
+      "description": "A case node whose reference label is micro (used by the so-pn-derivable mirror).",
+      "required": [
+        "reference"
+      ],
+      "properties": {
+        "reference": {
+          "required": [
+            "label"
+          ],
+          "properties": {
+            "label": {
+              "enum": [
+                "micro"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "NodeIsItc": {
+      "description": "A case node whose reference label is itc (used by the so-pn-derivable mirror).",
+      "required": [
+        "reference"
+      ],
+      "properties": {
+        "reference": {
+          "required": [
+            "label"
+          ],
+          "properties": {
+            "label": {
+              "enum": [
+                "itc"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "SignoutCase": {
+      "description": "extensions.signout of a case module (SIGNOUT.md §7.1, Appendix A; contracts.ts §1 SignoutCase). Closed. The allOf members tagged x-lint-rule mirror the semantic lint rules of §7.2 (the TypeScript parser evaluates them after the structure, the lint reports them under their own rule id).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "dataset",
+        "rules",
+        "nodes",
+        "reference",
+        "report",
+        "teaching"
+      ],
+      "properties": {
+        "schema": {
+          "const": "stoipath.learn.signout-case/1"
+        },
+        "dataset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "patient",
+            "centre",
+            "stagesCsv",
+            "annotations"
+          ],
+          "properties": {
+            "name": {
+              "const": "CAMELYON17"
+            },
+            "patient": {
+              "description": "Shown only after submission and in exports (D12).",
+              "type": "string",
+              "pattern": "^patient_[0-9]{3}$"
+            },
+            "centre": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            },
+            "stagesCsv": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "url",
+                "sha256"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^(sha256:)?[0-9a-f]{64}$"
+                }
+              }
+            },
+            "annotations": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^patient_[0-9]{3}_node_[0-4]\\.xml$"
+              }
+            }
+          }
+        },
+        "rules": {
+          "const": "camelyon17-simplified/1"
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/SignoutCaseNode"
+          }
+        },
+        "reference": {
+          "$ref": "#/$defs/CaseReference"
+        },
+        "report": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sizeTolerance",
+            "viewedAt_um_per_px",
+            "adequateScale_um_per_px"
+          ],
+          "properties": {
+            "sizeTolerance": {
+              "const": 0.2
+            },
+            "viewedAt_um_per_px": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "adequateScale_um_per_px": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "itc",
+                "micro",
+                "macro"
+              ],
+              "properties": {
+                "itc": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "micro": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "macro": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          }
+        },
+        "teaching": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "text"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^T[0-9]{1,2}$"
+              },
+              "text": {
+                "$ref": "#/$defs/Text"
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "description": "reference.pN follows from the node labels under CAMELYON17's simplified rules (§6.1), and the four counts equal the counts of the labels (lint so-pn-derivable).",
+          "x-lint-rule": "so-pn-derivable",
+          "allOf": [
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "allOf": [
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsPositive"
+                        },
+                        "minContains": 0,
+                        "maxContains": 0
+                      },
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsItc"
+                        },
+                        "minContains": 0,
+                        "maxContains": 0
+                      }
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "pN": {
+                        "const": "pN0"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "allOf": [
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsPositive"
+                        },
+                        "minContains": 0,
+                        "maxContains": 0
+                      },
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsItc"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "pN": {
+                        "const": "pN0(i+)"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "allOf": [
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsPositive"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsMacro"
+                        },
+                        "minContains": 0,
+                        "maxContains": 0
+                      }
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "pN": {
+                        "const": "pN1mi"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "allOf": [
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsMacro"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsPositive"
+                        },
+                        "maxContains": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "pN": {
+                        "const": "pN1"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "allOf": [
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsMacro"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "$ref": "#/$defs/NodeIsPositive"
+                        },
+                        "minContains": 4
+                      }
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "pN": {
+                        "const": "pN2"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsPositive"
+                    },
+                    "minContains": 0,
+                    "maxContains": 0
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesPositive": {
+                        "const": 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsPositive"
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesPositive": {
+                        "const": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsPositive"
+                    },
+                    "minContains": 2,
+                    "maxContains": 2
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesPositive": {
+                        "const": 2
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsPositive"
+                    },
+                    "minContains": 3,
+                    "maxContains": 3
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesPositive": {
+                        "const": 3
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsPositive"
+                    },
+                    "minContains": 4,
+                    "maxContains": 4
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesPositive": {
+                        "const": 4
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsPositive"
+                    },
+                    "minContains": 5,
+                    "maxContains": 5
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesPositive": {
+                        "const": 5
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMacro"
+                    },
+                    "minContains": 0,
+                    "maxContains": 0
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMacro": {
+                        "const": 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMacro"
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMacro": {
+                        "const": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMacro"
+                    },
+                    "minContains": 2,
+                    "maxContains": 2
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMacro": {
+                        "const": 2
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMacro"
+                    },
+                    "minContains": 3,
+                    "maxContains": 3
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMacro": {
+                        "const": 3
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMacro"
+                    },
+                    "minContains": 4,
+                    "maxContains": 4
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMacro": {
+                        "const": 4
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMacro"
+                    },
+                    "minContains": 5,
+                    "maxContains": 5
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMacro": {
+                        "const": 5
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMicro"
+                    },
+                    "minContains": 0,
+                    "maxContains": 0
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMicro": {
+                        "const": 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMicro"
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMicro": {
+                        "const": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMicro"
+                    },
+                    "minContains": 2,
+                    "maxContains": 2
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMicro": {
+                        "const": 2
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMicro"
+                    },
+                    "minContains": 3,
+                    "maxContains": 3
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMicro": {
+                        "const": 3
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMicro"
+                    },
+                    "minContains": 4,
+                    "maxContains": 4
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMicro": {
+                        "const": 4
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsMicro"
+                    },
+                    "minContains": 5,
+                    "maxContains": 5
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesMicro": {
+                        "const": 5
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsItc"
+                    },
+                    "minContains": 0,
+                    "maxContains": 0
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesItc": {
+                        "const": 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsItc"
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesItc": {
+                        "const": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsItc"
+                    },
+                    "minContains": 2,
+                    "maxContains": 2
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesItc": {
+                        "const": 2
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsItc"
+                    },
+                    "minContains": 3,
+                    "maxContains": 3
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesItc": {
+                        "const": 3
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsItc"
+                    },
+                    "minContains": 4,
+                    "maxContains": 4
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesItc": {
+                        "const": 4
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "nodes"
+                ],
+                "properties": {
+                  "nodes": {
+                    "type": "array",
+                    "contains": {
+                      "$ref": "#/$defs/NodeIsItc"
+                    },
+                    "minContains": 5,
+                    "maxContains": 5
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "reference": {
+                    "properties": {
+                      "nodesItc": {
+                        "const": 5
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "SignoutCaseModule": {
+      "description": "A whole case file: a Learn module (module.schema.json, Learn's format parses it) with the case-level constraints of SIGNOUT.md §7.1 / §7.2 and extensions.signout. Python validates against this entry point; the TypeScript parser leaves the module part to Learn's format.parseModule.",
+      "allOf": [
+        {
+          "$ref": "module.schema.json#/$defs/ModuleFile"
+        },
+        {
+          "type": "object",
+          "required": [
+            "extensions"
+          ],
+          "properties": {
+            "extensions": {
+              "type": "object",
+              "required": [
+                "signout"
+              ],
+              "properties": {
+                "signout": {
+                  "$ref": "#/$defs/SignoutCase"
+                }
+              }
+            },
+            "slides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "$ref": "#/$defs/NeutralText"
+                  },
+                  "catalogueId": {
+                    "$ref": "#/$defs/NeutralText"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "D13 / PE-6: the vignette is invented, generic and labelled (lint so-vignette-invented).",
+          "x-lint-rule": "so-vignette-invented",
+          "type": "object",
+          "required": [
+            "case"
+          ],
+          "properties": {
+            "case": {
+              "type": "object",
+              "required": [
+                "vignette"
+              ],
+              "properties": {
+                "vignette": {
+                  "type": "object",
+                  "required": [
+                    "text",
+                    "synthetic"
+                  ],
+                  "properties": {
+                    "synthetic": {
+                      "const": true
+                    },
+                    "text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "pattern": "^Teaching vignette \\(invented\\):"
+                        },
+                        {
+                          "pattern": "labels each slide as one node"
+                        },
+                        {
+                          "not": {
+                            "anyOf": [
+                              {
+                                "pattern": "\\b[0-9]{1,3}[- ][Yy][Ee][Aa][Rr]\\b"
+                              },
+                              {
+                                "pattern": "\\b([Ss][Hh][Ee]|[Hh][Ee]|[Hh][Ee][Rr]|[Hh][Ii][Ss])\\b"
+                              },
+                              {
+                                "pattern": "\\b([Ll][Ee][Ff][Tt]|[Rr][Ii][Gg][Hh][Tt])\\b"
+                              },
+                              {
+                                "pattern": "\\b[Cc][Mm]\\b"
+                              },
+                              {
+                                "pattern": "\\bER\\b|\\bPR\\b|\\bHER2\\b"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "A sign-out case has no items and one Open tour step (lint so-items-empty).",
+          "x-lint-rule": "so-items-empty",
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "maxItems": 0
+            },
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "required": [
+                    "kind",
+                    "phase"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "const": "tour"
+                    },
+                    "phase": {
+                      "const": "open"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "TimerOption": {
+      "anyOf": [
+        {
+          "enum": [
+            "count-up",
+            "none"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "countdownMinutes"
+          ],
+          "properties": {
+            "countdownMinutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 600
+            }
+          }
+        }
+      ]
+    },
+    "FeedbackOption": {
+      "enum": [
+        "per-case",
+        "after-worklist"
+      ]
+    },
+    "DerivedPnOption": {
+      "enum": [
+        "shown",
+        "hidden"
+      ]
+    },
+    "LockableOption": {
+      "enum": [
+        "timer",
+        "feedback",
+        "derivedPn"
+      ]
+    },
+    "WorklistFile": {
+      "description": "A practice worklist (SIGNOUT.md §7.1, Appendix D; contracts.ts §2 WorklistFile). Closed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "id",
+        "title",
+        "summary",
+        "audience",
+        "practiceStatement",
+        "cases",
+        "options",
+        "attribution"
+      ],
+      "properties": {
+        "schema": {
+          "const": "stoipath.learn.worklist/1"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+        },
+        "title": {
+          "$ref": "#/$defs/ShortText"
+        },
+        "summary": {
+          "$ref": "#/$defs/Text"
+        },
+        "audience": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "undergraduate",
+              "medical-student",
+              "resident",
+              "cme"
+            ]
+          }
+        },
+        "practiceStatement": {
+          "const": "Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool."
+        },
+        "useNotice": {
+          "$ref": "#/$defs/Text"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "url",
+              "title",
+              "estimatedMinutes"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+              },
+              "url": {
+                "description": "Relative to the worklist file (same origin).",
+                "type": "string",
+                "pattern": "^(?![a-zA-Z][a-zA-Z0-9+.-]*:)(?!//)[^\\s]+\\.json$"
+              },
+              "title": {
+                "$ref": "#/$defs/ShortText"
+              },
+              "estimatedMinutes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 600
+              }
+            }
+          }
+        },
+        "options": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "timer",
+            "feedback",
+            "lock"
+          ],
+          "properties": {
+            "timer": {
+              "$ref": "#/$defs/TimerOption"
+            },
+            "feedback": {
+              "$ref": "#/$defs/FeedbackOption"
+            },
+            "derivedPn": {
+              "$ref": "#/$defs/DerivedPnOption"
+            },
+            "lock": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/LockableOption"
+              }
+            }
+          }
+        },
+        "attribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dataset",
+            "holder",
+            "licence",
+            "url",
+            "sentence",
+            "citation"
+          ],
+          "properties": {
+            "dataset": {
+              "$ref": "#/$defs/ShortText"
+            },
+            "holder": {
+              "$ref": "#/$defs/Text"
+            },
+            "licence": {
+              "$ref": "#/$defs/ShortText"
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https://"
+            },
+            "sentence": {
+              "$ref": "#/$defs/Text"
+            },
+            "citation": {
+              "$ref": "#/$defs/Text"
+            }
+          }
+        }
+      }
+    },
+    "ResolvedOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timer",
+        "feedback",
+        "derivedPn",
+        "locked"
+      ],
+      "properties": {
+        "timer": {
+          "$ref": "#/$defs/TimerOption"
+        },
+        "feedback": {
+          "$ref": "#/$defs/FeedbackOption"
+        },
+        "derivedPn": {
+          "$ref": "#/$defs/DerivedPnOption"
+        },
+        "locked": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/LockableOption"
+          }
+        }
+      }
+    },
+    "NodeTraceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slideId",
+        "opened",
+        "examined",
+        "msOnScreen",
+        "bestScale",
+        "bestScaleOverTissue",
+        "settledViews",
+        "depositsTotal",
+        "depositsViewed10x",
+        "depositsViewed20x",
+        "adequateScale_um_per_px",
+        "viewedAtAdequate",
+        "msAtAdequate",
+        "missType",
+        "borderline",
+        "flags"
+      ],
+      "properties": {
+        "slideId": {
+          "$ref": "#/$defs/SlideId"
+        },
+        "opened": {
+          "type": "boolean"
+        },
+        "examined": {
+          "type": "boolean"
+        },
+        "msOnScreen": {
+          "$ref": "#/$defs/NonNegative"
+        },
+        "bestScale": {
+          "$ref": "#/$defs/NumberOrNull"
+        },
+        "bestScaleOverTissue": {
+          "$ref": "#/$defs/NumberOrNull"
+        },
+        "settledViews": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "depositsTotal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "depositsViewed10x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "depositsViewed20x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "adequateScale_um_per_px": {
+          "$ref": "#/$defs/NumberOrNull"
+        },
+        "viewedAtAdequate": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "msAtAdequate": {
+          "$ref": "#/$defs/NumberOrNull"
+        },
+        "missType": {
+          "enum": [
+            "search",
+            "recognition",
+            "indeterminate",
+            null
+          ]
+        },
+        "borderline": {
+          "type": "boolean"
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "onDeposit",
+              "distance_um"
+            ],
+            "properties": {
+              "onDeposit": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "distance_um": {
+                "$ref": "#/$defs/NumberOrNull"
+              }
+            }
+          }
+        },
+        "largestDeposit_um": {
+          "description": "Contract 3 (A-RES-Q1): this node's reference largest single annotated deposit in µm, null without one. Optional: results files written before contract 3 omit it.",
+          "$ref": "#/$defs/NumberOrNull"
+        }
+      }
+    },
+    "CaseResult": {
+      "description": "SIGNOUT.md §6.5 (contracts.ts §4 CaseResult) plus the results file's case block and trace kind (Appendix C ResultsCase). No composite score (Q5).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "caseId",
+        "contentHash",
+        "attempt",
+        "rules",
+        "complete",
+        "nodesNotExamined",
+        "reference",
+        "submitted",
+        "classes",
+        "pnDistance",
+        "nodesAgreed",
+        "size",
+        "nodes",
+        "time",
+        "options",
+        "submittedAt",
+        "case",
+        "trace"
+      ],
+      "properties": {
+        "caseId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+        },
+        "contentHash": {
+          "$ref": "#/$defs/Sha256Ref"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rules": {
+          "const": "camelyon17-simplified/1"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "nodesNotExamined": {
+          "$ref": "#/$defs/Count"
+        },
+        "reference": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "labels",
+            "pN",
+            "nodesPositive",
+            "nodesMacro",
+            "nodesMicro",
+            "nodesItc",
+            "largestDeposit_um",
+            "clusterSpan_um",
+            "largestDepositNode"
+          ],
+          "properties": {
+            "labels": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "items": {
+                "$ref": "#/$defs/NodeLabel"
+              }
+            },
+            "pN": {
+              "$ref": "#/$defs/PnCategory"
+            },
+            "nodesPositive": {
+              "$ref": "#/$defs/Count"
+            },
+            "nodesMacro": {
+              "$ref": "#/$defs/Count"
+            },
+            "nodesMicro": {
+              "$ref": "#/$defs/Count"
+            },
+            "nodesItc": {
+              "$ref": "#/$defs/Count"
+            },
+            "largestDeposit_um": {
+              "$ref": "#/$defs/NumberOrNull"
+            },
+            "clusterSpan_um": {
+              "$ref": "#/$defs/NumberOrNull"
+            },
+            "largestDepositNode": {
+              "$ref": "#/$defs/NodeIndexOrNull"
+            }
+          }
+        },
+        "submitted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "nodesExamined",
+            "nodesMacro",
+            "nodesMicro",
+            "nodesItc",
+            "nodesPositiveDerived",
+            "largestDeposit_mm",
+            "largestDeposit_measuredNode",
+            "pN",
+            "derivedPn",
+            "derivedPnShown",
+            "inconsistent",
+            "comment",
+            "previewText"
+          ],
+          "properties": {
+            "calls": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "items": {
+                "$ref": "#/$defs/NodeLabel"
+              }
+            },
+            "nodesExamined": {
+              "const": 5
+            },
+            "nodesMacro": {
+              "$ref": "#/$defs/Count"
+            },
+            "nodesMicro": {
+              "$ref": "#/$defs/Count"
+            },
+            "nodesItc": {
+              "$ref": "#/$defs/Count"
+            },
+            "nodesPositiveDerived": {
+              "$ref": "#/$defs/Count"
+            },
+            "largestDeposit_mm": {
+              "$ref": "#/$defs/NumberOrNull"
+            },
+            "largestDeposit_measuredNode": {
+              "$ref": "#/$defs/NodeIndexOrNull"
+            },
+            "pN": {
+              "$ref": "#/$defs/PnCategory"
+            },
+            "derivedPn": {
+              "$ref": "#/$defs/PnCategory"
+            },
+            "derivedPnShown": {
+              "type": "boolean"
+            },
+            "inconsistent": {
+              "type": "boolean"
+            },
+            "comment": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "previewText": {
+              "type": "string"
+            }
+          }
+        },
+        "classes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nodes",
+            "pN",
+            "case"
+          ],
+          "properties": {
+            "nodes": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "class",
+                  "direction",
+                  "borderline"
+                ],
+                "properties": {
+                  "class": {
+                    "enum": [
+                      "match",
+                      "minor",
+                      "major"
+                    ]
+                  },
+                  "direction": {
+                    "enum": [
+                      "under",
+                      "over",
+                      "none"
+                    ]
+                  },
+                  "borderline": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "pN": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "class",
+                "direction"
+              ],
+              "properties": {
+                "class": {
+                  "enum": [
+                    "match",
+                    "minor",
+                    "major"
+                  ]
+                },
+                "direction": {
+                  "enum": [
+                    "under",
+                    "over",
+                    "none"
+                  ]
+                }
+              }
+            },
+            "case": {
+              "enum": [
+                "match",
+                "minor",
+                "major"
+              ]
+            }
+          }
+        },
+        "pnDistance": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "nodesAgreed": {
+          "$ref": "#/$defs/Count"
+        },
+        "size": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agreement",
+            "ref_um",
+            "clusterSpan_um",
+            "call_um",
+            "refNode",
+            "callNode"
+          ],
+          "properties": {
+            "agreement": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "category",
+                "numeric"
+              ],
+              "properties": {
+                "category": {
+                  "enum": [
+                    "same size category",
+                    "different size category",
+                    "not compared"
+                  ]
+                },
+                "numeric": {
+                  "enum": [
+                    "within 20 %",
+                    "differs",
+                    "not compared"
+                  ]
+                }
+              }
+            },
+            "ref_um": {
+              "$ref": "#/$defs/NumberOrNull"
+            },
+            "clusterSpan_um": {
+              "$ref": "#/$defs/NumberOrNull"
+            },
+            "call_um": {
+              "$ref": "#/$defs/NumberOrNull"
+            },
+            "refNode": {
+              "$ref": "#/$defs/NodeIndexOrNull"
+            },
+            "callNode": {
+              "$ref": "#/$defs/NodeIndexOrNull"
+            }
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/NodeTraceSummary"
+          }
+        },
+        "time": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reviewMs",
+            "reportMs",
+            "overrunMs"
+          ],
+          "properties": {
+            "reviewMs": {
+              "$ref": "#/$defs/NonNegative"
+            },
+            "reportMs": {
+              "$ref": "#/$defs/NonNegative"
+            },
+            "overrunMs": {
+              "$ref": "#/$defs/NonNegative"
+            }
+          }
+        },
+        "options": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "timer",
+            "feedback",
+            "derivedPn"
+          ],
+          "properties": {
+            "timer": {
+              "$ref": "#/$defs/TimerOption"
+            },
+            "feedback": {
+              "$ref": "#/$defs/FeedbackOption"
+            },
+            "derivedPn": {
+              "$ref": "#/$defs/DerivedPnOption"
+            }
+          }
+        },
+        "submittedAt": {
+          "$ref": "#/$defs/IsoDateTime"
+        },
+        "case": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "version",
+            "contentHash",
+            "title",
+            "review"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+            },
+            "version": {
+              "$ref": "#/$defs/Semver"
+            },
+            "contentHash": {
+              "$ref": "#/$defs/Sha256Ref"
+            },
+            "title": {
+              "$ref": "#/$defs/ShortText"
+            },
+            "review": {
+              "enum": [
+                "draft",
+                "reviewed"
+              ]
+            }
+          }
+        },
+        "trace": {
+          "const": "summary"
+        }
+      }
+    },
+    "SignoutResultsFile": {
+      "description": "stoipath.learn.signout-results/1 (SIGNOUT.md Appendix C, D22, PE-8, PE-13, PE-19, PE-21; contracts.ts §5). Closed: no name, email, user id, device id or time zone.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "product",
+        "labelString",
+        "practiceStatement",
+        "useStatement",
+        "privacy",
+        "rules",
+        "class_definitions",
+        "attribution",
+        "build",
+        "exportedAt",
+        "attempt",
+        "worklist",
+        "cases"
+      ],
+      "properties": {
+        "schema": {
+          "const": "stoipath.learn.signout-results/1"
+        },
+        "product": {
+          "const": "learn"
+        },
+        "labelString": {
+          "const": "For educational use. Not a medical device. Contains no protected health information."
+        },
+        "practiceStatement": {
+          "const": "Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool."
+        },
+        "useStatement": {
+          "const": "Formative practice data on draft teaching cases. Not validated for high-stakes decisions about a trainee; use it for feedback, curriculum and programme evaluation only."
+        },
+        "privacy": {
+          "const": "Created in your browser. Nothing in this file was sent anywhere; it contains only what you typed and did."
+        },
+        "useNoticeShown": {
+          "type": "boolean"
+        },
+        "useNotice": {
+          "$ref": "#/$defs/Text"
+        },
+        "rules": {
+          "const": "camelyon17-simplified/1"
+        },
+        "class_definitions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/Text"
+          }
+        },
+        "attribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sentence",
+            "citation",
+            "licence",
+            "url"
+          ],
+          "properties": {
+            "sentence": {
+              "$ref": "#/$defs/Text"
+            },
+            "citation": {
+              "$ref": "#/$defs/Text"
+            },
+            "licence": {
+              "$ref": "#/$defs/ShortText"
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https://"
+            }
+          }
+        },
+        "build": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "exportedAt": {
+          "$ref": "#/$defs/IsoDateTime"
+        },
+        "traineeCode": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,32}$"
+        },
+        "groupCode": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,32}$"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "worklist": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "title",
+            "options"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+            },
+            "title": {
+              "$ref": "#/$defs/ShortText"
+            },
+            "options": {
+              "$ref": "#/$defs/ResolvedOptions"
+            }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CaseResult"
+          }
+        }
+      }
+    },
+    "SlideIndex": {
+      "description": "A per-slide index (SIGNOUT.md §8.1, Appendix B), by reference to its own schema (owner: source; ER-13a: one writer, never copied here).",
+      "$ref": "slide-index.schema.json"
+    },
+    "FactsFile": {
+      "description": "A case's facts file (LEARN.md CNT-4's mechanism; SIGNOUT.md §15.3), by reference to Learn's definition.",
+      "$ref": "module.schema.json#/$defs/FactsFile"
+    }
+  }
+}

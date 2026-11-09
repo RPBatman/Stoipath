@@ -1,0 +1,15 @@
+{
+  "note": "rules 'ajcc-8/1'",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/rules",
+      "value": "ajcc-8/1"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/rules"
+  }
+}

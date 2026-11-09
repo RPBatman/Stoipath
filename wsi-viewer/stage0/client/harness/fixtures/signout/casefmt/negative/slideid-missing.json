@@ -1,0 +1,14 @@
+{
+  "note": "slideId missing (CAS-2: slideId present)",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "remove",
+      "path": "/extensions/signout/nodes/1/slideId"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/nodes/1/slideId"
+  }
+}

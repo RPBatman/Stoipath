@@ -1,0 +1,17 @@
+{
+  "note": "the annotation version differs from the overlay file",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/nodes/4/annotation/version",
+      "value": "old00000"
+    }
+  ],
+  "expect": {
+    "rule": "so-annotation-exists",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/4/annotation/version",
+    "message": null
+  }
+}

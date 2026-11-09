@@ -1,0 +1,18 @@
+{
+  "note": "a thumbnail file name with the patient id",
+  "base": "c17-01.module.json",
+  "patch": [],
+  "expect": {
+    "rule": "so-labels-neutral",
+    "severity": "error",
+    "path": "/slides/0/catalogueId",
+    "message": null
+  },
+  "cataloguePatch": [
+    {
+      "op": "replace",
+      "path": "/slides/0/thumbnail/url",
+      "value": "slides/patient_017_node_0.thumb.jpg"
+    }
+  ]
+}

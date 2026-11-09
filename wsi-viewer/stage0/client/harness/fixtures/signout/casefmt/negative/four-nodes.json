@@ -1,0 +1,14 @@
+{
+  "note": "four nodes (node 1 removed)",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "remove",
+      "path": "/extensions/signout/nodes/0"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/nodes"
+  }
+}
