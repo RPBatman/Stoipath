@@ -76,6 +76,10 @@ jobs:
           cache-dependency-path: ${{ env.CLIENT }}/package-lock.json
       - run: npm ci
         working-directory: ${{ env.CLIENT }}
+      - name: Playwright ${{ env.PLAYWRIGHT_VERSION }} + Chromium (IOP-5 decodes a PNG in Chromium)
+        run: |
+          npm install -g playwright@${{ env.PLAYWRIGHT_VERSION }}
+          playwright install --with-deps chromium
       - name: node harness/unit.mjs
         run: node harness/unit.mjs
         working-directory: ${{ env.CLIENT }}
@@ -125,6 +129,11 @@ jobs:
           cache-dependency-path: ${{ env.CLIENT }}/package-lock.json
       - run: npm ci
         working-directory: ${{ env.CLIENT }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: python libraries the checks call (schema validation, content twins)
+        run: pip install numpy pillow tifffile imagecodecs jsonschema
       - name: Playwright ${{ env.PLAYWRIGHT_VERSION }} + Chromium, axe-core ${{ env.AXE_VERSION }} (global, as the harness expects)
         run: |
           npm install -g playwright@${{ env.PLAYWRIGHT_VERSION }} axe-core@${{ env.AXE_VERSION }}
