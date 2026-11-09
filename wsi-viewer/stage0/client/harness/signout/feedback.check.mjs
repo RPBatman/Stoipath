@@ -466,6 +466,12 @@ export async function run(ctx) {
     check(TAG, lm.fraction <= 0.6 + 0.005 && lm.fraction >= 0.5 && Math.abs(lm.dx) <= 0.5 && Math.abs(lm.dy) <= 0.5, `${tag}: the macro cluster occupies ${(lm.fraction * 100).toFixed(1)} % (≤ 60 %) of the uncovered viewport, centred (dx ${lm.dx.toFixed(3)}, dy ${lm.dy.toFixed(3)})`);
     const ms = await shot(page, 'showme-macro-1440');
     if (ms !== null) check(TAG, true, `${tag}: screenshot ${ms}`);
+    // S3 review fixes (§19.5): the macro sentence speaks a coarse fit as its own power; the HUD chip no longer asks for 10×
+    await page.waitForTimeout(400);
+    const smm = (await fv(page)).lastShowMe;
+    check(TAG, !/below 2\.5×/.test(smm.spoken) && /^Flying to deposit 1 of node 3, about [\d.,]+ (µm|mm), at (about )?[\d.]+×\.$/.test(smm.spoken), `${tag}: the macro Show me says its magnification ("${smm.spoken}")`);
+    const chipC = await page.evaluate(() => window.__signout.host().gate);
+    check(TAG, chipC === 'Node 3 of 5 · report submitted', `${tag}: after submission the HUD node chip reads '${chipC}' (no "not yet viewed at 10×")`);
     await finish(r, tag);
   }
   {
@@ -690,6 +696,14 @@ export async function run(ctx) {
     await submit(page, { calls: ['negative', 'negative', 'negative', 'micro', 'itc'], pN: 'pN1mi' });
     const c = await card(page);
     check(TAG, c.rows.node4?.cells[2] === 'major: ITC vs micrometastasis · borderline node (reference label rests on the cell-count criterion)', `${tag}: the borderline row on the phone sheet`);
+    // S3 review fixes (§19.5, PE-10): the largest single outline as the deposit size, the span named as foci, the rest collapsed
+    const n5 = await page.evaluate(() => ({ rows: [...document.querySelectorAll('#taskCard [data-testid="node-4"] .so-fb__deposit > span')].map((x) => x.textContent), show: [...document.querySelectorAll('#taskCard [data-testid="node-4"] [data-showme]')].map((b) => [b.dataset.showme, b.getAttribute('aria-label')]), head: document.querySelector('#taskCard [data-testid="node-4"] h4 span')?.textContent }));
+    check(TAG, n5.head === 'Node 5 · micrometastasis · about 190 µm' && n5.rows.length === 4 && /^Deposit 1 · about 190 µm \(37 foci spanning about 780 µm\) · /.test(n5.rows[0]) && /^and 12 smaller deposits \(about 32–130 µm\) · /.test(n5.rows[3]), `${tag}: Node 5 lists the three largest deposits by their largest outline and one row for 12 smaller ones (${n5.rows.join(' | ')})`);
+    check(TAG, n5.show.length === 4 && n5.show[3][0] === '4:rest' && n5.show[3][1] === 'Show me the smaller deposits of node 5', `${tag}: the collapsed row has one Show me (${JSON.stringify(n5.show[3])})`);
+    await page.evaluate(() => document.querySelector('#taskCard [data-showme="4:rest"]').click());
+    await waitFn(page, () => window.__signout.tools.feedback().lastShowMe?.cluster === 'rest', null, 20_000);
+    const restSm = (await fv(page)).lastShowMe;
+    check(TAG, /^(Flying to the 12 smaller deposits of node 5, at (about )?[\d.]+×\.|Images are unavailable; the deposit is at [\d,.]+, [\d,.]+ µm\.)$/.test(restSm.spoken ?? ''), `${tag}: Show me on the collapsed row: "${restSm.spoken}"`);
     const sizes = await page.evaluate(() => [...document.querySelectorAll('#taskCard [data-showme]')].map((b) => b.getBoundingClientRect().height));
     check(TAG, sizes.length > 0 && sizes.every((h) => h >= 44 - 0.5), `${tag}: Show me targets ≥ 44 px under a coarse pointer (${sizes.map((x) => x.toFixed(0)).join(', ')})`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

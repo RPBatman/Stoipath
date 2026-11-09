@@ -231,6 +231,15 @@ export async function run(ctx) {
     const chip20 = await page.evaluate(() => window.__signout.host().gate);
     const row20 = (await rv(page)).tray[2].text;
     check(TAG, chip20 === 'Node 3 of 5 · viewed at 20×' && /^Node 3 · viewed at 20× · \d+:\d\d$/.test(row20), `REV-1 at rest after the 20× view: HUD chip '${chip20}', tray '${row20}'`);
+    // S3 review fix (§19.5): a 5× view of a part of the slide with no tissue cell (unscanned) is not "over tissue"; the chip says so
+    await page.evaluate(() => window.__stage0.jumpTo(3000, 3000, Math.log2((window.devicePixelRatio * 0.2431) / 2.0)));
+    await helpers.settle(page, { quietMs: 500 });
+    await page.waitForTimeout(500);
+    const chipBlack = await page.evaluate(() => window.__signout.host().gate);
+    const nBlack = (await rv(page)).nodes[2];
+    check(TAG, chipBlack === 'Node 3 of 5 · no tissue in this view (unscanned area or blank glass)' && near(nBlack.bestScaleOverTissue, 0.5, 0.01), `REV-1b a 5× view with no tissue cell: chip '${chipBlack}', and it does not count as over tissue (best over tissue still ${nBlack.bestScaleOverTissue})`);
+    await page.evaluate(([x, y]) => window.__stage0.jumpTo(x, y, Math.log2((window.devicePixelRatio * 0.2431) / 0.5)), [(tb[0] + tb[2]) / 2, (tb[1] + tb[3]) / 2]);
+    await helpers.settle(page, { quietMs: 500 });
 
     // REV-2: a settle whose view is not Sharp, then a move before Sharp → kept as sharp: false
     await stub.setMode({ mode: 'slow' });

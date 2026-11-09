@@ -256,6 +256,9 @@ export async function run(ctx) {
     await page.keyboard.press('Enter');
     await waitWl(page, (v) => v.current === 'c17-01');
     await H.waitForSlide(page);
+    await page.waitForFunction(() => document.activeElement?.id === 'soCardTitle', null, { timeout: 5_000 }).catch(() => {});
+    const openFocus = await page.evaluate(() => document.activeElement?.id || document.activeElement?.tagName);
+    check(TAG, openFocus === 'soCardTitle', `WRK-P (S3 review fix, SC 2.4.3): ↵ on a worklist row lands focus on the Open card's phase title, not on <body> (${openFocus})`);
     let v = await wv(page);
     let host = await page.evaluate(() => window.__signout.host());
     const openCard = await page.evaluate(() => ({ title: document.getElementById('soCardTitle')?.textContent, cta: document.querySelector('#taskCard .btn--cta')?.textContent, note: document.querySelector('#taskCard .cta-note')?.textContent, text: document.getElementById('taskCard').innerText }));
