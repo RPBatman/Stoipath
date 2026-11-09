@@ -12,6 +12,8 @@ export const PREFS_PREFIX = 'stoipath.shell.v1.';
 export interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
+  /** Optional (a test fake may omit it): `remove` then forgets the key in memory only. */
+  removeItem?(key: string): void;
 }
 
 function defaultStorage(): StorageLike | null {
@@ -53,6 +55,14 @@ export function createPrefs(storage: StorageLike | null = defaultStorage(), pref
         storage?.setItem(prefix + key, raw);
       } catch {
         /* quota or blocked: the in-memory copy serves this session */
+      }
+    },
+    remove(key: string): void {
+      memory.delete(key);
+      try {
+        storage?.removeItem?.(prefix + key);
+      } catch {
+        /* blocked: nothing to forget */
       }
     },
   };

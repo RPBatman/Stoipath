@@ -11,7 +11,7 @@
  * Depends on contracts only: grading (class definitions) through `api.service('grading')`, read when a file is built.
  * install() provides `results` and exposes `window.__signout.tools.results()`.
  */
-import type { CommandSource, KeyValueStore } from '../../shell/contracts';
+import type { CommandSource, KeyValueStore, PrefsStore } from '../../shell/contracts';
 import type { CaseResult, CohortFile, LoadedCase, LoadedWorklist, ResolvedOptions, ResultsStore, SignoutApi, SignoutResultsFile } from '../contracts';
 import { CohortTool } from './cohort';
 import { casesCsv, nodesCsv } from './csv';
@@ -36,6 +36,8 @@ export function downloadText(name: string, text: string, type: string): void {
 export interface ResultsDeps {
   storage: KeyValueStore;
   atRest(cb: () => void): void;
+  /** The synchronous page-hide journal (core's PrefsStore); optional, so the unit test needs no change. */
+  journal?: PrefsStore | null;
   api: Pick<SignoutApi, 'bus' | 'service' | 'host'> & { shell: Pick<SignoutApi['shell'], 'live' | 'env'> };
   download?: (name: string, text: string, type: string) => void;
   now?: () => Date;
@@ -43,7 +45,7 @@ export interface ResultsDeps {
 
 /** The service over explicit dependencies (the unit test passes a memory storage and a recording download). */
 export function createResults(deps: ResultsDeps): ResultsStore & { readonly store: ProgressStore; readonly cohort: CohortTool | null; lastExport: { name: string; bytes: number; text: string } | null } {
-  const store = new ProgressStore({ storage: deps.storage, atRest: deps.atRest, bus: deps.api.bus });
+  const store = new ProgressStore({ storage: deps.storage, atRest: deps.atRest, bus: deps.api.bus, journal: deps.journal ?? null });
   const download = deps.download ?? downloadText;
   const now = deps.now ?? (() => new Date());
   let cohort: CohortTool | null = null;
@@ -109,12 +111,18 @@ export function createResults(deps: ResultsDeps): ResultsStore & { readonly stor
 }
 
 export function install(api: SignoutApi): void {
-  const svc = createResults({ storage: api.shell.storage, atRest: (cb) => api.shell.atRest(cb), api });
+  const svc = createResults({ storage: api.shell.storage, atRest: (cb) => api.shell.atRest(cb), api, journal: api.shell.prefs });
   api.provide('results', svc);
-  // §5.8: write what is pending when the page goes away (the browser may still finish an IndexedDB put).
-  window.addEventListener('pagehide', () => void svc.flush());
+  // §5.8: keep what is pending when the page goes away. An IndexedDB put started here alone did not survive a reload
+  // inside the debounce (final-verification fix 2026-11-09), so the store journals it synchronously first (store.ts);
+  // review's and report's own pagehide listeners run after this one and their changes are journaled at once.
+  window.addEventListener('pagehide', () => svc.store.hide());
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') void svc.flush();
+    if (document.visibilityState === 'hidden') svc.store.hide();
+    else svc.store.show();
+  });
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) svc.store.show();
   });
   api.debug.expose('results', () => ({
     state: svc.state,

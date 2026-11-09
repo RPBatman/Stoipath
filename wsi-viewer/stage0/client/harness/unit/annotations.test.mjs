@@ -319,6 +319,37 @@ export default async function (t) {
     const s = await st.flush();
     t.eq([s.state, s.text, st.all().length], ['memory-only', 'Not saved: this browser blocks storage here. Export GeoJSON to keep your annotations.', 1], 'storage refused: memory-only with the exact text, the annotation stays in memory');
   }
+  {
+    // page hide (2026-11-09): the unsaved text is journaled synchronously; a reload loads the journal and writes it back
+    const pm = new Map();
+    const prefs = { get: (k, f) => (pm.has(k) ? JSON.parse(pm.get(k)) : f), set: (k, v) => pm.set(k, JSON.stringify(v)), remove: (k) => pm.delete(k) };
+    const storage = fakeStorage();
+    const st = mkStore();
+    const timers = [];
+    const per = new P.Persister(st, { storage, index: new P.StorageIndex(storage), atRest: (cb) => timers.push(cb), bus: null, live: null, notice: () => {}, journal: prefs }, 'tumor_014');
+    st.persister = per;
+    await per.load();
+    const a = st.create({ kind: 'point', geometry: { type: 'Point', coordinates: [5, 6] }, input: 'mouse' });
+    const jk = P.journalKey(st.slideKey);
+    t.ok(!pm.has(jk), 'page hide journal: nothing journaled while the page is shown');
+    per.hide();
+    t.eq(JSON.parse(pm.get(jk) ?? 'null')?.fingerprint, st.fingerprint, 'hide() journals the unsaved text synchronously under annotations.unsaved/<slide key>');
+    // the page went away before its IndexedDB write landed: a new page on an empty storage
+    const storage2 = fakeStorage();
+    const st2 = mkStore();
+    const per2 = new P.Persister(st2, { storage: storage2, index: new P.StorageIndex(storage2), atRest: (cb) => cb(), bus: null, live: null, notice: () => {}, journal: prefs }, 'tumor_014');
+    st2.persister = per2;
+    const n = await per2.load();
+    t.eq([n, st2.all()[0]?.id], [1, a.id], 'a reload loads the journaled annotation (same id)');
+    await st2.flush();
+    t.ok(typeof storage2.data.get(`annotations/${st2.slideKey}`) === 'string' && !pm.has(jk), 'and writes it to IndexedDB, then forgets the journal');
+    // another build of the slide: the journal is dropped, not loaded
+    pm.set(jk, JSON.stringify({ fingerprint: 'OTHER', text: st.text(S.PERSIST_OPTIONS) }));
+    const st3 = mkStore();
+    const per3 = new P.Persister(st3, { storage: fakeStorage(), index: new P.StorageIndex(fakeStorage()), atRest: (cb) => cb(), bus: null, live: null, notice: () => {}, journal: prefs }, 'tumor_014');
+    st3.persister = per3;
+    t.eq([await per3.load(), pm.has(jk)], [0, false], 'a journal of another build is dropped');
+  }
   t.group('formats');
   t.eq([P.formatBytes(512), P.formatBytes(1536), P.formatBytes(2.5 * 1048576)], ['512 B', '1.5 KB', '2.50 MB'], 'formatBytes');
   t.eq(S.labelList(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8']), 'A1, A2, A3, A4, A5, A6 and 2 more', 'labelList shortens after six');

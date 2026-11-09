@@ -153,8 +153,16 @@ export function install(shell: ShellApi): void {
   };
   for (const c of cmds) shell.commands.register(c);
 
-  // ---- page hide: write every dirty store now (D6)
-  window.addEventListener('pagehide', () => service.flushAll());
+  // ---- page hide: journal every dirty store synchronously, then write it now (D6; 2026-11-09: an IndexedDB write
+  // started in pagehide alone did not survive a reload made inside the 800 ms debounce)
+  window.addEventListener('pagehide', () => service.hideAll());
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') service.hideAll();
+    else service.showAll();
+  });
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) service.showAll();
+  });
 
   // ---- debug view (window.__shell.tools.annotations())
   shell.debug.expose('annotations', () => {

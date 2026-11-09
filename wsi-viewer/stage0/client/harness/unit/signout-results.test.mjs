@@ -232,6 +232,51 @@ export default async function (t) {
     t.ok(bus.events.some(([n, p]) => n === 'progressSaved' && p.state === 'error'), 'progressSaved {state: error}');
   }
 
+  // ------------------------------------------------------------------------------------------------ page hide (2026-11-09)
+  t.group('page-hide journal');
+  {
+    // a fake PrefsStore (localStorage under the page prefix) and a storage whose writes never land (the page went away)
+    const mkPrefs = (m = new Map()) => ({ m, get: (k, f) => (m.has(k) ? JSON.parse(m.get(k)) : f), set: (k, v) => m.set(k, JSON.stringify(v)), remove: (k) => m.delete(k) });
+    const prefs = mkPrefs();
+    const dead = memoryStorage();
+    const lost = { available: true, put: () => new Promise(() => {}), get: dead.get.bind(dead), delete: dead.delete.bind(dead) };
+    const tm = fakeTimers();
+    const ps = new S.ProgressStore({ storage: lost, atRest: () => {}, timers: tm, journal: prefs });
+    ps.putProgress(progress('wl', 'c17-01', { currentNode: 3 }));
+    t.eq(prefs.m.size, 0, 'nothing is journaled before page hide (debounced IndexedDB writes only)');
+    ps.hide();
+    t.eq(JSON.parse(prefs.m.get('progress.unsaved/signout.progress/wl/c17-01') ?? 'null')?.currentNode, 3, 'hide() journals the pending record synchronously (prefs key progress.unsaved/<key>)');
+    ps.putProgress(progress('wl', 'c17-01', { currentNode: 4 }));
+    t.eq(JSON.parse(prefs.m.get('progress.unsaved/signout.progress/wl/c17-01')).currentNode, 4, 'a change made after hide (another pagehide listener) is journaled at once');
+    // the next page: same prefs, storage without the record
+    const st = memoryStorage();
+    const ps2 = new S.ProgressStore({ storage: st, atRest: (cb) => cb(), timers: fakeTimers(), journal: prefs });
+    t.eq((await ps2.getProgress('wl', 'c17-01'))?.currentNode, 4, 'a reload reads the journaled record (it is never older than storage)');
+    await ps2.flush();
+    t.eq(st.m.get('session|signout.progress/wl/c17-01')?.currentNode, 4, 'and writes it back to storage');
+    t.ok(!prefs.m.has('progress.unsaved/signout.progress/wl/c17-01'), 'the journal entry goes once that write succeeded');
+    // a journal entry stays until a write at least as new succeeds; show() returns to debounced writes
+    const tm3 = fakeTimers();
+    const st3 = memoryStorage();
+    const ps3 = new S.ProgressStore({ storage: st3, atRest: (cb) => cb(), timers: tm3, journal: prefs });
+    ps3.putProgress(progress('wl', 'c17-02', { currentNode: 1 }));
+    ps3.hide();
+    await ps3.flush();
+    t.ok(!prefs.m.has('progress.unsaved/signout.progress/wl/c17-02'), 'hide() then a successful write: no journal left');
+    ps3.show();
+    ps3.putProgress(progress('wl', 'c17-02', { currentNode: 2 }));
+    t.eq([tm3.size, prefs.m.has('progress.unsaved/signout.progress/wl/c17-02')], [1, false], 'after show() a change is debounced again and not journaled');
+    ps3.hide();
+    await ps3.clearWorklist('wl', ['c17-02']);
+    t.ok(!prefs.m.has('progress.unsaved/signout.progress/wl/c17-02') && !st3.m.has('session|signout.progress/wl/c17-02'), 'Start again removes the journal entry with the record');
+    // without storage nothing is journaled (memory-only keeps its meaning)
+    const prefs4 = mkPrefs();
+    const ps4 = new S.ProgressStore({ storage: memoryStorage({ available: false }), atRest: (cb) => cb(), timers: fakeTimers(), journal: prefs4 });
+    ps4.putProgress(progress('wl', 'c17-01'));
+    ps4.hide();
+    t.eq(prefs4.m.size, 0, 'memory-only: page hide journals nothing');
+  }
+
   // ------------------------------------------------------------------------------------------------ the results file (RES-1)
   t.group('RES-1 file');
   for (const [name, f] of Object.entries(fx)) {

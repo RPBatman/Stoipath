@@ -17,6 +17,8 @@
 //   flow E (1440)                  ITM-6 text answer without one (0.5 / 1)
 //   flow F (1440)                  ITM-7 Change answer, and ⌫ on the committed mark
 //   flow G (390 × 844 coarse)      ITM-11 phone: tap, bottom sheet that closes on Fly there and reopens, targets ≥ 44 px
+//   flow H (1440, reduced motion)  ITM-8 race: the step before the item and the item's mount in one task (the tour's 20×
+//                                  view of P7 presented after mount is not logged; CI fix 2026-11-09)
 // Every page: no console or page error, every request same-origin GET with no body, axe-core WCAG 2.2 AA 0 violations in
 // the states it opens.
 import { readFileSync } from 'node:fs';
@@ -675,6 +677,39 @@ export async function run(ctx) {
       await H.axe(page, check, TAG, 'axe: region item awaiting (390 coarse)');
       noErrors(errors, 'flow G');
       await sameOrigin(page, reqs, 'flow G');
+    } finally {
+      await c.close();
+    }
+  }
+
+  // ============================================================================================== flow H · ITM-8 race
+  // CI fix (2026-11-09): the step before the item (the tour's 20× view of P7, an instant jump under reduced motion) and
+  // the item's mount happen in ONE task, so the jump's first frame is presented only after the item mounted. That view
+  // began before the item and must not count over a mark at P7 (flow A met this order by chance on a loaded runner).
+  {
+    const { c, page, errors, reqs } = await boot(desktop);
+    try {
+      ok(await toStep(page, S.region - 2), `ITM-8 race setup: step ${S.region - 1} (fit) is current`);
+      await H.settle(page);
+      const same = await page.evaluate(() => {
+        const a = window.__learn.test.run('step:next');
+        const b = window.__learn.test.run('step:next');
+        return { a, b, step: window.__learn.bus.log().filter((e) => e.name === 'stepShown').at(-1)?.payload.stepIndex ?? -1 };
+      });
+      await H.settle(page);
+      ok(same.a && same.b && same.step === S.region, `ITM-8 race: N twice in one task reaches step ${S.region + 1} before the 20× view's first frame (${JSON.stringify(same)})`);
+      await page.evaluate(() => window.__shell.setTool('point'));
+      await jumpTo(page, CASE.P7[0], CASE.P7[1], CASE.P7_scale);
+      await clickWorld(page, CASE.P7[0], CASE.P7[1]);
+      await page.waitForFunction(() => window.__learn.tools.items().draftMarkId !== null, null, { timeout: 10_000, polling: 50 });
+      await jumpTo(page, CASE.C[0], CASE.C[1], 0.5);
+      await waitText(page, `${CARD('q-region')} .learn-item__gate-status`, X.gateBestP7, 5000);
+      const g = await text(page, `${CARD('q-region')} .learn-item__gate-status`);
+      const hud = await page.evaluate(() => window.__learn.host().gate);
+      ok(g === X.gateBestP7, `ITM-8 race: the tour's 20× view presented after mount does not count over a mark at P7: "${g}"`);
+      ok(hud === 'Zoom gate · 20× · not over your mark yet', `ITM-8 race: HUD gate chip "${hud}"`);
+      noErrors(errors, 'flow H');
+      await sameOrigin(page, reqs, 'flow H');
     } finally {
       await c.close();
     }

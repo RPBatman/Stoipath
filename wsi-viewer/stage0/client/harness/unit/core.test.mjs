@@ -327,6 +327,16 @@ export default async function (t) {
     q.set('class', 'Stroma');
     t.eq(q.get('class', 'Tumor'), 'Stroma', 'a throwing localStorage falls back to memory for the session');
     t.eq(prefs.createPrefs(null).get('x', 1), 1, 'no localStorage at all: fallbacks');
+    // additive remove (2026-11-09, the page-hide journal)
+    const mem2 = new Map();
+    const p2 = prefs.createPrefs({ getItem: (k) => mem2.get(k) ?? null, setItem: (k, v) => mem2.set(k, v), removeItem: (k) => mem2.delete(k) });
+    p2.set('j', { a: 1 });
+    p2.remove('j');
+    t.ok(!mem2.has('stoipath.shell.v1.j') && p2.get('j', null) === null, 'remove() forgets the key in memory and in localStorage');
+    const p3 = prefs.createPrefs(fake);
+    p3.set('k', 1);
+    p3.remove('k');
+    t.eq(p3.get('k', 0), 1, 'a storage without removeItem: remove() forgets only the memory copy (the stored value reads back)');
   }
 
   // ------------------------------------------------------------------ Wave L0 product and storage namespace (LEARN.md §4.3 C4)

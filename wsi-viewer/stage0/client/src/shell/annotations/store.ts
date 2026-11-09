@@ -255,6 +255,10 @@ export interface StorePersistence {
   readonly status: PersistenceStatus;
   changed(): void;
   flush(): Promise<PersistenceStatus>;
+  /** Optional (2026-11-09): page hide: journal unsaved work synchronously, then flush (persist.ts). */
+  hide?(): void;
+  /** Optional (2026-11-09): the page is shown again. */
+  show?(): void;
 }
 
 interface Step {

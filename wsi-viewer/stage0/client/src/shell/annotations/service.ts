@@ -219,6 +219,21 @@ export class AnnotationsService implements AnnotationService {
   flushAll(): void {
     for (const e of this.entries.values()) void e.store.flush();
   }
+  /**
+   * Page hide (pagehide, the tab hidden; 2026-11-09): each store's unsaved text goes to the synchronous journal first
+   * (persist.ts), then its IndexedDB write starts, so a reload right after an edit keeps it.
+   */
+  hideAll(): void {
+    for (const e of this.entries.values()) {
+      const p = e.store.persister;
+      if (p?.hide !== undefined) p.hide();
+      else void e.store.flush();
+    }
+  }
+  /** The page is shown again (the tab visible, a back/forward-cache restore). */
+  showAll(): void {
+    for (const e of this.entries.values()) e.store.persister?.show?.();
+  }
 
   // ------------------------------------------------------------------ internals
 
@@ -266,7 +281,7 @@ export class AnnotationsService implements AnnotationService {
       announce: say,
       bus: shell.bus,
     });
-    const persister = new Persister(store, { storage: shell.storage, index: this.index, atRest: (cb) => shell.atRest(cb), bus: shell.bus, live: shell.live, notice: (t) => shell.atRest(() => shell.notices.transient(t, 10_000)) }, slide.identity.name);
+    const persister = new Persister(store, { storage: shell.storage, index: this.index, atRest: (cb) => shell.atRest(cb), bus: shell.bus, live: shell.live, notice: (t) => shell.atRest(() => shell.notices.transient(t, 10_000)), journal: shell.prefs }, slide.identity.name);
     store.persister = persister;
     const ctx: SourceContext = {
       classes: this.classes,

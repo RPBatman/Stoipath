@@ -11,11 +11,19 @@
  * now (pagehide, submission, Start again). Every storage call runs on one promise chain, so a clear can never be undone
  * by a write already queued before it.
  *
+ * Page hide (final-verification fix 2026-11-09). An IndexedDB write started in `pagehide` did not survive a reload made
+ * inside the 800 ms debounce, so a flag, a measurement or a node call made just before it was lost. `hide()` (pagehide,
+ * the tab hidden) now copies every pending record synchronously to the journal (core's PrefsStore: localStorage under
+ * the page's prefs prefix, key `progress.unsaved/<key>`) before it starts the writes, and while hidden every change is
+ * journaled and written at once (the review and report modules write their clocks and held entries in their own
+ * pagehide listeners, after this one). A read prefers the journal (it is never older than storage) and writes it back;
+ * a journal entry goes when a write of that record (or a newer one) succeeds, or with the record.
+ *
  * Without storage (core marks it unavailable and shows the §9.1 sentence once) everything keeps working in memory and
  * `state` is `memory-only`; a write the browser refuses for its value reports `error`. Every call resolves.
  * No DOM.
  */
-import type { EventBus, KeyValueStore } from '../../shell/contracts';
+import type { EventBus, KeyValueStore, PrefsStore } from '../../shell/contracts';
 import type { CaseProgress, SignoutEvents, SignoutSaveState, WorklistRecord } from '../contracts';
 import { SIGNOUT_KEYS } from '../contracts';
 
@@ -38,7 +46,12 @@ export interface ProgressDeps {
   timers?: Timers;
   debounceMs?: number;
   maxWaitMs?: number;
+  /** The synchronous page-hide journal (core's PrefsStore); without it page hide only starts the writes, as before. */
+  journal?: PrefsStore | null;
 }
+
+/** The journal's prefs key of a progress record. */
+export const journalKey = (key: string): string => `progress.unsaved/${key}`;
 
 /** One storage write or delete (debug view `__signout.tools.results().writes`). */
 export interface WriteRecord {
@@ -55,6 +68,8 @@ interface Pending {
   value: CaseProgress;
   timer: unknown;
   firstAt: number;
+  /** The change counter when this value was put (the journal is cleared by a write at least this new). */
+  seq: number;
 }
 
 export class ProgressStore {
@@ -67,6 +82,11 @@ export class ProgressStore {
   private st: SignoutSaveState;
   lastError: string | null = null;
   readonly writes: WriteRecord[] = [];
+  /** The page is hidden: every progress change is journaled and written at once. */
+  private hidden = false;
+  private seq = 0;
+  /** key → the change counter of the value in the journal. */
+  private readonly journaled = new Map<string, number>();
 
   constructor(private readonly deps: ProgressDeps) {
     this.timers = deps.timers ?? defaultTimers;
@@ -89,6 +109,16 @@ export class ProgressStore {
   /** Read a record: the in-memory value first (it is always the newest), else storage. */
   async read<T>(key: string): Promise<T | null> {
     if (this.memory.has(key)) return clone(this.memory.get(key) as T);
+    const j = this.readJournal(key);
+    if (j !== null) {
+      // the last page hide's unsaved record: it is the newest; write it back (the journal goes once that succeeds)
+      this.memory.set(key, clone(j));
+      const seq = ++this.seq;
+      this.journaled.set(key, seq);
+      this.pending.set(key, { value: clone(j) as CaseProgress, timer: null, firstAt: Date.now(), seq });
+      void this.writePending(key);
+      return clone(j as T);
+    }
     if (!this.deps.storage.available) return null;
     await this.chain.catch(() => undefined);
     const v = await this.deps.storage.get<T>(STORE, key).catch(() => undefined);
@@ -112,10 +142,11 @@ export class ProgressStore {
   remove(key: string): Promise<void> {
     const p = this.pending.get(key);
     if (p !== undefined) {
-      this.timers.clear(p.timer);
+      if (p.timer !== null) this.timers.clear(p.timer);
       this.pending.delete(key);
     }
     this.memory.delete(key);
+    this.clearJournal(key);
     return this.enqueue(async () => {
       if (!this.deps.storage.available) return;
       await this.deps.storage.delete(STORE, key).catch(() => undefined);
@@ -135,12 +166,35 @@ export class ProgressStore {
     this.memory.set(key, value);
     const now = Date.now();
     const prev = this.pending.get(key);
-    if (prev !== undefined) this.timers.clear(prev.timer);
+    if (prev !== undefined && prev.timer !== null) this.timers.clear(prev.timer);
     const firstAt = prev?.firstAt ?? now;
     const wait = Math.max(0, Math.min(this.debounce, firstAt + this.maxWait - now));
-    const timer = this.timers.set(() => this.deps.atRest(() => void this.writePending(key)), wait);
-    this.pending.set(key, { value, timer, firstAt });
+    const seq = ++this.seq;
+    if (this.hidden) {
+      // the page is going away: journal it now and start its write (no timer, no atRest: neither may come)
+      this.pending.set(key, { value, timer: null, firstAt, seq });
+      this.writeJournal(key, value, seq);
+      void this.writePending(key);
+    } else {
+      const timer = this.timers.set(() => this.deps.atRest(() => void this.writePending(key)), wait);
+      this.pending.set(key, { value, timer, firstAt, seq });
+    }
     if (this.deps.storage.available && this.st !== 'error') this.st = 'saving';
+  }
+
+  /**
+   * The page is going away or hidden (pagehide, visibilitychange): every pending record goes to the journal
+   * synchronously, then its write starts. Until `show()`, every change is journaled and written at once.
+   */
+  hide(): void {
+    this.hidden = true;
+    for (const [key, p] of this.pending) this.writeJournal(key, p.value, p.seq);
+    void this.flush();
+  }
+
+  /** The page is shown again (the tab visible, a back/forward-cache restore): writes are debounced again. */
+  show(): void {
+    this.hidden = false;
   }
 
   /** Write every pending progress record now. */
@@ -153,7 +207,7 @@ export class ProgressStore {
   private writePending(key: string): Promise<void> {
     const p = this.pending.get(key);
     if (p === undefined) return Promise.resolve();
-    this.timers.clear(p.timer);
+    if (p.timer !== null) this.timers.clear(p.timer);
     this.pending.delete(key);
     const value = p.value;
     return this.enqueue(async () => {
@@ -165,6 +219,8 @@ export class ProgressStore {
         if (ok) {
           state = 'saved';
           this.lastError = null;
+          const j = this.journaled.get(key);
+          if (j !== undefined && p.seq >= j) this.clearJournal(key);
         } else {
           state = this.deps.storage.available ? 'error' : 'memory-only';
           this.lastError = this.deps.storage.lastWriteError ?? 'the browser refused the write';
@@ -205,6 +261,28 @@ export class ProgressStore {
     }
     if (!CODE_RE.test(code)) return false;
     return this.write(key, code);
+  }
+
+  // ------------------------------------------------------------------ the page-hide journal
+
+  private readJournal(key: string): unknown {
+    const j = this.deps.journal;
+    if (j === undefined || j === null) return null;
+    const v = j.get<unknown>(journalKey(key), null);
+    return v !== null && typeof v === 'object' ? v : null;
+  }
+
+  private writeJournal(key: string, value: CaseProgress, seq: number): void {
+    const j = this.deps.journal;
+    if (j === undefined || j === null || !this.deps.storage.available) return;
+    j.set(journalKey(key), value);
+    this.journaled.set(key, seq);
+  }
+
+  private clearJournal(key: string): void {
+    if (!this.journaled.has(key) && this.readJournal(key) === null) return;
+    this.journaled.delete(key);
+    this.deps.journal?.remove?.(journalKey(key));
   }
 
   // ------------------------------------------------------------------ internals

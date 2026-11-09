@@ -411,7 +411,7 @@ The answer is correct iff every `required` field is correct and at least `passMi
 ### 6.4 The zoom gate and the half-credit rule
 
 - **The view log** (`items/gate-log.ts`). On each `viewSettled` of view A while a region item is current, compute the uncovered viewport rectangle in level-0 px. Width = `(cssW − insetLeft − insetRight) × scale_um_per_px / mpp`; height = `cssH × scale / mpp`; the centre shifts by `(insetLeft − insetRight) / 2 × scale / mpp`. This is read at settle only.
-- **When a view counts as sharp.** If `host.sharpness('A').state` is `sharp` at that settle, the entry gets `sharp: true`. Otherwise it is held until a `tileSettled {sharp: true}` with no camera movement in between. Movement drops it: an unsharp entry is kept with `sharp: false`. Cap: 500 entries; over the cap the oldest entry that could not meet the gate (not sharp, or coarser than the gate scale) goes first (review fix 2026-11-08). A settle whose camera move began before the item mounted is not logged (J-ITM2; LEARN-QUESTIONS I-N4).
+- **When a view counts as sharp.** If `host.sharpness('A').state` is `sharp` at that settle, the entry gets `sharp: true`. Otherwise it is held until a `tileSettled {sharp: true}` with no camera movement in between. Movement drops it: an unsharp entry is kept with `sharp: false`. Cap: 500 entries; over the cap the oldest entry that could not meet the gate (not sharp, or coarser than the gate scale) goes first (review fix 2026-11-08). A settle whose camera move began before the item mounted is not logged (J-ITM2; LEARN-QUESTIONS I-N4). A move counts as begun when it was requested, not when its first frame is presented: a move requested before mount whose first frame comes after it (the step before's instant jump, N handled before the next frame) is not logged either (CI fix 2026-11-09, §15.2h J-I49).
 - **Met** iff some entry has `sharp: true`, `scale_um_per_px ≤ gate.scale_um_per_px × 1.01`, and a rect that intersects the subject. A point must lie in the rect. A polygon must have overlapping bboxes and either a vertex in the rect, the rect centre inside the polygon, or crossing edges.
 - **The subject** is the mark, or the candidate's geometry. For a text answer it is the target, evaluated at reveal only; the gatebox then reads `Checked when you reveal: view the area you describe at 20× or more.`
 - **Score.** Wrong → 0. Correct (`correct` or `correct-related`) with the gate met, or no gate → `points`. Correct with the gate unmet → `points × unmetFactor`: `0.5 / 1`, feedback `Correct region, but you never viewed it at 20×: half credit by the gate rule stated on the card.` (`FeedbackKind` `half-gate`; for a rule (a) point `ItemScore.related` still names the feature, so the card can add its sentence). Rule (b) partial → `points × partialInside.factor × gate factor`: 0.5 / 1 with the gate met, 0.25 / 1 without (both rules are on the card; §15.2 J-I5).
@@ -1481,6 +1481,47 @@ so no §12 entry is new and the case stays `draft`, version 0.1.1).
     (`target-size`, see J-I47). Everything else in that run passed, tools-check included (628 ok).
   - LI-R3 run against the build before this fix (the same harness, `--dist` of that tree): all six runs fail, because
     there is no banner. The check therefore detects the defect.
+
+
+### 15.2h CI fix: the ITM-8 race (Learn integrator, 2026-11-09)
+
+- **J-I49 · Root cause: a product race in `items/machine.ts`, not a test race.** On GitHub Actions (ubuntu-24.04,
+  4 vCPU, SwiftShader) the commit of the reviewed L1 state (`ceadf797`) passed learn-check in one run and failed it in
+  another, on both attempts, with exactly ITM-8's `a mark at P7, then the deposit at 20×` reading `Met · 20× over your
+  mark` and the HUD chip reading `null`. This is the flake of J-I32 / I-N4, which the 2026-11-08 fix had only narrowed.
+  - **Mechanism.** Step 3 (index 2, `lymphoid`) is the tour's 20× view centred on (3181.61, 3181.61) µm, which is
+    level-0 (13088, 13088): exactly the check's P7. Under reduced motion the player jumps the camera at once, but the
+    shell emits `viewChanged` only with the next presented frame. On a loaded runner the check's `N` (sent as soon as
+    `stepShown` is seen) is handled before that frame, so the region item mounts first. The I-N4 guard dated the move
+    at its first `viewChanged`, after mount, so the lymphoid view's settle was logged as a view of the item. A mark at
+    P7 then met the gate from a view the learner saw before the item appeared.
+  - **Evidence.** Repeating `--only items` with CPU throttling (CDP `Emulation.setCPUThrottlingRate` 4 and 6, three
+    and four busy loops on the 4 vCPUs) did not hit the window locally (7 clean runs on the build before the fix). Forcing the order
+    does, every time: two `step:next` in one task (the jump and the mount with no frame between) gave `Met · 20× over
+    your mark` and HUD `null` in 3 of 3 runs on the build before the fix, and the expected `Not met yet · highest
+    magnification over your mark so far: 5×` with `Zoom gate · 20× · not over your mark yet` in 3 of 3 after it.
+  - **Fix.** At mount the items engine compares the engine's live camera (`viewer.api.state()`: centre, log zoom,
+    animating) with the last presented frame (`viewer.snapshot`). If a move is still to be presented, it began before
+    mount, and its settle is not logged (`moveUnpresented`; read once at mount, nothing per frame). §6.4 says so.
+  - **Check.** `items.check.mjs` flow H forces the order on every run and asserts the gatebox and the HUD chip (6 new
+    lines; items 124 → 130). Flow A is unchanged.
+  - **Proof.** The items check (flows A–H) with CDP CPU throttling 6× and three busy loops on the 4 vCPUs: 20 clean
+    runs in a row on the gate build of J-I50 (`client/dist`, 106–118 s each). An earlier series on a private build of
+    the same source had 16 clean runs before the session's 30-minute background limit stopped its browser (not a check
+    failure). Against a deliberately broken gate (a scratch build whose `gate()` ignores
+    where the view was) the check fails ITM-8 and its HUD line. Against the build before the fix, flow H fails both
+    of its lines.
+- **J-I50 · Gate numbers.** One `npm run build` into `client/dist`, build id `2026-11-09T05:42:53Z`. `src/main.ts`,
+  `src/shell/main.ts`, `src/learn/main.ts`, `index.html`, `shell.html`, `learn.html`, `src/learn/host/commands.ts`,
+  `src/shell/navigator.ts` and `src/scheduler.ts` keep their sha256 (checked before and after).
+  - tsc `--noEmit`: clean. run.mjs exit 0; check-metrics 20 ok. shell-check 190 ok. tools-check (axe-core 4.10.3)
+    628 ok. unit.mjs 4,144 ok in 30 files. `python3 -I -m unittest discover tools/tests`: 95 tests OK.
+  - learn-check (`--ref-dist <L0 dist> --axe <axe-core 4.10.3>`): 1,150 checks, 0 FAIL, no re-run. Integrator 472,
+    modules 678 (content 62, course 95, item-editor 64, items 130, player 109, progress 48, reveal 78, studio 92). It
+    ran a second time on the same build inside signout-check's SI-2: 1,150 ok, 0 FAIL again.
+  - The same build carries the practice page's reload fix (SIGNOUT.md §19.7), which also touches the shared
+    annotations persister: a reload right after drawing keeps the drawing on every page that uses it, learn.html
+    included.
 
 ### 15.3 Judgement-call log (scoring, Wave L1, 2026-11-04)
 

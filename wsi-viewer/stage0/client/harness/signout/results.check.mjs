@@ -14,6 +14,9 @@
 //   RES-5  storage blocked: the memory-only sentence shows, submission and export still work
 //   RES-6  Start again: the second-press text names the next attempt, it disarms after 5 s, the records and the case
 //          slides' flags go, and the next submission carries attempt 2
+//   RES-7  a reload right after an edit keeps it (final-verification fix 2026-11-09): a flag, a measurement and a node
+//          call, each followed by a reload 100 ms and 300 ms later (inside the 800 ms write debounce), are all there after
+//          the reload: in the progress record, in review's view, and the flag's dot on the slide
 // Cases run on the range stub through worklist.check.mjs's `caseTree` (Case 1 and Case 2 of the pilot, committed case
 // files, no request to the bucket).
 import { spawnSync } from 'node:child_process';
@@ -21,6 +24,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DRAFT_017, caseTree, openCaseAndWait, rowsOf, shot, waitWl, wv } from './worklist.check.mjs';
+import { key, openCase, reviewTree, rv, waitNode } from './review.check.mjs';
 
 const TAG = 'results';
 const here = fileURLToPath(new URL('.', import.meta.url));
@@ -314,5 +318,84 @@ export async function run(ctx) {
     const realErrors = errors.filter((x) => !/denied permission to access the database|SecurityError/.test(x));
     check(TAG, realErrors.length === 0, `RES-5: no console or page errors but the refused database (${realErrors.slice(0, 2).join(' | ')})`);
     await bctx.close();
+  }
+
+  // ------------------------------------------------------------------------------------------------ RES-7 reload after an edit
+  // Each edit is made by the trainee's own path (T ↵, M ↵ → ↵, the call radio in the card), seen in review's in-memory
+  // view, and the page is reloaded `ms` later: well inside the 800 ms write debounce, so only the page-hide path can keep it.
+  {
+    const rtree = reviewTree(ctx, `${Date.now().toString(36)}-${process.pid}-res7`, [{ id: 'res-reload' }]);
+    const { ctx: bctx, page, errors } = await openCase(ctx, rtree, 'res-reload', H.VIEWPORTS.desktop);
+    const NODE = 2;
+    const stored = () => page.evaluate(() => window.__signout.test.storageGet('session', 'signout.progress/res-reload/c17-01'));
+    const dots = () => page.evaluate(() => (window.__shell.tools.annotations().all ?? []).filter((a) => a.properties?.stoipath?.kind === 'point').length);
+    const rulers = () => page.evaluate(() => (window.__shell.tools.annotations().all ?? []).filter((a) => a.properties?.stoipath?.kind === 'measurement').length);
+    const reloadAfter = async (ms) => {
+      await page.waitForTimeout(ms);
+      await page.reload();
+      await H.waitForSignout(page);
+      await page.waitForFunction((n) => window.__signout.tools.review?.().node === n && window.__signout.tools.review().mounted === 'examine', NODE, { timeout: 30_000 });
+      await waitNode(ctx, page, NODE);
+    };
+    const measure = async (steps) => {
+      await key(page, 'm');
+      await key(page, 'Enter');
+      for (let i = 0; i < steps; i++) {
+        await page.keyboard.press('ArrowRight');
+        await page.waitForTimeout(150);
+      }
+      await page.waitForFunction(() => !window.__stage0.state().cameraAnimating, null, { timeout: 5000 });
+      await page.keyboard.press('Enter');
+    };
+    try {
+      await key(page, 'n');
+      await page.waitForFunction(() => window.__signout.tools.review().mounted === 'examine', null, { timeout: 10_000 });
+      await page.click(`#nodeTray .so-tray__row[data-node="${NODE}"]`);
+      await waitNode(ctx, page, NODE);
+      await key(page, '5');
+      await H.settle(page, { quietMs: 300 });
+      const calls = { 100: 'micro', 300: 'macro' };
+      for (const ms of [100, 300]) {
+        // a flag (T, ↵ at the centre crosshair)
+        const flags = (await rv(page)).nodes[NODE].flags.length + 1;
+        await key(page, 't');
+        await key(page, 'Enter');
+        await page.waitForFunction(([n, k]) => window.__signout.tools.review().nodes[n].flags.length === k, [NODE, flags], { timeout: 5000 });
+        await reloadAfter(ms);
+        let v = await rv(page);
+        let rec = await stored();
+        let d = await dots();
+        check(TAG, v.nodes[NODE].flags.length === flags && rec?.nodes?.[NODE]?.flags?.length === flags && d === flags, `RES-7: a flag, then a reload ${ms} ms later: ${flags} flag(s) kept (review ${v.nodes[NODE].flags.length}, stored ${rec?.nodes?.[NODE]?.flags?.length ?? 'none'}, dots on the slide ${d})`);
+        // a measurement (M, ↵, → × k, ↵), each longer than the last
+        const before = (await rv(page)).nodes[NODE].measurement_um ?? 0;
+        // at 5× (a reload restores the node's fit, where a pan is clamped at the slide's edge)
+        await key(page, '5');
+        await H.settle(page, { quietMs: 300 });
+        await measure(ms === 100 ? 3 : 6);
+        await page.waitForFunction(([n, l]) => (window.__signout.tools.review().nodes[n].measurement_um ?? 0) > l, [NODE, before], { timeout: 5000 });
+        const longest = (await rv(page)).nodes[NODE].measurement_um;
+        const drawn = await rulers();
+        await reloadAfter(ms);
+        v = await rv(page);
+        rec = await stored();
+        const drawnAfter = await rulers();
+        check(TAG, v.nodes[NODE].measurement_um === longest && rec?.nodes?.[NODE]?.measurement_um === longest && drawnAfter === drawn, `RES-7: a measurement, then a reload ${ms} ms later: the longest is kept (${longest.toFixed(1)} µm; review ${v.nodes[NODE].measurement_um?.toFixed?.(1) ?? 'none'}, stored ${rec?.nodes?.[NODE]?.measurement_um?.toFixed?.(1) ?? 'none'}) and the measurement is still drawn (${drawnAfter} of ${drawn} on the slide)`);
+        await key(page, 'v');
+        // a node call (the call radio in the card)
+        await page.click(`#taskCard input[name="so-review-call"][value="${calls[ms]}"]`);
+        await page.waitForFunction(([n, c]) => window.__signout.tools.worklist().progress.report.calls[n] === c, [NODE, calls[ms]], { timeout: 5000 });
+        await reloadAfter(ms);
+        const w = await page.evaluate(() => window.__signout.tools.worklist().progress);
+        rec = await stored();
+        check(TAG, w.report.calls[NODE] === calls[ms] && rec?.report?.calls?.[NODE] === calls[ms], `RES-7: a node call, then a reload ${ms} ms later: "${calls[ms]}" is kept (worklist ${w.report.calls[NODE]}, stored ${rec?.report?.calls?.[NODE] ?? 'none'})`);
+      }
+      const keys = await page.evaluate(() => Object.keys(localStorage));
+      check(TAG, keys.every((k) => k.startsWith('stoipath.learn-signout.v1.')), `RES-7: every localStorage key on the page starts stoipath.learn-signout.v1. (${keys.join(', ') || 'none'})`);
+      check(TAG, errors.length === 0, `RES-7: no console or page errors (${errors.slice(0, 2).join(' | ')})`);
+    } catch (e) {
+      check(TAG, false, `RES-7 threw: ${e instanceof Error ? e.message.split('\n')[0] : String(e)}`);
+    } finally {
+      await bctx.close();
+    }
   }
 }

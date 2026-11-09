@@ -417,6 +417,21 @@ export class ItemsEngine implements ItemsService {
   }
   private camMoving = false;
   private moveBegan = 0;
+  /**
+   * CI fix (2026-11-09, ITM-8): a camera move requested before mount whose first frame is not presented yet. The step
+   * before (the tour's 20× view, an instant jump under reduced motion) moves the camera at once, but `viewChanged` comes
+   * only with the next presented frame. When N is handled before that frame (a loaded machine: input runs ahead of the
+   * frame), the move's first `viewChanged` came after mount, so `moveBegan` dated it after mount and its settle was
+   * logged. Read here, once, at mount: the engine's live camera against the last presented frame (no per-frame work).
+   */
+  private moveUnpresented(): boolean {
+    const v = this.shell.primary.viewer;
+    if (v === null) return false;
+    const snap = v.snapshot;
+    const cam = v.api.state();
+    if (cam.cameraAnimating || !snap.settled) return true;
+    return Math.abs(cam.logZoom - snap.logZoom) > 1e-9 || Math.abs(cam.cx - snap.cx) > 1e-6 || Math.abs(cam.cy - snap.cy) > 1e-6;
+  }
   private onSettled(s: ViewSample): void {
     if (s.view !== 'A') return;
     const began = this.camMoving ? this.moveBegan : null;
@@ -1159,6 +1174,11 @@ export class ItemsEngine implements ItemsService {
     const m: Mounted = { itemId, el, view, presentedMs: presentedAt !== null && Number.isFinite(Date.parse(presentedAt)) ? Date.parse(presentedAt) : Date.now(), mountedPerf: performance.now() };
     this.mounted = m;
     this.log.drop();
+    // a move already requested (its first frame still to come) began before this mount: its settle is not logged
+    if (!this.camMoving && this.moveUnpresented()) {
+      this.camMoving = true;
+      this.moveBegan = m.mountedPerf - 1;
+    }
     const l = this.live(itemId);
     l.lastGate = null;
     // a fresh response (first visit, or after Start again) starts without the last session's transient lines

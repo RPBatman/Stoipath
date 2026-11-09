@@ -9,7 +9,7 @@
 
 **When.** After the owner's review of SIGNOUT.md §15 (the ten draft cases) and the Safari colour check (Q18), and at the time the owner chooses (Q17). Building and testing did not wait for those; publishing does.
 
-**Build.** One `npm run build`, build id `2026-11-09T03:19:33Z` (the `__BUILD_ID__` in the viewer chunk). Every gate of SIGNOUT.md §16 row S3 passed on this build after the S3 review fixes and their second round (§19.5, §19.6). If the orchestrator rebuilds before copying, the hashed names change. In that case, recompute §1 from the new `dist/.vite/manifest.json`: the `signout.html` entry, its `imports` (followed recursively) and its `css`, plus the `assets/decode-worker-*.js` that the viewer chunk names in its code. Keep §4's exclusions.
+**Build.** One `npm run build`, build id `2026-11-09T05:42:53Z` (the `__BUILD_ID__` in the viewer chunk). Every gate of SIGNOUT.md §16 row S3 passed on this build after the S3 review fixes, their second round and the pre-PR fixes (§19.5, §19.6, §19.7). If the orchestrator rebuilds before copying, the hashed names change. In that case, recompute §1 from the new `dist/.vite/manifest.json`: the `signout.html` entry, its `imports` (followed recursively) and its `css`, plus the `assets/decode-worker-*.js` that the viewer chunk names in its code. Keep §4's exclusions.
 
 The tables were computed by a script from the manifest, the chunk texts and the data tree, not written by hand. "On stage0-deploy" compares each file with the local `stage0-deploy` worktree at commit `9d08796` (the Learn L1 publication). Check it again against the branch as it stands when you copy.
 
@@ -19,16 +19,16 @@ The tables were computed by a script from the manifest, the chunk texts and the 
 
 | Path (same on stage0-deploy) | Bytes | sha256 (first 16) | On stage0-deploy |
 |---|---:|---|---|
-| `client/dist/signout.html` | 30,607 | `efce8670fad079db…` | absent (new) |
-| `client/dist/assets/signout-BSMEOKp9.js` | 283,545 | `e6d5e3cc45bddf0d…` | absent (new) |
+| `client/dist/signout.html` | 30,607 | `d59e6dd81bf2e4f0…` | absent (new) |
+| `client/dist/assets/signout-cJsLXdBx.js` | 284,765 | `82e2a17c33dbf8d3…` | absent (new) |
 | `client/dist/assets/signout-C7yIincS.css` | 54,647 | `573050646ba34733…` | absent (new) |
-| `client/dist/assets/sharpness-yGL6MC9N.js` | 262,995 | `54e544f26b3eae4a…` | absent (new) |
+| `client/dist/assets/sharpness-CeiNsMj0.js` | 264,479 | `046509f62e656851…` | absent (new) |
 | `client/dist/assets/sharpness-BIe6eH59.css` | 86,404 | `4e7da52984cbe808…` | identical (already there) |
-| `client/dist/assets/viewer-BCehJxFD.js` | 93,628 | `0aea9f5802066583…` | absent (new) |
-| `client/dist/assets/panels-0R7yMs5c.js` | 130,783 | `96d55b30b02766d1…` | absent (new) |
+| `client/dist/assets/viewer-Bud8-SUp.js` | 93,628 | `4987b4fb02026c9f…` | absent (new) |
+| `client/dist/assets/panels-3crOAU6U.js` | 130,783 | `b2e0aa1a810f9cdb…` | absent (new) |
 | `client/dist/assets/decode-worker-DA5Af6kW.js` | 8,734 | `b2659ff57031281d…` | absent (new) |
 
-Total 951,343 bytes.
+Total 954,047 bytes.
 
 Notes:
 - **Nothing is overwritten.** Every asset name is content-hashed. Seven of the eight files are new names on the branch; `sharpness-BIe6eH59.css` is already there with identical bytes. `signout.html` is a new page.
@@ -205,11 +205,11 @@ Nothing already published is required by this page. In particular `data/catalogu
 | Path | Why |
 |---|---|
 | `client/dist/index.html` | the measurement page is frozen; the published one stays |
-| `client/dist/assets/index-B3XOP0mZ.js` | the measurement page's entry chunk (frozen) |
+| `client/dist/assets/index-Dse8ocay.js` | the measurement page's entry chunk (frozen) |
 | `client/dist/learn.html` | Learn L1 keeps its published build unless the owner redeploys L1 on purpose |
-| `client/dist/assets/learn-CNwSfs7Y.js` | this build's Learn L1 entry chunk (not needed by `signout.html`) |
+| `client/dist/assets/learn-DIuBXQ3t.js` | this build's Learn L1 entry chunk (not needed by `signout.html`) |
 | `client/dist/shell.html` | the research shell keeps its published Phase A build |
-| `client/dist/assets/shell-CN-8h_0Q.js` | this build's shell entry chunk |
+| `client/dist/assets/shell-BCRZN7rT.js` | this build's shell entry chunk |
 | `client/dist/assets/shell-y4bCx_os.css` | this build's shell stylesheet |
 | `client/dist/.vite/manifest.json` | build metadata, not served |
 | `any `*.tif`, tile, `.npy` or offset-array file` | slides stay in the CAMELYON17 bucket; nothing of a slide is copied (the Pages site is at about 668 MB of its 1 GB budget) |
