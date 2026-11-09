@@ -1227,7 +1227,9 @@ CI (`stage0-ci.yml`, GitHub `ubuntu-24.04`, 4 vCPU, SwiftShader) failed the sign
   - **+4 ms:** p50 10.2 against a limit of 11.0, ratio 1.40: passes. Here, the check catches a pipeline that adds more than about 5 ms per JPEG tile, roughly doubling its decode time. The old line would have failed this run, at 10.2 ms. The new line does not, because a 10 ms absolute cannot be told apart from runner speed (above).
 - **Not changed.** The metric itself still counts blank tiles as decodes (a third of the samples). Changing what the engine reports is a metrics question for the engine owner, not part of this fix.
 
-GATE_NUMBERS_PLACEHOLDER
+**Gate numbers (2026-11-09; one `npm run build` into `client/dist`, build id `2026-11-09T08:55:41Z`; the CI workflow's invocations).** `src/` is unchanged; the change is in `harness/signout/integrator.check.mjs` and this file. No timing re-run was needed.
+- tsc `--noEmit` clean. run.mjs exit 0 (decode p50 7.2 ms, recorded only); check-metrics **20 ok**; shell-check **190 ok**; tools-check `--axe` **628 ok**; unit.mjs **4,144 ok** in 30 files; learn-check `--axe` **1,147 ok** (without `--ref-dist`, as CI runs it); `python3 -I -m unittest discover tools/tests` **95 tests OK**.
+- signout-check `--axe` exit 0 in 387 s: **846 ok, 0 FAIL** (integrator 376, modules 470). SO-P8: decode p50 6.2 ms (n 148, p95 16.4) against the control's p50 8.9 ms (n 148, 0 unknown), so a limit of 13.4 ms and a ratio of 0.70; device budget met on this machine.
 
 ---
 
