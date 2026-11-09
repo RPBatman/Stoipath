@@ -2,6 +2,8 @@
 
 **Status:** specification for builders, first full version 2026-11-08, **revised the same day after a pathologist-educator review and an engineer review** (every finding and its disposition is in §21; the review ids `PE-n` and `ER-n` are cited where a section changed). **Wave S0 (2026-11-08):** the range engine (E1–E9), the Learn hook S0b-1 and the empty practice page `signout.html` (plate, keymap, About; trainee and cohort modes) are built, and the S0 gate is green on one `npm run build` with the Phase A and Learn gates (§19.1). The five measured decisions are in §19.1: blank tiles byte-identical and black, `no-store`, centre-4 top-left, soft cancel `finish`, APP14 pixel-exact. The measurement page, the research shell and Learn L1 are unchanged (ENG-7, SI-1, SI-1b). No case, worklist or sign-out module exists yet (S1, S2). Every number that is not a decision is traced to the facts file of 2026-11-08 (`scratchpad/signout/facts/FACTS.md`, cited below as **F§n**; its measured inputs are in `facts/*.json`), to LEARN.md, or to the code named in the row. Every clinical or dataset-derived statement a trainee will read is listed in §15 for the owner's review and ships `draft`.
 
+**Wave S3 (2026-11-09):** the final gate is green on one `npm run build`: every SI, ENG, module and Phase A gate, and learn-check after one timing re-run. SO-P9 read 1.57 MB from the bucket. The 42 screenshots are in `design/screens/integrated/shots/signout-*.jpg`. Engine and pathologist-educator / accessibility review fixes E1, R1–R5 and R7–R9 are applied. The deploy list is [`SIGNOUT-DEPLOY.md`](SIGNOUT-DEPLOY.md). Before deploy the owner answers Q3, Q17, Q18, Q20 and Q21 (§20); the log is §19.4.
+
 **Why:** on 2026-11-08 the owner asked *"Are we building a simulated sign-out mode??"* and then *"Write the spec and then build it."* The owner is a pathology resident in the UT system; the UT pathology departments are planning a grant-funded international case conference and want trainee outcome data. L2 is the second usable slice of **Stoipath Learn** (plan 12 §5): a worklist of cases, a multi-slide review of five lymph nodes per case, a structured **practice report**, submission, field-by-field comparison with the reference answer, the viewing trace against the reference deposits, and a per-trainee results export plus a cohort CSV for a programme director. The pilot runs on **CAMELYON17** (CC0 1.0, Radboud UMC): 100 training patients × 5 sentinel-node slides, per-node labels and a per-patient pN stage in `stages.csv`, lesion annotations for 50 slides (F§0). The slides are read **directly from the public bucket by HTTP byte range**; nothing is copied to GitHub Pages (the site is at 668 MB of its ~1 GB budget).
 
 **Read first:** [LEARN.md](LEARN.md) in full (this spec reuses its page, host, format, scoring, storage, strings and harness conventions and names them by section); [LEARN-QUESTIONS.md](LEARN-QUESTIONS.md) "host conventions" (2026-11-04); [TOOLS.md](TOOLS.md) §2 (one engine frame), D1 (in-place slide switch), D12 (catalogue), §11.2 (viewports); [`src/learn/contracts.ts`](src/learn/contracts.ts); [`src/shell/contracts.ts`](src/shell/contracts.ts) §2 (SlideEntry, SlideRef), §5 (VectorLayerFile); the engine files `src/pyramid.ts`, `src/decode-messages.ts`, `src/decode-worker.ts`, `src/decode-pool.ts`, `src/scheduler.ts` (constructor and `pool.request`), `src/viewer.ts` (`startViewer` lines 398–455); `docs/plan/13-regulatory-pathway-and-free-distribution.md` (FR-R0, intended use); `docs/research/11-gap-6-education-modules.md` (viewing trace, director views); `docs/research/11-gap-7-clinical-integration.md` (sign-out hand-off checklist); `design/screens/final/clinical-signout.html` (the slide tray and the hand-off checklist, lines 928–942 and 1035–1058; `.checklist` line 426) and `education-module.html`; `design/handoff/ux-copy.md` §2 (regulatory wording), §11 (clinical sign-out strings, to borrow structure, never claims), §13, §14, §16 (strings that must never appear); the facts file F§0–§6.
@@ -982,6 +984,78 @@ The integrator then:
   - the module checks' worklist (1440, 390), report form (1440, 390), countdown, dialog, Compare, exam lock and Show me screenshots.
   - The non-identity virtual objects draw borrowed pool tiles (J-E8). The sheet layouts were looked at before and after J-S2-6.
 
+### 19.4 Sign-out integrator, Wave S3 (2026-11-09)
+
+Wave S3 had no builders. The integrator:
+- ran the S2 gate again as a baseline on one build (`g1`, build id `2026-11-08T23:57:44Z`, 0 FAIL);
+- ran SO-P9 against the bucket;
+- took the 42 screenshots on real slide bytes and looked at every one;
+- ran an engine review and a pathologist-educator / accessibility review;
+- applied the fixes below and ran the full gate on one `npm run build` (`g4`, build id `2026-11-09T00:43:01Z`);
+- wrote `SIGNOUT-DEPLOY.md`, closed the INFERRED rows and S2-N1 in SIGNOUT-QUESTIONS.md, and listed the owner's pre-deploy questions at the top of §20.
+
+The contract stays 3. No Learn, shell or frozen file changed.
+
+- **J-S3-1 · Who reviewed.** No written review findings were handed to Wave S3. So the integrator ran both reviews itself, with Learn L1's lenses (LEARN.md §15.2e):
+  - the **engine review** read the range path (`range-source.ts`, the worker's `handleRange` / `handleArrays`, the pool's array and probe calls, the level gate, the viewer wiring) against §8, then ran SO-P9 on the real bucket;
+  - the **pathologist-educator / accessibility review** looked at the 42 real-byte screenshots, probed the submit dialog, the navigator and the option grid at every viewport, and read the report and comparison strings.
+
+  *The owner may prefer* an independent review round before deploy; every fix below is small and listed with its check.
+- **J-S3-2 · The review fixes** (each re-checked on the `g4` build):
+  - **E1 · engine** (`src/range-source.ts`): the arrays-LRU keys are built once per slide. `isResident()` runs from the level gate for every queued tile of a non-resident level in every frame, and it used to build a key string on each call. `range-source.test.mjs` 68 ok; ENG-2 … ENG-9 pass.
+  - **R1 · worklist**: the pilot's rows read `Case 1 · Case 1 · 5 nodes · …`, because the worklist's case titles are `Case {k}`, and a screen reader said it twice. A title that only repeats `Case {k}` is now left out (§5.1). WRK-1 / WRK-4 and the unit test are updated, and a distinct title still shows.
+  - **R2 · S2-N1, feedback**: Show me after a node switch now waits for the base or the failure threshold (up to 8 s, from a 200 ms timer), and a later Show me supersedes a waiting one. A new SI-11 row switches to Node 5 with the host down: it says `Images are unavailable; the deposit is at 5,405, 8,851 µm.` and does not fly.
+  - **R3 · report**: the dialog's calls row read `Node calls: 1 negative · 2 negative …`, right above `Node counts: 2 macro · 1 micro …`, so `1 negative` read as a count. It now reads `node 1 negative · node 2 negative · …` (§5.4 item 8).
+  - **R4 · integrator**: the strip and the HUD said `Sharpening…` on the worklist and the cohort tool, where no slide is open. `signout.html` now starts at `No slide open`, which Learn's `EngineChrome` replaces when a slide opens. New SI-7 row, 6 viewports.
+  - **R5 · integrator, accessibility (SC 2.4.11, 2.1.1)**: on sheets and in landscape (≤ 1079 px) the submit dialog's body could not shrink, so the dialog clipped `Keep reviewing · Submit practice report` and the last warning actions under the flow bar. On a tablet both buttons sat behind the flow bar. `#submitBody` is now a flex column whose checklist scrolls, and the footer stays on screen. New SI-7 row: the footer is hit-testable at all six viewports.
+  - **R7 · integrator**: on a portrait node (patient_017_node_2 is 0.45 : 1) the navigator grew to 240 × 557 px when the card closed, covering a fifth of the canvas. `main.ts` now sets `--so-nav-ar` on `slideOpened`, and `signout.css` caps the navigator at 40 vh tall (164 × 389 px there). Shell and Learn L1 are untouched; SI-1b is equal.
+  - **R8 · report, accessibility**: in the docked card at 1280–1920 px, `Micrometastasis` and `Macrometastasis` ran 3–17 px past their option boxes. Below 304 px a container query stacks the four options in one column. This is measured: every label is now inside its box at the six viewports. SI-7 and SI-8 (axe) pass.
+  - **R9 · results**: at phone width the cohort table broke file names letter by letter. Below 600 px it keeps a 44 rem width, and its focusable region scrolls sideways (SC 1.4.10 allows that for data tables).
+  - **Reviewed and kept:**
+    - J-E4's `finish` (SO-P10 on `g4`: `abort` 7.50 s, `finish` 7.52 s, 6 connections each);
+    - the black `blankFill` (J-E1);
+    - the two thresholds a trainee sees: "Nodes examined" counts a sharp view at 5× or more (Q12), while the dialog warns below 10× (PE-9). They answer different questions; *the owner may prefer* one threshold (Q28).
+- **J-S3-3 · SO-P9 on the bucket (`--network`, recorded, not gated).** `patient_086_node_3` (centre 4, DSF 1, 1440 × 900):
+  - first view complete in 1.09 s with 20 requests and 0.29 MB;
+  - the 20× jump complete in 1.38 s with 26 requests and 1.27 MB, including one level-1 array request of 187,072 B (L* 1);
+  - total **1.57 MB** over 46 requests, against the 3 MB target;
+  - every request a GET with one closed Range, answered 206, with the ETag equal to the index's (INF-14, also read from JavaScript under the bucket's real CORS answer);
+  - 0 console errors.
+
+  The bytes went through `helpers.bucketRoute` (`route.fetch()` through this sandbox's proxy), so connection reuse on the real link is not measured here.
+- **J-S3-4 · Screenshots on real bytes.**
+  - The 40 state shots and the two Q18 colour shots were taken on the built page with the real catalogue and worklist (`<scratch>/signout/integrator-s3/shots.mjs`). Case 1: a trainee misses Node 2's ITC, so the comparison is a minor discrepancy, and Show me lands on that ITC.
+  - Every slide byte went through the range cache under `<scratch>/signout/cache/net`; a miss was read once from the bucket.
+  - Bucket egress for the whole of S3 was **28.7 MB**: SO-P9 1.57 MB, the first screenshot pass 22.4 MB and the second 4.8 MB, after which three more passes read 0 B. Every read was a single closed range, and no slide was downloaded.
+  - The c17ycc colour shot is framed 600 µm left of Case 8 Node 1's ITC, so that a public screenshot does not point at the answer. The c17rgb shot is Case 1 Node 3's lymphoid tissue at the edge of its macrometastasis; Case 1's answers are in the Compare shots anyway.
+  - Every shot was looked at. A first pass on the `g1` build found R1, R3, R4, R5 and R7. The fixed build's pass found R8 and R9, which were fixed, retaken and looked at again: one by one at full size, and the final set again as five contact sheets plus the colour pair.
+- **J-S3-5 · The published pages are unchanged (ENG-7, ENG-9, SI-1, SI-1b, on `g4`).**
+  - `parseManifest(data/manifest.json)` equals `pyramid-before-s0.json`. `index.html`'s graph is `index.html` + the viewer chunk.
+  - The six frozen files and the three after-S0 files keep their recorded sha256 (SI-1, 21 rows).
+  - `learn.html` and `shell.html` computed styles equal the L1 final dist (SI-1b), and the shell navigator DOM is unchanged (ENG-9).
+  - `SIGNOUT-DEPLOY.md` copies no published page and changes no byte that a published page loads. The decode worker is a new name; the old ones stay.
+- **J-S3-6 · Deploy shape.**
+  - The page graph is 8 files, 940,785 B: 7 new names and `sharpness-BIe6eH59.css`, which is already on the branch.
+  - `data/signout/` is 136 files, 2,095,236 B.
+  - No slide, tile or array file is copied.
+
+**Gate numbers (Wave S3, 2026-11-09; one `npm run build` into `client/dist`, build id `2026-11-09T00:43:01Z`).**
+- tsc `--noEmit`: clean, standalone and inside the build.
+- `harness/signout-check.mjs --phase-a --ref-dist <L1 final dist> --learn-ref-dist <L0 baseline> --axe <axe-core 4.10.3>`, with the range cache for CNT-6, in 1,413 s:
+  - **integrator 387 ok** (S2: 374, plus the new R4, R5 and S2-N1 rows). SI-1 21, SI-1b 11, SI-3, SI-4, SI-5, SI-6, SI-7, SI-8, SI-9, SI-10 (in CNT-3), SI-11 6, CNT-3 keyboard only with 0 pointer events. SO-P1 0.50 s (DSF 1) and 0.41 s (DSF 2); SO-P6 3.27 MB and 2.53 MB, 0 tiles twice; SO-P8 decode p50 5.4 ms (p95 13.8). The SI-11 plate came at 8.1 s.
+  - **modules 467 ok**: worklist 90, results 44, review 47, report 62, feedback 198, content 23 page + library rows. Plus the library runs: casefmt 208 unit + 14 python, grading 256 unit, content 327 unit + 14 python.
+  - **SI-2 on the same build:**
+    - run.mjs exit 0, check-metrics **20 ok**;
+    - shell-check **190 ok**;
+    - tools-check (`--axe`) **628 ok**;
+    - unit.mjs **4,098 ok** (S2: 4,097; one new worklist row);
+    - python **94 tests OK**;
+    - learn-check (J-I48's invocation) **1,142 ok, 2 FAIL**. Both failures were ITM-8 view-settle lines in `items`: the camera settled over the mark at 20× under the gate's load ("Met · 20× over your mark" where "Not met yet" was expected), and the HUD gate chip that follows read null. Re-run once on its own on the same `client/dist` with the same flags (`--only items`): **124 ok, 0 FAIL**. That is the timing re-run of §16; nothing in Learn changed in S3.
+- `harness/signout/source.check.mjs --dist client/dist --dist-abort <S0's abort build> --dist-pre <L1 final dist>`: **56 ok, 0 FAIL**. That covers ENG-2 (36 of 36, max difference 0; APP14 37 of 37) and ENG-3 … ENG-9. It also covers ENG-6 (cap 6), SO-P7 (socket closed 2 ms after the request, 65,536 B), SO-P10 (above), SO-P11, ER-8 and INF-1.
+- `SIGNOUT_SO_P9_ONLY=1 harness/signout-check.mjs --only integrator --network`: 5 ok (J-S3-3).
+- The baseline before the fixes (`g1`, build `2026-11-08T23:57:44Z`): integrator 374, modules 467, SI-2 all green (learn-check 1,144), source 56, 0 FAIL in 1,382 s.
+
+
 ---
 
 ## 20. Open questions for the owner (with the defaults the build follows until answered)
@@ -1024,6 +1098,7 @@ The ten cases also stay `draft` until the owner's review of §15 (the facts file
 | Q25 | **Two numbers for the content (S1, CNT-N3, CNT-N4).** (a) Case 5 Node 2's span is 3,288 µm, because clusters merge by boundary distance (§6.3); FACTS §5 has 4,114 µm, from bounding-box gaps. (b) Case 4's teaching sentence T1 says `125 µm`, while its reference sentence says `about 120 µm`. Keep both as built? | Keep both: the boundary rule, and T1 verbatim from §15.1. |
 | Q26 | **Free text in the cohort CSV (S2, A-RES-Q2).** `cases.csv` carries no `comment` or `preview_text` column; both stay in the results file. Add them (at the end, before `duplicate`; a cell starting with `=`, `+`, `-` or `@` would be prefixed with `'` against spreadsheet formula injection)? | Not added. |
 | Q27 | **Node clocks during the Report phase (S2, A-REVIEW-N1).** A node's clock runs while it is on screen, so time spent with the report form open counts toward that node (and `reportMs` is part of the case time). Pause the node clocks in Report instead? | Keep them running. |
+| Q28 | **Two magnification thresholds (S3).** The Compare card's `Nodes examined` counts a node with a sharp settled view at 5× or more (Q12), while the submit dialog warns about a node never viewed at 10× or more (PE-9). A trainee can see `Nodes examined: 1 of 5` after a dialog that warned about that same node. Use one threshold for both? | Keep both: they answer different questions (looked at all, versus looked closely enough to call a small deposit). |
 
 ---
 

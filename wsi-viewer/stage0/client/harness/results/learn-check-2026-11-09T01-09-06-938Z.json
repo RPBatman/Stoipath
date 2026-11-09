@@ -1,0 +1,635 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "refDist": "/tmp/claude-0/-home-user-Stoipath/c92ade85-68e3-5745-aae9-ca65fc534b98/scratchpad/learn/integrator/baseline-dist",
+ "seconds": 36,
+ "files": [
+  "items.check.mjs"
+ ],
+ "moduleCounts": {
+  "items": 124
+ },
+ "gates": [],
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "install: items provides `items` and __learn.tools.items() (modules format, scoring, progress, reveal, items, player, course)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "install: item:reveal U, item:alternatives ⇧↵ and item:reopen are registered in \"The flow (Learn)\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "install: the registry reports no binding conflict (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N × 3 reaches step 4, the region item"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "D15: the card states the scoring rule before answering (\"Scored: a point on any tumour focus (or within 50 µm of one), or an outline of the largest deposit with IoU 0.50 or more; an outline that lies at least 90 % on tumour earns half credit.\")"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "card head: \"Item 1 of 4 · Region marking\" · \"1 point\" (Item 1 of 4 · Region marking1 point)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "the item is mounted awaiting; the primary action is \"Commit answer ↵\" (Commit answer ↵)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "the card's CTA reads \"Commit answer ↵\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-9: N on an awaiting item leaves step 4 and says \"Answer this item first: commit, then reveal (U).\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: before U no request matches camelyon16-expert.geojson (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: overlay features 0 = the annotation store's 0 + the step's 0 hotspots (Learn sources hold 0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: no mark, the deposit at 20× settled: the gatebox still reads \"Not met yet · place a mark, then view it at 20×\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: region item awaiting (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "no frame cost: 0 mutations in #taskCard and the HUD gate chip during a 1 s drag on the region item (0; 0 at rest after it)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: a mark at P7, then the deposit at 20×: \"Not met yet · highest magnification over your mark so far: 5×\" (the finest view over the mark, not the deposit)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "HUD gate chip while unmet at 20× with the mark out of view (review fix: no \"now 20× · need ≥ 20×\"): \"Zoom gate · 20× · not over your mark yet\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: still no request for the reference layer"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: two Point clicks leave one mark annotation in the store (1; the newest is the item's draft mark)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "markChanged fired for each mark (2; last: point, mouse)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the mark row reads \"Your mark · point\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the gatebox reads \"Met · 20× over your mark\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "HUD gate chip hidden once the gate is met (null)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "gateChanged {met: true, bestScale 0.5} ({\"itemId\":\"q-region\",\"met\":true,\"bestScale_um_per_px\":0.5})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the CTA commits (itemCommitted {\"itemId\":\"q-region\",\"modality\":\"pointer\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the polite region says \"Answer saved. You can still change it until you reveal. Press U to reveal.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "committed: the CTA reads \"Reveal U\" and the card \"Answer saved. Press U to reveal…\" [card committed, engine q-region:committed, scheduled false, status \"✓Answer saved. Press U to reveal. You can still change your \"]"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: itemAnswered {modality: pointer, gateMet: true, score: 1} ({\"itemId\":\"q-region\",\"modality\":\"pointer\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-3: the feedback title reads \"Revealed · inside the outline · 1 / 1\" [card revealed, engine q-region:revealed, scheduled false, status \"✓Revealed · inside the outline · 1 / 1Your point is inside t\"]"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-8: the reference layer is fetched only after U (1 request)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: after reveal the store holds no mark for the item (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: the frozen mark source (z 310) draws it ([{\"id\":\"learn-mark\",\"features\":1}])"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "revealed: the key row \"Answer key (dashed yellow) · CAMELYON16 reference outline, 3.29 mm²Hide key\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "revealed: the CTA reads \"Next step N\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: region item revealed (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: after reveal the active tool is Select (select)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: clicks on the slide after reveal leave the store empty, even with Point chosen again (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: and the polite region says why, naming no class (D17)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-12: no sentence of items names the class (arks are kept only while a region question is open, so that mark was not kept. | Marks are kept only while a region question is open, so that mark was not kept.)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N reaches step 5, q-sinus"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: Tab reaches the options of q-sinus"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: B checks B (B); 2 checks B too (B)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: D inside the group checks D and leaves the camera unchanged (WASD suppressed: true)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: ↵ on the CTA commits ({\"itemId\":\"q-sinus\",\"modality\":\"keyboard\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: says \"Answer saved. You can still change it until you reveal. Press U to reveal.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: option B has .is-correct and the text \"✓ correct\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-1: the title is \"Correct · B · 1 / 1\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: MCQ revealed (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N reaches step 6, q-size"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-10: before measuring the card reads \"Measure with M (two clicks or two taps).\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-10: two clicks with M: the card shows \"Your measurement · 789.5 µm\" (formatLengthUm of 789.5 µm)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-10: C scores 1 / 1 whatever was measured (\"Correct · C · 1 / 1\"; the score's metric holds only the choice)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "setup: N reaches step 7, q-features"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: A, B and D toggle on (ABD)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: A, B, D commit and reveal 0.33 / 1 (\"Partly correct · you chose A, B, D · 0.33 / 1\")"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: A, B and C show \"✓ correct\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-2: D shows \"✕ your choice\" and \"This describes the lymphocytes.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: multi revealed (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow A: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow A: 172 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4 setup: the region item"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: Enter closes the polygon and moves focus to the card's primary action"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: says \"Polygon closed. Commit answer has focus. Press Enter again to commit, or Escape to go back to the slide.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the mark row reads \"Your mark · polygon · 5.80 mm²\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the first commit shows the gate warning (gateWarned true, gate-warning)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the warning is said assertively (once; J-I47)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: and not politely as well"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: with the card open, the warning is in the card only (the integrator's banner stays hidden)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: the card shows the warning with \"View my mark at 20×\" and \"Commit anyway\" (\"!You have not viewed your mark at 20× yet. Commit now for half credit if it is c…\")"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: gate warning (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: Commit anyway, then U: \"Revealed · IoU 57 % · 0.5 / 1\" (iou 0.567, gateMet false)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-4: and the half-credit sentence"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow B: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow B: 134 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5 setup: the region item, by N only"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: ⇧↵ opens the panel (aria-modal=\"false\", \"Mark the metastasis without a pointer\"), focus on a region"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: the candidate letters are drawn while the panel is open (4 points, z 450)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: arrow keys go to C"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: Tab reaches \"Fly there: region C at 20 times\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: Fly there puts the camera at 20× over C (1742.5, 1244.6 µm at 0.500 µm/px)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: the radio is still C and the panel stays open beside the slide"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: says \"Flying to region C, …, at 20 times.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: Tab reaches \"Commit C as my mark ↵\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: committed by keyboard ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"confidence\":null}); the panel closed"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5 (AC-A4): the score deep-equals scoreRegion(item, key, {kind: 'mark', mark: point(C)}, log, mpp) (score 1, gate met true)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: modality keyboard, 1 / 1 ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"score\":1,\"points\":1,\"gateMet\":true,\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: the assertive sentence is \"Revealed. Your point is inside the outline. 1 of 1.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-5: no mouse, pointer, wheel or touch event along the way (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow C: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow C: 150 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6 setup (with a 20× view)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: candidates panel, Candidate regions tab (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: candidates panel, Answer in text tab (1440): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: \"Commit my text answer\" commits with modality text ({\"itemId\":\"q-region\",\"modality\":\"text\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: the gatebox reads \"Checked when you reveal: view the area you describe at 20× or more.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: with a sharp 20× view of the target: \"Revealed · rubric 3 / 3 · 1 / 1\", modality text"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow D: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow D: 143 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6 setup (without a 20× view)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: \"Commit my text answer\" commits with modality text ({\"itemId\":\"q-region\",\"modality\":\"text\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: the gatebox reads \"Checked when you reveal: view the area you describe at 20× or more.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-6: without one: 0.5 / 1 (\"Revealed · rubric 3 / 3 · 0.5 / 1\"; the gate applies to every modality alike)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow E: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow E: 121 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7 setup"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "Enter with Point places a mark at the crosshair, moves focus to the CTA and says \"Point placed. Commit answer has focus. P…\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "focus is on the primary action"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "a keyboard mark commits with modality keyboard ({\"itemId\":\"q-region\",\"modality\":\"keyboard\",\"confidence\":null})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: Change answer returns the item to awaiting (itemReopened)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: says \"Answer unlocked. Change your mark or confidence, then commit again.\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: ⌫ on the committed mark deletes it and reopens the item (awaiting, draft mark null)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-7: and says \"Answer unlocked…\""
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow F: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow F: 130 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11 setup (390 × 844 coarse)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: a Point-tool tap places a mark ({\"kind\":\"point\",\"annotationId\":\"fd1b2cd0-0480-4bf4-946f-98b071e85d5d\",\"area_um2\":null,\"inputDevice\":\"touch\"})"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: the candidates panel is a bottom sheet (390 × 338 px, bottom at 788 of 844)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: candidates panel as a sheet (390 coarse): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: every control of the sheet is ≥ 44 px or spaced (12 checked)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: Fly there closes the sheet so the slide is visible"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: ⇧↵ reopens it on the same region (C checked, focus C)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "ITM-11: every control of the item card is ≥ 44 px or spaced (6 checked)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "axe: region item awaiting (390 coarse): 0 violations"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow G: no console or page error (0)"
+  },
+  {
+   "tag": "items",
+   "ok": true,
+   "msg": "flow G: 126 requests, all same-origin GET; no beacon, socket or request body (0 other; 0 guarded)"
+  }
+ ]
+}
