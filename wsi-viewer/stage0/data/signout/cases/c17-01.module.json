@@ -1,0 +1,421 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "c17-01",
+  "version": "0.2.0",
+  "metadata": {
+    "title": "Case 1 · sentinel lymph nodes, five slides",
+    "summary": "Review five sentinel lymph node sections, call each node, and stage the set under CAMELYON17's simplified rules in a practice report.",
+    "audience": ["resident", "medical-student", "cme"],
+    "objectives": [
+      "Survey every node of a sentinel lymph node set at low power before examining at high power.",
+      "Call each node negative, isolated tumour cells, micrometastasis or macrometastasis.",
+      "Derive the pN category from the node calls under CAMELYON17's simplified rules, and say how a full AJCC/CAP report would differ."
+    ],
+    "tags": {
+      "organ": ["lymph node"],
+      "stain": ["H&E"],
+      "difficulty": 3,
+      "topics": ["sentinel lymph node", "breast cancer", "metastasis", "pN staging", "practice report"]
+    },
+    "authors": [
+      {
+        "name": "Stoipath Learn L2 build (AI-assisted draft)",
+        "role": "author"
+      }
+    ],
+    "review": {
+      "status": "draft",
+      "notes": "Reference values derived from CAMELYON17 stages.csv and annotations; every statement is listed in c17-01.facts.json, common.facts.json and SIGNOUT.md §15."
+    },
+    "language": "en",
+    "estimatedMinutes": 25,
+    "created": "2026-11-08",
+    "updated": "2026-11-08",
+    "textLicence": {
+      "id": "CC-BY-4.0",
+      "text": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "slides": [
+    {
+      "ref": "n0",
+      "catalogueId": "camelyon17.c17s-0006",
+      "label": "Case 1 · node 1 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "94968x210579@0.2431@0,0@f9d01715c807"
+    },
+    {
+      "ref": "n1",
+      "catalogueId": "camelyon17.c17s-0007",
+      "label": "Case 1 · node 2 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "96651x197226@0.2431@0,0@5206f3c14d81"
+    },
+    {
+      "ref": "n2",
+      "catalogueId": "camelyon17.c17s-0008",
+      "label": "Case 1 · node 3 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "94968x210579@0.2431@0,0@328f64f4d8f1"
+    },
+    {
+      "ref": "n3",
+      "catalogueId": "camelyon17.c17s-0009",
+      "label": "Case 1 · node 4 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "94968x210579@0.2431@0,0@eafedb1ea381"
+    },
+    {
+      "ref": "n4",
+      "catalogueId": "camelyon17.c17s-0010",
+      "label": "Case 1 · node 5 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "96651x197226@0.2431@0,0@a9583e083326"
+    }
+  ],
+  "case": {
+    "vignette": {
+      "text": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules.",
+      "synthetic": true,
+      "source": "Invented for teaching; CAMELYON17 publishes no clinical record"
+    },
+    "slides": ["n0", "n1", "n2", "n3", "n4"]
+  },
+  "items": [],
+  "steps": [
+    {
+      "id": "open",
+      "kind": "tour",
+      "phase": "open",
+      "title": "Case packet",
+      "text": "Five slides, one node each by the data set's convention. Open every node, call each one, then fill the practice report.",
+      "view": {
+        "kind": "fit",
+        "slide": "n0"
+      },
+      "transition": "cut",
+      "tools": ["select"]
+    }
+  ],
+  "extensions": {
+    "signout": {
+      "schema": "stoipath.learn.signout-case/1",
+      "dataset": {
+        "name": "CAMELYON17",
+        "patient": "patient_017",
+        "centre": 0,
+        "stagesCsv": {
+          "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv",
+          "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247"
+        },
+        "annotations": ["patient_017_node_1.xml", "patient_017_node_2.xml", "patient_017_node_4.xml"]
+      },
+      "rules": "camelyon17-simplified/1",
+      "nodes": [
+        {
+          "ref": "n0",
+          "title": "Node 1",
+          "slide": "n0",
+          "slideId": "patient_017_node_0",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [384, 76288, 81664, 148480],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 47,
+            "rows": 103,
+            "bits": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000180000000000e00000000001900000000001f00000000003f00000000007f0000000000fd0000000000fc0000000000fc0000000001f80000000003f00440000007e00dec00000fe81ff800001fd07fd980004bf8fcbf0000fff1f1f80000ffe710f00003ffce0000000fff10680000047600a0000007e000e800000fc000f00000100001c00000000001c30000000007ee000030000fcc0000e0001d98000b00000000001f00000000241e00000000003e00000000e02100000001f80700000001f00f00000003800000000003c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n1",
+          "title": "Node 2",
+          "slide": "n1",
+          "slideId": "patient_017_node_1",
+          "reference": {
+            "label": "itc",
+            "sentence": "Reference: isolated tumour cells, about 84 µm (longest single annotated outline; CAMELYON17 annotation of 1 polygon, about 0.0024 mm²). Under AJCC breast staging, which CAMELYON17 applies, a node with ITCs only is not counted toward the number of positive nodes.",
+            "largestDeposit_um": 83.6,
+            "clusterSpan_um": 83.6,
+            "polygons": 1,
+            "area_mm2": 0.002417,
+            "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px; clusters merge polygons within 100 µm"
+          },
+          "annotation": {
+            "layer": "camelyon17-annotation",
+            "version": "2bf0a484",
+            "clusters": [
+              {
+                "id": "c1",
+                "featureIds": ["89a14ced-6bd0-5827-ac85-d9a7ad937cd9"],
+                "feret_um": 83.6,
+                "largestPolygon_um": 83.6,
+                "bbox": [66774, 104349, 67085.3, 104552]
+              }
+            ]
+          },
+          "tissueBbox": [1408, 1536, 80768, 195840],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 48,
+            "rows": 97,
+            "bits": "c00000000000600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000002000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f88000070000fc0000078003fe00000780067f800001e00ff7c00001c01ff7e00003907fdfe00003f07ffff00003c03fffe00001e41cfff000007319ffe000003a407fe000001f0237c000001f0423e000000fb807000000071b03000000000000000000000000000000000c0000000000000000000007fde00000001fffe80000003ffffe0000002ffffe0000000dffff0000002dffff80000007ffff8002003bfffe0000003f59ff0000001effff00000002ffff00000001ffff800000003fbf00000000fffe00000001fff800000000fff0000000003f80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000"
+          }
+        },
+        {
+          "ref": "n2",
+          "title": "Node 3",
+          "slide": "n2",
+          "slideId": "patient_017_node_2",
+          "reference": {
+            "label": "macro",
+            "sentence": "Reference: macrometastasis, about 3,200 µm (longest single annotated outline; CAMELYON17 annotation of 17 polygons, about 7.8 mm²).",
+            "largestDeposit_um": 3157.9,
+            "clusterSpan_um": 3157.9,
+            "polygons": 17,
+            "area_mm2": 7.764,
+            "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px; clusters merge polygons within 100 µm"
+          },
+          "annotation": {
+            "layer": "camelyon17-annotation",
+            "version": "215cc179",
+            "clusters": [
+              {
+                "id": "c1",
+                "featureIds": [
+                  "bd35865e-717d-5dd5-86b3-aa4a2741d886",
+                  "a8dda0a8-40a9-5518-8bb9-5d717322e698",
+                  "2b6d2a8b-30a3-586a-ad68-a40c560cf121",
+                  "2b2ecc02-ee6e-5e38-a519-3603d7c2ec30"
+                ],
+                "feret_um": 3157.9,
+                "largestPolygon_um": 3157.9,
+                "bbox": [48767.5, 145576, 58331.6, 156635]
+              },
+              {
+                "id": "c2",
+                "featureIds": ["6694deda-395d-53a3-9eae-2d177818430d"],
+                "feret_um": 2689,
+                "largestPolygon_um": 2689,
+                "bbox": [29176.6, 82625.8, 40093.2, 89529.4]
+              },
+              {
+                "id": "c3",
+                "featureIds": [
+                  "86d8db0e-b9c4-5143-8f46-341151c87742",
+                  "6a081772-b63b-565d-b2b6-358ac35cf2a2",
+                  "3ef9ef60-8418-54b1-848c-db23a7cb3a57",
+                  "b87039a4-b467-5dc5-9d2e-527157a0c4b6",
+                  "a3970195-1d29-50e3-9e30-9fd9f852d619",
+                  "71d86ad8-1137-5df9-a5b2-67edb8cacc72"
+                ],
+                "feret_um": 1744.6,
+                "largestPolygon_um": 1744.6,
+                "bbox": [40904.3, 149100, 47003.9, 156088]
+              },
+              {
+                "id": "c4",
+                "featureIds": ["884b9886-2d80-5c93-beec-00c96f58e059"],
+                "feret_um": 1060.8,
+                "largestPolygon_um": 1060.8,
+                "bbox": [41656.1, 82308.2, 42636.7, 86663.4]
+              },
+              {
+                "id": "c5",
+                "featureIds": [
+                  "26a22460-2fbe-5792-9f28-fbbb8bcb694c",
+                  "aaf4ea0d-04e1-5d35-984f-c3db2046e4af",
+                  "ae18ba75-d3f8-5381-82ee-f70b707e6ec0",
+                  "b8ba1aa6-795f-5e27-8795-7082b3d5c79b",
+                  "128cd2d1-65dd-53e8-a275-d2754f0067c0"
+                ],
+                "feret_um": 767.2,
+                "largestPolygon_um": 364.6,
+                "bbox": [25813.1, 83342.3, 27775.6, 85877]
+              }
+            ]
+          },
+          "tissueBbox": [16000, 56832, 85888, 157056],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 47,
+            "rows": 103,
+            "bits": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001400000000007f0000000001ff800000200fff800005c01fff800018403fff800005e07ffc00001fe0fffe00007fc1fffe00007f93fffc0000ffa67ff80007ff403ff00007fe08f9e0000ffc10f1c0001ff1004200003fe00c0000001fc3f90000000073f000000000eff000000007fff00000000fffe00000003fff800003dc7ff7000003fc3fc6000007ffff9800000ffdfe00000007fa440000007ff380000000ffe080000000bfc0000000003fc000000003ff8000000003ff0b00000003fe0800000007fee000000007fde00000000fc3c00000003fbfc00000007f7fc0000000feff800000007bffd0000000e3ffa000000107ff000000000fff000000001ffc000000003ff8000000003ff0000000007fe0000000007f80000000007d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n3",
+          "title": "Node 4",
+          "slide": "n3",
+          "slideId": "patient_017_node_3",
+          "reference": {
+            "label": "macro",
+            "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+          },
+          "annotation": null,
+          "tissueBbox": [384, 86528, 74240, 189440],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 47,
+            "rows": 103,
+            "bits": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0000000004f00000000003f8000000007ff00000000ffff00000003ffb80000000fff900000001ffe0000000013f8000000001f88000100001f18000100003ef8421800007ee0eb38800001d3d6f300000003ff0700000003fe1e00000001fa3c00000007fc7c0000000ff8f80000001ff1f00000007fe3e00000007e038000001870070000001800000000603000000001d0e00000001fe1e000000027c3c00000001fe0000000003ff8000000013ff000000002fff000000000ff8000000001f0000000000780000000000f00000000001c00000000003c0000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f800000003fff000000007ffc00000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n4",
+          "title": "Node 5",
+          "slide": "n4",
+          "slideId": "patient_017_node_4",
+          "reference": {
+            "label": "micro",
+            "sentence": "Reference: micrometastasis, about 780 µm (longest single annotated outline; CAMELYON17 annotation of 20 polygons, about 0.52 mm²). Annotated foci lying within 0.1 mm of each other span about 930 µm; that span is annotation geometry, not how a deposit is measured.",
+            "largestDeposit_um": 775.7,
+            "clusterSpan_um": 925.7,
+            "polygons": 20,
+            "area_mm2": 0.5215,
+            "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px; clusters merge polygons within 100 µm"
+          },
+          "annotation": {
+            "layer": "camelyon17-annotation",
+            "version": "4df8099d",
+            "clusters": [
+              {
+                "id": "c1",
+                "featureIds": [
+                  "d83ae5e4-fd02-5845-83b5-e456dda5199a",
+                  "13666230-59a6-5518-916a-fa48200729e5",
+                  "e3d7edc1-92ed-5c95-a24c-966845cb85f4",
+                  "05b09314-bb55-5698-97f6-da0317afb875",
+                  "e45ed609-56bf-5409-b2cb-be9b820b0033",
+                  "508d620f-680c-5ade-a784-5022d4227e22",
+                  "5b492302-a2e1-509e-8e2d-c21502142ea9",
+                  "31a53931-dacd-5a31-a8a2-fd4c60dc9088"
+                ],
+                "feret_um": 925.7,
+                "largestPolygon_um": 775.7,
+                "bbox": [20889.4, 34666, 23581, 38150.9]
+              },
+              {
+                "id": "c2",
+                "featureIds": ["77cf577a-0c5b-58a0-b1c9-8c7e3589c82f"],
+                "feret_um": 549.6,
+                "largestPolygon_um": 549.6,
+                "bbox": [59444.1, 101970, 61237.5, 104042]
+              },
+              {
+                "id": "c3",
+                "featureIds": [
+                  "0ce88dba-59a7-5f1c-8baa-4e6d8653d10d",
+                  "a2bf600c-8cfa-531b-8cd3-2519590014e5",
+                  "3b9c48b0-8c3d-5c7a-b2dc-bd366b9f0f66",
+                  "1ea6356c-5462-5a0e-8743-70ab158787b0",
+                  "711ea9eb-1686-5dd1-bf77-580484d31d07"
+                ],
+                "feret_um": 502.4,
+                "largestPolygon_um": 327.5,
+                "bbox": [67224.3, 52036.4, 69289.2, 53398]
+              },
+              {
+                "id": "c4",
+                "featureIds": ["627eb93c-5a89-5bf3-9d6a-281a112a04dd"],
+                "feret_um": 454,
+                "largestPolygon_um": 454,
+                "bbox": [18177.5, 48346, 19972.3, 49346.8]
+              },
+              {
+                "id": "c5",
+                "featureIds": [
+                  "4f6e8e2d-88a4-5606-9203-c81ff7184a1f",
+                  "d4b2ea9b-593d-59a7-9841-4b2085e51f71",
+                  "36b3e529-7539-57c3-bcb6-4417b18fd874",
+                  "b783e737-cba3-5eb6-944b-315cd2783eba"
+                ],
+                "feret_um": 431.8,
+                "largestPolygon_um": 362.7,
+                "bbox": [60199.8, 87899.9, 61624.2, 89496.3]
+              },
+              {
+                "id": "c6",
+                "featureIds": ["1a7ac335-ff24-52da-bb77-56e76284c408"],
+                "feret_um": 154.6,
+                "largestPolygon_um": 154.6,
+                "bbox": [17071.1, 51136.9, 17617.6, 51539.4]
+              }
+            ]
+          },
+          "tissueBbox": [2048, 22784, 75776, 114688],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 48,
+            "rows": 97,
+            "bits": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c00000000000d00000000002c0000000000fc0000000000fe0000000000fc0000000000fc0000000001ff0005380001fc0003f80001fc0001f00003fe0001f80003fc0001f00003fc0003f00003fc0003f00007f80007f0001ffc0007f0001ff80003f0001fe28001f0003fce8001f0003fef8001f0001ffb8005f8001ff80005f8000fd80007e00001580007e00003fc0007f00001f40001e00001f80000000003f80000000003f80000000003e80038000007e8003e000007e0007e000007e0007f00000fe700ff00001fff007f80003fe1e0ff80003fe0007f00003fe0007e00007fc000fe00007fc000fe00007ec000fc00007d00007c00007f80005c00007c00000000003c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "reference": {
+        "pN": "pN1",
+        "nodesExamined": 5,
+        "nodesPositive": 3,
+        "nodesMacro": 2,
+        "nodesMicro": 1,
+        "nodesItc": 1,
+        "largestDeposit_um": 3157.9,
+        "largestDepositNode": "n2",
+        "sentence": "Reference pN: pN1 under CAMELYON17's simplified rules (3 nodes with micro- or macrometastasis, at least one of them a macrometastasis; the ITC-only node is not counted as positive, as in AJCC). The largest annotated deposit is in node 3; node 4 is a macrometastasis by label without an annotation, so the case's largest deposit is not compared."
+      },
+      "report": {
+        "sizeTolerance": 0.2,
+        "viewedAt_um_per_px": [1, 0.5],
+        "adequateScale_um_per_px": {
+          "itc": 0.5,
+          "micro": 1,
+          "macro": 2
+        }
+      },
+      "teaching": [
+        {
+          "id": "T1",
+          "text": "Node 2 carries isolated tumour cells. Under AJCC breast staging, which CAMELYON17 applies, a node with ITCs only is not counted toward the number of positive nodes, so three positive nodes give pN1, not pN2."
+        },
+        {
+          "id": "T2",
+          "text": "Only nodes 2, 3 and 5 are annotated in CAMELYON17; node 4 is a macrometastasis by label alone, so no location or size can be shown for it, and the case's largest deposit is not compared."
+        }
+      ]
+    }
+  }
+}

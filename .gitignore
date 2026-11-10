@@ -25,3 +25,5 @@ wsi-viewer/docs/verification/artifacts/*/cert.pem
 
 # Learn build rig output (a build product, like client/dist)
 wsi-viewer/stage0/client/rig-dist/
+# signout-check run-local trees (removed after each run)
+wsi-viewer/stage0/client/harness/results/tmp/

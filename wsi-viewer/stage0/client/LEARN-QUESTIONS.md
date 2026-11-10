@@ -1083,3 +1083,14 @@ Behaviour other modules can rely on (no type change):
 Closed by these fixes: I-N4 (the ITM-8 timing race: a settle whose camera move began before the item mounted is not
 logged), J-I23 / J-I30's player notes (the revealed item's CTA note and `Mark without a pointer`). Still open: J-I25
 (reveal's `attach`), J-I26 (the studio heading's focus ring), the mark row's long hint (items).
+
+## CI fix (Learn integrator, 2026-11-09)
+
+- **items · I-N4 reopened and closed again.** The 2026-11-08 fix dated a camera move at its first presented frame
+  (`viewChanged`). On GitHub Actions (ubuntu-24.04, 4 vCPU, SwiftShader) one run failed ITM-8 on both attempts with
+  the line of J-I32. The step before the region item jumps the camera at once to the tour's 20× view of P7, but
+  `viewChanged` only comes with the next frame. If N is handled before that frame, the item mounts first. The move then
+  looked as if it began after mount, and its settle was logged. `items/machine.ts` now reads, at mount, the engine's
+  live camera against the last presented frame (`moveUnpresented`). A move still to be presented counts as begun before
+  mount. `items.check.mjs` flow H forces that order (two `step:next` in one task) on every run (LEARN.md §15.2h J-I49).
+

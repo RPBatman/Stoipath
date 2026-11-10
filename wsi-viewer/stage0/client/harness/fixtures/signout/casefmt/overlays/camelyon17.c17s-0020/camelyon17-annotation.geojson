@@ -1,0 +1,185 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "2a251947-62ee-4035-82e1-9f05f8b2d0de",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20000,
+              60000
+            ],
+            [
+              20200,
+              60000
+            ],
+            [
+              20200,
+              60150
+            ],
+            [
+              20000,
+              60150
+            ],
+            [
+              20000,
+              60000
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "8182350e-2ba9-4be2-8e11-c8840ce467a5",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20400,
+              60300
+            ],
+            [
+              20600,
+              60300
+            ],
+            [
+              20600,
+              60450
+            ],
+            [
+              20400,
+              60450
+            ],
+            [
+              20400,
+              60300
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "91ac7878-6a40-46c9-86ee-a0ef575bdb69",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20800,
+              60600
+            ],
+            [
+              21000,
+              60600
+            ],
+            [
+              21000,
+              60750
+            ],
+            [
+              20800,
+              60750
+            ],
+            [
+              20800,
+              60600
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "4f89ee30-9d9e-4d12-8459-29ba8224ddf3",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21200,
+              60900
+            ],
+            [
+              21400,
+              60900
+            ],
+            [
+              21400,
+              61050
+            ],
+            [
+              21200,
+              61050
+            ],
+            [
+              21200,
+              60900
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    }
+  ],
+  "stoipath": {
+    "schema": "stoipath.layer/1",
+    "id": "camelyon17-annotation",
+    "title": "CAMELYON17 annotation",
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T00:00:00Z",
+      "inputHash": "sha256:e49d3459f10b4c94cf97fa174c66a02a3e8ccc14940bbf2f9838a37ebab3222f",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "532e6e34"
+    },
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "source": {
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/x.xml",
+      "sha256": "e49d3459f10b4c94cf97fa174c66a02a3e8ccc14940bbf2f9838a37ebab3222f",
+      "bytes": 1000,
+      "format": "ASAP XML"
+    },
+    "coordinateSpace": "pyramid-level0",
+    "regionOffset": [
+      0,
+      0
+    ],
+    "slide": {
+      "id": "camelyon17.c17s-0020",
+      "fingerprint": "97792x221184@0.2263@0,0@532e6e34a575"
+    },
+    "conversion": "casefmt fixture stand-in",
+    "featuresDropped": 0,
+    "generator": "casefmt fixture"
+  }
+}

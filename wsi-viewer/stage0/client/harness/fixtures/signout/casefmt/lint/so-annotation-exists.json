@@ -1,0 +1,17 @@
+{
+  "note": "a feature id that is not in the layer",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/nodes/2/annotation/clusters/0/featureIds/0",
+      "value": "not-a-feature"
+    }
+  ],
+  "expect": {
+    "rule": "so-annotation-exists",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/2/annotation/clusters/0/featureIds/0",
+    "message": "Node n2: feature not-a-feature is not in camelyon17-annotation"
+  }
+}

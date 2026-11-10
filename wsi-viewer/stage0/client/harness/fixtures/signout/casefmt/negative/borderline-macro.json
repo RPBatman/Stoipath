@@ -1,0 +1,17 @@
+{
+  "note": "borderline on a macro node (CAS-2: borderline only on itc/micro)",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/nodes/2/reference/borderline",
+      "value": {
+        "reason": "fixture"
+      }
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/nodes/2/reference/borderline"
+  }
+}

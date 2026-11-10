@@ -1,0 +1,175 @@
+{
+  "schema": "stoipath.learn.facts/1",
+  "module": "camelyon17-pilot",
+  "version": "0.2.0",
+  "facts": [
+    {
+      "id": "F1",
+      "pointer": "/case/vignette/text",
+      "quote": "The data set labels each slide as one node by its largest focus",
+      "basis": "stages.csv carries one label per slide (five slides per patient) and the README says \"whole-slide images of sentinel lymph node\"; a slide may show more than one profile or fragment of nodal tissue. Stated as the data set's convention, not as anatomy; the owner confirms against Bandi et al. 2019 (Q20).",
+      "status": "pending",
+      "note": "S0.1 · One slide = one node · in cases/*.module.json (every case, the vignette)"
+    },
+    {
+      "id": "F2",
+      "pointer": "/about/Staging rules",
+      "quote": "pN categories follow CAMELYON17's simplified staging rules: AJCC pN0, pN0(i+), pN1mi, pN1 and pN2 by node count and largest deposit, with ITC-only nodes excluded from the positive-node count as in AJCC, and without the (sn) suffix, extranodal extension or pN3 that a full AJCC/CAP report carries.",
+      "basis": "FACTS §4.2 (SECONDARY wording from public code quoting the challenge; the rule set reproduces stages.csv for 100 of 100 patients, §4.1); the ITC exclusion is AJCC 8th edition's rule for breast pN, adopted by the challenge (PE-1). The owner confirms against the challenge's Evaluation page (Q3).",
+      "status": "pending",
+      "note": "S0.2 · Rules attribution · in client/src/signout/host/about.ts (About row \"Staging rules\", SIGNOUT.md §9.1)"
+    },
+    {
+      "id": "F3",
+      "pointer": "/about/How this differs from AJCC~1CAP",
+      "quote": "A real report on five sentinel nodes would (1) add the (sn) suffix, e.g. pN1(sn), because only sentinel nodes were examined; (2) report extranodal extension (present/absent and its extent); (3) count nodes with macrometastasis, micrometastasis and isolated tumour cells separately; (4) measure the largest contiguous deposit, not an annotation outline; (5) say whether ITCs were found on H&E or by immunohistochemistry. CAMELYON17 labels carry none of these, so this practice report omits the (sn) suffix and extranodal extension and cannot score them.",
+      "basis": "AJCC 8th edition breast pN ((sn) suffix, ITC / micro / macro definitions, pN3); CAP breast sentinel-node protocol (extranodal extension, per-category counts, method of ITC detection). None of these is in CAMELYON17's labels (FACTS §0, §4).",
+      "status": "pending",
+      "note": "S0.3 · AJCC/CAP differences (§6.1a) · in client/src/signout/host/about.ts (About; also the report head and the comparison)"
+    },
+    {
+      "id": "F4",
+      "pointer": "/§6.1/size-definitions/1",
+      "quote": "Isolated tumour cells: single cells or clusters not larger than 0.2 mm, or not more than 200 cells in one cross-section.",
+      "basis": "AJCC 8th edition wording as the challenge uses it (FACTS §4.2, SECONDARY); \"largest contiguous deposit\" is AJCC's measurement rule (PE-10); LEARN.md F15, F28–F30 are the same statements, pending.",
+      "status": "pending",
+      "note": "S0.4 · Size definitions (1 of 4) · in client/SIGNOUT.md §6.1 (the report form's radio descriptions, Wave S2)"
+    },
+    {
+      "id": "F5",
+      "pointer": "/§6.1/size-definitions/2",
+      "quote": "Micrometastasis: larger than 0.2 mm and/or more than 200 cells, none larger than 2.0 mm.",
+      "basis": "AJCC 8th edition wording as the challenge uses it (FACTS §4.2, SECONDARY); \"largest contiguous deposit\" is AJCC's measurement rule (PE-10); LEARN.md F15, F28–F30 are the same statements, pending.",
+      "status": "pending",
+      "note": "S0.4 · Size definitions (2 of 4) · in client/SIGNOUT.md §6.1 (the report form's radio descriptions, Wave S2)"
+    },
+    {
+      "id": "F6",
+      "pointer": "/§6.1/size-definitions/3",
+      "quote": "Macrometastasis: larger than 2.0 mm.",
+      "basis": "AJCC 8th edition wording as the challenge uses it (FACTS §4.2, SECONDARY); \"largest contiguous deposit\" is AJCC's measurement rule (PE-10); LEARN.md F15, F28–F30 are the same statements, pending.",
+      "status": "pending",
+      "note": "S0.4 · Size definitions (3 of 4) · in client/SIGNOUT.md §6.1 (the report form's radio descriptions, Wave S2)"
+    },
+    {
+      "id": "F7",
+      "pointer": "/§6.1/size-definitions/4",
+      "quote": "Measure the largest contiguous deposit; do not add separate deposits together.",
+      "basis": "AJCC 8th edition wording as the challenge uses it (FACTS §4.2, SECONDARY); \"largest contiguous deposit\" is AJCC's measurement rule (PE-10); LEARN.md F15, F28–F30 are the same statements, pending.",
+      "status": "pending",
+      "note": "S0.4 · Size definitions (4 of 4) · in client/SIGNOUT.md §6.1 (the report form's radio descriptions, Wave S2)"
+    },
+    {
+      "id": "F8",
+      "pointer": "/§6.1/pn-descriptions/1",
+      "quote": "pN0 — every node negative.",
+      "basis": "derivePn (SIGNOUT.md §6.1; FACTS §4.1, §4.2), reworded for reading at the microscope (PE-16).",
+      "status": "pending",
+      "note": "S0.5 · Radio descriptions (1 of 5) · in client/SIGNOUT.md §6.1 (the report form's pN radios, Wave S2)"
+    },
+    {
+      "id": "F9",
+      "pointer": "/§6.1/pn-descriptions/2",
+      "quote": "pN0(i+) — isolated tumour cells only, in one or more nodes; no micro- or macrometastasis.",
+      "basis": "derivePn (SIGNOUT.md §6.1; FACTS §4.1, §4.2), reworded for reading at the microscope (PE-16).",
+      "status": "pending",
+      "note": "S0.5 · Radio descriptions (2 of 5) · in client/SIGNOUT.md §6.1 (the report form's pN radios, Wave S2)"
+    },
+    {
+      "id": "F10",
+      "pointer": "/§6.1/pn-descriptions/3",
+      "quote": "pN1mi — at least one micrometastasis and no macrometastasis, whatever the number of micro nodes; ITC-only nodes do not change this.",
+      "basis": "derivePn (SIGNOUT.md §6.1; FACTS §4.1, §4.2), reworded for reading at the microscope (PE-16).",
+      "status": "pending",
+      "note": "S0.5 · Radio descriptions (3 of 5) · in client/SIGNOUT.md §6.1 (the report form's pN radios, Wave S2)"
+    },
+    {
+      "id": "F11",
+      "pointer": "/§6.1/pn-descriptions/4",
+      "quote": "pN1 — 1 to 3 positive nodes (micro or macro), at least one of them a macrometastasis.",
+      "basis": "derivePn (SIGNOUT.md §6.1; FACTS §4.1, §4.2), reworded for reading at the microscope (PE-16).",
+      "status": "pending",
+      "note": "S0.5 · Radio descriptions (4 of 5) · in client/SIGNOUT.md §6.1 (the report form's pN radios, Wave S2)"
+    },
+    {
+      "id": "F12",
+      "pointer": "/§6.1/pn-descriptions/5",
+      "quote": "pN2 — 4 to 9 positive nodes, at least one a macrometastasis (with five slides: 4 or 5). pN3 (10 or more) cannot occur here.",
+      "basis": "derivePn (SIGNOUT.md §6.1; FACTS §4.1, §4.2), reworded for reading at the microscope (PE-16).",
+      "status": "pending",
+      "note": "S0.5 · Radio descriptions (5 of 5) · in client/SIGNOUT.md §6.1 (the report form's pN radios, Wave S2)"
+    },
+    {
+      "id": "F13",
+      "pointer": "/attribution/sentence",
+      "quote": "CAMELYON17 data set by the Computational Pathology Group, Radboud University Medical Center, Nijmegen, with Canisius-Wilhelmina Hospital, UMC Utrecht, Rijnstate Hospital and LabPON (CC0 1.0). Slides are read directly from the dataset's public bucket; nothing is copied or uploaded.",
+      "basis": "README (FACTS §0: the five centres), license.txt (CC0 1.0); the slides are read by HTTP byte range from the public bucket (D7, D8).",
+      "status": "pending",
+      "note": "S0.6 · Attribution · in worklists/camelyon17-pilot.worklist.json"
+    },
+    {
+      "id": "F14",
+      "pointer": "/attribution/citation",
+      "quote": "Bandi P, Geessink O, Manson Q, et al. From detection of individual metastases to classification of lymph node status at the patient level: the CAMELYON17 challenge. IEEE Trans Med Imaging 2019;38(2):550–560. doi:10.1109/TMI.2018.2867350.",
+      "basis": "The CAMELYON17 paper (PMID 30716025; FACTS §4.1; PE-19).",
+      "status": "pending",
+      "note": "S0.6 · Attribution (citation) · in worklists/camelyon17-pilot.worklist.json"
+    },
+    {
+      "id": "F15",
+      "pointer": "/summary",
+      "quote": "Ten five-node sentinel lymph node cases from the public CAMELYON17 data set, two per pN category, for practice reports.",
+      "basis": "SIGNOUT.md §15.1 and FACTS §5: two pilot patients per pN category (pN0, pN0(i+), pN1mi, pN1, pN2), from the five centres.",
+      "status": "pending",
+      "note": "S0.7 · Worklist summary · in worklists/camelyon17-pilot.worklist.json"
+    },
+    {
+      "id": "F16",
+      "pointer": "/useNotice",
+      "quote": "Your programme may ask you to send the exported results file for curriculum and programme evaluation; sending it is your choice, and the file contains only what you typed and did.",
+      "basis": "D22 and PE-21: the results file holds only what the trainee typed and did (Appendix C); the page sends nothing (no telemetry).",
+      "status": "pending",
+      "note": "S0.8 · Use notice · in worklists/camelyon17-pilot.worklist.json"
+    },
+    {
+      "id": "F17",
+      "pointer": "/§15.3/label-only/1",
+      "quote": "Your finest sharp view over this node was {mag}; you spent {s} s on it.",
+      "basis": "FACTS §4.3 (which nodes have XML); the viewing trace (D17); the low-power sentence is general teaching, not a statement about these slides (PE-17).",
+      "status": "pending",
+      "note": "S0.9 · Label-only follow-up (1 of 2) · in client/SIGNOUT.md §5.6 item 3 (the comparison, Wave S2)"
+    },
+    {
+      "id": "F18",
+      "pointer": "/§15.3/label-only/2",
+      "quote": "A macrometastasis is usually visible at 2–5×: survey the whole section at low power before leaving a node.",
+      "basis": "FACTS §4.3 (which nodes have XML); the viewing trace (D17); the low-power sentence is general teaching, not a statement about these slides (PE-17).",
+      "status": "pending",
+      "note": "S0.9 · Label-only follow-up (2 of 2) · in client/SIGNOUT.md §5.6 item 3 (the comparison, Wave S2)"
+    },
+    {
+      "id": "F19",
+      "pointer": "/§5.6/miss-sentences/1",
+      "quote": "You never had this deposit in view at {mag} or more (search miss).",
+      "basis": "The trace against the clusters at the node's adequate scale (§6.4); the thresholds (2 s dwell; 0.5 / 1.0 / 2.0 µm/px) are this page's conventions (Q22).",
+      "status": "pending",
+      "note": "S0.10 · Miss sentence (1 of 3) · in client/SIGNOUT.md §5.6 item 3 (the comparison, Wave S2)"
+    },
+    {
+      "id": "F20",
+      "pointer": "/§5.6/miss-sentences/2",
+      "quote": "This deposit was in view at {mag} for {s} s and not called (recognition miss).",
+      "basis": "The trace against the clusters at the node's adequate scale (§6.4); the thresholds (2 s dwell; 0.5 / 1.0 / 2.0 µm/px) are this page's conventions (Q22).",
+      "status": "pending",
+      "note": "S0.10 · Miss sentence (2 of 3) · in client/SIGNOUT.md §5.6 item 3 (the comparison, Wave S2)"
+    },
+    {
+      "id": "F21",
+      "pointer": "/§5.6/miss-sentences/3",
+      "quote": "This deposit was in view at {mag} for under 2 s (indeterminate).",
+      "basis": "The trace against the clusters at the node's adequate scale (§6.4); the thresholds (2 s dwell; 0.5 / 1.0 / 2.0 µm/px) are this page's conventions (Q22).",
+      "status": "pending",
+      "note": "S0.10 · Miss sentence (3 of 3) · in client/SIGNOUT.md §5.6 item 3 (the comparison, Wave S2)"
+    }
+  ]
+}

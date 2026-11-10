@@ -1,0 +1,488 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "c17-03",
+  "version": "0.2.0",
+  "metadata": {
+    "title": "Case 3 · sentinel lymph nodes, five slides",
+    "summary": "Review five sentinel lymph node sections, call each node, and stage the set under CAMELYON17's simplified rules in a practice report.",
+    "audience": ["resident", "medical-student", "cme"],
+    "objectives": [
+      "Survey every node of a sentinel lymph node set at low power before examining at high power.",
+      "Call each node negative, isolated tumour cells, micrometastasis or macrometastasis.",
+      "Derive the pN category from the node calls under CAMELYON17's simplified rules, and say how a full AJCC/CAP report would differ."
+    ],
+    "tags": {
+      "organ": ["lymph node"],
+      "stain": ["H&E"],
+      "difficulty": 3,
+      "topics": ["sentinel lymph node", "breast cancer", "metastasis", "pN staging", "practice report"]
+    },
+    "authors": [
+      {
+        "name": "Stoipath Learn L2 build (AI-assisted draft)",
+        "role": "author"
+      }
+    ],
+    "review": {
+      "status": "draft",
+      "notes": "Reference values derived from CAMELYON17 stages.csv and annotations; every statement is listed in c17-03.facts.json, common.facts.json and SIGNOUT.md §15."
+    },
+    "language": "en",
+    "estimatedMinutes": 25,
+    "created": "2026-11-08",
+    "updated": "2026-11-08",
+    "textLicence": {
+      "id": "CC-BY-4.0",
+      "text": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "slides": [
+    {
+      "ref": "n0",
+      "catalogueId": "camelyon17.c17s-0021",
+      "label": "Case 3 · node 1 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "102400x93184@0.2263@0,0@e00437194bd7"
+    },
+    {
+      "ref": "n1",
+      "catalogueId": "camelyon17.c17s-0022",
+      "label": "Case 3 · node 2 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "106496x93184@0.2263@0,0@b5b1b387aff8"
+    },
+    {
+      "ref": "n2",
+      "catalogueId": "camelyon17.c17s-0023",
+      "label": "Case 3 · node 3 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "114688x103936@0.2269@0,0@bebda8f78d02"
+    },
+    {
+      "ref": "n3",
+      "catalogueId": "camelyon17.c17s-0024",
+      "label": "Case 3 · node 4 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "131072x93184@0.2263@0,0@c3691ddc8ead"
+    },
+    {
+      "ref": "n4",
+      "catalogueId": "camelyon17.c17s-0025",
+      "label": "Case 3 · node 5 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "65536x89600@0.2263@0,0@6b51842ad5a6"
+    }
+  ],
+  "case": {
+    "vignette": {
+      "text": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules.",
+      "synthetic": true,
+      "source": "Invented for teaching; CAMELYON17 publishes no clinical record"
+    },
+    "slides": ["n0", "n1", "n2", "n3", "n4"]
+  },
+  "items": [],
+  "steps": [
+    {
+      "id": "open",
+      "kind": "tour",
+      "phase": "open",
+      "title": "Case packet",
+      "text": "Five slides, one node each by the data set's convention. Open every node, call each one, then fill the practice report.",
+      "view": {
+        "kind": "fit",
+        "slide": "n0"
+      },
+      "transition": "cut",
+      "tools": ["select"]
+    }
+  ],
+  "extensions": {
+    "signout": {
+      "schema": "stoipath.learn.signout-case/1",
+      "dataset": {
+        "name": "CAMELYON17",
+        "patient": "patient_046",
+        "centre": 2,
+        "stagesCsv": {
+          "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv",
+          "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247"
+        },
+        "annotations": ["patient_046_node_3.xml", "patient_046_node_4.xml"]
+      },
+      "rules": "camelyon17-simplified/1",
+      "nodes": [
+        {
+          "ref": "n0",
+          "title": "Node 1",
+          "slide": "n0",
+          "slideId": "patient_046_node_0",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [1024, 2944, 102016, 90432],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 100,
+            "rows": 91,
+            "bits": "000000000000000000000000000000000000000000000000000000000000000000000002100000f800000080000001e02000001ff00000000000007fc0000003ff80000000040007fe0000381ffc000001000003fff000041fffe00000000003ffff0e0007effe00000000007ffffff8007ffff8040000000fffffffc007ffffe000000000fffffffe8077ffcf0000002007ffffff6007fffcf8000000007ffffefe007fffe7c000000007ffffffe007fffcfc007f0000ffffff7e007fff17e08ff8000ffffff7e003fbf83bd9ff8001ffffff7e00efbf83b89ffc003ffffff1e00cfffc0fdcffe003ffffff0e0077fef07fc3fe007ffffff8e007fffd87fbffe007ffffff8f00ffff3ffffffe01fffffff8e00fffffbfffefe01fffffffee007fbfffffdfff01fffffffe7007fff3fffdfff83ffffffff3003fff3fffffff07fffffffff801fff3fffffffcffffffffff803fff7fffffff0ffffffffff003fffefffbfff3ffffffffffc03fffffffbfff7ffffffffdf803fffffffffff7ffffffffff803ffffffffffffffffffffcfc03ffffffffffffffffffffefc01ffffffffffffffffffffefc01ffffffffffefffffffffffc01ffffffffffefffffffffff801ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff803ffffffffffffffffffffff80bffffffffffffffffffffff801ffffffffffdfffffffffff801ffffffffffffffffffffff801ffffffffffffffffffffff801ffffffffffffffffffffff800ffffffffffdfffffffffff800ffffffffffffffffffffff800ffffffffffffffffffffff0007fffffffffffffffffffff0003ffffffffffffffffffff70003fffffffffffffffffffff0003fffffffffffffffffffff0003fffffffffffffffffffff1001fffffffffffffffffffff0000fffffffffffffffffffff0000fffffffffffffffffffff0000fffffffffffffffffffff00007bfffffffffffffffffff8000f9ffffffffbffffffffff00007ffffffffedffffffffff00003c3ffffffffffffffffff00001e3ffffffefffffffffff00001fdffffffeffffffffffe00000fcffffffeffffffffffe000007ffffffffbfffffffffe000007fffffffeffffffffffe000007ffffffffffffffffffe000003feffffffffffffffffe000003fffffffbffffffffffe040001fefffff79fffffffffc000000ffdffff7ffffffffff0000000ffefffcfffffffffff0000000fff7ffdfffffffffff0000000fffbffa7ffffffffff0008800ffbdff03ffffffff380000008fffefe07fffffffff800020007ffe7c1fbffffffe7800000007ffe781fffc63ff7f800000003ffc001fffe7fe7ffc00000001f00000fffddfe1fbc000000000000003ff9d587f0000020000000000fff1ffde40000000000000000ffc1ff9fa0000000000000000cf80fc0c00000000402000000fe00280000000000000000000708000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n1",
+          "title": "Node 2",
+          "slide": "n1",
+          "slideId": "patient_046_node_1",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [4992, 1408, 105792, 90304],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 104,
+            "rows": 91,
+            "bits": "000000000000000000000000000002000000001000400000410000000000000216000000000000000000000003fe000000000000000000000003dc00000002000000000000000ffe10000000200000000080003ffc00000000040000000010007ffd0000000880000000000003fff8800000008000000010000fffe0008000000000000004049fffe40000000000000000001fdfffc00000000000000000027fffffc8001000000000000001ffffff80000080000410000007ffffff8000000000004000001fffffff8000000000000000007fffffff800000000000000001ffffbfff600000000000000083ffff7fff800008000000000007ffffffff80036f00000000001fffff7fff8007ff80000040001fffffffff0007ffc0000800001ffffdf7ff000fffe0000008001ffffbafff000fffe0000100003fffffffff001ffff0083000003fffffffff803ffff800000000fffff73fff807ffff8001000007fffff8fffc0fffffc08200000ffffffcefff0fffffff00000017fffffffffe1fffffffc000003ff7fffeffff9fffffffe000003ffffffeffffbfffffdff000007fffffdeffff9fffffccf80000ffffdffbffff9fffffdff808007ffffffc7fff1ffffffff800003efffff9ffff1fffffffdc000038fffdfbdfff1fffffffec00003effffffcfff9fffff7ffc000079feffffffff9fffff7ff000003ffbf7dfffff8ffffffff800001fe7bfffffff8ffffffffc00001ffd7fffffff8ffffffffc00001ff83fffffff0fffffffff80001ff37bffffff0fffffffff80001fdffbffffff1fffffffff80000ffbbfbfffff1fffffffff801007febffffffe1fffffffffc00007e73ffffffe3fffffffffc00007efbffffffe7fffffffffc00003ef7ffffffc7fffffffffc00033fffffffffcffffffffff800000ff3f7ffffcffffffffbf800000fe7ffffff9ffffffffffc000003dfafffff9ffffffffffc000003d3ffffff1ffffffffffc000601fffffffe1ffffffffffc000000dffffffc1ffffffffff80004047ffffffa1fffffbffffc0000007ffffff01ffffffffffc0000047ffffff23ffffffffffc0008003ffffff87ffffffffffc0000003ffffdf83fffffff7ffec000001fffbdfc3ffffffffffee000221ffdfff81ffffffbfffee002000ffedff81ffffffffffff004000bfffffc0fffffbffdfff8000003fbfefc0ffffffffffff8000003ffffec07fffffffffff8000001fffbfc07fffffffffff800000007007902bffbfffffff0000000000038037ff7ffffffe0000000000000015fdfffd7ffe000000000000001dff07fffffe000000000000011ffffffff9fe000000000000001ffffffffbf0000000000000003eff7bf9ffe0000000000000003e7fffbfffc0000000000000003f7fefbfbd00000000000000001f6edffffc00000000000000000f9fefff30000000000000000003f7fffde0000004000000000107fedfffe0001000000200000001dfe7ffc1001008000000001801f7c37c000000000000000000007ffb30010000000000000000003f4fe00000000000000000000003fe400000000000040000000808200000420000000008000000100008200000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n2",
+          "title": "Node 3",
+          "slide": "n2",
+          "slideId": "patient_046_node_2",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [0, 0, 114368, 102784],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 112,
+            "rows": 102,
+            "bits": "800000000fc003ffffffff801f80000000003fc007ffffffffc02c80000000007fc01fffffffffe01b80000000007ff07fffffffffe03e80000000007fffffffffffffe07f80000000007ffffffffffffff03b80000000007ffffffffffffff43f8000000000fffffffffffffff01f8000000000fffffffffffffff03fc000000001fffffffffffffff0cdc000000003fffffffffffffff07e8000000003fffffffffffffff41d0000000003fbfffffffffffffc4b0000000001fffefffffffffffe2e0000000001ffffffffffffffff720000000001ffffffffffffffff260000000000ffffbfffffffffff9e0000000000ffffffffffffffff9a00000000007fffffffffffffffc300400000003fffffffffffffffc500000000003ffbffffffffffffe18000000000ffffffffffffffffe68000000000ffefffffffffffffe5c000040000ffeffffffffffffff4c000000000fffffffffffffffff840000000007fffffffffffffbffa40000000007fdffffffffffffffa600000000007fffffffffffffffe4000000000007ffffffffffffff84000000000003ffffffffffffff9c000000000001efdfffffffffff98000000000010ffffffffeffff7f00000000000107fffffffffffdce00000000000007fffffffffffccf00000000000003fffffffffffc4700000001000001fffffffffffe5f00000003e000003ffffffffffb0f80000003f800000f7efffffffa0200000003f800000f303ffffbf8041000006ff8000006001ffffff004c000007fd00000000007ffffe000c00000fff0000000000fffffe209400000fffbc0000000ffffff8203c00001ffffef200003ffffff8006400001ff8dff80001fffffff0001c00001fdffffe3801fffffff0003e00003ffbffffffc1fffffff0028400003fff7fffffe1ffffffe0001400003ffffffffff7ff6fffc0000400007ffdffffffffffffffc000340001ffffffffffffffffffc00424000ffffffffffffe7fdffbc00000003ffffffeffffffbfdfef80000000ffffffffff7ffffdb88400000007fdffffffffbff7f008000000400efffffffffffffff000000000000ffffffffffffffff000000200000ffffffffffffffff8000001c0400ffbfffffffffffffe200000c0000fffffffffffffffffc0000000802affffffffffffffffe8001000000fdf7ffffffffffffff0004081000cddfffdfffffffffffc000002000c9efffffffffffffffc004102000daffffffffffffffffe0000830005bfffffffbffffffffe00000000073fffffffffffffffffc00702800f3fffffffffffffffffc00200c00377ffffffffffffffffe000008007eeffffffffffffffffe00000600f687fffffbfffffffffe10082a003f03ffffffffffffffff10e0320007007fffefffffffffff00000b0050007fffffffffffffff00009300100fffffffffffffffff00000100391fff9f1fffffffffff00000b00fd7fff8dbfffffffffff00007d0078ffffefffffffffffff00000b0000fffff7ffffffffffff00001d0001fffffaeffffffffffe00000f0001ffffff7ffffffffffc0000090003fffffffffffffffffc0000010007fffffffffffffffffc0000618007fffffffffffffffffc00005ac003fffffffffffffffffc0000dbe001ffeffffffffffffff80000003001fffffffffffffffff00000001801ffffffffffffffff8000000c1801ffffffffffffffff000000040c007ffbfffffffffffc0000100006003ffffffffffffff90000100303003ffffffffffffff80000001bb2000ffffffffffffff000080c30020003ffffffffffffe008000020420000ffffffffffffe00400087083000031ffffffffffe00000087043000040ff7fffffffe000000010030000007fffffffcfc00000001a010000000005bfff06c0000000270300000000001ffc00c00000000bf6000000000009000000000000003a0000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n3",
+          "title": "Node 4",
+          "slide": "n3",
+          "slideId": "patient_046_node_3",
+          "reference": {
+            "label": "micro",
+            "sentence": "Reference: micrometastasis, about 1,100 µm (longest single annotated outline; CAMELYON17 annotation of 3 polygons, about 0.78 mm²).",
+            "largestDeposit_um": 1126.5,
+            "clusterSpan_um": 1126.5,
+            "polygons": 3,
+            "area_mm2": 0.7773,
+            "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2263 µm/px; clusters merge polygons within 100 µm"
+          },
+          "annotation": {
+            "layer": "camelyon17-annotation",
+            "version": "de9d59f7",
+            "clusters": [
+              {
+                "id": "c1",
+                "featureIds": ["4d3eb577-2a7a-5bf0-855a-eba2306b075e"],
+                "feret_um": 1126.5,
+                "largestPolygon_um": 1126.5,
+                "bbox": [49039.2, 21865.4, 53766.8, 26433.2]
+              },
+              {
+                "id": "c2",
+                "featureIds": ["3ebea59b-dcae-58e6-84d5-47c994414be5", "8d18d9a5-cfc0-593d-85fd-42cc926d4bce"],
+                "feret_um": 248.9,
+                "largestPolygon_um": 155.9,
+                "bbox": [45246.4, 15495.3, 46056.3, 16587.4]
+              }
+            ]
+          },
+          "tissueBbox": [3008, 0, 131072, 93184],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 128,
+            "rows": 91,
+            "bits": "000030000000000e000fe00000000000000000000000000e000fc000000000000000000000000007000d0000000000000000000000000011d000000210000000000000000000001df840000000000000000000000000001fffc0000000000000000000000000008fbfe0000000000000000000000000007c3fe00000000000400000000000001fffcff00000000000400000000000007fffdff8000000000000000000000001ffffeff0000000000000000000000003ffffe7f600500000000000000001fc03ffff77fe0000000000000000000fffe7ffff77fc0000000000000000001fffffffff7ffe0000000000020000003ffffffff978ff0000000000000000003ffffff7f9fbeb0000000000000000007fffffffffffff000000000000000000ffffffffffffff000000000000000001ffffffffbfffff000010000000000083ffffffffffffef000000000000000007ffffffffffffbf001a00000000000003fffffffffff77e000000000000000007fffffffffff77e000000000200000007fffffffffff7ff00000000000000000fffffffffffff2f00000000000000000ffffff5fffffead80000000000000000ffffff87ffffbc7800000000000000007fffef83ffffd3f80000000000000000ffffff81ffffff880000000000000000ffffff80ffffeb82000000000000000bffffff307ffff7c00000000000000003ffffbff000ffffc00000000000000003fffffff800ffff000000000200000003fffffffa007ff788000003d800000003fffffff8003fffc000000ff000000003ffd7fffc003fffc000008ffce0000003fffbfff0007fffe000080ffdf0000003fffefff800ffffe0000007fcf8000003fffffff800ffffb000007ffffc000003fbfdfff001ffffe000027ffffc000007ffff77f003fffff000007ffff8000007fffffff0017ffff000003ffffc00010ffffffff0037fffb00000bfffbc0003ffdf7ff7ec03ffffb80000ffffd80003fffffffffc03ffffb00001fffff7000fffffff7ff7037fffb80000fffff7000ff7ffffffb785fdfff9000079ffff800fffffffffef8feffff80000ffffff801ffdffcfffdf7edffff00000cffffe0017dffbe07fe1f3f7fff00000c7ffff003fffff7b7f40ffeffff0010037ffff0037fffedf89907f9ffff000003fffff003ffffff5d3b9f7dffff800003fffff010feffff5f3c09e9ffff800003fffff003ffffffcd300b5dffeec000017ff80006efffffdd538eb7ffff000001f04000067ff7bfe8151a9e7fff8000f000000007fffffff21c0bffdfffc001c000000007ffffff780c37fffffe8001f000000003fffffff6883fffcdbf80007c0e000003fffffff37faffffcfb00007cffc00003fffffffeffeffffde000007fffe00003ffffffffffdffffd0000007ffff00001ffffffffffef7ff80000007ffffe0001ffffffffffe47f70200001fffffe00017fffefdffe007ff8000003fffffe00017ffff7f208002e78000007fffffe00009dffffc000002010000007fb7fdf00000f7fff000000000000001f4207de000107bbfc000000000040003fc68038002007f1f0000000000000007fe380f8000003e10000000100000000ff3f807c000000000000000000000001eeff80fc00000108000000000000000bffbfc17800000000000000000000001ff1fd81fc0000000001000000000000fffffd8bfc0100000000000000000000ffc6f9dbfc0300080000000000000003fe80f1fffc0300080000000000000003ff9ff7fffe0700000000000000000007fe9feffffe070000000000000000000feffffffffc3f0001000000000000000ffffffefff8772000004000020000001ffffffffff8370000000000010080000dfffffffff01e0000000000000000000bdefee86ff00e00000000000000000003f81e8017e006000000000000000000007000000000060000000000030000000020000000001e0000000000000000000000000000001c00000000000000000000000000000018"
+          }
+        },
+        {
+          "ref": "n4",
+          "title": "Node 5",
+          "slide": "n4",
+          "slideId": "patient_046_node_4",
+          "reference": {
+            "label": "micro",
+            "sentence": "Reference: micrometastasis, about 190 µm (longest single annotated outline; CAMELYON17 annotation of 78 polygons, about 0.13 mm²). Annotated foci lying within 0.1 mm of each other span about 780 µm; that span is annotation geometry, not how a deposit is measured.",
+            "largestDeposit_um": 193.6,
+            "clusterSpan_um": 779,
+            "polygons": 78,
+            "area_mm2": 0.13,
+            "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2263 µm/px; clusters merge polygons within 100 µm",
+            "borderline": {
+              "reason": "micro by cell count; no single annotated focus exceeds 0.2 mm"
+            }
+          },
+          "annotation": {
+            "layer": "camelyon17-annotation",
+            "version": "6baae8b0",
+            "clusters": [
+              {
+                "id": "c1",
+                "featureIds": [
+                  "aacd0342-f244-5078-9474-a93018bee39c",
+                  "35840991-06e9-5506-957b-9a36615b867c",
+                  "f00d8b32-6950-5362-b860-44203589b5d6",
+                  "97ae3331-6d63-58f8-ac98-0d1c0b1d37c0",
+                  "75357ebc-d7d0-5919-8e8b-e18469361747",
+                  "486328b0-1a27-5a8e-89e1-da25832add77",
+                  "4ac87bb9-ccb0-5638-9e4b-e00d3c1ddd4a",
+                  "fab4a07c-1e55-5fb6-aa25-9818ae0bda5e",
+                  "b8cb66be-206e-551e-9f50-dfa5da2b8540",
+                  "3795d15f-9d56-5ec1-b0cd-2bb2a5969ef1",
+                  "ae5bb0cd-6379-5d8c-ac7f-3e915e45f766",
+                  "2b0309c5-aac6-5eea-a15f-fa669a895275",
+                  "c4d3c89e-3dbf-5a6d-8578-b1ad0913c310",
+                  "986cd5fb-c924-55b8-9d73-147cd276f96a",
+                  "c83cdbf6-a99c-548c-a869-5ad0f62a90a6",
+                  "a15e1ff6-6142-5844-9c84-2a27d719c531",
+                  "84127b43-0306-51ac-b14a-13cedc977800",
+                  "b29d9284-fadc-5ccc-be8f-b9555dfe8559",
+                  "44053fa7-48d5-517a-bb38-65a529dbd5e2",
+                  "7efc679c-de12-5ede-b76e-2ba378bb1699",
+                  "bc70b9fd-8b15-5692-9696-7389e5c84d59",
+                  "c7dcc557-8769-5445-8514-3d9391b70eca",
+                  "3099a2c5-4ca8-5dd7-ba76-456c7dc789aa",
+                  "453192d2-a50a-5c9c-b7e9-5f3a6c689e30",
+                  "f0c94f8a-5bda-5b41-9c04-52b94f0cd118",
+                  "bfdf5ea3-7762-59c2-a041-836050f992bc",
+                  "50fd411b-bc90-5a91-aec7-265077e8f286",
+                  "62a15890-23c4-54bf-bf9a-63f399aaae4d",
+                  "c7baad44-093f-555d-b08a-3a14bd09a5f0",
+                  "d90b9f7a-546b-508c-8a50-09d0e1b6412b",
+                  "9dffbc51-9ded-5cd8-b73e-dc0651c602d9",
+                  "1ebfa51b-2104-5fd2-8efc-8b53a6f92363",
+                  "4acd9084-889d-58ee-ab44-c78d6c8a8385",
+                  "a979a547-0c2a-50df-8b35-5b01628d7a3c",
+                  "ab474652-993b-5a03-8f85-7c216867fd87",
+                  "2b91561b-63b4-55bf-9d5d-29021c053159",
+                  "512f84d5-435f-59c4-8410-b367846316b3"
+                ],
+                "feret_um": 779,
+                "largestPolygon_um": 193.6,
+                "bbox": [48008.4, 20299.3, 51013.5, 23686.9]
+              },
+              {
+                "id": "c2",
+                "featureIds": [
+                  "4f2fbc4a-2517-50c9-815e-621fa0b094ea",
+                  "5098ad49-cb15-5dd7-a5d1-b706e7ff9771",
+                  "b4651ac1-c612-5e14-9b60-95f42bc2ae91",
+                  "bf332f15-ac60-5e58-a158-54bdb27df95e",
+                  "d817029c-5b5e-588c-9245-b4a9cb960e02",
+                  "f61214ec-dff7-52ba-a528-cdfd81e2f47a"
+                ],
+                "feret_um": 401.2,
+                "largestPolygon_um": 127.3,
+                "bbox": [48141.6, 16784.7, 49748.51, 17859.2]
+              },
+              {
+                "id": "c3",
+                "featureIds": [
+                  "3bcc7cc5-0ee2-5363-841a-8ce5e10af2af",
+                  "1904edcb-b6fe-550d-a0b4-6f0fba2bd010",
+                  "18b5dd98-1da5-5c71-a0ef-021d4bbd6e53",
+                  "1f21e7f3-b16c-552f-82af-e8f5ec0ebea3",
+                  "0691a05a-2119-518f-b421-411d2c031643",
+                  "5858de0d-f18b-57fb-bf52-4f3d73494295"
+                ],
+                "feret_um": 370.1,
+                "largestPolygon_um": 77.7,
+                "bbox": [45892.8, 18744.9, 47450.5, 19769.7]
+              },
+              {
+                "id": "c4",
+                "featureIds": [
+                  "9af4c427-b6fc-5f69-b93c-8579dc97ab81",
+                  "6acb1e6a-c024-53f8-a21c-454f12935632",
+                  "0c6624f8-51e1-53ff-9c7d-5cb6612fe18a",
+                  "f0195ed3-2ff2-5d16-9d4e-51ccdac15dfb",
+                  "b31c97da-4ceb-57f2-a754-cb400bedb022",
+                  "63535fea-da7d-5481-92d5-e9c382699628"
+                ],
+                "feret_um": 345.4,
+                "largestPolygon_um": 110.2,
+                "bbox": [17979.6, 47281.8, 19062.4, 48741.6]
+              },
+              {
+                "id": "c5",
+                "featureIds": [
+                  "86f0e2a1-f974-59af-97eb-2b52a599dfc9",
+                  "ce34346f-975d-53a4-a6c5-6a6160d3ebce",
+                  "f21208fa-46bb-548a-ba9f-2804332002a5"
+                ],
+                "feret_um": 273,
+                "largestPolygon_um": 108.7,
+                "bbox": [51860.9, 20923.8, 52785.9, 21774]
+              },
+              {
+                "id": "c6",
+                "featureIds": ["63925b4f-3fe9-5207-b4d1-53044ef2d17b", "cc06fd0a-8772-5683-b1f0-0a446c3f1793"],
+                "feret_um": 272.9,
+                "largestPolygon_um": 133.5,
+                "bbox": [50062.6, 18279.1, 50883.1, 19218.5]
+              },
+              {
+                "id": "c7",
+                "featureIds": [
+                  "753bedd5-f050-56bb-81f3-e1a1ace57233",
+                  "535bf7f0-0718-5805-acaa-5bc1845b7d31",
+                  "f5898e90-dede-5975-9f8a-26867ba3fb72",
+                  "0954ad76-fbe6-545a-beb1-fac2abd9eecc",
+                  "ea6fc100-5ee3-52ee-a11d-44ff4e2120d6"
+                ],
+                "feret_um": 253.4,
+                "largestPolygon_um": 89.6,
+                "bbox": [46327.1, 21220.9, 47190.3, 22219.4]
+              },
+              {
+                "id": "c8",
+                "featureIds": ["2655807c-9e4b-5214-bde3-1ab0ce5054c7", "fff2f0f2-411f-5ba0-9595-1c38033764e3"],
+                "feret_um": 228.6,
+                "largestPolygon_um": 128.9,
+                "bbox": [47925, 17929.2, 48346.7, 18938.6]
+              },
+              {
+                "id": "c9",
+                "featureIds": ["acb96f29-90c5-547e-b3cd-838377b7284a", "69b78b4a-dd70-5ea9-a589-265f67af3bd3"],
+                "feret_um": 226.6,
+                "largestPolygon_um": 105.8,
+                "bbox": [45846.8, 20193.4, 46837, 20494.3]
+              },
+              {
+                "id": "c10",
+                "featureIds": [
+                  "ec6b3584-2eb5-5b78-899b-9add20574b41",
+                  "7b1f6cdb-416f-50d5-85fb-e5d42ad0b9ef",
+                  "bf048db9-98cb-5681-b1ff-124f3e7af50c"
+                ],
+                "feret_um": 206.4,
+                "largestPolygon_um": 72.1,
+                "bbox": [50499.7, 19601, 51303, 20240.3]
+              },
+              {
+                "id": "c11",
+                "featureIds": ["b945d134-5166-5518-a45a-e44e1eed00e6", "fadd0018-b888-56e8-a11e-22e57f184294"],
+                "feret_um": 134.5,
+                "largestPolygon_um": 38.2,
+                "bbox": [18664.6, 45427.2, 19208.1, 45725.7]
+              },
+              {
+                "id": "c12",
+                "featureIds": ["159dc847-02fa-54ed-8b52-3864d5a28f12"],
+                "feret_um": 50.5,
+                "largestPolygon_um": 50.5,
+                "bbox": [49894.8, 19385.3, 50080.8, 19594.2]
+              },
+              {
+                "id": "c13",
+                "featureIds": ["55f599fe-6825-5558-9ea7-9e03a9b92d41"],
+                "feret_um": 41.7,
+                "largestPolygon_um": 41.7,
+                "bbox": [51187, 21084.8, 51351.9, 21244.9]
+              },
+              {
+                "id": "c14",
+                "featureIds": ["4c51e59d-2e44-5fb5-a615-51bd7959ed41"],
+                "feret_um": 38.9,
+                "largestPolygon_um": 38.9,
+                "bbox": [19451.9, 48387.6, 19554.3, 48536.9]
+              },
+              {
+                "id": "c15",
+                "featureIds": ["197341fb-dfef-56ff-822c-ab0c6d817fb5"],
+                "feret_um": 31.7,
+                "largestPolygon_um": 31.7,
+                "bbox": [47991.1, 20036.8, 48117.8, 20168.5]
+              }
+            ]
+          },
+          "tissueBbox": [2112, 640, 65536, 88960],
+          "tissueCells": {
+            "cell": 1024,
+            "cols": 64,
+            "rows": 88,
+            "bits": "100000000400200001010000004c0002004000000010001100002100000000050000017fd804001c200007ffff800807040017ffffe0288000000fffffe50068008003fffff8000421801fffffe118000001fffffff000400001fffffff000460001fffffffa19420003fffffffe0080000201fffffe80010000003fffff88c10000001fffffa6200000813fffffc18100008207ffffe21200018003fffff0060001c01ffffff8a00000e01ffffff8110000e01ffffff8010000e03ffffffe812000007ffffffe000000007ffffffc000000007ffffffe000000007ffffffe00000000ffffffff01000000ffffffff08000000ffffffff80000000ffffffff80078000ffffffff8007e0007fffffff8007f0007fffffff8003f8007fffffff8001f0087ffffffe0003f6003ffffffe0007ffb01ffffffe2207fff81ffffffef207fffe0ffffffff007fffe0ffffffff003fffe0ffffffff003fffe07fffffff003fffc07fffffff003fffe03fffffff003ffff03fffffff003fffa03fffffff003fff001fffffff001fff000fffffff000fff0007fffffe000fff0007fffffe0207ff0003fffffc0007ff0001fffff80007ff04a1fffff00203ff0080fffff00003ff0000fffff00001ff00607ffff00003ff00001fffc00001ff00001fff800003ff000007f8000001ff04000100000001ff00004000000003fe00000000000007ff0000000002000ffe0000200000003fff0000000000007fff0000000000007fff0002000000017fff0000000000027fff000000000000ffff8000000000007fff0000000000007fff0800000000003fff0100000000001fffc000000000000fff80000080000007ffc0000000000003ffc0000000000001ffe00000200000007fe00000008000003e00000040000100082000000800000000000000000080000080000100000000004000000004000000400000000000000000000000000"
+          }
+        }
+      ],
+      "reference": {
+        "pN": "pN1mi",
+        "nodesExamined": 5,
+        "nodesPositive": 2,
+        "nodesMacro": 0,
+        "nodesMicro": 2,
+        "nodesItc": 0,
+        "largestDeposit_um": 1126.5,
+        "largestDepositNode": "n3",
+        "sentence": "Reference pN: pN1mi under CAMELYON17's simplified rules (2 nodes with micro- or macrometastasis). The largest annotated deposit is in node 4."
+      },
+      "report": {
+        "sizeTolerance": 0.2,
+        "viewedAt_um_per_px": [1, 0.5],
+        "adequateScale_um_per_px": {
+          "itc": 0.5,
+          "micro": 1,
+          "macro": 2
+        }
+      },
+      "teaching": [
+        {
+          "id": "T1",
+          "text": "Two micrometastases and no macrometastasis: pN1mi, whatever the number of micro nodes."
+        },
+        {
+          "id": "T2",
+          "text": "Node 5: labelled micrometastasis by CAMELYON17 although no single annotated focus reaches 0.2 mm (78 small foci, the largest about 190 µm; foci within 100 µm of each other span about 780 µm). AJCC also classes a deposit of more than 200 cells in one cross-section as a micrometastasis, which an outline cannot show. Calling this node ITC is a defensible disagreement."
+        },
+        {
+          "id": "T3",
+          "text": "This centre's slides are scanned at 0.2263 µm per pixel; the scale bar and your measurements use each slide's own resolution."
+        }
+      ]
+    }
+  }
+}

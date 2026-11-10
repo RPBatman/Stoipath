@@ -1,0 +1,17 @@
+{
+  "note": "a node names a slide that is not in the case",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/nodes/4/slide",
+      "value": "n9"
+    }
+  ],
+  "expect": {
+    "rule": "so-nodes-slides",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/4/slide",
+    "message": "Node n4 names n9, which is not a slide of this case"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [[66945.4,104364],[66907.9,104352],[66872.9,104350],[66837.9,104349],[66803.8,104351],[66774,104369],[66776.5,104408],[66799.6,104437],[66833.7,104455],[66863.5,104481],[66887.4,104506],[66923.2,104524],[66960.8,104524],[67000.8,104539],[67034.1,104552],[67071.6,104541],[67085.3,104500],[67081.9,104460],[67065.6,104427],[67028.1,104395],[66987.2,104375],[66955.6,104362],[66945.4,104364]]
+        ],
+        "type": "Polygon"
+      },
+      "id": "89a14ced-6bd0-5827-ac85-d9a7ad937cd9",
+      "properties": {
+        "classification": {
+          "color": [255,0,0],
+          "name": "Tumor"
+        },
+        "isLocked": true,
+        "name": "Annotation 0",
+        "objectType": "annotation",
+        "stoipath": {
+          "createdAt": "2022-09-28T12:49:30Z",
+          "input": "file",
+          "kind": "polygon",
+          "label": "R1",
+          "schema": "stoipath.annotation/1",
+          "updatedAt": "2022-09-28T12:49:30Z",
+          "version": 1
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "stoipath": {
+    "conversion": "subtracted regionLevel0 (0, 0); dropped 0 of 1 annotation outside the 96,651 × 197,226 px pyramid; kept 1 (1 Tumor) with 22 vertices; none partly inside; coordinates rounded to 2 decimals, rings closed",
+    "coordinateSpace": "pyramid-level0",
+    "featuresDropped": 0,
+    "generator": "stage0/tools/convert_asap_annotations.py 1",
+    "id": "camelyon17-annotation",
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T12:49:30Z",
+      "inputHash": "sha256:2bf0a484d01342d8cec07ea28eb40abe275c66d058bdd1c83618434fa2f58eef",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "2bf0a484"
+    },
+    "regionOffset": [0,0],
+    "schema": "stoipath.layer/1",
+    "slide": {
+      "fingerprint": "96651x197226@0.2431@0,0@5206f3c14d81",
+      "id": "camelyon17.c17s-0007"
+    },
+    "source": {
+      "bytes": 1568,
+      "format": "ASAP XML",
+      "sha256": "2bf0a484d01342d8cec07ea28eb40abe275c66d058bdd1c83618434fa2f58eef",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/patient_017_node_1.xml"
+    },
+    "title": "CAMELYON17 annotation"
+  },
+  "type": "FeatureCollection"
+}

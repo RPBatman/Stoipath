@@ -1,0 +1,21 @@
+{
+  "schema": "stoipath.learn.facts/1",
+  "module": "c17-01",
+  "version": "0.2.0",
+  "facts": [
+    {
+      "id": "F1",
+      "pointer": "/extensions/signout/reference/sentence",
+      "quote": "Reference pN: pN1",
+      "basis": "stages.csv patient_017 row (fixture)",
+      "status": "pending"
+    },
+    {
+      "id": "F2",
+      "pointer": "/extensions/signout/nodes/2/reference/sentence",
+      "quote": "about 3,200 µm",
+      "basis": "annotation geometry (fixture)",
+      "status": "pending"
+    }
+  ]
+}

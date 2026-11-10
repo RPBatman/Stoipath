@@ -1,0 +1,15 @@
+{
+  "note": "an unknown property in extensions.signout (the parser reads forward with one warning; the schema is closed)",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/futureField",
+      "value": 1
+    }
+  ],
+  "expect": {
+    "parse": "warning",
+    "pointer": "/extensions/signout/futureField"
+  }
+}

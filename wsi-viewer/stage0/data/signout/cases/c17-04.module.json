@@ -1,0 +1,300 @@
+{
+  "schema": "stoipath.learn.module/1",
+  "id": "c17-04",
+  "version": "0.2.0",
+  "metadata": {
+    "title": "Case 4 · sentinel lymph nodes, five slides",
+    "summary": "Review five sentinel lymph node sections, call each node, and stage the set under CAMELYON17's simplified rules in a practice report.",
+    "audience": ["resident", "medical-student", "cme"],
+    "objectives": [
+      "Survey every node of a sentinel lymph node set at low power before examining at high power.",
+      "Call each node negative, isolated tumour cells, micrometastasis or macrometastasis.",
+      "Derive the pN category from the node calls under CAMELYON17's simplified rules, and say how a full AJCC/CAP report would differ."
+    ],
+    "tags": {
+      "organ": ["lymph node"],
+      "stain": ["H&E"],
+      "difficulty": 3,
+      "topics": ["sentinel lymph node", "breast cancer", "metastasis", "pN staging", "practice report"]
+    },
+    "authors": [
+      {
+        "name": "Stoipath Learn L2 build (AI-assisted draft)",
+        "role": "author"
+      }
+    ],
+    "review": {
+      "status": "draft",
+      "notes": "Reference values derived from CAMELYON17 stages.csv and annotations; every statement is listed in c17-04.facts.json, common.facts.json and SIGNOUT.md §15."
+    },
+    "language": "en",
+    "estimatedMinutes": 25,
+    "created": "2026-11-08",
+    "updated": "2026-11-08",
+    "textLicence": {
+      "id": "CC-BY-4.0",
+      "text": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "slides": [
+    {
+      "ref": "n0",
+      "catalogueId": "camelyon17.c17s-0001",
+      "label": "Case 4 · node 1 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "94968x210579@0.2431@0,0@6204037c2dbe"
+    },
+    {
+      "ref": "n1",
+      "catalogueId": "camelyon17.c17s-0002",
+      "label": "Case 4 · node 2 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "96651x197226@0.2431@0,0@220857c2e2a0"
+    },
+    {
+      "ref": "n2",
+      "catalogueId": "camelyon17.c17s-0003",
+      "label": "Case 4 · node 3 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "94968x210579@0.2431@0,0@9d3c44a37278"
+    },
+    {
+      "ref": "n3",
+      "catalogueId": "camelyon17.c17s-0004",
+      "label": "Case 4 · node 4 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "94968x210579@0.2431@0,0@95e2e74ccbb8"
+    },
+    {
+      "ref": "n4",
+      "catalogueId": "camelyon17.c17s-0005",
+      "label": "Case 4 · node 5 · H&E",
+      "stain": "H&E",
+      "dataset": "CAMELYON17",
+      "licence": {
+        "id": "CC0-1.0",
+        "text": "CC0 1.0 Universal",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "fingerprint": "96651x197226@0.2431@0,0@a02c2e8af090"
+    }
+  ],
+  "case": {
+    "vignette": {
+      "text": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules.",
+      "synthetic": true,
+      "source": "Invented for teaching; CAMELYON17 publishes no clinical record"
+    },
+    "slides": ["n0", "n1", "n2", "n3", "n4"]
+  },
+  "items": [],
+  "steps": [
+    {
+      "id": "open",
+      "kind": "tour",
+      "phase": "open",
+      "title": "Case packet",
+      "text": "Five slides, one node each by the data set's convention. Open every node, call each one, then fill the practice report.",
+      "view": {
+        "kind": "fit",
+        "slide": "n0"
+      },
+      "transition": "cut",
+      "tools": ["select"]
+    }
+  ],
+  "extensions": {
+    "signout": {
+      "schema": "stoipath.learn.signout-case/1",
+      "dataset": {
+        "name": "CAMELYON17",
+        "patient": "patient_004",
+        "centre": 0,
+        "stagesCsv": {
+          "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv",
+          "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247"
+        },
+        "annotations": ["patient_004_node_4.xml"]
+      },
+      "rules": "camelyon17-simplified/1",
+      "nodes": [
+        {
+          "ref": "n0",
+          "title": "Node 1",
+          "slide": "n0",
+          "slideId": "patient_004_node_0",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [9600, 97152, 69376, 185472],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 47,
+            "rows": 103,
+            "bits": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001800000000073e000000001ffc000000007ff400000000ff6000000001ffe000000003ffe000000007ff800000000fff000000033fbe0000000bfc0c0000001fe8300000003fc0f8000000fe81c0000001ff0000000003fc0000000003f80000000001c0000fc0000300003f8000000000ff0000000003fe000000000ff8000002601ff000001fe07fe000007fd07f800000ff00fe000001fe81fe000003ffc3f0000007ff03f000000ff007e000003fd003800001ffe000000003ff0000000007ff000000000ff8000000001ff0000000003fc0000000003f00000000007e0000000000f80000000000e00000000001f00000000003c000000000038000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n1",
+          "title": "Node 2",
+          "slide": "n1",
+          "slideId": "patient_004_node_1",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [6528, 69120, 95488, 139776],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 48,
+            "rows": 97,
+            "bits": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000700000000000f70005c00000fbf017c00000bef01fe00000ffe01fe00000ffe00fe00000ffe00ff00000ff301fb00001fdd010e00000ffd0000000007fd0000000007fc0000000007f80000000005f40000000005e800000000005000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000180000000020180000000020700000000001080000000001000000000001c00000000001c00000000000f80000000000ec00000000003e00000000001c00000000000f000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n2",
+          "title": "Node 3",
+          "slide": "n2",
+          "slideId": "patient_004_node_2",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [12160, 23552, 73472, 124416],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 47,
+            "rows": 103,
+            "bits": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003c0000000001fe0000000003fc000000000fff000000001ffa000000001ffc000000003ff8000000002ff8000000003ff0000000001ff0000000001fe0000000007fc3f00000007f87f00000003f1fe000000a7e3fe000003ffc7ff0000077f87ff00000fff0ffe00001ff80ffe000079f01ffc0001fc001ff80003f8007ff00007f000ffe0000d8001ffc0000000013e00000000001c0000000000600000001000c0000001f80000000007f0000000001fe0000000003fc000000000ffc0000000037f8000000003fe000000000ff9000000003ff620000000ffcff0000003ffbff0000007fdfff000001ffbffe0000017e7ffc000003f8fff800001e601ff000003e403fc000001f001f0000007c0000000000f00000000001e00000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n3",
+          "title": "Node 4",
+          "slide": "n3",
+          "slideId": "patient_004_node_3",
+          "reference": {
+            "label": "negative",
+            "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+          },
+          "annotation": null,
+          "tissueBbox": [6912, 48512, 70656, 119424],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 47,
+            "rows": 103,
+            "bits": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001800000000001f8000000000bf00000000017f8000000008ff0030000019ff807c00003c7f806000001fff80f000007fff07ec00009fff1f900000bffe3fe40001fffcffc00007e7f9ff200005fff3fe600003ffeffe000027fffffc00004cfffff8000079ffffe600014fffffc000008ffffff800031ffffdf000063fdfff6000107f3ffbc00030123fd78000339e7fe200002770ffc000001fe0ff8000001f70ff1000003e81ff0000007c03ff000000fc07fe000000e80ffd000000c01ff0000000001ff0000000003f400000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        },
+        {
+          "ref": "n4",
+          "title": "Node 5",
+          "slide": "n4",
+          "slideId": "patient_004_node_4",
+          "reference": {
+            "label": "itc",
+            "sentence": "Reference: isolated tumour cells, about 120 µm (longest single annotated outline; CAMELYON17 annotation of 3 polygons, about 0.015 mm²). Under AJCC breast staging, which CAMELYON17 applies, a node with ITCs only is not counted toward the number of positive nodes.",
+            "largestDeposit_um": 124.7,
+            "clusterSpan_um": 124.7,
+            "polygons": 3,
+            "area_mm2": 0.01495,
+            "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px; clusters merge polygons within 100 µm"
+          },
+          "annotation": {
+            "layer": "camelyon17-annotation",
+            "version": "f8d9e9f7",
+            "clusters": [
+              {
+                "id": "c1",
+                "featureIds": ["9c0093d4-5312-5b12-b5cd-d96733008cdd"],
+                "feret_um": 124.7,
+                "largestPolygon_um": 124.7,
+                "bbox": [10626.2, 75345.4, 10809.6, 75855.5]
+              },
+              {
+                "id": "c2",
+                "featureIds": ["0ed97673-5959-5700-965f-6e6a84f6f25f"],
+                "feret_um": 114.8,
+                "largestPolygon_um": 114.8,
+                "bbox": [13092.3, 87057.5, 13482.8, 87440.1]
+              },
+              {
+                "id": "c3",
+                "featureIds": ["1d50190b-7191-5525-aa3b-0039eb8c1395"],
+                "feret_um": 93,
+                "largestPolygon_um": 93,
+                "bbox": [12597.7, 88778.1, 12938.4, 89160.6]
+              }
+            ]
+          },
+          "tissueBbox": [9600, 60416, 80000, 123008],
+          "tissueCells": {
+            "cell": 2048,
+            "cols": 48,
+            "rows": 97,
+            "bits": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000028000e0000007c000e000000fe003cc00000ff007fe00039ff603f80007ffff03cd0007ffff01ff0007ffff81ff0007ffffc7fd000fffffeffe000fffffeffe000fffffeffe000fffffeffe0007feffeffe0007fe7ffffe0003fc3ff3c60003fc0fc0000000fe67c000000071fd8000000007fe000000001ffe800000003ffe000000007ffffe0000007ffffe0000007fffff0000007fffff0000000fffff000000003ffe000000000ffe0000000007f00000000003e00000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      ],
+      "reference": {
+        "pN": "pN0(i+)",
+        "nodesExamined": 5,
+        "nodesPositive": 0,
+        "nodesMacro": 0,
+        "nodesMicro": 0,
+        "nodesItc": 1,
+        "largestDeposit_um": 124.7,
+        "largestDepositNode": "n4",
+        "sentence": "Reference pN: pN0(i+) under CAMELYON17's simplified rules (0 nodes with micro- or macrometastasis; the ITC-only node is not counted as positive, as in AJCC). The largest annotated deposit is in node 5."
+      },
+      "report": {
+        "sizeTolerance": 0.2,
+        "viewedAt_um_per_px": [1, 0.5],
+        "adequateScale_um_per_px": {
+          "itc": 0.5,
+          "micro": 1,
+          "macro": 2
+        }
+      },
+      "teaching": [
+        {
+          "id": "T1",
+          "text": "A single 125 µm cluster of isolated tumour cells in node 5: pN0(i+)."
+        },
+        {
+          "id": "T2",
+          "text": "Isolated tumour cells are easy to miss on a single H&E level; many laboratories find them with cytokeratin immunohistochemistry or deeper levels, neither of which exists for these slides. A missed ITC node is a minor discrepancy here (pN0 vs pN0(i+)); the lesson is where and how to look, not that H&E alone should always find them."
+        }
+      ]
+    }
+  }
+}

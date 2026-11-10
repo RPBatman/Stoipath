@@ -1,0 +1,17 @@
+{
+  "note": "derivedPn 'maybe'",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/options/derivedPn",
+      "value": "maybe"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/options/derivedPn",
+    "message": null
+  }
+}

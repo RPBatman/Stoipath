@@ -1,0 +1,79 @@
+{
+  "schema": "stoipath.learn.facts/1",
+  "module": "c17-02",
+  "version": "0.2.0",
+  "facts": [
+    {
+      "id": "F1",
+      "pointer": "/case/vignette/text",
+      "quote": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules.",
+      "basis": "Invented for teaching (D13, §15.2): one generic text for all ten cases, labelled \"Teaching vignette (invented)\"; CAMELYON17 publishes no clinical record (FACTS §0). Its one dataset claim, one slide = one node, is S0.1 in common.facts.json.",
+      "status": "pending",
+      "note": "S2.1 · Vignette (§15.2)"
+    },
+    {
+      "id": "F2",
+      "pointer": "/steps/0/text",
+      "quote": "Five slides, one node each by the data set's convention. Open every node, call each one, then fill the practice report.",
+      "basis": "The data set's one-slide-one-node convention (S0.1, common.facts.json); the rest is instruction.",
+      "status": "pending",
+      "note": "S2.2 · Case packet (Open step)"
+    },
+    {
+      "id": "F3",
+      "pointer": "/extensions/signout/nodes/0/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_025_node_0.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S2.3 · Node label · Node 1 (patient_025_node_0)"
+    },
+    {
+      "id": "F4",
+      "pointer": "/extensions/signout/nodes/1/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_025_node_1.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S2.4 · Node label · Node 2 (patient_025_node_1)"
+    },
+    {
+      "id": "F5",
+      "pointer": "/extensions/signout/nodes/2/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_025_node_2.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S2.5 · Node label · Node 3 (patient_025_node_2)"
+    },
+    {
+      "id": "F6",
+      "pointer": "/extensions/signout/nodes/3/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_025_node_3.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S2.6 · Node label · Node 4 (patient_025_node_3)"
+    },
+    {
+      "id": "F7",
+      "pointer": "/extensions/signout/nodes/4/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_025_node_4.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S2.7 · Node label · Node 5 (patient_025_node_4)"
+    },
+    {
+      "id": "F8",
+      "pointer": "/extensions/signout/reference/sentence",
+      "quote": "Reference pN: pN0 under CAMELYON17's simplified rules (every node negative).",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) patient row patient_025.zip = pN0; derivePn of the node labels ['negative', 'negative', 'negative', 'negative', 'negative'] gives pN0 (the rules reproduce stages.csv for 100 of 100 patients, FACTS §4.1, §4.2); counts macro 0, micro 0, ITC 0, positive 0. Largest annotated deposit: none (no annotated node).",
+      "status": "pending",
+      "note": "S2.8 · pN (§15.3)"
+    },
+    {
+      "id": "F9",
+      "pointer": "/extensions/signout/teaching/0/text",
+      "quote": "A clean negative set: the report says so without a deposit size, and the preview reads 0/5, pN0.",
+      "basis": "stages.csv: every node of patient_025 negative, pN0; negative nodes carry no annotation (FACTS §4.3); §5.4 item 7 preview text.",
+      "status": "pending",
+      "note": "S2.9 · Teaching T1"
+    }
+  ]
+}

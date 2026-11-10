@@ -1,0 +1,248 @@
+{
+  "schema": "stoipath.learn.signout-results/1",
+  "product": "learn",
+  "labelString": "For educational use. Not a medical device. Contains no protected health information.",
+  "practiceStatement": "Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool.",
+  "useStatement": "Formative practice data on draft teaching cases. Not validated for high-stakes decisions about a trainee; use it for feedback, curriculum and programme evaluation only.",
+  "privacy": "Created in your browser. Nothing in this file was sent anywhere; it contains only what you typed and did.",
+  "useNoticeShown": true,
+  "useNotice": "Your programme may ask you to send the exported results file for curriculum and programme evaluation; sending it is your choice, and the file contains only what you typed and did.",
+  "rules": "camelyon17-simplified/1",
+  "class_definitions": {
+    "match": "The call equals the reference.",
+    "minor": "Same N category (pN) or a size call (negative vs ITC, micro vs macro) at node level.",
+    "major": "A different N category (pN), or metastasis present vs absent at node level (ITC counts as absent)."
+  },
+  "attribution": {
+    "sentence": "CAMELYON17 data set by the Computational Pathology Group, Radboud University Medical Center, Nijmegen, with Canisius-Wilhelmina Hospital, UMC Utrecht, Rijnstate Hospital and LabPON (CC0 1.0). Slides are read directly from the dataset's public bucket; nothing is copied or uploaded.",
+    "citation": "Bandi P, Geessink O, Manson Q, et al. From detection of individual metastases to classification of lymph node status at the patient level: the CAMELYON17 challenge. IEEE Trans Med Imaging 2019;38(2):550–560. doi:10.1109/TMI.2018.2867350.",
+    "licence": "CC0 1.0",
+    "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+  },
+  "build": "casefmt-fixture",
+  "exportedAt": "2026-11-08T12:30:00Z",
+  "traineeCode": "R2-017",
+  "attempt": 1,
+  "worklist": {
+    "id": "camelyon17-pilot",
+    "title": "Sentinel lymph node practice · CAMELYON17 pilot",
+    "options": {
+      "timer": "count-up",
+      "feedback": "per-case",
+      "derivedPn": "shown",
+      "locked": []
+    }
+  },
+  "cases": [
+    {
+      "caseId": "c17-01",
+      "contentHash": "sha256:aa88707b414857a2f3bdebd45e1d82d6da081a1fda724f04d4e4811600cd9083",
+      "attempt": 1,
+      "rules": "camelyon17-simplified/1",
+      "complete": true,
+      "nodesNotExamined": 0,
+      "reference": {
+        "labels": [
+          "negative",
+          "itc",
+          "macro",
+          "macro",
+          "micro"
+        ],
+        "pN": "pN1",
+        "nodesPositive": 3,
+        "nodesMacro": 2,
+        "nodesMicro": 1,
+        "nodesItc": 1,
+        "largestDeposit_um": 3158,
+        "clusterSpan_um": 3158,
+        "largestDepositNode": 2
+      },
+      "submitted": {
+        "calls": [
+          "negative",
+          "negative",
+          "macro",
+          "macro",
+          "micro"
+        ],
+        "nodesExamined": 5,
+        "nodesMacro": 2,
+        "nodesMicro": 1,
+        "nodesItc": 0,
+        "nodesPositiveDerived": 3,
+        "largestDeposit_mm": 3.2,
+        "largestDeposit_measuredNode": 2,
+        "pN": "pN1",
+        "derivedPn": "pN1",
+        "derivedPnShown": true,
+        "inconsistent": false,
+        "comment": "",
+        "previewText": "Lymph nodes, sentinel (5): 3 of 5 positive (2 macro, 1 micro); largest deposit 3.2 mm; pN1."
+      },
+      "classes": {
+        "nodes": [
+          {
+            "class": "match",
+            "direction": "none",
+            "borderline": false
+          },
+          {
+            "class": "minor",
+            "direction": "under",
+            "borderline": false
+          },
+          {
+            "class": "match",
+            "direction": "none",
+            "borderline": false
+          },
+          {
+            "class": "match",
+            "direction": "none",
+            "borderline": false
+          },
+          {
+            "class": "match",
+            "direction": "none",
+            "borderline": false
+          }
+        ],
+        "pN": {
+          "class": "match",
+          "direction": "none"
+        },
+        "case": "minor"
+      },
+      "pnDistance": 0,
+      "nodesAgreed": 4,
+      "size": {
+        "agreement": {
+          "category": "not compared",
+          "numeric": "not compared"
+        },
+        "ref_um": 3158,
+        "clusterSpan_um": 3158,
+        "call_um": 3200,
+        "refNode": 2,
+        "callNode": 2
+      },
+      "nodes": [
+        {
+          "slideId": "patient_017_node_0",
+          "opened": true,
+          "examined": true,
+          "msOnScreen": 61000,
+          "bestScale": 0.5,
+          "bestScaleOverTissue": 0.5,
+          "settledViews": 12,
+          "depositsTotal": 0,
+          "depositsViewed10x": 0,
+          "depositsViewed20x": 0,
+          "adequateScale_um_per_px": null,
+          "viewedAtAdequate": null,
+          "msAtAdequate": null,
+          "missType": null,
+          "borderline": false,
+          "flags": []
+        },
+        {
+          "slideId": "patient_017_node_1",
+          "opened": true,
+          "examined": true,
+          "msOnScreen": 61001,
+          "bestScale": 0.5,
+          "bestScaleOverTissue": 0.5,
+          "settledViews": 12,
+          "depositsTotal": 1,
+          "depositsViewed10x": 1,
+          "depositsViewed20x": 0,
+          "adequateScale_um_per_px": 0.5,
+          "viewedAtAdequate": false,
+          "msAtAdequate": 0,
+          "missType": "search",
+          "borderline": false,
+          "flags": []
+        },
+        {
+          "slideId": "patient_017_node_2",
+          "opened": true,
+          "examined": true,
+          "msOnScreen": 61002,
+          "bestScale": 0.5,
+          "bestScaleOverTissue": 0.5,
+          "settledViews": 12,
+          "depositsTotal": 2,
+          "depositsViewed10x": 2,
+          "depositsViewed20x": 2,
+          "adequateScale_um_per_px": 2.0,
+          "viewedAtAdequate": true,
+          "msAtAdequate": 9000,
+          "missType": null,
+          "borderline": false,
+          "flags": [
+            {
+              "onDeposit": true,
+              "distance_um": 0
+            }
+          ]
+        },
+        {
+          "slideId": "patient_017_node_3",
+          "opened": true,
+          "examined": true,
+          "msOnScreen": 61003,
+          "bestScale": 0.5,
+          "bestScaleOverTissue": 0.5,
+          "settledViews": 12,
+          "depositsTotal": 0,
+          "depositsViewed10x": 0,
+          "depositsViewed20x": 0,
+          "adequateScale_um_per_px": 2.0,
+          "viewedAtAdequate": null,
+          "msAtAdequate": null,
+          "missType": null,
+          "borderline": false,
+          "flags": []
+        },
+        {
+          "slideId": "patient_017_node_4",
+          "opened": true,
+          "examined": true,
+          "msOnScreen": 61004,
+          "bestScale": 0.5,
+          "bestScaleOverTissue": 0.5,
+          "settledViews": 12,
+          "depositsTotal": 1,
+          "depositsViewed10x": 1,
+          "depositsViewed20x": 1,
+          "adequateScale_um_per_px": 1.0,
+          "viewedAtAdequate": true,
+          "msAtAdequate": 4000,
+          "missType": null,
+          "borderline": false,
+          "flags": []
+        }
+      ],
+      "time": {
+        "reviewMs": 900000,
+        "reportMs": 120000,
+        "overrunMs": 0
+      },
+      "options": {
+        "timer": "count-up",
+        "feedback": "per-case",
+        "derivedPn": "shown"
+      },
+      "submittedAt": "2026-11-08T12:00:00Z",
+      "case": {
+        "id": "c17-01",
+        "version": "0.2.0",
+        "contentHash": "sha256:aa88707b414857a2f3bdebd45e1d82d6da081a1fda724f04d4e4811600cd9083",
+        "title": "Case 1 · sentinel lymph nodes, five slides",
+        "review": "draft"
+      },
+      "trace": "summary"
+    }
+  ]
+}

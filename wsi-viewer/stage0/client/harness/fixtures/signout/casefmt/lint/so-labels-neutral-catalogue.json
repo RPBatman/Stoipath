@@ -1,0 +1,18 @@
+{
+  "note": "a catalogue title naming the answer",
+  "base": "c17-01.module.json",
+  "patch": [],
+  "expect": {
+    "rule": "so-labels-neutral",
+    "severity": "error",
+    "path": "/slides/1/catalogueId",
+    "message": null
+  },
+  "cataloguePatch": [
+    {
+      "op": "replace",
+      "path": "/slides/1/title",
+      "value": "Sentinel lymph node · ITC"
+    }
+  ]
+}

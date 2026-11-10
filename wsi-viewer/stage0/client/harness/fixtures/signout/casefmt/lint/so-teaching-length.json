@@ -1,0 +1,17 @@
+{
+  "note": "a teaching sentence over 400 characters",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/teaching/1/text",
+      "value": "Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. Long teaching text. "
+    }
+  ],
+  "expect": {
+    "rule": "so-teaching-length",
+    "severity": "warning",
+    "path": "/extensions/signout/teaching/1/text",
+    "message": "/extensions/signout/teaching/1/text is long for the card (420 characters)"
+  }
+}

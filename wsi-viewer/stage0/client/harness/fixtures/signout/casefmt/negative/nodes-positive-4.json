@@ -1,0 +1,15 @@
+{
+  "note": "nodesPositive 4 for patient_017's labels",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/reference/nodesPositive",
+      "value": 4
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/reference/nodesPositive"
+  }
+}

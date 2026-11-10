@@ -14,7 +14,7 @@
  *
  * No DOM; never called per frame.
  */
-import type { EventBus, KeyValueStore, LiveRegions, PersistenceState, PersistenceStatus, ShellEvents } from '../contracts';
+import type { EventBus, KeyValueStore, LiveRegions, PersistenceState, PersistenceStatus, PrefsStore, ShellEvents } from '../contracts';
 import { PERSIST_OPTIONS, type Store, type StorePersistence } from './store';
 
 /** TOOLS.md D6 caps, in UTF-16 code units of the stored text (2 MiB per slide, 16 MiB in total). */
@@ -22,6 +22,14 @@ export const SLIDE_CAP = 2 * 1024 * 1024;
 export const TOTAL_CAP = 16 * 1024 * 1024;
 export const SAVE_DEBOUNCE_MS = 800;
 export const INDEX_KEY = '#index';
+/** The page-hide journal's prefs key of a slide (under the page's prefs prefix; 2026-11-09). */
+export const journalKey = (slideKey: string): string => `annotations.unsaved/${slideKey}`;
+
+/** What the page-hide journal holds for one slide: this build's text of the store at page hide. */
+interface JournalEntry {
+  fingerprint: string;
+  text: string;
+}
 export const keptKey = (slideKey: string, fingerprint: string): string => `${slideKey}#fp=${fingerprint}`;
 
 /** "512 B", "3.4 KB", "1.27 MB" (binary multiples, as the caps are). */
@@ -109,6 +117,13 @@ export interface PersisterDeps {
   /** A one-off sentence (the kept-not-loaded notice): strip + polite, at rest. */
   notice(text: string): void;
   now?: () => string;
+  /**
+   * Additive, optional (2026-11-09): a synchronous store for the page-hide journal (core's PrefsStore, localStorage).
+   * IndexedDB is asynchronous, and a write started in `pagehide` does not survive a reload that follows an edit inside
+   * the 800 ms debounce, so `hide()` copies the unsaved text here at once and `load()` prefers that copy. Without it
+   * (a test double), page hide only starts the IndexedDB write, as before.
+   */
+  journal?: PrefsStore | null;
 }
 
 /**
@@ -134,6 +149,10 @@ export class Persister implements StorePersistence {
   private blocked: string | null = null;
   private readonly listeners = new Set<(s: PersistenceStatus) => void>();
   private readonly now: () => string;
+  /** The page is hidden (pagehide, or the tab hidden): every change is journaled at once. */
+  private hidden = false;
+  /** The store revision the journal holds, or null when there is no journal entry of this slide. */
+  private journalRev: number | null = null;
 
   constructor(
     private readonly store: Store,
@@ -159,7 +178,13 @@ export class Persister implements StorePersistence {
     try {
       await this.deps.index.ready;
       const key = this.store.slideKey;
-      const text = await this.deps.storage.get<unknown>('annotations', key);
+      const journaled = this.readJournal();
+      const text = journaled ?? (await this.deps.storage.get<unknown>('annotations', key));
+      if (journaled !== null) {
+        // unsaved work of the last page hide: load it, and write it to IndexedDB (the journal goes once that succeeds)
+        this.journalRev = -1;
+        this.dirty = true;
+      }
       if (typeof text === 'string' && text !== '') {
         this.stored = true;
         let doc: unknown = null;
@@ -193,6 +218,22 @@ export class Persister implements StorePersistence {
   changed(): void {
     this.dirty = true;
     if (this.loaded) this.schedule();
+    if (this.hidden) this.writeJournal();
+  }
+
+  /**
+   * The page is going away or hidden (pagehide, visibilitychange): copy the unsaved text to the journal synchronously,
+   * then start the IndexedDB write. A change made while hidden is journaled at once (changed()).
+   */
+  hide(): void {
+    this.hidden = true;
+    this.writeJournal();
+    void this.flush();
+  }
+
+  /** The page is shown again (pageshow from the back/forward cache, the tab visible): back to debounced writes. */
+  show(): void {
+    this.hidden = false;
   }
 
   async flush(): Promise<PersistenceStatus> {
@@ -244,6 +285,7 @@ export class Persister implements StorePersistence {
     if (!storage.available) return this.settle(this.make('memory-only', 0, null));
     if (this.blocked !== null) return this.settle(this.make('error', 0, null, this.blocked));
     if (n === 0 && !this.stored) return this.settle(this.make('idle', 0, null));
+    const rev = this.store.revision;
     const text = this.store.text(PERSIST_OPTIONS);
     const bytes = text.length;
     if (bytes > SLIDE_CAP) return this.settle(this.make('over-cap', bytes, null));
@@ -255,7 +297,38 @@ export class Persister implements StorePersistence {
     this.stored = true;
     const savedAt = this.now();
     await this.deps.index.set(key, { bytes, counters: { A: this.store.counters.A, M: this.store.counters.M }, fingerprint: this.store.fingerprint, savedAt });
+    if (this.journalRev !== null && rev >= this.journalRev) this.clearJournal();
     return this.settle(this.make('saved', bytes, savedAt));
+  }
+
+  // ------------------------------------------------------------------ the page-hide journal (synchronous, prefs)
+
+  private readJournal(): string | null {
+    const j = this.deps.journal;
+    if (j === undefined || j === null) return null;
+    const e = j.get<JournalEntry | null>(journalKey(this.store.slideKey), null);
+    if (e === null || typeof e !== 'object' || typeof e.text !== 'string' || e.text === '') return null;
+    // another build of the slide: the stored text (if any) decides, as without a journal
+    if (e.fingerprint !== this.store.fingerprint) {
+      j.remove?.(journalKey(this.store.slideKey));
+      return null;
+    }
+    return e.text;
+  }
+
+  private writeJournal(): void {
+    const j = this.deps.journal;
+    if (j === undefined || j === null || !this.loaded || (!this.dirty && this.writing === null) || this.blocked !== null || !this.deps.storage.available) return;
+    const text = this.store.text(PERSIST_OPTIONS);
+    if (text.length > SLIDE_CAP) return;
+    if (this.store.all().length === 0 && !this.stored) return;
+    j.set<JournalEntry>(journalKey(this.store.slideKey), { fingerprint: this.store.fingerprint, text });
+    this.journalRev = this.store.revision;
+  }
+
+  private clearJournal(): void {
+    this.journalRev = null;
+    this.deps.journal?.remove?.(journalKey(this.store.slideKey));
   }
 
   /** A stored text that is not this build's (or unreadable): keep it under its own key, never load or overwrite it. */

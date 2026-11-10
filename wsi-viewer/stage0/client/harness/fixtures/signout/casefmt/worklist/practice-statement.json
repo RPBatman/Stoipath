@@ -1,0 +1,17 @@
+{
+  "note": "another practice statement",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/practiceStatement",
+      "value": "Practice report."
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/practiceStatement",
+    "message": null
+  }
+}

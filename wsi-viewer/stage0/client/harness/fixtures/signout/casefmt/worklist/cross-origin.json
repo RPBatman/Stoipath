@@ -1,0 +1,17 @@
+{
+  "note": "an entry on another site",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/cases/0/url",
+      "value": "https://example.org/cases/c17-01.module.json"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/cases/0/url",
+    "message": null
+  }
+}

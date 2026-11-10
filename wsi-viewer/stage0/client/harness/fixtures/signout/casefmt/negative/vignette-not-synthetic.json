@@ -1,0 +1,15 @@
+{
+  "note": "vignette.synthetic false",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/case/vignette/synthetic",
+      "value": false
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/case/vignette/synthetic"
+  }
+}

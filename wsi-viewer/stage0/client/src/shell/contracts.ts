@@ -1271,6 +1271,11 @@ export interface KeyValueStore {
 export interface PrefsStore {
   get<T>(key: string, fallback: T): T;
   set<T>(key: string, value: T): void;
+  /**
+   * Additive, optional (2026-11-09, the page-hide journal): forget a key (memory and localStorage). Used for the
+   * synchronous copies of unsaved work written at page hide (annotations' Persister, the practice page's progress).
+   */
+  remove?(key: string): void;
 }
 
 /** Read-only test views, published as window.__shell.tools[name]() by the integrator. */

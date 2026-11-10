@@ -1,0 +1,170 @@
+# Stage-0 client: the same gates the build workflows run locally (wsi-viewer/stage0/client/README.md, LEARN.md, SIGNOUT.md).
+#
+# Slides: the tile pyramids are not in git on this branch. They are taken from the published site branch (stage0-deploy):
+# the measurement slide (data/tiles) and the four sample slides the shell and Learn checks open.
+#
+# Timing lines: a few checks compare frame-interval or input-latency percentiles (software GPU on a shared runner). The
+# project's rule is "a timing-only failure is re-run once on its own before it is called real", so each browser gate is
+# allowed exactly one re-run; both logs are kept as artifacts. A second failure fails the job.
+name: stage0-ci
+
+on:
+  push:
+    paths: ['wsi-viewer/stage0/**', '.github/workflows/stage0-ci.yml']
+  pull_request:
+    paths: ['wsi-viewer/stage0/**', '.github/workflows/stage0-ci.yml']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit or branch to test (default: the commit of this run)'
+        required: false
+
+concurrency:
+  group: stage0-ci-${{ github.ref }}-${{ inputs.ref || 'head' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22'
+  PLAYWRIGHT_VERSION: '1.63.0'
+  AXE_VERSION: '4.10.3'
+  CLIENT: wsi-viewer/stage0/client
+
+jobs:
+  build:
+    name: typecheck and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.CLIENT }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ env.CLIENT }}
+      - name: tsc --noEmit
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: ${{ env.CLIENT }}
+      - name: npm run build
+        run: npm run build
+        working-directory: ${{ env.CLIENT }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ${{ env.CLIENT }}/dist
+          include-hidden-files: true
+          retention-days: 7
+
+  unit:
+    name: unit tests (node + python)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.CLIENT }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ env.CLIENT }}
+      - name: Playwright ${{ env.PLAYWRIGHT_VERSION }} + Chromium (IOP-5 decodes a PNG in Chromium)
+        run: |
+          npm install -g playwright@${{ env.PLAYWRIGHT_VERSION }}
+          playwright install --with-deps chromium
+      - name: node harness/unit.mjs
+        run: node harness/unit.mjs
+        working-directory: ${{ env.CLIENT }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pillow tifffile imagecodecs jsonschema
+      - name: python unittest (stage0/tools/tests)
+        run: python -I -m unittest discover tools/tests -v
+        working-directory: wsi-viewer/stage0
+
+  browser:
+    name: ${{ matrix.gate }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        gate: [measurement, shell, tools, learn, signout]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: slides from the published site branch
+        uses: actions/checkout@v4
+        with:
+          ref: stage0-deploy
+          path: _deploy
+          sparse-checkout: |
+            data/tiles
+            data/samples/CMU-1-Small-Region
+            data/samples/CMU-1
+            data/samples/Hamamatsu-2
+            data/samples/JP2K-33003-1
+      - name: link slides into wsi-viewer/stage0/data
+        run: |
+          d=wsi-viewer/stage0/data
+          ln -sfn "$GITHUB_WORKSPACE/_deploy/data/tiles" "$d/tiles"
+          mkdir -p "$d/samples"
+          for s in CMU-1-Small-Region CMU-1 Hamamatsu-2 JP2K-33003-1; do ln -sfn "$GITHUB_WORKSPACE/_deploy/data/samples/$s" "$d/samples/$s"; done
+          ls "$d/tiles" | head -3; du -shL "$d/tiles" "$d/samples"/*
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.CLIENT }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ env.CLIENT }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: python libraries the checks call (schema validation, content twins)
+        run: pip install numpy pillow tifffile imagecodecs jsonschema
+      - name: Playwright ${{ env.PLAYWRIGHT_VERSION }} + Chromium, axe-core ${{ env.AXE_VERSION }} (global, as the harness expects)
+        run: |
+          npm install -g playwright@${{ env.PLAYWRIGHT_VERSION }} axe-core@${{ env.AXE_VERSION }}
+          playwright install --with-deps chromium
+          echo "AXE_CORE=$(npm root -g)/axe-core/axe.min.js" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ${{ env.CLIENT }}/dist
+      - name: run ${{ matrix.gate }} (one re-run allowed for timing lines)
+        working-directory: ${{ env.CLIENT }}
+        run: |
+          set -o pipefail
+          case "${{ matrix.gate }}" in
+            measurement) cmd='node harness/run.mjs && node harness/check-metrics.mjs' ;;
+            shell)       cmd='node harness/shell-check.mjs' ;;
+            tools)       cmd='node harness/tools-check.mjs --axe "$AXE_CORE"' ;;
+            learn)       cmd='node harness/learn-check.mjs --axe "$AXE_CORE"' ;;
+            signout)     cmd='node harness/signout-check.mjs --axe "$AXE_CORE"' ;;
+          esac
+          if [ "${{ matrix.gate }}" = signout ] && [ ! -f harness/signout-check.mjs ]; then echo "no signout-check.mjs at this commit"; exit 0; fi
+          if bash -c "$cmd" 2>&1 | tee "$RUNNER_TEMP/run1.log"; then exit 0; fi
+          echo "::warning title=${{ matrix.gate }}::first run failed; re-running once (project rule for timing-only lines). First-run FAIL lines:"
+          grep -E 'FAIL' "$RUNNER_TEMP/run1.log" | head -20 || true
+          bash -c "$cmd" 2>&1 | tee "$RUNNER_TEMP/run2.log"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.gate }}
+          path: |
+            ${{ env.CLIENT }}/harness/results/*.json
+            ${{ runner.temp }}/run*.log
+          retention-days: 14
+          if-no-files-found: ignore

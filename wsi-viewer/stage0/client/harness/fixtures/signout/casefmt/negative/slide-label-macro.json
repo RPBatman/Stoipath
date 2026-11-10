@@ -1,0 +1,15 @@
+{
+  "note": "a slide label containing 'macro'",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/slides/2/label",
+      "value": "Case 1 · node 3 · macro"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/slides/2/label"
+  }
+}

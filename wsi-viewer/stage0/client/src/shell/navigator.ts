@@ -40,7 +40,20 @@ export class NavigatorView {
     thumb.style.aspectRatio = `${pyramid.width} / ${pyramid.height}`;
     // Top level of the pyramid (one 480 px tile for tumor_014): positioned in % so it follows the thumbnail size.
     const lvl = pyramid.levels[pyramid.levels.length - 1];
-    if (lvl !== undefined) {
+    if (pyramid.thumbnail !== undefined) {
+      // A remote range slide (SIGNOUT.md E8, ER-1): its tile URLs are not image URLs, so the index's same-origin
+      // overview image stands for the top level.
+      const img = document.createElement('img');
+      img.alt = '';
+      img.decoding = 'async';
+      img.draggable = false;
+      img.src = pyramid.thumbnail.url;
+      img.style.left = '0%';
+      img.style.top = '0%';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      tiles.appendChild(img);
+    } else if (lvl !== undefined) {
       for (let y = 0; y < lvl.tilesY; y++) {
         for (let x = 0; x < lvl.tilesX; x++) {
           const img = document.createElement('img');

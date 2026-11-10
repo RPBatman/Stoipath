@@ -1,0 +1,17 @@
+{
+  "note": "a slide label naming the answer",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/slides/2/label",
+      "value": "Case 1 · node 3 · macro"
+    }
+  ],
+  "expect": {
+    "rule": "so-labels-neutral",
+    "severity": "error",
+    "path": "/slides/2/label",
+    "message": "/slides/2/label names the answer (macro)"
+  }
+}

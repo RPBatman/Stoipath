@@ -1,0 +1,17 @@
+{
+  "note": "two entries with one id",
+  "base": "worklists/camelyon17-pilot.worklist.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/cases/1/id",
+      "value": "c17-01"
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "rule": "so-worklist",
+    "path": "/cases/1/id",
+    "message": "Case id c17-01 is used twice"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "note": "borderline on a node without annotation",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/nodes/0/reference/borderline",
+      "value": {
+        "reason": "fixture"
+      }
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/nodes/0/reference/borderline"
+  }
+}

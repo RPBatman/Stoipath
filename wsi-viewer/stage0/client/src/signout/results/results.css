@@ -1,0 +1,41 @@
+/*
+ * results · the cohort tool (SIGNOUT.md §4.5, §5.7, D23). Design-system classes first (.field, .input, .table, .table-wrap,
+ * .btn, .badge--learn); these rows add only the tool's own layout, scoped under .so-cohort, tokens only, dark chrome
+ * (as L1). The drop zone is a dashed target with the same focus ring as every control (base.css --focus-shadow); its
+ * input twin is the native file input above it (SC 2.1.1). N = new (no final has a cohort screen).
+ */
+.signout .so-cohort { max-width: 120ch; display: flex; flex-direction: column; gap: var(--space-6); }
+.signout .so-cohort__head { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+.signout .so-cohort__title { font-size: var(--text-2xl); font-weight: var(--weight-semibold); line-height: var(--leading-tight); margin: 0; }
+.signout .so-cohort__title:focus { outline: none; }
+.signout .so-cohort__title:focus-visible { box-shadow: var(--focus-shadow); border-radius: var(--radius-1); }
+.signout .so-cohort__practice { margin: 0; font-weight: var(--weight-medium); color: var(--color-text); line-height: var(--leading-body); }
+.signout .so-cohort__use { margin: 0; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border-strong); border-radius: var(--radius-2); background: var(--color-surface-1); color: var(--color-text); line-height: var(--leading-body); max-width: 80ch; }
+.signout .so-cohort__section { display: flex; flex-direction: column; gap: var(--space-3); }
+.signout .so-cohort__h { font-size: var(--text-lg); font-weight: var(--weight-semibold); margin: 0; }
+.signout .so-cohort__input { max-width: 48ch; padding-top: var(--space-2); padding-bottom: var(--space-2); height: auto; }
+.signout .so-cohort__error[hidden] { display: none; }
+.signout .so-cohort__drop { display: flex; align-items: center; justify-content: center; min-height: 88px; max-width: 64ch; padding: var(--space-4); border: 1.5px dashed var(--color-border-strong); border-radius: var(--radius-3); color: var(--color-text-secondary); background: var(--color-surface--1); cursor: pointer; text-align: center; }
+.signout .so-cohort__drop:hover, .signout .so-cohort__drop.is-over { color: var(--color-text); border-color: var(--color-text-secondary); background: var(--color-row-hover); }
+.signout .so-cohort__drop:focus { outline: none; }
+.signout .so-cohort__drop:focus-visible { box-shadow: var(--focus-shadow); color: var(--color-text); }
+.signout .so-cohort__tablewrap { max-width: 100%; }
+.signout .so-cohort__table th[scope="row"] { text-transform: none; letter-spacing: 0; font-size: var(--text-sm); font-weight: var(--weight-regular); color: var(--color-text); background: transparent; white-space: normal; word-break: break-all; }
+.signout .so-cohort__table td.mono { word-break: break-all; }
+.signout .so-cohort__empty { margin: 0; }
+.signout .so-cohort__empty[hidden] { display: none; }
+.signout .so-cohort__counts { margin: 0; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-text); }
+.signout .so-cohort__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.signout .so-cohort__note { margin: 0; font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--leading-body); max-width: 80ch; }
+.is-coarse .signout .so-cohort .btn, .signout.is-coarse .so-cohort .btn { min-height: 44px; }
+@media (pointer: coarse) { .signout .so-cohort .btn { min-height: 44px; } }
+.signout .so-cohort__tablewrap:focus { outline: none; }
+.signout .so-cohort__tablewrap:focus-visible { box-shadow: var(--focus-shadow); }
+
+/* S3 review fix (R9): at phone width the loaded-files table broke file names and builds letter by letter
+   (`word-break: break-all` in nine columns of a 360 px table). Below 600 px the table keeps its natural width and the
+   focusable region around it scrolls sideways (a data table may scroll in two dimensions, SC 1.4.10). */
+@media (max-width: 599px) {
+  .signout .so-cohort__table { min-width: 44rem; }
+  .signout .so-cohort__table th[scope="row"], .signout .so-cohort__table td.mono { word-break: normal; overflow-wrap: normal; white-space: nowrap; }
+}

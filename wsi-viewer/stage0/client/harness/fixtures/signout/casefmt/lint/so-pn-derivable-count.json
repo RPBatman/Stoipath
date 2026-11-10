@@ -1,0 +1,17 @@
+{
+  "note": "nodesPositive does not equal the count",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/reference/nodesPositive",
+      "value": 4
+    }
+  ],
+  "expect": {
+    "rule": "so-pn-derivable",
+    "severity": "error",
+    "path": "/extensions/signout/reference/nodesPositive",
+    "message": "The reference nodesPositive 4 does not follow from the node labels (3)"
+  }
+}

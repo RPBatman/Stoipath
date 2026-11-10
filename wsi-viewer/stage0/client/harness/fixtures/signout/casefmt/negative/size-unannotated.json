@@ -1,0 +1,15 @@
+{
+  "note": "a size on a node without annotation",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/extensions/signout/nodes/3/reference/largestDeposit_um",
+      "value": 2500
+    }
+  ],
+  "expect": {
+    "parse": "error",
+    "pointer": "/extensions/signout/nodes/3/reference/largestDeposit_um"
+  }
+}

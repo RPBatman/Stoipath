@@ -1,0 +1,221 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "62bfeafc-86fa-430b-8723-abd532386028",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20000,
+              60000
+            ],
+            [
+              20200,
+              60000
+            ],
+            [
+              20200,
+              60150
+            ],
+            [
+              20000,
+              60150
+            ],
+            [
+              20000,
+              60000
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "1074ddc8-8e37-44ab-8d3b-d274b655e255",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20400,
+              60300
+            ],
+            [
+              20600,
+              60300
+            ],
+            [
+              20600,
+              60450
+            ],
+            [
+              20400,
+              60450
+            ],
+            [
+              20400,
+              60300
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "d47d0037-bd98-4713-8791-6b9d4e5ee8f6",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              20800,
+              60600
+            ],
+            [
+              21000,
+              60600
+            ],
+            [
+              21000,
+              60750
+            ],
+            [
+              20800,
+              60750
+            ],
+            [
+              20800,
+              60600
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "62bf193e-8a71-4707-80c6-6f573123477a",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21200,
+              60900
+            ],
+            [
+              21400,
+              60900
+            ],
+            [
+              21400,
+              61050
+            ],
+            [
+              21200,
+              61050
+            ],
+            [
+              21200,
+              60900
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "463720f2-6599-4a2d-8376-6b2e7792d381",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              21600,
+              61200
+            ],
+            [
+              21800,
+              61200
+            ],
+            [
+              21800,
+              61350
+            ],
+            [
+              21600,
+              61350
+            ],
+            [
+              21600,
+              61200
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "classification": {
+          "name": "Tumor"
+        }
+      }
+    }
+  ],
+  "stoipath": {
+    "schema": "stoipath.layer/1",
+    "id": "camelyon17-annotation",
+    "title": "CAMELYON17 annotation",
+    "origin": "reference",
+    "provenance": {
+      "createdAt": "2022-09-28T00:00:00Z",
+      "inputHash": "sha256:f67ab5aea77c9921241af08354c053b9e7c7a145a3896c55473b9a5efa5db522",
+      "producer": "CAMELYON17 annotation (ASAP XML)",
+      "regulatoryStatus": "research",
+      "version": "d826cc6a"
+    },
+    "licence": {
+      "id": "CC0-1.0",
+      "text": "CC0 1.0 Universal",
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+    },
+    "source": {
+      "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/annotations/x.xml",
+      "sha256": "f67ab5aea77c9921241af08354c053b9e7c7a145a3896c55473b9a5efa5db522",
+      "bytes": 1000,
+      "format": "ASAP XML"
+    },
+    "coordinateSpace": "pyramid-level0",
+    "regionOffset": [
+      0,
+      0
+    ],
+    "slide": {
+      "id": "camelyon17.c17s-0008",
+      "fingerprint": "94968x210579@0.2431@0,0@d826cc6aee28"
+    },
+    "conversion": "casefmt fixture stand-in",
+    "featuresDropped": 0,
+    "generator": "casefmt fixture"
+  }
+}

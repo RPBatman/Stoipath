@@ -1,0 +1,17 @@
+{
+  "note": "the layer is not an overlay of the slide's catalogue entry",
+  "base": "c17-01.module.json",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/extensions/signout/nodes/1/annotation/layer",
+      "value": "other-layer"
+    }
+  ],
+  "expect": {
+    "rule": "so-annotation-exists",
+    "severity": "error",
+    "path": "/extensions/signout/nodes/1/annotation/layer",
+    "message": null
+  }
+}

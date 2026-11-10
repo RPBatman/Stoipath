@@ -1,0 +1,612 @@
+{
+ "nodes": [
+  {
+   "centre": 0,
+   "height": 210579,
+   "layout": "c17rgb",
+   "levels": [
+    {
+     "countsAt": 1334170806,
+     "offsetsAt": 1334783862,
+     "storedHeight": 210579,
+     "storedWidth": 94968,
+     "tiles": 76632
+    },
+    {
+     "countsAt": 1676026572,
+     "offsetsAt": 1676179836,
+     "storedHeight": 105289,
+     "storedWidth": 47484,
+     "tiles": 19158
+    },
+    {
+     "countsAt": 1766025836,
+     "offsetsAt": 1766064564,
+     "storedHeight": 52644,
+     "storedWidth": 23742,
+     "tiles": 4841
+    },
+    {
+     "countsAt": 1791015338,
+     "offsetsAt": 1791025322,
+     "storedHeight": 26322,
+     "storedWidth": 11871,
+     "tiles": 1248
+    },
+    {
+     "countsAt": 1797846286,
+     "offsetsAt": 1797848782,
+     "storedHeight": 13161,
+     "storedWidth": 5935,
+     "tiles": 312
+    },
+    {
+     "countsAt": 1799625692,
+     "offsetsAt": 1799626316,
+     "storedHeight": 6580,
+     "storedWidth": 2967,
+     "tiles": 78
+    },
+    {
+     "countsAt": 1800097526,
+     "offsetsAt": 1800097694,
+     "storedHeight": 3290,
+     "storedWidth": 1483,
+     "tiles": 21
+    },
+    {
+     "countsAt": 1800253208,
+     "offsetsAt": 1800253272,
+     "storedHeight": 1645,
+     "storedWidth": 741,
+     "tiles": 8
+    },
+    {
+     "countsAt": 1800300568,
+     "offsetsAt": 1800300584,
+     "storedHeight": 822,
+     "storedWidth": 370,
+     "tiles": 2
+    }
+   ],
+   "mpp": 0.2431,
+   "size": 1800300889,
+   "slide": "patient_017_node_0",
+   "width": 94968
+  },
+  {
+   "centre": 0,
+   "height": 197226,
+   "layout": "c17rgb",
+   "levels": [
+    {
+     "countsAt": 1807900582,
+     "offsetsAt": 1808484214,
+     "storedHeight": 197226,
+     "storedWidth": 96651,
+     "tiles": 72954
+    },
+    {
+     "countsAt": 2242633620,
+     "offsetsAt": 2242780300,
+     "storedHeight": 98613,
+     "storedWidth": 48325,
+     "tiles": 18335
+    },
+    {
+     "countsAt": 2356562364,
+     "offsetsAt": 2356599612,
+     "storedHeight": 49306,
+     "storedWidth": 24162,
+     "tiles": 4656
+    },
+    {
+     "countsAt": 2389818222,
+     "offsetsAt": 2389827630,
+     "storedHeight": 24653,
+     "storedWidth": 12081,
+     "tiles": 1176
+    },
+    {
+     "countsAt": 2399889232,
+     "offsetsAt": 2399891632,
+     "storedHeight": 12326,
+     "storedWidth": 6040,
+     "tiles": 300
+    },
+    {
+     "countsAt": 2402752534,
+     "offsetsAt": 2402753158,
+     "storedHeight": 6163,
+     "storedWidth": 3020,
+     "tiles": 78
+    },
+    {
+     "countsAt": 2403537196,
+     "offsetsAt": 2403537364,
+     "storedHeight": 3081,
+     "storedWidth": 1510,
+     "tiles": 21
+    },
+    {
+     "countsAt": 2403783952,
+     "offsetsAt": 2403784016,
+     "storedHeight": 1540,
+     "storedWidth": 755,
+     "tiles": 8
+    },
+    {
+     "countsAt": 2403860010,
+     "offsetsAt": 2403860026,
+     "storedHeight": 770,
+     "storedWidth": 377,
+     "tiles": 2
+    }
+   ],
+   "mpp": 0.2431,
+   "size": 2403860331,
+   "slide": "patient_017_node_1",
+   "width": 96651
+  },
+  {
+   "centre": 0,
+   "height": 210579,
+   "layout": "c17rgb",
+   "levels": [
+    {
+     "countsAt": 2798811778,
+     "offsetsAt": 2799424834,
+     "storedHeight": 210579,
+     "storedWidth": 94968,
+     "tiles": 76632
+    },
+    {
+     "countsAt": 3573256702,
+     "offsetsAt": 3573409966,
+     "storedHeight": 105289,
+     "storedWidth": 47484,
+     "tiles": 19158
+    },
+    {
+     "countsAt": 3785482544,
+     "offsetsAt": 3785521272,
+     "storedHeight": 52644,
+     "storedWidth": 23742,
+     "tiles": 4841
+    },
+    {
+     "countsAt": 3843115568,
+     "offsetsAt": 3843125552,
+     "storedHeight": 26322,
+     "storedWidth": 11871,
+     "tiles": 1248
+    },
+    {
+     "countsAt": 3858110290,
+     "offsetsAt": 3858112786,
+     "storedHeight": 13161,
+     "storedWidth": 5935,
+     "tiles": 312
+    },
+    {
+     "countsAt": 3861623850,
+     "offsetsAt": 3861624474,
+     "storedHeight": 6580,
+     "storedWidth": 2967,
+     "tiles": 78
+    },
+    {
+     "countsAt": 3862443254,
+     "offsetsAt": 3862443422,
+     "storedHeight": 3290,
+     "storedWidth": 1483,
+     "tiles": 21
+    },
+    {
+     "countsAt": 3862670814,
+     "offsetsAt": 3862670878,
+     "storedHeight": 1645,
+     "storedWidth": 741,
+     "tiles": 8
+    },
+    {
+     "countsAt": 3862737222,
+     "offsetsAt": 3862737238,
+     "storedHeight": 822,
+     "storedWidth": 370,
+     "tiles": 2
+    }
+   ],
+   "mpp": 0.2431,
+   "size": 3862737543,
+   "slide": "patient_017_node_2",
+   "width": 94968
+  },
+  {
+   "centre": 0,
+   "height": 210579,
+   "layout": "c17rgb",
+   "levels": [
+    {
+     "countsAt": 1687876072,
+     "offsetsAt": 1688489128,
+     "storedHeight": 210579,
+     "storedWidth": 94968,
+     "tiles": 76632
+    },
+    {
+     "countsAt": 2113104008,
+     "offsetsAt": 2113257272,
+     "storedHeight": 105289,
+     "storedWidth": 47484,
+     "tiles": 19158
+    },
+    {
+     "countsAt": 2221964284,
+     "offsetsAt": 2222003012,
+     "storedHeight": 52644,
+     "storedWidth": 23742,
+     "tiles": 4841
+    },
+    {
+     "countsAt": 2251792836,
+     "offsetsAt": 2251802820,
+     "storedHeight": 26322,
+     "storedWidth": 11871,
+     "tiles": 1248
+    },
+    {
+     "countsAt": 2259959672,
+     "offsetsAt": 2259962168,
+     "storedHeight": 13161,
+     "storedWidth": 5935,
+     "tiles": 312
+    },
+    {
+     "countsAt": 2262075288,
+     "offsetsAt": 2262075912,
+     "storedHeight": 6580,
+     "storedWidth": 2967,
+     "tiles": 78
+    },
+    {
+     "countsAt": 2262629000,
+     "offsetsAt": 2262629168,
+     "storedHeight": 3290,
+     "storedWidth": 1483,
+     "tiles": 21
+    },
+    {
+     "countsAt": 2262807938,
+     "offsetsAt": 2262808002,
+     "storedHeight": 1645,
+     "storedWidth": 741,
+     "tiles": 8
+    },
+    {
+     "countsAt": 2262864632,
+     "offsetsAt": 2262864648,
+     "storedHeight": 822,
+     "storedWidth": 370,
+     "tiles": 2
+    }
+   ],
+   "mpp": 0.2431,
+   "size": 2262864953,
+   "slide": "patient_017_node_3",
+   "width": 94968
+  },
+  {
+   "centre": 0,
+   "height": 197226,
+   "layout": "c17rgb",
+   "levels": [
+    {
+     "countsAt": 2068947516,
+     "offsetsAt": 2069531148,
+     "storedHeight": 197226,
+     "storedWidth": 96651,
+     "tiles": 72954
+    },
+    {
+     "countsAt": 2610599526,
+     "offsetsAt": 2610746206,
+     "storedHeight": 98613,
+     "storedWidth": 48325,
+     "tiles": 18335
+    },
+    {
+     "countsAt": 2759404286,
+     "offsetsAt": 2759441534,
+     "storedHeight": 49306,
+     "storedWidth": 24162,
+     "tiles": 4656
+    },
+    {
+     "countsAt": 2801059848,
+     "offsetsAt": 2801069256,
+     "storedHeight": 24653,
+     "storedWidth": 12081,
+     "tiles": 1176
+    },
+    {
+     "countsAt": 2812485622,
+     "offsetsAt": 2812488022,
+     "storedHeight": 12326,
+     "storedWidth": 6040,
+     "tiles": 300
+    },
+    {
+     "countsAt": 2815374434,
+     "offsetsAt": 2815375058,
+     "storedHeight": 6163,
+     "storedWidth": 3020,
+     "tiles": 78
+    },
+    {
+     "countsAt": 2816106344,
+     "offsetsAt": 2816106512,
+     "storedHeight": 3081,
+     "storedWidth": 1510,
+     "tiles": 21
+    },
+    {
+     "countsAt": 2816335138,
+     "offsetsAt": 2816335202,
+     "storedHeight": 1540,
+     "storedWidth": 755,
+     "tiles": 8
+    },
+    {
+     "countsAt": 2816409472,
+     "offsetsAt": 2816409488,
+     "storedHeight": 770,
+     "storedWidth": 377,
+     "tiles": 2
+    }
+   ],
+   "mpp": 0.2431,
+   "size": 2816409793,
+   "slide": "patient_017_node_4",
+   "width": 96651
+  },
+  {
+   "centre": 4,
+   "height": 62976,
+   "layout": "c17ycc",
+   "levels": [
+    {
+     "countsAt": 655316524,
+     "offsetsAt": 655654036,
+     "storedHeight": 62976,
+     "storedWidth": 175616,
+     "tiles": 42189
+    },
+    {
+     "countsAt": 871004510,
+     "offsetsAt": 871089822,
+     "storedHeight": 31744,
+     "storedWidth": 88064,
+     "tiles": 10664
+    },
+    {
+     "countsAt": 939773952,
+     "offsetsAt": 939795280,
+     "storedHeight": 15872,
+     "storedWidth": 44032,
+     "tiles": 2666
+    },
+    {
+     "countsAt": 959746510,
+     "offsetsAt": 959752014,
+     "storedHeight": 8192,
+     "storedWidth": 22016,
+     "tiles": 688
+    },
+    {
+     "countsAt": 965084364,
+     "offsetsAt": 965085772,
+     "storedHeight": 4096,
+     "storedWidth": 11264,
+     "tiles": 176
+    },
+    {
+     "countsAt": 966385966,
+     "offsetsAt": 966386318,
+     "storedHeight": 2048,
+     "storedWidth": 5632,
+     "tiles": 44
+    },
+    {
+     "countsAt": 966697412,
+     "offsetsAt": 966697508,
+     "storedHeight": 1024,
+     "storedWidth": 3072,
+     "tiles": 12
+    },
+    {
+     "countsAt": 966775282,
+     "offsetsAt": 966775306,
+     "storedHeight": 512,
+     "storedWidth": 1536,
+     "tiles": 3
+    },
+    {
+     "countsAt": 966802214,
+     "offsetsAt": 966802230,
+     "storedHeight": 512,
+     "storedWidth": 1024,
+     "tiles": 2
+    },
+    {
+     "countsAt": null,
+     "offsetsAt": null,
+     "storedHeight": 512,
+     "storedWidth": 512,
+     "tiles": 1
+    }
+   ],
+   "mpp": 0.25,
+   "size": 966967826,
+   "slide": "patient_092_node_0",
+   "width": 175616
+  },
+  {
+   "centre": 0,
+   "height": 197226,
+   "layout": "c17rgb",
+   "levels": [
+    {
+     "countsAt": 2387125978,
+     "offsetsAt": 2387709610,
+     "storedHeight": 197226,
+     "storedWidth": 96651,
+     "tiles": 72954
+    },
+    {
+     "countsAt": 3016341238,
+     "offsetsAt": 3016487918,
+     "storedHeight": 98613,
+     "storedWidth": 48325,
+     "tiles": 18335
+    },
+    {
+     "countsAt": 3188165252,
+     "offsetsAt": 3188202500,
+     "storedHeight": 49306,
+     "storedWidth": 24162,
+     "tiles": 4656
+    },
+    {
+     "countsAt": 3235582694,
+     "offsetsAt": 3235592102,
+     "storedHeight": 24653,
+     "storedWidth": 12081,
+     "tiles": 1176
+    },
+    {
+     "countsAt": 3248232478,
+     "offsetsAt": 3248234878,
+     "storedHeight": 12326,
+     "storedWidth": 6040,
+     "tiles": 300
+    },
+    {
+     "countsAt": 3251285500,
+     "offsetsAt": 3251286124,
+     "storedHeight": 6163,
+     "storedWidth": 3020,
+     "tiles": 78
+    },
+    {
+     "countsAt": 3252039110,
+     "offsetsAt": 3252039278,
+     "storedHeight": 3081,
+     "storedWidth": 1510,
+     "tiles": 21
+    },
+    {
+     "countsAt": 3252278672,
+     "offsetsAt": 3252278736,
+     "storedHeight": 1540,
+     "storedWidth": 755,
+     "tiles": 8
+    },
+    {
+     "countsAt": 3252358758,
+     "offsetsAt": 3252358774,
+     "storedHeight": 770,
+     "storedWidth": 377,
+     "tiles": 2
+    }
+   ],
+   "mpp": 0.2431,
+   "size": 3252359079,
+   "slide": "patient_004_node_4",
+   "width": 96651
+  },
+  {
+   "centre": 4,
+   "height": 93696,
+   "layout": "c17ycc",
+   "levels": [
+    {
+     "countsAt": 586256528,
+     "offsetsAt": 586783568,
+     "storedHeight": 93696,
+     "storedWidth": 184320,
+     "tiles": 65880
+    },
+    {
+     "countsAt": 782906178,
+     "offsetsAt": 783038658,
+     "storedHeight": 47104,
+     "storedWidth": 92160,
+     "tiles": 16560
+    },
+    {
+     "countsAt": 848428648,
+     "offsetsAt": 848461768,
+     "storedHeight": 23552,
+     "storedWidth": 46080,
+     "tiles": 4140
+    },
+    {
+     "countsAt": 868195544,
+     "offsetsAt": 868203824,
+     "storedHeight": 11776,
+     "storedWidth": 23040,
+     "tiles": 1035
+    },
+    {
+     "countsAt": 873544840,
+     "offsetsAt": 873547048,
+     "storedHeight": 6144,
+     "storedWidth": 11776,
+     "tiles": 276
+    },
+    {
+     "countsAt": 874856002,
+     "offsetsAt": 874856578,
+     "storedHeight": 3072,
+     "storedWidth": 6144,
+     "tiles": 72
+    },
+    {
+     "countsAt": 875179484,
+     "offsetsAt": 875179628,
+     "storedHeight": 1536,
+     "storedWidth": 3072,
+     "tiles": 18
+    },
+    {
+     "countsAt": 875273194,
+     "offsetsAt": 875273242,
+     "storedHeight": 1024,
+     "storedWidth": 1536,
+     "tiles": 6
+    },
+    {
+     "countsAt": 875301210,
+     "offsetsAt": 875301226,
+     "storedHeight": 512,
+     "storedWidth": 1024,
+     "tiles": 2
+    },
+    {
+     "countsAt": null,
+     "offsetsAt": null,
+     "storedHeight": 512,
+     "storedWidth": 512,
+     "tiles": 1
+    }
+   ],
+   "mpp": 0.25,
+   "size": 875466460,
+   "slide": "patient_092_node_1",
+   "width": 184320
+  }
+ ],
+ "note": "Real geometry from the range builders' header walks (facts/pilot_headers.json and the cached IFDs); arrays are generated by harness/signout/range-server.mjs.",
+ "schema": "stoipath.signout.fixture-geometry/1"
+}

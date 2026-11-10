@@ -172,7 +172,11 @@ export class LearnCommands implements KeyScopeHost {
     const pan = (dx: number, dy: number, f: number): void => {
       const v = engine();
       if (v === null) return;
-      v.commands.panBy(-dx * f * v.snapshot.viewW, -dy * f * v.snapshot.viewH);
+      // ⇧+arrow (f = 1) steps by the chrome's viewport: the whole canvas, or the uncovered span when the page set
+      // `chrome.keyInsets` (the practice page, SIGNOUT.md §19.6); learn.html leaves it null, so nothing changes there.
+      // The 10 % pan stays a tenth of the canvas.
+      const [w, h] = d.chrome.viewportStep(v, f === 1);
+      v.commands.panBy(-dx * f * w, -dy * f * h);
     };
     const rows: ShellCommand[] = [
       { id: 'pan', owner: OWNER, group: NAV, label: 'Pan 10 %', keys: [['←', '↑', '↓', '→'], ['W', 'A', 'S', 'D']], keymapOnly: true },
@@ -188,8 +192,30 @@ export class LearnCommands implements KeyScopeHost {
         { id: `pan:${dir}`, owner: OWNER, group: NAV, label: `Pan ${dir}`, keymapOnly: true, bindings: [w(arrow), w(letter)], run: () => pan(dx, dy, 0.1) },
         { id: `pan.viewport:${dir}`, owner: OWNER, group: NAV, label: `Pan one viewport ${dir}`, keymapOnly: true, bindings: [w(arrow, { shift: true })], run: () => pan(dx, dy, 1) },
       ]),
-      { id: 'zoomin', owner: OWNER, group: NAV, label: 'Zoom in 2×', keys: [['+'], ['=']], bindings: [w('+'), w('=')], run: () => engine()?.commands.zoomBy(1) },
-      { id: 'zoomout', owner: OWNER, group: NAV, label: 'Zoom out 2×', keys: [['−']], bindings: [w('-')], run: () => engine()?.commands.zoomBy(-1) },
+      {
+        id: 'zoomin',
+        owner: OWNER,
+        group: NAV,
+        label: 'Zoom in 2×',
+        keys: [['+'], ['=']],
+        bindings: [w('+'), w('=')],
+        run: () => {
+          const v = engine();
+          if (v !== null) d.chrome.zoomStep(v, 1);
+        },
+      },
+      {
+        id: 'zoomout',
+        owner: OWNER,
+        group: NAV,
+        label: 'Zoom out 2×',
+        keys: [['−']],
+        bindings: [w('-')],
+        run: () => {
+          const v = engine();
+          if (v !== null) d.chrome.zoomStep(v, -1);
+        },
+      },
       {
         id: 'fit',
         owner: OWNER,
@@ -231,7 +257,7 @@ export class LearnCommands implements KeyScopeHost {
           }
           const target = d.chrome.prevLogZoom;
           d.chrome.prevLogZoom = v.snapshot.logZoom;
-          v.commands.flyTo(v.snapshot.cx, v.snapshot.cy, target, 'preset', d.env.reducedMotion());
+          d.chrome.flyKeepingView(v, target, 'preset');
         },
       },
       { id: 'zoom:type', owner: OWNER, group: NAV, label: 'Type a zoom (× or µm/px)', meta: 'Enter on the magnification readout', keys: [['↵']], run: () => d.chrome.openTypedZoom() },
@@ -254,8 +280,11 @@ export class LearnCommands implements KeyScopeHost {
   /**
    * LEARN.md §8.1 "Not in this build" rows, registered AFTER every module installed, each with only the bindings
    * still free, and skipped when a module registered its id (an installed module always wins; nothing conflicts).
+   * `opts.slides: false` (SIGNOUT.md §4.3 S0b-1, additive) leaves out the `nib:slides` row (] / [), so the practice
+   * page can bind `node:next` / `node:prev` (SIGNOUT.md §10). Default true: learn.html registers it as before.
    */
-  registerRefusals(itemsInstalled: boolean): void {
+  registerRefusals(itemsInstalled: boolean, opts?: { slides?: boolean }): void {
+    const slides = opts?.slides ?? true;
     const d = this.d;
     const w = (key: string, shift = false): KeyBinding => (shift ? { key, scope: 'window', shift: true } : { key, scope: 'window' });
     const caps = (b: KeyBinding): string[] => [...(b.shift === true ? ['⇧'] : []), b.key.length === 1 ? b.key.toUpperCase() : b.key];
@@ -276,7 +305,7 @@ export class LearnCommands implements KeyScopeHost {
       ['nib:snapshot', 'Snapshot', [w('s', true)], refuse(REFUSALS.snapshot)],
       ['nib:compare', 'Compare', [w('c')], refuse(REFUSALS.compare)],
       ['nib:rotate', 'Rotate 90° clockwise / anticlockwise', [w('r'), w('r', true)], refuse(REFUSALS.rotate)],
-      ['nib:slides', 'Next / previous slide', [w(']'), w('[')], refuse(REFUSALS.slides)],
+      ...(slides ? [['nib:slides', 'Next / previous slide', [w(']'), w('[')], refuse(REFUSALS.slides)] as [string, string, KeyBinding[], () => void]] : []),
     ];
     for (const [id, label, bindings, run] of rows) fallback({ id, owner: OWNER, group: NIB, label, keys: bindings.map(caps), bindings, notInBuild: true, run });
     fallback({ id: 'nib:labelimage', owner: OWNER, group: NIB, label: 'Label image — no PHI in Learn', notInBuild: true, run: refuse(REFUSALS.labelImage) });

@@ -1,0 +1,4262 @@
+{
+ "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+ "refDist": null,
+ "stub": {
+  "running": true
+ },
+ "seconds": 387,
+ "files": [
+  "integrator.check.mjs",
+  "content.check.mjs",
+  "feedback.check.mjs",
+  "report.check.mjs",
+  "results.check.mjs",
+  "review.check.mjs",
+  "worklist.check.mjs"
+ ],
+ "moduleCounts": {
+  "casefmt": 2,
+  "grading": 1,
+  "content": 19,
+  "integrator": 376,
+  "feedback": 197,
+  "report": 62,
+  "results": 51,
+  "review": 51,
+  "worklist": 87
+ },
+ "gates": [],
+ "failures": 0,
+ "checks": [
+  {
+   "tag": "casefmt",
+   "ok": true,
+   "msg": "unit signout-casefmt.test.mjs: exit 0, 208 ok, 0 FAIL"
+  },
+  {
+   "tag": "casefmt",
+   "ok": true,
+   "msg": "python test_signout_schema.py: exit 0, 14 tests (OK)"
+  },
+  {
+   "tag": "grading",
+   "ok": true,
+   "msg": "unit signout-grading.test.mjs: exit 0, 267 ok, 0 FAIL"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "unit signout-content.test.mjs: exit 0, 327 ok, 0 FAIL"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "python test_signout_content.py: exit 0, 15 tests (OK)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 signout.html is its own entry (assets/signout-DLA12C2h.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 the measurement page's graph is still index.html + the viewer chunk only (index.html, _viewer-Cb08LDJI.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 index.html's built graph (2 chunks) holds no src/signout/ module (none) and no chunk carrying a practice-page string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 shell.html's built graph (3 chunks) holds no src/signout/ module (none) and no chunk carrying a practice-page string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 learn.html's built graph (4 chunks) holds no src/signout/ module (none) and no chunk carrying a practice-page string (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 the marker strings are found in signout.html's own graph (assets/signout-DLA12C2h.js)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 learn.html (assets/learn-CSnQ0MAt.css, assets/sharpness-BIe6eH59.css) and shell.html (assets/sharpness-BIe6eH59.css, assets/shell-y4bCx_os.css) load no signout CSS; shared with signout.html: assets/sharpness-BIe6eH59.css"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 / SI-5 the built signout.html carries the D21 CSP meta verbatim (default-src 'self'; script-src 'self'; style-src 'self' 'uns…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/main.ts's module graph (18 modules) reaches nothing under src/signout/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/shell/main.ts's module graph (55 modules) reaches nothing under src/signout/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/learn/main.ts + 9 Learn module(s)'s module graph (172 modules) reaches nothing under src/signout/ (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 signout.html's module graph (src/signout/main.ts + 7 sign-out module(s), 164 modules) holds nothing from src/shell/{layers,compare,share}/, only catalogue.ts of src/shell/library/, and of src/learn/ only contracts, host, format and scoring (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/main.ts sha256 eb0eba9b5cc5756f… equals the value recorded at Wave S0 start (eb0eba9b5cc5756f…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/shell/main.ts sha256 d5a2dc7ebb7a8ccb… equals the value recorded at Wave S0 start (d5a2dc7ebb7a8ccb…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/learn/main.ts sha256 0923904b2b8d1236… equals the value recorded at Wave S0 start (0923904b2b8d1236…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 index.html sha256 c090d0d870d84e39… equals the value recorded at Wave S0 start (c090d0d870d84e39…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 shell.html sha256 f75786a3af73b053… equals the value recorded at Wave S0 start (f75786a3af73b053…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 learn.html sha256 0ea53d274e4d63c8… equals the value recorded at Wave S0 start (0ea53d274e4d63c8…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/learn/host/commands.ts sha256 2432ec3c7c3b6282… equals the value recorded after S0 (2432ec3c7c3b6282…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/shell/navigator.ts sha256 c0b06231be56e499… equals the value recorded after S0 (c0b06231be56e499…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-1 src/scheduler.ts sha256 01de7e79bc0e5987… equals the value recorded after S0 (01de7e79bc0e5987…)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: the label string is real text with role=\"note\" (visible; \"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: document.title \"Practice worklist · Stoipath Learn\" ends with \" · Stoipath Learn\" (top bar \"Practice worklist\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: __signout.product \"learn\", mode \"trainee\", __signout.contract 4 (SignoutApi, 4 since the S3 review fixes), tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: command registry conflicts() empty (69 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: Phase A geometry · interop · annotations · draw-tools; Learn format · scoring (window.__learn.tools.format/scoring published); sign-out modules: casefmt · grading · results · worklist · review · report · feedback"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: the canvas plate \"No case open · Choose a case from the worklist.\" (status)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: the canvas area is the page's main region; #cohortRoot is hidden"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 axe-core WCAG 2.2 AA (empty worklist plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About: Product \"Stoipath Learn\", Mode \"Practice report\", Launch \"Standalone · no LMS launch in this build · product learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About Purpose is the practice sentence (\"Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About carries §6.1a verbatim under \"How this differs from AJCC/CAP\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About \"Staging rules\" present; no string calls the ITC rule a \"CAMELYON17 rule\" (PE-1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About Data and Network rows (D22)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About Attribution carries the sentence and the citation, and no dataset id before a submission (D12)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 About Version \"L2 · build_hash 2026-11-09T08:…\", Licence"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900 axe-core WCAG 2.2 AA (About open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (372 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: learner-facing copy never says \"sign-out\" outside the practice sentence and the refusal (D1; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: every request is same-origin (19 requests; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: the label string is real text with role=\"note\" (in the badge name on the phone; \"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: document.title \"Practice worklist · Stoipath Learn\" ends with \" · Stoipath Learn\" (top bar \"Practice worklist\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: __signout.product \"learn\", mode \"trainee\", __signout.contract 4 (SignoutApi, 4 since the S3 review fixes), tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: command registry conflicts() empty (69 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: Phase A geometry · interop · annotations · draw-tools; Learn format · scoring (window.__learn.tools.format/scoring published); sign-out modules: casefmt · grading · results · worklist · review · report · feedback"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: the canvas plate \"No case open · Choose a case from the worklist.\" (status)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: the canvas area is the page's main region; #cohortRoot is hidden"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse axe-core WCAG 2.2 AA (empty worklist plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About: Product \"Stoipath Learn\", Mode \"Practice report\", Launch \"Standalone · no LMS launch in this build · product learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About Purpose is the practice sentence (\"Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About carries §6.1a verbatim under \"How this differs from AJCC/CAP\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About \"Staging rules\" present; no string calls the ITC rule a \"CAMELYON17 rule\" (PE-1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About Data and Network rows (D22)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About Attribution carries the sentence and the citation, and no dataset id before a submission (D12)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse About Version \"L2 · build_hash 2026-11-09T08:…\", Licence"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse axe-core WCAG 2.2 AA (About open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (372 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: learner-facing copy never says \"sign-out\" outside the practice sentence and the refusal (D1; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: every request is same-origin (19 requests; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 trainee phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: the label string is real text with role=\"note\" (visible; \"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: document.title \"Cohort tool · Stoipath Learn\" ends with \" · Stoipath Learn\" (top bar \"Cohort tool\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: __signout.product \"learn\", mode \"cohort\", __signout.contract 4 (SignoutApi, 4 since the S3 review fixes), tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: command registry conflicts() empty (59 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: Phase A geometry · interop · annotations · draw-tools; Learn format · scoring (window.__learn.tools.format/scoring published); sign-out modules: casefmt · grading · results"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: #cohortRoot replaces the canvas (cohort shown true, canvas shown false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: exactly one main region is rendered (1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 axe-core WCAG 2.2 AA (cohort tool): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About: Product \"Stoipath Learn\", Mode \"Cohort tool\", Launch \"Standalone · no LMS launch in this build · product learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About Purpose is the practice sentence (\"Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About carries §6.1a verbatim under \"How this differs from AJCC/CAP\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About \"Staging rules\" present; no string calls the ITC rule a \"CAMELYON17 rule\" (PE-1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About Data and Network rows (D22)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About Attribution carries the sentence and the citation, and no dataset id before a submission (D12)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 About Version \"L2 · build_hash 2026-11-09T08:…\", Licence"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900 axe-core WCAG 2.2 AA (About open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (299 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: learner-facing copy never says \"sign-out\" outside the practice sentence and the refusal (D1; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: every request is same-origin (8 requests; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: badge \"LEARN\" named \"Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: the label string is real text with role=\"note\" (in the badge name on the phone; \"For educational use. Not a medical device. Contains no protected health information.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: document.title \"Cohort tool · Stoipath Learn\" ends with \" · Stoipath Learn\" (top bar \"Cohort tool\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: __signout.product \"learn\", mode \"cohort\", __signout.contract 4 (SignoutApi, 4 since the S3 review fixes), tools.core() contract 1 product \"learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: command registry conflicts() empty (59 commands; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: Phase A geometry · interop · annotations · draw-tools; Learn format · scoring (window.__learn.tools.format/scoring published); sign-out modules: casefmt · grading · results"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: #cohortRoot replaces the canvas (cohort shown true, canvas shown false)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: exactly one main region is rendered (1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse axe-core WCAG 2.2 AA (cohort tool): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: no text, title or aria-* says \"Stoipath Viewer (RUO)\" or the RUO string (299 strings; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: learner-facing copy never says \"sign-out\" outside the practice sentence and the refusal (D1; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: every request is same-origin (8 requests; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-3 cohort phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 seed: the research shell stored its annotation in stoipath-shell (2 record(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 the research annotation is not loaded or drawn on the practice page (store 0, overlay features 0; database stoipath-learn-signout)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 a slide opens in place on the practice page (key openslide.CMU-1-Small-Region; plate cleared; HUD \"CMU-1-Small-Region · H&E\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 after a flag and a progress write indexedDB.databases() lists stoipath-learn-signout and no Learn L1 database (stoipath-learn-signout, stoipath-shell)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 the flag and the progress record are in stoipath-learn-signout (annotations 2, session 2)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 the flag is a point of the Stroma class (--ann-5, \"your flags\", D26; kind point, class Stroma, active Stroma)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 stoipath-shell annotations are byte-identical to the seed after the practice page ran"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 every localStorage / sessionStorage key the practice page wrote starts with \"stoipath.learn-signout.v1.\" (1 writes since its load, research writes before: 0; bad: none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4 axe-core WCAG 2.2 AA (practice page, a slide open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-4: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 the D21 CSP meta is present verbatim (connect-src names the bucket host only)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 the page guard: 0 main-thread cross-origin requests and no beacon / socket / body while a slide is open (0, 0 violation(s))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 fetch('https://example.org/') from the page rejects with a securitypolicyviolation (connect-src)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 the guard counted that one main-thread cross-origin attempt (1: https://example.org/) — the counter works"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 no beacon, socket, event source or body; every same-origin request is GET (68 requests; none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 (the refused example.org fetch excepted): no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 preview: the range slide camelyon17.c17s-9003 opens in place on the practice page (pyramid name camelyon17.c17s-9003, the neutral id, ER-15)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 preview: every request the stub saw is a GET with one closed Range answered 206 (5 requests; none bad)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 preview: the page guard counted 0 main-thread cross-origin request(s): every slide byte came from a worker (ER-3; INF-1 holds: the meta CSP does not bind the workers)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 preview: the navigator shows one thumbnail <img> and no request carries a stoipath- scheme (E8, ER-1; navigator IMG:http://127.0.0.1:41397/client/harness/results/tmp/signout-2026-11-09T09-11-39-264Z-11162/indexes/thumb-c17rgb.jpg)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "A-SRC-N4 the harness page (label signout-check) exposes __stage0.decodeProbe (function); main.ts passes debugProbe only for label=signout-check (gated)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 preview (range slide): no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 ? opens \"Keyboard map · Stoipath Learn\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 the four Learn groups in order (The flow (Learn) · Navigate · Mark and measure · Help and reserved)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 every §10 row of this build is present with its keycaps (30 rows; all present)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 no \"Next / previous slide\" refusal row (S0b-1: ] and [ are review's node:next / node:prev)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 the \"Not in this build\" rows are struck through (10 of 10)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 D20 / D11: no class picker, GeoJSON or tour rows (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 only the refusal row says \"sign out\" (none)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 axe-core WCAG 2.2 AA (keymap open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 ⇧↵ writes \"Sign-out is not part of Stoipath Learn.\" to the strip and says it assertively (\"Sign-out is not part of Stoipath Learn.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 U writes \"There is nothing to uncover here: submit the practice report to compare it with the reference.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 ⇧D writes \"Dx mode — not part of Stoipath Learn (educational use)\" and says it assertively"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 ] is not refused with L1's \"Slides change with the steps in Learn\" (review binds node:next; strip \"Choose a case from the worklist.\", key {\"key\":\"]\",\"how\":\"node:next\"})"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I D20: the practice page drops 12 registrations (class:*, import/export:geojson, tool:area); no #classMenu"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I palette: placeholder \"Type a command, node or zoom…\", groups The flow (Learn) · Navigate · Mark and measure · Help and reserved, the task dock inert while open (true)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I axe-core WCAG 2.2 AA (palette open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I the node chip: \"Node 3 of 5 · not yet viewed at 10×\" with no keycap (S0b-3, withKey false); null hides it"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I plate no-case: \"No case open · Choose a case from the worklist.\" (status)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I plate opening: \"Opening Case 3…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I plate fingerprint (dataset node 2 = Node 3): \"Case 3 was written for a different build of node 3; it was not opened.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I plate changed-object: \"Case 1 node 3 has changed in the dataset bucket; the practice index needs rebuilding.\", no Retry (ER-9)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I plate slide-host: \"The slide host did not answer (HTTP 503). You can still fill the practice report; images retry when you press Retry.\"; Retry and Continue without images run their callbacks (1, 1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I null hides the plate; host.toast: \"Not yetSubmit the practice report first.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I #nodeTray is a section of the task dock above #taskCard, hidden until review shows it (\"Nodes in this case\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I #submitDlg is a dock-layer dialog with #submitBody for report (§4.2)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-9 / SI-I: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I a ?worklist= on another site is refused with a notice (\"This link names a worklist on another site; the built-in worklist was used\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-I ?worklist= refusal: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 worklist card: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (343 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 axe (worklist card, before the codes): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 Tab reached the trainee and group code fields; typed codes stored (R2-017, PGY2.site-A)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 Tab to Case 1 and ↵ opened it (Open card)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Open card: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (366 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 axe (Open card): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 N started the review (Review phase)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 ⇧Tab reached the slide canvas"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Review, Node 1: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (375 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Review, Node 2: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (375 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Review, Node 3: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (375 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 the 20× preset (5) on Node 3: 0.500 µm/px"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 axe (Review with the tray, a flag on Node 3): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Review, Node 4: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (377 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Review, Node 5: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (376 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 T + ↵ on Node 3 made a flag (1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 pyramid.name of every opened node is the neutral id (ER-15; camelyon17.c17s-9001, camelyon17.c17s-9001, camelyon17.c17s-9002, camelyon17.c17s-9003, camelyon17.c17s-9004, camelyon17.c17s-9005)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 Report phase (the form excluded): no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (366 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 the report by keyboard: negative, negative, macro, macro, micro; pN1"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 axe (Report, complete): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-10 CNT-3 submit dialog: no reference sentence, \"patient_\" or label word in text, aria-*, title, alt or document.title outside the report form (412 strings; none); overlay requests 0"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 axe (submit dialog): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 ↵ on the CTA opened the dialog (focus on its first warning action \"Open node 1\"); Tab to \"Submit practice report\" and ↵ submitted"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 reads \"Minor discrepancy: node 2 called negative, reference isolated tumour cells (missed)\" (said: \"Submitted. Minor discrepancy: node 2 called negative, reference isolated tumour cells (missed). 4 node(s) not examined.\"; banner: \"!Minor discrepancy · node 2 called negative, reference isolated tumour cells (missed) · 4 node(s) not examined\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 / SI-10 no overlay request before caseSubmitted (0); after it 3, each file once"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 Show me (↵) switched to Node 2 in place and flew to its ITC at 0.500 µm/px, spoken \"Flying to deposit 1 of node 2, about 84 µm, at 20×.\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 Export results (↵) saved stoipath-learn-practice_si-main_20261109-091207.results.json; python validates it against $defs/SignoutResultsFile (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 the file: trainee R2-017, group PGY2.site-A, Case 1 minor, attempt 1, Node 3 flags 1"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "contract 3 (A-RES-Q1): each node summary carries its own reference size (, 83.6, 3157.9, , 775.7)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 no pointer event was used, start to export (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3 axe (Compare card after Show me): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 every request the stub saw is a GET with one closed Range answered 206 (150; none bad)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 stub log = browser log: 150 stub entries, 150 cross-origin requests in the browser, all GETs to the stub host"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-5 0 main-thread cross-origin fetches (every slide byte from a worker, ER-3); no beacon, socket, body or non-GET (0, 0, 0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "CNT-3: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-11 stub → fail (control endpoint): the slide-host plate within 8.1 s (≤ 10 s): \"The slide host did not answer (HTTP 503). You can still fill the practice report; images retry when you press Retry.\" (alert; Retry, Continue without images)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 / SI-11 axe (slide-host plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-11 without images the report was filled and submitted; the comparison shows \"!Minor discrepancy · node 2 called negative, reference isola…\" and 2 label-only sentence block(s)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-11 Show me says the coordinates sentence (\"Images are unavailable; the deposit is at 16,271, 25,392 µm.\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-11 / S2-N1 Show me after a switch to Node 5 with the host down says the coordinates sentence, no fly ([\"Node 5 of 5 opened.\",\"Images are unavailable; the deposit is at 5,405, 8,851 µm.\"]; switched true, node 4)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-11 stub → ok (control endpoint), Retry: the plate is gone and tiles draw (31 received, sharp)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-11 (stub 503s allowed): no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 design/design-system/layout-check.mjs's in-page rules (T1, Z1, S1, A1–A3) are reused (8821 chars)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R4 desktop 1440x900: the strip indicator on the worklist reads \"No slide open\" (indicator)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (worklist: the use notice and both code fields): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 worklist card: T1 Z1 S1 A1 A2 A3 (26 targets, 1 by spacing, 1 transient; A1: layout-check's 1 box-only fail(s) clear once clipped or covered targets are discounted (2 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900: the canvas is 83 % of the frame at rest on the Open card (task card drawer, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Open card): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Open card, card closed: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Open card, card open: T1 Z1 S1 A1 A2 A3 (21 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Review with the tray): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Review with the tray, card closed: T1 Z1 S1 A1 A2 A3 (22 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Review with the tray, card open: T1 Z1 S1 A1 A2 A3 (37 targets, 0 by spacing, 0 transient; A1: layout-check's 4 box-only fail(s) clear once clipped or covered targets are discounted (0 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Review (trace recorder on): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Review (trace recorder on): no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Review (trace recorder on): 309 of 321 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Review (trace recorder on): CDP LayoutCount 61 ≤ 161 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Review (trace recorder on): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Review (trace recorder on): no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Review (trace recorder on): 409 of 429 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Review (trace recorder on): CDP LayoutCount 48 ≤ 52 frames + 2 and RecalcStyleCount 49 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Report, empty): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Report, empty, card closed: T1 Z1 S1 A1 A2 A3 (22 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Report, empty, card open: T1 Z1 S1 A1 A2 A3 (56 targets, 16 by spacing, 0 transient; A1: layout-check's 9 box-only fail(s) clear once clipped or covered targets are discounted (18 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Report, half-filled): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: the inconsistency warning shows (pN2 against calls giving pN1): \"!Your pN differs from the one your own node calls give (pN1)…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Report, half-filled with the inconsistency warning): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Report, complete): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: \"Other measurements…\" opens its menu (a keyboard measurement on Node 1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Report, \"Other measurements…\" open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: the submit dialog carries both warning kinds (Node 5 never opened; Node 2 never at 10×)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (submit dialog with both warning kinds): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 submit dialog open: T1 Z1 S1 A1 A2 A3 (30 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R5 desktop 1440x900: the submit dialog's footer is on screen and hit-testable (Keep reviewing · Submit practice report); the checklist scrolls inside the dialog (auto)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Compare: minor, incomplete): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Compare, card closed: T1 Z1 S1 A1 A2 A3 (23 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 Compare, card open: T1 Z1 S1 A1 A2 A3 (37 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 desktop 1440x900: the comparison overlays are drawn on Node 3 (17 features)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Compare (17 overlay features drawn): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Compare (17 overlay features drawn): no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Compare (17 overlay features drawn): 309 of 318 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 1 s drag in Compare (17 overlay features drawn): CDP LayoutCount 61 ≤ 185 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Compare (overlays drawn): no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Compare (overlays drawn): no redundant DOM write (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Compare (overlays drawn): 418 of 435 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-6 / SO-P5 desktop 1440x900 wheel burst in Compare (overlays drawn): CDP LayoutCount 49 ≤ 53 frames + 2 and RecalcStyleCount 50 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Compare: match): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: Case 3 with Node 5 called ITC is the borderline major (\"✕Major discrepancy · node 5 called isolated tumour cells, reference mi…\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Compare: major, borderline): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (Compare: major (pN2 over-staged)): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: exam lock \"!Submitted. Feedback unlocks when every case in this worklis…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (exam lock): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: the changed-object plate \"Case 2 node 1 has changed in the dataset bucket; the practice index needs rebuilding.\" (no Retry)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (changed-object plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 changed-object plate: T1 Z1 S1 A1 A2 A3 (21 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (slide-host plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 slide-host plate: T1 Z1 S1 A1 A2 A3 (23 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900: the cohort tool loaded three results files (3 rows)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop 1440x900 axe (cohort tool with 3 files): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop 1440x900 cohort tool with 3 files: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / SI-8 desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R4 phone 390x844 coarse: the strip indicator on the worklist reads \"No slide open\" (indicator)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (worklist: the use notice and both code fields): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse worklist card: T1 Z1 S1 A1 A2 A3 (20 targets, 1 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse: the canvas is 79 % of the frame at rest on the Open card (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Open card): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Open card, card closed: T1 Z1 S1 A1 A2 A3 (11 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Open card, card open: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Review with the tray): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Review with the tray, card closed: T1 Z1 S1 A1 A2 A3 (13 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Review with the tray, card open: T1 Z1 S1 A1 A2 A3 (27 targets, 4 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Report, empty): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Report, empty, card closed: T1 Z1 S1 A1 A2 A3 (13 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Report, empty, card open: T1 Z1 S1 A1 A2 A3 (46 targets, 25 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Report, half-filled): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: the inconsistency warning shows (pN2 against calls giving pN1): \"!Your pN differs from the one your own node calls give (pN1)…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Report, half-filled with the inconsistency warning): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Report, complete): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: \"Other measurements…\" opens its menu (a keyboard measurement on Node 1)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Report, \"Other measurements…\" open): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: the submit dialog carries both warning kinds (Node 5 never opened; Node 2 never at 10×)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (submit dialog with both warning kinds): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse submit dialog open: T1 Z1 S1 A1 A2 A3 (54 targets, 21 by spacing, 0 transient; A1: layout-check's 4 box-only fail(s) clear once clipped or covered targets are discounted (25 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R5 phone 390x844 coarse: the submit dialog's footer is on screen and hit-testable (Keep reviewing · Submit practice report); the checklist scrolls inside the dialog (auto, scrolling)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Compare: minor, incomplete): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Compare, card closed: T1 Z1 S1 A1 A2 A3 (14 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse Compare, card open: T1 Z1 S1 A1 A2 A3 (27 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse: one canvas height across the phases on the sheet (J-I28; open 406, review 406, report 406, compare 406)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Compare: match): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: Case 3 with Node 5 called ITC is the borderline major (\"✕Major discrepancy · node 5 called isolated tumour cells, reference mi…\")"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Compare: major, borderline): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (Compare: major (pN2 over-staged)): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: exam lock \"!Submitted. Feedback unlocks when every case in this worklis…\""
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (exam lock): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: the changed-object plate \"Case 2 node 1 has changed in the dataset bucket; the practice index needs rebuilding.\" (no Retry)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (changed-object plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse changed-object plate: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (slide-host plate): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse slide-host plate: T1 Z1 S1 A1 A2 A3 (14 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse: the cohort tool loaded three results files (3 rows)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone 390x844 coarse axe (cohort tool with 3 files): 0 violations"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone 390x844 coarse cohort tool with 3 files: T1 Z1 S1 A1 A2 A3 (11 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / SI-8 phone 390x844 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R4 desktop-wide 1920x1080: the strip indicator on the worklist reads \"No slide open\" (indicator)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 worklist card: T1 Z1 S1 A1 A2 A3 (23 targets, 1 by spacing, 1 transient; A1: layout-check's 1 box-only fail(s) clear once clipped or covered targets are discounted (1 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080: the canvas is 90 % of the frame at rest on the Open card (task card docked, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Open card, card closed: T1 Z1 S1 A1 A2 A3 (17 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Open card, card open: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Review with the tray, card closed: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Review with the tray, card open: T1 Z1 S1 A1 A2 A3 (34 targets, 4 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Report, empty, card closed: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Report, empty, card open: T1 Z1 S1 A1 A2 A3 (51 targets, 23 by spacing, 0 transient; A1: layout-check's 2 box-only fail(s) clear once clipped or covered targets are discounted (13 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop-wide 1920x1080: the submit dialog carries both warning kinds (Node 5 never opened; Node 2 never at 10×)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 submit dialog open: T1 Z1 S1 A1 A2 A3 (27 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R5 desktop-wide 1920x1080: the submit dialog's footer is on screen and hit-testable (Keep reviewing · Submit practice report); the checklist scrolls inside the dialog (auto)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Compare, card closed: T1 Z1 S1 A1 A2 A3 (20 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 Compare, card open: T1 Z1 S1 A1 A2 A3 (34 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop-wide 1920x1080: the cohort tool loaded three results files (3 rows)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-wide 1920x1080 cohort tool with 3 files: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / SI-8 desktop-wide 1920x1080: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R4 desktop-dsf2 1280x800 DSF 2: the strip indicator on the worklist reads \"No slide open\" (indicator)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 worklist card: T1 Z1 S1 A1 A2 A3 (26 targets, 2 by spacing, 2 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2: the canvas is 81 % of the frame at rest on the Open card (task card drawer, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Open card, card closed: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Open card, card open: T1 Z1 S1 A1 A2 A3 (21 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Review with the tray, card closed: T1 Z1 S1 A1 A2 A3 (22 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Review with the tray, card open: T1 Z1 S1 A1 A2 A3 (37 targets, 0 by spacing, 1 transient; A1: layout-check's 4 box-only fail(s) clear once clipped or covered targets are discounted (0 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Report, empty, card closed: T1 Z1 S1 A1 A2 A3 (22 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Report, empty, card open: T1 Z1 S1 A1 A2 A3 (54 targets, 18 by spacing, 1 transient; A1: layout-check's 7 box-only fail(s) clear once clipped or covered targets are discounted (21 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop-dsf2 1280x800 DSF 2: the submit dialog carries both warning kinds (Node 5 never opened; Node 2 never at 10×)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 submit dialog open: T1 Z1 S1 A1 A2 A3 (30 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R5 desktop-dsf2 1280x800 DSF 2: the submit dialog's footer is on screen and hit-testable (Keep reviewing · Submit practice report); the checklist scrolls inside the dialog (auto, scrolling)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Compare, card closed: T1 Z1 S1 A1 A2 A3 (23 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 Compare, card open: T1 Z1 S1 A1 A2 A3 (37 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 desktop-dsf2 1280x800 DSF 2: the cohort tool loaded three results files (3 rows)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 desktop-dsf2 1280x800 DSF 2 cohort tool with 3 files: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / SI-8 desktop-dsf2 1280x800 DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R4 tablet 1024x1366 coarse: the strip indicator on the worklist reads \"No slide open\" (indicator)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse worklist card: T1 Z1 S1 A1 A2 A3 (22 targets, 1 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse: the canvas is 76 % of the frame at rest on the Open card (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Open card, card closed: T1 Z1 S1 A1 A2 A3 (17 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Open card, card open: T1 Z1 S1 A1 A2 A3 (18 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Review with the tray, card closed: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Review with the tray, card open: T1 Z1 S1 A1 A2 A3 (33 targets, 3 by spacing, 0 transient; A1: layout-check's 1 box-only fail(s) clear once clipped or covered targets are discounted (2 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Report, empty, card closed: T1 Z1 S1 A1 A2 A3 (19 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Report, empty, card open: T1 Z1 S1 A1 A2 A3 (50 targets, 24 by spacing, 0 transient; A1: layout-check's 1 box-only fail(s) clear once clipped or covered targets are discounted (17 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 tablet 1024x1366 coarse: the submit dialog carries both warning kinds (Node 5 never opened; Node 2 never at 10×)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse submit dialog open: T1 Z1 S1 A1 A2 A3 (58 targets, 24 by spacing, 0 transient; A1: layout-check's 1 box-only fail(s) clear once clipped or covered targets are discounted (25 not hit-testable))"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R5 tablet 1024x1366 coarse: the submit dialog's footer is on screen and hit-testable (Keep reviewing · Submit practice report); the checklist scrolls inside the dialog (auto, scrolling)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Compare, card closed: T1 Z1 S1 A1 A2 A3 (20 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse Compare, card open: T1 Z1 S1 A1 A2 A3 (34 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse: one canvas height across the phases on the sheet (J-I28; open 668, review 668, report 668, compare 668)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 tablet 1024x1366 coarse: the cohort tool loaded three results files (3 rows)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 tablet 1024x1366 coarse cohort tool with 3 files: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / SI-8 tablet 1024x1366 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R4 phone-landscape 844x390 coarse: the strip indicator on the worklist reads \"No slide open\" (indicator)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse worklist card: T1 Z1 S1 A1 A2 A3 (22 targets, 1 by spacing, 2 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse: the canvas is 73 % of the frame at rest on the Open card (task card sheet, closed; ≥ 70 %)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Open card, card closed: T1 Z1 S1 A1 A2 A3 (13 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Open card, card open: T1 Z1 S1 A1 A2 A3 (14 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Review with the tray, card closed: T1 Z1 S1 A1 A2 A3 (15 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Review with the tray, card open: T1 Z1 S1 A1 A2 A3 (29 targets, 4 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Report, empty, card closed: T1 Z1 S1 A1 A2 A3 (15 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Report, empty, card open: T1 Z1 S1 A1 A2 A3 (46 targets, 25 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone-landscape 844x390 coarse: the submit dialog carries both warning kinds (Node 5 never opened; Node 2 never at 10×)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse submit dialog open: T1 Z1 S1 A1 A2 A3 (21 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / R5 phone-landscape 844x390 coarse: the submit dialog's footer is on screen and hit-testable (Keep reviewing · Submit practice report); the checklist scrolls inside the dialog (auto, scrolling)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Compare, card closed: T1 Z1 S1 A1 A2 A3 (16 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse Compare, card open: T1 Z1 S1 A1 A2 A3 (29 targets, 0 by spacing, 1 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse: one canvas height across the phases on the sheet (J-I28; open 286, review 286, report 286, compare 286)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-8 phone-landscape 844x390 coarse: the cohort tool loaded three results files (3 rows)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 phone-landscape 844x390 coarse cohort tool with 3 files: T1 Z1 S1 A1 A2 A3 (12 targets, 0 by spacing, 0 transient)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SI-7 / SI-8 phone-landscape 844x390 coarse: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P1 desktop 1440x900 (DSF 1): first sharp overview 0.38 s after the case opened (≤ 2.5 s; measured from openCase, which precedes slideOpening)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P2 desktop 1440x900 (DSF 1): before the first input 5 requests (≤ 40), 0.09 MB (≤ 2 MB), 0 array requests (levels 4–8 inline)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P3 desktop 1440x900: jumpTo 20× → Sharp in 0.32 s (≤ 3 s), L* 1, level-1 arrays exactly once (1; 306528 B ≤ 320 KB), no level-0 array"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P3 desktop 1440x900: pointer-down + 1 s drag at 20× made no level-0 array request (0 array requests; ER-2)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P6 desktop 1440x900 (DSF 1): the scripted review of Node 3 moved 3.27 MB (≤ 15 MB) in 100 requests (97 tiles; engine requests 97); tiles fetched twice 0 of 97 (0.0 % ≤ 5 %; by tile key)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P8 desktop 1440x900: decode p50 6.2 ms per tile (worker tDecoded − tBody, n 148, p95 16.4) ≤ 1.5 × the matched control's p50 8.9 ms = 13.4 ms (the same tiles decoded the same way at the same moments in a harness worker on this machine; n 148, p95 31.0, 0 unknown; ratio 0.70); device budget 10 ms (§13): met on this machine (recorded)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P6b desktop 1440x900: the return to Node 3 at 20× made 0 array requests (0: the module LRU kept the level-1 arrays); recorded: 35 tile requests, 0.37 MB, 0 served from the browser cache (no-store, J-E2)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P4 desktop 1440x900: at most 1 requests in flight to the slide host (≤ 6)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P desktop 1440x900: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P1 phone-dsf2 390x844 coarse DSF 2 (DSF 2): first sharp overview 0.38 s after the case opened (≤ 2.5 s; measured from openCase, which precedes slideOpening)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P2 phone-dsf2 390x844 coarse DSF 2 (DSF 2): before the first input 5 requests (≤ 40), 0.09 MB (≤ 4 MB), 0 array requests (levels 4–8 inline)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P6 phone-dsf2 390x844 coarse DSF 2 (DSF 2): the scripted review of Node 3 moved 2.53 MB (recorded) in 47 requests (45 tiles; engine requests 45); tiles fetched twice 0 of 45 (0.0 % ≤ 5 %; by tile key)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P4 phone-dsf2 390x844 coarse DSF 2: at most 1 requests in flight to the slide host (≤ 6)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P phone-dsf2 390x844 coarse DSF 2: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P3b desktop-dsf2 1280x800 DSF 2: jumpTo 20× on Node 5 → L* 0, level-0 arrays exactly once (1; 1167264 B ≤ 1.25 MB), nothing fetched twice (arrays by range, tiles by key: 0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P3b: no console or page error (0)"
+  },
+  {
+   "tag": "integrator",
+   "ok": true,
+   "msg": "SO-P7 (S2 half) every request the stub answered in ok mode during the run was a GET with one closed Range, 206 (653; none bad); the ignore-range half is source.check.mjs's"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 the served data/signout/catalogue.json lists 50 slides in collection camelyon17-pilot"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 every entry's index (neutral name, range kind), thumbnail (decodes at its stated size) and overlay (12 files, slide id and fingerprint equal the entry's) is served (all 50)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 casefmt loads the served pilot worklist through the page's loader: 10 cases, no warning ({\"ok\":true,\"cases\":10,\"warnings\":[]})"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 all ten cases load through casefmt in the page (no warning but the draft note) and lint with 0 errors against the served catalogue, indexes and overlays (patient_017 patient_025 patient_046 patient_004 patient_052 patient_078 patient_036 patient_086 patient_075 patient_092)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 nothing is requested from another origin (the bucket included) while the content is read (0)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 every request a GET"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "axe-core WCAG 2.2 AA on the practice page over the committed catalogue: 0 violations"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-1 no console or page errors (0)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_017_node_0 has the committed index's geometry (size, MPP, 9 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_017_node_1 has the committed index's geometry (size, MPP, 9 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_017_node_2 has the committed index's geometry (size, MPP, 9 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_017_node_3 has the committed index's geometry (size, MPP, 9 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_017_node_4 has the committed index's geometry (size, MPP, 9 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_092_node_0 has the committed index's geometry (size, MPP, 10 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_004_node_4 has the committed index's geometry (size, MPP, 9 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 the stub's virtual patient_092_node_1 has the committed index's geometry (size, MPP, 10 levels, stored sizes, tiles, array positions)"
+  },
+  {
+   "tag": "content",
+   "ok": true,
+   "msg": "CNT-6 real bytes: no STOIPATH_SIGNOUT_CACHE and no --network; skipped (the bucket is never read by default)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "the feedback module is installed and provides `feedback` (services: casefmt, grading, results, worklist, review, report, feedback)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "§10: reference:toggle ⇧E and learn:overlays H registered by feedback in \"The flow (Learn)\"; conflicts() empty (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "boot: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "boot: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): banner \"!Minor discrepancy · node 2 called negative, reference isolated tumour cells (missed) · 1 node(s) not examined\" (want \"… Minor discrepancy · node 2 called negative, reference isolated tumour cells (missed) · 1 node(s) not examined\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the banner carries a glyph (aria-hidden) and the class in words (minor)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): node rows [\"agrees\",\"minor: negative vs ITC (missed)\",\"agrees\",\"agrees (node not opened)\",\"agrees\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): pN row \"pN1 | pN1 | agrees\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the practice sentence in the comparison and the host's draft chip shown (D2, LEARN.md D11; §4.2)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the §6.1a disclosure, verbatim"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the case's 2 teaching sentences listed"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the overlay legend in words (SC 1.4.1)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): the reference pN sentence"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): axe-core WCAG 2.2 AA on the Compare card (minor, incomplete): 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 1 (c17-01 negative/negative/macro/macro/micro pN1): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): banner \"✕Major discrepancy · pN pN2, reference pN1 (over-staged)\" (want \"… Major discrepancy · pN pN2, reference pN1 (over-staged)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): the banner carries a glyph (aria-hidden) and the class in words (major)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): node rows [\"agrees\",\"agrees\",\"agrees\",\"agrees\",\"agrees\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): pN row \"pN2 | pN1 | major: pN2 vs pN1 (over-staged)\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): the inconsistent row \"Your own node calls gave pN1.\" (pN1 | pN1 | Your own node calls gave pN1.)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 2 (c17-01 negative/itc/macro/macro/micro pN2): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): banner \"!Minor discrepancy · node 5 called negative, reference isolated tumour cells (missed)\" (want \"… Minor discrepancy · node 5 called negative, reference isolated tumour cells (missed)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): the banner carries a glyph (aria-hidden) and the class in words (minor)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): node rows [\"agrees\",\"agrees\",\"agrees\",\"agrees\",\"minor: negative vs ITC (missed)\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): pN row \"pN0 | pN0(i+) | minor: pN0 vs pN0(i+) (under-staged)\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 3 (c17-04 negative/negative/negative/negative/negative pN0): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): banner \"✕Major discrepancy · node 5 called negative, reference micrometastasis (missed)\" (want \"… Major discrepancy · node 5 called negative, reference micrometastasis (missed)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): the banner carries a glyph (aria-hidden) and the class in words (major)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): node rows [\"agrees\",\"agrees\",\"agrees\",\"agrees\",\"major: negative vs micrometastasis (missed)\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): pN row \"pN1mi | pN1mi | agrees\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): axe-core WCAG 2.2 AA on the Compare card (major): 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 4 (c17-03 negative/negative/negative/micro/negative pN1mi): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): banner \"✕Major discrepancy · node 5 called isolated tumour cells, reference micrometastasis · borderline node (reference label rests on the cell-count criterion)\" (want \"… Major discrepancy · node 5 called isolated tumour cells, reference micrometastasis · borderline node (reference label rests on the cell-count criterion)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): the banner carries a glyph (aria-hidden) and the class in words (major)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): node rows [\"agrees\",\"agrees\",\"agrees\",\"agrees\",\"major: ITC vs micrometastasis · borderline node (reference label rests on the cell-count criterion)\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): pN row \"pN1mi | pN1mi | agrees\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): axe-core WCAG 2.2 AA on the Compare card (borderline): 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 5 (c17-03 negative/negative/negative/micro/itc pN1mi): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): banner \"✕Major discrepancy · pN pN1, reference pN2 (under-staged)\" (want \"… Major discrepancy · pN pN1, reference pN2 (under-staged)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): the banner carries a glyph (aria-hidden) and the class in words (major)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): node rows [\"agrees\",\"agrees\",\"agrees\",\"agrees\",\"agrees\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): pN row \"pN1 | pN2 | major: pN1 vs pN2 (under-staged)\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): the inconsistent row \"Your own node calls gave pN2.\" (pN2 | pN2 | Your own node calls gave pN2.)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 6 (c17-05 macro/macro/macro/macro/negative pN1): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): banner \"!Minor discrepancy · node 4 called macrometastasis, reference micrometastasis (over-called)\" (want \"… Minor discrepancy · node 4 called macrometastasis, reference micrometastasis (over-called)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): the banner carries a glyph (aria-hidden) and the class in words (minor)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): node rows [\"agrees\",\"agrees\",\"agrees\",\"minor: macrometastasis vs micrometastasis (over-called)\",\"agrees\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): pN row \"pN1 | pN1mi | minor: pN1 vs pN1mi (over-staged)\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 7 (c17-07 negative/negative/negative/macro/negative pN1): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): banner \"✕Major discrepancy · node 3 called micrometastasis, reference negative (over-called)\" (want \"… Major discrepancy · node 3 called micrometastasis, reference negative (over-called)\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): the banner carries a glyph (aria-hidden) and the class in words (major)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): node rows [\"agrees\",\"agrees\",\"major: micrometastasis vs negative (over-called)\",\"agrees\",\"agrees\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): pN row \"pN2 | pN2 | agrees\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 8 (c17-10 macro/macro/micro/macro/macro pN2): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): banner \"✓Match · pN agrees and every node agrees\" (want \"… Match · pN agrees and every node agrees\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): the banner carries a glyph (aria-hidden) and the class in words (match)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): node rows [\"agrees\",\"agrees\",\"agrees\",\"agrees\",\"agrees\"]"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): pN row \"pN1 | pN1 | agrees\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): the inconsistent row absent (none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): rows in §5.6's order; extranodal extension not assessed · not labelled"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): <th scope=\"col\"> × 4, a <th scope=\"row\"> per row, the dataset slide id after submission (D12)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): one table shown (compare-table-compact); the compact table carries the same agreements with <th scope=\"row\">"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): axe-core WCAG 2.2 AA on the Compare card (match): 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 example 9 (c17-01 negative/itc/macro/macro/micro pN1): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 size row (Case 8): \"0.07 mm (node 1) | about 0.073 mm (longest single annotated outline, node 5) | same size category · within 20 %\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 size row (Case 8): category, then numeric, then the geometry sentence (at 1079, 1100, 1503)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 size row (Case 8): the measured-node sentence (PE-14)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 size row (Case 8): no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-1 size row (Case 8): every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: ⇧E before submission is refused: \"The reference unlocks after you submit the practice report.\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: flags before submission: node 1 1, node 3 2 (by T + ↵ (review))"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: no overlay file requested before caseSubmitted (SI-10; 0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: no sign-out source drawn before submission (looked 0, reference 0, flags 0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: reference: 17 polygons, --ann-3 dashed, dark halo, no fill, not hit-testable (17, {\"stroke\":\"--ann-3\",\"dash\":\"dash\",\"fill\":false,\"width\":\"normal\",\"halo\":\"dark\",\"handles\":\"none\"})"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: flags: --ann-5 solid dots (2 on node 3)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: where you looked: --ann-6 fill α 0.12, 5 vertices (< 2,000) on the 1024 µm grid"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: the overlay surface lists the three sources visible (signout-looked, signout-reference, signout-flags)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: ⇧E turns the reference off (others stay): {\"looked\":true,\"reference\":false,\"flags\":true}, \"Reference annotation off\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: H hides every sign-out source: {\"looked\":false,\"reference\":false,\"flags\":false}, \"All overlays hidden · H shows them\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: H again restores exactly the previous set (reference still off): {\"looked\":true,\"reference\":false,\"flags\":true}"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: ⇧E turns it back on"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: referenceToggled emitted ([false,true])"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-4: Node 4 (label only): D18, \"Your finest sharp view over this node was 2.5×; you spent 0.1 s on it.\", the low-power sentence, no Show me"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-4: Node 1 (negative): D18's negative sentence, \"Your finest sharp view over this node was 5×; you spent 2.3 s on it.\", no low-power sentence, no Show me"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "D26: \"Your flag 1 on node 1: this node has no annotation to compare with\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "D26: node 3 flags \"Your flag 1 on node 3: on a reference deposit | Your flag 2 on node 3: 5,849 µm from the nearest deposit\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "§5.6 item 3: node 3 lists 5 deposits with Show me; the five-polygon cluster reads its largest outline and its span as foci (S3 review fix; \"Deposit 5 · about 360 µm (5 foci spanning about 770 µm) · never in view at 10× or more\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-N1: the stored result was refined with the loaded polygons (c17-01#1#2026-11-09T09:15:07.292Z), classes unchanged (match)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 1 s drag with the comparison overlays drawn: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 1 s drag with the comparison overlays drawn: no redundant DOM write (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 1 s drag with the comparison overlays drawn: 309 of 319 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 1 s drag with the comparison overlays drawn: CDP LayoutCount 61 ≤ 184 frames + 2 and RecalcStyleCount 63 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 wheel burst with the comparison overlays drawn: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 wheel burst with the comparison overlays drawn: no redundant DOM write (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 wheel burst with the comparison overlays drawn: 419 of 419 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5 wheel burst with the comparison overlays drawn: CDP LayoutCount 49 ≤ 52 frames + 2 and RecalcStyleCount 49 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "SO-P5: no write in #taskCard during the gestures (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: each of the case's 3 overlay files requested once (patient_017_node_1.geojson ×1, patient_017_node_2.geojson ×1, patient_017_node_4.geojson ×1)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: on node 2 the reference shows its one ITC polygon (1)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2: axe-core WCAG 2.2 AA with the overlays drawn: 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2 / FBK-4 / SO-P5: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-2 / FBK-4 / SO-P5: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: Show me on Node 2's ITC switched the node in place (node 1; history 2 → 2; one canvas#view)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: the ITC lands at 0.5000 µm/px (0.5 ± 1 %), centred within 0.5 CSS px (dx -0.102, dy 0.036)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: spoken politely \"Flying to deposit 1 of node 2, about 84 µm, at 20×.\" (in the polite log of 6)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: the macro cluster occupies 60.0 % (≤ 60 %) of the uncovered viewport, centred (dx -0.029, dy 0.085)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: the macro Show me says its magnification (\"Flying to deposit 1 of node 3, about 3.2 mm, at about 1.7×.\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: after submission the HUD node chip reads 'Node 3 of 5 · report submitted' (no \"not yet viewed at 10×\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 reduced motion: with reduced motion Show me lands in one frame (scale 3.630 vs 3.630, centre off by 0.00 µm, animating false)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 reduced motion: the macro cluster fits 60 % (60.0 %)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 reduced motion: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 reduced motion: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 slide host down: with the stub failing, Show me says \"Images are unavailable; the deposit is at 16,271, 25,392 µm.\" (strip \"Images are unavailable; the deposit is at 16,271, 25,392 µm.\") and does not fly"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 slide host down: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-3 slide host down: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop 1440x900 fit: vertex 0 of patient_017 node_2's first polygon at device (679.6, 552.3): the drawn reference matches the engine-projected outline with a shift of 0.25 device px (IoU 0.61, unshifted 0.61, 2 px off 0.42; 749 vertices, 445 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop 1440x900 20×: vertex 0 of patient_017 node_2's first polygon at device (629.7, 428.9): the drawn reference matches the engine-projected outline with a shift of 0.25 device px (IoU 0.95, unshifted 0.94, 2 px off 0.69; 4 vertices, 178 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop 1440x900: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop 1440x900: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop-dsf2 1280x800 DSF 2 fit: vertex 0 of patient_017 node_2's first polygon at device (1201.4, 963.0): the drawn reference matches the engine-projected outline with a shift of 0.00 device px (IoU 0.57, unshifted 0.57, 2 px off 0.47; 749 vertices, 1857 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop-dsf2 1280x800 DSF 2 20×: vertex 0 of patient_017 node_2's first polygon at device (1099.3, 757.8): the drawn reference matches the engine-projected outline with a shift of 0.25 device px (IoU 0.98, unshifted 0.97, 2 px off 0.84; 4 vertices, 714 drawn px; ≤ 1 px)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop-dsf2 1280x800 DSF 2: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-6 desktop-dsf2 1280x800 DSF 2: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 search · Node 5 called negative: miss sentence \"You never had this deposit in view at 20× or more (search miss).\" (got \"You never had this deposit in view at 20× or more (search miss).\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 search · Node 5 called negative: \"Deposit 1 · about 120 µm · never in view at 10× or more\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 search · Node 5 called negative: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 search · Node 5 called negative: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called negative: miss sentence \"This deposit was in view at 20× for 6 s and not called (recognition miss).\" (got \"This deposit was in view at 20× for 6 s and not called (recognition miss).\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called negative: \"Deposit 1 · about 120 µm · in view at 20× for 6 s\", 3 deposits with Show me"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called negative: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called negative: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 indeterminate · Node 5 called negative: miss sentence \"This deposit was in view at 20× for under 2 s (indeterminate).\" (got \"This deposit was in view at 20× for under 2 s (indeterminate).\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 indeterminate · Node 5 called negative: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 indeterminate · Node 5 called negative: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called itc: miss sentence absent (got none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called itc: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called itc: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called micro: miss sentence absent (got none)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called micro: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-7 recognition · Node 5 called micro: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: Case 1 shows only the lock sentence (\"!Submitted. Feedback unlocks when every case in this worklist is submitted (1 of 2 done).\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: ⇧E refused with the lock sentence (\"Submitted. Feedback unlocks when every case in this worklist is submitted (1 of 2 done).\"), no source drawn, no overlay request (0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: axe-core WCAG 2.2 AA on the exam lock: 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: the last case submitted: the comparison unlocks (\"✓Match · pN agrees and every node agrees\")"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: Case 1's comparison is unlocked too (✓Match · pN agrees and every node agrees)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK-5: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: the borderline row on the phone sheet"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: Node 5 lists the three largest deposits by their largest outline and one row for 12 smaller ones (Deposit 1 · about 190 µm (37 foci spanning about 780 µm) · never in view at 10× or more | Deposit 2 · about 130 µm (2 foci spanning about 270 µm) · never in view at 10× or more | Deposit 3 · about 130 µm (2 foci spanning about 230 µm) · never in view at 10× or more | and 12 smaller deposits (about 32–130 µm) · none in view at 10× or more)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: the collapsed row has one Show me ([\"4:rest\",\"Show me the smaller deposits of node 5\"])"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: Show me on the collapsed row: \"Flying to the 12 smaller deposits of node 5, at about 0.3×.\""
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: Show me targets ≥ 44 px under a coarse pointer (44, 44, 44, 44, 44, 44)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: no horizontal page scroll (the table scrolls in its own region; 0)"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: axe-core WCAG 2.2 AA (borderline, coarse): 0 violations"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: no console or page errors ()"
+  },
+  {
+   "tag": "feedback",
+   "ok": true,
+   "msg": "FBK phone 390x844: every request is a GET to this site or the local range stub (0 elsewhere)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 one <form> labelled by the card title ('Report · Case 1'; document 'Practice report · Case 1 · Stoipath Learn'), the practice sentence at its head"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 <details> 'How this differs from AJCC/CAP' (closed) holds §6.1a verbatim"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 five <fieldset>s, legends 'Node 1 · opened', 'Node 2 · not opened', 'Node 3 · not opened', 'Node 4 · not opened', 'Node 5 · not opened', each a role=\"radiogroup\" (labelled by its legend) of four native radios"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 option labels and each option described by its §6.1 size definition (+ the measuring rule)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 the read-only counts <dl> in CAP's order and the ENE row (Nodes examined · With macrometastasis · With micrometastasis · With isolated tumour cells only · Positive nodes for pN (macro + micro) · Extranodal extension)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 the AJCC ITC hint"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 the pN radiogroup, each radio described by its §6.1 sentence"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 the size field: label, number input, described by its hint"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 the comment (≤ 1,000), the preview region (aria-live off, labelled)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1 axe: the empty report: 0 violations"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the counts follow every call (macro/micro/ITC/positive: 0/0/0/0 0/0/1/0 1/0/1/1 2/0/1/2 2/1/1/3)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the derived line 'From your node calls these rules give pN1.' (no pN entered: no warning)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 five calls in quick succession wrote the derived line once (1 mutation record; spoken 1×, polite)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the preview before a pN: 'Sentinel lymph nodes, five (1–5), H&E: metastatic carcinoma in 3 of 5 nodes (2 macrometastasis, 1 micrometastasis); isolated tumour cells in 1 node(s); largest deposit not measured; extranodal extension not assessed. pN not yet chosen.'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 a burst of two calls → one change of the line ('From your node calls these rules give pN2.', 1 mutation records)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the inconsistency warning appears for pN2 ('Your pN differs from the one your own node calls g…') and clears for pN1"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 axe: the report half-filled: 0 violations"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 axe: the report with the inconsistency warning: 0 violations"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the preview of the positive set: 'Sentinel lymph nodes, five (1–5), H&E: metastatic carcinoma in 3 of 5 nodes (2 macrometastasis, 1 micrometastasis); isolated tumour cells in 1 node(s); largest deposit 3.2 mm; extranodal extension not assessed. pN1 (CAMELYON17 simplified rules; a full AJCC report would read pN1(sn)).'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the preview of an all-negative set: 'Five sentinel lymph nodes, negative for metastatic carcinoma (0/5). pN0 (CAMELYON17 simplified rules; a full AJCC report would read pN0(sn)).'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-6 N on Report is refused: 'Submit the practice report first: the button is in the card.' (phase stays Report)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-6 ⇧N returned to Review; the call made in the form shows in the tray ('Node 3 · not opened · called macro')"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-1/2/6: no console or page error (0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 derivedPn hidden (locked): neither the derived line nor the warning renders before submission"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 the result still records derivedPn pN1 (shown: false, inconsistent: true)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-2 hidden: no console or page error (0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the CTA with no calls: 'Call every node first: Node 1, Node 2, Node 3, Node 4, Node 5.', focus on Node 1's radiogroup (so-call-0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 no pN: 'Choose a pN category.', focus on the pN radiogroup"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the dialog 'Submit practice report · Case 1' with its lead"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 both warning rows with their actions: 'Node 4 was never opened.' + 'Open node 4 first'; 'Node 2 was opened but never viewed at 10× or more.' + 'Open node 2'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the checklist rows: ✓Node calls: node 1 negative · node 2 ITC · node 3 macro · node 4 macro · node 5 micro | ✓Node counts: 2 macro · 1 micro · 1 ITC-only | ✓pN: pN1 | iLargest deposit: not given | iTime: 0:03 | iAttempt 1"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 footer 'Keep reviewing · Submit practice report', focus on the first warning action ('Open node 4 first')"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the dialog uses the short call words only (SI-10)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the warnings are spoken once, assertively ('Node 4 was never opened. Node 2 was opened but never viewed at 10× or more.')"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 axe: the submit dialog with both warning kinds: 0 violations"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 'Open node 4 first' opened Node 4 and closed the dialog (phase examine)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 report.warning() for the J-I47 banner: 'Node 2 was opened but never viewed at 10× or more. Node 4 was opened but never viewed at 10× or more.'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 every node viewed at 10×: no warning row, focus on 'Submit practice report'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 'Submit practice report' submitted: phase complete, the result stored before the phase changed (attempt 1)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the submission sentence, assertive: 'Submitted. Match: your pN and every node call agree with the reference.'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3 the stored CaseResult carries previewText, complete true, slideIds by dataset index"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-6 after submission the form is read-only (inputs disabled: true) and report's CTA is gone (the worklist's card: its CTA now leads to the comparison)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-6 ⇧N from Compare: Review is read-only (calls disabled; CTA [\"Compare with the reference N\"])"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-3/6: no console or page error (0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-4 Tab reached the five radiogroups and the arrows chose negative, itc, macro, macro, micro"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-4 the size field, then 'Other measurements…' by Enter (focus on 'Node 2 · 273.7 µm'), ↓ to 'Node 1 · 136.0 µm', Enter filled 0.14 mm from node 1 and closed the menu"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-4 Esc closes the menu, focus back on its button"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-4 pN by arrows, the comment, ↵ on the CTA, ↵ in the dialog (focus 'Submit practice report') submitted: pN pN1, comment 'Keyboard only.'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-4 no pointer event was used (0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-4: no console or page error (0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 the card meta shows '1:58 left' (countdown of 2 min)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 under a minute ('0:45 left'): the alertdialog says 'One minute left.' with 'Extend by 10 minutes'; spoken once (1), timerWarning once"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 axe: the countdown prompt in the Review card: 0 violations"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 'Extend by 10 minutes' added 600 s (limit 120 → 720 s, '10:44 left'; kept in the case record: countdownExtensions 1)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 at zero: 'Time is up. You can still submit; the time over is recorded.' said once assertively (1), timeUp once, not submitted (phase examine)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 overrunMs recorded (19846 ms)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 the Report card carries the prompt and '0:00 left'"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5 the submitted result records time.overrunMs 20847 ms (reviewMs 740690, reportMs 1522)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT-5: no console or page error (0)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "phone: the report in the sheet, 20 call options ≥ 44 px (min 44)"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT axe: the report at 390 × 844 coarse: 0 violations"
+  },
+  {
+   "tag": "report",
+   "ok": true,
+   "msg": "RPT phone: no console or page error (0)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: the cohort head carries the title, the practice sentence and the use statement (PE-13)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: the node-column note (PE-7) and \"Files are read in this browser; nothing is uploaded.\""
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: Enter on the drop zone opens the file chooser (multiple), the keyboard twin of a drop"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: the table of loaded files: File, Trainee code, Group, Attempt, Cases, Build, Exported (File, Trainee code, Group, Attempt, Cases, Build, Exported, Action)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: three files loaded by chooser and by drop: (none) · R2-017 / PGY2.site-A · attempt 2 ((none)/(none)/1/2 | (none)/(none)/1/2 | R2-017/PGY2.site-A/2/2)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: the counts line, both breakdowns labelled (S3 review fix) \"3 files · 6 case rows · pN: match 5 · minor 0 · major 1 · case class: match 3 · minor 2 · major 1\""
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: axe-core WCAG 2.2 AA on the cohort tool with 3 files: 0 violations"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: cases.csv (keyboard download) has exactly Appendix C's 128 columns in order"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: 1 header + 6 rows, every row complete (6 rows)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: the duplicate file's rows are marked duplicate (- - duplicate duplicate - -)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: the named columns are present (node{k}_slide_id … node{k}_best_um_per_px, attempt, group_code, rules, review status, complete, nodes_not_examined, directions)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: node columns use the dataset index with slide ids; attempt and group code per row"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: CRLF line ends; no magnification word in either CSV (PE-20)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3: nodes.csv has Appendix C's columns, 5 rows per case (30), node 0–4 and slide_id"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: a non-results file is refused: aria-invalid, aria-describedby names the error, the parser's first error (This is not a results file (not-results.json: /schema: is not stoipath.learn.signout-results/1).)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: axe-core WCAG 2.2 AA with a refused file: 0 violations"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: Remove by keyboard; focus stays on the next row's Remove (remove)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: no request leaves the page while files are read and CSVs made (0)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-4: cohort mode, conflicts() empty"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-3 / RES-4: no console or page errors ()"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: the exported file validates against $defs/SignoutResultsFile (python jsonschema; 0 errors)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: no key matches /name|email|user|device|ip|zone/i except title (none)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: label string, practice sentence, privacy sentence, use statement, rules"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: class_definitions and attribution.citation"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: useNoticeShown with the notice text (the worklist card showed it, PE-21)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: attempt 1 on the file and on every case (1 case, class minor)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: traineeCode and groupCode absent when none was typed"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-2: file name stoipath-learn-practice_res-check_20261109-091632.results.json"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-2: resultsExported {worklistId, cases: 1, bytes} ({\"worklistId\":\"res-check\",\"cases\":1,\"bytes\":11698})"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1: traineeCode and groupCode present once typed; the file still validates"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: the first press arms it; the second-press text names the next attempt and focus stays on the button (\"Press again to clear your answers · export your results first; attempt 1 will be recorded as attempt 2\")"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: unpressed for 5 s it disarms and nothing is cleared"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: the second press clears every case record, stores attempt 2 and the rows read not started (Attempt 2)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: attemptStarted {attempt: 2}"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: Export with nothing submitted under the new attempt is refused with a sentence"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: the case slide's flags are cleared (1 before, 0 after)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-6: the next submission carries attempt 2 (file 2, case 2)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-1 / RES-2 / RES-6: no console or page errors ()"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-5: with IndexedDB refused the results store is memory-only (memory-only)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-5: the memory-only sentence shows (\"This browser does not allow saving here; your answers stay until you close the p…\")"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-5: submission still works and the result exports"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-5: the worklist keeps the result in memory (Case 1 · 5 nodes · submitted · minor discrepancy)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-5: no console or page errors but the refused database ()"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: a flag, then a reload 100 ms later: 1 flag(s) kept (review 1, stored 1, dots on the slide 1)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: a measurement, then a reload 100 ms later: the longest is kept (204.8 µm; review 204.8, stored 204.8) and the measurement is still drawn (1 of 1 on the slide)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: a node call, then a reload 100 ms later: \"micro\" is kept (worklist micro, stored micro)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: a flag, then a reload 300 ms later: 2 flag(s) kept (review 2, stored 2, dots on the slide 2)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: a measurement, then a reload 300 ms later: the longest is kept (411.0 µm; review 411.0, stored 411.0) and the measurement is still drawn (2 of 2 on the slide)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: a node call, then a reload 300 ms later: \"macro\" is kept (worklist macro, stored macro)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: every localStorage key on the page starts stoipath.learn-signout.v1. (stoipath.learn-signout.v1.class.active)"
+  },
+  {
+   "tag": "results",
+   "ok": true,
+   "msg": "RES-7: no console or page errors ()"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "Open card: 'Case 1 of 1 · Review checks · review-check', practice sentence, vignette row, 'You will…', CTA 'Start the review N', tray hidden (true)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "Open card rows: nodes line, keyboard line with keycaps, the saved note"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "Open card names no deposit class before submission (SI-10, CNT-N5)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV axe: the Open card at 1440 × 900: 0 violations"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 Review: the tray lists Node 1 … Node 5, Node 1 is aria-current and 'opened · m:ss' (Node 1 · opened · 0:00 | Node 2 · not opened | Node 3 · not opened | Node 4 · not opened | Node 5 · not opened)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 HUD node chip 'Node 1 of 5 · not yet viewed at 10×' (withKey false: no keycap)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2b the view node 1 opened on (the tissue fit) is logged once, sharp, at the fit scale, with no move (1 entry, 22.50 µm/px)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 ] switches in place: one canvas#view (1), no navigation entry (history 2 → 2)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 fragment '#c=c17-01&n=1' (dataset index 1), tray row 2 aria-current"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 HUD chip 'Node 2 of 5 · not yet viewed at 10×', slide camelyon17.c17s-0007"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 [ at the first node: 'This is the first node.'"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 tray button opened Node 5 (fragment #c=c17-01&n=4); ] at the last node: 'This is the last node.'"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 jumpTo 20× + settle wrote one sharp entry at 0.5000 µm/px (1 → 2 entries; t 698 ms)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 the entry is the uncovered viewport in level-0 px (1036 CSS px wide, centred on the uncovered span)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1 at rest after the 20× view: HUD chip 'Node 3 of 5 · viewed at 20×', tray 'Node 3 · viewed at 20× · 0:01'"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1b a 5× view with no tissue cell: chip 'Node 3 of 5 · no tissue in this view (unscanned area or blank glass)', and it does not count as over tissue (best over tissue still 0.5)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 a 40× settle while tiles were slow was held (true), and the move before Sharp kept it as sharp: false (3 such entries; last entries 0.50/S 0.25/s 0.25/s 0.25/s 0.25/S)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 the cap holds at 2,000 entries (2000; the newest is the 10× settle at 1.000 µm/px)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 1 s drag with the trace recorder on: no layout-reading DOM call (0)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 1 s drag with the trace recorder on: no redundant DOM write (0)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 1 s drag with the trace recorder on: 61 of 74 mutations while moving, all text / style.transform in the HUD or navigator rectangle or an indicator / gesture class (0 other)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 1 s drag with the trace recorder on: CDP LayoutCount 25 ≤ 182 frames + 2 and RecalcStyleCount 33 ≤ 2 × frames + 4"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 during the drag: 0 mutations in #taskCard / #nodeTray, 0 storage writes"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-2 the drag's settled view was logged after it, at rest (newest t 12113 > 8655)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-3 node 3's time on screen: hidden 1.5 s 13456 → 13456 ms (paused), visible 1.5 s → 14959 ms (+1503)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-3 the card meta shows 'Case time 0:18' (count-up, at rest)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV axe: Review with the tray at 1440 × 900: 0 violations"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-1/2/3 desktop: no console or page error (0)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 T + ↵ made a flag on node 3 (1), listed in the card (Flags on this node · 1 | Flag 1 · A1)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 a Polygon was refused with 'Only point flags and measurements are kept here; outlines are not part of the practice report.' (said: true; strip: 'Deleted A2 · Ctrl+Z to undo') and the flag count stays 1"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 the refused Polygon was removed from the store (kinds left: point)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 longest measurement node 3 204.6 µm, node 5 411.0 µm; card 'Your longest measurement on this node · 411.0 µm'"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 the flag and both measurements are persisted in the sign-out progress record (1 flag)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 the report offers 'Use 411.0 µm (node 5)' (the longer, node 5)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4 'Other measurements…' lists both: Node 5 · 411.0 µm | Node 3 · 204.6 µm"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-4: no console or page error (0)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-5 node 1 opened on its tissueBbox: scale 22.500 vs 22.500 µm/px (±1 %), centre off by 0.000 CSS px (≤ 0.5) at 1376×780, insets 0/340"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-5 node 2 after ]: scale 60.558 vs 60.558 µm/px (±1 %), centre off by 0.000 CSS px (≤ 0.5) at 1376×780, insets 0/340"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-7 from the tissue fit on Node 2 at 1440 × 900 (card covers 340 CSS px), preset 3 kept the visible centre: x 9.99 → 9.99 mm, tissue box centre 9.99 mm (≤ one cell, 498 µm), at 2.000 µm/px"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-7 two ⇧→ steps at 5×: consecutive trace rectangles touch or overlap (gap 0.0 level-0 px, ≤ 8.2 = one CSS px; step 8523 px, uncovered width 8523 px)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-7 + and − zoom about the uncovered centre: visible centre x 1.301 → 1.301 → 1.301 mm (≤ one CSS px), 2.00 → 1.00 → 2.00 µm/px"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-5 node 4 with tissueBbox [0, 0, 0, 0] fits the whole slide: scale 65.630 vs 65.630 µm/px (±1 %), centre off by 0.000 CSS px (≤ 0.5) at 1376×780, insets 0/340"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-5 node 3: 'Fit tissue' returns after a 20× zoom: scale 31.230 vs 31.236 µm/px (±1 %), centre off by 0.000 CSS px (≤ 0.5) at 1376×780, insets 0/340"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-5: no console or page error (0)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV axe: the Open card at 390 × 844 coarse: 0 violations"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-6 phone: the tray is in the sheet (sheet), visible"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-6 tray rows ≥ 44 px (44, 44, 44, 44, 44)"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-6 the on-screen 'Next node' button opened Node 2"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-6 ] opened Node 3 on the phone"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV axe: Review with the tray at 390 × 844 coarse: 0 violations"
+  },
+  {
+   "tag": "review",
+   "ok": true,
+   "msg": "REV-6: no console or page error (0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the default worklist lists the ten cases in order, each \"Case k · 5 nodes · not started\" (the pilot's titles only repeat Case k; S3 review fix) (10: Case 1 · 5 nodes · not started | Case 2 · 5 nodes · not started …)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: 25 minutes each, no case differs (PE-5)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: every case loads and parses (not locked), attempt 1"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the practice sentence is on the worklist card (D2)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the use notice is on the worklist card (PE-21)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the attribution sentence and the citation are on the worklist card (§12, PE-19)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the privacy rows, the network row included (D22)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the cohort tool link, Export results and Attempt 1"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: no answer word (patient_, macro-/micrometastasis, isolated tumour cells) on the card or in the title before any submission (SI-10's rule; objectives are not rendered, A-CNT-N5)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: the canvas shows the plate \"No case open · Choose a case from the worklist.\" as a status (No case open)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: document.title \"Practice worklist · Stoipath Learn\""
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: step:next / step:prev registered by the worklist; conflicts() empty (0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: no cross-origin request (the bucket untouched) and every request a GET (0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: axe-core WCAG 2.2 AA on the worklist card (use notice, both code fields): 0 violations"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 1440: no console or page errors ()"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the default worklist lists the ten cases in order, each \"Case k · 5 nodes · not started\" (the pilot's titles only repeat Case k; S3 review fix) (10: Case 1 · 5 nodes · not started | Case 2 · 5 nodes · not started …)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: 25 minutes each, no case differs (PE-5)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: every case loads and parses (not locked), attempt 1"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the practice sentence is on the worklist card (D2)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the use notice is on the worklist card (PE-21)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the attribution sentence and the citation are on the worklist card (§12, PE-19)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the privacy rows, the network row included (D22)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the cohort tool link, Export results and Attempt 1"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: no answer word (patient_, macro-/micrometastasis, isolated tumour cells) on the card or in the title before any submission (SI-10's rule; objectives are not rendered, A-CNT-N5)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: the canvas shows the plate \"No case open · Choose a case from the worklist.\" as a status (No case open)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: document.title \"Practice worklist · Stoipath Learn\""
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: step:next / step:prev registered by the worklist; conflicts() empty (0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: no cross-origin request (the bucket untouched) and every request a GET (0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: axe-core WCAG 2.2 AA on the worklist card (use notice, both code fields): 0 violations"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-1 390: no console or page errors ()"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: \"R2 017@x\" is refused in place: aria-invalid, aria-describedby → the fix sentence ({\"invalid\":\"true\",\"desc\":\"soWlTraineeErr\",\"errText\":\"!Letters, digits, dots, dashes and underscores only; no spaces or @.\",\"errHidden\":false})"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: axe-core WCAG 2.2 AA with the trainee code refused: 0 violations"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: a refused code is never stored"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: valid codes typed with the keyboard are stored as signout.trainee / signout.group ([\"R2-017\",\"PGY2.site-A\",null])"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: both codes persist across a reload (R2-017, PGY2.site-A)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: emptying the group code clears it"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: every localStorage key on the page starts stoipath.learn-signout.v1. (stoipath.learn-signout.v1.class.active)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-2: no console or page errors ()"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: Change opens the options (aria-expanded true), by the keyboard"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: exam style sets the derived pN to hidden (hidden, select hidden)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: under exam style the card shows no per-case minutes (PE-5)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: both explanation sentences are on the card"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: the options row follows (\"Timer: count-up · Feedback: after the whole worklist (exam style) · Derived pN: hidden until the comparison\")"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: the derived pN stays changeable (not locked) and the choices are stored in signout.worklist/<id> ({\"feedback\":\"after-worklist\",\"derivedPn\":\"shown\"})"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: axe-core WCAG 2.2 AA with the options open: 0 violations"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: the options persist across a reload"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: no console or page errors ()"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: a locked option shows as read-only text, never a control; the derived pN defaults to hidden ({\"select\":false,\"text\":\"FeedbackAfter the whole worklist (exam style) · set by this worklist\",\"derived\":\"hidden\"})"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: the unlocked derived pN changes; the locked feedback does not"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: under exam style a submitted case reads \"submitted\" with no class until the worklist is complete (Case 1 · 5 nodes · submitted)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3: once every case is submitted the classes show (submitted · minor discrepancy | submitted · match)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-3 (locked): no console or page errors ()"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P (S3 review fix, SC 2.4.3): ↵ on a worklist row lands focus on the Open card's phase title, not on <body> (soCardTitle)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: a case opens on the Open card (phase open) with a fresh progress record of attempt 1"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: Open card head \"Case 1 of 2 · …\", CTA \"Start the review N\", note (Case 1 of 2 · Sentinel lymph node practice · CAMELYON17 pilot | Start the review N)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: the Open card carries the practice sentence, the use notice and the citation (D2, PE-21, §12)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: top-bar title and document.title \"Practice report · Case 1 · Stoipath Learn\" (Practice report · Case 1)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: rail Open · Review · Report · Compare = current, locked, locked, locked (current, locked, locked, locked)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: node 1 (dataset node_0) is open in view A (camelyon17.c17s-0006)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: the fragment reads #c=c17-01&n=0 (#c=c17-01&n=0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: axe-core WCAG 2.2 AA on the Open card: 0 violations"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: a phase change made from the card moves focus to the phase title (SC 2.4.3; soCardTitle)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: Review CTA \"Fill the practice report N\" and the unopened-nodes note (4 nodes not opened yet: Node 2, Node 3, Node 4 and Node 5.)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: rail done, current, locked, locked; Review discloses select, point, measure (§10) (done,current,locked,locked; [\"select\",\"point\",\"measure\"])"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: top-bar step \"Review · node 1 of 5\" (Review · node 1 of 5)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: ] ] → Node 3: step \"Review · node 3 of 5\", fragment #c=c17-01&n=2, no history entry (replaceState)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: a 1 s drag writes nothing in #taskCard (0)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: ⇧N back to Open; Review stays reached (current,reached,locked,locked)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: Report CTA \"Submit practice report ↵\", secondary \"Back to the nodes ⇧N\" (Submit practice report ↵ | Back to the nodes ⇧N)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: N is refused on Report with the sentence (\"Submit the practice report first: the button is in the card.\")"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: Compare is reached only by submission (rail click refused: \"Compare opens when you submit the practice report.\")"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: the rail goes back to Review and forward again to the reached Report"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-4: a reload during Review returns to Case 1, Review, Node 3 (dataset node_2, camelyon17.c17s-0008) with the call kept (macro)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-4: the row reads \"Case 1 · 5 nodes · in review · node 3 of 5\""
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: back on the worklist the fragment is empty and the plate says No case open"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-4: a reload without a fragment shows the worklist with the case in review"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: submission moves to Compare; the result is stored with the progress; rail done ×3, current (done,done,done,current)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: Compare CTA \"Next case N\", secondary \"Export results\" (Next case N)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: axe-core WCAG 2.2 AA on the Compare card: 0 violations"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: ⇧N from Compare returns to Review read-only; its CTA goes back to the comparison (Compare with the reference N)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: Next case opens Case 2 on its Open card"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: on the last case the Compare CTA is \"Back to the worklist\" (Back to the worklist)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P: per-case feedback shows the class in the rows (submitted · minor discrepancy | submitted · match)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-P / WRK-4: no console or page errors ()"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-5: #c=c17-01&n=2 opens Case 1 at Node 3 (dataset node_2, camelyon17.c17s-0008)"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-5: an unknown case id opens the worklist with the sentence (\"This link names a case that is not in this worklist; opened the worklist instead.\")"
+  },
+  {
+   "tag": "worklist",
+   "ok": true,
+   "msg": "WRK-5: no console or page errors ()"
+  }
+ ]
+}

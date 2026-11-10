@@ -10,7 +10,7 @@
  */
 import type { DeviceInfo, Metrics } from '../../metrics';
 import type { OverlayLive } from '../../overlay';
-import type { FrameSnapshot, ViewerButtonHandlers, ViewerUi } from '../../viewer';
+import type { FrameSnapshot, Viewer, ViewerButtonHandlers, ViewerUi } from '../../viewer';
 import type { Disposer, NoticeSink, ShellApi, SlideContext, ToolId, ViewId } from '../../shell/contracts';
 import { $, AttrSlot, TextSlot } from '../../shell/dom';
 import { spokenStain } from '../../shell/facts';
@@ -120,6 +120,16 @@ export class EngineChrome {
   label: SlideLabel | null = null;
   /** Previous zoom for `togglemag` (Z). */
   prevLogZoom: number | null = null;
+  /**
+   * Additive host option (SIGNOUT.md §19.6, SIGNOUT-QUESTIONS 2026-11-09 "keyboard zoom and pan on the uncovered
+   * view"): the CSS px of pane A covered on the left / right (the practice page passes `env.visibleInsets('A')`, a
+   * cached read, no layout). When set, the keyboard zooms (presets 1–6, typed zoom, Z, + / −) keep the centre of the
+   * uncovered span fixed and ⇧+arrow steps by the uncovered span. Null (learn.html, the default): the canvas centre
+   * and the whole canvas, exactly as before.
+   */
+  keyInsets: (() => { left: number; right: number } | null) | null = null;
+  /** The target of the last uncovered-span key zoom, the base of the next one while the camera still eases to it. */
+  private keyTarget: { cx: number; cy: number; lz: number } | null = null;
   private last: FrameSnapshot | null = null;
   private readonly settledBy: Record<ViewId, boolean> = { A: true, B: true };
   gesturing = false;
@@ -335,8 +345,56 @@ export class EngineChrome {
     const snap = v.snapshot;
     this.prevLogZoom = snap.logZoom;
     const lz = Math.min(snap.maxLogZoom, Math.max(snap.minLogZoom, Math.log2((v.pyramid.mpp * snap.renderDpr) / s)));
-    v.commands.flyTo(snap.cx, snap.cy, lz, 'preset', this.env.reducedMotion());
+    this.flyKeepingView(v, lz, 'preset');
     this.notices.transient(`${label} · ${s.toFixed(2)} µm/px (derived)`, 4000, false);
+  }
+
+  /** Device px from the canvas centre to the centre of the uncovered span (0 without `keyInsets`). */
+  private uncoveredShift(snap: FrameSnapshot): number {
+    const ins = this.keyInsets?.() ?? null;
+    if (ins === null) return 0;
+    const l = ins.left > 0 ? ins.left : 0;
+    const r = ins.right > 0 ? ins.right : 0;
+    const dpr = snap.cssW > 0 ? snap.viewW / snap.cssW : snap.renderDpr;
+    return ((l - r) / 2) * dpr;
+  }
+  /**
+   * Fly `v` to log zoom `lz` about the view centre: the canvas centre (learn.html, as before), or with `keyInsets` the
+   * centre of the uncovered span, whose world point stays put: cx' = cx + δ (1/k − 1/k'), δ the device-px shift of the
+   * uncovered centre and k = 2^logZoom. On key presses only, never per frame.
+   */
+  flyKeepingView(v: Viewer, lz: number, kind: string): void {
+    const snap = v.snapshot;
+    const shift = this.uncoveredShift(snap);
+    const base = shift !== 0 && snap.animating && this.keyTarget !== null ? this.keyTarget : { cx: snap.cx, cy: snap.cy, lz: snap.logZoom };
+    const z = Math.min(snap.maxLogZoom, Math.max(snap.minLogZoom, lz));
+    const cx = shift === 0 ? snap.cx : base.cx + shift * (2 ** -base.lz - 2 ** -z);
+    const cy = shift === 0 ? snap.cy : base.cy;
+    this.keyTarget = shift === 0 ? null : { cx, cy, lz: z };
+    v.commands.flyTo(cx, cy, z, kind, this.env.reducedMotion());
+  }
+  /** + / − (`zoomin` / `zoomout`): the engine's eased zoom about the canvas centre, or with `keyInsets` a fly about the uncovered centre. */
+  zoomStep(v: Viewer, levels: number): void {
+    const snap = v.snapshot;
+    if (this.uncoveredShift(snap) === 0) {
+      v.commands.zoomBy(levels);
+      return;
+    }
+    const from = snap.animating && this.keyTarget !== null ? this.keyTarget.lz : snap.logZoom;
+    this.flyKeepingView(v, from + levels, 'key');
+  }
+  /**
+   * A key pan's viewport in device px: the whole canvas (learn.html; the 10 % arrow pan everywhere), or with
+   * `keyInsets` and `uncovered` (⇧+arrow) the uncovered span. A key pan also ends the key-zoom chain.
+   */
+  viewportStep(v: Viewer, uncovered: boolean): [number, number] {
+    const snap = v.snapshot;
+    this.keyTarget = null;
+    const ins = uncovered ? (this.keyInsets?.() ?? null) : null;
+    if (ins === null) return [snap.viewW, snap.viewH];
+    const dpr = snap.cssW > 0 ? snap.viewW / snap.cssW : snap.renderDpr;
+    const covered = ((ins.left > 0 ? ins.left : 0) + (ins.right > 0 ? ins.right : 0)) * dpr;
+    return [Math.max(1, snap.viewW - covered), snap.viewH];
   }
   private wireTypedZoom(): void {
     const magBtn = $('magBtn');

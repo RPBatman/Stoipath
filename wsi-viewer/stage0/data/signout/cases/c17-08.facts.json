@@ -1,0 +1,95 @@
+{
+  "schema": "stoipath.learn.facts/1",
+  "module": "c17-08",
+  "version": "0.2.0",
+  "facts": [
+    {
+      "id": "F1",
+      "pointer": "/case/vignette/text",
+      "quote": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules.",
+      "basis": "Invented for teaching (D13, §15.2): one generic text for all ten cases, labelled \"Teaching vignette (invented)\"; CAMELYON17 publishes no clinical record (FACTS §0). Its one dataset claim, one slide = one node, is S0.1 in common.facts.json.",
+      "status": "pending",
+      "note": "S8.1 · Vignette (§15.2)"
+    },
+    {
+      "id": "F2",
+      "pointer": "/steps/0/text",
+      "quote": "Five slides, one node each by the data set's convention. Open every node, call each one, then fill the practice report.",
+      "basis": "The data set's one-slide-one-node convention (S0.1, common.facts.json); the rest is instruction.",
+      "status": "pending",
+      "note": "S8.2 · Case packet (Open step)"
+    },
+    {
+      "id": "F3",
+      "pointer": "/extensions/signout/nodes/0/reference/sentence",
+      "quote": "Reference: isolated tumour cells, about 59 µm (longest single annotated outline; CAMELYON17 annotation of 2 polygons, about 0.0022 mm²). Annotated foci lying within 0.1 mm of each other span about 110 µm; that span is annotation geometry, not how a deposit is measured. Under AJCC breast staging, which CAMELYON17 applies, a node with ITCs only is not counted toward the number of positive nodes.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_086_node_0.tif = itc; annotations/patient_086_node_0.xml converted to overlays/patient_086_node_0.geojson (layer version 7fb7ee1f): 2 Tumor polygon(s); largest single polygon Feret 58.7 µm; polygons within 100 µm merged span 111.5 µm (1 cluster(s)); area 0.00225 mm²; at this slide's 0.25 µm/px (ImageDescription DICOM_PIXEL_SPACING \"0.00025\" mm (no XResolution tag)); Feret by convex hull, written \"about\" to two significant figures. The outline is the challenge's annotation extent, not a pathologist's measurement of this case (PE-10; FACTS §4.3, §1.1). The ITC sentence is AJCC 8th edition's rule for breast pN, applied by the challenge (S0.2, PE-1).",
+      "status": "pending",
+      "note": "S8.3 · Node label and size · Node 1 (patient_086_node_0)"
+    },
+    {
+      "id": "F4",
+      "pointer": "/extensions/signout/nodes/1/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_086_node_1.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S8.4 · Node label · Node 2 (patient_086_node_1)"
+    },
+    {
+      "id": "F5",
+      "pointer": "/extensions/signout/nodes/2/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_086_node_2.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S8.5 · Node label · Node 3 (patient_086_node_2)"
+    },
+    {
+      "id": "F6",
+      "pointer": "/extensions/signout/nodes/3/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_086_node_3.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S8.6 · Node label · Node 4 (patient_086_node_3)"
+    },
+    {
+      "id": "F7",
+      "pointer": "/extensions/signout/nodes/4/reference/sentence",
+      "quote": "Reference: isolated tumour cells, about 73 µm (longest single annotated outline; CAMELYON17 annotation of 2 polygons, about 0.0024 mm²). Annotated foci lying within 0.1 mm of each other span about 130 µm; that span is annotation geometry, not how a deposit is measured. Under AJCC breast staging, which CAMELYON17 applies, a node with ITCs only is not counted toward the number of positive nodes.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_086_node_4.tif = itc; annotations/patient_086_node_4.xml converted to overlays/patient_086_node_4.geojson (layer version 49d67245): 2 Tumor polygon(s); largest single polygon Feret 72.8 µm; polygons within 100 µm merged span 128.0 µm (1 cluster(s)); area 0.002375 mm²; at this slide's 0.25 µm/px (ImageDescription DICOM_PIXEL_SPACING \"0.00025\" mm (no XResolution tag)); Feret by convex hull, written \"about\" to two significant figures. The outline is the challenge's annotation extent, not a pathologist's measurement of this case (PE-10; FACTS §4.3, §1.1). The ITC sentence is AJCC 8th edition's rule for breast pN, applied by the challenge (S0.2, PE-1).",
+      "status": "pending",
+      "note": "S8.7 · Node label and size · Node 5 (patient_086_node_4)"
+    },
+    {
+      "id": "F8",
+      "pointer": "/extensions/signout/reference/sentence",
+      "quote": "Reference pN: pN0(i+) under CAMELYON17's simplified rules (0 nodes with micro- or macrometastasis; the 2 ITC-only nodes are not counted as positive, as in AJCC). The largest annotated deposit is in node 5.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) patient row patient_086.zip = pN0(i+); derivePn of the node labels ['itc', 'negative', 'negative', 'negative', 'itc'] gives pN0(i+) (the rules reproduce stages.csv for 100 of 100 patients, FACTS §4.1, §4.2); counts macro 0, micro 0, ITC 2, positive 0. Largest annotated deposit: node 5 (72.8 µm).",
+      "status": "pending",
+      "note": "S8.8 · pN (§15.3)"
+    },
+    {
+      "id": "F9",
+      "pointer": "/extensions/signout/teaching/0/text",
+      "quote": "Two nodes with isolated tumour cells and no micro- or macrometastasis: still pN0(i+); the number of ITC nodes does not change the category.",
+      "basis": "stages.csv: nodes 0 and 4 itc, nodes 1–3 negative, pN0(i+); derivePn: ITC only → pN0(i+) whatever their number.",
+      "status": "pending",
+      "note": "S8.9 · Teaching T1"
+    },
+    {
+      "id": "F10",
+      "pointer": "/extensions/signout/teaching/1/text",
+      "quote": "Isolated tumour cells are easy to miss on a single H&E level; many laboratories find them with cytokeratin immunohistochemistry or deeper levels, neither of which exists for these slides. A missed ITC node is a minor discrepancy here (pN0 vs pN0(i+)); the lesson is where and how to look, not that H&E alone should always find them.",
+      "basis": "General pathology practice: sentinel-node protocols find ITCs with cytokeratin immunohistochemistry or deeper levels; neither exists for CAMELYON17 slides (FACTS §0). pN0 vs pN0(i+) is minor by §6.2 (both N0). PE-18.",
+      "status": "pending",
+      "note": "S8.10 · Teaching T2"
+    },
+    {
+      "id": "F11",
+      "pointer": "/extensions/signout/teaching/2/text",
+      "quote": "These slides come from a scanner that stores no pixels for empty areas; blank regions are drawn as background.",
+      "basis": "Centre 4 (Philips) slides store TileByteCounts 0 for empty areas (FACTS §1.3: 52 % of level 0 on patient_092_node_1); the engine paints them with absentFill 254, 254, 254 (SIGNOUT.md §8.1).",
+      "status": "pending",
+      "note": "S8.11 · Teaching T3"
+    }
+  ]
+}

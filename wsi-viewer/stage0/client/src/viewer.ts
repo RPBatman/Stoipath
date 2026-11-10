@@ -115,6 +115,11 @@ export interface Stage0Api {
   fitLogZoom(): number;
   state(): Stage0State;
   pathDone: boolean;
+  /**
+   * Decode one tile of a range slide in a worker and return its RGBA (SIGNOUT.md E4, ENG-2). Present only when
+   * startViewer received `debugProbe: true`, which the measurement page never passes.
+   */
+  decodeProbe?(level: number, x: number, y: number): Promise<{ rgba: Uint8ClampedArray; w: number; h: number; url: string }>;
 }
 declare global {
   interface Window {
@@ -212,6 +217,13 @@ export interface FrameSnapshot {
   maxLogZoom: number;
   pathRunning: boolean;
   pathProgress: string;
+  /**
+   * Tile failures counted by the scheduler (SIGNOUT.md E5, ER-11; additive): errors (not aborts), watchdog timeouts,
+   * and the last failure text ("tile L/x_y: message"), null until one happens. 0 / 0 / null in a healthy session.
+   */
+  errors: number;
+  timeouts: number;
+  lastFailure: string | null;
 }
 
 export interface ViewerCommands {
@@ -302,6 +314,11 @@ export interface ViewerOptions {
   measurementStatus?: boolean;
   /** Hold a screen wake lock while the scripted path runs, where the browser offers one (feature-detected). */
   wakeLockDuringPath?: boolean;
+  /**
+   * Expose `__stage0.decodeProbe(level, x, y)` (SIGNOUT.md E4, ENG-2; the sign-out harness page only). Default false;
+   * the measurement page never passes it.
+   */
+  debugProbe?: boolean;
 }
 
 interface WakeLockSentinelLike {
@@ -416,7 +433,7 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   overlay.setStatus('loading manifest…');
   const manifestUrl = await resolveManifestUrl(params.get('manifest'));
   const { pyramid, manifest } = await loadPyramidWithManifest(manifestUrl);
-  const protocol = protocolOf(pyramid.manifestUrl);
+  const protocol = pyramid.tileProtocol ?? protocolOf(pyramid.manifestUrl);
   overlay.setStatus('starting renderer…');
 
   // Texture array sized to this screen and device class (renderer.ts chooseLayerCount; constants.ts "GPU upload").
@@ -447,6 +464,8 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
   const pool = new DecodePool(workerCount, (msg: WorkerResponse) => scheduler.handleWorkerMessage(msg));
   pool.onError = (message) => overlay.showError?.(message);
   scheduler = new Scheduler(pyramid, cache, pool, protocol);
+  // Remote range slide (SIGNOUT.md E5): every worker gets the source; array fetches go through the pool.
+  pyramid.rangeSource?.attach(pool);
   scheduler.onTile = (msg) => {
     if (msg.type !== 'tile') return;
     metrics.noteTile(msg.tBody - msg.tStart, msg.tDecoded - msg.tBody, msg.bytes);
@@ -520,6 +539,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     maxLogZoom: 0,
     pathRunning: false,
     pathProgress: '',
+    errors: 0,
+    timeouts: 0,
+    lastFailure: null,
   };
   const fillCameraSnapshot = (): void => {
     snapshot.logZoom = cam.logZoom;
@@ -712,6 +734,14 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     }),
     pathDone: false,
   };
+  if (opts.debugProbe === true) {
+    api.decodeProbe = async (level, x, y) => {
+      if (pyramid.levelReady !== undefined && !pyramid.levelReady(level, 0)) throw new Error(`level ${level} is not resident yet`);
+      const url = pyramid.tileUrl(level, x, y);
+      const r = await pool.probe(url);
+      return { rgba: r.rgba, w: r.w, h: r.h, url };
+    };
+  }
   if (exposeGlobal) window.__stage0 = api;
   path.onDone = () => {
     releaseWakeLock();
@@ -765,6 +795,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
     else if (path.running) acquireWakeLock(); // the browser releases a wake lock when the page is hidden
   };
   document.addEventListener('visibilitychange', onVisibility);
+  // Range slides only (SIGNOUT.md §8.4, §19.5): back online → every failed tile is requested again at once.
+  const onOnline = (): void => scheduler.resetFailures();
+  if (pyramid.rangeSource !== undefined) window.addEventListener('online', onOnline);
 
   // Context loss (REVIEW H5): mobile drivers commit texture memory lazily, so an oversize array fails seconds later as
   // a context loss. Recover with half the layers, remember the count for the next load in this tab, keep the metrics.
@@ -994,6 +1027,9 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
       snapshot.lost = renderer.lost;
       snapshot.pathRunning = path.running;
       snapshot.pathProgress = path.progress;
+      snapshot.errors = scheduler.counters.errors;
+      snapshot.timeouts = scheduler.counters.timeouts;
+      snapshot.lastFailure = scheduler.lastFailure;
       for (const cb of frameHooks) cb(snapshot);
     }
 
@@ -1042,10 +1078,12 @@ export async function startViewer(opts: ViewerOptions): Promise<Viewer> {
       dprWatch = null;
     }
     document.removeEventListener('visibilitychange', onVisibility);
+    window.removeEventListener('online', onOnline);
     frameHooks.length = 0;
     resizeHooks.length = 0;
     path.onDone = null;
     releaseWakeLock();
+    pyramid.rangeSource?.dispose();
     pool.terminate();
     // A live PerformanceObserver is a GC root: without this every disposed engine (canvas, GL context, cache, frame log)
     // stays reachable through Metrics (Phase A review, engine lens). Queued decoded bitmaps are closed at once too.

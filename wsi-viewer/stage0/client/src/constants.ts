@@ -268,3 +268,32 @@ export const OVERLAY_REFRESH_FRAMES = 5;
 // ---------------------------------------------------------------- renderer limits
 /** Maximum instanced cells drawn per frame (4K at DPR 2 and s = 0.5 is ~170 cells; the rest is headroom). task. */
 export const MAX_INSTANCES = 1024;
+
+// ---------------------------------------------------------------- remote range source (SIGNOUT.md §4.3 E6, §8; Wave S0)
+/** A level whose offset arrays failed is retried on the next tier-0 demand after min(2^n, this) seconds (§8.4). */
+export const RANGE_ARRAY_RETRY_MAX_S = 30;
+/**
+ * Levels with at most this many tiles carry their offset arrays inline in the slide index (build_signout_index.py uses
+ * the same value), so the first view needs no array request at DSF 1 or 2 (level 4 has 132-312 tiles on every pilot
+ * slide; ER-7).
+ */
+export const RANGE_INLINE_MAX_TILES = 320;
+/** Module-level LRU of parsed offset arrays, keyed source URL + ETag + level; survives viewer.dispose() (ER-8, D27). */
+export const RANGE_ARRAY_LRU_BYTES = 8 * 1024 * 1024;
+/**
+ * Soft cancels (the scheduler's "no longer wanted") on the range path: 'abort' aborts the fetch below
+ * CANCEL_BYTES_FRACTION as the tile path does; 'finish' lets every range request finish (an abort closes an HTTP/1.1
+ * socket and the next request pays a new TCP + TLS set-up, about 2 RTT, F§3). Forced (watchdog) cancels always abort.
+ * Wave S0, SO-P10 (SIGNOUT.md §19.1): the scripted review at 40 ms emulated RTT and 10 Mbit/s, six runs per policy,
+ * took 7.57 s mean with 'finish' and 7.70 s with 'abort' (within run-to-run noise; 6 connections either way; soft
+ * cancels are rare on this path, 0-5 per review; 1-2 % more bytes with 'finish'). 'finish' is adopted: the faster
+ * mean, and on a real link an aborted HTTP/1.1 request costs a new TCP + TLS connection the stub cannot show.
+ */
+export const RANGE_SOFT_CANCEL: 'abort' | 'finish' = 'finish';
+/**
+ * Fetch cache mode of range requests (ER-8; measured in Wave S0, SIGNOUT.md §19.1): Chromium does serve a repeated
+ * identical single Range from its disk cache with S3's headers (ETag, Last-Modified, no Cache-Control), but once it
+ * holds part of an object it adds `If-Range` to every new range request of that URL, which ENG-4 forbids (S3 would
+ * answer a mismatch with the whole object). So 'no-store'; the arrays LRU (range-source.ts) covers node switches.
+ */
+export const RANGE_FETCH_CACHE: RequestCache = 'no-store';

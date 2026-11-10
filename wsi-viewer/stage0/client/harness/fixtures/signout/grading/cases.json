@@ -1,0 +1,3266 @@
+{
+ "cases": [
+  {
+   "contentHash": "sha256:f7e85a043ab4ac66bfe0169ec0f55c6607fc819a219c429ff0398895503605d3",
+   "id": "c17-01",
+   "module": {
+    "extensions": {
+     "signout": {
+      "dataset": {
+       "annotations": [
+        "patient_017_node_1.xml",
+        "patient_017_node_2.xml",
+        "patient_017_node_4.xml"
+       ],
+       "centre": 0,
+       "name": "CAMELYON17",
+       "patient": "patient_017",
+       "stagesCsv": {
+        "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv"
+       }
+      },
+      "nodes": [
+       {
+        "annotation": null,
+        "ref": "n0",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n0",
+        "slideId": "patient_017_node_0",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 1"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            39827,
+            89827,
+            40173,
+            90173
+           ],
+           "featureIds": [
+            "n1-c1-f1"
+           ],
+           "feret_um": 84,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n1",
+        "reference": {
+         "area_mm2": 0.0024,
+         "clusterSpan_um": 84,
+         "label": "itc",
+         "largestDeposit_um": 84,
+         "polygons": 1,
+         "sentence": "Reference: isolated tumour cells, about 84 µm (longest single annotated outline; CAMELYON17 annotation of 1 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px"
+        },
+        "slide": "n1",
+        "slideId": "patient_017_node_1",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 2"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            38504,
+            93504,
+            51496,
+            106496
+           ],
+           "featureIds": [
+            "n2-c1-f1"
+           ],
+           "feret_um": 3158,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n2",
+        "reference": {
+         "area_mm2": 7.76,
+         "clusterSpan_um": 3158,
+         "label": "macro",
+         "largestDeposit_um": 3158,
+         "polygons": 17,
+         "sentence": "Reference: macrometastasis, about 3158 µm (longest single annotated outline; CAMELYON17 annotation of 17 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px"
+        },
+        "slide": "n2",
+        "slideId": "patient_017_node_2",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 3"
+       },
+       {
+        "annotation": null,
+        "ref": "n3",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n3",
+        "slideId": "patient_017_node_3",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 4"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            50403,
+            108403,
+            53597,
+            111597
+           ],
+           "featureIds": [
+            "n4-c1-f1",
+            "n4-c1-f2"
+           ],
+           "feret_um": 776,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n4",
+        "reference": {
+         "area_mm2": 0.52,
+         "clusterSpan_um": 926,
+         "label": "micro",
+         "largestDeposit_um": 776,
+         "polygons": 20,
+         "sentence": "Reference: micrometastasis, about 776 µm (longest single annotated outline; CAMELYON17 annotation of 20 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px"
+        },
+        "slide": "n4",
+        "slideId": "patient_017_node_4",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 5"
+       }
+      ],
+      "reference": {
+       "largestDepositNode": "n2",
+       "largestDeposit_um": 3158,
+       "nodesExamined": 5,
+       "nodesItc": 1,
+       "nodesMacro": 2,
+       "nodesMicro": 1,
+       "nodesPositive": 3,
+       "pN": "pN1",
+       "sentence": "Reference pN: pN1 under CAMELYON17's simplified rules."
+      },
+      "report": {
+       "adequateScale_um_per_px": {
+        "itc": 0.5,
+        "macro": 2.0,
+        "micro": 1.0
+       },
+       "sizeTolerance": 0.2,
+       "viewedAt_um_per_px": [
+        1.0,
+        0.5
+       ]
+      },
+      "rules": "camelyon17-simplified/1",
+      "schema": "stoipath.learn.signout-case/1",
+      "teaching": []
+     }
+    },
+    "id": "c17-01",
+    "items": [],
+    "schema": "stoipath.learn.module/1",
+    "slides": [
+     {
+      "catalogueId": "camelyon17.c17s-0001",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 1 · node 1 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n0",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0002",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 1 · node 2 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n1",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0003",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 1 · node 3 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n2",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0004",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 1 · node 4 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n3",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0005",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 1 · node 5 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n4",
+      "stain": "H&E"
+     }
+    ],
+    "version": "0.0.1-fixture"
+   },
+   "mpp": [
+    0.2431,
+    0.2431,
+    0.2431,
+    0.2431,
+    0.2431
+   ],
+   "number": 1,
+   "patient": "patient_017",
+   "polygons": [
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n1-c1-f1",
+      "rings": [
+       [
+        [
+         40172.77,
+         90000.0
+        ],
+        [
+         40169.45,
+         90033.71
+        ],
+        [
+         40159.62,
+         90066.12
+        ],
+        [
+         40143.65,
+         90095.98
+        ],
+        [
+         40122.17,
+         90122.17
+        ],
+        [
+         40095.98,
+         90143.65
+        ],
+        [
+         40066.12,
+         90159.62
+        ],
+        [
+         40033.71,
+         90169.45
+        ],
+        [
+         40000.0,
+         90172.77
+        ],
+        [
+         39966.29,
+         90169.45
+        ],
+        [
+         39933.88,
+         90159.62
+        ],
+        [
+         39904.02,
+         90143.65
+        ],
+        [
+         39877.83,
+         90122.17
+        ],
+        [
+         39856.35,
+         90095.98
+        ],
+        [
+         39840.38,
+         90066.12
+        ],
+        [
+         39830.55,
+         90033.71
+        ],
+        [
+         39827.23,
+         90000.0
+        ],
+        [
+         39830.55,
+         89966.29
+        ],
+        [
+         39840.38,
+         89933.88
+        ],
+        [
+         39856.35,
+         89904.02
+        ],
+        [
+         39877.83,
+         89877.83
+        ],
+        [
+         39904.02,
+         89856.35
+        ],
+        [
+         39933.88,
+         89840.38
+        ],
+        [
+         39966.29,
+         89830.55
+        ],
+        [
+         40000.0,
+         89827.23
+        ],
+        [
+         40033.71,
+         89830.55
+        ],
+        [
+         40066.12,
+         89840.38
+        ],
+        [
+         40095.98,
+         89856.35
+        ],
+        [
+         40122.17,
+         89877.83
+        ],
+        [
+         40143.65,
+         89904.02
+        ],
+        [
+         40159.62,
+         89933.88
+        ],
+        [
+         40169.45,
+         89966.29
+        ],
+        [
+         40172.77,
+         90000.0
+        ]
+       ]
+      ]
+     }
+    ],
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n2-c1-f1",
+      "rings": [
+       [
+        [
+         51495.27,
+         100000.0
+        ],
+        [
+         51370.46,
+         101267.16
+        ],
+        [
+         51000.85,
+         102485.63
+        ],
+        [
+         50400.62,
+         103608.58
+        ],
+        [
+         49592.85,
+         104592.85
+        ],
+        [
+         48608.58,
+         105400.62
+        ],
+        [
+         47485.63,
+         106000.85
+        ],
+        [
+         46267.16,
+         106370.46
+        ],
+        [
+         45000.0,
+         106495.27
+        ],
+        [
+         43732.84,
+         106370.46
+        ],
+        [
+         42514.37,
+         106000.85
+        ],
+        [
+         41391.42,
+         105400.62
+        ],
+        [
+         40407.15,
+         104592.85
+        ],
+        [
+         39599.38,
+         103608.58
+        ],
+        [
+         38999.15,
+         102485.63
+        ],
+        [
+         38629.54,
+         101267.16
+        ],
+        [
+         38504.73,
+         100000.0
+        ],
+        [
+         38629.54,
+         98732.84
+        ],
+        [
+         38999.15,
+         97514.37
+        ],
+        [
+         39599.38,
+         96391.42
+        ],
+        [
+         40407.15,
+         95407.15
+        ],
+        [
+         41391.42,
+         94599.38
+        ],
+        [
+         42514.37,
+         93999.15
+        ],
+        [
+         43732.84,
+         93629.54
+        ],
+        [
+         45000.0,
+         93504.73
+        ],
+        [
+         46267.16,
+         93629.54
+        ],
+        [
+         47485.63,
+         93999.15
+        ],
+        [
+         48608.58,
+         94599.38
+        ],
+        [
+         49592.85,
+         95407.15
+        ],
+        [
+         50400.62,
+         96391.42
+        ],
+        [
+         51000.85,
+         97514.37
+        ],
+        [
+         51370.46,
+         98732.84
+        ],
+        [
+         51495.27,
+         100000.0
+        ]
+       ]
+      ]
+     }
+    ],
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n4-c1-f1",
+      "rings": [
+       [
+        [
+         53596.05,
+         110000.0
+        ],
+        [
+         53565.38,
+         110311.37
+        ],
+        [
+         53474.56,
+         110610.78
+        ],
+        [
+         53327.07,
+         110886.72
+        ],
+        [
+         53128.58,
+         111128.58
+        ],
+        [
+         52886.72,
+         111327.07
+        ],
+        [
+         52610.78,
+         111474.56
+        ],
+        [
+         52311.37,
+         111565.38
+        ],
+        [
+         52000.0,
+         111596.05
+        ],
+        [
+         51688.63,
+         111565.38
+        ],
+        [
+         51389.22,
+         111474.56
+        ],
+        [
+         51113.28,
+         111327.07
+        ],
+        [
+         50871.42,
+         111128.58
+        ],
+        [
+         50672.93,
+         110886.72
+        ],
+        [
+         50525.44,
+         110610.78
+        ],
+        [
+         50434.62,
+         110311.37
+        ],
+        [
+         50403.95,
+         110000.0
+        ],
+        [
+         50434.62,
+         109688.63
+        ],
+        [
+         50525.44,
+         109389.22
+        ],
+        [
+         50672.93,
+         109113.28
+        ],
+        [
+         50871.42,
+         108871.42
+        ],
+        [
+         51113.28,
+         108672.93
+        ],
+        [
+         51389.22,
+         108525.44
+        ],
+        [
+         51688.63,
+         108434.62
+        ],
+        [
+         52000.0,
+         108403.95
+        ],
+        [
+         52311.37,
+         108434.62
+        ],
+        [
+         52610.78,
+         108525.44
+        ],
+        [
+         52886.72,
+         108672.93
+        ],
+        [
+         53128.58,
+         108871.42
+        ],
+        [
+         53327.07,
+         109113.28
+        ],
+        [
+         53474.56,
+         109389.22
+        ],
+        [
+         53565.38,
+         109688.63
+        ],
+        [
+         53596.05,
+         110000.0
+        ]
+       ]
+      ]
+     },
+     {
+      "clusterId": "c1",
+      "featureId": "n4-c1-f2",
+      "rings": [
+       [
+        [
+         52846.81,
+         110000.0
+        ],
+        [
+         52842.07,
+         110048.15
+        ],
+        [
+         52828.02,
+         110094.45
+        ],
+        [
+         52805.22,
+         110137.12
+        ],
+        [
+         52774.52,
+         110174.52
+        ],
+        [
+         52737.12,
+         110205.22
+        ],
+        [
+         52694.45,
+         110228.02
+        ],
+        [
+         52648.15,
+         110242.07
+        ],
+        [
+         52600.0,
+         110246.81
+        ],
+        [
+         52551.85,
+         110242.07
+        ],
+        [
+         52505.55,
+         110228.02
+        ],
+        [
+         52462.88,
+         110205.22
+        ],
+        [
+         52425.48,
+         110174.52
+        ],
+        [
+         52394.78,
+         110137.12
+        ],
+        [
+         52371.98,
+         110094.45
+        ],
+        [
+         52357.93,
+         110048.15
+        ],
+        [
+         52353.19,
+         110000.0
+        ],
+        [
+         52357.93,
+         109951.85
+        ],
+        [
+         52371.98,
+         109905.55
+        ],
+        [
+         52394.78,
+         109862.88
+        ],
+        [
+         52425.48,
+         109825.48
+        ],
+        [
+         52462.88,
+         109794.78
+        ],
+        [
+         52505.55,
+         109771.98
+        ],
+        [
+         52551.85,
+         109757.93
+        ],
+        [
+         52600.0,
+         109753.19
+        ],
+        [
+         52648.15,
+         109757.93
+        ],
+        [
+         52694.45,
+         109771.98
+        ],
+        [
+         52737.12,
+         109794.78
+        ],
+        [
+         52774.52,
+         109825.48
+        ],
+        [
+         52805.22,
+         109862.88
+        ],
+        [
+         52828.02,
+         109905.55
+        ],
+        [
+         52842.07,
+         109951.85
+        ],
+        [
+         52846.81,
+         110000.0
+        ]
+       ]
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "contentHash": "sha256:2d178b8215553fb008aa05441826070672c8d141cc321688d675c9b16ed7b96f",
+   "id": "c17-04",
+   "module": {
+    "extensions": {
+     "signout": {
+      "dataset": {
+       "annotations": [
+        "patient_004_node_4.xml"
+       ],
+       "centre": 0,
+       "name": "CAMELYON17",
+       "patient": "patient_004",
+       "stagesCsv": {
+        "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv"
+       }
+      },
+      "nodes": [
+       {
+        "annotation": null,
+        "ref": "n0",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n0",
+        "slideId": "patient_004_node_0",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 1"
+       },
+       {
+        "annotation": null,
+        "ref": "n1",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n1",
+        "slideId": "patient_004_node_1",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 2"
+       },
+       {
+        "annotation": null,
+        "ref": "n2",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n2",
+        "slideId": "patient_004_node_2",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 3"
+       },
+       {
+        "annotation": null,
+        "ref": "n3",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n3",
+        "slideId": "patient_004_node_3",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 4"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            49742,
+            99742,
+            50258,
+            100258
+           ],
+           "featureIds": [
+            "n4-c1-f1"
+           ],
+           "feret_um": 125,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n4",
+        "reference": {
+         "area_mm2": 0.015,
+         "clusterSpan_um": 125,
+         "label": "itc",
+         "largestDeposit_um": 125,
+         "polygons": 3,
+         "sentence": "Reference: isolated tumour cells, about 125 µm (longest single annotated outline; CAMELYON17 annotation of 3 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px"
+        },
+        "slide": "n4",
+        "slideId": "patient_004_node_4",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 5"
+       }
+      ],
+      "reference": {
+       "largestDepositNode": "n4",
+       "largestDeposit_um": 125,
+       "nodesExamined": 5,
+       "nodesItc": 1,
+       "nodesMacro": 0,
+       "nodesMicro": 0,
+       "nodesPositive": 0,
+       "pN": "pN0(i+)",
+       "sentence": "Reference pN: pN0(i+) under CAMELYON17's simplified rules."
+      },
+      "report": {
+       "adequateScale_um_per_px": {
+        "itc": 0.5,
+        "macro": 2.0,
+        "micro": 1.0
+       },
+       "sizeTolerance": 0.2,
+       "viewedAt_um_per_px": [
+        1.0,
+        0.5
+       ]
+      },
+      "rules": "camelyon17-simplified/1",
+      "schema": "stoipath.learn.signout-case/1",
+      "teaching": []
+     }
+    },
+    "id": "c17-04",
+    "items": [],
+    "schema": "stoipath.learn.module/1",
+    "slides": [
+     {
+      "catalogueId": "camelyon17.c17s-0016",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 4 · node 1 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n0",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0017",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 4 · node 2 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n1",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0018",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 4 · node 3 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n2",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0019",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 4 · node 4 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n3",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0020",
+      "dataset": "CAMELYON17",
+      "fingerprint": "96651x197226@0.2431@0,0@000000000000",
+      "label": "Case 4 · node 5 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n4",
+      "stain": "H&E"
+     }
+    ],
+    "version": "0.0.1-fixture"
+   },
+   "mpp": [
+    0.2431,
+    0.2431,
+    0.2431,
+    0.2431,
+    0.2431
+   ],
+   "number": 4,
+   "patient": "patient_004",
+   "polygons": [
+    null,
+    null,
+    null,
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n4-c1-f1",
+      "rings": [
+       [
+        [
+         50257.1,
+         100000.0
+        ],
+        [
+         50252.16,
+         100050.16
+        ],
+        [
+         50237.53,
+         100098.39
+        ],
+        [
+         50213.77,
+         100142.83
+        ],
+        [
+         50181.79,
+         100181.79
+        ],
+        [
+         50142.83,
+         100213.77
+        ],
+        [
+         50098.39,
+         100237.53
+        ],
+        [
+         50050.16,
+         100252.16
+        ],
+        [
+         50000.0,
+         100257.1
+        ],
+        [
+         49949.84,
+         100252.16
+        ],
+        [
+         49901.61,
+         100237.53
+        ],
+        [
+         49857.17,
+         100213.77
+        ],
+        [
+         49818.21,
+         100181.79
+        ],
+        [
+         49786.23,
+         100142.83
+        ],
+        [
+         49762.47,
+         100098.39
+        ],
+        [
+         49747.84,
+         100050.16
+        ],
+        [
+         49742.9,
+         100000.0
+        ],
+        [
+         49747.84,
+         99949.84
+        ],
+        [
+         49762.47,
+         99901.61
+        ],
+        [
+         49786.23,
+         99857.17
+        ],
+        [
+         49818.21,
+         99818.21
+        ],
+        [
+         49857.17,
+         99786.23
+        ],
+        [
+         49901.61,
+         99762.47
+        ],
+        [
+         49949.84,
+         99747.84
+        ],
+        [
+         50000.0,
+         99742.9
+        ],
+        [
+         50050.16,
+         99747.84
+        ],
+        [
+         50098.39,
+         99762.47
+        ],
+        [
+         50142.83,
+         99786.23
+        ],
+        [
+         50181.79,
+         99818.21
+        ],
+        [
+         50213.77,
+         99857.17
+        ],
+        [
+         50237.53,
+         99901.61
+        ],
+        [
+         50252.16,
+         99949.84
+        ],
+        [
+         50257.1,
+         100000.0
+        ]
+       ]
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "contentHash": "sha256:25fcd76aac5ca19004361aa324163e7bc20779f512d1c49178a60cdef6300a0c",
+   "id": "c17-03",
+   "module": {
+    "extensions": {
+     "signout": {
+      "dataset": {
+       "annotations": [
+        "patient_046_node_3.xml",
+        "patient_046_node_4.xml"
+       ],
+       "centre": 2,
+       "name": "CAMELYON17",
+       "patient": "patient_046",
+       "stagesCsv": {
+        "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv"
+       }
+      },
+      "nodes": [
+       {
+        "annotation": null,
+        "ref": "n0",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n0",
+        "slideId": "patient_046_node_0",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 1"
+       },
+       {
+        "annotation": null,
+        "ref": "n1",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n1",
+        "slideId": "patient_046_node_1",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 2"
+       },
+       {
+        "annotation": null,
+        "ref": "n2",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n2",
+        "slideId": "patient_046_node_2",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 3"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            39509,
+            92509,
+            44491,
+            97491
+           ],
+           "featureIds": [
+            "n3-c1-f1"
+           ],
+           "feret_um": 1127,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n3",
+        "reference": {
+         "area_mm2": 0.78,
+         "clusterSpan_um": 1127,
+         "label": "micro",
+         "largestDeposit_um": 1127,
+         "polygons": 3,
+         "sentence": "Reference: micrometastasis, about 1127 µm (longest single annotated outline; CAMELYON17 annotation of 3 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2263 µm/px"
+        },
+        "slide": "n3",
+        "slideId": "patient_046_node_3",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 4"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            39571,
+            89571,
+            40429,
+            90429
+           ],
+           "featureIds": [
+            "n4-c1-f1"
+           ],
+           "feret_um": 194,
+           "id": "c1"
+          },
+          {
+           "bbox": [
+            42668,
+            92668,
+            43332,
+            93332
+           ],
+           "featureIds": [
+            "n4-c2-f1"
+           ],
+           "feret_um": 150,
+           "id": "c2"
+          },
+          {
+           "bbox": [
+            46734,
+            98734,
+            47266,
+            99266
+           ],
+           "featureIds": [
+            "n4-c3-f1"
+           ],
+           "feret_um": 120,
+           "id": "c3"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n4",
+        "reference": {
+         "area_mm2": 0.13,
+         "borderline": {
+          "reason": "micro by cell count; no single annotated focus exceeds 0.2 mm"
+         },
+         "clusterSpan_um": 779,
+         "label": "micro",
+         "largestDeposit_um": 194,
+         "polygons": 78,
+         "sentence": "Reference: micrometastasis, about 194 µm (longest single annotated outline; CAMELYON17 annotation of 78 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2263 µm/px"
+        },
+        "slide": "n4",
+        "slideId": "patient_046_node_4",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 5"
+       }
+      ],
+      "reference": {
+       "largestDepositNode": "n3",
+       "largestDeposit_um": 1127,
+       "nodesExamined": 5,
+       "nodesItc": 0,
+       "nodesMacro": 0,
+       "nodesMicro": 2,
+       "nodesPositive": 2,
+       "pN": "pN1mi",
+       "sentence": "Reference pN: pN1mi under CAMELYON17's simplified rules."
+      },
+      "report": {
+       "adequateScale_um_per_px": {
+        "itc": 0.5,
+        "macro": 2.0,
+        "micro": 1.0
+       },
+       "sizeTolerance": 0.2,
+       "viewedAt_um_per_px": [
+        1.0,
+        0.5
+       ]
+      },
+      "rules": "camelyon17-simplified/1",
+      "schema": "stoipath.learn.signout-case/1",
+      "teaching": []
+     }
+    },
+    "id": "c17-03",
+    "items": [],
+    "schema": "stoipath.learn.module/1",
+    "slides": [
+     {
+      "catalogueId": "camelyon17.c17s-0011",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 3 · node 1 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n0",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0012",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 3 · node 2 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n1",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0013",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 3 · node 3 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n2",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0014",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 3 · node 4 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n3",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0015",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 3 · node 5 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n4",
+      "stain": "H&E"
+     }
+    ],
+    "version": "0.0.1-fixture"
+   },
+   "mpp": [
+    0.2263,
+    0.2263,
+    0.2263,
+    0.2263,
+    0.2263
+   ],
+   "number": 3,
+   "patient": "patient_046",
+   "polygons": [
+    null,
+    null,
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n3-c1-f1",
+      "rings": [
+       [
+        [
+         44490.06,
+         95000.0
+        ],
+        [
+         44442.21,
+         95485.79
+        ],
+        [
+         44300.51,
+         95952.9
+        ],
+        [
+         44070.41,
+         96383.4
+        ],
+        [
+         43760.74,
+         96760.74
+        ],
+        [
+         43383.4,
+         97070.41
+        ],
+        [
+         42952.9,
+         97300.51
+        ],
+        [
+         42485.79,
+         97442.21
+        ],
+        [
+         42000.0,
+         97490.06
+        ],
+        [
+         41514.21,
+         97442.21
+        ],
+        [
+         41047.1,
+         97300.51
+        ],
+        [
+         40616.6,
+         97070.41
+        ],
+        [
+         40239.26,
+         96760.74
+        ],
+        [
+         39929.59,
+         96383.4
+        ],
+        [
+         39699.49,
+         95952.9
+        ],
+        [
+         39557.79,
+         95485.79
+        ],
+        [
+         39509.94,
+         95000.0
+        ],
+        [
+         39557.79,
+         94514.21
+        ],
+        [
+         39699.49,
+         94047.1
+        ],
+        [
+         39929.59,
+         93616.6
+        ],
+        [
+         40239.26,
+         93239.26
+        ],
+        [
+         40616.6,
+         92929.59
+        ],
+        [
+         41047.1,
+         92699.49
+        ],
+        [
+         41514.21,
+         92557.79
+        ],
+        [
+         42000.0,
+         92509.94
+        ],
+        [
+         42485.79,
+         92557.79
+        ],
+        [
+         42952.9,
+         92699.49
+        ],
+        [
+         43383.4,
+         92929.59
+        ],
+        [
+         43760.74,
+         93239.26
+        ],
+        [
+         44070.41,
+         93616.6
+        ],
+        [
+         44300.51,
+         94047.1
+        ],
+        [
+         44442.21,
+         94514.21
+        ],
+        [
+         44490.06,
+         95000.0
+        ]
+       ]
+      ]
+     }
+    ],
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n4-c1-f1",
+      "rings": [
+       [
+        [
+         40428.63,
+         90000.0
+        ],
+        [
+         40420.4,
+         90083.62
+        ],
+        [
+         40396.01,
+         90164.03
+        ],
+        [
+         40356.4,
+         90238.14
+        ],
+        [
+         40303.09,
+         90303.09
+        ],
+        [
+         40238.14,
+         90356.4
+        ],
+        [
+         40164.03,
+         90396.01
+        ],
+        [
+         40083.62,
+         90420.4
+        ],
+        [
+         40000.0,
+         90428.63
+        ],
+        [
+         39916.38,
+         90420.4
+        ],
+        [
+         39835.97,
+         90396.01
+        ],
+        [
+         39761.86,
+         90356.4
+        ],
+        [
+         39696.91,
+         90303.09
+        ],
+        [
+         39643.6,
+         90238.14
+        ],
+        [
+         39603.99,
+         90164.03
+        ],
+        [
+         39579.6,
+         90083.62
+        ],
+        [
+         39571.37,
+         90000.0
+        ],
+        [
+         39579.6,
+         89916.38
+        ],
+        [
+         39603.99,
+         89835.97
+        ],
+        [
+         39643.6,
+         89761.86
+        ],
+        [
+         39696.91,
+         89696.91
+        ],
+        [
+         39761.86,
+         89643.6
+        ],
+        [
+         39835.97,
+         89603.99
+        ],
+        [
+         39916.38,
+         89579.6
+        ],
+        [
+         40000.0,
+         89571.37
+        ],
+        [
+         40083.62,
+         89579.6
+        ],
+        [
+         40164.03,
+         89603.99
+        ],
+        [
+         40238.14,
+         89643.6
+        ],
+        [
+         40303.09,
+         89696.91
+        ],
+        [
+         40356.4,
+         89761.86
+        ],
+        [
+         40396.01,
+         89835.97
+        ],
+        [
+         40420.4,
+         89916.38
+        ],
+        [
+         40428.63,
+         90000.0
+        ]
+       ]
+      ]
+     },
+     {
+      "clusterId": "c2",
+      "featureId": "n4-c2-f1",
+      "rings": [
+       [
+        [
+         43331.42,
+         93000.0
+        ],
+        [
+         43325.05,
+         93064.66
+        ],
+        [
+         43306.19,
+         93126.83
+        ],
+        [
+         43275.56,
+         93184.13
+        ],
+        [
+         43234.35,
+         93234.35
+        ],
+        [
+         43184.13,
+         93275.56
+        ],
+        [
+         43126.83,
+         93306.19
+        ],
+        [
+         43064.66,
+         93325.05
+        ],
+        [
+         43000.0,
+         93331.42
+        ],
+        [
+         42935.34,
+         93325.05
+        ],
+        [
+         42873.17,
+         93306.19
+        ],
+        [
+         42815.87,
+         93275.56
+        ],
+        [
+         42765.65,
+         93234.35
+        ],
+        [
+         42724.44,
+         93184.13
+        ],
+        [
+         42693.81,
+         93126.83
+        ],
+        [
+         42674.95,
+         93064.66
+        ],
+        [
+         42668.58,
+         93000.0
+        ],
+        [
+         42674.95,
+         92935.34
+        ],
+        [
+         42693.81,
+         92873.17
+        ],
+        [
+         42724.44,
+         92815.87
+        ],
+        [
+         42765.65,
+         92765.65
+        ],
+        [
+         42815.87,
+         92724.44
+        ],
+        [
+         42873.17,
+         92693.81
+        ],
+        [
+         42935.34,
+         92674.95
+        ],
+        [
+         43000.0,
+         92668.58
+        ],
+        [
+         43064.66,
+         92674.95
+        ],
+        [
+         43126.83,
+         92693.81
+        ],
+        [
+         43184.13,
+         92724.44
+        ],
+        [
+         43234.35,
+         92765.65
+        ],
+        [
+         43275.56,
+         92815.87
+        ],
+        [
+         43306.19,
+         92873.17
+        ],
+        [
+         43325.05,
+         92935.34
+        ],
+        [
+         43331.42,
+         93000.0
+        ]
+       ]
+      ]
+     },
+     {
+      "clusterId": "c3",
+      "featureId": "n4-c3-f1",
+      "rings": [
+       [
+        [
+         47265.13,
+         99000.0
+        ],
+        [
+         47260.04,
+         99051.73
+        ],
+        [
+         47244.95,
+         99101.46
+        ],
+        [
+         47220.45,
+         99147.3
+        ],
+        [
+         47187.48,
+         99187.48
+        ],
+        [
+         47147.3,
+         99220.45
+        ],
+        [
+         47101.46,
+         99244.95
+        ],
+        [
+         47051.73,
+         99260.04
+        ],
+        [
+         47000.0,
+         99265.13
+        ],
+        [
+         46948.27,
+         99260.04
+        ],
+        [
+         46898.54,
+         99244.95
+        ],
+        [
+         46852.7,
+         99220.45
+        ],
+        [
+         46812.52,
+         99187.48
+        ],
+        [
+         46779.55,
+         99147.3
+        ],
+        [
+         46755.05,
+         99101.46
+        ],
+        [
+         46739.96,
+         99051.73
+        ],
+        [
+         46734.87,
+         99000.0
+        ],
+        [
+         46739.96,
+         98948.27
+        ],
+        [
+         46755.05,
+         98898.54
+        ],
+        [
+         46779.55,
+         98852.7
+        ],
+        [
+         46812.52,
+         98812.52
+        ],
+        [
+         46852.7,
+         98779.55
+        ],
+        [
+         46898.54,
+         98755.05
+        ],
+        [
+         46948.27,
+         98739.96
+        ],
+        [
+         47000.0,
+         98734.87
+        ],
+        [
+         47051.73,
+         98739.96
+        ],
+        [
+         47101.46,
+         98755.05
+        ],
+        [
+         47147.3,
+         98779.55
+        ],
+        [
+         47187.48,
+         98812.52
+        ],
+        [
+         47220.45,
+         98852.7
+        ],
+        [
+         47244.95,
+         98898.54
+        ],
+        [
+         47260.04,
+         98948.27
+        ],
+        [
+         47265.13,
+         99000.0
+        ]
+       ]
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "contentHash": "sha256:ab16e5854336e2d17c93f592b47f815d5de26943fba4044a15c9f764cc9907c7",
+   "id": "c17-05",
+   "module": {
+    "extensions": {
+     "signout": {
+      "dataset": {
+       "annotations": [
+        "patient_052_node_1.xml"
+       ],
+       "centre": 2,
+       "name": "CAMELYON17",
+       "patient": "patient_052",
+       "stagesCsv": {
+        "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv"
+       }
+      },
+      "nodes": [
+       {
+        "annotation": null,
+        "ref": "n0",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n0",
+        "slideId": "patient_052_node_0",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 1"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            39351,
+            95351,
+            52649,
+            108649
+           ],
+           "featureIds": [
+            "n1-c1-f1"
+           ],
+           "feret_um": 3009,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n1",
+        "reference": {
+         "area_mm2": 5.14,
+         "clusterSpan_um": 4114,
+         "label": "macro",
+         "largestDeposit_um": 3009,
+         "polygons": 42,
+         "sentence": "Reference: macrometastasis, about 3009 µm (longest single annotated outline; CAMELYON17 annotation of 42 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2263 µm/px"
+        },
+        "slide": "n1",
+        "slideId": "patient_052_node_1",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 2"
+       },
+       {
+        "annotation": null,
+        "ref": "n2",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n2",
+        "slideId": "patient_052_node_2",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 3"
+       },
+       {
+        "annotation": null,
+        "ref": "n3",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n3",
+        "slideId": "patient_052_node_3",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 4"
+       },
+       {
+        "annotation": null,
+        "ref": "n4",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n4",
+        "slideId": "patient_052_node_4",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 5"
+       }
+      ],
+      "reference": {
+       "largestDepositNode": "n1",
+       "largestDeposit_um": 3009,
+       "nodesExamined": 5,
+       "nodesItc": 0,
+       "nodesMacro": 4,
+       "nodesMicro": 0,
+       "nodesPositive": 4,
+       "pN": "pN2",
+       "sentence": "Reference pN: pN2 under CAMELYON17's simplified rules."
+      },
+      "report": {
+       "adequateScale_um_per_px": {
+        "itc": 0.5,
+        "macro": 2.0,
+        "micro": 1.0
+       },
+       "sizeTolerance": 0.2,
+       "viewedAt_um_per_px": [
+        1.0,
+        0.5
+       ]
+      },
+      "rules": "camelyon17-simplified/1",
+      "schema": "stoipath.learn.signout-case/1",
+      "teaching": []
+     }
+    },
+    "id": "c17-05",
+    "items": [],
+    "schema": "stoipath.learn.module/1",
+    "slides": [
+     {
+      "catalogueId": "camelyon17.c17s-0021",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 5 · node 1 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n0",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0022",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 5 · node 2 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n1",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0023",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 5 · node 3 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n2",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0024",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 5 · node 4 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n3",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0025",
+      "dataset": "CAMELYON17",
+      "fingerprint": "89600x214528@0.2263@0,0@000000000000",
+      "label": "Case 5 · node 5 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n4",
+      "stain": "H&E"
+     }
+    ],
+    "version": "0.0.1-fixture"
+   },
+   "mpp": [
+    0.2263,
+    0.2263,
+    0.2263,
+    0.2263,
+    0.2263
+   ],
+   "number": 5,
+   "patient": "patient_052",
+   "polygons": [
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n1-c1-f1",
+      "rings": [
+       [
+        [
+         52648.25,
+         102000.0
+        ],
+        [
+         52520.51,
+         103297.01
+        ],
+        [
+         52142.19,
+         104544.18
+        ],
+        [
+         51527.82,
+         105693.57
+        ],
+        [
+         50701.03,
+         106701.03
+        ],
+        [
+         49693.57,
+         107527.82
+        ],
+        [
+         48544.18,
+         108142.19
+        ],
+        [
+         47297.01,
+         108520.51
+        ],
+        [
+         46000.0,
+         108648.25
+        ],
+        [
+         44702.99,
+         108520.51
+        ],
+        [
+         43455.82,
+         108142.19
+        ],
+        [
+         42306.43,
+         107527.82
+        ],
+        [
+         41298.97,
+         106701.03
+        ],
+        [
+         40472.18,
+         105693.57
+        ],
+        [
+         39857.81,
+         104544.18
+        ],
+        [
+         39479.49,
+         103297.01
+        ],
+        [
+         39351.75,
+         102000.0
+        ],
+        [
+         39479.49,
+         100702.99
+        ],
+        [
+         39857.81,
+         99455.82
+        ],
+        [
+         40472.18,
+         98306.43
+        ],
+        [
+         41298.97,
+         97298.97
+        ],
+        [
+         42306.43,
+         96472.18
+        ],
+        [
+         43455.82,
+         95857.81
+        ],
+        [
+         44702.99,
+         95479.49
+        ],
+        [
+         46000.0,
+         95351.75
+        ],
+        [
+         47297.01,
+         95479.49
+        ],
+        [
+         48544.18,
+         95857.81
+        ],
+        [
+         49693.57,
+         96472.18
+        ],
+        [
+         50701.03,
+         97298.97
+        ],
+        [
+         51527.82,
+         98306.43
+        ],
+        [
+         52142.19,
+         99455.82
+        ],
+        [
+         52520.51,
+         100702.99
+        ],
+        [
+         52648.25,
+         102000.0
+        ]
+       ]
+      ]
+     }
+    ],
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "contentHash": "sha256:6ad44dea757492b06d8b1d860af55a5e1ba4dddaa1197785476f6715fd799848",
+   "id": "c17-07",
+   "module": {
+    "extensions": {
+     "signout": {
+      "dataset": {
+       "annotations": [
+        "patient_036_node_3.xml"
+       ],
+       "centre": 1,
+       "name": "CAMELYON17",
+       "patient": "patient_036",
+       "stagesCsv": {
+        "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv"
+       }
+      },
+      "nodes": [
+       {
+        "annotation": null,
+        "ref": "n0",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n0",
+        "slideId": "patient_036_node_0",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 1"
+       },
+       {
+        "annotation": null,
+        "ref": "n1",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n1",
+        "slideId": "patient_036_node_1",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 2"
+       },
+       {
+        "annotation": null,
+        "ref": "n2",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n2",
+        "slideId": "patient_036_node_2",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 3"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            42377,
+            95377,
+            45623,
+            98623
+           ],
+           "featureIds": [
+            "n3-c1-f1"
+           ],
+           "feret_um": 789,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n3",
+        "reference": {
+         "area_mm2": 0.48,
+         "clusterSpan_um": 789,
+         "label": "micro",
+         "largestDeposit_um": 789,
+         "polygons": 6,
+         "sentence": "Reference: micrometastasis, about 789 µm (longest single annotated outline; CAMELYON17 annotation of 6 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.2431 µm/px"
+        },
+        "slide": "n3",
+        "slideId": "patient_036_node_3",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 4"
+       },
+       {
+        "annotation": null,
+        "ref": "n4",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n4",
+        "slideId": "patient_036_node_4",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 5"
+       }
+      ],
+      "reference": {
+       "largestDepositNode": "n3",
+       "largestDeposit_um": 789,
+       "nodesExamined": 5,
+       "nodesItc": 0,
+       "nodesMacro": 0,
+       "nodesMicro": 1,
+       "nodesPositive": 1,
+       "pN": "pN1mi",
+       "sentence": "Reference pN: pN1mi under CAMELYON17's simplified rules."
+      },
+      "report": {
+       "adequateScale_um_per_px": {
+        "itc": 0.5,
+        "macro": 2.0,
+        "micro": 1.0
+       },
+       "sizeTolerance": 0.2,
+       "viewedAt_um_per_px": [
+        1.0,
+        0.5
+       ]
+      },
+      "rules": "camelyon17-simplified/1",
+      "schema": "stoipath.learn.signout-case/1",
+      "teaching": []
+     }
+    },
+    "id": "c17-07",
+    "items": [],
+    "schema": "stoipath.learn.module/1",
+    "slides": [
+     {
+      "catalogueId": "camelyon17.c17s-0031",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 7 · node 1 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n0",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0032",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 7 · node 2 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n1",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0033",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 7 · node 3 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n2",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0034",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 7 · node 4 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n3",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0035",
+      "dataset": "CAMELYON17",
+      "fingerprint": "94968x210579@0.2431@0,0@000000000000",
+      "label": "Case 7 · node 5 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n4",
+      "stain": "H&E"
+     }
+    ],
+    "version": "0.0.1-fixture"
+   },
+   "mpp": [
+    0.2431,
+    0.2431,
+    0.2431,
+    0.2431,
+    0.2431
+   ],
+   "number": 7,
+   "patient": "patient_036",
+   "polygons": [
+    null,
+    null,
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n3-c1-f1",
+      "rings": [
+       [
+        [
+         45622.79,
+         97000.0
+        ],
+        [
+         45591.61,
+         97316.59
+        ],
+        [
+         45499.26,
+         97621.01
+        ],
+        [
+         45349.3,
+         97901.57
+        ],
+        [
+         45147.49,
+         98147.49
+        ],
+        [
+         44901.57,
+         98349.3
+        ],
+        [
+         44621.01,
+         98499.26
+        ],
+        [
+         44316.59,
+         98591.61
+        ],
+        [
+         44000.0,
+         98622.79
+        ],
+        [
+         43683.41,
+         98591.61
+        ],
+        [
+         43378.99,
+         98499.26
+        ],
+        [
+         43098.43,
+         98349.3
+        ],
+        [
+         42852.51,
+         98147.49
+        ],
+        [
+         42650.7,
+         97901.57
+        ],
+        [
+         42500.74,
+         97621.01
+        ],
+        [
+         42408.39,
+         97316.59
+        ],
+        [
+         42377.21,
+         97000.0
+        ],
+        [
+         42408.39,
+         96683.41
+        ],
+        [
+         42500.74,
+         96378.99
+        ],
+        [
+         42650.7,
+         96098.43
+        ],
+        [
+         42852.51,
+         95852.51
+        ],
+        [
+         43098.43,
+         95650.7
+        ],
+        [
+         43378.99,
+         95500.74
+        ],
+        [
+         43683.41,
+         95408.39
+        ],
+        [
+         44000.0,
+         95377.21
+        ],
+        [
+         44316.59,
+         95408.39
+        ],
+        [
+         44621.01,
+         95500.74
+        ],
+        [
+         44901.57,
+         95650.7
+        ],
+        [
+         45147.49,
+         95852.51
+        ],
+        [
+         45349.3,
+         96098.43
+        ],
+        [
+         45499.26,
+         96378.99
+        ],
+        [
+         45591.61,
+         96683.41
+        ],
+        [
+         45622.79,
+         97000.0
+        ]
+       ]
+      ]
+     }
+    ],
+    null
+   ]
+  },
+  {
+   "contentHash": "sha256:5d5a8decb8865d3a7ce528b8a89ea2e818bd1f1650c940b6a48b36517ed7fcd6",
+   "id": "c17-10",
+   "module": {
+    "extensions": {
+     "signout": {
+      "dataset": {
+       "annotations": [
+        "patient_092_node_1.xml"
+       ],
+       "centre": 4,
+       "name": "CAMELYON17",
+       "patient": "patient_092",
+       "stagesCsv": {
+        "sha256": "1bf47c5c3b205891210f25cdfd167fb53649f5ae807379e734a50a8ca654b247",
+        "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/stages.csv"
+       }
+      },
+      "nodes": [
+       {
+        "annotation": null,
+        "ref": "n0",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n0",
+        "slideId": "patient_092_node_0",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 1"
+       },
+       {
+        "annotation": {
+         "clusters": [
+          {
+           "bbox": [
+            34692,
+            85692,
+            47308,
+            98308
+           ],
+           "featureIds": [
+            "n1-c1-f1"
+           ],
+           "feret_um": 3154,
+           "id": "c1"
+          }
+         ],
+         "layer": "camelyon17-annotation",
+         "version": "fixture-1"
+        },
+        "ref": "n1",
+        "reference": {
+         "area_mm2": 5.84,
+         "clusterSpan_um": 3255,
+         "label": "macro",
+         "largestDeposit_um": 3154,
+         "polygons": 4,
+         "sentence": "Reference: macrometastasis, about 3154 µm (longest single annotated outline; CAMELYON17 annotation of 4 polygons).",
+         "sizeBasis": "maximum Feret diameter of the largest single annotated polygon at 0.25 µm/px"
+        },
+        "slide": "n1",
+        "slideId": "patient_092_node_1",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 2"
+       },
+       {
+        "annotation": null,
+        "ref": "n2",
+        "reference": {
+         "label": "negative",
+         "sentence": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show."
+        },
+        "slide": "n2",
+        "slideId": "patient_092_node_2",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 3"
+       },
+       {
+        "annotation": null,
+        "ref": "n3",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n3",
+        "slideId": "patient_092_node_3",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 4"
+       },
+       {
+        "annotation": null,
+        "ref": "n4",
+        "reference": {
+         "label": "macro",
+         "sentence": "Reference: macrometastasis (label only: this node is not annotated in CAMELYON17, so its location and size cannot be shown)."
+        },
+        "slide": "n4",
+        "slideId": "patient_092_node_4",
+        "tissueBbox": [
+         10000,
+         20000,
+         80000,
+         180000
+        ],
+        "title": "Node 5"
+       }
+      ],
+      "reference": {
+       "largestDepositNode": "n1",
+       "largestDeposit_um": 3154,
+       "nodesExamined": 5,
+       "nodesItc": 0,
+       "nodesMacro": 4,
+       "nodesMicro": 0,
+       "nodesPositive": 4,
+       "pN": "pN2",
+       "sentence": "Reference pN: pN2 under CAMELYON17's simplified rules."
+      },
+      "report": {
+       "adequateScale_um_per_px": {
+        "itc": 0.5,
+        "macro": 2.0,
+        "micro": 1.0
+       },
+       "sizeTolerance": 0.2,
+       "viewedAt_um_per_px": [
+        1.0,
+        0.5
+       ]
+      },
+      "rules": "camelyon17-simplified/1",
+      "schema": "stoipath.learn.signout-case/1",
+      "teaching": []
+     }
+    },
+    "id": "c17-10",
+    "items": [],
+    "schema": "stoipath.learn.module/1",
+    "slides": [
+     {
+      "catalogueId": "camelyon17.c17s-0046",
+      "dataset": "CAMELYON17",
+      "fingerprint": "87552x206848@0.25@0,0@000000000000",
+      "label": "Case 10 · node 1 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n0",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0047",
+      "dataset": "CAMELYON17",
+      "fingerprint": "87552x206848@0.25@0,0@000000000000",
+      "label": "Case 10 · node 2 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n1",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0048",
+      "dataset": "CAMELYON17",
+      "fingerprint": "87552x206848@0.25@0,0@000000000000",
+      "label": "Case 10 · node 3 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n2",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0049",
+      "dataset": "CAMELYON17",
+      "fingerprint": "87552x206848@0.25@0,0@000000000000",
+      "label": "Case 10 · node 4 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n3",
+      "stain": "H&E"
+     },
+     {
+      "catalogueId": "camelyon17.c17s-0050",
+      "dataset": "CAMELYON17",
+      "fingerprint": "87552x206848@0.25@0,0@000000000000",
+      "label": "Case 10 · node 5 · H&E",
+      "licence": {
+       "id": "CC0-1.0",
+       "text": "CC0 1.0 Universal",
+       "url": "https://camelyon-dataset.s3.amazonaws.com/CAMELYON17/license.txt"
+      },
+      "ref": "n4",
+      "stain": "H&E"
+     }
+    ],
+    "version": "0.0.1-fixture"
+   },
+   "mpp": [
+    0.25,
+    0.25,
+    0.25,
+    0.25,
+    0.25
+   ],
+   "number": 10,
+   "patient": "patient_092",
+   "polygons": [
+    null,
+    [
+     {
+      "clusterId": "c1",
+      "featureId": "n1-c1-f1",
+      "rings": [
+       [
+        [
+         47308.0,
+         92000.0
+        ],
+        [
+         47186.79,
+         93230.63
+        ],
+        [
+         46827.83,
+         94413.97
+        ],
+        [
+         46244.91,
+         95504.54
+        ],
+        [
+         45460.43,
+         96460.43
+        ],
+        [
+         44504.54,
+         97244.91
+        ],
+        [
+         43413.97,
+         97827.83
+        ],
+        [
+         42230.63,
+         98186.79
+        ],
+        [
+         41000.0,
+         98308.0
+        ],
+        [
+         39769.37,
+         98186.79
+        ],
+        [
+         38586.03,
+         97827.83
+        ],
+        [
+         37495.46,
+         97244.91
+        ],
+        [
+         36539.57,
+         96460.43
+        ],
+        [
+         35755.09,
+         95504.54
+        ],
+        [
+         35172.17,
+         94413.97
+        ],
+        [
+         34813.21,
+         93230.63
+        ],
+        [
+         34692.0,
+         92000.0
+        ],
+        [
+         34813.21,
+         90769.37
+        ],
+        [
+         35172.17,
+         89586.03
+        ],
+        [
+         35755.09,
+         88495.46
+        ],
+        [
+         36539.57,
+         87539.57
+        ],
+        [
+         37495.46,
+         86755.09
+        ],
+        [
+         38586.03,
+         86172.17
+        ],
+        [
+         39769.37,
+         85813.21
+        ],
+        [
+         41000.0,
+         85692.0
+        ],
+        [
+         42230.63,
+         85813.21
+        ],
+        [
+         43413.97,
+         86172.17
+        ],
+        [
+         44504.54,
+         86755.09
+        ],
+        [
+         45460.43,
+         87539.57
+        ],
+        [
+         46244.91,
+         88495.46
+        ],
+        [
+         46827.83,
+         89586.03
+        ],
+        [
+         47186.79,
+         90769.37
+        ],
+        [
+         47308.0,
+         92000.0
+        ]
+       ]
+      ]
+     }
+    ],
+    null,
+    null,
+    null
+   ]
+  }
+ ],
+ "note": "Grading fixtures (SIGNOUT.md section 6.2 worked examples): labels and pN from stages.csv, sizes from FACTS.md section 5; cluster geometry is synthetic (discs in level-0 px) and the module is a skeleton (slides + extensions.signout only)."
+}

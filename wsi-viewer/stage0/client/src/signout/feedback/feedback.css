@@ -1,0 +1,104 @@
+/*
+ * feedback · the Compare card (SIGNOUT.md §4.5, §5.6, §11). Design-system classes first (.btn, .chip, .card); the rows
+ * below are scoped under the practice page root (.signout) and the card's own root (.so-fb), tokens only, dark chrome
+ * (as L1). The class banner, the summary cards and the score list copy the education final's rows verbatim, re-rooted:
+ *   .feedback*        design/screens/final/education-module.html lines 227–230 (SIGNOUT.md §4.5 cites 214–232, the
+ *                     block they sit in; the four .feedback rows are 227–230)
+ *   .scorecard*       education-module.html lines 255–258 (§4.5 cites 255–257; 258 is the --plain modifier used here)
+ *   .expert-compare*  education-module.html lines 286–288
+ *   .lock-note*       education-module.html lines 265–266 (the exam-style lock, D19)
+ * Everything else is N (new), marked with what it is for. Classes and agreement are words with glyphs; colour only
+ * repeats them (SC 1.4.1).
+ */
+
+/* --- .feedback: education-module.html 227–230 ------------------------------------------------------------------------ */
+.signout .so-fb .feedback { display: flex; gap: var(--space-4); padding: var(--space-4); border-radius: var(--radius-3); border: 1px solid var(--color-border-strong); background: var(--color-surface-1); }   /* final 227 */
+.signout .so-fb .feedback__glyph { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-text); display: grid; place-items: center; font: 700 14px/1 var(--font-mono); flex: 0 0 auto; }   /* final 228 */
+.signout .so-fb .feedback__title { font-weight: var(--weight-semibold); }   /* final 229 */
+.signout .so-fb .feedback .score { display: block; margin-top: var(--space-2); font-family: var(--font-ui); font-size: var(--text-sm); }   /* final 230 */
+
+/* --- .scorecard: education-module.html 255–258 ----------------------------------------------------------------------- */
+.signout .so-fb .scorecard { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface-1); border: 1px solid var(--color-border); border-radius: var(--radius-3); }   /* final 255 */
+.signout .so-fb .scorecard dl { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); font-size: var(--text-sm); margin: 0; }   /* final 256 */
+.signout .so-fb .scorecard dt { color: var(--color-text-secondary); } .signout .so-fb .scorecard dd { font-family: var(--font-mono); text-align: right; }   /* final 257 */
+.signout .so-fb .scorecard--plain { padding: 0; border: 0; background: none; grid-template-columns: 1fr; }   /* final 258 */
+
+/* --- .expert-compare: education-module.html 286–288 ------------------------------------------------------------------ */
+.signout .so-fb .expert-compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }   /* final 286 */
+.signout .so-fb .expert-compare .card { padding: var(--space-3); font-size: var(--text-sm); }   /* final 287 */
+.signout .so-fb .expert-compare .lbl { font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); }   /* final 288 */
+
+/* --- .lock-note: education-module.html 265–266 ----------------------------------------------------------------------- */
+.signout .so-fb .lock-note { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-text); border-radius: var(--radius-2); }   /* final 265 */
+.signout .so-fb .lock-note .glyph { font: 700 var(--text-sm)/1 var(--font-mono); }   /* final 266 */
+
+/* --- N: the card's layout ---------------------------------------------------------------------------------------------- */
+.signout .so-fb { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; font-size: var(--text-sm); line-height: var(--leading-body); container: sofb / inline-size; }
+.signout .so-fb p { margin: 0; }
+.signout .so-fb__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.signout .so-fb__practice { font-weight: var(--weight-medium); }
+.signout .so-fb__head .so-fb__practice { flex: 1 1 24ch; }
+.signout .so-fb__h { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.signout .so-fb__sub { display: block; font-family: var(--font-mono); font-size: var(--text-xs); font-weight: normal; color: var(--color-text-secondary); overflow-wrap: anywhere; }
+.signout .so-fb__table td:nth-child(4) { min-width: 12rem; }
+.signout .so-fb__bannertext { align-self: center; overflow-wrap: anywhere; }
+/* the banner's class: the glyph and the words carry it; the border repeats it (never colour alone) */
+.signout .so-fb__banner--match { border-color: var(--color-success); }
+.signout .so-fb__banner--minor { border-color: var(--color-warning); }
+.signout .so-fb__banner--major { border-color: var(--color-danger); border-width: 2px; }
+.signout .so-fb__pnval { display: block; margin-top: var(--space-1); font-family: var(--font-mono); font-size: var(--text-lg); }
+
+/* N: the field-by-field table; it scrolls inside its own focusable region on narrow sheets (SC 1.4.10) */
+.signout .so-fb__tablewrap { overflow-x: auto; max-width: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-2); }
+.signout .so-fb__tablewrap:focus-visible { outline: none; box-shadow: var(--focus-shadow); }
+.signout .so-fb__table { width: 100%; min-width: 34rem; border-collapse: collapse; font-size: var(--text-sm); }
+.signout .so-fb__table caption { text-align: left; padding: var(--space-2) var(--space-3); font-weight: var(--weight-semibold); }
+.signout .so-fb__table th, .signout .so-fb__table td { text-align: left; vertical-align: top; padding: var(--space-2) var(--space-3); border-top: 1px solid var(--color-divider); overflow-wrap: break-word; hyphens: manual; }
+.signout .so-fb__table thead th { font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-caps); font-weight: var(--weight-medium); white-space: nowrap; }
+.signout .so-fb__table tbody th { font-weight: var(--weight-medium); white-space: nowrap; }
+.signout .so-fb__table tr[data-class="minor"] .so-fb__agree { box-shadow: inset 3px 0 0 var(--color-warning); }
+.signout .so-fb__table tr[data-class="major"] .so-fb__agree { box-shadow: inset 3px 0 0 var(--color-danger); font-weight: var(--weight-medium); }
+.signout .so-fb__span { white-space: pre-wrap; }
+/* N: the compact table (narrow cards) and the wide one (≥ 36rem of card); one of the two is shown */
+.signout .so-fb__wide { display: none; }
+.signout .so-fb__compact { min-width: 0; border: 1px solid var(--color-border); border-radius: var(--radius-2); border-collapse: separate; border-spacing: 0; }
+.signout .so-fb__compact { width: 100%; box-sizing: border-box; }
+.signout .so-fb__compact thead th { white-space: normal; }
+.signout .so-fb__compact tbody th { white-space: normal; width: 30%; }
+.signout .so-fb__cell { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-2); margin: 0; }
+.signout .so-fb__cell dt { color: var(--color-text-secondary); font-size: var(--text-xs); align-self: baseline; }
+.signout .so-fb__cell dd { margin: 0; min-width: 0; }
+.signout .so-fb__compact tr[data-class="minor"] .so-fb__agree { box-shadow: none; text-decoration: underline 2px var(--color-warning); text-underline-offset: 3px; }
+.signout .so-fb__compact tr[data-class="major"] .so-fb__agree { box-shadow: none; text-decoration: underline 2px var(--color-danger); text-underline-offset: 3px; font-weight: var(--weight-medium); }
+@container sofb (min-width: 36rem) {
+  .signout .so-fb__wide { display: block; }
+  .signout .so-fb__compact { display: none; }
+}
+.signout .so-fb__notes { display: flex; flex-direction: column; gap: var(--space-2); color: var(--color-text-secondary); }
+.signout .so-fb__refsentence { color: var(--color-text-secondary); }
+.signout .so-fb__warn { padding: var(--space-2) var(--space-3); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-2); }
+
+/* N: where the deposits were */
+.signout .so-fb__where { display: flex; flex-direction: column; gap: var(--space-3); }
+.signout .so-fb__legend { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-text-secondary); font-size: var(--text-xs); }
+.signout .so-fb__sw { display: inline-block; width: 14px; height: 10px; border-radius: 2px; flex: 0 0 auto; }
+.signout .so-fb__sw--ref { border: 2px dashed var(--ann-3); }
+.signout .so-fb__sw--flag { width: 10px; border-radius: 50%; background: var(--ann-5); box-shadow: 0 0 0 1px var(--ann-halo-dark, rgba(0, 0, 0, 0.7)); }
+.signout .so-fb__sw--looked { background: color-mix(in srgb, var(--ann-6) 30%, transparent); border: 1px solid var(--ann-6); }
+.signout .so-fb__node { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-2); background: var(--color-surface-1); }
+.signout .so-fb__nodeh { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.signout .so-fb__deposits, .signout .so-fb__flags, .signout .so-fb__teaching ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.signout .so-fb__deposit { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-3); min-height: var(--target); }
+.signout .so-fb__deposit > span { flex: 1 1 24ch; min-width: 0; }
+.signout .so-fb__deposit .btn { flex: 0 0 auto; min-height: max(24px, var(--target-control)); }
+.signout .so-fb__miss { font-weight: var(--weight-medium); }
+.signout .so-fb__lowpower { color: var(--color-text-secondary); }
+.signout .so-fb__flags li { color: var(--color-text-secondary); }
+.signout .so-fb__teaching { display: flex; flex-direction: column; gap: var(--space-2); }
+.signout .so-fb__teaching li { padding-left: var(--space-3); border-left: 2px solid var(--color-border-strong); }
+.signout .so-fb__ajcc summary { cursor: pointer; min-height: var(--target); display: flex; align-items: center; font-weight: var(--weight-medium); }
+.signout .so-fb__ajcc p { padding: var(--space-2) 0 0; color: var(--color-text-secondary); }
+@media (max-width: 1079px) {
+  .signout .so-fb .expert-compare { grid-template-columns: 1fr 1fr; }
+  .signout .so-fb__table tbody th { white-space: normal; }
+}

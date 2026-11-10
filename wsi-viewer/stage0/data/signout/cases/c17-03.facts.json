@@ -1,0 +1,95 @@
+{
+  "schema": "stoipath.learn.facts/1",
+  "module": "c17-03",
+  "version": "0.2.0",
+  "facts": [
+    {
+      "id": "F1",
+      "pointer": "/case/vignette/text",
+      "quote": "Teaching vignette (invented): five H&E slides of sentinel lymph node tissue from one patient, as released in the public CAMELYON17 data set. The data set labels each slide as one node by its largest focus, so call each slide as one node even if it shows more than one profile of nodal tissue. No immunohistochemistry, deeper levels, primary tumour, gross description or clinical history exists for these slides; this vignette is invented for teaching and carries no patient information. Review every node, call each one, and stage the set under CAMELYON17's simplified rules.",
+      "basis": "Invented for teaching (D13, §15.2): one generic text for all ten cases, labelled \"Teaching vignette (invented)\"; CAMELYON17 publishes no clinical record (FACTS §0). Its one dataset claim, one slide = one node, is S0.1 in common.facts.json.",
+      "status": "pending",
+      "note": "S3.1 · Vignette (§15.2)"
+    },
+    {
+      "id": "F2",
+      "pointer": "/steps/0/text",
+      "quote": "Five slides, one node each by the data set's convention. Open every node, call each one, then fill the practice report.",
+      "basis": "The data set's one-slide-one-node convention (S0.1, common.facts.json); the rest is instruction.",
+      "status": "pending",
+      "note": "S3.2 · Case packet (Open step)"
+    },
+    {
+      "id": "F3",
+      "pointer": "/extensions/signout/nodes/0/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_046_node_0.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S3.3 · Node label · Node 1 (patient_046_node_0)"
+    },
+    {
+      "id": "F4",
+      "pointer": "/extensions/signout/nodes/1/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_046_node_1.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S3.4 · Node label · Node 2 (patient_046_node_1)"
+    },
+    {
+      "id": "F5",
+      "pointer": "/extensions/signout/nodes/2/reference/sentence",
+      "quote": "Reference: negative (CAMELYON17 label). Negative nodes carry no annotation, so there is nothing to show.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_046_node_2.tif = negative (FACTS §0); no negative slide has an annotation XML in CAMELYON17 (FACTS §4.3); D18.",
+      "status": "pending",
+      "note": "S3.5 · Node label · Node 3 (patient_046_node_2)"
+    },
+    {
+      "id": "F6",
+      "pointer": "/extensions/signout/nodes/3/reference/sentence",
+      "quote": "Reference: micrometastasis, about 1,100 µm (longest single annotated outline; CAMELYON17 annotation of 3 polygons, about 0.78 mm²).",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_046_node_3.tif = micro; annotations/patient_046_node_3.xml converted to overlays/patient_046_node_3.geojson (layer version de9d59f7): 3 Tumor polygon(s); largest single polygon Feret 1126.5 µm; polygons within 100 µm merged span 1126.5 µm (2 cluster(s)); area 0.7773 mm²; at this slide's 0.2263 µm/px (XResolution 44186/1 pixels per cm (RATIONAL, ResolutionUnit 3)); Feret by convex hull, written \"about\" to two significant figures. The outline is the challenge's annotation extent, not a pathologist's measurement of this case (PE-10; FACTS §4.3, §1.1).",
+      "status": "pending",
+      "note": "S3.6 · Node label and size · Node 4 (patient_046_node_3)"
+    },
+    {
+      "id": "F7",
+      "pointer": "/extensions/signout/nodes/4/reference/sentence",
+      "quote": "Reference: micrometastasis, about 190 µm (longest single annotated outline; CAMELYON17 annotation of 78 polygons, about 0.13 mm²). Annotated foci lying within 0.1 mm of each other span about 780 µm; that span is annotation geometry, not how a deposit is measured.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) row patient_046_node_4.tif = micro; annotations/patient_046_node_4.xml converted to overlays/patient_046_node_4.geojson (layer version 6baae8b0): 78 Tumor polygon(s); largest single polygon Feret 193.6 µm; polygons within 100 µm merged span 779.0 µm (15 cluster(s)); area 0.13 mm²; at this slide's 0.2263 µm/px (XResolution 44186/1 pixels per cm (RATIONAL, ResolutionUnit 3)); Feret by convex hull, written \"about\" to two significant figures. The outline is the challenge's annotation extent, not a pathologist's measurement of this case (PE-10; FACTS §4.3, §1.1). Marked borderline (PE-3, D33): the label rests on the > 200-cell criterion (FACTS §4.4).",
+      "status": "pending",
+      "note": "S3.7 · Node label and size · Node 5 (patient_046_node_4)"
+    },
+    {
+      "id": "F8",
+      "pointer": "/extensions/signout/reference/sentence",
+      "quote": "Reference pN: pN1mi under CAMELYON17's simplified rules (2 nodes with micro- or macrometastasis). The largest annotated deposit is in node 4.",
+      "basis": "stages.csv (sha256 1bf47c5c3b20…) patient row patient_046.zip = pN1mi; derivePn of the node labels ['negative', 'negative', 'negative', 'micro', 'micro'] gives pN1mi (the rules reproduce stages.csv for 100 of 100 patients, FACTS §4.1, §4.2); counts macro 0, micro 2, ITC 0, positive 2. Largest annotated deposit: node 4 (1126.5 µm).",
+      "status": "pending",
+      "note": "S3.8 · pN (§15.3)"
+    },
+    {
+      "id": "F9",
+      "pointer": "/extensions/signout/teaching/0/text",
+      "quote": "Two micrometastases and no macrometastasis: pN1mi, whatever the number of micro nodes.",
+      "basis": "stages.csv: nodes 3 and 4 micro, no macro, pN1mi; derivePn (§6.1): pN1mi whatever the number of micro nodes.",
+      "status": "pending",
+      "note": "S3.9 · Teaching T1"
+    },
+    {
+      "id": "F10",
+      "pointer": "/extensions/signout/teaching/1/text",
+      "quote": "Node 5: labelled micrometastasis by CAMELYON17 although no single annotated focus reaches 0.2 mm (78 small foci, the largest about 190 µm; foci within 100 µm of each other span about 780 µm). AJCC also classes a deposit of more than 200 cells in one cross-section as a micrometastasis, which an outline cannot show. Calling this node ITC is a defensible disagreement.",
+      "basis": "§15.3 borderline caveat (PE-3, D33; FACTS §4.4): the node is labelled micro in stages.csv while its largest polygon is under 0.2 mm; AJCC 8th edition also defines a micrometastasis by > 200 cells in one cross-section, which an outline cannot show. Numbers from the committed overlay at this slide's MPP.",
+      "status": "pending",
+      "note": "S3.10 · Teaching T2"
+    },
+    {
+      "id": "F11",
+      "pointer": "/extensions/signout/teaching/2/text",
+      "quote": "This centre's slides are scanned at 0.2263 µm per pixel; the scale bar and your measurements use each slide's own resolution.",
+      "basis": "Per-slide MPP from the indexes (node 1 0.2263, node 2 0.2263, node 3 0.2269, node 4 0.2263, node 5 0.2263 µm/px; FACTS §1.1: centre 2 stores 44186 px/cm, one slide 0.2269); the engine and the size feedback use each slide's own MPP (D14).",
+      "status": "pending",
+      "note": "S3.11 · Teaching T3"
+    }
+  ]
+}
