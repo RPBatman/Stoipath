@@ -1,67 +1,183 @@
 {
- "generated_at": "2026-11-04T06:58:16Z",
- "as_of": "2026-11-04",
+ "generated_at": "2026-11-10T21:41:44Z",
+ "as_of": "2026-11-10",
+ "as_of_utc": "2026-11-10T20:19:00Z",
  "inputs": {
-  "transcript_files": 217,
-  "transcript_lines": 53085,
-  "unique_assistant_messages": 8177,
+  "transcript_files": 314,
+  "transcript_lines": 77194,
+  "unique_assistant_messages": 14430,
   "sessions": 1,
-  "workflows": 75,
-  "duplicate_lines_same_message": 16042,
+  "workflows": 82,
+  "duplicate_lines_same_message": 22044,
   "duplicate_messages_across_runs": 0,
   "duplicate_messages_across_files": 72,
   "cache_write_unsplit_tokens": 0,
   "synthetic_with_usage": 0
  },
  "runs": {
-  "total": 213,
+  "total": 310,
+  "definition": "agent run = one subagent (workflow agent or direct subagent); the interactive main session is counted separately; \"called a model\" = at least one API response with usage in its transcript",
+  "agent_launches": 309,
+  "agent_runs_that_called_a_model": 278,
+  "agent_launches_without_a_model_call": 31,
+  "main_session": 1,
   "by_kind": {
    "main": 1,
-   "workflow-agent": 205,
+   "workflow-agent": 302,
    "direct-subagent": 7
   },
   "outcomes": {
-   "in_progress": 5,
-   "result": 167,
-   "killed": 7,
+   "in_progress": 3,
+   "result": 246,
+   "killed": 27,
    "error": 34
   }
  },
- "tokens": {
-  "in": 94122,
-  "out": 20560527,
-  "in_plus_out": 20654649,
-  "cache_write": 125737973,
-  "cache_read": 2418518273,
-  "all_kinds": 2564910895
- },
- "by_model": {
-  "claude-fable-5-1": {
-   "in": 83502,
-   "out": 12437491,
-   "cw": 89966951,
-   "cw5m": 87357437,
-   "cw1h": 2609514,
-   "cr": 662322766,
-   "messages": 2896,
-   "cost_usd": 1932.45
+ "outcomes_cost": {
+  "result": {
+   "runs": 246,
+   "cost_usd": 3031.48,
+   "share_of_cost": 0.8557
   },
-  "claude-opus-5-5": {
-   "in": 10620,
-   "out": 8123036,
-   "cw": 35771022,
-   "cw5m": 30277721,
-   "cw1h": 5493301,
-   "cr": 1756195507,
-   "messages": 5217,
-   "cost_usd": 709.08
+  "error": {
+   "runs": 34,
+   "cost_usd": 125.81,
+   "share_of_cost": 0.0355
+  },
+  "killed": {
+   "runs": 27,
+   "cost_usd": 111.71,
+   "share_of_cost": 0.0315
+  },
+  "in_progress": {
+   "runs": 3,
+   "cost_usd": 273.76,
+   "share_of_cost": 0.0773
   }
  },
- "cost_usd_total": 2641.53,
+ "failed_or_killed": {
+  "runs": 61,
+  "cost_usd": 237.52,
+  "share_of_cost": 0.067,
+  "rule": "outcome error (journal failed record) or killed (agent started, no result record); a killed run can still have produced files, so this is an upper bound of work not delivered by that run"
+ },
+ "usage_limits": {
+  "launches_refused_without_a_model_call": 31,
+  "refused_launches_by_start_date": {
+   "2026-10-24": 17,
+   "2026-11-04": 9,
+   "2026-11-05": 5
+  },
+  "launches_without_a_model_call_and_no_limit_record": 0,
+  "runs_interrupted_after_model_calls": 19,
+  "interrupted_runs_by_start_date": {
+   "2026-10-24": 8,
+   "2026-10-26": 2,
+   "2026-11-01": 4,
+   "2026-11-04": 3,
+   "2026-11-05": 2
+  },
+  "messages": {
+   "You've hit your session limit \u00b7 resets 7:40pm (UTC)": 6,
+   "You've hit your session limit \u00b7 resets 11:20pm (UTC)": 23,
+   "You've hit your session limit \u00b7 resets 4:10am (UTC)": 3,
+   "You've hit your weekly limit \u00b7 resets 7am (UTC)": 7,
+   "You've hit your weekly limit \u00b7 resets Nov 8, 7am (UTC)": 24
+  }
+ },
+ "resumed_workflows": {
+  "launches_superseded_by_a_restart": 11,
+  "cost_usd": 25.25,
+  "of_which_without_a_model_call": 8,
+  "rule": "an agent started again under the same journal key (the workflow was resumed): both attempts are kept as runs, the first has superseded_by set; no message id is shared between them"
+ },
+ "tokens": {
+  "in": 116585,
+  "out": 27553275,
+  "in_plus_out": 27669860,
+  "cache_write": 192345874,
+  "cache_read": 4197863921,
+  "all_kinds": 4417879655
+ },
+ "tool_calls": 21982,
+ "web_search_calls_in_transcripts": 873,
+ "by_model": {
+  "claude-fable-5-1": {
+   "in": 94078,
+   "out": 13252564,
+   "cw": 96673071,
+   "cw5m": 93895957,
+   "cw1h": 2777114,
+   "cr": 745785968,
+   "messages": 3248,
+   "cost_usd": 2079.26,
+   "share_of_cost": 0.5869
+  },
+  "claude-fable-5-2": {
+   "in": 63,
+   "out": 87367,
+   "cw": 1699927,
+   "cw5m": 425215,
+   "cw1h": 1274712,
+   "cr": 15808024,
+   "messages": 30,
+   "cost_usd": 31.3,
+   "share_of_cost": 0.0088
+  },
+  "claude-opus-5-5": {
+   "in": 20535,
+   "out": 13387107,
+   "cw": 88036197,
+   "cw5m": 77873901,
+   "cw1h": 10162296,
+   "cr": 3269717771,
+   "messages": 10117,
+   "cost_usd": 1392.44,
+   "share_of_cost": 0.393
+  },
+  "claude-sonnet-5-5": {
+   "in": 1909,
+   "out": 826237,
+   "cw": 5936679,
+   "cw5m": 5936679,
+   "cw1h": 0,
+   "cr": 166552158,
+   "messages": 946,
+   "cost_usd": 39.76,
+   "share_of_cost": 0.0112
+  }
+ },
+ "cost_usd_total": 3542.76,
+ "cost_complete": true,
  "unpriced_models": [],
- "phases": {
+ "price_table": {
+  "as_of": "2026-11-10",
+  "sha256": "e99017d66161ade8dab894ab669fe5cdf6c66816975622b09a8caff24bbe005a",
+  "web_search_usd_per_1000": 10.0
+ },
+ "cost_mix": {
+  "input": {
+   "usd": 1.03,
+   "share": 0.0003
+  },
+  "output": {
+   "usd": 942.13,
+   "share": 0.2659
+  },
+  "cache_write": {
+   "usd": 1739.4,
+   "share": 0.491
+  },
+  "cache_read": {
+   "usd": 860.21,
+   "share": 0.2428
+  }
+ },
+ "uncached_equivalent_usd": 23283.8,
+ "deliverables": {
   "planning": {
    "runs": 73,
+   "runs_that_called_a_model": 71,
    "outcomes": {
     "result": 64,
     "killed": 2,
@@ -73,33 +189,42 @@
    "tokens_cache_read": 170705153,
    "api_messages": 924,
    "cost_usd": 749.48,
+   "failed_or_killed_runs": 9,
+   "failed_or_killed_cost_usd": 14.33,
    "has_unpriced": false,
    "first_start": "2026-10-24T15:05:08Z",
    "last_end": "2026-10-25T15:14:34Z",
    "agent_wall_clock_h": 20.15,
-   "workflow_count": 33
+   "label": "Planning (plan sections, gap research, critique, synthesis)",
+   "workflow_count": 33,
+   "share_of_cost": 0.2116
   },
   "verification": {
-   "runs": 29,
+   "runs": 24,
+   "runs_that_called_a_model": 12,
    "outcomes": {
-    "result": 15,
-    "error": 13,
-    "in_progress": 1
+    "result": 11,
+    "error": 13
    },
-   "tokens_in": 11358,
-   "tokens_out": 1617537,
-   "tokens_cache_write": 9833608,
-   "tokens_cache_read": 185316338,
-   "api_messages": 802,
-   "cost_usd": 214.0,
+   "tokens_in": 10450,
+   "tokens_out": 1134248,
+   "tokens_cache_write": 7728544,
+   "tokens_cache_read": 66284869,
+   "api_messages": 350,
+   "cost_usd": 169.99,
+   "failed_or_killed_runs": 13,
+   "failed_or_killed_cost_usd": 11.61,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:48Z",
-   "last_end": "2026-11-04T06:57:01Z",
-   "agent_wall_clock_h": 8.75,
-   "workflow_count": 18
+   "last_end": "2026-10-25T13:42:58Z",
+   "agent_wall_clock_h": 6.67,
+   "label": "Verification of the plan claims",
+   "workflow_count": 15,
+   "share_of_cost": 0.048
   },
   "prototype": {
    "runs": 12,
+   "runs_that_called_a_model": 9,
    "outcomes": {
     "result": 7,
     "error": 5
@@ -110,14 +235,19 @@
    "tokens_cache_read": 32782694,
    "api_messages": 176,
    "cost_usd": 95.28,
+   "failed_or_killed_runs": 5,
+   "failed_or_killed_cost_usd": 31.16,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:15:08Z",
    "last_end": "2026-10-25T13:47:43Z",
    "agent_wall_clock_h": 3.73,
-   "workflow_count": 1
+   "label": "Prototype (Stage 0 viewer)",
+   "workflow_count": 1,
+   "share_of_cost": 0.0269
   },
   "design": {
    "runs": 50,
+   "runs_that_called_a_model": 50,
    "outcomes": {
     "result": 41,
     "error": 9
@@ -128,87 +258,246 @@
    "tokens_cache_read": 294716609,
    "api_messages": 1265,
    "cost_usd": 830.36,
+   "failed_or_killed_runs": 9,
+   "failed_or_killed_cost_usd": 75.85,
    "has_unpriced": false,
    "first_start": "2026-10-25T23:39:57Z",
    "last_end": "2026-11-01T13:29:59Z",
    "agent_wall_clock_h": 22.04,
-   "workflow_count": 14
+   "label": "Design (UX research, design system, concepts, screens)",
+   "workflow_count": 14,
+   "share_of_cost": 0.2344
   },
   "shell": {
-   "runs": 2,
+   "runs": 30,
+   "runs_that_called_a_model": 30,
    "outcomes": {
-    "killed": 2
+    "killed": 4,
+    "result": 26
    },
-   "tokens_in": 428,
-   "tokens_out": 368698,
-   "tokens_cache_write": 2532412,
-   "tokens_cache_read": 75037580,
-   "api_messages": 208,
-   "cost_usd": 35.05,
+   "tokens_in": 6596,
+   "tokens_out": 4885967,
+   "tokens_cache_write": 18450558,
+   "tokens_cache_read": 1145528620,
+   "api_messages": 3268,
+   "cost_usd": 419.1,
+   "failed_or_killed_runs": 4,
+   "failed_or_killed_cost_usd": 62.03,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:04:01Z",
-   "last_end": "2026-11-01T16:52:30Z",
-   "agent_wall_clock_h": 1.03,
-   "workflow_count": 2
+   "last_end": "2026-11-02T03:56:31Z",
+   "agent_wall_clock_h": 17.76,
+   "label": "Research shell, Phase A tools, samples corpus",
+   "workflow_count": 6,
+   "share_of_cost": 0.1183
   },
-  "dissemination": {
-   "runs": 7,
+  "learn-l1": {
+   "runs": 44,
+   "runs_that_called_a_model": 31,
    "outcomes": {
-    "result": 6,
+    "result": 27,
+    "killed": 17
+   },
+   "tokens_in": 11028,
+   "tokens_out": 3508655,
+   "tokens_cache_write": 29813826,
+   "tokens_cache_read": 892404480,
+   "api_messages": 2772,
+   "cost_usd": 413.5,
+   "failed_or_killed_runs": 17,
+   "failed_or_killed_cost_usd": 29.61,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T03:33:06Z",
+   "last_end": "2026-11-08T16:30:18Z",
+   "agent_wall_clock_h": 20.09,
+   "label": "Learn L1 (spec, build, gate fix)",
+   "workflow_count": 3,
+   "share_of_cost": 0.1167
+  },
+  "signout-l2": {
+   "runs": 24,
+   "runs_that_called_a_model": 24,
+   "outcomes": {
+    "result": 24
+   },
+   "tokens_in": 7684,
+   "tokens_out": 2805861,
+   "tokens_cache_write": 19203253,
+   "tokens_cache_read": 712762646,
+   "api_messages": 2257,
+   "cost_usd": 319.32,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-08T17:08:36Z",
+   "last_end": "2026-11-09T04:34:13Z",
+   "agent_wall_clock_h": 14.05,
+   "label": "Practice report L2 (simulated sign-out)",
+   "workflow_count": 1,
+   "share_of_cost": 0.0901
+  },
+  "epa-design": {
+   "runs": 12,
+   "runs_that_called_a_model": 12,
+   "outcomes": {
+    "result": 11,
     "killed": 1
    },
-   "tokens_in": 792,
-   "tokens_out": 460062,
-   "tokens_cache_write": 1491228,
-   "tokens_cache_read": 63065788,
-   "api_messages": 274,
-   "cost_usd": 31.71,
+   "tokens_in": 1564,
+   "tokens_out": 458095,
+   "tokens_cache_write": 4198464,
+   "tokens_cache_read": 44669490,
+   "api_messages": 252,
+   "cost_usd": 52.65,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 5.41,
+   "has_unpriced": false,
+   "first_start": "2026-11-09T01:39:00Z",
+   "last_end": "2026-11-09T02:54:59Z",
+   "agent_wall_clock_h": 1.52,
+   "label": "Assessment design (plan section 14)",
+   "workflow_count": 1,
+   "share_of_cost": 0.0149
+  },
+  "iphone-fix": {
+   "runs": 10,
+   "runs_that_called_a_model": 9,
+   "outcomes": {
+    "result": 8,
+    "killed": 2
+   },
+   "tokens_in": 1398,
+   "tokens_out": 990500,
+   "tokens_cache_write": 3976431,
+   "tokens_cache_read": 169385315,
+   "api_messages": 692,
+   "cost_usd": 73.57,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 6.51,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T05:04:13Z",
+   "last_end": "2026-11-04T08:21:39Z",
+   "agent_wall_clock_h": 4.22,
+   "label": "iPhone measurement fix",
+   "workflow_count": 1,
+   "share_of_cost": 0.0208
+  },
+  "ci-pr": {
+   "runs": 4,
+   "runs_that_called_a_model": 4,
+   "outcomes": {
+    "result": 4
+   },
+   "tokens_in": 680,
+   "tokens_out": 230042,
+   "tokens_cache_write": 8158025,
+   "tokens_cache_read": 71930242,
+   "api_messages": 336,
+   "cost_usd": 55.15,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-09T04:34:57Z",
+   "last_end": "2026-11-09T09:39:17Z",
+   "agent_wall_clock_h": 4.77,
+   "label": "CI and pull-request fixes",
+   "workflow_count": 2,
+   "share_of_cost": 0.0156
+  },
+  "dissemination": {
+   "runs": 11,
+   "runs_that_called_a_model": 11,
+   "outcomes": {
+    "result": 10,
+    "killed": 1
+   },
+   "tokens_in": 1060,
+   "tokens_out": 760030,
+   "tokens_cache_write": 2418243,
+   "tokens_cache_read": 86444656,
+   "api_messages": 408,
+   "cost_usd": 47.03,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 1.01,
    "has_unpriced": false,
    "first_start": "2026-10-25T15:15:29Z",
-   "last_end": "2026-11-01T17:23:21Z",
-   "agent_wall_clock_h": 1.55,
-   "workflow_count": 2
+   "last_end": "2026-11-04T07:38:14Z",
+   "agent_wall_clock_h": 2.45,
+   "label": "Dissemination (executive summary, abstract, comparator, ledger)",
+   "workflow_count": 3,
+   "share_of_cost": 0.0133
+  },
+  "audit": {
+   "runs": 13,
+   "runs_that_called_a_model": 13,
+   "outcomes": {
+    "result": 13
+   },
+   "tokens_in": 1430,
+   "tokens_out": 566839,
+   "tokens_cache_write": 2889982,
+   "tokens_cache_read": 122370438,
+   "api_messages": 714,
+   "cost_usd": 43.57,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-10T18:16:16Z",
+   "last_end": "2026-11-10T19:36:33Z",
+   "agent_wall_clock_h": 2.39,
+   "label": "Project audit",
+   "workflow_count": 1,
+   "share_of_cost": 0.0123
+  },
+  "audit-fixes": {
+   "runs": 2,
+   "runs_that_called_a_model": 2,
+   "outcomes": {
+    "in_progress": 2
+   },
+   "tokens_in": 206,
+   "tokens_out": 119750,
+   "tokens_cache_write": 586058,
+   "tokens_cache_read": 21787858,
+   "api_messages": 104,
+   "cost_usd": 7.65,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-10T20:08:48Z",
+   "last_end": "2026-11-10T20:18:59Z",
+   "agent_wall_clock_h": 0.34,
+   "label": "Audit fixes",
+   "workflow_count": 1,
+   "share_of_cost": 0.0022
   },
   "main-session": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "in_progress": 1
    },
-   "tokens_in": 6498,
-   "tokens_out": 681358,
-   "tokens_cache_write": 8161055,
-   "tokens_cache_read": 266029198,
-   "api_messages": 605,
-   "cost_usd": 180.18,
+   "tokens_in": 7227,
+   "tokens_out": 849664,
+   "tokens_cache_write": 14299908,
+   "tokens_cache_read": 366090851,
+   "api_messages": 823,
+   "cost_usd": 266.11,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T14:47:08Z",
-   "last_end": "2026-11-04T06:56:01Z",
-   "agent_wall_clock_h": 256.15,
-   "workflow_count": 0
-  },
-  "other": {
-   "runs": 39,
-   "outcomes": {
-    "result": 34,
-    "killed": 2,
-    "in_progress": 3
-   },
-   "tokens_in": 7784,
-   "tokens_out": 6189248,
-   "tokens_cache_write": 23097088,
-   "tokens_cache_read": 1330864913,
-   "api_messages": 3859,
-   "cost_usd": 505.47,
-   "has_unpriced": false,
-   "first_start": "2026-11-01T16:52:57Z",
-   "last_end": "2026-11-04T06:56:06Z",
-   "agent_wall_clock_h": 22.86,
-   "workflow_count": 8
+   "last_end": "2026-11-10T20:09:01Z",
+   "agent_wall_clock_h": 413.36,
+   "label": "Main session (whole period)",
+   "workflow_count": 0,
+   "share_of_cost": 0.0751
   }
  },
  "workflows": {
   "wf_010db20c-16a": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -218,6 +507,8 @@
    "tokens_cache_read": 16052342,
    "api_messages": 78,
    "cost_usd": 18.01,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T00:00:56Z",
    "last_end": "2026-10-25T01:04:27Z",
@@ -225,11 +516,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 301358,
    "harness_duration_s": 3813.5
   },
   "wf_0312b4af-957": {
    "runs": 16,
+   "runs_that_called_a_model": 16,
    "outcomes": {
     "result": 15,
     "killed": 1
@@ -240,6 +533,8 @@
    "tokens_cache_read": 35319095,
    "api_messages": 235,
    "cost_usd": 160.74,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 3.71,
    "has_unpriced": false,
    "first_start": "2026-10-24T15:05:08Z",
    "last_end": "2026-10-24T18:01:14Z",
@@ -247,11 +542,39 @@
    "workflow_name": "wsi-viewer-plan",
    "stage": null,
    "status": "killed",
+   "deliverable": "planning",
    "harness_total_tokens": 4564221,
    "harness_duration_s": 10566.8
   },
+  "wf_0f63ba88-ee5": {
+   "runs": 10,
+   "runs_that_called_a_model": 9,
+   "outcomes": {
+    "result": 8,
+    "killed": 2
+   },
+   "tokens_in": 1398,
+   "tokens_out": 990500,
+   "tokens_cache_write": 3976431,
+   "tokens_cache_read": 169385315,
+   "api_messages": 692,
+   "cost_usd": 73.57,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 6.51,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T05:04:13Z",
+   "last_end": "2026-11-04T08:21:39Z",
+   "agent_wall_clock_h": 4.22,
+   "workflow_name": "iphone-diagnose",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "iphone-fix",
+   "harness_total_tokens": 3052078,
+   "harness_duration_s": 11846.4
+  },
   "wf_10e199eb-aeb": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -261,6 +584,8 @@
    "tokens_cache_read": 2452452,
    "api_messages": 14,
    "cost_usd": 10.9,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T23:54:50Z",
    "last_end": "2026-10-25T00:10:46Z",
@@ -268,11 +593,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 318625,
    "harness_duration_s": 957.9
   },
   "wf_134c52e8-b55": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -282,6 +609,8 @@
    "tokens_cache_read": 682983,
    "api_messages": 6,
    "cost_usd": 9.49,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:39:15Z",
    "last_end": "2026-10-24T18:48:26Z",
@@ -289,11 +618,39 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "judge",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 339900,
    "harness_duration_s": 552.8
   },
+  "wf_148d6e0b-e06": {
+   "runs": 38,
+   "runs_that_called_a_model": 25,
+   "outcomes": {
+    "result": 21,
+    "killed": 17
+   },
+   "tokens_in": 10092,
+   "tokens_out": 2947280,
+   "tokens_cache_write": 23018706,
+   "tokens_cache_read": 787613579,
+   "api_messages": 2307,
+   "cost_usd": 348.4,
+   "failed_or_killed_runs": 17,
+   "failed_or_killed_cost_usd": 29.61,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T04:18:09Z",
+   "last_end": "2026-11-08T13:09:36Z",
+   "agent_wall_clock_h": 15.89,
+   "workflow_name": "learn-l1",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "learn-l1",
+   "harness_total_tokens": 3953955,
+   "harness_duration_s": 21103.5
+  },
   "wf_14b806de-ea0": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "error": 1
    },
@@ -303,6 +660,8 @@
    "tokens_cache_read": 3678036,
    "api_messages": 18,
    "cost_usd": 11.61,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 11.61,
    "has_unpriced": false,
    "first_start": "2026-10-25T01:09:40Z",
    "last_end": "2026-10-25T01:29:32Z",
@@ -310,11 +669,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify-report",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 526991,
    "harness_duration_s": 1191.9
   },
   "wf_18f137a5-7e6": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -324,6 +685,8 @@
    "tokens_cache_read": 3773730,
    "api_messages": 21,
    "cost_usd": 21.13,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T14:17:39Z",
    "last_end": "2026-10-25T14:37:33Z",
@@ -331,11 +694,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 626930,
    "harness_duration_s": 1195.8
   },
   "wf_1e6bff0f-508": {
    "runs": 1,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 1
    },
@@ -344,7 +709,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:19:14Z",
    "last_end": "2026-10-24T18:19:14Z",
@@ -352,11 +719,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "judge",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 0,
    "harness_duration_s": 3.1
   },
   "wf_1fcffe7f-faa": {
    "runs": 3,
+   "runs_that_called_a_model": 3,
    "outcomes": {
     "result": 2,
     "error": 1
@@ -367,6 +736,8 @@
    "tokens_cache_read": 17074111,
    "api_messages": 70,
    "cost_usd": 62.42,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 8.37,
    "has_unpriced": false,
    "first_start": "2026-10-26T01:34:43Z",
    "last_end": "2026-10-26T02:32:47Z",
@@ -374,11 +745,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "concepts",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 1328950,
    "harness_duration_s": 3486.5
   },
   "wf_233334ce-ea2": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -388,6 +761,8 @@
    "tokens_cache_read": 6793038,
    "api_messages": 25,
    "cost_usd": 30.49,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:47Z",
    "last_end": "2026-10-24T19:57:55Z",
@@ -395,11 +770,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 986522,
    "harness_duration_s": 1149.8
   },
   "wf_257113c8-90c": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -409,6 +786,8 @@
    "tokens_cache_read": 14357138,
    "api_messages": 71,
    "cost_usd": 16.73,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T00:00:56Z",
    "last_end": "2026-10-25T00:59:15Z",
@@ -416,11 +795,38 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 299203,
    "harness_duration_s": 3502.7
   },
+  "wf_2c0947e8-1aa": {
+   "runs": 5,
+   "runs_that_called_a_model": 5,
+   "outcomes": {
+    "result": 5
+   },
+   "tokens_in": 770,
+   "tokens_out": 289528,
+   "tokens_cache_write": 5163349,
+   "tokens_cache_read": 77758094,
+   "api_messages": 382,
+   "cost_usd": 46.1,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-08T13:11:02Z",
+   "last_end": "2026-11-08T16:30:18Z",
+   "agent_wall_clock_h": 3.48,
+   "workflow_name": "learn-gate-and-iphone-fix",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "learn-l1",
+   "harness_total_tokens": 1333051,
+   "harness_duration_s": 11958.7
+  },
   "wf_2dca9dfb-777": {
    "runs": 5,
+   "runs_that_called_a_model": 5,
    "outcomes": {
     "result": 5
    },
@@ -430,6 +836,8 @@
    "tokens_cache_read": 33637437,
    "api_messages": 119,
    "cost_usd": 92.02,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T07:02:23Z",
    "last_end": "2026-11-01T08:57:34Z",
@@ -437,11 +845,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "screen",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 2412006,
    "harness_duration_s": 6916.5
   },
   "wf_320f724b-cc8": {
    "runs": 8,
+   "runs_that_called_a_model": 8,
    "outcomes": {
     "result": 8
    },
@@ -451,6 +861,8 @@
    "tokens_cache_read": 55904716,
    "api_messages": 212,
    "cost_usd": 132.79,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T08:58:01Z",
    "last_end": "2026-11-01T11:38:37Z",
@@ -458,11 +870,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "finish",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 3868171,
    "harness_duration_s": 9638.7
   },
   "wf_34319e5d-772": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "killed": 1
    },
@@ -472,6 +886,8 @@
    "tokens_cache_read": 22222819,
    "api_messages": 74,
    "cost_usd": 12.6,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 12.6,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:04:01Z",
    "last_end": "2026-11-01T16:30:58Z",
@@ -479,11 +895,13 @@
    "workflow_name": "integrate-shell",
    "stage": null,
    "status": "killed",
+   "deliverable": "shell",
    "harness_total_tokens": 501620,
    "harness_duration_s": 1562.7
   },
   "wf_3ad60ff3-b79": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "error": 1
    },
@@ -493,6 +911,8 @@
    "tokens_cache_read": 0,
    "api_messages": 1,
    "cost_usd": 0.81,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 0.81,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:19:11Z",
    "last_end": "2026-10-24T18:19:21Z",
@@ -500,11 +920,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "judge",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 63024,
    "harness_duration_s": 9.9
   },
   "wf_3bc5346d-9f6": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "killed": 2
    },
@@ -514,6 +936,8 @@
    "tokens_cache_read": 58423500,
    "api_messages": 243,
    "cost_usd": 26.99,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 26.99,
    "has_unpriced": false,
    "first_start": "2026-11-01T17:12:08Z",
    "last_end": "2026-11-01T17:47:36Z",
@@ -521,11 +945,13 @@
    "workflow_name": "samples-corpus",
    "stage": null,
    "status": "killed",
+   "deliverable": "shell",
    "harness_total_tokens": 618733,
    "harness_duration_s": 1384.5
   },
   "wf_3ea4071f-681": {
    "runs": 2,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 2
    },
@@ -534,7 +960,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:59:02Z",
    "last_end": "2026-10-24T19:59:02Z",
@@ -542,11 +970,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 0,
    "harness_duration_s": 0.5
   },
   "wf_3f32efdd-499": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -556,6 +986,8 @@
    "tokens_cache_read": 3825838,
    "api_messages": 26,
    "cost_usd": 17.41,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T23:43:07Z",
    "last_end": "2026-10-25T00:03:19Z",
@@ -563,11 +995,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 588333,
    "harness_duration_s": 1216.7
   },
   "wf_42384c06-41d": {
    "runs": 5,
+   "runs_that_called_a_model": 5,
    "outcomes": {
     "result": 5
    },
@@ -577,6 +1011,8 @@
    "tokens_cache_read": 36333354,
    "api_messages": 144,
    "cost_usd": 167.02,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T07:02:23Z",
    "last_end": "2026-11-01T08:50:05Z",
@@ -584,11 +1020,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "screen",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 2551502,
    "harness_duration_s": 6467.9
   },
   "wf_44a48f4d-17e": {
    "runs": 3,
+   "runs_that_called_a_model": 3,
    "outcomes": {
     "result": 2,
     "killed": 1
@@ -599,6 +1037,8 @@
    "tokens_cache_read": 2134864,
    "api_messages": 26,
    "cost_usd": 2.87,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 1.01,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:20:18Z",
    "last_end": "2026-11-01T16:31:05Z",
@@ -606,11 +1046,13 @@
    "workflow_name": "tsp-prep",
    "stage": null,
    "status": "killed",
+   "deliverable": "dissemination",
    "harness_total_tokens": 327021,
    "harness_duration_s": 646.4
   },
   "wf_48ba4e81-b95": {
    "runs": 10,
+   "runs_that_called_a_model": 10,
    "outcomes": {
     "result": 9,
     "error": 1
@@ -621,6 +1063,8 @@
    "tokens_cache_read": 45248102,
    "api_messages": 275,
    "cost_usd": 69.88,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 5.45,
    "has_unpriced": false,
    "first_start": "2026-11-01T11:14:31Z",
    "last_end": "2026-11-01T13:29:59Z",
@@ -628,11 +1072,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "sweep",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 2533053,
    "harness_duration_s": 8127.6
   },
   "wf_4909ef62-cfb": {
    "runs": 3,
+   "runs_that_called_a_model": 3,
    "outcomes": {
     "result": 3
    },
@@ -642,6 +1088,8 @@
    "tokens_cache_read": 59831217,
    "api_messages": 239,
    "cost_usd": 24.59,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:31:54Z",
    "last_end": "2026-11-01T17:23:21Z",
@@ -649,11 +1097,13 @@
    "workflow_name": "tsp-prep",
    "stage": null,
    "status": "completed",
+   "deliverable": "dissemination",
    "harness_total_tokens": 1065170,
    "harness_duration_s": 3089.5
   },
   "wf_4bb421a9-ae8": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -663,6 +1113,8 @@
    "tokens_cache_read": 4657443,
    "api_messages": 24,
    "cost_usd": 23.66,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T14:17:40Z",
    "last_end": "2026-10-25T14:39:35Z",
@@ -670,11 +1122,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 697861,
    "harness_duration_s": 1318.0
   },
   "wf_52521047-493": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -684,6 +1138,8 @@
    "tokens_cache_read": 1840312,
    "api_messages": 14,
    "cost_usd": 10.85,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T00:11:24Z",
    "last_end": "2026-10-25T00:25:01Z",
@@ -691,11 +1147,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "critique-section",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 481929,
    "harness_duration_s": 818.7
   },
   "wf_527f90c1-fdc": {
    "runs": 19,
+   "runs_that_called_a_model": 19,
    "outcomes": {
     "result": 19
    },
@@ -705,6 +1163,8 @@
    "tokens_cache_read": 863031155,
    "api_messages": 2266,
    "cost_usd": 295.15,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T19:21:59Z",
    "last_end": "2026-11-02T03:56:31Z",
@@ -712,11 +1172,13 @@
    "workflow_name": "phase-a-tools",
    "stage": null,
    "status": "completed",
+   "deliverable": "shell",
    "harness_total_tokens": 9690145,
    "harness_duration_s": 30874.4
   },
   "wf_57970b00-23a": {
    "runs": 3,
+   "runs_that_called_a_model": 3,
    "outcomes": {
     "result": 1,
     "error": 2
@@ -727,6 +1189,8 @@
    "tokens_cache_read": 14823224,
    "api_messages": 59,
    "cost_usd": 59.31,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 36.73,
    "has_unpriced": false,
    "first_start": "2026-10-26T01:34:40Z",
    "last_end": "2026-10-26T02:31:49Z",
@@ -734,11 +1198,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "concepts",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 1308677,
    "harness_duration_s": 3428.9
   },
   "wf_57cb5676-622": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -748,6 +1214,8 @@
    "tokens_cache_read": 2358517,
    "api_messages": 11,
    "cost_usd": 6.55,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:39:18Z",
    "last_end": "2026-10-24T18:50:59Z",
@@ -755,11 +1223,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "judge",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 343995,
    "harness_duration_s": 705.4
   },
   "wf_598d5cac-3bf": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -769,6 +1239,8 @@
    "tokens_cache_read": 27032807,
    "api_messages": 83,
    "cost_usd": 19.0,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-04T03:33:06Z",
    "last_end": "2026-11-04T04:16:17Z",
@@ -776,11 +1248,13 @@
    "workflow_name": "learn-spec",
    "stage": null,
    "status": "completed",
+   "deliverable": "learn-l1",
    "harness_total_tokens": 635850,
    "harness_duration_s": 2594.0
   },
   "wf_601c64ae-391": {
    "runs": 12,
+   "runs_that_called_a_model": 9,
    "outcomes": {
     "result": 7,
     "error": 5
@@ -791,6 +1265,8 @@
    "tokens_cache_read": 32782694,
    "api_messages": 176,
    "cost_usd": 95.28,
+   "failed_or_killed_runs": 5,
+   "failed_or_killed_cost_usd": 31.16,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:15:08Z",
    "last_end": "2026-10-25T13:47:43Z",
@@ -798,11 +1274,38 @@
    "workflow_name": "stage0-prototype",
    "stage": null,
    "status": "completed",
+   "deliverable": "prototype",
    "harness_total_tokens": 396664,
    "harness_duration_s": 1387.4
   },
+  "wf_6155e60d-4b0": {
+   "runs": 2,
+   "runs_that_called_a_model": 2,
+   "outcomes": {
+    "result": 2
+   },
+   "tokens_in": 228,
+   "tokens_out": 79126,
+   "tokens_cache_write": 1203530,
+   "tokens_cache_read": 17978846,
+   "api_messages": 111,
+   "cost_usd": 10.29,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-09T08:32:47Z",
+   "last_end": "2026-11-09T09:39:17Z",
+   "agent_wall_clock_h": 1.11,
+   "workflow_name": "so-p8-ci",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "ci-pr",
+   "harness_total_tokens": 417989,
+   "harness_duration_s": 3990.9
+  },
   "wf_61a44a31-862": {
    "runs": 3,
+   "runs_that_called_a_model": 3,
    "outcomes": {
     "result": 2,
     "error": 1
@@ -813,6 +1316,8 @@
    "tokens_cache_read": 18186003,
    "api_messages": 65,
    "cost_usd": 58.24,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 9.22,
    "has_unpriced": false,
    "first_start": "2026-10-26T01:34:43Z",
    "last_end": "2026-10-26T02:30:03Z",
@@ -820,11 +1325,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "concepts",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 1314780,
    "harness_duration_s": 3321.9
   },
   "wf_61a75c97-8b6": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -834,6 +1341,8 @@
    "tokens_cache_read": 4510715,
    "api_messages": 19,
    "cost_usd": 16.49,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:51:58Z",
    "last_end": "2026-10-24T19:24:14Z",
@@ -841,11 +1350,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "synth",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 384359,
    "harness_duration_s": 1939.5
   },
   "wf_621faae6-037": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -855,6 +1366,8 @@
    "tokens_cache_read": 5176016,
    "api_messages": 22,
    "cost_usd": 26.62,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:01:27Z",
    "last_end": "2026-10-24T18:18:36Z",
@@ -862,11 +1375,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "arch",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 865660,
    "harness_duration_s": 1031.2
   },
   "wf_6b2d07c1-509": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -876,6 +1391,8 @@
    "tokens_cache_read": 1174089,
    "api_messages": 10,
    "cost_usd": 4.88,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:24:29Z",
    "last_end": "2026-10-24T19:37:51Z",
@@ -883,11 +1400,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "amend-architecture",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 170159,
    "harness_duration_s": 804.0
   },
   "wf_6d62eef7-2f0": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -897,6 +1416,8 @@
    "tokens_cache_read": 7262100,
    "api_messages": 26,
    "cost_usd": 28.13,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:47Z",
    "last_end": "2026-10-24T19:55:51Z",
@@ -904,11 +1425,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 946890,
    "harness_duration_s": 1026.2
   },
   "wf_6fec47fb-ebb": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -918,6 +1441,8 @@
    "tokens_cache_read": 5687945,
    "api_messages": 29,
    "cost_usd": 21.2,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T13:43:41Z",
    "last_end": "2026-10-25T13:59:59Z",
@@ -925,11 +1450,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 633240,
    "harness_duration_s": 983.4
   },
   "wf_7450a8e5-4d3": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -939,6 +1466,8 @@
    "tokens_cache_read": 2629514,
    "api_messages": 14,
    "cost_usd": 23.81,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T13:43:41Z",
    "last_end": "2026-10-25T14:15:34Z",
@@ -946,11 +1475,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 426567,
    "harness_duration_s": 1919.3
   },
   "wf_748b9740-800": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -960,6 +1491,8 @@
    "tokens_cache_read": 3228594,
    "api_messages": 12,
    "cost_usd": 13.31,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:01:30Z",
    "last_end": "2026-10-24T18:17:09Z",
@@ -967,11 +1500,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "arch",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 443770,
    "harness_duration_s": 944.0
   },
   "wf_7868541f-343": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "error": 1
    },
@@ -981,6 +1516,8 @@
    "tokens_cache_read": 4918086,
    "api_messages": 31,
    "cost_usd": 3.46,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 3.46,
    "has_unpriced": false,
    "first_start": "2026-11-01T05:05:49Z",
    "last_end": "2026-11-01T05:16:15Z",
@@ -988,11 +1525,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "screen",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 244620,
    "harness_duration_s": 627.6
   },
   "wf_7d38fe31-dbf": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1002,6 +1541,8 @@
    "tokens_cache_read": 2648591,
    "api_messages": 16,
    "cost_usd": 12.06,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T13:24:37Z",
    "last_end": "2026-10-25T13:42:58Z",
@@ -1009,11 +1550,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify-report",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 329945,
    "harness_duration_s": 1103.8
   },
   "wf_7d743d6e-626": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1023,6 +1566,8 @@
    "tokens_cache_read": 6468705,
    "api_messages": 32,
    "cost_usd": 24.18,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T13:43:38Z",
    "last_end": "2026-10-25T14:11:32Z",
@@ -1030,11 +1575,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 608230,
    "harness_duration_s": 1676.3
   },
   "wf_807e4bb6-f1e": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1044,6 +1591,8 @@
    "tokens_cache_read": 1790918,
    "api_messages": 11,
    "cost_usd": 6.16,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T23:39:57Z",
    "last_end": "2026-10-25T23:51:48Z",
@@ -1051,11 +1600,38 @@
    "workflow_name": "ux-design-slice",
    "stage": "research",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 271163,
    "harness_duration_s": 712.6
   },
+  "wf_81e8fa28-c04": {
+   "runs": 4,
+   "runs_that_called_a_model": 4,
+   "outcomes": {
+    "result": 4
+   },
+   "tokens_in": 268,
+   "tokens_out": 299968,
+   "tokens_cache_write": 927015,
+   "tokens_cache_read": 23378868,
+   "api_messages": 134,
+   "cost_usd": 15.31,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-04T06:53:49Z",
+   "last_end": "2026-11-04T07:38:14Z",
+   "agent_wall_clock_h": 0.89,
+   "workflow_name": "tsp-abstract-v1",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "dissemination",
+   "harness_total_tokens": 970140,
+   "harness_duration_s": 2667.3
+  },
   "wf_84d422b3-0a5": {
    "runs": 6,
+   "runs_that_called_a_model": 6,
    "outcomes": {
     "result": 6
    },
@@ -1065,6 +1641,8 @@
    "tokens_cache_read": 41192728,
    "api_messages": 149,
    "cost_usd": 95.83,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T07:02:20Z",
    "last_end": "2026-11-01T08:38:34Z",
@@ -1072,11 +1650,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "screen",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 2680290,
    "harness_duration_s": 5777.4
   },
   "wf_85cbef15-573": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1086,6 +1666,8 @@
    "tokens_cache_read": 4260138,
    "api_messages": 21,
    "cost_usd": 19.86,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T23:43:04Z",
    "last_end": "2026-10-24T23:59:35Z",
@@ -1093,11 +1675,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "critique",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 877907,
    "harness_duration_s": 992.2
   },
   "wf_97902b76-f13": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1107,6 +1691,8 @@
    "tokens_cache_read": 2478059,
    "api_messages": 12,
    "cost_usd": 19.44,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T13:43:38Z",
    "last_end": "2026-10-25T14:17:12Z",
@@ -1114,11 +1700,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise-architecture",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 395498,
    "harness_duration_s": 2017.0
   },
   "wf_9b5596d5-2b6": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1128,6 +1716,8 @@
    "tokens_cache_read": 5014409,
    "api_messages": 21,
    "cost_usd": 12.0,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T23:40:00Z",
    "last_end": "2026-10-25T23:59:00Z",
@@ -1135,11 +1725,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "principles",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 355593,
    "harness_duration_s": 1144.3
   },
   "wf_9deb2f1e-875": {
    "runs": 2,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 2
    },
@@ -1148,7 +1740,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:59:02Z",
    "last_end": "2026-10-24T19:59:02Z",
@@ -1156,11 +1750,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 0,
    "harness_duration_s": 0.5
   },
   "wf_a4fa8db1-aa1": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1170,6 +1766,8 @@
    "tokens_cache_read": 7016872,
    "api_messages": 43,
    "cost_usd": 11.52,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T00:00:56Z",
    "last_end": "2026-10-25T00:41:52Z",
@@ -1177,11 +1775,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 260953,
    "harness_duration_s": 2458.5
   },
   "wf_adce8a09-963": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "killed": 1
    },
@@ -1191,6 +1791,8 @@
    "tokens_cache_read": 52814761,
    "api_messages": 134,
    "cost_usd": 22.45,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 22.45,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:17:34Z",
    "last_end": "2026-11-01T16:52:30Z",
@@ -1198,11 +1800,13 @@
    "workflow_name": "integrate-shell",
    "stage": null,
    "status": "killed",
+   "deliverable": "shell",
    "harness_total_tokens": 518571,
    "harness_duration_s": 2096.2
   },
   "wf_b1ac0171-b71": {
    "runs": 2,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 2
    },
@@ -1211,7 +1815,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:59:02Z",
    "last_end": "2026-10-24T19:59:02Z",
@@ -1219,11 +1825,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 0,
    "harness_duration_s": 0.4
   },
   "wf_b5358005-abb": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "error": 2
    },
@@ -1233,6 +1841,8 @@
    "tokens_cache_read": 597500,
    "api_messages": 9,
    "cost_usd": 3.77,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 3.77,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:58:18Z",
    "last_end": "2026-10-24T19:59:10Z",
@@ -1240,11 +1850,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "critique",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 310492,
    "harness_duration_s": 51.4
   },
   "wf_bdacf0bf-98f": {
    "runs": 2,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 2
    },
@@ -1253,7 +1865,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:59:02Z",
    "last_end": "2026-10-24T19:59:02Z",
@@ -1261,11 +1875,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 0,
    "harness_duration_s": 0.6
   },
   "wf_bfa07b92-34b": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1275,6 +1891,8 @@
    "tokens_cache_read": 5033448,
    "api_messages": 23,
    "cost_usd": 22.67,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:48Z",
    "last_end": "2026-10-24T19:53:29Z",
@@ -1282,11 +1900,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 768661,
    "harness_duration_s": 883.6
   },
   "wf_c154d227-ade": {
    "runs": 2,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 2
    },
@@ -1295,7 +1915,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:59:01Z",
    "last_end": "2026-10-24T19:59:02Z",
@@ -1303,11 +1925,38 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 0,
    "harness_duration_s": 0.7
   },
+  "wf_c544ea8f-011": {
+   "runs": 13,
+   "runs_that_called_a_model": 13,
+   "outcomes": {
+    "result": 13
+   },
+   "tokens_in": 1430,
+   "tokens_out": 566839,
+   "tokens_cache_write": 2889982,
+   "tokens_cache_read": 122370438,
+   "api_messages": 714,
+   "cost_usd": 43.57,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-10T18:16:16Z",
+   "last_end": "2026-11-10T19:36:33Z",
+   "agent_wall_clock_h": 2.39,
+   "workflow_name": "project-audit",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "audit",
+   "harness_total_tokens": 2969880,
+   "harness_duration_s": 4817.9
+  },
   "wf_c6bdd34a-343": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "error": 2
    },
@@ -1317,6 +1966,8 @@
    "tokens_cache_read": 515342,
    "api_messages": 8,
    "cost_usd": 2.62,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 2.62,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:58:22Z",
    "last_end": "2026-10-24T19:59:55Z",
@@ -1324,11 +1975,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "critique",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 249498,
    "harness_duration_s": 96.6
   },
   "wf_c99f0036-656": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1338,6 +1991,8 @@
    "tokens_cache_read": 11782205,
    "api_messages": 49,
    "cost_usd": 47.5,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T23:43:07Z",
    "last_end": "2026-10-25T01:08:53Z",
@@ -1345,11 +2000,38 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 827335,
    "harness_duration_s": 5150.1
   },
+  "wf_cd6ecb51-c64": {
+   "runs": 24,
+   "runs_that_called_a_model": 24,
+   "outcomes": {
+    "result": 24
+   },
+   "tokens_in": 7684,
+   "tokens_out": 2805861,
+   "tokens_cache_write": 19203253,
+   "tokens_cache_read": 712762646,
+   "api_messages": 2257,
+   "cost_usd": 319.32,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
+   "has_unpriced": false,
+   "first_start": "2026-11-08T17:08:36Z",
+   "last_end": "2026-11-09T04:34:13Z",
+   "agent_wall_clock_h": 14.05,
+   "workflow_name": "learn-signout-l2",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "signout-l2",
+   "harness_total_tokens": 9889533,
+   "harness_duration_s": 41139.4
+  },
   "wf_d09c7814-7ee": {
    "runs": 6,
+   "runs_that_called_a_model": 6,
    "outcomes": {
     "result": 6
    },
@@ -1359,6 +2041,8 @@
    "tokens_cache_read": 132824749,
    "api_messages": 496,
    "cost_usd": 49.68,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T16:52:57Z",
    "last_end": "2026-11-01T19:20:41Z",
@@ -1366,11 +2050,13 @@
    "workflow_name": "review-shell",
    "stage": null,
    "status": "completed",
+   "deliverable": "shell",
    "harness_total_tokens": 2211644,
    "harness_duration_s": 8865.7
   },
   "wf_d216cdb8-2bb": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1380,6 +2066,8 @@
    "tokens_cache_read": 4604239,
    "api_messages": 22,
    "cost_usd": 14.76,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T23:43:07Z",
    "last_end": "2026-10-24T23:53:51Z",
@@ -1387,11 +2075,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "critique",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 869798,
    "harness_duration_s": 648.0
   },
   "wf_d30f46c5-672": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1401,6 +2091,8 @@
    "tokens_cache_read": 6400357,
    "api_messages": 31,
    "cost_usd": 20.13,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:48Z",
    "last_end": "2026-10-24T19:54:19Z",
@@ -1408,11 +2100,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 650480,
    "harness_duration_s": 933.0
   },
   "wf_d726a9be-dd5": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1422,6 +2116,8 @@
    "tokens_cache_read": 16211636,
    "api_messages": 55,
    "cost_usd": 12.24,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-11-01T17:59:27Z",
    "last_end": "2026-11-01T18:32:29Z",
@@ -1429,11 +2125,13 @@
    "workflow_name": "shell-tools-spec",
    "stage": null,
    "status": "completed",
+   "deliverable": "shell",
    "harness_total_tokens": 514533,
    "harness_duration_s": 1985.3
   },
   "wf_dbcd9af8-b88": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1443,6 +2141,8 @@
    "tokens_cache_read": 4887254,
    "api_messages": 25,
    "cost_usd": 32.29,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T14:17:39Z",
    "last_end": "2026-10-25T14:46:12Z",
@@ -1450,11 +2150,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 783667,
    "harness_duration_s": 1714.9
   },
   "wf_dc2d0f4a-630": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "error": 1
    },
@@ -1464,6 +2166,8 @@
    "tokens_cache_read": 3663649,
    "api_messages": 25,
    "cost_usd": 4.07,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 4.07,
    "has_unpriced": false,
    "first_start": "2026-11-01T05:05:49Z",
    "last_end": "2026-11-01T05:16:35Z",
@@ -1471,11 +2175,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "screen",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 262990,
    "harness_duration_s": 647.8
   },
   "wf_e0390a8f-63d": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1485,6 +2191,8 @@
    "tokens_cache_read": 3853540,
    "api_messages": 22,
    "cost_usd": 31.67,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T14:17:39Z",
    "last_end": "2026-10-25T14:46:23Z",
@@ -1492,11 +2200,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "revise",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 732982,
    "harness_duration_s": 1726.4
   },
   "wf_e081933a-80d": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1506,6 +2216,8 @@
    "tokens_cache_read": 9238089,
    "api_messages": 34,
    "cost_usd": 58.6,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T23:59:10Z",
    "last_end": "2026-10-26T01:34:06Z",
@@ -1513,11 +2225,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "design-system",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 510779,
    "harness_duration_s": 5700.1
   },
   "wf_e99f4e0c-9e4": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1527,6 +2241,8 @@
    "tokens_cache_read": 2257615,
    "api_messages": 11,
    "cost_usd": 5.9,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:39:18Z",
    "last_end": "2026-10-24T18:49:34Z",
@@ -1534,11 +2250,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "judge",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 318675,
    "harness_duration_s": 621.0
   },
   "wf_ea847c77-1aa": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1548,6 +2266,8 @@
    "tokens_cache_read": 5505877,
    "api_messages": 26,
    "cost_usd": 22.06,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:48Z",
    "last_end": "2026-10-24T19:53:17Z",
@@ -1555,11 +2275,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 746385,
    "harness_duration_s": 871.4
   },
   "wf_ecfbabae-4b1": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1569,6 +2291,8 @@
    "tokens_cache_read": 7809693,
    "api_messages": 37,
    "cost_usd": 23.79,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:47Z",
    "last_end": "2026-10-24T19:55:50Z",
@@ -1576,11 +2300,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "draft",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 771617,
    "harness_duration_s": 1024.6
   },
   "wf_f10e265d-b53": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1590,6 +2316,8 @@
    "tokens_cache_read": 4214532,
    "api_messages": 32,
    "cost_usd": 15.35,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T23:43:05Z",
    "last_end": "2026-10-25T00:06:07Z",
@@ -1597,11 +2325,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 497370,
    "harness_duration_s": 1384.6
   },
   "wf_f1f45276-b55": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "result": 2
    },
@@ -1611,6 +2341,8 @@
    "tokens_cache_read": 5276518,
    "api_messages": 22,
    "cost_usd": 25.65,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:01:30Z",
    "last_end": "2026-10-24T18:17:07Z",
@@ -1618,11 +2350,39 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "arch",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 875434,
    "harness_duration_s": 941.0
   },
+  "wf_f2918586-0f2": {
+   "runs": 12,
+   "runs_that_called_a_model": 12,
+   "outcomes": {
+    "result": 11,
+    "killed": 1
+   },
+   "tokens_in": 1564,
+   "tokens_out": 458095,
+   "tokens_cache_write": 4198464,
+   "tokens_cache_read": 44669490,
+   "api_messages": 252,
+   "cost_usd": 52.65,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 5.41,
+   "has_unpriced": false,
+   "first_start": "2026-11-09T01:39:00Z",
+   "last_end": "2026-11-09T02:54:59Z",
+   "agent_wall_clock_h": 1.52,
+   "workflow_name": "simulated-practice-epa",
+   "stage": null,
+   "status": "completed",
+   "deliverable": "epa-design",
+   "harness_total_tokens": 1733726,
+   "harness_duration_s": 3265.1
+  },
   "wf_f30d346e-dc0": {
    "runs": 2,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 2
    },
@@ -1631,7 +2391,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:59:02Z",
    "last_end": "2026-10-24T19:59:02Z",
@@ -1639,11 +2401,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "verify",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 0,
    "harness_duration_s": 0.6
   },
   "wf_f5a5e494-811": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1653,6 +2417,8 @@
    "tokens_cache_read": 9113282,
    "api_messages": 31,
    "cost_usd": 15.97,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-25T14:46:59Z",
    "last_end": "2026-10-25T15:14:34Z",
@@ -1660,11 +2426,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "final",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 599352,
    "harness_duration_s": 1657.7
   },
   "wf_f761c187-2d3": {
    "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
     "error": 2
    },
@@ -1674,6 +2442,8 @@
    "tokens_cache_read": 7691783,
    "api_messages": 50,
    "cost_usd": 8.56,
+   "failed_or_killed_runs": 2,
+   "failed_or_killed_cost_usd": 8.56,
    "has_unpriced": false,
    "first_start": "2026-11-01T05:05:47Z",
    "last_end": "2026-11-01T05:19:27Z",
@@ -1681,11 +2451,13 @@
    "workflow_name": "ux-design-slice",
    "stage": "screen",
    "status": "completed",
+   "deliverable": "design",
    "harness_total_tokens": 526709,
    "harness_duration_s": 819.8
   },
   "wf_fa72069a-f66": {
    "runs": 1,
+   "runs_that_called_a_model": 1,
    "outcomes": {
     "result": 1
    },
@@ -1695,6 +2467,8 @@
    "tokens_cache_read": 2709315,
    "api_messages": 17,
    "cost_usd": 19.82,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T19:38:48Z",
    "last_end": "2026-10-24T19:59:52Z",
@@ -1702,11 +2476,13 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "extract-claims",
    "status": "completed",
+   "deliverable": "verification",
    "harness_total_tokens": 416888,
    "harness_duration_s": 1266.6
   },
   "wf_fb36d66f-8ef": {
    "runs": 1,
+   "runs_that_called_a_model": 0,
    "outcomes": {
     "error": 1
    },
@@ -1715,7 +2491,9 @@
    "tokens_cache_write": 0,
    "tokens_cache_read": 0,
    "api_messages": 0,
-   "cost_usd": 0.0,
+   "cost_usd": 0,
+   "failed_or_killed_runs": 1,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
    "first_start": "2026-10-24T18:19:14Z",
    "last_end": "2026-10-24T18:19:14Z",
@@ -1723,209 +2501,209 @@
    "workflow_name": "wsi-plan-slice",
    "stage": "judge",
    "status": "completed",
+   "deliverable": "planning",
    "harness_total_tokens": 0,
    "harness_duration_s": 3.0
   },
-  "wf_0f63ba88-ee5": {
-   "runs": 7,
+  "wf_fd4b3489-3e8": {
+   "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
-    "result": 6,
-    "in_progress": 1
+    "result": 2
    },
-   "tokens_in": 1104,
-   "tokens_out": 666749,
-   "tokens_cache_write": 2338667,
-   "tokens_cache_read": 124965702,
-   "api_messages": 546,
-   "cost_usd": 50.03,
+   "tokens_in": 452,
+   "tokens_out": 150916,
+   "tokens_cache_write": 6954495,
+   "tokens_cache_read": 53951396,
+   "api_messages": 225,
+   "cost_usd": 44.86,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
-   "first_start": "2026-11-04T05:04:13Z",
-   "last_end": "2026-11-04T06:57:01Z",
-   "agent_wall_clock_h": 2.81,
-   "workflow_name": null,
+   "first_start": "2026-11-09T04:34:57Z",
+   "last_end": "2026-11-09T08:14:45Z",
+   "agent_wall_clock_h": 3.66,
+   "workflow_name": "pre-pr-fixes",
    "stage": null,
-   "status": "running (no workflow record yet)"
+   "status": "completed",
+   "deliverable": "ci-pr",
+   "harness_total_tokens": 639499,
+   "harness_duration_s": 13189.7
   },
-  "wf_148d6e0b-e06": {
-   "runs": 7,
+  "wf_8a916584-b9f": {
+   "runs": 2,
+   "runs_that_called_a_model": 2,
    "outcomes": {
-    "result": 5,
     "in_progress": 2
    },
-   "tokens_in": 1242,
-   "tokens_out": 1209843,
-   "tokens_cache_write": 5184582,
-   "tokens_cache_read": 226915625,
-   "api_messages": 616,
-   "cost_usd": 95.51,
+   "tokens_in": 206,
+   "tokens_out": 119750,
+   "tokens_cache_write": 586058,
+   "tokens_cache_read": 21787858,
+   "api_messages": 104,
+   "cost_usd": 7.65,
+   "failed_or_killed_runs": 0,
+   "failed_or_killed_cost_usd": 0,
    "has_unpriced": false,
-   "first_start": "2026-11-04T04:18:09Z",
-   "last_end": "2026-11-04T06:56:06Z",
-   "agent_wall_clock_h": 4.65,
-   "workflow_name": null,
+   "first_start": "2026-11-10T20:08:48Z",
+   "last_end": "2026-11-10T20:18:59Z",
+   "agent_wall_clock_h": 0.34,
+   "workflow_name": "audit-fixes-1",
    "stage": null,
-   "status": "running (no workflow record yet)"
-  },
-  "wf_81e8fa28-c04": {
-   "runs": 1,
-   "outcomes": {
-    "in_progress": 1
-   },
-   "tokens_in": 12,
-   "tokens_out": 6829,
-   "tokens_cache_write": 128986,
-   "tokens_cache_read": 491208,
-   "api_messages": 6,
-   "cost_usd": 0.88,
-   "has_unpriced": false,
-   "first_start": "2026-11-04T06:53:49Z",
-   "last_end": "2026-11-04T06:55:30Z",
-   "agent_wall_clock_h": 0.03,
-   "workflow_name": null,
-   "stage": null,
-   "status": "running (no workflow record yet)"
+   "status": "running (no workflow record yet)",
+   "deliverable": "audit-fixes"
   }
  },
+ "unmapped_workflows": {},
  "wall_clock": {
   "first": "2026-10-24T14:47:08Z",
-  "last": "2026-11-04T06:57:01Z",
-  "span_h": 256.2,
-  "span_days": 10.67,
-  "agent_active_union_h": 33.1,
-  "agent_wall_clock_sum_h": 80.1,
+  "last": "2026-11-10T20:18:59Z",
+  "span_h": 413.5,
+  "span_days": 17.23,
+  "agent_active_union_h": 62.6,
+  "agent_wall_clock_sum_h": 120.2,
   "agent_active_dates": [
    "2026-10-24",
    "2026-10-25",
    "2026-10-26",
    "2026-11-01",
    "2026-11-02",
-   "2026-11-04"
-  ]
+   "2026-11-04",
+   "2026-11-05",
+   "2026-11-08",
+   "2026-11-09",
+   "2026-11-10"
+  ],
+  "calendar_dates_in_span": 18
  },
  "days": {
   "first_research_note_commit": "2026-10-24T18:30:11+00:00",
-  "to_date": "2026-11-04",
-  "elapsed_days": 11,
-  "calendar_days_inclusive": 12
+  "to_date": "2026-11-10",
+  "elapsed_days": 17,
+  "calendar_days_inclusive": 18
  },
  "owner_messages": {
-  "count": 50,
+  "count": 70,
   "per_day": {
    "2026-10-24": 15,
    "2026-10-25": 12,
    "2026-10-26": 2,
    "2026-11-01": 14,
    "2026-11-03": 1,
-   "2026-11-04": 6
+   "2026-11-04": 6,
+   "2026-11-05": 1,
+   "2026-11-08": 5,
+   "2026-11-09": 11,
+   "2026-11-10": 3
   },
-  "timestamps": [
-   "2026-10-24T14:47:08.550Z",
-   "2026-10-24T14:48:03.211Z",
-   "2026-10-24T14:50:19.509Z",
-   "2026-10-24T14:56:41.694Z",
-   "2026-10-24T15:11:52.040Z",
-   "2026-10-24T17:38:13.448Z",
-   "2026-10-24T17:48:09.127Z",
-   "2026-10-24T18:29:25.456Z",
-   "2026-10-24T18:38:06.175Z",
-   "2026-10-24T18:58:39.219Z",
-   "2026-10-24T19:02:04.942Z",
-   "2026-10-24T19:09:14.232Z",
-   "2026-10-24T19:15:54.498Z",
-   "2026-10-24T19:36:11.275Z",
-   "2026-10-24T23:43:43.943Z",
-   "2026-10-25T13:23:23.346Z",
-   "2026-10-25T13:25:34.471Z",
-   "2026-10-25T14:57:15.317Z",
-   "2026-10-25T16:01:12.592Z",
-   "2026-10-25T16:12:35.855Z",
-   "2026-10-25T16:37:21.737Z",
-   "2026-10-25T16:39:30.933Z",
-   "2026-10-25T16:41:40.617Z",
-   "2026-10-25T16:47:34.841Z",
-   "2026-10-25T23:14:58.078Z",
-   "2026-10-25T23:36:11.255Z",
-   "2026-10-25T23:47:11.196Z",
-   "2026-10-26T00:48:31.228Z",
-   "2026-10-26T00:52:15.884Z",
-   "2026-11-01T05:04:09.389Z",
-   "2026-11-01T06:02:50.991Z",
-   "2026-11-01T12:59:04.937Z",
-   "2026-11-01T14:10:33.553Z",
-   "2026-11-01T15:58:33.179Z",
-   "2026-11-01T16:01:28.128Z",
-   "2026-11-01T16:16:38.833Z",
-   "2026-11-01T16:16:52.489Z",
-   "2026-11-01T16:34:01.943Z",
-   "2026-11-01T17:21:16.587Z",
-   "2026-11-01T17:51:35.472Z",
-   "2026-11-01T17:55:02.115Z",
-   "2026-11-01T17:58:04.371Z",
-   "2026-11-01T18:19:50.114Z",
-   "2026-11-03T17:21:44.583Z",
-   "2026-11-04T02:43:25.911Z",
-   "2026-11-04T03:31:10.631Z",
-   "2026-11-04T04:12:28.019Z",
-   "2026-11-04T04:49:39.012Z",
-   "2026-11-04T04:53:43.563Z",
-   "2026-11-04T04:58:40.273Z"
-  ],
   "slash_commands": {
-   "count": 5,
-   "timestamps": [
-    "2026-10-24T14:50:19.407Z",
-    "2026-11-01T06:01:07.057Z",
-    "2026-11-01T14:10:33.404Z",
-    "2026-11-01T16:16:38.720Z",
-    "2026-11-01T16:16:49.439Z"
-   ]
+   "count": 7,
+   "per_day": {
+    "2026-10-24": 1,
+    "2026-11-01": 4,
+    "2026-11-08": 1,
+    "2026-11-10": 1
+   }
   },
-  "rule": "type user, origin.kind == \"human\" in the main transcript; tool results, system, meta, task-notification and peer-agent text excluded; content not read into this file"
+  "rule": "type user, origin.kind == \"human\" in the main transcript; tool results, system, meta, task-notification and peer-agent text excluded; content not read into this file; per-day counts only (no timestamps are published)"
  },
  "harness_cost_state": {
-  "note": "Claude Code's own running total for the session (last cost-state record in the main transcript); it includes model calls made inside tools (e.g. web search / fetch on Haiku 5.5) and any call whose response was never written to a transcript, so it is the upper reference and the ledger the lower bound",
-  "record_written_after": "2026-11-04T02:44:57Z",
-  "total_cost_usd": 2519.98,
+  "note": "Claude Code's own running total for the session (last cost-state record in the main transcript); it includes model calls made inside tools (web search and fetch, run by a small model), web-search fees, and any call whose response was never written to a transcript, so it is the upper reference and the ledger the lower bound",
+  "record_written_after": "2026-11-10T20:00:49Z",
+  "total_cost_usd": 3595.4,
   "ledger_same_cutoff": {
    "claude-fable-5-1": {
-    "output": 12437491,
-    "cache_write": 89966951,
-    "cache_read": 662322766,
-    "cost_usd": 1932.45
+    "output": 13252564,
+    "cache_write": 96673071,
+    "cache_read": 745785968,
+    "cost_usd": 2079.26
+   },
+   "claude-fable-5-2": {
+    "output": 77155,
+    "cache_write": 1688416,
+    "cache_read": 13699653,
+    "cost_usd": 30.29
    },
    "claude-opus-5-5": {
-    "output": 5855245,
-    "cache_write": 26031552,
-    "cache_read": 1342222871,
-    "cost_usd": 530.85
+    "output": 13333076,
+    "cache_write": 87723791,
+    "cache_read": 3254877037,
+    "cost_usd": 1386.82
+   },
+   "claude-sonnet-5-5": {
+    "output": 760518,
+    "cache_write": 5663027,
+    "cache_read": 159605034,
+    "cost_usd": 37.73
    }
   },
+  "ledger_same_cutoff_total_usd": 3534.1,
+  "ledger_at_or_below_harness_in_every_model_row": true,
+  "models_in_harness_not_in_ledger": [
+   "claude-haiku-5-5"
+  ],
   "models": {
    "claude-fable-5-1": {
-    "input": 118158,
-    "output": 12771178,
-    "cache_write": 92077535,
-    "cache_read": 680490030,
+    "input": 128670,
+    "output": 13586228,
+    "cache_write": 98746469,
+    "cache_read": 763347033,
     "web_search_requests": 0,
-    "cost_usd": 1980.61
+    "web_search_fee_usd": 0.0,
+    "cost_usd": 2126.8,
+    "token_cost_usd": 2126.8
+   },
+   "claude-fable-5-2": {
+    "input": 2587,
+    "output": 77393,
+    "cache_write": 1691620,
+    "cache_read": 17071809,
+    "web_search_requests": 0,
+    "web_search_fee_usd": 0.0,
+    "cost_usd": 31.05,
+    "token_cost_usd": 31.05
    },
    "claude-haiku-5-5": {
-    "input": 10839487,
-    "output": 813414,
+    "input": 12125128,
+    "output": 911569,
     "cache_write": 0,
     "cache_read": 0,
-    "web_search_requests": 700,
-    "cost_usd": 8.49
+    "web_search_requests": 790,
+    "web_search_fee_usd": 7.9,
+    "cost_usd": 9.57,
+    "token_cost_usd": 1.67
    },
    "claude-opus-5-5": {
-    "input": 8930,
-    "output": 5855327,
-    "cache_write": 26031769,
-    "cache_read": 1342294241,
+    "input": 40720,
+    "output": 13344475,
+    "cache_write": 87737482,
+    "cache_read": 3269979953,
     "web_search_requests": 0,
-    "cost_usd": 530.88
+    "web_search_fee_usd": 0.0,
+    "cost_usd": 1390.26,
+    "token_cost_usd": 1390.26
+   },
+   "claude-sonnet-5-5": {
+    "input": 1836,
+    "output": 760518,
+    "cache_write": 5663027,
+    "cache_read": 159605034,
+    "web_search_requests": 0,
+    "web_search_fee_usd": 0.0,
+    "cost_usd": 37.73,
+    "token_cost_usd": 37.73
    }
-  }
+  },
+  "web_search_requests_total": 790,
+  "web_search_fee_usd_total": 7.9
  },
- "human_minutes": null
+ "web_search_fees": {
+  "requests_in_harness_record": 790,
+  "usd_per_1000": 10.0,
+  "fee_usd": 7.9,
+  "in_ledger_total": false,
+  "note": "web-search fees and the small-model calls inside the search and fetch tools appear only in the harness's aggregate record, not in any transcript message, so they are outside cost_usd_total"
+ },
+ "human_minutes": null,
+ "basis_sentence": "At API list prices (standard speed, no batch discount, prompt caching as recorded), the model usage logged in this project's agent transcripts (278 agent runs that each called a model, plus the main session, across all project phases) comes to at least US$3,542 as of 2026-11-10 20:19 UTC; that is a lower bound (web-search fees, model calls made inside tools and any response never written to a transcript are left out), the API-equivalent of work done on a subscription plan and not money spent, and the human hours are not logged."
 }

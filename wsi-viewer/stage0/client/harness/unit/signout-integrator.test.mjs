@@ -83,13 +83,40 @@ export default async function (t) {
   t.ok(rows['Staging rules'].includes('ITC-only nodes excluded from the positive-node count as in AJCC'), 'staging rules say the ITC rule is AJCC’s (PE-1)');
   t.ok(!/CAMELYON17 rule/.test(JSON.stringify(rows)), 'no "CAMELYON17 rule" anywhere (lint so-no-camelyon-itc-claim)');
   t.ok(rows.Attribution.includes(CITATION) && rows.Attribution.startsWith('CAMELYON17 data set by the Computational Pathology Group'), 'attribution sentence and citation (§12, PE-19)');
-  t.eq(rows.Licence, 'Apache-2.0 (this software); case text CC BY 4.0; slides CC0 1.0', 'Licence');
+  // audit 2026-11-10 (C1, B14): release status and licences as the owner decided on 2026-11-10
+  t.eq(rows.Licence, 'Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; case text licence to be confirmed; slides CC0 1.0', 'Licence (C1: proposed, pending UT OTC approval; B14: case text licence to be confirmed)');
+  t.ok(!/\bopen[- ]source\b/i.test(JSON.stringify(rows).replace(/intended for open-source release/g, '')), 'no row calls the software open-source (only "intended for open-source release")');
   const cohort = Object.fromEntries(about.aboutRows({ mode: 'cohort', build: 'B1', draft: true, attribution: null, files: ['patient_017_node_0.tif', 'patient_017_node_1.tif'] }));
   t.eq(cohort.Mode, 'Cohort tool', 'cohort: Mode Cohort tool');
   t.eq(cohort.Review, 'Draft — pending pathologist review', 'a draft adds the Review row (LEARN.md D11)');
   t.ok(cohort.Attribution.endsWith('Dataset files: patient_017_node_0.tif, patient_017_node_1.tif.'), 'the dataset files listed after the citation');
   const own = Object.fromEntries(about.aboutRows({ mode: 'trainee', build: 'B1', draft: false, attribution: { dataset: 'CAMELYON17', holder: 'h', licence: 'CC0 1.0', url: 'u', sentence: 'S.', citation: 'C.' }, files: [] }));
   t.eq(own.Attribution, 'S. C.', "the worklist's own attribution block replaces the page's copy; an empty file list adds nothing");
+
+  t.group('Safari colour notice (audit 2026-11-10, H2): which user agents see it');
+  const safari = await t.load('src/signout/host/safari.ts');
+  const UA = {
+    macSafari: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+    macChrome: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+    macEdge: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0',
+    macFirefox: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:132.0) Gecko/20100101 Firefox/132.0',
+    linuxHeadless: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36',
+    winChrome: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+    android: 'Mozilla/5.0 (Linux; Android 14; Pixel 7a) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36',
+    iphoneSafari: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+    iphoneChrome: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/141.0.0.0 Mobile/15E148 Safari/604.1',
+    ipadSafari: 'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+  };
+  t.eq(safari.appleWebKit(UA.macSafari, 0), 'macos', 'macOS Safari → macos');
+  t.eq(safari.appleWebKit(UA.macSafari, 5), 'ios', 'a Macintosh Safari user agent with touch points (iPadOS desktop site) → ios');
+  for (const k of ['macChrome', 'macEdge', 'macFirefox', 'linuxHeadless', 'winChrome', 'android']) t.eq(safari.appleWebKit(UA[k], 0), null, `${k} → no notice`);
+  t.eq(safari.appleWebKit(UA.macChrome, 5), null, 'macOS Chrome with touch points → still no notice (Chromium never matches)');
+  for (const k of ['iphoneSafari', 'iphoneChrome', 'ipadSafari']) t.eq(safari.appleWebKit(UA[k], 5), 'ios', `${k} → ios (every iOS browser is WebKit)`);
+  t.eq(safari.appleWebKit('', 0), null, 'an empty user agent → no notice');
+  t.eq(safari.safariNoteText('macos'), 'Colour rendering in Safari has not been checked yet. If the slides look off, use Chrome or Edge.', 'the macOS wording (owner decision 2026-11-10)');
+  t.eq(safari.safariNoteText('ios'), 'Colour rendering in Safari has not been checked yet. If the slides look off, use Chrome or Edge on a computer.', 'the iPhone / iPad wording names a computer (every iOS browser is WebKit)');
+  t.ok(safari.SAFARI_DISMISSED_KEY.startsWith(env.SIGNOUT_NAMESPACE.prefsPrefix), 'the dismissal key sits under the page prefix');
+  t.ok(safari.SAFARI_DISMISS_LABEL.startsWith('Dismiss'), 'the dismiss name starts with its visible text "Dismiss" (SC 2.5.3)');
 
   t.group('plates (§9.1, §8.4; node numbers 1-based in strings, D29)');
   const P = about.plateText;

@@ -35,7 +35,7 @@
       "id": "F5",
       "pointer": "/steps/2/text",
       "quote": "This is the background: a dense, non-cohesive population of small lymphocytes with round, dark nuclei and very little cytoplasm.",
-      "basis": "Location (3181.6, 3181.6) µm at 20×, 1.44 mm from the deposit outline; level-2 tile tiles/2/6_6.jpg viewed by the spec author: dense small lymphocytes, a paler sinus-like area at its right edge. Review fix 2026-11-08 (pathologist-educator review): was \"sheets of small lymphocytes\"; \"sheets\" is a word the module teaches as favouring carcinoma (F17), so the background is now described as non-cohesive.",
+      "basis": "Location (3181.6, 3181.6) µm at 20×, 1.44 mm from the deposit outline; level-2 tile tiles/2/6_6.jpg viewed by the spec author: dense small lymphocytes, a paler sinus-like area at its right edge. Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): was \"sheets of small lymphocytes\"; \"sheets\" is a word the module teaches as favouring carcinoma (F17), so the background is now described as non-cohesive.",
       "status": "pending"
     },
     {
@@ -49,28 +49,28 @@
       "id": "F7",
       "pointer": "/items/0/candidates/0/description",
       "quote": "Upper border of the region",
-      "basis": "Point (9300, 1000) px, 522 µm outside the outline; tiles/3/2_0.jpg: clusters of round clear spaces (likely fat) between lymphoid bands. Review fix 2026-11-08 (pathologist-educator review): the description is now its position only; it used to describe the histology (\"round clear spaces between bands of dark lymphoid tissue\"), which let a learner pick the answer by reading instead of looking.",
+      "basis": "Point (9300, 1000) px, 522 µm outside the outline; tiles/3/2_0.jpg: clusters of round clear spaces (likely fat) between lymphoid bands. Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): the description is now its position only; it used to describe the histology (\"round clear spaces between bands of dark lymphoid tissue\"), which let a learner pick the answer by reading instead of looking.",
       "status": "pending"
     },
     {
       "id": "F8",
       "pointer": "/items/0/candidates/1/description",
       "quote": "Lower right corner of the region",
-      "basis": "Point (13088, 13088) px, 1.44 mm outside the outline; tiles/2/6_6.jpg (dense lymphoid tissue). Review fix 2026-11-08 (pathologist-educator review): position only (was \"Lower right corner: dense, dark-staining lymphoid tissue\").",
+      "basis": "Point (13088, 13088) px, 1.44 mm outside the outline; tiles/2/6_6.jpg (dense lymphoid tissue). Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): position only (was \"Lower right corner: dense, dark-staining lymphoid tissue\").",
       "status": "pending"
     },
     {
       "id": "F9",
       "pointer": "/items/0/candidates/2/description",
       "quote": "Centre of the region",
-      "basis": "Point (7168, 5120) px, inside the outline, 459 µm from its edge, in no Exclusion; tiles/2/3_2.jpg. Review fix 2026-11-08 (pathologist-educator review): position only (was \"Centre: sheets of large, pale cells with abundant pink cytoplasm\", which named the carcinoma features of q-features and overstated the cytoplasm: moderate, not abundant, at 40×).",
+      "basis": "Point (7168, 5120) px, inside the outline, 459 µm from its edge, in no Exclusion; tiles/2/3_2.jpg. Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): position only (was \"Centre: sheets of large, pale cells with abundant pink cytoplasm\", which named the carcinoma features of q-features and overstated the cytoplasm: moderate, not abundant, at 40×).",
       "status": "pending"
     },
     {
       "id": "F10",
       "pointer": "/items/0/candidates/3/description",
       "quote": "Lower edge of the region",
-      "basis": "Point (6400, 13900) px, 820 µm outside the outline (819.8 µm by Phase A distanceToGeometry, checked in Python; the draft said 784 µm, corrected 2026-11-04, LEARN-QUESTIONS S-Q4); tiles/3/1_3.jpg (round and slit-like clear spaces within lymphoid tissue). Review fix 2026-11-08 (pathologist-educator review): position only.",
+      "basis": "Point (6400, 13900) px, 820 µm outside the outline (819.8 µm by Phase A distanceToGeometry, checked in Python; the draft said 784 µm, corrected 2026-11-04, LEARN-QUESTIONS S-Q4); tiles/3/1_3.jpg (round and slit-like clear spaces within lymphoid tissue). Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): position only.",
       "status": "pending"
     },
     {
@@ -154,14 +154,14 @@
       "id": "F22",
       "pointer": "/steps/7/text",
       "quote": "The smaller outlined areas inside it are marked Exclusion: non-tumour areas such as vessel lumens and spaces, which the dataset excludes from the tumour outline.",
-      "basis": "CAMELYON16 ASAP annotation group 'Exclusion'; the six Exclusion polygons of this region all lie inside 'Annotation 3' (computed). Review fix 2026-11-08 (pathologist-educator review): the ones inspected are empty lumens and spaces inside the deposit, some vessels with red cells (shots r-1440-exclusion-revealed, s-1440-after-5), so \"non-tumour tissue\" became \"non-tumour areas such as vessel lumens and spaces\". The items' wrong-hole feedback says the same.",
+      "basis": "CAMELYON16 ASAP annotation group 'Exclusion'; the six Exclusion polygons of this region all lie inside 'Annotation 3' (computed). Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): the ones inspected are empty lumens and spaces inside the deposit, some vessels with red cells (shots r-1440-exclusion-revealed, s-1440-after-5), so \"non-tumour tissue\" became \"non-tumour areas such as vessel lumens and spaces\". The items' wrong-hole feedback says the same.",
       "status": "pending"
     },
     {
       "id": "F23",
       "pointer": "/case/expertView/text",
       "quote": "three small tumour areas the CAMELYON16 outline marks separately",
-      "basis": "Three further Tumor polygons in the region ('Annotation 4–6'): greatest dimensions 0.05, 0.07 and 0.15 mm (areas 830, 2,424 and 5,185 µm²). None overlaps the main outline 'Annotation 3', but their nearest vertices are only 15, 20 and 11 µm from it (area centroids 28, 48 and 65 µm; measured 2026-11-04, LEARN-QUESTIONS S-Q4b; the draft said 70–950 µm). Review fix 2026-11-08 (pathologist-educator review): at 10× and 20× they are small tumour-cell nests that abut the deposit's irregular invasive edge, 11–20 µm (1–2 cell diameters) from it, not separate metastases; \"three small separate tumour foci\" became the conservative wording offered here before. Whether to describe them as part of the deposit is still the owner's call.",
+      "basis": "Three further Tumor polygons in the region ('Annotation 4–6'): greatest dimensions 0.05, 0.07 and 0.15 mm (areas 830, 2,424 and 5,185 µm²). None overlaps the main outline 'Annotation 3', but their nearest vertices are only 15, 20 and 11 µm from it (area centroids 28, 48 and 65 µm; measured 2026-11-04, LEARN-QUESTIONS S-Q4b; the draft said 70–950 µm). Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): at 10× and 20× they are small tumour-cell nests that abut the deposit's irregular invasive edge, 11–20 µm (1–2 cell diameters) from it, not separate metastases; \"three small separate tumour foci\" became the conservative wording offered here before. Whether to describe them as part of the deposit is still the owner's call.",
       "status": "pending"
     },
     {
@@ -175,7 +175,7 @@
       "id": "F25",
       "pointer": "/answerKeys/0/related/0/feedback",
       "quote": "That is tumour too: one of three small tumour areas the CAMELYON16 outline marks separately, so a point on it counts.",
-      "basis": "As F23 (owner default rule (a), 2026-11-04, default pending owner: a point on any Tumor focus counts). Review fix 2026-11-08 (pathologist-educator review): \"one of three small separate foci in the CAMELYON16 outline\" became the conservative wording, as F23.",
+      "basis": "As F23 (owner default rule (a), 2026-11-04, default pending owner: a point on any Tumor focus counts). Review fix 2026-11-08 (review by an AI agent in a pathologist-educator role): \"one of three small separate foci in the CAMELYON16 outline\" became the conservative wording, as F23.",
       "status": "pending"
     },
     {

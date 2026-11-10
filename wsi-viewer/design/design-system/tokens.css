@@ -1,7 +1,8 @@
 /* =============================================================================
    Stoipath design system · tokens.css
    Design phase document 2a · 2026-10-26 · revised 2026-11-01 after the
-   pathologist and a11y-ux critiques of the three final screens (README §10).
+   critiques by AI agents in the pathologist and a11y-ux roles (not human
+   reviewers) of the three final screens (README §10).
 
    One file of CSS custom properties. No build step, no network fonts, no
    dependencies. Loaded by every wireframe and component sheet by relative path

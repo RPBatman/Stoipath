@@ -27,6 +27,8 @@
 import '../../../../design/design-system/tokens.css';
 import '../../../../design/design-system/base.css';
 import './signout.css';
+// Imported first: Rollup names a shared chunk after its last module, so the shared chunk keeps its `sharpness-*` name.
+import { installSitePagesLink } from '../site-link';
 import { SHARP_TIMEOUT_MS } from '../constants';
 import { startViewer, type FrameSnapshot } from '../viewer';
 import type { CommandSource, EventBus, ShellApi, ShellCommand, ShellModule, KeyBinding, SlideRef } from '../shell/contracts';
@@ -59,6 +61,7 @@ import { ATTRIBUTION_SENTENCE, CITATION, LABEL, PRACTICE, REFUSE_SIGNOUT, REFUSE
 import { publishSignoutHooks, type BusLogEntry } from './host/debug';
 import { SIGNOUT_NAMESPACE, installRequestGuard, parseMode, parseSignoutParams, setFragment, signoutCatalogueUrls } from './host/env';
 import { NodeTrayHost, SignoutPlates } from './host/tray';
+import { appleWebKit, installSafariNote } from './host/safari';
 
 /** Injected by vite.config.ts `define`: UTC time of the build. */
 declare const __BUILD_ID__: string;
@@ -273,6 +276,24 @@ function about(): void {
   renderAbout($('aboutFacts'), { mode, build: __BUILD_ID__, draft: draftOn, attribution, files: attributionFiles });
 }
 about();
+// Audit 2026-11-10 (H3): the link to the site's landing page, shown once the landing page answers (src/site-link.ts).
+installSitePagesLink($('aboutDlg'), $('aboutDlg').querySelector<HTMLElement>('.dialog__body') ?? $('aboutDlg'), { dev: import.meta.env.DEV });
+
+// ------------------------------------------------------------------ the Safari colour notice (audit 2026-11-10, H2)
+// Trainee mode only (the cohort tool shows no slide). Safari / WebKit on macOS and iPhone / iPad only (host/safari.ts).
+if (mode !== 'cohort') {
+  let session: Storage | null = null;
+  try {
+    session = window.sessionStorage;
+  } catch {
+    session = null;
+  }
+  installSafariNote(
+    { app, note: $('safariNote'), text: $('safariNoteText'), dismiss: $('safariNoteClose') as HTMLButtonElement, focusAfter: () => shell.focusCanvas() },
+    appleWebKit(navigator.userAgent, navigator.maxTouchPoints ?? 0),
+    session,
+  );
+}
 
 // ------------------------------------------------------------------ the Learn API (format and scoring, unchanged; D3)
 function makeBus<E>(log: BusLogEntry[], what: string): EventBus<E> {

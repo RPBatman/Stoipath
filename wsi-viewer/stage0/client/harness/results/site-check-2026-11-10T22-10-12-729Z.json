@@ -1,0 +1,465 @@
+{
+  "tool": "site-check",
+  "at": "2026-11-10T22:10:12.729Z",
+  "dist": "/home/user/Stoipath/wsi-viewer/stage0/client/dist",
+  "seconds": 18,
+  "ok": 91,
+  "fail": 0,
+  "checks": [
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 /start.html answers 200"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 one h1 \"Stoipath\", lang en, title \"Stoipath · all pages\""
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 landmarks: main 1, header 1, footer 1"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 no horizontal scroll (scrollWidth − innerWidth = 0)"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 axe-core WCAG 2.2 AA at 390 × 844: 0 violations"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 card \"Learn\": client/dist/learn.html, badge Learn, purpose (163 chars), intended use, status [\"Draft case pending pathologist review\",\"Stoipath Learn L1\"]"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 card \"Practice report\": client/dist/signout.html, badge Learn, purpose (180 chars), intended use, status [\"Draft cases pending pathologist review\",\"Safari colour check pending: use Chrome or Edge on a computer (on iPhone and iPad every browser uses Safari's engine)\",\"Simplified pN staging, as in the CAMELYON17 challenge\"]"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 card \"Viewer, research use only\": client/dist/shell.html, badge RUO, purpose (156 chars), intended use, status [\"Prototype research shell\",\"Public sample slides only\"]"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 card \"Measurement instrument\": client/dist/?overlay=1, badge Instrument, purpose (134 chars), intended use, status [\"Frozen build of 2026-10-25\",\"Later iPhone fix not published\",\"Best on a laptop\"]"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 four product cards (Learn, Practice report, Viewer, research use only, Measurement instrument)"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 secondary link \"OpenSeadragon comparator\" → comparator/osd.html"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 secondary link \"Design pages\" → design/"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 release status \"intended for open-source release; licence proposed, pending UT OTC approval\" and \"Apache-2.0 (proposed; pending UT OTC approval)\""
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 \"open-source\" appears only as \"intended for open-source release\" (2×)"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 data attribution: CAMELYON16, CAMELYON17, CC0 1.0, OpenSlide test data"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 \"No patient data\""
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 built by AI agents with human gate review; agent reviews are named as such"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-2 dated (\"Status as of 2026-11-10\")"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 every link is at least 24 px tall (all)"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 in-page link #products has a target"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Learn\" client/dist/learn.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/learn.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Practice report\" client/dist/signout.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/signout.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Viewer, research use only\" client/dist/shell.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/shell.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Measurement instrument\" client/dist/?overlay=1 → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/?overlay=1 → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"OpenSeadragon comparator\" comparator/osd.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-3 \"Design pages\" design/ → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 the page made no request but itself (1 request(s))"
+    },
+    {
+      "tag": "SITE 390",
+      "ok": true,
+      "msg": "SITE-1 no console or page error (0)"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 /start.html answers 200"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 one h1 \"Stoipath\", lang en, title \"Stoipath · all pages\""
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 landmarks: main 1, header 1, footer 1"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 no horizontal scroll (scrollWidth − innerWidth = 0)"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 axe-core WCAG 2.2 AA at 1440 × 900: 0 violations"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 card \"Learn\": client/dist/learn.html, badge Learn, purpose (163 chars), intended use, status [\"Draft case pending pathologist review\",\"Stoipath Learn L1\"]"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 card \"Practice report\": client/dist/signout.html, badge Learn, purpose (180 chars), intended use, status [\"Draft cases pending pathologist review\",\"Safari colour check pending: use Chrome or Edge on a computer (on iPhone and iPad every browser uses Safari's engine)\",\"Simplified pN staging, as in the CAMELYON17 challenge\"]"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 card \"Viewer, research use only\": client/dist/shell.html, badge RUO, purpose (156 chars), intended use, status [\"Prototype research shell\",\"Public sample slides only\"]"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 card \"Measurement instrument\": client/dist/?overlay=1, badge Instrument, purpose (134 chars), intended use, status [\"Frozen build of 2026-10-25\",\"Later iPhone fix not published\",\"Best on a laptop\"]"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 four product cards (Learn, Practice report, Viewer, research use only, Measurement instrument)"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 secondary link \"OpenSeadragon comparator\" → comparator/osd.html"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 secondary link \"Design pages\" → design/"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 release status \"intended for open-source release; licence proposed, pending UT OTC approval\" and \"Apache-2.0 (proposed; pending UT OTC approval)\""
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 \"open-source\" appears only as \"intended for open-source release\" (2×)"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 data attribution: CAMELYON16, CAMELYON17, CC0 1.0, OpenSlide test data"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 \"No patient data\""
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 built by AI agents with human gate review; agent reviews are named as such"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-2 dated (\"Status as of 2026-11-10\")"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 every link is at least 24 px tall (all)"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 in-page link #products has a target"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Learn\" client/dist/learn.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/learn.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Practice report\" client/dist/signout.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/signout.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Viewer, research use only\" client/dist/shell.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/shell.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Measurement instrument\" client/dist/?overlay=1 → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Open\" client/dist/?overlay=1 → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"OpenSeadragon comparator\" comparator/osd.html → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-3 \"Design pages\" design/ → 200 text/html; charset=utf-8"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 the page made no request but itself (1 request(s))"
+    },
+    {
+      "tag": "SITE 1440",
+      "ok": true,
+      "msg": "SITE-1 no console or page error (0)"
+    },
+    {
+      "tag": "SITE-4 learn.html",
+      "ok": true,
+      "msg": "no request for start.html before About opens (0)"
+    },
+    {
+      "tag": "SITE-4 learn.html",
+      "ok": true,
+      "msg": "About shows \"All Stoipath pages\" → http://127.0.0.1:46807/start.html (24 px tall)"
+    },
+    {
+      "tag": "SITE-4 learn.html",
+      "ok": true,
+      "msg": "one same-origin HEAD probe of start.html (HEAD)"
+    },
+    {
+      "tag": "SITE-4 learn.html",
+      "ok": true,
+      "msg": "About Licence row \"Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; module text licence to be confirmed; slides under their own licences\""
+    },
+    {
+      "tag": "SITE-4 learn.html",
+      "ok": true,
+      "msg": "axe-core WCAG 2.2 AA (About open, with the link): 0 violations"
+    },
+    {
+      "tag": "SITE-4 learn.html",
+      "ok": true,
+      "msg": "no console or page error (0)"
+    },
+    {
+      "tag": "SITE-4 learn.html (no landing page)",
+      "ok": true,
+      "msg": "no request for start.html before About opens (0)"
+    },
+    {
+      "tag": "SITE-4 learn.html (no landing page)",
+      "ok": true,
+      "msg": "the link stays hidden when start.html answers 404 (shown false)"
+    },
+    {
+      "tag": "SITE-4 learn.html (no landing page)",
+      "ok": true,
+      "msg": "no error of the page's own; the browser's network line for the 404 only (1: Failed to load resource: the server responded with a status of 404 (Not Found))"
+    },
+    {
+      "tag": "SITE-4 signout.html",
+      "ok": true,
+      "msg": "no request for start.html before About opens (0)"
+    },
+    {
+      "tag": "SITE-4 signout.html",
+      "ok": true,
+      "msg": "About shows \"All Stoipath pages\" → http://127.0.0.1:46807/start.html (24 px tall)"
+    },
+    {
+      "tag": "SITE-4 signout.html",
+      "ok": true,
+      "msg": "one same-origin HEAD probe of start.html (HEAD)"
+    },
+    {
+      "tag": "SITE-4 signout.html",
+      "ok": true,
+      "msg": "About Licence row \"Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; case text licence to be confirmed; slides CC0 1.0\""
+    },
+    {
+      "tag": "SITE-4 signout.html",
+      "ok": true,
+      "msg": "axe-core WCAG 2.2 AA (About open, with the link): 0 violations"
+    },
+    {
+      "tag": "SITE-4 signout.html",
+      "ok": true,
+      "msg": "no console or page error (0)"
+    },
+    {
+      "tag": "SITE-4 signout.html (no landing page)",
+      "ok": true,
+      "msg": "no request for start.html before About opens (0)"
+    },
+    {
+      "tag": "SITE-4 signout.html (no landing page)",
+      "ok": true,
+      "msg": "the link stays hidden when start.html answers 404 (shown false)"
+    },
+    {
+      "tag": "SITE-4 signout.html (no landing page)",
+      "ok": true,
+      "msg": "no error of the page's own; the browser's network line for the 404 only (1: Failed to load resource: the server responded with a status of 404 (Not Found))"
+    },
+    {
+      "tag": "SITE-4 shell.html",
+      "ok": true,
+      "msg": "no request for start.html before About opens (0)"
+    },
+    {
+      "tag": "SITE-4 shell.html",
+      "ok": true,
+      "msg": "About shows \"All Stoipath pages\" → http://127.0.0.1:46807/start.html (24 px tall)"
+    },
+    {
+      "tag": "SITE-4 shell.html",
+      "ok": true,
+      "msg": "one same-origin HEAD probe of start.html (HEAD)"
+    },
+    {
+      "tag": "SITE-4 shell.html",
+      "ok": true,
+      "msg": "About Licence row \"Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; slides under their own licences\""
+    },
+    {
+      "tag": "SITE-4 shell.html",
+      "ok": true,
+      "msg": "axe-core WCAG 2.2 AA (About open, with the link): 0 violations"
+    },
+    {
+      "tag": "SITE-4 shell.html",
+      "ok": true,
+      "msg": "no console or page error (0)"
+    },
+    {
+      "tag": "SITE-4 shell.html (no landing page)",
+      "ok": true,
+      "msg": "no request for start.html before About opens (0)"
+    },
+    {
+      "tag": "SITE-4 shell.html (no landing page)",
+      "ok": true,
+      "msg": "the link stays hidden when start.html answers 404 (shown false)"
+    },
+    {
+      "tag": "SITE-4 shell.html (no landing page)",
+      "ok": true,
+      "msg": "no error of the page's own; the browser's network line for the 404 only (1: Failed to load resource: the server responded with a status of 404 (Not Found))"
+    }
+  ]
+}

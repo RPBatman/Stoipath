@@ -94,12 +94,34 @@
 .app.signout:not(.nav-hidden) > .learn-warnbar { margin-right: calc(min(var(--layout-navigator), 25% - var(--layout-hud-inset)) + 2 * var(--layout-hud-inset)); }
 @media (max-width: 599px) { .app.signout:not(.nav-open) > .learn-warnbar { margin-right: 0; } }
 @media (max-width: 1079px) and (max-height: 500px) and (orientation: landscape) { .app.signout:not(.nav-open) > .learn-warnbar { margin-right: 0; } }
+/* Audit 2026-11-10 (H2): the Safari colour notice (#safariNote, src/signout/host/safari.ts) takes the warning banner's
+   place and rules: a grid item of the canvas cell at --z-banner (never resizes the canvas), stopping short of the
+   navigator, hidden while a dialog or the palette is open and while the gate warning holds the canvas top edge. The
+   HUD's top-left cluster steps below it by its rendered height (--so-safari-h, 0 when not rendered). */
+.app.signout > .so-safari { grid-area: canvas; align-self: start; position: relative; z-index: var(--z-banner); min-width: 0; }
+.app.signout > .so-safari[hidden], .app.signout:is(.dialog-open, .palette-open) > .so-safari, .app.signout > .learn-warnbar:not([hidden]) ~ .so-safari { display: none; }
+.signout .so-safari .banner__actions .btn--sm { min-height: max(28px, var(--target-control)); }
+.app.signout:not(.nav-hidden) > .so-safari { margin-right: calc(min(var(--layout-navigator), 25% - var(--layout-hud-inset)) + 2 * var(--layout-hud-inset)); }
+@media (max-width: 599px) { .app.signout:not(.nav-open) > .so-safari { margin-right: 0; } }
+@media (max-width: 1079px) and (max-height: 500px) and (orientation: landscape) { .app.signout:not(.nav-open) > .so-safari { margin-right: 0; } }
+/* The task card as a drawer over the canvas (1080–1599; short landscape phones) covers the cell's right side: the notice
+   stops short of it, so its Dismiss button is never under the drawer. */
+@media (min-width: 1080px) and (max-width: 1599px) {
+  .app.signout.dock-open > .so-safari { margin-right: var(--layout-dock); }
+  .app.signout.dock-open:not(.nav-hidden) > .so-safari { margin-right: calc(var(--layout-dock) + min(var(--layout-navigator), 25% - var(--layout-hud-inset)) + 2 * var(--layout-hud-inset)); }
+}
+@media (max-width: 1079px) and (max-height: 500px) and (orientation: landscape) { .app.signout.dock-open > .so-safari { margin-right: var(--learn-side); } }
+.app.signout #paneA > .hud--tl { top: calc(var(--layout-hud-inset) + var(--so-safari-h, 0px)); }
 @media (max-width: 1079px) {
   .app.signout > .learn-warnbar { flex-wrap: wrap; align-items: flex-start; gap: var(--space-2) var(--space-3); padding: var(--space-3) var(--space-4); }
   .signout .learn-warnbar .banner__glyph { margin-top: 1px; }
   /* the actions share the text's row when it keeps ≥ 16em (tablet, landscape), else take their own row (phone) */
   .signout .learn-warnbar .banner__text { flex: 1 1 16em; }
   .signout .learn-warnbar .banner__actions { margin-left: auto; justify-content: flex-end; flex-wrap: wrap; }
+  .app.signout > .so-safari { flex-wrap: wrap; align-items: flex-start; gap: var(--space-2) var(--space-3); padding: var(--space-3) var(--space-4); }
+  .signout .so-safari .banner__glyph { margin-top: 1px; }
+  .signout .so-safari .banner__text { flex: 1 1 16em; }
+  .signout .so-safari .banner__actions { margin-left: auto; }
 }
 
 /* --- Task card (final 164–193) -------------------------------------------------------------------------------------- */

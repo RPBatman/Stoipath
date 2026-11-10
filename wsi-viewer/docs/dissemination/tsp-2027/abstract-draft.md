@@ -1,5 +1,7 @@
 # Draft abstract — TSP 2027, investigative category
 
+> **Status 2026-11-10 (owner; audit B9, B16, C1).** Not submitted to TSP 2027; a later conference is the target, deadline to be decided. This bracketed template is kept for reuse. Its filled figures (168 runs, 13.6 M tokens, US$2,012, 8 days, 2026-11-01) are **superseded**: use the current roll-up and the ledger's basis sentence (quoted in [`abstract-v1.md`](abstract-v1.md)'s status block). The title and Background now say "intended for open-source release" (owner decision 2026-11-10; licence Apache-2.0, proposed, pending UT OTC approval); the word counts below predate that change.
+
 > **Filled version with the device data: [`abstract-v1.md`](abstract-v1.md) (v1, 2026-11-04, preliminary; refill after the Wed 4 Nov 18:00 CT freeze). This file stays the bracketed template.**
 
 Source: plan section 11 Part B, [B6](../../plan/11-autonomous-execution-and-dissemination.md) (text reproduced exactly; counted
@@ -25,17 +27,17 @@ four section labels = **350**, exactly at the limit. Any longer device numbers a
 
 ## Title
 
-AI-agent-built, in-house-verifiable open-source whole-slide image viewing: a capability and cost demonstration on public de-identified slides
+AI-agent-built, in-house-verifiable whole-slide image viewing intended for open-source release: a capability and cost demonstration on public de-identified slides
 
 ## Body
 
-**Background:** Whole-slide imaging serves primary diagnosis in roughly 15 % of US practices; cost and integration burden are the leading barriers, and viewers are sold by subscription at undisclosed prices without published performance data. Published deployed-viewer latency is 108–238 ms per field of view. Can AI coding agents, with humans only as gate reviewers, produce an open-source viewer whose performance, provenance and cost a health system can verify itself?
+**Background:** Whole-slide imaging serves primary diagnosis in roughly 15 % of US practices; cost and integration burden are the leading barriers, and viewers are sold by subscription at undisclosed prices without published performance data. Published deployed-viewer latency is 108–238 ms per field of view. Can AI coding agents, with humans only as gate reviewers, produce a viewer, intended for open-source release, whose performance, provenance and cost a health system can verify itself?
 
 **Design:** A multi-agent pipeline wrote 18 research notes, five architecture proposals scored by three independent judge agents, and a plan with machine-checkable gates; 24 load-bearing claims were independently re-derived. Agents built a web prototype (TypeScript/WebGL2) with an explicit level-of-detail, prefetch and never-blank rendering policy over a static tile pyramid from one CC0 CAMELYON16 slide (15,360² px, 1,210 JPEG tiles). It records per frame the level wanted versus drawn and per gesture the time-to-sharp. A scripted five-burst camera path ran (≥ 10 cold and 10 warm repetitions) on [n] consumer devices ([classes]) over Wi-Fi and cellular, in headless Chromium under emulated LAN, broadband and 4G, and against OpenSeadragon 6.1.1 (tuned profile) serving identical tiles. Every agent run logged tokens, list-price cost and wall-clock; tile builds were byte-identity checked.
 
 **Results:** Over Wi-Fi, time-to-sharp after zoom bursts was [p50/p95] ms (laptop), [p50/p95] ms (Android phone) and [p50/p95] ms (tablet), versus [p50/p95] ms for OpenSeadragon on the same devices; [k] % of settled frames showed no coarser-level tile and blank frames were [0]. Warm revisits settled within [x] frames. The project to date consumed 168 agent runs, 13.6 million tokens, US$2,012 and [H] human-hours over 8 days; 4 of 24 verified claims held unchanged, none were refuted. Licence scanning found 0 non-permissive client dependencies; a software bill of materials was generated.
 
-**Conclusion:** An AI-agent-built open viewer reached [summary] on consumer devices for US$2,012 of model usage, with machine-checkable provenance. This is a capability and cost demonstration on public de-identified data, not a diagnostic validation; clinical use requires CAP validation and distribution requires FDA clearance. Native-core milestone results will be presented.
+**Conclusion:** An AI-agent-built viewer reached [summary] on consumer devices for US$2,012 of model usage, with machine-checkable provenance. This is a capability and cost demonstration on public de-identified data, not a diagnostic validation; clinical use requires CAP validation and distribution requires FDA clearance. Native-core milestone results will be presented.
 
 ---
 

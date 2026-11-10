@@ -109,6 +109,15 @@
         <span class="banner__actions" id="ctxWarnActions"></span>
       </div>
 
+      <!-- Audit 2026-11-10 (H2): the Safari colour notice, on Safari / WebKit on macOS and on iPhone / iPad only
+           (src/signout/host/safari.ts writes the text and shows it). Like #ctxWarn a banner over the canvas top edge: a
+           grid item of the canvas cell, so it never resizes the canvas; it stays until dismissed (for this session). -->
+      <div class="banner so-safari" id="safariNote" role="region" aria-label="Browser notice" hidden>
+        <span class="banner__glyph" aria-hidden="true">i</span>
+        <span class="banner__text" id="safariNoteText"></span>
+        <span class="banner__actions"><button class="btn btn--sm btn--secondary" type="button" id="safariNoteClose">Dismiss</button></span>
+      </div>
+
       <!-- B. Canvas area: pane A (the engine canvas, replaced on every slide switch, sits before #overlayA), its HUD and
            the plates. Pane B exists for core's two view hosts and is never shown in Learn (no compare, LEARN.md D4). -->
       <div class="canvas-area region" id="canvasArea" role="main" aria-label="Slide canvas area">
