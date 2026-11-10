@@ -576,8 +576,8 @@ body.surface-widget > .app.wb { display: none; }
   .review-head, .demo, .decisions { display: none; }
 }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvasA">Skip to slide</a>
 <button class="review-restore" id="reviewRestore" type="button" aria-label="Show the review header and demo controls">review controls</button>
 
@@ -1312,7 +1312,7 @@ body.surface-widget > .app.wb { display: none; }
       <div class="dock__body">
         <div class="keymap__preset pad"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup" aria-label="Keymap preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand cluster</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand cluster</button></div><span class="text-xs text-secondary">reserved: none (no dictation here)</span></div>
         <div class="keymap" id="keymapGroups" data-live="commands:registry"></div>
-        <p class="hint">Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for the editing set and Ctrl+K; no Alt, no F-keys (Hyperdrive rule). All bindings are rebindable and exported with the command registry. Reserved here: none (research build; no dictation).</p>
+        <p class="hint">Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for the editing set and Ctrl+K; no Alt, no F-keys (EHR rule). All bindings are rebindable and exported with the command registry. Reserved here: none (research build; no dictation).</p>
       </div>
     </div>
     <div class="paneloverlay about" id="aboutOverlay" role="dialog" aria-modal="false" aria-labelledby="aboutTitle">
@@ -1328,7 +1328,7 @@ body.surface-widget > .app.wb { display: none; }
           <dt>Display</dt><dd>pitch unknown (browser) · Dx mode not part of this build</dd>
           <dt>Telemetry</dt><dd><div class="segmented" role="radiogroup" aria-label="Telemetry" data-live="telemetry:switch"><button class="segmented__item" role="radio" aria-checked="true">On (PHI-free)</button><button class="segmented__item" role="radio" aria-checked="false">Off</button><button class="segmented__item" role="radio" aria-checked="false">Air-gap</button></div></dd>
           <dt>Keymap</dt><dd><label class="select"><select aria-label="Keymap preset"><option>Default</option><option>Left-hand cluster</option><option>Right-hand cluster</option></select></label></dd>
-          <dt>Licence</dt><dd>Apache-2.0</dd>
+          <dt>Licence</dt><dd>Apache-2.0 (proposed; pending UT OTC approval)</dd>
         </dl>
         <p>Telemetry carries no PHI, no free text and no file names; command telemetry records command names, never keys. The full product label is also shown in English in every locale.</p>
         <div class="pad"><button class="toggle" role="switch" aria-checked="false" id="cvdRemapToggle"><span class="toggle__track"></span><span class="toggle__text">CVD-friendly stain remap<span class="toggle__hint">Per-user shader LUT (Dalton 2026); applies to tissue, not to the palette (FR-V8)</span></span></button></div>
@@ -1467,7 +1467,7 @@ v.state</pre></div>
 
 <!-- ===================== Design decisions (review only; collapsed) ===================== -->
 <details class="decisions" id="decisions">
-  <summary>Design decisions · final research annotation workspace · what came from where, what the judges disagreed on, the engine-contract map</summary>
+  <summary>Design decisions · final research annotation workspace · what came from where, what the judges disagreed on, the engine-contract map</summary><p class="note"><b>Who judged and critiqued (note added 2026-11-10, audit H1).</b> Every judge and critic named in this section ("pathologist", "UX/a11y", "engineering") was an AI agent given that role brief, not a human professional; no human pathologist judged or critiqued this design. The owner's own review (<code>design/REVIEW-GUIDE.md</code>) is pending.</p>
 
   <h3>1. The verdict and the shape of the final</h3>
   <p>The weighted ranking put <b>B Workbench</b> first (7.73), <b>C Task-flow</b> a close second (7.60) and <b>A Canvas-maximal</b> third (6.63); two judges (pathologist, UX/a11y) voted C the winner and the engineering judge voted B. The final is therefore <b>B's structure</b> (two docks with fixed homes, an always-visible search field, the rail with panel switchers, docks as fixed grid tracks resizable by keyboard, the laptop panel strip, the widget as the same shell with docks removed) carrying <b>C's safety scaffolding and geometry</b> (cohort progress in the top bar, To do / In progress / Done, coverage, the candidate-region queue, "Mark slide complete", in-dock keymap and About that never cover the slide, the in-flow sheet on tablets and phones, the canvas input pattern, the explicit export targets, the full degraded-state inventory, whole-canvas CVD simulation, the Clinical-IH / Dx labelling) and <b>A's collapsed-chrome mode</b> (focus mode <kbd class="key">\</kbd> hides rail and docks and shows the HUD tool line and the counted class legend; the tool wheel at the pointer; the inline typed-zoom field; the quality sheet; the per-device channel-cap reasons; the first-run hint retired by <code>commandInvoked</code>).</p>
@@ -1523,7 +1523,7 @@ v.state</pre></div>
     <li>The pen hint and pen-tip palette sit in the left band (x &lt; 25 %), outside the central 50 % (B's hint was inside it).</li>
   </ul>
 
-  <h3>4b. Revision 2026-11-01 · fixes from the pathologist and a11y-ux critiques</h3>
+  <h3>4b. Revision 2026-11-01 · fixes from the critiques by AI agents in the pathologist and a11y-ux roles (not human reviewers)</h3>
   <ul>
     <li><b>Revision 2026-11-01</b> · <i>Wrong-slide hazard (high).</i> One launch-context object drives every identity surface. <code>renderIdentity()</code> writes the top-bar accession (+ part-block), the HUD identity line, the navigator caption and label image, the Inspector and Slides "this slide" headers, the Case row, the annotation layer name, the compare view's label, the canvas <code>aria-label</code>, the snapshot and bookmark footers and the live region from <code>SLIDES[k]</code> in the RUO build and from <code>LAUNCH</code> (accession · part-block · stain) in Clinical-IH / Dx. Clinical builds show no cohort text, no CC0 chip, no Cohort panel and no CAMELYON ground-truth layer; the top bar reads <code>AP-26-04417 · A1-1</code> and the HUD <code>AP-26-04417 · A1-1 · H&amp;E</code>. The demo readout's <b>identity</b> field asserts that every surface names the same slide (its visible text contains the identity tokens; the top bar must carry the case key, and the part-block may leave it ≤ 1263 px) and turns amber if one disagrees.</li>
     <li><b>Revision 2026-11-01</b> · <i>Palette placement (P1).</i> The scrim is gone (the canvas stays hittable; a pointer-down outside the palette closes it, as in the clinical final). Below 1080 px the palette is the in-flow sheet: it takes the sheet row in place of the dock while open (≤ 40 % high, rounded top corners), so the canvas yields height and the slide centre is never covered (a bottom-anchored overlay would still reach 190 px into the central zone on a portrait tablet); at ≥ 1080 px it keeps dropping over the Context column (over the drawer track at 1080–1599). Design note: the three finals still each carry a <code>.palette-layer</code> rule; one rule belongs in base.css §6.9 (design-system scope). Sweep 2026-11-01: base.css §6.9 carries it; this page's copies are deleted (§4c).</li>
@@ -1688,7 +1688,7 @@ v.state</pre></div>
     launch: 'This launch asked for Stoipath Clinical-IH but this is Stoipath Viewer (research use only). Nothing was opened.',
     dxRuo: 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.',
     dxAttest: 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.',
-    dxEntered: 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago',
+    dxEntered: 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago',
     dxDropped: 'Dx mode ended: display attestation lost. Viewing in Nav mode.',
     tier2: 'Tier 2 · 60 Hz'
   };
@@ -2058,7 +2058,7 @@ v.state</pre></div>
     { h: 'Annotate', rows: [['V', 'Select / pan'], ['P  F  Y', 'Polygon · brush (pen pressure) · polyline'], ['X  E  T', 'Rectangle · ellipse · point'], ['M  ⇧M  ⇧T', 'Measure length · area · count'], ['Q then 1–8', 'Class picker (QuPath names)'], ['⇧Q', 'Class legend (HUD)'], ['↵  ⌫', 'Commit · delete selected'], ['Ctrl Z  Ctrl Y', 'Undo · redo'], ['Ctrl C  Ctrl V', 'Copy · paste (same slide)'], ['Tab', 'Through the annotation list']] },
     { h: 'Layers and compare', rows: [['H  ⇧H', 'Hide all overlays · AI heatmap on / off'], [',  .', 'Overlay opacity down / up'], ['⇧A  ⇧X', 'Accept · reject the AI result under focus'], ['C  /', 'Side by side · curtain'], ['⇧G', 'Channel grid view (proposed, B-2)']] },
     { h: 'Workbench', rows: [['\\', 'Focus mode: hide / restore rail and docks (proposed, B-1)'], ['⇧V', 'Tool wheel at the pointer (proposed, A)'], ['N', 'Mark slide complete · open the next to-do slide (proposed, C-2)'], ['Ctrl K', 'Command palette'], ['?', 'This map'], ['Esc', 'Cancel tool · close the top-most sheet']] },
-    { h: 'Not in this build', rows: [['⇧ Enter', 'Request sign-out (Clinical-IH / Dx only)', true], ['⇧D', 'Dx mode (Dx-capable builds only; refused here with the fixed string)', true], ['F1 … F12  Alt+…', 'Never bound (browsers, Hyperdrive)', true]] }
+    { h: 'Not in this build', rows: [['⇧ Enter', 'Request sign-out (Clinical-IH / Dx only)', true], ['⇧D', 'Dx mode (Dx-capable builds only; refused here with the fixed string)', true], ['F1 … F12  Alt+…', 'Never bound (browsers, EHR)', true]] }
   ];
   function renderKeymap() {
     $('#keymapGroups').innerHTML = KEYMAP.map(g => `<div class="keymap__group"><h4>${g.h}</h4>${g.rows.map(r => `<div class="keymap__row${r[2] ? ' is-reserved' : ''}"><span class="keymap__keys">${r[0].split('  ').map(k => `<kbd class="key${r[2] ? ' key--reserved' : ''}">${k}</kbd>`).join('')}</span><span>${r[1]}</span></div>`).join('')}</div>`).join('');

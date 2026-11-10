@@ -2,6 +2,8 @@
 
 **What this file is.** The dated log of every contract gap a builder meets while building [SIGNOUT.md](SIGNOUT.md), every request filed with an integrator (sign-out, Learn, engine), and every answer. A builder who needs a type widened, a host behaviour changed, a shared file edited or a fact confirmed writes it here in a dated section under its module's heading, quoting the spec section, and goes on with a stand-in in its own scratch files. Nobody widens a type locally (SIGNOUT.md hard rule 1). Integrators answer in the same section, marked **A-**, and record the contract version (`SignoutApi.contract`, starting at 1).
 
+**Who reviewed (2026-11-10, audit H1).** Every review named in this file (pathologist-educator, engineer, engine, accessibility, keyboard) was performed by an AI agent working in that role, not by a human professional. The only human review is the owner's; its status and the release record of `signout.html` are in SIGNOUT.md (status block and §20).
+
 **How to file.** `## {date} · {module}: {one-line title}` then the question (`{MODULE}-Q{n}`), a note (`{MODULE}-N{n}`) or an answer (`A-{MODULE}-Q{n}`). Keep the spec's numbering: cite `SIGNOUT.md §n` and, for facts, `F§n` of `scratchpad/signout/facts/FACTS.md`.
 
 ---
@@ -41,7 +43,7 @@ Q3 (staging-rule wording, blocked page), Q4 (discrepancy classes), Q7 (identity 
 
 ---
 
-## 2026-11-08 · spec author: revision after the pathologist-educator and engineer reviews (SIGNOUT.md §21)
+## 2026-11-08 · spec author: revision after the pathologist-educator and engineer reviews (SIGNOUT.md §21; both reviews by AI agents in those roles)
 
 The spec was revised the same day it was written. What that changes for the requests and the INFERRED table above:
 
@@ -612,7 +614,7 @@ A CSS container query on the card (`≥ 36rem`) shows exactly one. The other is 
 
 ## 2026-11-09 · sign-out integrator: Wave S3 (final gate, INFERRED rows closed, review fixes)
 
-Wave S3 had no builders. The integrator ran the final gate, the bucket run (SO-P9), the screenshots, an engine review and a pathologist-educator / accessibility review, applied the fixes below in the module files under the S3 mandate (SIGNOUT.md §16 row S3), and ran the full gate again on one `npm run build` (SIGNOUT.md §19.4). The contract stays 3; no type changed.
+Wave S3 had no builders. The integrator ran the final gate, the bucket run (SO-P9), the screenshots, an engine review and a pathologist-educator / accessibility review (both by AI agents in those roles; no human pathologist), applied the fixes below in the module files under the S3 mandate (SIGNOUT.md §16 row S3), and ran the full gate again on one `npm run build` (SIGNOUT.md §19.4). The contract stays 3; no type changed.
 
 ### INFERRED rows: final status (every row of the spec author's two tables)
 
@@ -654,7 +656,7 @@ The integrator's own files (`signout.html`, `signout.css`, `main.ts`, `integrato
 
 ## 2026-11-09 · sign-out integrator: S3 review fixes (contract 4, a reviewed engine change, answers)
 
-The two S3 reviews (pathologist-educator / accessibility, engine regression) handed twelve findings to the integrator. Each one is listed with what was done in SIGNOUT.md §19.5. This section records what other owners need to know.
+The two S3 reviews (pathologist-educator / accessibility, engine regression; both by AI agents in those roles, not by a human pathologist) handed twelve findings to the integrator. Each one is listed with what was done in SIGNOUT.md §19.5. This section records what other owners need to know.
 
 ### SI-1 after-S0 values (2026-11-09, revised by the S3 review fix to `src/scheduler.ts`)
 

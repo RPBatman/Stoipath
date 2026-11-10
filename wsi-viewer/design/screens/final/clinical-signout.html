@@ -63,7 +63,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   .review-foot input[type="checkbox"] { width: 24px; height: 24px; }
 }
 
-/* ---- synthetic host (Epic Hyperdrive) frame for the iframe variant */
+/* ---- synthetic host (EHR) frame for the iframe variant */
 .host { position: relative; }
 .host__bar { display: none; height: 44px; align-items: center; gap: var(--space-5); padding: 0 var(--space-6); background: #e9ecf1; color: #1f2a3a; font-size: var(--text-sm); border-bottom: 1px solid #c5ccd6; white-space: nowrap; overflow: hidden; }   /* synthetic host: never wraps over the review header on narrow viewports (revision 2026-11-01) */
 .host__bar .htab { font-weight: 600; border-bottom: 2px solid #1f2a3a; padding: 12px 0; }
@@ -148,7 +148,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   .flowbar .btn--sm { min-height: var(--target); }
 }
 
-/* embedded (Hyperdrive iframe): one column, compact bars, no rail / dock / flow bar; no keys bound */
+/* embedded (EHR iframe): one column, compact bars, no rail / dock / flow bar; no keys bound */
 .app.fin.app--embedded {
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-strip);
@@ -553,8 +553,8 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 .decisions li { margin: 3px 0; }
 .decisions .dn { font-weight: 600; color: #fff; }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 <!-- ====== Shared inline SVG: icons and synthetic tissue (no network; all geometry in micrometres) ====== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -691,18 +691,18 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 </header>
 
 <div class="host" id="host">
-  <div class="host__bar" aria-hidden="true"><span>Epic Hyperdrive (synthetic host window)</span><span class="htab">AP-26-04417 · Surgical Pathology</span><span>Results Review</span><span>Notes</span><span class="hostnote">iframe below: no popups, no top navigation, postMessage JSON-RPC only; the controller binds no keys</span></div>
+  <div class="host__bar" aria-hidden="true"><span>EHR host window (synthetic)</span><span class="htab">AP-26-04417 · Surgical Pathology</span><span>Results Review</span><span>Notes</span><span class="hostnote">iframe below: no popups, no top navigation, postMessage JSON-RPC only; the controller binds no keys</span></div>
 
   <div class="app fin dock-open nav-open legend-on" id="app" data-build="clinical-ih" data-variant="signout" data-cond="normal" data-step="3" data-tool="select">
 
     <!-- A. Top bar: badge → label string → identity → mode (fixed slots; outside every dismissible layer, P4) -->
     <header class="topbar region" aria-label="Top bar">
       <div class="topbar__slot-badge">
-        <button class="badge badge--clinical" id="badge" data-live="launch:product" aria-haspopup="dialog" aria-label="Product: Stoipath Clinical-IH. In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation. Opens the full label and About">Clinical-IH</button>
+        <button class="badge badge--clinical" id="badge" data-live="launch:product" aria-haspopup="dialog" aria-label="Product: Stoipath Clinical-IH. In-house laboratory-validated tool. Not FDA cleared. For use only within Fictional Example Lab under CLIA/CAP validation. Opens the full label and About">Clinical-IH</button>
         <span class="chip chip--purpose not-embedded" id="purposeChip" data-live="launch:purposeOfUse"><span class="chip__long">Sign-out</span><span class="chip__short">Sign-out</span></span>
         <button class="chip chip--solid flow-chip embed-only" id="embedFlowChip" aria-label="Current step; opens the step list" data-live="commands"><span class="n">3/5</span> <span class="flow-chip__name">Examine</span> <svg class="icon icon--sm"><use href="#i-next"/></svg></button>
       </div>
-      <span class="topbar__label" id="labelString" role="note" data-live="launch:product">In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.</span>
+      <span class="topbar__label" id="labelString" role="note" data-live="launch:product">In-house laboratory-validated tool. Not FDA cleared. For use only within Fictional Example Lab under CLIA/CAP validation.</span>
       <div class="topbar__identity" data-live="launch">
         <span class="accession" data-synthetic>AP-26-04417</span>
         <span class="topbar__identity-rest">
@@ -892,7 +892,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
         <!-- Panel 1 · Open: identity before pixels (C) + identity-verified line and clinical context from the LIS (B) -->
         <section class="step-panel" id="panel-1" aria-label="Open: verify identity">
           <div class="idcard" data-live="launch">
-            <div class="labelimg" id="labelImg" data-live="launch:label" data-synthetic role="img" aria-label="Slide label image, Tier 2: AP-26-04417 A1-1 H&amp;E DOE, JANE">AP-26-04417<br>A1-1 · H&amp;E<br>DOE, JANE · 1958<span class="lab">UT Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span></div>
+            <div class="labelimg" id="labelImg" data-live="launch:label" data-synthetic role="img" aria-label="Slide label image, Tier 2: AP-26-04417 A1-1 H&amp;E DOE, JANE">AP-26-04417<br>A1-1 · H&amp;E<br>DOE, JANE · 1958<span class="lab">Fictional Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span></div>
             <dl class="kv">
               <dt>Accession</dt><dd class="mono" data-synthetic>AP-26-04417</dd>
               <dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958 · F <span class="syn text-xs text-secondary">(synthetic)</span></dd>
@@ -904,8 +904,8 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
             </dl>
           </div>
           <div class="statusline" id="identityLine" data-live="events:identityMismatch"><span class="g ok">✓</span><span><b>Identity verified</b> · launch context matches the manifest (<span class="mono">sid</span>, Study UID) before the first tile was drawn</span></div>
-          <div class="statusline" id="attestLine" data-live="dx:attestation"><span class="g ok">✓</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span></div>
-          <div class="statusline" data-live="launch:user"><span class="g ok">✓</span><span>Launched by <span data-synthetic>Dr Example</span> · pathologist · purpose <span id="kvPurpose">sign-out</span> · via Beaker worklist</span></div>
+          <div class="statusline" id="attestLine" data-live="dx:attestation"><span class="g ok">✓</span><span><span data-synthetic>Example display DX-27</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span></div>
+          <div class="statusline" data-live="launch:user"><span class="g ok">✓</span><span>Launched by <span data-synthetic>Dr Example</span> · pathologist · purpose <span id="kvPurpose">sign-out</span> · via LIS worklist</span></div>
           <div class="statusline" id="frozenLine" hidden data-live="lis:worklist"><span class="g attn">!</span><span>Frozen section · OR 4 · received <span class="mono">09:41</span> · CAP target 20 min</span></div>
           <details class="section" open><summary>Clinical context <span class="count">from LIS</span></summary>
             <div class="section__body">
@@ -1037,7 +1037,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
           <div class="pad not-consult not-embedded" style="padding-top:6px">
             <label class="toggle" id="markReviewed" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Mark case Reviewed in the worklist</span><span class="toggle__hint">Unchecked: send evidence only, keep In review</span></span></label>
           </div>
-          <div class="hintline not-consult not-embedded">Sign-out happens in the LIS. <kbd class="key">⇧↵</kbd> hands back status and evidence (<span class="mono">signoutRequested</span>) and returns focus to Beaker. This list keeps updating while you keep reviewing.</div>
+          <div class="hintline not-consult not-embedded">Sign-out happens in the LIS. <kbd class="key">⇧↵</kbd> hands back status and evidence (<span class="mono">signoutRequested</span>) and returns focus to the LIS. This list keeps updating while you keep reviewing.</div>
           <div class="hintline consult-only" hidden>The preliminary note goes to the OR through the LIS; a tablet session is always <b>Consultation · preliminary only</b>. Final sign-out waits for permanent sections on a diagnostic display.</div>
           <div class="hintline embed-only">Inside the EHR window this build is Nav only. Hand off to the companion window on the diagnostic display to enter Dx mode and sign out.</div>
         </section>
@@ -1078,7 +1078,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
     <!-- E. Status strip: the live region's visual twin; ONE notice plus chips -->
     <footer class="strip region" aria-label="Status">
       <span class="indicator indicator--complete" id="stripIndicator" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label" id="stripIndicatorLabel">Rendering Complete</span></span>
-      <span class="strip__notice" id="stripNotice">Dx mode · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span>
+      <span class="strip__notice" id="stripNotice">Dx mode · display attested (EDID · <span data-synthetic>Example display DX-27</span>) · QA passed 3 days ago</span>
       <div class="strip__group strip__group--end" id="stripChips">
         <button class="chip chip--solid" id="stripNet" hidden data-live="telemetry:network">Slow link (6 Mbps) — reduced detail while moving</button>
         <button class="chip chip--solid" id="stripSlow" hidden data-live="telemetry:server-timing">Server slow (p95 1.2 s) — prefetch paused</button>
@@ -1103,7 +1103,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <footer class="review-foot" aria-label="Demo controls">
   <span class="lbl">Demo</span>
   <label>Product <select id="ctlProduct"><option value="clinical-ih">Clinical-IH</option><option value="dx">Dx (cleared)</option><option value="ruo">Viewer (RUO)</option></select></label>
-  <label>Surface <select id="ctlVariant"><option value="signout">Sign-out · companion window</option><option value="consult">Frozen consult · iPad</option><option value="embedded">Hyperdrive iframe</option></select></label>
+  <label>Surface <select id="ctlVariant"><option value="signout">Sign-out · companion window</option><option value="consult">Frozen consult · iPad</option><option value="embedded">EHR iframe</option></select></label>
   <label title="Device tier comes from the quality record, never from the window width">Tier <select id="ctlTier"><option value="1">Tier 1 · N-Desk</option><option value="2">Tier 2 · 60 Hz (W60)</option></select></label>
   <label>State <select id="ctlCond"><option value="normal">Normal</option><option value="cold4g">Cold 4G</option><option value="offline">Offline pack</option><option value="slow">Slow translator</option><option value="tileerror">Tile errors</option><option value="dxrefused">Dx refused · no attestation</option><option value="qastale">Dx refused · QA overdue</option><option value="dropped">Dx dropped · attestation lost</option><option value="mismatch">Identity mismatch</option><option value="expired">Session expired</option><option value="manifest">Manifest 503</option><option value="ctxloss">GPU context loss</option></select></label>
   <label>Step <select id="ctlStep"><option value="1">1 Open</option><option value="2">2 Screen</option><option value="3">3 Examine</option><option value="4">4 Annotate</option><option value="5">5 Sign-out</option></select></label>
@@ -1127,7 +1127,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
     <div class="dialog__header"><h2 class="dialog__title" id="km-title">Keyboard shortcuts</h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
       <div class="keymap__filter"><input class="input" type="search" id="kmFilter" placeholder="Filter keys or commands" aria-label="Filter the keyboard map"><div class="segmented" role="radiogroup" aria-label="Preset"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand</button></div></div>
-      <p class="text-xs text-secondary" style="margin:0">Generated from the command registry. Reserved at this site and struck through: F1–F12 and Alt (Hyperdrive), Ctrl+Space (Epic search), numeric keypad (Dragon push-to-talk). No key is bound inside the Hyperdrive controller iframe.</p>
+      <p class="text-xs text-secondary" style="margin:0">Generated from the command registry. Reserved at this site and struck through: F1–F12 and Alt (EHR), Ctrl+Space (EHR search), numeric keypad (dictation push-to-talk). No key is bound inside the EHR controller iframe.</p>
       <div class="keymap" id="kmBody"></div>
     </div>
     <div class="dialog__footer"><span class="text-xs text-secondary" style="margin-right:auto">All bindings are rebindable and exported with the registry; keys work whenever the viewer window has focus.</span><button class="btn btn--secondary" data-close>Close</button></div>
@@ -1146,7 +1146,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="so-title" data-live="commands:signoutRequested">
     <div class="dialog__header"><h2 class="dialog__title" id="so-title">Request sign-out · <span class="mono" data-synthetic>AP-26-04417</span></h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
-      <p class="text-sm text-secondary" style="margin:0">What returns to the LIS now. Sign-out itself is completed in Beaker; this hands back status and evidence and returns focus to the controller.</p>
+      <p class="text-sm text-secondary" style="margin:0">What returns to the LIS now. Sign-out itself is completed in the LIS; this hands back status and evidence and returns focus to the controller.</p>
       <div class="alert alert--warning" id="soWarn"><span class="alert__glyph">!</span><div><div class="alert__title"><span id="soWarnTitle">A2-1 has not been viewed</span></div><div id="soWarnText">Slide A2-1 (H&amp;E, level II) was never opened in this session. The LIS will record it as unviewed.</div></div></div>
       <ul class="checklist" id="soList"></ul>
     </div>
@@ -1172,7 +1172,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
     <div class="dialog__body">
       <div class="field"><label class="field__label" for="consultWho">Colleague (on-call list from the LIS; synthetic)</label><div class="select"><select class="input" id="consultWho" data-live="lis:oncall"><option>Dr Example · haematopathology · on call</option><option>Dr Sample · breast pathology</option></select></div></div>
       <div class="field"><span class="field__label">What they receive</span><div class="text-sm">Expiring link (2 h) to this case at the current view · <b>Tier 0</b> (no label image, no patient identifiers) · your measurement and region · this preliminary note draft · audit logged</div></div>
-      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Page them now</span><span class="toggle__hint">Pager / Teams via the integration service</span></span></label>
+      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Page them now</span><span class="toggle__hint">Pager / chat via the integration service</span></span></label>
       <div class="alert alert--info"><span class="alert__glyph">i</span><div>The consult opens in their build at the same step with <b>Consultation · preliminary only</b>; their reply lands in the LIS as an addendum.</div></div>
     </div>
     <div class="dialog__footer"><button class="btn btn--ghost" data-close>Cancel</button><button class="btn btn--accent" data-cmd="confirmConsult">Send request</button></div>
@@ -1191,7 +1191,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
     <div class="dialog__header"><h2 class="dialog__title" id="ab-title">About this build</h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
       <p id="aboutString" class="text-sm" style="margin:0"></p>
-      <dl class="provenance"><dt>Product</dt><dd id="aboutProduct">Stoipath Clinical-IH · UT Example Lab</dd><dt>Version</dt><dd>0.9.0-clin1 (synthetic)</dd><dt>build_hash</dt><dd>3f9c…a71e</dd><dt>pathway_hash</dt><dd>b0d2…44c9</dd><dt>Launch</dt><dd id="aboutLaunch">product=clinical-ih · purposeOfUse=TREAT</dd><dt>Telemetry</dt><dd>on · PHI-free · kill switch in Settings</dd><dt>Viewport trail</dt><dd>This session records where you looked, for the laboratory's quality record.</dd></dl>
+      <dl class="provenance"><dt>Product</dt><dd id="aboutProduct">Stoipath Clinical-IH · Fictional Example Lab</dd><dt>Version</dt><dd>0.9.0-clin1 (synthetic)</dd><dt>build_hash</dt><dd>3f9c…a71e</dd><dt>pathway_hash</dt><dd>b0d2…44c9</dd><dt>Launch</dt><dd id="aboutLaunch">product=clinical-ih · purposeOfUse=TREAT</dd><dt>Telemetry</dt><dd>on · PHI-free · kill switch in Settings</dd><dt>Viewport trail</dt><dd>This session records where you looked, for the laboratory's quality record.</dd></dl>
       <p class="text-xs text-secondary" style="margin:0">Regulatory text, English in every locale: "For Research Use Only. Not for use in diagnostic procedures." applies to the Stoipath Viewer build only.</p>
     </div>
     <div class="dialog__footer"><button class="btn btn--secondary" data-close>Close</button></div>
@@ -1209,7 +1209,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
         <li><span class="g ok">✓</span><span>Evidence attached: 1 measurement · 2.3 mm (SR TID 1500) · 1 region · viewed <span id="sdViewed">2 of 3</span> slides</span></li>
         <li><span class="g ok">✓</span><span>Turnaround <span class="mono" id="sdTat">06:12</span> of the CAP 20-minute target · received 09:41</span></li>
       </ul>
-      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Also page the surgeon</span><span class="toggle__hint">Pager / Teams via the integration service</span></span></label>
+      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Also page the surgeon</span><span class="toggle__hint">Pager / chat via the integration service</span></span></label>
     </div>
     <div class="dialog__footer"><button class="btn btn--ghost" data-close>Keep reviewing</button><button class="btn btn--secondary" data-cmd="consult">Request consult first</button><button class="btn btn--accent" data-cmd="confirmSend"><svg class="icon icon--sm"><use href="#i-send"/></svg>Send preliminary</button></div>
   </div>
@@ -1218,7 +1218,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <!-- ====== Design decisions (collapsed by default; review document, not product) ====== -->
 <section class="decisions" id="decisions" aria-label="Design decisions">
 <details>
-<summary>Design decisions · what was taken from which concept and why · where the judges disagreed and how it was decided · engine-contract map · notes to file</summary>
+<summary>Design decisions · what was taken from which concept and why · where the judges disagreed and how it was decided · engine-contract map · notes to file</summary><p class="note"><b>Who judged and critiqued (note added 2026-11-10, audit H1).</b> Every judge and critic named in this section ("pathologist", "UX/a11y", "engineering") was an AI agent given that role brief, not a human professional; no human pathologist judged or critiqued this design. The owner's own review (<code>design/REVIEW-GUIDE.md</code>) is pending.</p>
 
 <h3>The screen in one paragraph</h3>
 <p>Concept C's five-step reading order (<b>Open → Screen → Examine → Annotate → Sign-out</b>) is the structure: a 72 px step rail with that step's tools, one dock panel per step, <kbd class="key">N</kbd>/<kbd class="key">⇧N</kbd> to move, <kbd class="key">⇧G</kbd> to collapse the flow into plain tabs for an attending. Three things from Concept B make it safe and cheap on the chrome: a <b>layout policy</b> that decides per surface whether the panel starts open (4K, 1920) or closed (laptop, iPad) and says so in the dock header; the <b>Dx gate as a six-row checklist</b> with the verbatim refusal string; and the <b>Sign-out step as a live hand-off section</b> that keeps updating "A2-1 not opened" while screening continues, with focus landing on <i>Open A2-1 first</i>. Two things from Concept A make the at-rest state fast for an expert: when the panel is closed the navigator becomes the <b>corner cluster</b> (viewport, label image, three slide thumbnails with viewed state, five summon tabs with their keys), and a <b>command echo</b> under the identity line teaches the keymap by use. Everything dispatches through one command registry that also renders the palette and the keyboard map. Dialogs are anchored over the dock or rail columns and never the canvas centre.</p>
@@ -1241,7 +1241,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <tr><td>In-viewport AI legend bottom-right, click a class to jump, fixed not-validated marker; "AI-flagged regions viewed at ≥ 10×"</td><td>A + B</td><td>Legend where the eye is; B's geometry line (point-in-polygon × viewChanged) surfaces in the sign-out evidence</td><td><kbd class="key">⇧Q</kbd> toggles the legend; shown only while the overlay is on</td></tr>
 <tr><td>Measure-tool status line bottom-left ("click two points · Space pan · Esc cancel")</td><td>A</td><td>Two-click measure needs its instruction near the pointer hand</td><td>Fixed-height slot; visible only while a drawing tool is active</td></tr>
 <tr><td>Frozen consult: TAT timer vs CAP 20 min, note templates, Request consult, Send preliminary, "Also page the surgeon"</td><td>C (+ B's TAT chip)</td><td>Best answer to US-C2 on an iPad (pathologist)</td><td>TAT timestamps marked as a proposed integration-service contract (engineering)</td></tr>
-<tr><td>Hyperdrive iframe: step chip + tray chips + <i>Open on diagnostic display</i>; no keys bound</td><td>C + B</td><td>C's compact collapse; B is the only concept that binds no keys in the iframe (principles §4.5 rule 5)</td><td>Only Esc and Tab work inside the frame; Ctrl+K shows the companion-window notice</td></tr>
+<tr><td>EHR iframe: step chip + tray chips + <i>Open on diagnostic display</i>; no keys bound</td><td>C + B</td><td>C's compact collapse; B is the only concept that binds no keys in the iframe (principles §4.5 rule 5)</td><td>Only Esc and Tab work inside the frame; Ctrl+K shows the companion-window notice</td></tr>
 <tr><td>Radial tool ring at the pointer</td><td>A (deferred)</td><td>Engineering: an engine-drawn radial is custom GPU work or DOM over the canvas; keep as a static-time, post-MVP option</td><td>Replaced by the plan's §4.1 context menu at the pointer (right-click, long-press, Menu key), static-time DOM only</td></tr>
 </tbody>
 </table>
@@ -1264,7 +1264,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <ul>
   <li>24 px minimum on every segmented control and strip button; 44 px rail tools, cluster tabs and dock controls under <code>pointer: coarse</code> (iPad landscape included).</li>
   <li>4.5:1 for layer names when the layer is off: secondary text, no opacity; the word "hidden" is appended in text.</li>
-  <li>The lab name is in the Clinical-IH label string ("UT Example Lab", a build-time constant in the token).</li>
+  <li>The lab name is in the Clinical-IH label string ("Fictional Example Lab", a build-time constant in the token).</li>
   <li>Identity mismatch, session expired, manifest 503, tile errors, slow translator, GPU context loss and Dx dropped each have a rendered state using the principles §5 microcopy verbatim.</li>
   <li>The status strip carries one notice plus chips, never two notices; the offline pack is a chip.</li>
   <li>HUD text is the only per-frame DOM write (<code>paintView</code>); preset state, aria labels, trail, tray and checklist update at settle (<code>renderSettled</code>).</li>
@@ -1333,7 +1333,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
   <li><span class="dn">DN-F9</span> Selecting the RUO product shows the launch-refused plate rather than a research workspace: the clinical launch has no home in that build (plan 04 §8, FR-R3).</li>
 </ul>
 
-<h3>Revision 2026-11-01 (critique round: pathologist and a11y-ux critics)</h3>
+<h3>Revision 2026-11-01 (critique round: AI agent critics in the pathologist and a11y-ux roles)</h3>
 <ul>
   <li><span class="dn">Revision 2026-11-01</span> Top bar (P4, P5): deleted the page override that gave the specimen title a natural width (it defeated base.css's width-0 title and pushed the mode slot and More button off screen at 1280–1600); title, meta and worklist chip now sit in base.css's <code>.topbar__identity-rest</code> wrapper; the purpose chip may shrink and has a short form (<i>Prelim only</i>) below a 1264 px container; the consult variant drops the title below 1600 so the full label string keeps 659 px; the page-level 1280–1599 meta rule and the 24 px mode-chip override are gone (base.css owns both). Measured after the fix: mode indicator, More button and accession inside the bar at 1024 / 1280 / 1366 / 1440 / 1600 / 1920 in both variants; the review header prints <b>TOP BAR OVERFLOW</b> if that ever regresses.</li>
   <li><span class="dn">Revision 2026-11-01</span> Dx truth (FR-V4): in Dx mode the mock never applies the soft (moving-tier) frame; the settle tier is fetched (longer wait on Cold 4G) and the indicator reads <i>Rendering…</i> until every slot is resident, <i>Not complete — do not interpret</i> (assertive) after the 2 s D6 timeout in every unsettled state, not only tile errors; <i>Rendering Complete</i> is asserted only when the frame is settled, not soft and no tiles are missing. The Dx net chip reads <i>Slow link (6 Mbps)</i> without "reduced detail while moving".</li>
@@ -1368,7 +1368,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate, body
 <h3>Revision 2026-11-01 (layout and accessibility re-review of the final screens)</h3>
 <ul>
   <li><span class="dn">Revision 2026-11-01</span> Launch refused (Viewer / RUO build): the page rule that collapses the dock column (<code>.app.fin.is-refused { grid-template-columns: rail 1fr 0 }</code>) was not breakpoint-guarded, so below 1080 px, where the grid areas are a single column, the whole app laid out in an 80 px first column (top bar 80 px wide at 390 × 844 and 1024 × 1366, plate card 118 px wide with letter-wrapped text, <i>More</i> over the badge). The same outranked the embedded iframe grid at every width (top bar 72 px at 1440 × 900 with <code>variant=embedded</code>). The rule is now <code>@media (min-width: 1080px) { .app.fin.is-refused:not(.app--embedded) { … } }</code>; the other blocked states (mismatch, expired, manifest) never had the rule. Measured after the fix with <code>#product=ruo</code>: the grid is one 390 / 1024 px column (coarse) and <code>72px 1368px 0px</code> at 1440; top bar full width at every viewport with the mode slot inside it; <i>More</i> no longer intersects the badge (both 44 × 44 under coarse); the plate card is 342 px wide at 390 (24 px insets) and 520 px from 1024 up; <code>layout-check</code> passes at 390 / 1024 / 1366 coarse and 1440 / 1920 for <code>#product=ruo</code> and for <code>#product=ruo&amp;variant=embedded</code>; axe reports no violation in either state. Found while measuring the iframe case: the top bar's <i>Open on diagnostic display</i> hand-off button stayed visible under the <i>Nothing was opened</i> plate; it is now hidden with the rest of the refused chrome.</li>
-  <li><span class="dn">Revision 2026-11-01</span> Embedded (Hyperdrive iframe) top bar below 1080 px, found while measuring the refused state and pre-existing: the 183 px <i>Open on diagnostic display</i> button pushed the mode slot to 400 px in a 390 px bar and squeezed the product badge out entirely (P4 breached: no product visible), and at 1024 the regulatory string truncated (604 &gt; 407 px). Using the purpose chip's long / short pattern in the <code>topbar</code> container query: 600–1079 px the button reads <i>Diagnostic display</i> (132 px) and the label string hides one step early inside the iframe (as on the phone, the badge's name carries the full claim); on the phone the button is a 44 px icon button (<code>#i-share</code>) whose full text stays as its accessible name (clipped, not <code>display:none</code>); whichever text span is displayed is the name (no <code>aria-hidden</code> on either); under a coarse pointer the button is 44 px tall at every width, like the mode chip beside it (was 28 px). Under a coarse pointer the slide tray also yields up to a 1439 px container (its 44 px chips truncated the label string by 17 px at 1366 × 1024; the fine-pointer 1280–1439 tray is unchanged). Measured after: <code>layout-check</code> passes for <code>#variant=embedded</code> at 390 / 1024 / 1366 coarse and 1440 / 1920. <b>Design note</b>: at 390 px the iframe bar still cannot hold badge, step chip, accession, hand-off, mode and More; the step chip drops its step name (<i>3/5 ›</i>; the name is in the list it opens) and the badge slot, which shrinks last, truncates the badge with an ellipsis at about 60 px (<i>CLINI…</i>; it painted the clipped middle of the word, <i>INICAL-</i>, over the accession before; the full product name is the badge's accessible name and About is one tap away). A phone-width Hyperdrive iframe is not a launch surface in the plan (the EHR client is desktop-only; the phone target is the standalone web build), so this is recorded, not redesigned; if it ever is one, the step chip belongs in the bottom strip.</li>
+  <li><span class="dn">Revision 2026-11-01</span> Embedded (EHR iframe) top bar below 1080 px, found while measuring the refused state and pre-existing: the 183 px <i>Open on diagnostic display</i> button pushed the mode slot to 400 px in a 390 px bar and squeezed the product badge out entirely (P4 breached: no product visible), and at 1024 the regulatory string truncated (604 &gt; 407 px). Using the purpose chip's long / short pattern in the <code>topbar</code> container query: 600–1079 px the button reads <i>Diagnostic display</i> (132 px) and the label string hides one step early inside the iframe (as on the phone, the badge's name carries the full claim); on the phone the button is a 44 px icon button (<code>#i-share</code>) whose full text stays as its accessible name (clipped, not <code>display:none</code>); whichever text span is displayed is the name (no <code>aria-hidden</code> on either); under a coarse pointer the button is 44 px tall at every width, like the mode chip beside it (was 28 px). Under a coarse pointer the slide tray also yields up to a 1439 px container (its 44 px chips truncated the label string by 17 px at 1366 × 1024; the fine-pointer 1280–1439 tray is unchanged). Measured after: <code>layout-check</code> passes for <code>#variant=embedded</code> at 390 / 1024 / 1366 coarse and 1440 / 1920. <b>Design note</b>: at 390 px the iframe bar still cannot hold badge, step chip, accession, hand-off, mode and More; the step chip drops its step name (<i>3/5 ›</i>; the name is in the list it opens) and the badge slot, which shrinks last, truncates the badge with an ellipsis at about 60 px (<i>CLINI…</i>; it painted the clipped middle of the word, <i>INICAL-</i>, over the accession before; the full product name is the badge's accessible name and About is one tap away). A phone-width EHR iframe is not a launch surface in the plan (the EHR client is desktop-only; the phone target is the standalone web build), so this is recorded, not redesigned; if it ever is one, the step chip belongs in the bottom strip.</li>
   <li><span class="dn">Revision 2026-11-01</span> Request-consult dialog: the colleague <code>&lt;select&gt;</code> had a visible caption but no accessible name (axe <code>select-name</code>, critical, SC 4.1.2, at all four viewports). The caption is now a <code>&lt;label for="consultWho"&gt;</code> and the select carries <code>id="consultWho"</code> and <code>data-live="lis:oncall"</code> (the on-call list comes from the LIS). The dialog's other <code>.field</code> is static text (no control); the preliminary-note textarea in the step panel and every toggle were already label-wrapped.</li>
   <li><span class="dn">Revision 2026-11-01</span> Deleted the page copy of base.css's <code>[hidden] { display: none !important; }</code> (base.css line 1195 owns it). The education screen's duplicate <code>.dock__resizer</code> rule is that screen's to remove.</li>
 </ul>
@@ -1407,7 +1407,7 @@ const SLIDE_W = 12000, SLIDE_H = 6000;              /* µm; the synthetic node i
 const SCAN = 0.25;                                   /* µm/px at the 40× scan */
 const PRESETS = [8, 4, 2, 1, 0.5, 0.25];             /* µm/px for 1.25 · 2.5 · 5 · 10 · 20 · 40× (derived, D8) */
 const STRINGS = {
-  'clinical-ih': 'In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.',
+  'clinical-ih': 'In-house laboratory-validated tool. Not FDA cleared. For use only within Fictional Example Lab under CLIA/CAP validation.',
   dx: 'Stoipath Dx · cleared configuration · see About for UDI, version and hashes.',
   ruo: 'For Research Use Only. Not for use in diagnostic procedures.'
 };
@@ -1454,7 +1454,7 @@ function dxGate() {
   if (S.tier === 2) fail('Device tier', sf.coarse ? 'Tier 2 (tablet · 60 Hz)' : 'Tier 2 (60 Hz display · W60)', 'Dx mode unavailable on this device (Tier 2).'); else ok('Device tier', 'Tier 1 · N-Desk');
   if (S.cond === 'dxrefused') fail('Display attestation', 'none (no EDID, no dx_profile.json)', 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.');
   else if (S.cond === 'dropped') fail('Display attestation', 'lost during the session', 'Dx mode ended: display attestation lost. Viewing in Nav mode.');
-  else ok('Display attestation', 'EDID · Barco MDPC-8127');
+  else ok('Display attestation', 'EDID · Example display DX-27');
   if (S.cond === 'qastale') fail('Display QA', 'last pass 34 days ago', 'Dx mode unavailable: display QA overdue (last pass 34 days ago). Ask your display administrator.'); else ok('Display QA', 'passed 3 days ago · cadence 30 days');
   ok('Deployment self-check', 'build 3f9c…a71e · pathway b0d2…44c9 registered');
   if (S.cond === 'mismatch') fail('Slide identity', 'launch context ≠ manifest', 'Slide identity mismatch. Viewing is blocked.'); else ok('Slide identity', 'launch context matches the manifest');
@@ -1689,7 +1689,7 @@ function setSlide(i, opts) {
   $('navSlideLabel').innerHTML = sl.id + ' · ' + (sl.kind || sl.stain) + '<br><span class="nav-sep"> · </span><span id="navCoverage"></span> viewed';
   $('navLabelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' ' + (sl.kind || sl.stain) + '<br>DOE, JANE';
   $('navLabelImg').setAttribute('aria-label', 'Slide label image: AP-26-04417 ' + sl.id + ' ' + (sl.kind || sl.stain) + ' DOE, JANE');
-  $('labelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' · ' + (sl.kind || sl.stain) + '<br>DOE, JANE · 1958<span class="lab">UT Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span>';
+  $('labelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' · ' + (sl.kind || sl.stain) + '<br>DOE, JANE · 1958<span class="lab">Fictional Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span>';
   if (!opts.keepView) { measure(); setView(6000, 3000, fitScale(), { silent: true }); scheduleSettle(); }
   renderOverlay(); renderTrail(); renderTray(); renderChecklist(); renderFlow(); renderSettled();
   echo('slide.open · ' + sl.id);
@@ -1723,12 +1723,12 @@ function renderVariant() {
   $('worklistChip').classList.toggle('is-reviewed', S.reviewed); $('worklistChip2').classList.toggle('is-reviewed', S.reviewed);
   const at = $('attestLine');
   if (v !== 'embedded' && S.tier === 2) at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>' + (sf.coarse ? 'iPad Pro 12.9 · MDM profile' : '60 Hz display · W60') + '</span> · Tier 2 · no display attestation → Nav mode' + (consult ? ' · <b>Consultation · preliminary only</b>' : '') + '</span>';
-  else if (v === 'consult') at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · session purpose <b>Consultation · preliminary only</b> → Nav mode (Dx is reserved for sign-out sessions)</span>';
-  else if (v === 'embedded') at.innerHTML = '<span class="g off">–</span><span>Embedded window (Hyperdrive) · attestation not available inside an iframe → Nav mode · hand off to the companion window for Dx</span>';
+  else if (v === 'consult') at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>Example display DX-27</span> · EDID attested · session purpose <b>Consultation · preliminary only</b> → Nav mode (Dx is reserved for sign-out sessions)</span>';
+  else if (v === 'embedded') at.innerHTML = '<span class="g off">–</span><span>Embedded window (EHR) · attestation not available inside an iframe → Nav mode · hand off to the companion window for Dx</span>';
   else if (S.cond === 'dxrefused') at.innerHTML = '<span class="g attn">!</span><span>This display cannot be attested (no EDID, no dx_profile.json) · Nav mode · ask your display administrator</span>';
   else if (S.cond === 'dropped') at.innerHTML = '<span class="g attn">!</span><span>Display attestation lost during the session · Dx mode ended · Nav mode</span>';
-  else if (S.cond === 'qastale') at.innerHTML = '<span class="g attn">!</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">display QA overdue · last pass 34 days ago</span> · Nav mode</span>';
-  else at.innerHTML = '<span class="g ok">✓</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span>';
+  else if (S.cond === 'qastale') at.innerHTML = '<span class="g attn">!</span><span><span data-synthetic>Example display DX-27</span> · EDID attested · <span data-live="dx:displayqa">display QA overdue · last pass 34 days ago</span> · Nav mode</span>';
+  else at.innerHTML = '<span class="g ok">✓</span><span><span data-synthetic>Example display DX-27</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span>';
   $('stripMic').hidden = v !== 'signout' || sf.coarse;
   $('stripTier').hidden = S.tier !== 2 || v === 'embedded'; $('stripTier').textContent = sf.coarse ? 'Tier 2 · 60 Hz' : 'Tier 2 · 60 Hz · W60';
   const qa = $('qaChip'); qa.hidden = v !== 'signout' || S.tier === 2 || S.cond === 'dxrefused' || S.cond === 'dropped'; qa.textContent = S.cond === 'qastale' ? 'QA overdue · 34 days' : 'QA passed 3 days ago';
@@ -1769,7 +1769,7 @@ function renderStrip() {
   else if (S.cond === 'ctxloss') notice = 'Graphics memory was reset — restoring the view';
   else if (S.cond === 'tileerror') notice = '3 tiles could not be loaded — retrying';
   else if (S.cond === 'dropped') notice = 'Dx mode ended: display attestation lost. Viewing in Nav mode.';
-  else if (isDx()) notice = S.adjust ? 'Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)' : 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+  else if (isDx()) notice = S.adjust ? 'Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)' : 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago';
   else if (!g.ok) notice = g.reason;
   else notice = 'Nav mode · Shift+D enters Dx mode (display attested · QA passed 3 days ago)';
   $('stripNotice').textContent = notice;
@@ -1833,10 +1833,10 @@ function checklistRows() {
     { st: 'ok', html: 'Regions: <b>' + S.regions + '</b><span class="sub">Polygon · Tumor · 1.9 mm² · DICOM ANN / GeoJSON</span>' },
     { st: S.aiDecision ? 'ok' : 'off', html: 'AI results: <b>' + ai + '</b><span class="sub">Metastasis detector (research status) ' + (dx ? 'stays off in Dx unless you open it' : 'off by default') + ' · flagged regions viewed at ≥ 10×: 1 of 3</span>' },
     { st: 'ok', html: 'Bookmarks: <b>' + S.bookmarks + '</b><span class="sub">state documents with thumbnails</span>' },
-    { st: dx ? 'ok' : 'attn', html: 'Render mode: <b>' + (dx ? 'DX · Rendering Complete' : 'NAV') + '</b><span class="sub">' + (dx ? 'Barco MDPC-8127 · EDID · QA passed 3 days ago · adjustments ' + (S.adjust ? 'logged' : 'default') : (g.reason || 'Nav mode by choice; Shift+D enters Dx')) + '</span>' },
+    { st: dx ? 'ok' : 'attn', html: 'Render mode: <b>' + (dx ? 'DX · Rendering Complete' : 'NAV') + '</b><span class="sub">' + (dx ? 'Example display DX-27 · EDID · QA passed 3 days ago · adjustments ' + (S.adjust ? 'logged' : 'default') : (g.reason || 'Nav mode by choice; Shift+D enters Dx')) + '</span>' },
     { st: 'ok', html: 'Audit: <b>complete</b><span class="sub">session open/close, sampled viewport trail, adjustment resets (AuditEvent)</span>' }
   ];
-  if (S.variant === 'signout') rows.push({ st: 'ok', html: 'Dictation: <b>Mic: dictation</b> (Dragon Medical One in Epic)<span class="sub">The viewer never records audio</span>' });
+  if (S.variant === 'signout') rows.push({ st: 'ok', html: 'Dictation: <b>Mic: dictation</b> (dictation software in the EHR)<span class="sub">The viewer never records audio</span>' });
   if (S.variant === 'consult') rows.push({ st: 'ok', html: 'Purpose: <b>Consultation · preliminary only</b><span class="sub">The note is preliminary; permanent sections follow</span>' });
   return rows;
 }
@@ -1966,7 +1966,7 @@ function now() { const d = new Date(); return String(d.getHours()).padStart(2, '
 function fmtLen(um) { return um >= 1000 ? (um / 1000).toFixed(um >= 10000 ? 0 : 1) + ' mm' : Math.round(um) + ' µm'; }
 function fmtArea(um2) { return um2 >= 1e5 ? (um2 / 1e6).toFixed(2) + ' mm²' : Math.round(um2).toLocaleString() + ' µm²'; }
 function shoelace(p) { let a = 0; for (let i = 0; i < p.length; i++) { const j = (i + 1) % p.length; a += p[i].x * p[j].y - p[j].x * p[i].y; } return Math.abs(a) / 2; }
-function productFooter() { return { 'clinical-ih': 'Clinical-IH · UT Example Lab · not FDA cleared', dx: 'Stoipath Dx · cleared configuration', ruo: 'RUO · not for use in diagnostic procedures' }[S.product]; }
+function productFooter() { return { 'clinical-ih': 'Clinical-IH · Fictional Example Lab · not FDA cleared', dx: 'Stoipath Dx · cleared configuration', ruo: 'RUO · not for use in diagnostic procedures' }[S.product]; }
 
 /* ---- toasts (event bus → DOM; above the strip on the dock side, never the centre) ---- */
 function toast(title, body, opts) {
@@ -2016,7 +2016,7 @@ function finalAction() {
   if (isBlocked()) return;
   if (S.variant === 'embedded') { runCmd('handoff'); return; }
   if (S.variant === 'consult') { if (S.sent) { toast('Preliminary already sent', 'An addendum goes through the LIS'); return; } openDialog('send'); return; }
-  if (S.reviewed) { toast('Already returned to the LIS', 'The case is Reviewed; reopen it from Beaker'); return; }
+  if (S.reviewed) { toast('Already returned to the LIS', 'The case is Reviewed; reopen it from the LIS'); return; }
   openDialog('signout');
 }
 function runCmd(cmd, src) {
@@ -2049,10 +2049,10 @@ function runCmd(cmd, src) {
     case 'signout': finalAction(); break;
     case 'consult': openDialog('consult'); break;
     case 'confirmConsult': closeDialog(); echo('consult.request'); toast('Consult requested', 'Dr Example paged · shareCreated · Tier 0 link (no label image, no identifiers) · expires in 2 h · the reply lands in the LIS as an addendum'); break;
-    case 'confirmSignout': closeDialog(); S.reviewed = S.markReviewed; renderVariant(); renderChecklist(); echo('signout.request'); toast('Returned to LIS', (S.markReviewed ? 'caseStatusChanged → Reviewed' : 'Status kept In review') + ' · viewed state per slide · 1 SR measurement · 1 ANN region · focus returned to Beaker'); announce((S.markReviewed ? 'Case marked Reviewed. ' : 'Evidence sent. ') + 'Focus returned to the LIS.'); break;
+    case 'confirmSignout': closeDialog(); S.reviewed = S.markReviewed; renderVariant(); renderChecklist(); echo('signout.request'); toast('Returned to LIS', (S.markReviewed ? 'caseStatusChanged → Reviewed' : 'Status kept In review') + ' · viewed state per slide · 1 SR measurement · 1 ANN region · focus returned to the LIS'); announce((S.markReviewed ? 'Case marked Reviewed. ' : 'Evidence sent. ') + 'Focus returned to the LIS.'); break;
     case 'openUnviewed': closeDialog(); nextUnviewed(); gotoStep(2, { open: true }); break;
     case 'confirmSend': closeDialog(); S.sent = true; renderVariant(); echo('preliminary.send'); toast('Preliminary sent', 'OR 4 · ORU / FHIR Observation (preliminary) · ' + $('tatBig').textContent + ' of the 20-minute target · surgeon paged'); announce('Preliminary diagnosis sent to the OR.'); break;
-    case 'confirmDx': if (!dxGate().ok) return; closeDialog(); S.dxWanted = true; S.adjust = false; S.overlay = false; applyAll(); scheduleSettle(); echo('dx.enter'); announce('Dx mode. Display attested, EDID, Barco MDPC-8127. QA passed 3 days ago.'); break;
+    case 'confirmDx': if (!dxGate().ok) return; closeDialog(); S.dxWanted = true; S.adjust = false; S.overlay = false; applyAll(); scheduleSettle(); echo('dx.enter'); announce('Dx mode. Display attested, EDID, Example display DX-27. QA passed 3 days ago.'); break;
     case 'dx': toggleDx(); break;
     case 'leaveDx': leaveDx(); break;
     case 'deleteSelected': deleteSelected(); break;
@@ -2062,7 +2062,7 @@ function runCmd(cmd, src) {
     case 'prevSlide': setSlide((S.slide + 2) % 3); break;
     case 'acceptAi': case 'rejectAi': S.aiDecision = cmd === 'acceptAi' ? 'accepted' : 'rejected'; renderChecklist(); echo('ai.' + S.aiDecision); toast('AI result ' + S.aiDecision, 'aiResult' + (cmd === 'acceptAi' ? 'Accepted' : 'Rejected') + ' · Metastasis detector · unet-lnmet v1.3 · returns to the LIS as evidence'); break;
     case 'reportMismatch': toast('Reported to the laboratory', 'identityMismatch audit event · the case is flagged in the LIS'); break;
-    case 'returnLis': toast('Returning to LIS', 'Focus returned to Beaker · nothing was changed'); break;
+    case 'returnLis': toast('Returning to LIS', 'Focus returned to the LIS · nothing was changed'); break;
     case 'report': toast('Problem reported', 'PHI-free report with the request id and Server-Timing'); break;
     case 'retryManifest': S.cond = 'normal'; applyAll(); scheduleSettle(); toast('Manifest loaded', 'Retry succeeded · thumbnail then levels ≤ 1024 px'); break;
     case 'signin': S.cond = 'normal'; applyAll(); scheduleSettle(); toast('Signed in', 'Session renewed · the view is restored'); break;
@@ -2328,7 +2328,7 @@ function addBookmark() {
   renderChecklist(); echo('bookmark.add'); toast('Bookmark saved', 'View ' + S.bookmarks + ' · ' + magText(S.scale) + ' · ' + SLIDES[S.slide].id + ' · B to add another, ⇧B to open the gallery');
 }
 
-/* ---- keyboard (every action has a key; no Ctrl/Alt/F-keys; NOTHING bound inside the Hyperdrive iframe) ---- */
+/* ---- keyboard (every action has a key; no Ctrl/Alt/F-keys; NOTHING bound inside the EHR iframe) ---- */
 function trapFocus(e) {
   const f = $$('button, input, select, textarea, [tabindex]:not([tabindex="-1"])', $(S.dialog === 'palette' ? 'paletteLayer' : 'modalLayer')).filter((x) => !x.disabled && x.offsetParent !== null);
   if (!f.length) return;
@@ -2408,14 +2408,14 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   if (S.variant === 'embedded') {                                                   /* principles §4.5 rule 5: the controller iframe binds no keys */
-    if (ctrl && (e.key === 'k' || e.key === 'K') && !inField) { e.preventDefault(); toast('Commands live in the companion window', 'The Hyperdrive controller iframe binds no keys (principles §4.5 rule 5). Open on diagnostic display.', { glyph: 'i' }); }
+    if (ctrl && (e.key === 'k' || e.key === 'K') && !inField) { e.preventDefault(); toast('Commands live in the companion window', 'The EHR controller iframe binds no keys (principles §4.5 rule 5). Open on diagnostic display.', { glyph: 'i' }); }
     return;
   }
   if (S.dialog) { if (e.key === 'Tab') trapFocus(e); return; }
   if (inField) return;
   if (ctrl && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); openDialog('palette'); return; }
   if (ctrl && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); undo(); return; }
-  if (ctrl || e.altKey || e.key === 'Tab' || /^F\d+$/.test(e.key)) return;        /* Hyperdrive and browser keys stay with the host */
+  if (ctrl || e.altKey || e.key === 'Tab' || /^F\d+$/.test(e.key)) return;        /* EHR and browser keys stay with the host */
   if (tag === 'BUTTON' && (e.key === ' ' || e.key === 'Enter')) return;             /* native activation: Space on a list item flies to it */
   let k = e.key;
   if (k.length === 1 && /[a-z]/i.test(k)) k = (e.shiftKey ? 'shift+' : '') + k.toUpperCase();
@@ -2438,7 +2438,7 @@ function openDialog(name) {
   if (name === 'send') { const v = $('prelimText').value.trim(); if (v) node.querySelector('#sdNote').textContent = v; node.querySelector('#sdViewed').textContent = SLIDES.filter((s) => s.opened).length + ' of 3'; node.querySelector('#sdTat').textContent = $('tatBig').textContent; node.querySelector('#sdMode').textContent = isDx() ? 'Dx mode' : 'Nav mode (' + (dxGate().reason || '').replace(/\.$/, '') + ')'; }
   if (name === 'about') {
     node.querySelector('#aboutString').textContent = STRINGS[S.product];
-    node.querySelector('#aboutProduct').textContent = { 'clinical-ih': 'Stoipath Clinical-IH · UT Example Lab', dx: 'Stoipath Dx · cleared edition · UDI (01)00850000000000 (synthetic)', ruo: 'Stoipath Viewer · research use only' }[S.product];
+    node.querySelector('#aboutProduct').textContent = { 'clinical-ih': 'Stoipath Clinical-IH · Fictional Example Lab', dx: 'Stoipath Dx · cleared edition · UDI (01)00850000000000 (synthetic)', ruo: 'Stoipath Viewer · research use only' }[S.product];
     node.querySelector('#aboutLaunch').textContent = 'product=' + S.product + ' · purposeOfUse=' + (S.variant === 'consult' ? 'TREAT (consultation · preliminary only)' : 'TREAT (sign-out)') + ' · surface=' + (S.variant === 'embedded' ? 'iframe' : (surface().coarse ? 'tablet' : 'companion window')) + ' · tier=' + S.tier + ' (quality record)';
   }
   if (name === 'dxgate') { renderGate(node); focusEl = node.querySelector(dxGate().ok && !isDx() ? '#gateEnter' : '#gateStay'); }   /* in Dx the safe choice (Stay) takes focus */
@@ -2471,7 +2471,7 @@ function renderGate(node) {
   const g = dxGate(), dx = isDx();
   node.querySelector('#dx-title').textContent = dx ? 'Dx mode · active' : (g.ok ? 'Enter Dx mode?' : 'Dx mode unavailable');
   node.querySelector('#gateRows').innerHTML = g.rows.map((r) => '<span class="g ' + (r.ok ? 'ok' : 'fail') + '" aria-hidden="true">' + (r.ok ? '✓' : '!') + '</span><span class="' + (r.ok ? '' : 'fail-row') + '">' + r.g + ': ' + esc(r.t) + (r.ok ? '' : ' — fails') + '</span>').join('');
-  node.querySelector('#gateNote').textContent = dx ? 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago' : (g.ok ? 'All gates pass. Entering Dx confirms the attestation source: EDID · Barco MDPC-8127.' : g.reason);
+  node.querySelector('#gateNote').textContent = dx ? 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago' : (g.ok ? 'All gates pass. Entering Dx confirms the attestation source: EDID · Example display DX-27.' : g.reason);
   const enter = node.querySelector('#gateEnter'), stay = node.querySelector('#gateStay');
   if (dx) { enter.innerHTML = 'Leave Dx mode'; enter.dataset.cmd = 'leaveDx'; enter.classList.remove('btn--accent'); enter.classList.add('btn--secondary'); stay.textContent = 'Stay in Dx mode'; stay.classList.remove('btn--ghost'); stay.classList.add('btn--accent'); }
   else { enter.disabled = !g.ok; enter.setAttribute('aria-disabled', g.ok ? 'false' : 'true'); }
@@ -2491,7 +2491,7 @@ const COMMANDS = [
 const KEYMAP_EXTRA = [
   ['Navigate', ['←↑↓→', 'WASD'], 'Pan 10 % of the viewport (held = continuous)'], ['Navigate', ['⇧ + ←↑↓→'], 'Pan one full viewport (systematic coverage)'], ['Navigate', ['1 … 6'], '1.25× · 2.5× · 5× · 10× · 20× · 40× (objective-equivalent, derived)'], ['Navigate', [',', '.'], 'Overlay opacity down / up'],
   ['Annotate', ['Q then 1–9'], 'Class picker'], ['Annotate', ['↵', '⌫', 'Esc'], 'Commit · remove last vertex / delete selected (never an undo) · clear selection, cancel tool, close sheet'], ['Annotate', ['⌃Z', '⌃Y'], 'Undo / redo (the only keys that revert a committed annotation)'], ['Annotate', ['Space'], 'Held: temporary pan while a drawing tool is active · in a list: fly to the item'], ['Annotate', ['Menu', 'right-click', 'long-press'], 'Tools here: bookmark, measure from here, annotate here, copy view link'],
-  ['Reserved', ['F1–F12', 'Alt'], 'Hyperdrive', true], ['Reserved', ['⌃Space', 'Num 0–9'], 'Epic search · Dragon push-to-talk', true]
+  ['Reserved', ['F1–F12', 'Alt'], 'EHR', true], ['Reserved', ['⌃Space', 'Num 0–9'], 'EHR search · dictation push-to-talk', true]
 ];
 function renderKeymap(node) {
   const groups = ['Flow', 'Navigate', 'Annotate', 'Reserved'];

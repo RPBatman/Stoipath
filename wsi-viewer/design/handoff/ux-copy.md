@@ -11,11 +11,11 @@ Design phase document 5 · Stoipath WSI viewer · 2026-11-01 · companion to `de
 ## 0. Conventions
 
 - **IDs** are `namespace.key`. Namespaces: `label` (product labelling), `bar` (top bar), `mode` (render mode and Dx gate), `strip` (status strip), `net` (network, tier, offline), `err` (errors, plates, banners), `empty`, `hud`, `nav` (navigator), `tool` (accessible names of tools), `cmd` (command registry labels, palette rows), `key` (keymap text), `clin` (clinical workflow), `res` (research workspace), `learn` (education), `dlg` (dialogs shared across builds), `toast`, `a11y` (live-region sentences that differ from the visual only by punctuation), `about`.
-- **Placeholders** use ICU syntax: `{accession}`, `{slide}` (`A1-1`), `{stain}` (`H&E`, `CK AE1/AE3`), `{mag}` (`20×`), `{umpp}` (`0.50`), `{n}`, `{total}`, `{pct}`, `{display}` (`Barco MDPC-8127`), `{days}`, `{mbps}`, `{p95}`, `{pack}`, `{date}`, `{labName}`, `{product}`, `{build}`, `{name}` (always a synthetic placeholder in mocks). Plurals use ICU `plural`.
+- **Placeholders** use ICU syntax: `{accession}`, `{slide}` (`A1-1`), `{stain}` (`H&E`, `CK AE1/AE3`), `{mag}` (`20×`), `{umpp}` (`0.50`), `{n}`, `{total}`, `{pct}`, `{display}` (`Example display DX-27`), `{days}`, `{mbps}`, `{p95}`, `{pack}`, `{date}`, `{labName}`, `{product}`, `{build}`, `{name}` (always a synthetic placeholder in mocks). Plurals use ICU `plural`.
 - **Typography in strings.** Middle dot ` · ` separates metadata fields; an em dash ` — ` introduces a reason or consequence (`Soft — slow link`); `…` (U+2026) marks an in-progress state, never three periods; `×` (U+00D7) for magnification; `µm`, `mm`, `mm²` with a thin space before the unit in prose and a normal space in the HUD; `≥`, `≤`, `≈` as symbols; sentence case everywhere except the four product badges and the mode indicator (`RUO`, `LEARN`, `CLINICAL-IH`, `DX`, `NAV`), which are uppercase; QuPath class names verbatim (`Tumor`, `Region*`).
 - **Numbers.** `Intl` formatting; magnification `20×` / `2.5×` / `1.25×` (trailing zeros trimmed); µm/px two decimals (`0.50 µm/px`); lengths in µm below 1 mm, mm above (`2.3 mm`); areas `1.9 mm²`; percentages with a space (`78 %`); times `09:41`, durations `06:12`; dates ISO (`2026-10-24`) in metadata, relative in status chips (`3 days ago`).
 - **Shortcuts in text** are rendered from the command registry as key caps (`<kbd class="key">`), never typed into the sentence; the strings below show them in angle-free form (`⇧↵`, `Ctrl+K`) where the key is part of the sentence, and the accessible name spells them out (`shortcut Shift Enter`, `Control K`).
-- **Synthetic content.** `AP-26-04417`, `DOE, JANE · 1958`, `Dr Example`, `UT Example Lab`, `Barco MDPC-8127` (a real display model used as a placeholder), `Example AI Inc.` are placeholders flagged `data-synthetic` in mocks; never ship them as defaults.
+- **Synthetic content.** `AP-26-04417`, `DOE, JANE · 1958`, `Dr Example`, `Fictional Example Lab`, `Example display DX-27` (a fictional display model; replaced a real model name on 2026-11-10, audit B11), `Example AI Inc.` are placeholders flagged `data-synthetic` in mocks; never ship them as defaults.
 
 ---
 
@@ -68,7 +68,7 @@ Design phase document 5 · Stoipath WSI viewer · 2026-11-01 · companion to `de
 | `label.badge.dx` | badge | `DX` | with the check glyph and double rule; principles §2.1 writes `Dx` (Copy note C1) |
 | `label.string.ruo` | label string, About, snapshot footer, splash | `For Research Use Only. Not for use in diagnostic procedures.` | token; [unverified wording] |
 | `label.string.learn` | label string, About | `For educational use. Not a medical device. Contains no protected health information.` | token |
-| `label.string.clinical` | label string, About | `In-house laboratory-validated tool. Not FDA cleared. For use only within {labName} under CLIA/CAP validation.` | `{labName}` build constant (`UT Example Lab` in mocks) |
+| `label.string.clinical` | label string, About | `In-house laboratory-validated tool. Not FDA cleared. For use only within {labName} under CLIA/CAP validation.` | `{labName}` build constant (`Fictional Example Lab` in mocks) |
 | `label.string.dx` | label string, About | `Stoipath Dx · cleared configuration · see About for UDI, version and hashes.` | placeholder until clearance |
 | `label.badge.aria.ruo` | badge accessible name | `Stoipath Viewer, for research use only. Open the product label and About` | research final; principle: name carries the claim |
 | `label.badge.aria.learn` | badge name | `Stoipath Learn. For educational use. Not a medical device. Contains no protected health information. Open About` | — |
@@ -84,7 +84,7 @@ Design phase document 5 · Stoipath WSI viewer · 2026-11-01 · companion to `de
 | `about.title` | About dialog | `About this build` | — |
 | `about.rows` | About | `Product` · `Label` · `Version` · `build_hash` · `pathway_hash` · `Engine` · `Surfaces` · `Display` · `Launch` · `Telemetry` · `Viewport trail` · `Keymap` · `Licence` · `Data` | row labels |
 | `about.product.clinical` | About | `Stoipath Clinical-IH · {labName}` | — |
-| `about.version` | About | `{version} · build_hash {hash} · engine {engineVersion} · separate build per product (never a runtime flag)` | Learn wording |
+| `about.version` | About | `{version} · build_hash {hash} · engine {engineVersion} · separate page per product; separate build artefacts are planned (plan 12)` | Learn wording; revised 2026-11-10 (audit L-D2: the pages come from one shared build, so "separate build per product" was not true) |
 | `about.surfaces.ruo` | About | `no sign-out · no LIS write-back · no Dx mode` | — |
 | `about.display.ruo` | About | `pitch unknown (browser) · Dx mode not part of this build` | — |
 | `about.launch.clinical` | About | `product=clinical-ih · purposeOfUse=TREAT` | — |
@@ -98,7 +98,7 @@ Design phase document 5 · Stoipath WSI viewer · 2026-11-01 · companion to `de
 | `about.cvd` | About toggle | `CVD-friendly stain remap` / `Per-user shader LUT (Dalton 2026); applies to tissue, not to the palette (FR-V8)` | — |
 | `about.motion` | About toggle | `Reduce motion` / `Instant fly-to, no inertia; follows the OS setting by default` | — |
 | `about.theme` | About toggle | `Light chrome` / `Allowed in Stoipath Viewer on non-diagnostic surfaces only; the canvas backdrop stays neutral grey` | DS-1 |
-| `about.licence` | About | `Apache-2.0` | — |
+| `about.licence` | About | `Apache-2.0 (proposed; pending UT OTC approval)` | Revised 2026-11-10 (audit C1): the software is intended for open-source release; no licence is granted until the campus OTC approves |
 
 ---
 

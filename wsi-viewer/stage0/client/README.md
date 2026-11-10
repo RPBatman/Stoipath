@@ -1,28 +1,148 @@
 # Stage-0 WSI viewer (client)
 
-A whole-slide-image viewer prototype whose only job is to **zoom and pan without visible blur or pop-in, and to
-measure itself while doing so**. It is a static site (Vite + TypeScript + WebGL2, no framework, no runtime
-dependencies) that reads a plain tile pyramid over HTTP and exports latency / sharpness numbers as JSON.
+The Stage-0 engine and the four pages built on it. The engine's job is to **zoom and pan without visible blur or
+pop-in, and to measure itself while doing so**. It is a static site (Vite + TypeScript + WebGL2, no framework, no
+runtime dependencies) that reads a plain tile pyramid over HTTP and exports latency / sharpness numbers as JSON. Most
+of this README is about the engine and its measurement page; the other three pages have their own specifications
+(table below).
 
-The policy it implements is the one in `wsi-viewer/docs/research/04-instant-zoom-client.md` (F2–F8) and
+<!-- status-block:begin (as of 2026-11-10; the same block is in every README; edit all copies together) -->
+## Status as of 2026-11-10
+
+This block is repeated, with the same content, at the top of every README in this repository. Where another document
+disagrees with it, this block is the newer statement. The command behind each number is in §5 of the
+[executive summary](../../docs/dissemination/executive-summary.md).
+
+**What it is.** Stoipath is a whole-slide image viewer for pathology education and research, at prototype stage. It is built
+by AI agents; the project owner, a pathology resident, reviews at defined gates. It is **intended for open-source release**.
+Licence: **Apache-2.0 (proposed; pending UT OTC approval)**. The repository contains no licence file, so no licence is granted
+yet. Every page is for educational or research use only: none is a medical device and none is validated for diagnosis. No
+patient data is used; every slide is public and de-identified.
+
+**The four published pages** (GitHub Pages, branch `stage0-deploy` at commit `c1eab77`; base URL
+`https://rpbatman.github.io/Stoipath/`):
+
+| Page | URL after the base | Published | Status |
+|---|---|---|---|
+| Measurement instrument | `client/dist/?overlay=1` | 2026-10-25 | Developer page that measures zoom and pan latency and sharpness. Frozen build of 2026-10-25. Not a product. |
+| Stoipath Viewer (RUO), the research shell | `client/dist/shell.html` | 2026-11-01; current build 2026-11-02 | Prototype. For research use only. Public sample slides. |
+| Stoipath Learn L1 | `client/dist/learn.html` | 2026-11-08 | One viewer tour and one draft teaching case (CAMELYON16). For educational use. Pending pathologist review. |
+| Practice report (Stoipath Learn L2) | `client/dist/signout.html` | 2026-11-09 | Ten draft cases of five lymph-node slides each (CAMELYON17), simplified pN staging. For educational use. Pending pathologist review. **Safari colour check pending: use Chrome or Edge on a computer (on iPhone and iPad every browser uses Safari's engine).** |
+
+Also published: the OpenSeadragon comparator (`comparator/osd.html`) and the design pages (`design/`, mock-up screens with
+synthetic content and no product behind them).
+
+- **Practice page decision.** On 2026-11-10 the owner decided that the practice report stays published for now, unless an
+  objective reason to take it down appears. Its Safari colour check is still open: 40 of its 50 slides depend on a colour
+  marker the page inserts before decoding, and the result has been checked only in Chromium, not in Safari on an iPad or a Mac.
+- **Site and repository differ.** The site root still redirects to the measurement instrument. A landing page that lists
+  every page is in the repository ([`site/index.html`](../../site/index.html)) and is not published. The live pages are older
+  builds than `main`: the corrected licence wording, the Safari notice on the practice page and later fixes are in the
+  repository only. Until the next publish, the live About dialogs of Learn and the practice report still read "Apache-2.0
+  (this software)" and give a CC BY 4.0 licence for the teaching text. This block supersedes both: the software licence is
+  proposed and pending approval, and the text licence is to be confirmed.
+- **Frozen.** The published measurement page has not changed since 2026-10-25 (build id `2026-10-25T16:53:04Z`), by
+  decision, so that device numbers stay comparable. The measurement freeze set for the abstract (2026-11-04 18:00 CT) has
+  passed. The iPhone fix of 2026-11-08 ("instrument 2") is in the source and is not published; whether to publish it, and at
+  which URL, is an open owner decision.
+- **Reviews.** Every review named in this repository's documents so far (pathologist-educator, programme-director,
+  accessibility, engineering, design judges, plan critics, auditors) was done by AI agents in those roles, not by human
+  professionals. The only human review is the owner's gate review. Pathologist review of the teaching content has not
+  started: 156 draft statements in 12 review sheets are all marked `pending` (37 for Learn L1, 119 for the practice report).
+- **Plan and research.** The plan has 14 sections ([index](../../docs/plan/README.md)) and rests on 19 research notes (10 topic
+  notes, 9 gap notes; [index](../../docs/research/README.md)). The newest are plan section 14,
+  [simulated independent practice and EPA-aligned assessment](../../docs/plan/14-simulated-independent-practice.md), and research
+  note [11-gap-9](../../docs/research/11-gap-9-simulated-practice-and-epas.md), both of 2026-11-09; section 14 is a design and
+  none of it is built. The plan calendar (M0 on 2026-12-05 and later milestones) was set on 2026-10-25 and has not been
+  re-baselined. The work since then went to the research shell, Learn L1 (owner's instruction of 2026-11-04) and the
+  practice report (owner's request of 2026-11-08), which the plan schedules for 2027. The plan's Sprint 1 items (a Rust
+  workspace, `gates/`, `docs/adr/`) do not exist. Whether to re-baseline the calendar is an open owner decision.
+- **Deadlines.** TSP 2027 abstract: due 2026-10-30, extended to 2026-11-06; the date has passed and **the abstract was not
+  submitted** (owner, 2026-11-10). A later conference is the target; its deadline is to be decided. UT OTC approval of the
+  release: plan milestone 2026-11-06 ("by 2026-11-07" elsewhere in the plan); the date has passed, no approval is recorded
+  and the status is pending.
+- **Audit and decisions.** The audit of 2026-11-10 is [`docs/audit/AUDIT-2026-11-10.md`](../../docs/audit/AUDIT-2026-11-10.md):
+  69 findings (1 critical, 5 high, 22 medium, 33 low, 8 for information), 27 of which need an owner decision. Owner
+  decisions, decided and open, are logged in [`docs/audit/DECISIONS.md`](../../docs/audit/DECISIONS.md). The owner's message
+  of 2026-11-10, verbatim: "Use the wording “intended for open-source release”. Start the fixes; leave the practice page up
+  for now (unless there is an objective reason to take it down). TSP abstract was not submitted, we can target another
+  conference - deadline TBD." The fixes made that day are logged in
+  [`stage0/client/SIGNOUT.md`](../../stage0/client/SIGNOUT.md) §22 (pages), [`docs/provenance/README.md`](../../docs/provenance/README.md)
+  (cost ledger) and [`docs/README.md`](../../docs/README.md) (documents). Every other audit decision is still open; the log
+  shows which of them were applied as interim defaults.
+- **Cost ledger.** [`docs/provenance/README.md`](../../docs/provenance/README.md), roll-up cut at 2026-11-10 20:19 UTC. Quote
+  its basis sentence verbatim; every earlier cost figure is superseded.
+- **Checks and CI.** From `wsi-viewer/stage0/client`, after `npm ci && npm run build`: `node harness/unit.mjs`;
+  `node harness/run.mjs && node harness/check-metrics.mjs`; `node harness/shell-check.mjs`; then `tools-check.mjs`,
+  `learn-check.mjs`, `signout-check.mjs` and `site-check.mjs`, each as `node harness/<name> --axe <path to axe.min.js>`. From
+  `wsi-viewer/stage0`: `python3 -I -m unittest discover tools/tests`. The browser checks need Playwright's Chromium and the
+  slide tiles, which are not in git on `main` (CI takes them from `stage0-deploy`). On the build of 2026-11-10 the results
+  were 4,171 unit assertions in 31 files, 20, 190, 628, 1,149, 898 and 91 passing page checks in the order above, and 95
+  Python tests, with no failure. CI ([`.github/workflows/stage0-ci.yml`](../../../.github/workflows/stage0-ci.yml)) runs the
+  build, the unit tests and the five browser gates on every push and pull request that touches `wsi-viewer/stage0/`; its
+  last run on `main` (merge commit `53be23e`, 2026-11-10) passed. Only Chromium is tested: no check has run in Safari or
+  Firefox.
+<!-- status-block:end -->
+
+## Engine documents
+
+The policy the engine implements is the one in `wsi-viewer/docs/research/04-instant-zoom-client.md` (F2–F8) and
 `wsi-viewer/docs/architecture/options/A-web-core.md` (§2–§3). Every constant lives in
 [`src/constants.ts`](src/constants.ts) with the section it comes from. How to measure on real devices is in
 [`../MEASUREMENT_PROTOCOL.md`](../MEASUREMENT_PROTOCOL.md); where the exports go and how they are summarised is
-in [`../results/README.md`](../results/README.md). The adversarial review and how each finding was resolved is
+in [`../results/README.md`](../results/README.md). The adversarial review (by AI agents) and how each finding was resolved is
 [`REVIEW.md`](REVIEW.md); what changed since the first build is in [`CHANGES.md`](CHANGES.md). The Stage-0 overview
 (pyramid build, LAN serving, static deployment) is [`../README.md`](../README.md).
 
-## Two pages: the measurement page and the RUO shell
+## Four pages over one engine
 
-The build has two pages over **one** engine module (`src/viewer.ts`, `startViewer()`; one rAF loop):
+The build has four pages over **one** engine module (`src/viewer.ts`, `startViewer()`; one rAF loop). They are entry
+points of one shared build (`vite.config.ts`), not separate builds per product.
 
-| Page | What it is | Use it for |
+| Page | What it is | Specification | Its check |
+|---|---|---|---|
+| `index.html` (default) | The measurement page: full-window canvas, debug overlay (`?overlay=1`), keys +/− arrows O R P, `window.__stage0`. Use it for every protocol run (MEASUREMENT_PROTOCOL.md). Engineering measurement only; not a product | this README | `harness/run.mjs`, `harness/check-metrics.mjs` |
+| `shell.html` | **Stoipath Viewer (RUO)**, the research shell: the designed research workspace (top bar with the RUO label, rail, HUD with magnification / scale bar / position, navigator, palette, keymap, Context dock) with the Phase A tools (slide library, annotation, layers, compare, snapshot) around the same engine. For research use only | [`SHELL.md`](SHELL.md), [`TOOLS.md`](TOOLS.md) | `harness/shell-check.mjs`, `harness/tools-check.mjs` |
+| `learn.html` | **Stoipath Learn L1**: module format, learner player, items, progress, author studio (`?studio=1`), one viewer tour and one draft case. For educational use; content pending pathologist review | [`LEARN.md`](LEARN.md) | `harness/learn-check.mjs` |
+| `signout.html` | **The practice report (Stoipath Learn L2)**: a worklist of ten draft CAMELYON17 cases, five-node review, structured practice report, comparison with the reference, results export, cohort table. For educational use; not a diagnostic or sign-out tool; content pending pathologist review. **Safari colour check pending: use Chrome or Edge on a computer (on iPhone and iPad every browser uses Safari's engine)** | [`SIGNOUT.md`](SIGNOUT.md), the practice-report specification | `harness/signout-check.mjs` |
+
+Source: the engine is the top-level `src/*.ts`; the pages are under `src/shell/`, `src/learn/` and `src/signout/`;
+`src/site-link.ts` is the shared "All Stoipath pages" link shown in each About dialog once the landing page
+([`../../site/index.html`](../../site/index.html)) is published. What each publish copies to the site is in
+[`DEPLOY-PHASE-A.md`](DEPLOY-PHASE-A.md), [`DEPLOY-LEARN-L1.md`](DEPLOY-LEARN-L1.md) and [`SIGNOUT-DEPLOY.md`](SIGNOUT-DEPLOY.md).
+
+**Source and published page differ.** This README describes the measurement page as it is in the source, which
+includes the iPhone fix of 2026-11-08 (instrument 2; [`IOS-FIX.md`](IOS-FIX.md)). The published measurement page is the
+frozen build of 2026-10-25 without that fix: there the buttons sit below the fold on narrow phones, there is no
+**Panel** button, and a stalled tile is not retried.
+
+## Checks and CI
+
+All commands run from this folder after `npm ci && npm run build`. The browser checks need Playwright's Chromium
+(a local or global install; `harness/browser.mjs` finds it) and the slide tiles under `../data/tiles/` and
+`../data/samples/`, which are not in git on `main`; CI takes them from the `stage0-deploy` branch. `--axe` takes the
+path of axe-core's `axe.min.js` and adds the automated accessibility checks.
+
+| Command | What it checks | Passing on the build of 2026-11-10 |
 |---|---|---|
-| `index.html` (default) | the measurement page: full-window canvas, debug overlay (`?overlay=1`), keys +/− arrows O R P, `window.__stage0` | every protocol and TSP-grade run (MEASUREMENT_PROTOCOL.md), `harness/run.mjs`, `harness/check-metrics.mjs` |
-| `shell.html` | **Stoipath Viewer (RUO)**: the designed research workspace (design system, top bar with the RUO label string, rail, HUD with magnification / scale bar / position, navigator, measure tool, palette, keymap, Context dock with Slide / Measurements / Engine) around the same engine | looking at the real slide in the product's shell; `harness/shell-check.mjs` |
+| `npm run build` | strict type check, then the production build of all four pages | clean |
+| `node harness/unit.mjs` | unit assertions for the pure modules (31 files under `harness/unit/`) | 4,171 |
+| `node harness/run.mjs && node harness/check-metrics.mjs` | the scripted path in headless Chromium, then the metric arithmetic against the frame log | 20 |
+| `node harness/shell-check.mjs` | the research shell: readouts, measurement, sharpness state, frame cost | 190 |
+| `node harness/tools-check.mjs --axe <axe.min.js>` | the Phase A tools | 628 |
+| `node harness/learn-check.mjs --axe <axe.min.js>` | Learn L1 | 1,149 |
+| `node harness/signout-check.mjs --axe <axe.min.js>` | the practice report, including the Safari notice | 898 |
+| `node harness/site-check.mjs --axe <axe.min.js>` | the landing page and the links between pages | 91 |
+| `python3 -I -m unittest discover tools/tests` (from `../`) | the content and schema tools | 95 tests |
 
-See [`SHELL.md`](SHELL.md) for the shell: how to run it, URL parameters (`?engine=1`), the keymap, the UI → engine
-contract table, the magnification and scale-bar derivation, deviations from the design and the test results.
+Every one of these passed with no failure on 2026-11-10 (build id `2026-11-10T21:44:29Z`; log in [`SIGNOUT.md`](SIGNOUT.md)
+§22). They run in Chromium with a software renderer only: no check has run in Safari or Firefox, and timing lines from
+them are never device numbers.
+
+CI is [`../../../.github/workflows/stage0-ci.yml`](../../../.github/workflows/stage0-ci.yml). On every push and pull
+request that touches `wsi-viewer/stage0/` it runs the type check and build, the unit and Python tests, and five browser
+gates (measurement, shell, tools, learn, signout). A browser gate that fails is re-run once. Not in CI:
+`site-check.mjs`, and the screenshot placement check (`harness/screens.mjs` with `harness/verify_screens.py`).
 
 ## Layout
 
@@ -41,12 +161,20 @@ contract table, the magnification and scale-bar derivation, deviations from the 
 | `src/metrics.ts` | per-frame typed-array log, per-gesture records (headline `ttsFromLastInputMs`, censoring, `pathRun`), input→rAF proxy (real and scripted input apart, split by kind), Event Timing, sliding-window display-interval detection, tile timings, p50/p95 summary, JSON export |
 | `src/scripted-path.ts` | the deterministic camera path in **absolute** zoom (start L* = 3; 5 zoom-in bursts to L* = 1 / L* = 0 at s = 0.87; pans with flick; zoom-outs; fit) |
 | `src/overlay.ts` | HUD + sparkline + device panel + buttons |
-| `src/main.ts` | bootstrap, URL parameters, device class, context-loss recovery and the single `requestAnimationFrame` loop |
+| `src/viewer.ts` | the engine as a reusable module (`startViewer()`): manifest load, renderer / cache / workers / scheduler / metrics, input binding, context-loss recovery, the single `requestAnimationFrame` loop, `window.__stage0` and the export; all four pages use it |
+| `src/main.ts` | the measurement page's entry: binds the engine to the debug overlay and the measurement keys |
+| `src/range-source.ts` | remote slide source for the practice report: BigTIFF tiles read by HTTP byte range (SIGNOUT.md §4.3) |
+| `src/decode-messages.ts`, `src/request-kind.ts` | the main-thread ↔ worker message contract; why a tile was requested |
+| `src/shell/`, `src/learn/`, `src/signout/`, `src/site-link.ts` | the research shell, Learn L1, the practice report, and the shared link to the landing page (their own specifications; not described in this table) |
 | `harness/serve.mjs` | dependency-free static server for `stage0/` (`immutable` tiles; optional per-tile latency / bandwidth emulation) |
 | `harness/run.mjs` | Playwright headless run of the scripted path; writes `harness/results/<timestamp>-<label>.json`; `--ua phone|tablet` emulates a device class |
 | `harness/browser.mjs` | shared Playwright loader (local or global install), Chromium flags for software WebGL, arg parser |
 | `harness/screens.mjs`, `harness/verify_screens.py` | screenshots of twelve fixed views into `harness/results/screens/`; eight are exact 1:1 renders of one level that the Python script compares pixel-for-pixel with the tiles on disk (needs numpy + Pillow) |
 | `harness/check-metrics.mjs` | drives the viewer with real Playwright mouse input and asserts the gesture-metric arithmetic against the frame log (TTS from the last input, fading frames counted as blurred, sharp fraction over the viewport only, real-input latency populated and ≥ 0) |
+| `harness/unit.mjs`, `harness/unit/` | unit-test runner and its 31 test files |
+| `harness/shell-check.mjs`, `harness/tools-check.mjs` + `harness/tools/` | page checks for the research shell and its Phase A tools |
+| `harness/learn-check.mjs` + `harness/learn/`, `harness/signout-check.mjs` + `harness/signout/` | page checks for Learn L1 and the practice report |
+| `harness/site-check.mjs` | checks the landing page and the links between pages on a served copy of the published layout |
 
 ## Build
 
@@ -56,7 +184,8 @@ npm install          # vite + typescript only
 npm run build        # tsc --noEmit (strict, no `any`) then vite build → dist/
 ```
 
-Production bundle (gzip): ≈ 27 KB main + 1 KB worker + 1.4 KB HTML. `base` is `./`, so `dist/` can be served from
+Production bundle of the measurement page on 2026-11-10 (gzip): ≈ 32 KB engine chunk + 2.4 KB entry + 3.4 KB worker +
+2.1 KB HTML; the whole `dist/` with all four pages is about 1.6 MB uncompressed. `base` is `./`, so `dist/` can be served from
 any sub-path; the page looks for the manifest at `../../data/manifest.json` first (i.e. `stage0/data/` next to
 `stage0/client/dist/`, the repository and GitHub Pages layout), then `/data/manifest.json`, `../data/manifest.json`,
 `data/manifest.json`, or whatever `?manifest=URL` says. Tile URLs are resolved relative to the manifest. The build
@@ -204,7 +333,7 @@ excluded and counted in `pausedFrames`), `displayIntervalMs` / `displayIntervalM
 `inputToRafScriptedMs` for the scripted path, Event Timing (`PerformanceObserver` type `event`, `durationThreshold`
 16 — discrete events only; wheel and pointermove are excluded by the API), `gestures` (all gestures, with counts by
 kind, `completed`, `censored`) and `zoomInBursts` (gestures with `levelsZoomed > 0`, not interrupted, not ending
-magnified — the unit the abstract reports): `ttsFromLastInputMs` (headline), `blurEndAfterInputMs`,
+magnified — the unit the summaries report): `ttsFromLastInputMs` (headline), `blurEndAfterInputMs`,
 `sharpAfterSettleMs`, `settleAfterInputMs`, `timeToSharpMs`, `maxBlurMs`, blurred-frame %, blur-area-time in
 level·s (04 F8 "BAT"), minimum sharp fraction, bytes per gesture, `cacheHitFraction`, `inputToFirstChangeMs`; tile
 counts per request kind (base / visible / partner / intent / ring / warmbase with requested / received / drawn),

@@ -115,10 +115,28 @@ export async function run(ctx) {
     }
     // the frozen files (LEARN-QUESTIONS.md, Wave L1 start)
     const q = readFileSync(resolve(clientDir, 'LEARN-QUESTIONS.md'), 'utf8');
+    const rowRe = (f) => new RegExp('\\| `' + f.replace(/[./]/g, (c) => `\\${c}`) + '` \\| `([0-9a-f]{64})` \\|');
+    // A later, deliberate change is recorded under a `##` / `###` heading line containing `LI-1 revised values` (dated, with
+    // its reason, same table form) in LEARN-QUESTIONS.md or at the end of LEARN.md; the last record of a file replaces its
+    // Wave L1 value (audit fixes 2026-11-10: src/shell/main.ts gained the licence row and the landing-page link).
+    const revisedOf = (f) => {
+      for (const doc of ['LEARN.md', 'LEARN-QUESTIONS.md']) {
+        const text = readFileSync(resolve(clientDir, doc), 'utf8');
+        let last = null;
+        for (const m of text.matchAll(/^#{2,3} .*LI-1 revised values.*$/gm)) {
+          const j = text.indexOf('\n## ', m.index + 1);
+          const v = rowRe(f).exec(text.slice(m.index, j > 0 ? j : undefined))?.[1] ?? null;
+          if (v !== null) last = { v, doc, head: m[0].replace(/^#+\s*/, '') };
+        }
+        if (last !== null) return last;
+      }
+      return null;
+    };
     for (const f of ['src/main.ts', 'src/shell/main.ts']) {
-      const m = new RegExp('\\| `' + f.replace(/[./]/g, (c) => `\\${c}`) + '` \\| `([0-9a-f]{64})` \\|').exec(q);
+      const rev = revisedOf(f);
+      const want = rev?.v ?? rowRe(f).exec(q)?.[1] ?? null;
       const now = createHash('sha256').update(readFileSync(resolve(clientDir, f))).digest('hex');
-      check(TAG, m !== null && m[1] === now, `LI-1 ${f} sha256 ${now.slice(0, 16)}… equals the value recorded at Wave L1 start (${m === null ? 'not recorded' : m[1].slice(0, 16) + '…'})`);
+      check(TAG, want !== null && want === now, `LI-1 ${f} sha256 ${now.slice(0, 16)}… equals the value recorded ${rev === null ? 'at Wave L1 start' : `in ${rev.doc} (${rev.head})`} (${want === null ? 'not recorded' : want.slice(0, 16) + '…'})`);
     }
   }
 
@@ -407,6 +425,12 @@ export async function run(ctx) {
       await page.waitForFunction(() => !document.getElementById('aboutDlg').hidden, null, { timeout: 3000 });
       const about = await page.evaluate(() => Object.fromEntries([...document.querySelectorAll('#aboutFacts dt')].map((dt) => [dt.textContent, dt.nextElementSibling?.textContent])));
       check(TAG, about.Product === 'Stoipath Learn' && about.Launch === 'Standalone · no LMS launch in this build · product learn' && (about.Data ?? '').startsWith('No protected health information.') && about.Label === 'For educational use. Not a medical device. Contains no protected health information.', `LI-I About: Product "${about.Product}", Launch "${about.Launch}", Data "${(about.Data ?? '').slice(0, 40)}…"`);
+      // audit 2026-11-10 (C1, B14, H3): the licence row says proposed / to be confirmed; the "All Stoipath pages" link
+      // appears once the landing page answers (serve.mjs serves wsi-viewer/site/index.html as /start.html, as Pages will)
+      check(TAG, about.Licence === 'Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; module text licence to be confirmed; slides under their own licences', `LI-I About Licence "${about.Licence}" (C1, B14)`);
+      await page.waitForFunction(() => document.querySelector('#aboutDlg [data-site-pages]')?.parentElement?.hidden === false, null, { timeout: 5000 }).catch(() => {});
+      const pagesLink = await page.evaluate(() => { const a = document.querySelector('#aboutDlg [data-site-pages]'); return a === null ? null : { shown: a.parentElement.hidden === false, href: a.href, text: a.textContent }; });
+      check(TAG, pagesLink !== null && pagesLink.shown && pagesLink.text === 'All Stoipath pages' && new URL(pagesLink.href).pathname === '/start.html', `LI-I About carries "All Stoipath pages" → ${pagesLink?.href ?? 'none'} (shown ${pagesLink?.shown})`);
       await H.axe(page, check, TAG, 'LI-I axe-core WCAG 2.2 AA (About open)');
       await page.keyboard.press('Escape');
       // host hooks: gate chip with the 20× keycap, toast, plates
@@ -1263,7 +1287,8 @@ export async function run(ctx) {
     }
     const flat = allRequests.flat().filter((r) => !/^https:\/\/([a-z]+\.)?example\.org\//.test(r.url));
     const foreign = flat.filter((r) => !r.same);
-    const nonGet = flat.filter((r) => r.method !== 'GET');
+    // GET, plus the one HEAD of the About dialog's landing-page probe (src/site-link.ts; no body, same origin)
+    const nonGet = flat.filter((r) => r.method !== 'GET' && !(r.method === 'HEAD' && new URL(r.url).pathname.endsWith('/start.html')));
     check(TAG, flat.length > 50 && foreign.length === 0 && nonGet.length === 0, `LI-5 across every page of these checks (${flat.length} requests): all same-origin (${foreign.length} other: ${foreign.slice(0, 2).map((r) => r.url).join(', ') || 'none'}) and GET (${nonGet.length} other: ${nonGet.slice(0, 2).map((r) => `${r.method} ${r.url}`).join(', ') || 'none'})`);
     check(TAG, allGuards.length === 0, `LI-5 no sendBeacon, WebSocket, EventSource, or fetch / XHR with a body or another method (${allGuards.length}${allGuards.length ? ': ' + JSON.stringify(allGuards.slice(0, 3)) : ''})`);
   }

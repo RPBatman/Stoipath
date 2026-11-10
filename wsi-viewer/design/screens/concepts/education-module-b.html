@@ -245,8 +245,8 @@ body.show-guides .canvas-area::after { border-color: rgba(0, 0, 0, .5); box-shad
 }
 @media (max-height: 700px) { .tour__caption { max-height: 3.2em; overflow: hidden; } }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 
 <!-- shared SVG symbols and filters (synthetic tissue; approximate colour transforms) -->
@@ -1080,7 +1080,7 @@ function renderDock() {
   if (S.build !== 'learn') {
     var names = { 'viewer-ruo': 'Stoipath Viewer (RUO): class palette · annotation list · layers with provenance · export jobs', 'clinical-ih': 'Stoipath Clinical-IH: case header · slide tray · AI overlay with provenance · Request sign-out', 'dx': 'Stoipath Dx: as Clinical-IH plus Rendering Complete and display QA' };
     $('#dock-head').innerHTML = '<span class="panel__title">Pillar panels</span>';
-    $('#dock-body').innerHTML = '<div class="p-5 stack"><div class="alert alert--neutral"><span class="alert__glyph">i</span><div>Same shell, different build. ' + esc(names[S.build]) + '. See the clinical-signout and research-annotation concepts; this demo only switches the identity slots and the status language.</div></div>' + (BUILD[S.build].mode ? '<dl class="kv"><dt>Case</dt><dd><span class="mono" data-synthetic>AP-26-04417</span> · <span data-synthetic>DOE, JANE · 1958 · synthetic</span></dd><dt>Display</dt><dd data-live="dx:attestation">' + (S.attested ? 'attested (EDID · Barco MDPC-8127, synthetic) · QA passed 3 days ago' : 'not attested · Nav mode') + '</dd></dl>' : '') + '</div>';
+    $('#dock-body').innerHTML = '<div class="p-5 stack"><div class="alert alert--neutral"><span class="alert__glyph">i</span><div>Same shell, different build. ' + esc(names[S.build]) + '. See the clinical-signout and research-annotation concepts; this demo only switches the identity slots and the status language.</div></div>' + (BUILD[S.build].mode ? '<dl class="kv"><dt>Case</dt><dd><span class="mono" data-synthetic>AP-26-04417</span> · <span data-synthetic>DOE, JANE · 1958 · synthetic</span></dd><dt>Display</dt><dd data-live="dx:attestation">' + (S.attested ? 'attested (EDID · Example display DX-27, synthetic) · QA passed 3 days ago' : 'not attested · Nav mode') + '</dd></dl>' : '') + '</div>';
     $('#dock-foot').innerHTML = '';
     return;
   }
@@ -1103,7 +1103,7 @@ function renderStrip() {
   var clinical = BUILD[S.build].mode; var dxOn = clinical && S.attested;
   canvas.classList.toggle('is-soft', S.net === '4g'); canvas.classList.toggle('is-tileerr', S.net === 'tileerr');
   var cls = 'indicator ', lab = 'Sharp', rsn = '', ntc = '', ch = '';
-  if (dxOn) { cls += 'indicator--complete'; lab = 'Rendering Complete'; ntc = 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago'; }
+  if (dxOn) { cls += 'indicator--complete'; lab = 'Rendering Complete'; ntc = 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago'; }
   else if (S.net === '4g') { cls += 'indicator--soft'; lab = 'Soft'; rsn = '— slow link'; ch += '<span class="chip chip--solid" data-live="telemetry:network">Slow link (6 Mbps) — reduced detail while moving</span>'; }
   else if (S.net === 'offline') { cls += 'indicator--sharp'; ch += '<span class="chip chip--solid" data-live="offline:pack">Offline pack · Lymph node unknowns, week 43 · saved 2026-10-20</span><span class="chip" data-live="offline">Classroom edge · 30 seats</span>'; }
   else if (S.net === 'tileerr') { cls += 'indicator--sharpening'; lab = 'Sharpening…'; ntc = '3 tiles could not be loaded — retrying'; ch += '<button class="btn btn--sm btn--secondary" data-cmd="retry">Retry</button>'; }

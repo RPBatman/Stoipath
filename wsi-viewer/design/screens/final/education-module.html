@@ -614,8 +614,8 @@ html.is-coarse .app.ed .navigator__pan .left, html.is-coarse .app.ed .navigator_
 .canvas-area.is-ihc #tissue .bg-fat { fill: #f7f7fa; } .canvas-area.is-ihc #tissue .adip { fill: #fafafc; stroke: #d2d2dc; }
 .canvas-area.is-ihc #tissue .rbc { fill: #d9c8cf; } #tissue .rbc { fill: #e8828f; }
 </style>
-</head>
-<body class="host-on">
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body class="host-on"><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 <!-- Icon sprite (inline, no network) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1177,7 +1177,7 @@ html.is-coarse .app.ed .navigator__pan .left, html.is-coarse .app.ed .navigator_
     <!-- ============ CLINICAL-IH / DX: the same flow shell, consult on an iPad or a frozen section (proof the shell does not fork; the clinical screen owns the workflow) ============ -->
     <section class="task" data-task="clin-open" aria-labelledby="t-co-h" hidden>
       <div class="task__grab" aria-hidden="true"></div>
-      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span class="js-stepmeta">Open</span><span data-live="lis:worklist">From Epic Beaker · In review</span></div><h2 class="task__title" id="t-co-h" tabindex="-1"><span data-synthetic>AP-26-04417</span> · Left axillary SLN</h2><p class="task__peekstem js-peekstem"></p><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span class="js-stepmeta">Open</span><span data-live="lis:worklist">From the LIS · In review</span></div><h2 class="task__title" id="t-co-h" tabindex="-1"><span data-synthetic>AP-26-04417</span> · Left axillary SLN</h2><p class="task__peekstem js-peekstem"></p><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
       <div class="task__peekbar"><p class="task__peekstem js-peekstem"></p><button class="btn btn--primary js-cta">Next</button><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand the task card"><svg class="icon"><use href="#i-up"/></svg></button></div>
       <div class="task__body">
         <dl class="vignette" data-live="launch"><dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958 · synthetic</dd><dt>Parts</dt><dd>A Left axillary sentinel node · B Non-sentinel node · C Breast, left (re-excision)</dd><dt>Purpose</dt><dd>Consultation · preliminary only (set by the launch, not editable here)</dd></dl>
@@ -1446,7 +1446,7 @@ html.is-coarse .app.ed .navigator__pan .left, html.is-coarse .app.ed .navigator_
       <div class="dialog__body about">
         <div><div class="lbl">Product</div><div id="ab-product">Stoipath Learn</div></div>
         <div><div class="lbl">Label</div><div class="js-label-string" id="ab-label" data-live="launch:product">For educational use. Not a medical device. Contains no protected health information.</div></div>
-        <div><div class="lbl">Version</div><div class="num" data-live="launch:build">0.7.0 · build_hash 4f1c9e2 · engine 0.7.0 · separate build per product (never a runtime flag)</div></div>
+        <div><div class="lbl">Version</div><div class="num" data-live="launch:build">0.7.0 · build_hash 4f1c9e2 · engine 0.7.0 · separate page per product; separate build artefacts are planned (plan 12)</div></div>
         <div><div class="lbl">Launch</div><div data-live="launch" id="ab-launch">LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn</div></div>
         <div><div class="lbl">Data</div><div>No protected health information. Slides: CAMELYON16 (CC0). Viewing trace is pseudonymous and leaves only as course aggregates. Telemetry switch: on (Settings).</div></div>
       </div>
@@ -1485,7 +1485,7 @@ html.is-coarse .app.ed .navigator__pan .left, html.is-coarse .app.ed .navigator_
       <div class="dialog__header"><h2 class="dialog__title" id="ho-t">Request sign-out · <span data-synthetic>AP-26-04417</span></h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
       <div class="dialog__body">
         <div class="alert alert--info"><span class="alert__glyph">i</span><div id="ho-text">This device cannot sign out. The case, your preliminary impression and 2 bookmarks will open on the diagnostic display, where Dx mode can be attested.</div></div>
-        <div class="field"><label class="field__label" for="ho-to">Open on</label><span class="select"><select id="ho-to"><option>My reading-room workstation · RR-3 (Barco MDPC-8127)</option><option>Dr Example's queue (synthetic)</option></select></span></div>
+        <div class="field"><label class="field__label" for="ho-to">Open on</label><span class="select"><select id="ho-to"><option>My reading-room workstation · RR-3 (Example display DX-27)</option><option>Dr Example's queue (synthetic)</option></select></span></div>
       </div>
       <div class="dialog__footer"><button class="btn btn--ghost" data-action="close">Cancel</button><button class="btn btn--accent" data-action="close">Send to workstation <kbd class="key">↵</kbd></button></div>
     </div>
@@ -1592,7 +1592,7 @@ html.is-coarse .app.ed .navigator__pan .left, html.is-coarse .app.ed .navigator_
 <!-- ================================================================ DESIGN DECISIONS (review document, collapsed by default) ===== -->
 <section class="decisions" id="decisions" aria-label="Design decisions (review only)">
   <details id="decisions-details">
-    <summary>Design decisions · final education module · what was taken from which concept, where the judges disagreed, and the engine-contract map</summary>
+    <summary>Design decisions · final education module · what was taken from which concept, where the judges disagreed, and the engine-contract map</summary><p class="note"><b>Who judged and critiqued (note added 2026-11-10, audit H1).</b> Every judge and critic named in this section ("pathologist", "UX/a11y", "engineering") was an AI agent given that role brief, not a human professional; no human pathologist judged or critiqued this design. The owner's own review (<code>design/REVIEW-GUIDE.md</code>) is pending.</p>
     <p class="note">Final design, 2026-11-01, synthesised from the three judged concepts (C 8.03 · B 6.98 · A 6.67, weighted). The plan (<code>docs/plan/12</code> §5, <code>02</code> FR-E1–E12 and NFR-A1–A5, <code>01</code> §3) and <code>design/principles-and-ia.md</code> are the sources of truth; departures are listed as Design notes at the end. Every element the engine or an integration would drive carries <code>data-live</code> (toggle <i>Live markers</i> in the demo strip). The product switch in the demo strip is review-only: each product is a separate build (plan 12 §2), the flow shell is a shared component library.</p>
 
     <h3>1. The shell: concept C (Task-flow), kept and corrected</h3>
@@ -1686,7 +1686,7 @@ html.is-coarse .app.ed .navigator__pan .left, html.is-coarse .app.ed .navigator_
       <li><b>DF-8 · Mock liberties.</b> Tissue is a seeded SVG; "soft" is a CSS blur standing in for a magnified ancestor; marks, labels, pins and the scale bar are DOM here but GPU layers in the product (principles D11); the CVD remap is a Machado deutan matrix, not the Dalton 2026 LUT.</li>
     </ul>
 
-    <h3>8. Revision 2026-11-01 (critique round: pathologist and UX/a11y judges)</h3>
+    <h3>8. Revision 2026-11-01 (critique round: AI agent judges in the pathologist and UX/a11y roles)</h3>
     <ul>
       <li><b>Revision 2026-11-01</b> · <i>Dialogs and the palette off the slide centre (P1, high).</i> The keymap, settings, About, tier, sharpness and hand-off dialogs and the candidates panel are anchored over the task-card column (base.css <code>.modal-layer</code>: top-right, dock-wide, the layer itself takes no input), starting below the context bar, at <code>min(--dock-w, 25 vw − 16 px − rail/4)</code> so the panel's left edge never crosses the central zone's right edge while the rail is 64 px; the scrim is gone (a pointer-down outside a modal dialog closes it) and the command palette drops from the top bar over the same column. Below 1080 px base.css makes every dialog a bottom sheet ≤ 40 % and the palette follows. Measured in the §6 run: no dialog, palette or sheet-free chrome intersects the central 50 % at 1920, 1440, 1366 or 4K.</li>
       <li><b>Revision 2026-11-01</b> · <i>The keyboard alternative can see what it flies to (high).</i> <code>#dlg-cand</code> is <code>aria-modal="false"</code> with no backdrop: it sits beside the slide, the slide keeps its keys while the panel is open (arrows pan, +/− zoom, Escape closes it, Tab past either end returns to the slide), and <i>Fly there</i> moves the view to 20× without choosing the region (choose = radio, look = button, two actions for AT users too). Below 1080 px the sheet closes on <i>Fly there</i> so the region is visible, and <kbd class="key">⇧↵</kbd> or <i>Mark without a pointer</i> reopens it on the same region; the help text says so per surface.</li>
@@ -1856,7 +1856,7 @@ function learnerSteps(aud) {
   return base;
 }
 var CLIN = [
-  { s: 1, ph: 0, task: 'clin-open', title: 'AP-26-04417 · Left axillary SLN', cta: 'Start screening', key: 'N', stem: 'Opened from Epic Beaker · In review · consultation, preliminary only.', view: 'fit', slide: 'he' },
+  { s: 1, ph: 0, task: 'clin-open', title: 'AP-26-04417 · Left axillary SLN', cta: 'Start screening', key: 'N', stem: 'Opened from the LIS · In review · consultation, preliminary only.', view: 'fit', slide: 'he' },
   { s: 2, ph: 1, task: 'clin-review', title: 'Systematic survey', meta: 'Screen', cta: 'Next', key: 'N', stem: 'Survey the whole node at low power; ⇧+arrows step one viewport.', view: 'fit' },
   { s: 3, ph: 2, task: 'clin-review', title: 'Suspicious areas at 20×', meta: 'Examine', cta: 'Next', key: 'N', stem: 'Examine the right-pole sinus at 20×; open A1-2 CK with ].', view: 'focus20' },
   { s: 4, ph: 3, task: 'clin-decide', title: 'Preliminary impression', meta: 'Decide', cta: 'Save preliminary impression', key: '↵', stem: 'Positive, negative or defer; measurement and note travel with the case.', view: 'focus20' },
@@ -2020,7 +2020,7 @@ function applyEnv() {
   // banner (clinical builds only)
   var banner = '';
   if (clinicalBuild && !dx) banner = dev === 'desktop' ? (state.product === 'dx' ? 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.' : 'Nav mode · Clinical-IH consultation · display not attested.') : 'Dx mode unavailable on this device (Tier 2). Consultation · preliminary only.';
-  if (dx) banner = 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+  if (dx) banner = 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago';
   $('#banner-slot').innerHTML = banner ? '<div class="banner banner--warning" role="status" data-live="dx:attestation"><span class="banner__glyph" aria-hidden="true">' + (dx ? '✓' : '!') + '</span><span class="banner__text">' + banner + '</span></div>' : '';
   // strip notice
   var notice = '';
@@ -2043,7 +2043,7 @@ function applyEnv() {
   $('#hud-slide').innerHTML = esc(slideName) + ' <span class="hud__secondary" id="hud-licence">· CAMELYON16 · CC0</span>';
   txt('#nav-label', (state.slideId === 'ihc' ? 'A1-2' : 'A1-1') + ' · overview · '); $('#nav-label').insertAdjacentHTML('beforeend', '<kbd class="key">O</kbd> hides');
   canvasArea.setAttribute('aria-label', 'Slide canvas, ' + (state.slideId === 'ihc' ? 'A1-2 CK AE1 AE3' : 'A1-1 H and E') + ', ' + fmtMag(10 / state.cam.scale).replace('×', ' times') + ', use arrow keys to pan and plus or minus to zoom');
-  var AB = { learn: ['Stoipath Learn', 'LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn'], ruo: ['Stoipath Viewer (RUO)', 'Standalone · manifest URL · product viewer-ruo · no LIS write-back, no sign-out event, no Dx gate'], clinical: ['Stoipath Clinical-IH', 'Epic Beaker worklist launch (IID URL + token) · product clinical-ih · purposeOfUse consultation · companion window'], dx: ['Stoipath Dx', 'Epic Beaker worklist launch · product dx · purposeOfUse ' + (dx ? 'sign-out' : 'consultation') + ' · UDI, build_hash and pathway_hash shown at start-up'] };
+  var AB = { learn: ['Stoipath Learn', 'LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn'], ruo: ['Stoipath Viewer (RUO)', 'Standalone · manifest URL · product viewer-ruo · no LIS write-back, no sign-out event, no Dx gate'], clinical: ['Stoipath Clinical-IH', 'LIS worklist launch (IID URL + token) · product clinical-ih · purposeOfUse consultation · companion window'], dx: ['Stoipath Dx', 'LIS worklist launch · product dx · purposeOfUse ' + (dx ? 'sign-out' : 'consultation') + ' · UDI, build_hash and pathway_hash shown at start-up'] };
   txt('#ab-product', AB[state.product][0]); txt('#ab-launch', AB[state.product][1]); txt('#km-product', AB[state.product][0]);
   $$('.js-label-string').forEach(function (el) { el.textContent = STRINGS[state.product]; });   /* the regulatory label string is real text (the product writes it from the i18n bundle), never CSS generated content (README D-F13) */
   txt('#km-dx', clinicalBuild ? (dx ? 'Dx mode: leave (confirms)' : 'Dx mode: refused on this surface') : 'Dx mode: not in this build'); $('#km-dictation').hidden = !clinicalBuild;

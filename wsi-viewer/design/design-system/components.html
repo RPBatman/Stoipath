@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stoipath design system · component sheet</title>
-<meta name="description" content="Living component sheet for the Stoipath WSI viewer design system: every shell component rendered in the dark diagnostic theme and the light chrome theme, with states, ARIA notes and the engine contract each one consumes. Revised 2026-11-01 after the pathologist and a11y-ux critiques of the three final screens (README §10). All case and patient content is synthetic.">
+<meta name="description" content="Living component sheet for the Stoipath WSI viewer design system: every shell component rendered in the dark diagnostic theme and the light chrome theme, with states, ARIA notes and the engine contract each one consumes. Revised 2026-11-01 after the critiques by AI agents in the pathologist and a11y-ux roles (not human reviewers) of the three final screens (README §10). All case and patient content is synthetic.">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="base.css">
 <style>
@@ -217,7 +217,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <p class="comp__desc">Each component is authored once and rendered twice: in the <b>dark diagnostic theme</b> (the only theme permitted on diagnostic surfaces) and in the <b>light chrome theme</b> (an opt-in for Stoipath Learn and non-diagnostic Viewer sessions). The canvas backdrop stays neutral dark grey in both. Each section lists what the engine renders versus what the DOM renders, which plan contract the component consumes, and its ARIA and keyboard behaviour. State columns use the <code>.is-hover</code>, <code>.is-focus</code>, <code>.is-active</code> and <code>.is-disabled</code> classes, which mirror the real pseudo-classes so the states can be reviewed without a pointer.</p>
   <dl class="comp__meta">
     <dt>Live marker</dt><dd>Toggle "Show live markers" above. Anything outlined in magenta carries <code>data-live="&lt;contract&gt;"</code> and would be bound to the engine (state document, layer API, annotation API, event bus, command bus, launch context, telemetry, offline pack, Dx gate). The colour is deliberately outside the product palette.</dd>
-    <dt>Synthetic</dt><dd>Orange dotted outline = placeholder PHI-shaped content (<code>data-synthetic</code>): <code>DOE, JANE · 1958</code>, accession <code>AP-26-04417</code>, display <code>Barco MDPC-8127</code>, cohort <code>CAMELYON16 · tumor_014</code>.</dd>
+    <dt>Synthetic</dt><dd>Orange dotted outline = placeholder PHI-shaped content (<code>data-synthetic</code>): <code>DOE, JANE · 1958</code>, accession <code>AP-26-04417</code>, display <code>Example display DX-27</code>, cohort <code>CAMELYON16 · tumor_014</code>.</dd>
     <dt>Microcopy</dt><dd>Status, Dx, network and error strings are taken verbatim from <code>design/principles-and-ia.md</code> §5; the live region speaks the same strings.</dd>
     <dt>Not here</dt><dd>GPU overlays (annotations, AI layers, label raster, scale bar numerals, cursor loupe) are drawn by the engine in the canvas. Where a section shows them, it is a visual reference drawn in SVG, labelled "engine-rendered".</dd>
   </dl>
@@ -415,7 +415,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         </nav>
         <footer class="strip region" aria-label="Status">
           <span class="indicator indicator--complete" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label">Rendering Complete</span></span>
-          <span class="strip__notice">Dx mode · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span>
+          <span class="strip__notice">Dx mode · display attested (EDID · <span data-synthetic>Example display DX-27</span>) · QA passed 3 days ago</span>
           <div class="strip__group strip__group--end"><span class="chip chip--solid" data-live="commands:mic"><svg class="icon icon--sm"><use href="#i-mic"/></svg>Mic: dictation</span></div>
         </footer>
         <!-- Anchored layers (sweep 2026-11-01), hidden at rest; the sheet controls show them. .modal-layer--dock: the dialog takes the dock column, no scrim; .palette-layer: over the dock column at ≥ 1080 px, the in-flow "sheet" row of this grid below 1080 px. -->
@@ -423,7 +423,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <div class="dialog" role="dialog" aria-modal="false" aria-labelledby="dlg-frame-dx-t" data-live="dx:attestation">
             <div class="dialog__header"><h4 class="dialog__title" id="dlg-frame-dx-t">Enter Dx mode?</h4><button class="btn btn--icon btn--ghost" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
             <div class="dialog__body">
-              <dl class="provenance"><dt>Display</dt><dd data-synthetic>Barco MDPC-8127 · EDID</dd><dt>Display QA</dt><dd>Passed 3 days ago</dd><dt>Self-check</dt><dd>build_hash registered · pathway_hash match</dd><dt>Adjustments</dt><dd>Reset to default (logged)</dd></dl>
+              <dl class="provenance"><dt>Display</dt><dd data-synthetic>Example display DX-27 · EDID</dd><dt>Display QA</dt><dd>Passed 3 days ago</dd><dt>Self-check</dt><dd>build_hash registered · pathway_hash match</dd><dt>Adjustments</dt><dd>Reset to default (logged)</dd></dl>
               <p class="text-xs text-secondary">The dialog sits in the dock's place; no scrim, so the slide stays visible beside it and a pointer-down outside closes it. Below 1080 px it is a bottom sheet ≤ 40 %.</p>
             </div>
             <div class="dialog__footer"><button class="btn btn--ghost">Cancel <kbd class="key">Esc</kbd></button><button class="btn btn--accent">Enter Dx mode <kbd class="key">⇧D</kbd></button></div>
@@ -549,7 +549,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <div class="demo demo--wide">
     <div class="demo__pane" data-theme="dark">
       <div class="stack stack--tight">
-        <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--complete" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label">Rendering Complete</span></span><span class="strip__notice">Dx mode · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span><div class="strip__group strip__group--end"><span class="text-xs">S12</span></div></footer>
+        <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--complete" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label">Rendering Complete</span></span><span class="strip__notice">Dx mode · display attested (EDID · <span data-synthetic>Example display DX-27</span>) · QA passed 3 days ago</span><div class="strip__group strip__group--end"><span class="text-xs">S12</span></div></footer>
         <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--rendering" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label">Rendering…</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="text-xs">flag not asserted</span></div></footer>
         <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--notcomplete" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label">Not complete — do not interpret</span></span><span class="strip__notice"></span><div class="strip__group strip__group--end"><span class="text-xs">settled &gt; 2 s without the flag (D6)</span></div></footer>
         <footer class="strip" style="border:1px solid var(--color-border);border-radius:4px"><span class="indicator indicator--sharp"><span class="indicator__glyph"></span><span class="indicator__label">Sharp</span></span><span class="strip__notice">Brightness/contrast adjusted — not the reference rendering. <a href="#">Reset (Shift+J)</a></span><div class="strip__group strip__group--end"><span class="text-xs">FR-V14 in Dx</span></div></footer>
@@ -703,7 +703,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   <p class="comp__desc">Tools are momentary single-letter commands (QuPath/Figma habit); the rail shows the key in the corner of each 24 px target (hidden on touch, where targets grow to 44 px and the rail becomes a 72 px bottom bar). Pan is never a mode: drag and wheel always pan; <kbd class="key">Space</kbd> pans temporarily while a drawing tool is active. The pen-tip palette is a transient, user-invoked GPU layer in the product (Pencil Pro squeeze); shown here as DOM for review.</p>
   <dl class="comp__meta">
     <dt>Rendering</dt><dd>Rail and toolbar: DOM. Pen-tip palette: GPU layer (exempt from the central-zone rule because it is user-invoked and transient).</dd>
-    <dt>Engine contract</dt><dd>Command bus; annotation API (tool → op). Keymap presets (default, left-hand cluster, right-hand cluster) come from the command registry; keys reserved by Dragon Medical One are greyed (FR-I9).</dd>
+    <dt>Engine contract</dt><dd>Command bus; annotation API (tool → op). Keymap presets (default, left-hand cluster, right-hand cluster) come from the command registry; keys reserved by dictation software are greyed (FR-I9).</dd>
     <dt>Plan refs</dt><dd>FR-A1, FR-V11, FR-V12 · principles §4.4–§4.5, Design notes D9, D15.</dd>
   </dl>
   <div class="demo">
@@ -1026,8 +1026,8 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
   </div>
   <details class="notes"><summary>ARIA and keyboard notes</summary><ul>
     <li>Combobox pattern: the input is <code>role="combobox"</code> with <code>aria-expanded</code>, <code>aria-controls</code> and <code>aria-activedescendant</code>; results are a <code>listbox</code> of <code>option</code>s; <kbd class="key">↑↓</kbd> move, <kbd class="key">Enter</kbd> runs, <kbd class="key">Esc</kbd> closes and returns focus. Focus is trapped while open.</li>
-    <li><kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd> is the only Ctrl binding besides the editing set; it is interceptable in Chromium and Firefox and is not claimed by Hyperdrive. The Hyperdrive controller iframe binds no keys at all.</li>
-    <li>Rows show the shortcut from the active preset; keys reserved at the site for Dragon Medical One are shown struck through (<code>.key--reserved</code>).</li>
+    <li><kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd> is the only Ctrl binding besides the editing set; it is interceptable in Chromium and Firefox and is not claimed by EHR. The EHR controller iframe binds no keys at all.</li>
+    <li>Rows show the shortcut from the active preset; keys reserved at the site for dictation software are shown struck through (<code>.key--reserved</code>).</li>
     <li>The active-descendant row (<code>aria-selected="true"</code>) uses the selection colour plus the 2 px indicator bar, as every list does; a hovered row uses the hover colour and lifts its secondary line to body text. The two states are therefore distinct and both keep ≥ 4.5:1 (sweep 2026-11-01; the selected row used the hover colour, 3.6:1 on the secondary line, research D-F12). The same applies to <code>.menu__item</code>.</li>
   </ul></details>
 </section>
@@ -1053,7 +1053,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
               <dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958</dd>
               <dt>Parts</dt><dd>A sentinel node L1 · B sentinel node L2 · C axillary contents</dd>
               <dt>Purpose</dt><dd>Sign-out · TREAT</dd>
-              <dt>Worklist</dt><dd>In review (from Beaker)</dd>
+              <dt>Worklist</dt><dd>In review (from the LIS)</dd>
             </dl>
           </div>
         </details>
@@ -1070,7 +1070,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         </details>
         <details class="section is-focus" open>
           <summary class="is-focus">Display QA <span class="count">focus state</span></summary>
-          <div class="section__body" style="padding:8px 16px"><span class="text-sm" data-live="dx:displayqa">QA passed 3 days ago · <span data-synthetic>Barco MDPC-8127</span> · next due in 27 days</span></div>
+          <div class="section__body" style="padding:8px 16px"><span class="text-sm" data-live="dx:displayqa">QA passed 3 days ago · <span data-synthetic>Example display DX-27</span> · next due in 27 days</span></div>
         </details>
         <div class="panel__footer"><button class="btn btn--ghost btn--sm">Export GeoJSON</button><button class="btn btn--primary btn--sm">Request sign-out <kbd class="key">⇧↵</kbd></button></div>
       </div>
@@ -1265,10 +1265,10 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <table class="table" aria-label="Display QA log">
           <thead><tr><th aria-sort="descending">Date</th><th>Display</th><th>Test</th><th class="num">ΔE00 max</th><th class="num">L max cd/m²</th><th>Result</th><th>Operator</th></tr></thead>
           <tbody>
-            <tr aria-selected="true"><td class="mono">2026-10-23</td><td data-synthetic>Barco MDPC-8127 · SN 1842…</td><td>Monthly colour + luminance</td><td class="num">1.8</td><td class="num">412</td><td><span class="dot dot--ok"></span>Pass</td><td data-synthetic>Display admin (R.K.)</td></tr>
-            <tr class="is-hover"><td class="mono">2026-09-22</td><td data-synthetic>Barco MDPC-8127 · SN 1842…</td><td>Monthly colour + luminance</td><td class="num">2.1</td><td class="num">418</td><td><span class="dot dot--ok"></span>Pass</td><td data-synthetic>Display admin (R.K.)</td></tr>
+            <tr aria-selected="true"><td class="mono">2026-10-23</td><td data-synthetic>Example display DX-27 · SN 1842…</td><td>Monthly colour + luminance</td><td class="num">1.8</td><td class="num">412</td><td><span class="dot dot--ok"></span>Pass</td><td data-synthetic>Display admin (R.K.)</td></tr>
+            <tr class="is-hover"><td class="mono">2026-09-22</td><td data-synthetic>Example display DX-27 · SN 1842…</td><td>Monthly colour + luminance</td><td class="num">2.1</td><td class="num">418</td><td><span class="dot dot--ok"></span>Pass</td><td data-synthetic>Display admin (R.K.)</td></tr>
             <tr><td class="mono">2026-09-01</td><td data-synthetic>Dell U2723QE · SN 7A1…</td><td>Consumer display check</td><td class="num">4.9</td><td class="num">305</td><td><span class="dot dot--fail"></span>Fail — Dx refused on this display</td><td>—</td></tr>
-            <tr><td class="mono">2026-08-21</td><td data-synthetic>Barco MDPC-8127 · SN 1842…</td><td>Monthly colour + luminance</td><td class="num">—</td><td class="num">—</td><td><span class="dot dot--pending"></span>Scheduled</td><td>—</td></tr>
+            <tr><td class="mono">2026-08-21</td><td data-synthetic>Example display DX-27 · SN 1842…</td><td>Monthly colour + luminance</td><td class="num">—</td><td class="num">—</td><td><span class="dot dot--pending"></span>Scheduled</td><td>—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1313,7 +1313,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="banner" role="status"><span class="banner__glyph">i</span><span class="banner__text"><b>Dx mode unavailable:</b> display QA overdue (last pass 34 days ago). Ask your display administrator.</span></div>
         <div class="banner banner--danger" role="alert" data-live="dx:attestation"><span class="banner__glyph">!</span><span class="banner__text"><b>Dx mode ended:</b> display attestation lost. Viewing in Nav mode.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary">Why? <kbd class="key">?</kbd></button><button class="btn btn--sm btn--ghost" aria-label="Dismiss"><svg class="icon icon--sm"><use href="#i-close"/></svg></button></div><span class="text-xs">assertive live region · S13 · controls inherit the inverse colour</span></div>
         <div class="banner" role="status"><span class="banner__glyph">i</span><span class="banner__text"><b>Metered connection</b> — case download paused.</span><div class="banner__actions"><button class="btn btn--sm btn--secondary">Download anyway</button></div></div>
-        <div class="banner" role="status" data-live="dx:attestation"><span class="banner__glyph">✓</span><span class="banner__text"><b>Dx mode</b> · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span><span class="text-xs text-secondary">one-line confirmation on ⇧D, auto-hides after 4 s</span></div>
+        <div class="banner" role="status" data-live="dx:attestation"><span class="banner__glyph">✓</span><span class="banner__text"><b>Dx mode</b> · display attested (EDID · <span data-synthetic>Example display DX-27</span>) · QA passed 3 days ago</span><span class="text-xs text-secondary">one-line confirmation on ⇧D, auto-hides after 4 s</span></div>
       </div>
     </div>
   </div>
@@ -1367,7 +1367,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-signout-t" data-live="commands:signoutRequested">
           <div class="dialog__header"><h4 class="dialog__title" id="dlg-signout-t">Request sign-out · <span class="mono" data-synthetic>AP-26-04417</span></h4><button class="btn btn--icon btn--ghost" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
           <div class="dialog__body">
-            <p class="text-sm text-secondary">This returns to the LIS. Dictation and sign-out happen in Beaker; the viewer hands back viewing evidence.</p>
+            <p class="text-sm text-secondary">This returns to the LIS. Dictation and sign-out happen in the LIS; the viewer hands back viewing evidence.</p>
             <dl class="provenance">
               <dt>Status</dt><dd>In review → Reviewed</dd>
               <dt>Slides viewed</dt><dd>3 of 3 · coverage 78 % / 31 % / 64 %</dd>
@@ -1384,7 +1384,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
           <div class="dialog__header"><h4 class="dialog__title" id="dlg-dx-t">Enter Dx mode?</h4></div>
           <div class="dialog__body">
             <dl class="provenance">
-              <dt>Display</dt><dd data-synthetic>Barco MDPC-8127 · EDID</dd>
+              <dt>Display</dt><dd data-synthetic>Example display DX-27 · EDID</dd>
               <dt>Display QA</dt><dd>Passed 3 days ago</dd>
               <dt>Self-check</dt><dd>build_hash registered · pathway_hash match</dd>
               <dt>Tier</dt><dd>Tier 1 · native shell</dd>
@@ -1456,7 +1456,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
 <!-- =============================================================== KEYMAP -->
 <section class="comp" id="keymap" aria-labelledby="h-keymap">
   <h2 id="h-keymap">Keyboard map overlay</h2>
-  <p class="comp__desc"><kbd class="key">?</kbd> or <kbd class="key">Ctrl</kbd>+<kbd class="key">/</kbd> opens the shortcut sheet. It names the active preset (default, left-hand cluster, right-hand cluster), shows the keys reserved at this site for Dragon Medical One or VoiceOver PRO struck through, and lists maps A (navigation and sign-out) and B (annotation) plus the Learn additions. Inside the canvas no Ctrl, Alt or F-key is ever bound (Hyperdrive rule).</p>
+  <p class="comp__desc"><kbd class="key">?</kbd> or <kbd class="key">Ctrl</kbd>+<kbd class="key">/</kbd> opens the shortcut sheet. It names the active preset (default, left-hand cluster, right-hand cluster), shows the keys reserved at this site for dictation software or a screen reader struck through, and lists maps A (navigation and sign-out) and B (annotation) plus the Learn additions. Inside the canvas no Ctrl, Alt or F-key is ever bound (EHR rule).</p>
   <dl class="comp__meta"><dt>Rendering</dt><dd>DOM dialog, generated from the command registry.</dd><dt>Engine contract</dt><dd>Command registry export (rebindable; presets); FR-I9 reserved keys.</dd><dt>Plan refs</dt><dd>NFR-A3, FR-V12, FR-I9 · principles §4.5, Design notes D3, D15.</dd></dl>
   <div class="demo demo--wide">
     <div class="demo__pane" data-theme="dark">
@@ -1503,7 +1503,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
               <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Space</kbd></span>Temporary pan (tool active) · fly to focused item</div>
               <div class="keymap__row"><span class="keymap__keys"><kbd class="key">↵</kbd><kbd class="key">⌫</kbd></span>Commit · delete selected</div>
               <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Ctrl</kbd><kbd class="key">Z</kbd> <kbd class="key">Y</kbd></span>Undo / redo</div>
-              <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">Num 0–9</kbd></span>Reserved: Dragon Medical One</div>
+              <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">Num 0–9</kbd></span>Reserved: dictation software</div>
             </div>
             <div class="keymap__group"><h4>Learn</h4>
               <div class="keymap__row"><span class="keymap__keys"><kbd class="key">N</kbd><kbd class="key">⇧N</kbd></span>Next / previous step or item</div>
@@ -1517,7 +1517,7 @@ body[data-view="dark"] .demo, body[data-view="light"] .demo { grid-template-colu
     </div>
   </div>
   <details class="notes"><summary>ARIA and rules</summary><ul>
-    <li>A dialog with a two-column definition list semantics (<code>&lt;dl&gt;</code> in product); every row is text, so it is searchable and readable by assistive tech. Reserved keys are marked in text ("Reserved: Dragon Medical One"), not only struck through. Reserved rows are sentences, so they use <code>--color-text-secondary</code> (4.78:1 on the dialog surface), never <code>--color-text-disabled</code>; the struck-through key keeps a dashed border instead of opacity (second revision 2026-11-01). The body is a named <code>region</code> with <code>tabindex="0"</code>: it holds no control, so without a focus stop it could not be scrolled from the keyboard (SC 2.1.1).</li>
+    <li>A dialog with a two-column definition list semantics (<code>&lt;dl&gt;</code> in product); every row is text, so it is searchable and readable by assistive tech. Reserved keys are marked in text ("Reserved: dictation software"), not only struck through. Reserved rows are sentences, so they use <code>--color-text-secondary</code> (4.78:1 on the dialog surface), never <code>--color-text-disabled</code>; the struck-through key keeps a dashed border instead of opacity (second revision 2026-11-01). The body is a named <code>region</code> with <code>tabindex="0"</code>: it holds no control, so without a focus stop it could not be scrolled from the keyboard (SC 2.1.1).</li>
     <li>Rules (principles §4.5): unmodified and Shift keys only inside the canvas; no F-keys, no Alt, no Ctrl except <kbd class="key">Ctrl</kbd>+<kbd class="key">Z/Y/C/V/A</kbd> and <kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd>; never Ctrl+T/W/N/L/D/F/P/S/R/+/−/0, Ctrl+Tab, Ctrl+Space, Ctrl+1–9, or the numeric keypad; <kbd class="key">Tab</kbd> always moves focus; <kbd class="key">Esc</kbd> always cancels.</li>
   </ul></details>
 </section>

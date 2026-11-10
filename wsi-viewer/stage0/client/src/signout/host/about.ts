@@ -38,7 +38,12 @@ export const ATTRIBUTION_SENTENCE =
 export const CITATION =
   'Bandi P, Geessink O, Manson Q, et al. From detection of individual metastases to classification of lymph node status at the patient level: the CAMELYON17 challenge. IEEE Trans Med Imaging 2019;38(2):550–560. doi:10.1109/TMI.2018.2867350.';
 
-export const LICENCE_ROW = 'Apache-2.0 (this software); case text CC BY 4.0; slides CC0 1.0';
+/**
+ * Audit 2026-11-10 (C1, B14; owner decision of 2026-11-10): the software is intended for open-source release and its
+ * licence is proposed, not granted; the case text has no named licensor yet, so its licence is "to be confirmed".
+ */
+export const LICENCE_ROW =
+  'Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; case text licence to be confirmed; slides CC0 1.0';
 
 /** §9.1 `Not in this build` sentences of the practice page (L1's other rows come from LearnCommands.registerRefusals). */
 export const REFUSE_SIGNOUT = 'Sign-out is not part of Stoipath Learn.';

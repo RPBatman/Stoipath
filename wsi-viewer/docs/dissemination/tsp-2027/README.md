@@ -1,5 +1,11 @@
 # TSP 2027 abstract — dissemination working folder
 
+> **Status 2026-11-10 (owner; audit B9, C1).** This abstract was **not submitted to TSP 2027**; the 6 November 2026 deadline passed without a submission. A later conference is the target; which one, and its deadline, are **to be decided** by the owner. This folder is kept as a **reusable draft**: re-read the new venue's rules (length, anonymity, categories) and refill every number from the then-current results and roll-up. The tags `tsp2027-results` and `tsp2027-abstract` were never created and are not needed now. **Wording (owner decision 2026-11-10):** the software is **"intended for open-source release"**, not "open-source"; its licence is Apache-2.0 (proposed; pending UT OTC approval), the repository has no licence file, and no approval is on record. The title and Background of [`abstract-v1.md`](abstract-v1.md) and [`abstract-draft.md`](abstract-draft.md), and the claim in this folder's README, were changed accordingly on 2026-11-10.
+>
+> **Cost, as the ledger now states it (quote verbatim):** "At API list prices (standard speed, no batch discount, prompt caching as recorded), the model usage logged in this project's agent transcripts (278 agent runs that each called a model, plus the main session, across all project phases) comes to at least US$3,542 as of 2026-11-10 20:19 UTC; that is a lower bound (web-search fees, model calls made inside tools and any response never written to a transcript are left out), the API-equivalent of work done on a subscription plan and not money spent, and the human hours are not logged."
+>
+> Refreshed figures from the same roll-up (cut-off 2026-11-10T20:19:00Z; `docs/provenance/totals.json`): **278** agent runs that called a model (309 launches, of which 31 were refused by a usage limit and never called a model) plus the main session; **27.67 million** input + output tokens (27,669,860; cache writes 192.35 M and cache reads 4,197.86 M are not in it); **US$3,542.76** at list price (the prototype alone US$95.28; 6.7 % on failed or killed runs); **17 days** from the first research-note commit (2026-10-24 → 2026-11-10; 18 calendar days); 120.2 agent-hours summed across parallel runs (62.6 h with at least one agent running); web-search fees US$7.90, outside the total; human hours not logged. Every cost figure in abstract v1's body is the 2026-11-04 roll-up (213 runs, US$2,641.53, 11 days) and must be refilled from the then-current roll-up before any submission.
+
 Owner-facing working folder for the Texas Society of Pathologists 2027 abstract submission. Everything here is
 drawn from plan section 11 Part B ([`11-autonomous-execution-and-dissemination.md`](../../plan/11-autonomous-execution-and-dissemination.md),
 B1–B9) and the Stage-0 prototype docs ([`stage0/`](../../../stage0/)). Part B owns the abstract text, the claim and the
@@ -27,8 +33,8 @@ precedence used here. Section 10 calls this folder `docs/dissemination/tsp2027/`
 
 ## The claim the abstract makes, and what it must not claim (Part B, B2 and B8)
 
-**Claim.** AI coding agents, with humans as reviewers at defined gates, produced in days an open-source whole-slide viewer
-prototype whose zoom/pan quality is **measured on consumer devices with a published, reproducible instrument**, whose build has
+**Claim.** AI coding agents, with humans as reviewers at defined gates, produced in days a whole-slide viewer
+prototype, intended for open-source release, whose zoom/pan quality is **measured on consumer devices with a published, reproducible instrument**, whose build has
 **complete provenance and cost accounting**, and whose licence and security posture are **machine-audited** — a capability-and-cost
 demonstration of in-house-verifiable open tooling. The planning pipeline's own claims-verification pass (24 load-bearing
 claims: 4 supported, 16 adjusted, 4 contested-resolved, 0 refuted, verified 2026-10-25) is part of the demonstration.
@@ -73,7 +79,7 @@ the 2028 cycle.
 - [ ] File scanned for names, affiliations, repository URL, project name — none present.
 - [ ] Devices named by class, with the statement that the REF page (if measured) was run on the same device in the same session; I2P not claimed; OSD = tuned profile.
 - [ ] Cells with 3–9 valid runs carry "preliminary" and their N; none below 3 are quoted.
-- [ ] Disclosure ready for the form: open source (Apache-2.0 + DCO), no commercial sponsor, who paid for model usage, no vendor relationship, AI-tool use disclosed; AI agents are not authors (ICMJE/COPE).
+- [ ] Disclosure ready for the form: intended for open-source release (Apache-2.0 + DCO, proposed; pending UT OTC approval; wording decided by the owner 2026-11-10), no commercial sponsor, who paid for model usage, no vendor relationship, AI-tool use disclosed; AI agents are not authors (ICMJE/COPE).
 - [ ] Mentor co-author confirmed; IRB determination requested (does not block the abstract).
 
 Related plan sections: [07 Roadmap §6 (T0/T1)](../../plan/07-roadmap-milestones.md), [10 Repo structure (S1-07a, S1-14, tags)](../../plan/10-repo-structure-and-first-sprints.md).

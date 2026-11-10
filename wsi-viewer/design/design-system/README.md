@@ -1,6 +1,6 @@
 # Stoipath design system
 
-Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-11-01** after the pathologist and a11y-ux critiques of the three final screens (changelog in §10), **swept the same day** for the cross-scope items the page revisers deferred to the design system (§10, *Revisions*), and **revised a second time the same day** (§11) for the six reviewed issues that named the shared files (keymap reserved rows, coarse navigator pads, the capped channel row, a prohibited `aria-label`, the danger-button hover tint, keyboard-scrollable regions).
+Design phase document 2 · Stoipath WSI viewer · 2026-10-26 · **revised 2026-11-01** after the critiques by AI agents in the pathologist and a11y-ux roles (not human reviewers) of the three final screens (changelog in §10), **swept the same day** for the cross-scope items the page revisers deferred to the design system (§10, *Revisions*), and **revised a second time the same day** (§11) for the six reviewed issues that named the shared files (keymap reserved rows, coarse navigator pads, the capped channel row, a prohibited `aria-label`, the danger-button hover tint, keyboard-scrollable regions).
 
 **Inputs.** `design/principles-and-ia.md` (P1–P10, the six regions, HUD and status language §5, state inventory §6, responsive strategy §7, accessibility architecture §8, Design notes D1–D15); `design/research/ux-conventions.md` (§7 palettes, §8 AI labelling, §12 dark chrome, §13 accessibility, keep/break lists); plan sections 01 §3–§5, 02 §2–§3.6 and §5.1, 04 §8–§10, 06 §1–§4, 12 §1.1–§2 and §5; research notes 11-gap-1, 11-gap-6, 11-gap-7. The plan is the source of truth; where this system had to decide something the plan leaves open, the choice is a **Design note** (§9 below).
 
@@ -662,7 +662,7 @@ Out of scope here and owned elsewhere: the concept explorations, the three final
 
 ## 10. Revision 2026-11-01 (changelog)
 
-Fixes to the shared files after the pathologist and a11y-ux critiques of `screens/final/*.html`. Token and class names are unchanged except the layer-row state (`.layer-row.is-hidden` → `.layer-row.is-off`), which no final screen used (research and clinical had already invented `.is-off`); the new names are additive (`--target-control`, `--color-navigator-pan-bg(-hover)`, `.topbar__identity-rest`, `.modal-layer--left`, `.modal-layer--center`, `.is-coarse`, `.candidate__radio`).
+Fixes to the shared files after the critiques by AI agents in the pathologist and a11y-ux roles (not human reviewers) of `screens/final/*.html`. Token and class names are unchanged except the layer-row state (`.layer-row.is-hidden` → `.layer-row.is-off`), which no final screen used (research and clinical had already invented `.is-off`); the new names are additive (`--target-control`, `--color-navigator-pan-bg(-hover)`, `.topbar__identity-rest`, `.modal-layer--left`, `.modal-layer--center`, `.is-coarse`, `.candidate__radio`).
 
 | # | Issue (critic) | Change | Files |
 |---|---|---|---|

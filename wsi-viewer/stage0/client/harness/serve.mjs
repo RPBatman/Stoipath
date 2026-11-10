@@ -4,6 +4,9 @@
 //               `npx vite build --outDir <scratch>/dist --emptyOutDir`; only the integrator builds into client/dist).
 // Samples alias (TOOLS.md D12, §7.4): /data/samples/<slide>/X is served from /data/samples/pyramids/<slide>/X when the
 // former does not exist (the catalogue uses the deployed layout), so only requests that would 404 change.
+// Landing-page alias (audit 2026-11-10, H3): /start.html is served from <root>/../site/index.html (wsi-viewer/site/) when
+// the root has no start.html, as on the published site, where the landing page sits at the root beside client/. The
+// products' "All Stoipath pages" link (src/site-link.ts) then finds it here as it will there. Nothing else changes.
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve, sep } from 'node:path';
@@ -45,6 +48,10 @@ export function startServer({ root, port = 8000, host = '0.0.0.0', latencyMs = 0
       res.writeHead(403);
       res.end('forbidden');
       return;
+    }
+    if (!inDist && urlPath === '/start.html' && !isFile(file)) {
+      const landing = resolve(rootAbs, '..', 'site', 'index.html');
+      if (isFile(landing)) file = landing;
     }
     if (!inDist && !isFile(file)) {
       const m = /^\/data\/samples\/([^/]+)\/(.+)$/.exec(urlPath);

@@ -21,6 +21,8 @@
 import '../../../../design/design-system/tokens.css';
 import '../../../../design/design-system/base.css';
 import './shell.css';
+// Imported first: Rollup names a shared chunk after its last module, so the shared chunk keeps its `sharpness-*` name.
+import { installSitePagesLink } from '../site-link';
 import type { DeviceInfo, Metrics } from '../metrics';
 import type { OverlayLive } from '../overlay';
 import { detectDeviceClass, startViewer, type FrameSnapshot, type ViewerButtonHandlers, type ViewerUi } from '../viewer';
@@ -399,6 +401,13 @@ dialogs.onToggle = (open) => {
 };
 const keymapDlg = $('keymapDlg');
 const aboutDlg = $('aboutDlg');
+// Audit 2026-11-10 (H3): the link to the site's landing page, shown once the landing page answers (src/site-link.ts).
+installSitePagesLink(aboutDlg, aboutDlg.querySelector<HTMLElement>('.dialog__body') ?? aboutDlg, { dev: import.meta.env.DEV });
+/**
+ * Audit 2026-11-10 (C1; owner decision of 2026-11-10): the software is intended for open-source release and its licence
+ * is proposed, not granted. Each slide keeps its own licence (Data row; Context → Slide).
+ */
+const SHELL_LICENCE_ROW = 'Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; slides under their own licences';
 
 /**
  * SC 2.4.11: the palette and the dock-column dialogs (keymap, About) open in the dock column, over the open Context
@@ -1128,6 +1137,7 @@ function onSlideOpenedA(slide: SlideContext): void {
     ['Surfaces', 'no sign-out · no LIS write-back · no Dx mode'],
     ['Data', `${id.cohort ?? 'dataset'} ${id.name}${id.licenceLong !== null ? ` · ${id.licenceLong}` : ''} · de-identified, no PHI`],
     ['Manifest', v.manifestUrl],
+    ['Licence', SHELL_LICENCE_ROW],
   ];
   for (const [k, val] of aboutRows) about.append(h('dt', { text: k }), h('dd', { text: val }));
   $('engLabel').textContent = `label ${v.label}`;

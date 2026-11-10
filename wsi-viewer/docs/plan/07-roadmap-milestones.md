@@ -128,6 +128,8 @@ Every gate is a JSON evidence file under `gates/` (`gates/m*.json`, `gates/v*.js
 | **FREE-1 / R7** | 135–147 target (143–156 bound) | 2029-05 → 08 (07 → 10) | First free deployments: 2–3 UT System hospitals | Qualification checklist, onboarding tests, display-QA attestation, activation files; first site activation record | Distribution committee |
 | **FREE-2** | DX-2 + 6–12 months | 2029-09 → 2030-06 | First non-UT health system | Same checklist; TX-RAMP where hosted | Distribution committee |
 
+> **Status 2026-11-10 (audit B9, C1; owner decisions of 2026-11-10).** **T0/TSP:** the TSP 2027 abstract was not submitted; a later conference is the target, deadline to be decided, so the T0, T1 and TSP rows do not apply to this cycle (the next venue's dates replace them once chosen). **OTC:** the approval due 2026-11-06 is not on record (no record in `docs/qms/`, no exception ADR); the repository is public and has no `LICENSE` file. Until a written approval is committed, the project is described as "intended for open-source release" and its licence as "Apache-2.0 (proposed; pending UT OTC approval)" (section 13's status note).
+
 ## 4. Workstream swimlane
 
 ```mermaid

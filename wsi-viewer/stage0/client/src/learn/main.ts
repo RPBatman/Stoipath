@@ -20,6 +20,8 @@
 import '../../../../design/design-system/tokens.css';
 import '../../../../design/design-system/base.css';
 import './learn.css';
+// Imported first: Rollup names a shared chunk after its last module, so the shared chunk keeps its `sharpness-*` name.
+import { installSitePagesLink } from '../site-link';
 import { startViewer } from '../viewer';
 import type { EventBus, KeyValueStore, ShellApi, ShellModule } from '../shell/contracts';
 import { createBus } from '../shell/core/bus';
@@ -306,6 +308,12 @@ const learn: LearnApi = {
 };
 
 // ------------------------------------------------------------------ About (LEARN.md §8.1)
+/**
+ * Audit 2026-11-10 (C1, B14; owner decision of 2026-11-10): the software is intended for open-source release and its
+ * licence is proposed, not granted; the module text has no named licensor yet, so its licence is "to be confirmed".
+ */
+const LICENCE_ROW =
+  'Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; module text licence to be confirmed; slides under their own licences';
 function renderAbout(): void {
   const dl = $('aboutFacts');
   const rows: [string, string][] = [
@@ -316,11 +324,13 @@ function renderAbout(): void {
     ['Mode', mode === 'studio' ? 'Author studio · drafts stay in this browser' : mode === 'preview' ? 'Preview of a draft · progress is not kept' : 'Learner'],
     ['Data', 'No protected health information. Slides: CAMELYON16 (CC0) and OpenSlide test data (CC0). Nothing you do here leaves this browser; your progress stays in this browser until you export it.'],
     ...(draftOn ? ([['Review', DRAFT_NOTE]] as [string, string][]) : []),
-    ['Licence', 'Apache-2.0 (this software); module text CC BY 4.0; slides under their own licences'],
+    ['Licence', LICENCE_ROW],
   ];
   dl.replaceChildren(...rows.flatMap(([k, v]) => [Object.assign(document.createElement('dt'), { textContent: k }), Object.assign(document.createElement('dd'), { textContent: v })]));
 }
 renderAbout();
+// Audit 2026-11-10 (H3): the link to the site's landing page, shown once the landing page answers (src/site-link.ts).
+installSitePagesLink($('aboutDlg'), $('aboutDlg').querySelector<HTMLElement>('.dialog__body') ?? $('aboutDlg'), { dev: import.meta.env.DEV });
 
 // ------------------------------------------------------------------ boot
 const learnModules = import.meta.glob<LearnModule>('./*/index.ts', { eager: true });

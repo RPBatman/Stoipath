@@ -144,10 +144,28 @@ export async function run(ctx) {
       return q.slice(i, j > 0 ? j : undefined);
     };
     const startText = section(/^\*\*SI-1 reference values \(/m) ?? '';
+    // A later, deliberate change to a frozen file is recorded under a `##` / `###` heading line containing
+    // `SI-1 revised values` (a dated section, with its reason, in the same table form) in SIGNOUT-QUESTIONS.md or at the
+    // end of SIGNOUT.md; the last such record of a file replaces its S0-start value (audit fixes 2026-11-10: C1's licence
+    // row and H3's landing-page link changed src/learn/main.ts and src/shell/main.ts).
+    const revisedOf = (f) => {
+      for (const doc of ['SIGNOUT.md', 'SIGNOUT-QUESTIONS.md']) {
+        const text = readFileSync(resolve(clientDir, doc), 'utf8');
+        let last = null;
+        for (const m of text.matchAll(/^#{2,3} .*SI-1 revised values.*$/gm)) {
+          const j = text.indexOf('\n## ', m.index + 1);
+          const v = recorded(text.slice(m.index, j > 0 ? j : undefined), f);
+          if (v !== null) last = { v, doc, head: m[0].replace(/^#+\s*/, '') };
+        }
+        if (last !== null) return last;
+      }
+      return null;
+    };
     for (const f of ['src/main.ts', 'src/shell/main.ts', 'src/learn/main.ts', 'index.html', 'shell.html', 'learn.html']) {
-      const want = recorded(startText, f);
+      const rev = revisedOf(f);
+      const want = rev?.v ?? recorded(startText, f);
       const now = sha(f);
-      check(TAG, want !== null && want === now, `SI-1 ${f} sha256 ${now.slice(0, 16)}… equals the value recorded at Wave S0 start (${want === null ? 'not recorded' : want.slice(0, 16) + '…'})`);
+      check(TAG, want !== null && want === now, `SI-1 ${f} sha256 ${now.slice(0, 16)}… equals the value recorded ${rev === null ? 'at Wave S0 start' : `in ${rev.doc} (${rev.head})`} (${want === null ? 'not recorded' : want.slice(0, 16) + '…'})`);
     }
     // the LAST section whose heading names the after-S0 values: a later dated section may revise one of them (the S3
     // review fix's scheduler.ts change, SIGNOUT.md §19.5)
@@ -312,7 +330,7 @@ export async function run(ctx) {
         check(TAG, (about['Staging rules'] ?? '').startsWith("pN categories follow CAMELYON17's simplified staging rules") && !/CAMELYON17 rule/.test(JSON.stringify(about)), `SI-3 ${tag} About "Staging rules" present; no string calls the ITC rule a "CAMELYON17 rule" (PE-1)`);
         check(TAG, about.Network === H.NETWORK_ROW && (about.Data ?? '').startsWith('No protected health information.'), `SI-3 ${tag} About Data and Network rows (D22)`);
         check(TAG, (about.Attribution ?? '').includes(H.CITATION) && (about.Attribution ?? '').includes('CC0 1.0') && !/patient_\d/.test(about.Attribution ?? ''), `SI-3 ${tag} About Attribution carries the sentence and the citation, and no dataset id before a submission (D12)`);
-        check(TAG, (about.Version ?? '').startsWith('L2 · build_hash ') && (about.Licence ?? '') === 'Apache-2.0 (this software); case text CC BY 4.0; slides CC0 1.0', `SI-3 ${tag} About Version "${(about.Version ?? '').slice(0, 30)}…", Licence`);
+        check(TAG, (about.Version ?? '').startsWith('L2 · build_hash ') && (about.Licence ?? '') === 'Apache-2.0 (proposed; pending UT OTC approval) for this software, which is intended for open-source release; case text licence to be confirmed; slides CC0 1.0', `SI-3 ${tag} About Version "${(about.Version ?? '').slice(0, 30)}…", Licence`);
         await H.axe(page, check, TAG, `SI-3 ${tag} axe-core WCAG 2.2 AA (About open)`);
         await page.keyboard.press('Escape');
         await page.waitForFunction(() => document.getElementById('aboutDlg').hidden, null, { timeout: 3000 });

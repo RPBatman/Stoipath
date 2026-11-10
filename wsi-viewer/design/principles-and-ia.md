@@ -399,7 +399,7 @@ In Dx mode the strip shows one of exactly three strings, set only by the Class C
 
 | Situation | Exact microcopy |
 |---|---|
-| Dx entered | `Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago` |
+| Dx entered | `Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago` |
 | Refused: no attestation | `Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.` |
 | Refused: iframe | `Dx mode unavailable inside an embedded window. Open on the diagnostic display to continue.` |
 | Refused: tablet / Tier 2 | `Dx mode unavailable on this device (Tier 2). Consultation · preliminary only.` |
@@ -571,7 +571,7 @@ The event bus is the engine's (FR-I12; plan 12 §1.1; web component events in pl
 
 ## 10. Screen-by-screen briefs for the three concept screens
 
-Every concept must show every element in its list, at the named viewports, in the same realistic content, so that concepts are comparable. Content: CAMELYON-style sentinel lymph node with a metastasis; case `AP-26-04417`; parts A–C; slides `A1-1 H&E`, `A1-2 CK AE1/AE3 (IHC)`, `A2-1 H&E`; patient placeholder `DOE, JANE · 1958 · synthetic`; scanner 0.25 µm/px; display Barco MDPC-8127 (clinical). Mark every element that would be live in the product with the design system's `live` marker.
+Every concept must show every element in its list, at the named viewports, in the same realistic content, so that concepts are comparable. Content: CAMELYON-style sentinel lymph node with a metastasis; case `AP-26-04417`; parts A–C; slides `A1-1 H&E`, `A1-2 CK AE1/AE3 (IHC)`, `A2-1 H&E`; patient placeholder `DOE, JANE · 1958 · synthetic`; scanner 0.25 µm/px; display Example display DX-27 (clinical). Mark every element that would be live in the product with the design system's `live` marker.
 
 ### 10.1 Clinical sign-out (`clinical-signout`)
 

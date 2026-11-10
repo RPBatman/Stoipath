@@ -115,6 +115,7 @@ footer.colophon p + p { margin-top: var(--space-2); }
   </div>
   <h1>Stoipath WSI viewer · UX/UI design</h1>
   <p class="lede">One Rust engine, four product builds, three pillars. These pages are the design phase for the owner's review: the three final screens synthesised from nine judged concepts, the design system they share, and the documents that decided them. The plan under <code>docs/plan/</code> is the source of truth; everything here is static HTML that opens from <code>file://</code> or any static host.</p>
+  <p class="lede"><b>Design mock-ups only: no product or validation exists.</b> No clinical, Dx or laboratory-validated Stoipath product exists, and all case, patient, laboratory and display names are synthetic or fictional. <b>Every judge and critic named on these pages was an AI agent</b> given a role brief (a pathologist-educator role, a UX and accessibility role, an engineering role); no human pathologist reviewed these designs. The owner's own review, with the review guide, is pending (status 2026-11-10).</p>
   <div class="actions">
     <a class="btn btn--primary" href="REVIEW-GUIDE.md">Start the review guide</a>
     <a class="btn btn--secondary" href="README.md">Read the folder README</a>
@@ -171,7 +172,7 @@ footer.colophon p + p { margin-top: var(--space-2); }
       <h3>Clinical sign-out viewer</h3>
       <p class="who">Base C Task-flow · grafts B Workbench, A Canvas-maximal</p>
       <a href="screens/final/clinical-signout.html"><img class="card__thumb" src="screens/final/shots/clinical-signout-1440x900.png" alt="Clinical sign-out final at 1440 by 900: dark neutral chrome, slide canvas with the corner cluster, step rail on the left, status strip" loading="lazy" decoding="async" width="1440" height="900"></a>
-      <p>Open → Screen → Examine → Annotate → Sign-out on a 72 px step rail; corner cluster with navigator, label image and slide tray at rest; seven-row Dx gate; live hand-off list that lands on <em>Open A2-1 first</em> when a slide is unviewed; Hyperdrive iframe and iPad consult variants.</p>
+      <p>Open → Screen → Examine → Annotate → Sign-out on a 72 px step rail; corner cluster with navigator, label image and slide tray at rest; seven-row Dx gate; live hand-off list that lands on <em>Open A2-1 first</em> when a slide is unviewed; EHR iframe and iPad consult variants.</p>
       <div class="meta-row"><span><span class="num">12</span> switchable states</span><span><span class="num">91</span> live markers</span><span><span class="num">20</span> screenshots</span></div>
       <div class="chips" aria-label="Clinical sign-out presets">
         <a class="chip chip-link" href="screens/final/clinical-signout.html#step=1">Step 1 Open</a>
@@ -180,7 +181,7 @@ footer.colophon p + p { margin-top: var(--space-2); }
         <a class="chip chip-link" href="screens/final/clinical-signout.html#cond=dxrefused">Dx refused</a>
         <a class="chip chip-link" href="screens/final/clinical-signout.html#cond=mismatch">Identity mismatch</a>
         <a class="chip chip-link" href="screens/final/clinical-signout.html#variant=consult&amp;tier=2">iPad consult · Tier 2</a>
-        <a class="chip chip-link" href="screens/final/clinical-signout.html#variant=embedded">Hyperdrive iframe</a>
+        <a class="chip chip-link" href="screens/final/clinical-signout.html#variant=embedded">EHR iframe</a>
         <a class="chip chip-link" href="screens/final/clinical-signout.html#decisions">Design decisions</a>
       </div>
       <div class="actions"><a class="btn btn--primary" href="screens/final/clinical-signout.html">Open</a><a class="btn btn--secondary" href="screens/final/shots/clinical-signout-3840x2160.png">4K screenshot</a></div>
@@ -228,7 +229,7 @@ footer.colophon p + p { margin-top: var(--space-2); }
 
 <section class="block" id="concepts" aria-labelledby="h-concepts">
   <h2 id="h-concepts">Concepts and judging <span class="caps">nine wireframes · three judges · six weighted criteria</span></h2>
-  <p class="block__intro">For each screen, three deliberately different angles on the same brief and content: <b>A Canvas-maximal</b> (chrome collapses to the edges, keyboard-summoned drawers, radial at the pointer), <b>B Workbench</b> (persistent, resizable, dockable panels; palette as the universal entry) and <b>C Task-flow</b> (a step rail organises the chrome around the task sequence; pen and touch first). A practising pathologist/educator, a UX and accessibility specialist and a front-end/engine engineer scored each 1–10 on workflow fit (0.30), clarity (0.20), accessibility (0.15), feasibility (0.15), device fit (0.15) and distinctiveness (0.05). The winner became the base of the final; the others donated mechanisms.</p>
+  <p class="block__intro">For each screen, three deliberately different angles on the same brief and content: <b>A Canvas-maximal</b> (chrome collapses to the edges, keyboard-summoned drawers, radial at the pointer), <b>B Workbench</b> (persistent, resizable, dockable panels; palette as the universal entry) and <b>C Task-flow</b> (a step rail organises the chrome around the task sequence; pen and touch first). Three AI agents, in the roles of a pathologist-educator (not a human pathologist), a UX and accessibility specialist and a front-end/engine engineer, scored each 1–10 on workflow fit (0.30), clarity (0.20), accessibility (0.15), feasibility (0.15), device fit (0.15) and distinctiveness (0.05). The winner became the base of the final; the others donated mechanisms.</p>
   <div class="table-wrap">
   <table class="table">
     <caption class="visually-hidden">Weighted judge scores per concept; the winner of each row is marked and in bold</caption>

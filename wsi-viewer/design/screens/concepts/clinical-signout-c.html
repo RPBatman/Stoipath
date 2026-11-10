@@ -46,7 +46,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 .review-foot .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
 .review-foot .hash { margin-left: auto; font-family: var(--font-mono); font-size: 10px; opacity: .75; max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
 
-/* ---- synthetic host (Epic Hyperdrive) frame for the iframe variant */
+/* ---- synthetic host (EHR) frame for the iframe variant */
 .host { position: relative; }
 .host__bar { display: none; height: 44px; align-items: center; gap: var(--space-5); padding: 0 var(--space-6); background: #e9ecf1; color: #1f2a3a; font-size: var(--text-sm); border-bottom: 1px solid #c5ccd6; }
 .host__bar .htab { font-weight: 600; border-bottom: 2px solid #1f2a3a; padding: 12px 0; }
@@ -131,7 +131,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
   .flowbar .btn--sm { min-height: 28px; }
 }
 
-/* embedded (Hyperdrive iframe): one column, compact bars, no rail/dock/flowbar */
+/* embedded (EHR iframe): one column, compact bars, no rail/dock/flowbar */
 .app.tf.app--embedded {
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: var(--layout-topbar) minmax(0, 1fr) var(--layout-strip);
@@ -330,7 +330,7 @@ body.review-hidden .review-head, body.review-hidden .review-foot { display: none
 /* ---- completed 2026-11-01: state classes driven by the script ---------- */
 /* The lab name is a build-time constant substituted into the controlled
    Clinical-IH string (principles §2.1); the token stays the single source.  */
-.app.tf { --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation."; }
+.app.tf { --string-clinical: "In-house laboratory-validated tool. Not FDA cleared. For use only within Fictional Example Lab under CLIA/CAP validation."; }
 .app.tf:not(.nav-open) .navigator { display: none; }
 .app.tf.is-refused { grid-template-columns: var(--layout-rail) minmax(0, 1fr) 0; }
 .app.is-refused .topbar__identity, .app.is-refused .embed-tray, .app.is-refused #qaChip, .app.is-refused #modeChip,
@@ -422,8 +422,8 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
 .layer-row__name .kind { white-space: nowrap; }
 .nav-sep { display: none; }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 
 <!-- ====== Shared inline SVG: icons and synthetic tissue (no network; all geometry in micrometres) ====== -->
@@ -553,7 +553,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
 </header>
 
 <div class="host" id="host">
-  <div class="host__bar" aria-hidden="true"><span>Epic Hyperdrive (synthetic host window)</span><span class="htab">AP-26-04417 · Surgical Pathology</span><span>Results Review</span><span>Notes</span><span class="hostnote">iframe below: no popups, no top navigation, postMessage JSON-RPC only</span></div>
+  <div class="host__bar" aria-hidden="true"><span>EHR host window (synthetic)</span><span class="htab">AP-26-04417 · Surgical Pathology</span><span>Results Review</span><span>Notes</span><span class="hostnote">iframe below: no popups, no top navigation, postMessage JSON-RPC only</span></div>
 
   <div class="app tf dock-open nav-open is-dx" id="app" data-build="clinical-ih" data-variant="signout" data-cond="normal" data-step="3" data-tool="select">
 
@@ -713,7 +713,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
         <!-- Panel 1 · Open: identity before pixels -->
         <section class="step-panel" id="panel-1" aria-label="Open: verify identity">
           <div class="idcard" data-live="launch">
-            <div class="labelimg" id="labelImg" data-live="launch:label" data-synthetic aria-label="Slide label image, Tier 2">AP-26-04417<br>A1-1 · H&amp;E<br>DOE, JANE · 1958<span class="lab">UT Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span></div>
+            <div class="labelimg" id="labelImg" data-live="launch:label" data-synthetic aria-label="Slide label image, Tier 2">AP-26-04417<br>A1-1 · H&amp;E<br>DOE, JANE · 1958<span class="lab">Fictional Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span></div>
             <dl class="kv">
               <dt>Accession</dt><dd class="mono" data-synthetic>AP-26-04417</dd>
               <dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958 · F <span class="syn text-xs text-secondary">(synthetic)</span></dd>
@@ -725,8 +725,8 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
             </dl>
           </div>
           <div class="statusline" data-live="events:identityMismatch"><span class="g ok">✓</span><span>Identity check: manifest <span class="mono">sid</span> and study UID match the launch context</span></div>
-          <div class="statusline" id="attestLine" data-live="dx:attestation"><span class="g ok">✓</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span></div>
-          <div class="statusline" data-live="launch:user"><span class="g ok">✓</span><span>Launched by <span data-synthetic>Dr Example</span> · pathologist · purpose <span id="kvPurpose">sign-out</span> · via Beaker worklist</span></div>
+          <div class="statusline" id="attestLine" data-live="dx:attestation"><span class="g ok">✓</span><span><span data-synthetic>Example display DX-27</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span></div>
+          <div class="statusline" data-live="launch:user"><span class="g ok">✓</span><span>Launched by <span data-synthetic>Dr Example</span> · pathologist · purpose <span id="kvPurpose">sign-out</span> · via LIS worklist</span></div>
           <div class="statusline" id="frozenLine" hidden data-live="lis:worklist"><span class="g attn">!</span><span>Frozen section · OR 4 · received <span class="mono">09:41</span> · CAP target 20 min</span></div>
           <details class="section" open><summary>Open-state preset <span class="count">hanging protocol</span></summary>
             <div class="section__body">
@@ -850,10 +850,10 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
             <li><span class="g ok">✓</span><span>Regions: <b>1</b> <span class="sub">Polygon · Tumor · 1.9 mm²</span></span></li>
             <li><span class="g off" id="ckAiG">–</span><span id="ckAi">AI results: <b>not reviewed</b><span class="sub">Metastasis detector (research status) stays off in Dx unless you open it</span></span></li>
             <li><span class="g ok">✓</span><span>Bookmarks: <b>2</b></span></li>
-            <li><span class="g ok" id="ckModeG">✓</span><span id="ckMode">Render mode: <b>DX · Rendering Complete</b><span class="sub">Barco MDPC-8127 · EDID · QA passed 3 days ago · adjustments default</span></span></li>
-            <li><span class="g ok">✓</span><span>Dictation: <b>Mic: dictation</b> (Dragon Medical One in Epic)<span class="sub">The viewer never records audio</span></span></li>
+            <li><span class="g ok" id="ckModeG">✓</span><span id="ckMode">Render mode: <b>DX · Rendering Complete</b><span class="sub">Example display DX-27 · EDID · QA passed 3 days ago · adjustments default</span></span></li>
+            <li><span class="g ok">✓</span><span>Dictation: <b>Mic: dictation</b> (dictation software in the EHR)<span class="sub">The viewer never records audio</span></span></li>
           </ul>
-          <div class="hintline not-consult not-embedded">Sign-out happens in the LIS. This step hands back status and evidence (<span class="mono">signoutRequested</span>) and returns focus to Beaker.</div>
+          <div class="hintline not-consult not-embedded">Sign-out happens in the LIS. This step hands back status and evidence (<span class="mono">signoutRequested</span>) and returns focus to the LIS.</div>
           <div class="hintline consult-only" hidden>The preliminary note goes to the OR through the LIS; a tablet session is always <b>Consultation · preliminary only</b>. Final sign-out waits for permanent sections on a diagnostic display.</div>
           <div class="hintline embed-only">Inside the EHR window this build is Nav only. Hand off to the companion window on the diagnostic display to enter Dx mode and sign out.</div>
         </section>
@@ -887,7 +887,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
     <!-- E. Status strip: the live region's visual twin -->
     <footer class="strip region" aria-label="Status">
       <span class="indicator indicator--complete" id="stripIndicator" data-live="events:renderingcomplete"><span class="indicator__glyph"></span><span class="indicator__label" id="stripIndicatorLabel">Rendering Complete</span><span class="indicator__reason" id="stripIndicatorReason"></span></span>
-      <span class="strip__notice" id="stripNotice">Dx mode · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span>
+      <span class="strip__notice" id="stripNotice">Dx mode · display attested (EDID · <span data-synthetic>Example display DX-27</span>) · QA passed 3 days ago</span>
       <div class="strip__group strip__group--end" id="stripChips">
         <button class="chip chip--solid" id="stripNet" hidden data-live="telemetry:network">Slow link (6 Mbps) — reduced detail while moving</button>
         <button class="chip chip--solid" id="stripOffline" hidden data-live="offline:pack">Offline pack · AP-26-04417 frozen · saved 09:43</button>
@@ -910,7 +910,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
 <footer class="review-foot" aria-label="Demo controls">
   <span class="lbl">Demo</span>
   <label>Product <select id="ctlProduct"><option value="clinical-ih">Clinical-IH</option><option value="dx">Dx (cleared)</option><option value="ruo">Viewer (RUO)</option></select></label>
-  <label>Variant <select id="ctlVariant"><option value="signout">Sign-out · companion window</option><option value="consult">Frozen consult · iPad</option><option value="embedded">Hyperdrive iframe</option></select></label>
+  <label>Variant <select id="ctlVariant"><option value="signout">Sign-out · companion window</option><option value="consult">Frozen consult · iPad</option><option value="embedded">EHR iframe</option></select></label>
   <label>State <select id="ctlCond"><option value="normal">Normal</option><option value="cold4g">Cold 4G</option><option value="offline">Offline</option><option value="tileerror">Tile errors</option><option value="dxrefused">Dx refused · no attestation</option><option value="mismatch">Identity mismatch</option><option value="expired">Session expired</option></select></label>
   <label>Step <select id="ctlStep"><option value="1">1 Open</option><option value="2">2 Screen</option><option value="3">3 Examine</option><option value="4">4 Annotate</option><option value="5">5 Sign-out</option></select></label>
   <label><input type="checkbox" id="ctlGuided" checked> Guided flow</label>
@@ -931,7 +931,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
   <div class="dialog dialog--wide keymap-dialog" role="dialog" aria-modal="true" aria-labelledby="km-title" data-live="commands">
     <div class="dialog__header"><h2 class="dialog__title" id="km-title">Keyboard shortcuts</h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
-      <div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand cluster</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand cluster</button></div><span class="text-xs text-secondary">Reserved at this site: F1–F12 and Alt (Hyperdrive), Ctrl+Space (Epic search), numeric keypad (Dragon push-to-talk). Shown struck through.</span></div>
+      <div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented" role="radiogroup"><button class="segmented__item" role="radio" aria-checked="true">Default</button><button class="segmented__item" role="radio" aria-checked="false">Left-hand cluster</button><button class="segmented__item" role="radio" aria-checked="false">Right-hand cluster</button></div><span class="text-xs text-secondary">Reserved at this site: F1–F12 and Alt (EHR), Ctrl+Space (EHR search), numeric keypad (dictation push-to-talk). Shown struck through.</span></div>
       <div class="keymap">
         <div class="keymap__group"><h4>Flow (this concept)</h4>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">N</kbd> <kbd class="key">⇧N</kbd></span><span class="desc">Next / previous step</span></div>
@@ -968,8 +968,8 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">↵</kbd> <kbd class="key">⌫</kbd> <kbd class="key">Esc</kbd></span><span class="desc">Commit · delete selected · cancel tool / close sheet</span></div>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">⌃Z</kbd> <kbd class="key">⌃Y</kbd></span><span class="desc">Undo / redo</span></div>
           <div class="keymap__row"><span class="keymap__keys"><kbd class="key">Space</kbd></span><span class="desc">Held: temporary pan while a drawing tool is active · in a list: fly to the item</span></div>
-          <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">F1–F12</kbd> <kbd class="key key--reserved">Alt</kbd></span><span class="desc">Hyperdrive</span></div>
-          <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">⌃Space</kbd> <kbd class="key key--reserved">Num 0–9</kbd></span><span class="desc">Epic search · Dragon push-to-talk</span></div>
+          <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">F1–F12</kbd> <kbd class="key key--reserved">Alt</kbd></span><span class="desc">EHR</span></div>
+          <div class="keymap__row is-reserved"><span class="keymap__keys"><kbd class="key key--reserved">⌃Space</kbd> <kbd class="key key--reserved">Num 0–9</kbd></span><span class="desc">EHR search · dictation push-to-talk</span></div>
         </div>
       </div>
     </div>
@@ -989,13 +989,13 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="so-title" data-live="commands:signoutRequested">
     <div class="dialog__header"><h2 class="dialog__title" id="so-title">Request sign-out · <span class="mono" data-synthetic>AP-26-04417</span></h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
-      <p class="text-sm text-secondary">What returns to the LIS now. Sign-out itself is completed in Beaker; this hands back status and evidence and returns focus to the controller.</p>
+      <p class="text-sm text-secondary">What returns to the LIS now. Sign-out itself is completed in the LIS; this hands back status and evidence and returns focus to the controller.</p>
       <div class="alert alert--warning" id="soWarn"><span class="alert__glyph">!</span><div><div class="alert__title">A2-1 has not been viewed</div><div>Slide A2-1 (H&amp;E, level II) was never opened in this session. The LIS will record it as unviewed.</div></div></div>
       <ul class="checklist" style="padding:0">
         <li><span class="g ok">✓</span><span>Status → <b>Reviewed</b> (<span class="mono">caseStatusChanged</span>) · viewed state per slide: A1-1 ✓ · A1-2 ½ · A2-1 –</span></li>
         <li><span class="g ok">✓</span><span>1 measurement · 2.3 mm (SR TID 1500) · 1 region · Tumor polygon (DICOM ANN)</span></li>
         <li><span class="g ok">✓</span><span>AI results: <span id="soAi">none reviewed</span></span></li>
-        <li><span class="g ok">✓</span><span>Render mode during review: <span id="soMode">DX · Rendering Complete · Barco MDPC-8127 (EDID) · QA 3 days ago</span></span></li>
+        <li><span class="g ok">✓</span><span>Render mode during review: <span id="soMode">DX · Rendering Complete · Example display DX-27 (EDID) · QA 3 days ago</span></span></li>
         <li><span class="g ok">✓</span><span>Audit: session open/close, sampled viewport trail, adjustment resets (<span class="mono">AuditEvent</span>)</span></li>
       </ul>
       <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Mark case Reviewed in the worklist</span><span class="toggle__hint">Unchecked: send evidence only, keep In review</span></span></label>
@@ -1010,7 +1010,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
     <div class="dialog__body">
       <div class="field"><span class="field__label">Colleague (on-call list from the LIS; synthetic)</span><div class="select"><select class="input"><option>Dr Example · haematopathology · on call</option><option>Dr Sample · breast pathology</option></select></div></div>
       <div class="field"><span class="field__label">What they receive</span><div class="text-sm">Expiring link (2 h) to this case at the current view · <b>Tier 0</b> (no label image, no patient identifiers) · your measurement and region · this preliminary note draft</div></div>
-      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Page them now</span><span class="toggle__hint">Pager / Teams via the integration service</span></span></label>
+      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Page them now</span><span class="toggle__hint">Pager / chat via the integration service</span></span></label>
       <div class="alert alert--info"><span class="alert__glyph">i</span><div>The consult opens in their build at the same step (<b>Note</b>) with <b>Consultation · preliminary only</b>; their reply lands in the LIS as an addendum.</div></div>
     </div>
     <div class="dialog__footer"><button class="btn btn--ghost" data-close>Cancel</button><button class="btn btn--accent" data-cmd="confirmConsult">Send request</button></div>
@@ -1022,7 +1022,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
     <div class="dialog__header"><h2 class="dialog__title" id="dx-title">Enter Dx mode</h2><button class="btn btn--icon btn--ghost" data-close aria-label="Close (Esc)"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="dialog__body">
       <ul class="checklist" style="padding:0">
-        <li><span class="g ok">✓</span><span>Display attested: <b data-synthetic>Barco MDPC-8127</b> · source <b>EDID</b> (native desktop shell)</span></li>
+        <li><span class="g ok">✓</span><span>Display attested: <b data-synthetic>Example display DX-27</b> · source <b>EDID</b> (native desktop shell)</span></li>
         <li><span class="g ok">✓</span><span>Display QA passed 3 days ago · cadence 30 days</span></li>
         <li><span class="g ok">✓</span><span>Deployment self-check passed · build hash registered</span></li>
         <li><span class="g ok">✓</span><span>Tier 1 device · derived-tier tiles never drawn in Dx</span></li>
@@ -1062,7 +1062,7 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
         <li><span class="g ok">✓</span><span>Evidence attached: 1 measurement · 2.3 mm (SR TID 1500) · 1 region · viewed <span id="sdViewed">2 of 3</span> slides</span></li>
         <li><span class="g ok">✓</span><span>Turnaround <span class="mono" id="sdTat">06:12</span> of the CAP 20-minute target · received 09:41</span></li>
       </ul>
-      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Also page the surgeon</span><span class="toggle__hint">Pager / Teams via the integration service</span></span></label>
+      <label class="toggle" aria-checked="true" role="switch" tabindex="0"><span class="toggle__track"></span><span class="toggle__text"><span>Also page the surgeon</span><span class="toggle__hint">Pager / chat via the integration service</span></span></label>
     </div>
     <div class="dialog__footer"><button class="btn btn--ghost" data-close>Keep reviewing</button><button class="btn btn--secondary" data-cmd="consult">Request consult first</button><button class="btn btn--accent" data-cmd="confirmSend"><svg class="icon icon--sm"><use href="#i-send"/></svg>Send preliminary</button></div>
   </div>
@@ -1081,10 +1081,10 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
   <li><b>Identity is step 1, not a header afterthought.</b> The label image, accession, part/block, patient placeholder, worklist state, launch user and purpose, identity-check result and display attestation sit in one card the reader sees before the first high-power view (P5). The identity line stays on the canvas and the label image stays in the navigator in every step; in Dx mode the label image cannot be collapsed (Design note D13).</li>
   <li><b>Screening is a step with a coverage contract.</b> The tray shows viewed / partly viewed / unviewed with a coverage bar per slide, the navigator keeps a viewed-area trail that never auto-fades, and <kbd>⇧</kbd>+arrows pan one full viewport for systematic coverage. What the LIS needs back (viewed state per slide) is the same data the pathologist sees.</li>
   <li><b>AI overlays are off by default in Dx and live in the Examine step.</b> Each layer row carries vendor, producer, version, inputHash, createdAt and <code>regulatoryStatus</code>; the research layer carries the fixed FR-R11 marker, the lab-validated layer carries a lab-validated marker with n. AI outlines use palette slots (teal, amber dashed) that the pathologist's own classes do not, so human and machine marks never share a colour. Outline first, heatmap on demand.</li>
-  <li><b>Sign-out is a checklist, and the viewer never owns the diagnosis.</b> Step 5 lists what returns to the LIS (status, viewed state, measurements as SR, regions as ANN/GeoJSON, AI accept/reject, bookmarks, render mode and display record, audit). The hand-off dialog repeats it, warns about the unviewed slide, and offers to open it first. The report is dictated in Beaker.</li>
+  <li><b>Sign-out is a checklist, and the viewer never owns the diagnosis.</b> Step 5 lists what returns to the LIS (status, viewed state, measurements as SR, regions as ANN/GeoJSON, AI accept/reject, bookmarks, render mode and display record, audit). The hand-off dialog repeats it, warns about the unviewed slide, and offers to open it first. The report is dictated in the LIS.</li>
   <li><b>Pen and touch first, scaling up.</b> On tablet the steps move to a flow bar at the top and the step's tools to a 44 px bottom bar; the step panel is a bottom sheet ≤ 40 % high; pen draws while a finger pans. On the 4K diagnostic display the same rail is 84 px wide with 24 px glyphs and the panel is 400 px: tiny chrome, big canvas (≈ 84 % canvas at rest).</li>
   <li><b>Frozen-section consult is the same flow with two steps renamed</b> (Note, Send): a TAT timer against the CAP 20-minute target, preliminary-note templates, a Request-consult affordance (Tier 0 share link, pager), and the fixed <i>Consultation · preliminary only</i> chip. Dx is refused with the Tier-2 string.</li>
-  <li><b>Hyperdrive iframe: the flow collapses to a chip.</b> No rail, no dock; the step chip opens a sheet; tray chips in the bar; <i>Open on diagnostic display</i> hands off to the companion window; Nav only; the refusal string names the reason. Dialogs and the keyboard sheet render inside the frame (no popups, no top navigation).</li>
+  <li><b>EHR iframe: the flow collapses to a chip.</b> No rail, no dock; the step chip opens a sheet; tray chips in the bar; <i>Open on diagnostic display</i> hands off to the companion window; Nav only; the refusal string names the reason. Dialogs and the keyboard sheet render inside the frame (no popups, no top navigation).</li>
   <li><b>Honest pixels.</b> The strip and HUD carry Sharp / Sharpening… / Soft — reason / Offline in Nav mode and exactly three Rendering strings in Dx. Cold 4G shows the best resident ancestor (soft) and the link chip; tile errors keep ancestors and say so; the Dx indicator turns to <i>Not complete — do not interpret</i> when tiles are missing. During any drag or wheel the app carries <code>.is-gesturing</code> and no chrome transition runs (P2).</li>
   <li><b>Micrometres are the only truth.</b> The scale bar is computed from µm/px and snaps to 1/2/5 × 10ⁿ µm within 80–200 px; the magnification is derived and says its pitch source (EDID / device profile / unknown with a tilde and the Pitch-unknown chip in the iframe).</li>
 </ul>
@@ -1105,10 +1105,10 @@ body.show-live .navigator, body.show-live .pane__id, body.show-live .plate { pos
   <li>Press <kbd>N</kbd> five times from step 1 and watch the dock, rail and HUD: does the sequence match how a case is actually read (identity → survey → high power → marks → hand-back)?</li>
   <li>Toggle <b>Guided flow</b> off: is the plain-tabs version a viewer a power user would accept on day one?</li>
   <li>Switch <b>Variant</b> to the iPad frozen consult at 1024 × 1366: the flow bar, 44 px tools, the Note step, the Request-consult dialog and the Tier-2 refusal.</li>
-  <li>Switch to the Hyperdrive iframe: the chip-only flow and the hand-off button.</li>
+  <li>Switch to the EHR iframe: the chip-only flow and the hand-off button.</li>
   <li>Switch <b>State</b> through Cold 4G, Tile errors, Dx refused and Identity mismatch: the microcopy is the plan's, verbatim; the canvas is never blank.</li>
   <li>Open the layers section in Examine: the vendor, status and the fixed marker; toggle the overlay in Dx and check the marker and the sign-out checklist update.</li>
-  <li>Press <kbd>?</kbd> and <kbd>Ctrl+K</kbd>: every command has a key without Ctrl/Alt/F-keys; reserved dictation and Hyperdrive keys are struck through.</li>
+  <li>Press <kbd>?</kbd> and <kbd>Ctrl+K</kbd>: every command has a key without Ctrl/Alt/F-keys; reserved dictation and EHR keys are struck through.</li>
   <li>Cover the canvas with your hand: badge, label string and mode indicator stay visible in every state and under every dialog (P4).</li>
 </ul>
 
@@ -1179,7 +1179,7 @@ const SLIDE_W = 12000, SLIDE_H = 6000;              /* µm; the synthetic node i
 const SCAN = 0.25;                                   /* µm/px at the 40× scan */
 const PRESETS = [8, 4, 2, 1, 0.5, 0.25];             /* µm/px for 1.25 · 2.5 · 5 · 10 · 20 · 40× (derived, D8) */
 const STRINGS = {
-  'clinical-ih': 'In-house laboratory-validated tool. Not FDA cleared. For use only within UT Example Lab under CLIA/CAP validation.',
+  'clinical-ih': 'In-house laboratory-validated tool. Not FDA cleared. For use only within Fictional Example Lab under CLIA/CAP validation.',
   dx: 'Stoipath Dx · cleared configuration · see About for UDI, version and hashes.',
   ruo: 'For Research Use Only. Not for use in diagnostic procedures.'
 };
@@ -1380,7 +1380,7 @@ function setSlide(i, opts) {
   $('kvSlide').textContent = 'Part ' + sl.part + ' · block ' + sl.block + ' · ' + sl.id; $('kvStain').textContent = sl.stain + (sl.kind ? ' (' + sl.kind + ')' : '');
   $('navSlideLabel').innerHTML = sl.id + ' · ' + (sl.kind || sl.stain) + '<br><span class="nav-sep"> · </span><span id="navCoverage"></span> viewed';
   $('navLabelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' ' + (sl.kind || sl.stain) + '<br>DOE, JANE';
-  $('labelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' · ' + (sl.kind || sl.stain) + '<br>DOE, JANE · 1958<span class="lab">UT Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span>';
+  $('labelImg').innerHTML = 'AP-26-04417<br>' + sl.id + ' · ' + (sl.kind || sl.stain) + '<br>DOE, JANE · 1958<span class="lab">Fictional Example Lab · synthetic</span><span class="barcode" aria-hidden="true"></span>';
   if (!opts.keepView) { measure(); setView(6000, 3000, fitScale(), { silent: true }); scheduleSettle(); }
   renderOverlay(); renderTrail(); renderTray(); renderChecklist(); renderFlow();
   announce('Slide ' + sl.id + ' ' + sl.stain + ' opened.' + (first ? ' First view: fit to slide.' : ''));
@@ -1409,9 +1409,9 @@ function renderVariant() {
   $('worklistChip').classList.toggle('is-reviewed', S.reviewed); $('worklistChip2').classList.toggle('is-reviewed', S.reviewed);
   const at = $('attestLine');
   if (v === 'consult') at.innerHTML = '<span class="g off">–</span><span><span data-synthetic>iPad Pro 12.9</span> · MDM profile · Tier 2 (60 Hz) · no display attestation → Nav mode · <b>Consultation · preliminary only</b></span>';
-  else if (v === 'embedded') at.innerHTML = '<span class="g off">–</span><span>Embedded window (Hyperdrive) · attestation not available inside an iframe → Nav mode · hand off to the companion window for Dx</span>';
+  else if (v === 'embedded') at.innerHTML = '<span class="g off">–</span><span>Embedded window (EHR) · attestation not available inside an iframe → Nav mode · hand off to the companion window for Dx</span>';
   else if (S.cond === 'dxrefused') at.innerHTML = '<span class="g attn">!</span><span>This display cannot be attested (no EDID, no MDM profile) · Nav mode · ask your display administrator</span>';
-  else at.innerHTML = '<span class="g ok">✓</span><span><span data-synthetic>Barco MDPC-8127</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span>';
+  else at.innerHTML = '<span class="g ok">✓</span><span><span data-synthetic>Example display DX-27</span> · EDID attested · <span data-live="dx:displayqa">QA passed 3 days ago</span></span>';
   $('stripMic').hidden = v === 'consult';
   $('stripTier').hidden = v !== 'consult'; $('stripPitch').hidden = v !== 'embedded';
   $('qaChip').hidden = v !== 'signout' || S.cond === 'dxrefused';
@@ -1441,7 +1441,7 @@ function renderStrip() {
   else if (S.cond === 'mismatch') notice = 'Slide identity mismatch · viewing blocked · audit event identityMismatch recorded';
   else if (S.cond === 'expired') notice = 'Your session has expired. Sign in again to continue viewing AP-26-04417.';
   else if (S.cond === 'tileerror') notice = '3 tiles could not be loaded — retrying';
-  else if (isDx()) notice = S.adjust ? 'Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)' : 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+  else if (isDx()) notice = S.adjust ? 'Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)' : 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago';
   else if (S.dxWanted && !g.ok) notice = g.reason;
   else if (!g.ok) notice = g.reason;
   else notice = 'Nav mode · Shift+D enters Dx mode (display attested · QA passed 3 days ago)';
@@ -1505,9 +1505,9 @@ function renderChecklist() {
     ['ok', 'Regions: <b>' + S.regions + '</b><span class="sub">Polygon · Tumor · 1.9 mm² · DICOM ANN / GeoJSON</span>'],
     [S.aiDecision ? 'ok' : 'off', 'AI results: <b>' + ai + '</b><span class="sub">Metastasis detector (research status) ' + (isDx() ? 'stays off in Dx unless you open it' : 'off by default') + '</span>'],
     ['ok', 'Bookmarks: <b>' + S.bookmarks + '</b><span class="sub">state documents with thumbnails</span>'],
-    [isDx() ? 'ok' : 'attn', 'Render mode: <b>' + (isDx() ? 'DX · Rendering Complete' : 'NAV') + '</b><span class="sub">' + (isDx() ? 'Barco MDPC-8127 · EDID · QA passed 3 days ago · adjustments ' + (S.adjust ? 'logged' : 'default') : (g.reason || 'Nav mode by choice; Shift+D enters Dx')) + '</span>'],
+    [isDx() ? 'ok' : 'attn', 'Render mode: <b>' + (isDx() ? 'DX · Rendering Complete' : 'NAV') + '</b><span class="sub">' + (isDx() ? 'Example display DX-27 · EDID · QA passed 3 days ago · adjustments ' + (S.adjust ? 'logged' : 'default') : (g.reason || 'Nav mode by choice; Shift+D enters Dx')) + '</span>'],
   ];
-  if (S.variant === 'signout') rows.push(['ok', 'Dictation: <b>Mic: dictation</b> (Dragon Medical One in Epic)<span class="sub">The viewer never records audio</span>']);
+  if (S.variant === 'signout') rows.push(['ok', 'Dictation: <b>Mic: dictation</b> (dictation software in the EHR)<span class="sub">The viewer never records audio</span>']);
   if (S.variant === 'consult') rows.push(['ok', 'Purpose: <b>Consultation · preliminary only</b><span class="sub">The note is preliminary; permanent sections follow</span>']);
   $('checklist').innerHTML = rows.map((r) => '<li><span class="g ' + r[0] + '">' + (r[0] === 'ok' ? '✓' : r[0] === 'attn' ? '!' : '–') + '</span><span>' + r[1] + '</span>' + (r[2] || '') + '</li>').join('');
   $('aiDecision').textContent = ai; $('aiEvidence').textContent = ai;
@@ -1601,7 +1601,7 @@ function now() { const d = new Date(); return String(d.getHours()).padStart(2, '
 function fmtLen(um) { return um >= 1000 ? (um / 1000).toFixed(um >= 10000 ? 0 : 1) + ' mm' : Math.round(um) + ' µm'; }
 function fmtArea(um2) { return um2 >= 1e5 ? (um2 / 1e6).toFixed(2) + ' mm²' : Math.round(um2).toLocaleString() + ' µm²'; }
 function shoelace(p) { let a = 0; for (let i = 0; i < p.length; i++) { const j = (i + 1) % p.length; a += p[i].x * p[j].y - p[j].x * p[i].y; } return Math.abs(a) / 2; }
-function productFooter() { return { 'clinical-ih': 'Clinical-IH · UT Example Lab · not FDA cleared', dx: 'Stoipath Dx · cleared configuration', ruo: 'RUO · not for use in diagnostic procedures' }[S.product]; }
+function productFooter() { return { 'clinical-ih': 'Clinical-IH · Fictional Example Lab · not FDA cleared', dx: 'Stoipath Dx · cleared configuration', ruo: 'RUO · not for use in diagnostic procedures' }[S.product]; }
 
 /* ---- toasts (event bus → DOM; never over the canvas centre) ------------ */
 function toast(title, body, opts) {
@@ -1643,7 +1643,7 @@ function finalAction() {
   if (S.cond === 'mismatch' || S.cond === 'expired') return;
   if (S.variant === 'embedded') { runCmd('handoff'); return; }
   if (S.variant === 'consult') { if (S.sent) { toast('Preliminary already sent', 'An addendum goes through the LIS'); return; } openDialog('send'); return; }
-  if (S.reviewed) { toast('Already returned to the LIS', 'The case is Reviewed; reopen it from Beaker'); return; }
+  if (S.reviewed) { toast('Already returned to the LIS', 'The case is Reviewed; reopen it from the LIS'); return; }
   openDialog('signout');
 }
 function runCmd(cmd, src) {
@@ -1674,10 +1674,10 @@ function runCmd(cmd, src) {
     case 'signout': finalAction(); break;
     case 'consult': openDialog('consult'); break;
     case 'confirmConsult': closeDialog(); toast('Consult requested', 'Dr Example paged · shareCreated · Tier 0 link (no label image, no identifiers) · expires in 2 h · the reply lands in the LIS as an addendum'); break;
-    case 'confirmSignout': closeDialog(); S.reviewed = true; renderVariant(); renderChecklist(); toast('Returned to LIS', 'caseStatusChanged → Reviewed · viewed state per slide · 1 SR measurement · 1 ANN region · focus returned to Beaker'); announce('Case marked Reviewed. Focus returned to the LIS.'); break;
+    case 'confirmSignout': closeDialog(); S.reviewed = true; renderVariant(); renderChecklist(); toast('Returned to LIS', 'caseStatusChanged → Reviewed · viewed state per slide · 1 SR measurement · 1 ANN region · focus returned to the LIS'); announce('Case marked Reviewed. Focus returned to the LIS.'); break;
     case 'openUnviewed': closeDialog(); nextUnviewed(); gotoStep(2); break;
     case 'confirmSend': closeDialog(); S.sent = true; renderVariant(); toast('Preliminary sent', 'OR 4 · ORU / FHIR Observation (preliminary) · 06:12 of the 20-minute target · surgeon paged'); announce('Preliminary diagnosis sent to the OR.'); break;
-    case 'confirmDx': closeDialog(); S.dxWanted = true; S.adjust = false; S.overlay = false; applyAll(); scheduleSettle(); announce('Dx mode. Display attested, EDID, Barco MDPC-8127. QA passed 3 days ago.'); break;
+    case 'confirmDx': closeDialog(); S.dxWanted = true; S.adjust = false; S.overlay = false; applyAll(); scheduleSettle(); announce('Dx mode. Display attested, EDID, Example display DX-27. QA passed 3 days ago.'); break;
     case 'dx': toggleDx(); break;
     case 'handoff': toast('Hand-off sent', 'Companion window on the diagnostic display · launch token · BroadcastChannel / postMessage · no popup, no top navigation'); announce('Hand-off sent to the companion window.'); break;
     case 'nextUnviewed': nextUnviewed(); break;
@@ -1685,7 +1685,7 @@ function runCmd(cmd, src) {
     case 'prevSlide': setSlide((S.slide + 2) % 3); break;
     case 'acceptAi': case 'rejectAi': S.aiDecision = cmd === 'acceptAi' ? 'accepted' : 'rejected'; renderChecklist(); toast('AI result ' + S.aiDecision, 'aiResult' + (cmd === 'acceptAi' ? 'Accepted' : 'Rejected') + ' · Metastasis detector · unet-lnmet v1.3 · returns to the LIS as evidence'); break;
     case 'reportMismatch': toast('Reported to the laboratory', 'identityMismatch audit event · the case is flagged in the LIS'); break;
-    case 'returnLis': toast('Returning to LIS', 'Focus returned to Beaker · nothing was changed'); break;
+    case 'returnLis': toast('Returning to LIS', 'Focus returned to the LIS · nothing was changed'); break;
     case 'signin': S.cond = 'normal'; applyAll(); scheduleSettle(); toast('Signed in', 'Session renewed · the view is restored'); break;
     case 'guided': S.guided = !S.guided; renderFlow(); renderControls(); writeHash(); toast(S.guided ? 'Guided flow on' : 'Guided flow off', S.guided ? 'Step rail and one panel per step' : 'Plain tabs · all tools shown · every key unchanged'); break;
     case 'label': if (isDx()) toast('Label image fixed in Dx mode', 'FR-R9 · D13: the label image cannot be collapsed in Dx', { glyph: '!' }); else { S.label = !S.label; renderChrome(); } break;
@@ -1968,7 +1968,7 @@ document.addEventListener('keydown', (e) => {
   const ctrl = e.ctrlKey || e.metaKey;
   if (ctrl && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); openDialog('palette'); return; }
   if (ctrl && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); undo(); return; }
-  if (ctrl || e.altKey || e.key === 'Tab' || /^F\d+$/.test(e.key)) return;        /* Hyperdrive and browser keys stay with the host */
+  if (ctrl || e.altKey || e.key === 'Tab' || /^F\d+$/.test(e.key)) return;        /* EHR and browser keys stay with the host */
   if (tag === 'BUTTON' && (e.key === ' ' || e.key === 'Enter')) return;             /* native activation: Space on a list item flies to it */
   let k = e.key;
   if (k.length === 1 && /[a-z]/i.test(k)) k = (e.shiftKey ? 'shift+' : '') + k.toUpperCase();
@@ -1988,12 +1988,12 @@ function openDialog(name) {
   if (name === 'signout') {
     node.querySelector('#soWarn').hidden = SLIDES[2].opened;
     node.querySelector('#soAi').textContent = $('aiEvidence').textContent;
-    node.querySelector('#soMode').textContent = isDx() ? 'DX · Rendering Complete · Barco MDPC-8127 (EDID) · QA 3 days ago' + (S.adjust ? ' · adjustments logged' : '') : 'NAV · ' + (dxGate().reason || 'Nav mode by choice');
+    node.querySelector('#soMode').textContent = isDx() ? 'DX · Rendering Complete · Example display DX-27 (EDID) · QA 3 days ago' + (S.adjust ? ' · adjustments logged' : '') : 'NAV · ' + (dxGate().reason || 'Nav mode by choice');
   }
   if (name === 'send') { const v = $('prelimText').value.trim(); if (v) node.querySelector('#sdNote').textContent = v; node.querySelector('#sdViewed').textContent = SLIDES.filter((s) => s.opened).length + ' of 3'; node.querySelector('#sdTat').textContent = $('tatBig').textContent; }
   if (name === 'about') {
     node.querySelector('#aboutString').textContent = STRINGS[S.product];
-    node.querySelector('#aboutProduct').textContent = { 'clinical-ih': 'Stoipath Clinical-IH · UT Example Lab', dx: 'Stoipath Dx · cleared edition · UDI (01)00850000000000 (synthetic)', ruo: 'Stoipath Viewer · research use only' }[S.product];
+    node.querySelector('#aboutProduct').textContent = { 'clinical-ih': 'Stoipath Clinical-IH · Fictional Example Lab', dx: 'Stoipath Dx · cleared edition · UDI (01)00850000000000 (synthetic)', ruo: 'Stoipath Viewer · research use only' }[S.product];
   }
   if (name === 'steps') node.querySelector('#flowDialogList').innerHTML = flowHTML();
   if (name === 'palette') wirePalette(node);

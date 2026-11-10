@@ -2,11 +2,15 @@
 
 `wsi-viewer/design/` · 2026-11-01 · status: **ready for the owner's review** (see [`REVIEW-GUIDE.md`](REVIEW-GUIDE.md)).
 
+**All reviews named in this folder were done by AI agents (note added 2026-11-10, audit H1).** The three judges and the two critics were AI agents given role briefs (a pathologist-educator role, a UX and accessibility role, a front-end/engine engineering role); no human pathologist, educator or engineer judged or critiqued these designs. The only human review is the owner's, run with [`REVIEW-GUIDE.md`](REVIEW-GUIDE.md); as of 2026-11-10 it is pending and no record of it is in the repository.
+
+**These are design mock-ups, not products (2026-11-10, audit B11).** Every page under `screens/` carries a persistent banner "Design mock-up: no product or validation exists · synthetic data · not a clinical tool". No clinical, Dx or laboratory-validated Stoipath product exists, and no display has been attested. Real vendor and product names that the mocks used for the host EHR, the LIS, dictation software and the display were replaced with generic or fictional ones (`Fictional Example Lab`, `Example display DX-27`).
+
 This folder holds the design phase of the Stoipath whole-slide-imaging viewer: the UX research, the design principles and information architecture, the design system (tokens, base styles, living component sheet, two validators), nine concept wireframes (three angles × three screens), the judge panel's scores, and the three **final** screens synthesised from the winners. Everything is static HTML, CSS and a little vanilla JavaScript: no build step, no CDN, no fonts fetched from the network. Every page opens from `file://` and from any static host.
 
 The plan under [`../docs/plan/`](../docs/plan/README.md) is the source of truth. Where the design had to decide something the plan leaves open, or found two plan statements in conflict, the choice is tagged **Design note** (D1–D15 in the principles, DS-1–DS-14 in the design system, DN-F*/DF-*/D-F* in the three finals) and collected for the plan owner; nothing here re-decides what the plan decided.
 
-Content is synthetic throughout: CAMELYON16-style sentinel lymph node with a metastasis, accession `AP-26-04417`, slides `A1-1 H&E`, `A1-2 CK AE1/AE3 (IHC)`, `A2-1 H&E`, patient placeholder `DOE, JANE · 1958 · synthetic`, display `Barco MDPC-8127`. No real patient, accession or display serial appears anywhere; placeholders carry `data-synthetic`. Elements the engine or an integration would drive carry `data-live="<contract>"` and can be outlined with each page's **Live markers** switch.
+Content is synthetic throughout: CAMELYON16-style sentinel lymph node with a metastasis, accession `AP-26-04417`, slides `A1-1 H&E`, `A1-2 CK AE1/AE3 (IHC)`, `A2-1 H&E`, patient placeholder `DOE, JANE · 1958 · synthetic`, display `Example display DX-27`. No real patient, accession or display serial appears anywhere; placeholders carry `data-synthetic`. Elements the engine or an integration would drive carry `data-live="<contract>"` and can be outlined with each page's **Live markers** switch.
 
 ---
 
@@ -51,17 +55,17 @@ ux-conventions   P1–P10, six regions,  tokens.css, base.css,  3 angles ×   pa
 2. **Principles and IA** ([`principles-and-ia.md`](principles-and-ia.md), 2026-10-25) fixed ten testable principles (P1 *the slide is the interface* … P10 *the chrome is the accessible layer*), the four-build / two-mode model as the user sees it (RUO · Learn · Clinical-IH · Dx; Nav · Dx), the six shell regions, the entry points, the interaction model for mouse, trackpad, touch, pen and keyboard, the HUD and status microcopy (used verbatim by every mock), a 30-row state inventory, the responsive strategy per surface, the accessibility architecture and the telemetry hooks, plus the briefs the concepts had to satisfy.
 3. **Design system** ([`design-system/`](design-system/README.md), 2026-10-26, revised 2026-11-01): neutral dark-grey diagnostic theme with chroma 0 inside 32 px of the canvas, a light chrome theme for Learn, an eight-colour annotation palette re-derived from Okabe-Ito to pass pairwise ΔE00 ≥ 20 under deuteranopia and protanopia simulation and to stay legible on H&E through a halo rule, the app frame as a fixed grid, every component in both themes with states and ARIA notes, and two validators (`contrast-check.py`, `layout-check.mjs`).
 4. **Nine concepts** ([`screens/concepts/`](screens/concepts/)): for each of the three screens, three deliberately different angles on the same brief and content: **A Canvas-maximal** (chrome collapses to the edges, keyboard-summoned drawers, radial at the pointer), **B Workbench** (persistent, resizable, dockable panels around a large canvas, palette as the universal entry), **C Task-flow** (a step rail organises the chrome around the task sequence, pen and touch first).
-5. **Judging** ([`screens/judging.md`](screens/judging.md), [`screens/judging.json`](screens/judging.json), 2026-11-01): three judges (a practising pathologist/educator, a UX and accessibility specialist, a front-end/engine engineer) scored each concept 1–10 on six criteria, weighted 0.30 workflow fit · 0.20 clarity · 0.15 accessibility · 0.15 feasibility · 0.15 device fit · 0.05 distinctiveness. Each judge also wrote a verdict with conditions for the final.
+5. **Judging** ([`screens/judging.md`](screens/judging.md), [`screens/judging.json`](screens/judging.json), 2026-11-01): three judges, each an AI agent in a role (a pathologist-educator role, not a human pathologist; a UX and accessibility specialist role; a front-end/engine engineer role), scored each concept 1–10 on six criteria, weighted 0.30 workflow fit · 0.20 clarity · 0.15 accessibility · 0.15 feasibility · 0.15 device fit · 0.05 distinctiveness. Each judge also wrote a verdict with conditions for the final.
 6. **Finals** ([`screens/final/`](screens/final/)): each starts from the weighted winner and grafts the judges' named mechanisms from the other two; a collapsed *Design decisions* section at the foot of every final records what came from where, where the judges disagreed and how it was decided, the fixes applied, the engine-contract map, the measured canvas shares and the design notes to file.
-7. **Critique and revision** (2026-11-01): a pathologist critic and an a11y-ux critic reviewed the three finals; the shared design system was revised (changelog in `design-system/README.md` §10: top-bar collapse order, dialogs anchored over the dock instead of centred, HUD backdrop α 0.80, always-visible 44 px navigator pan pads, colour-dimmed hidden layer rows, 24/44 px target sizes, the settled `Sharp` label kept at 70 %, sheets ≤ 40 %) and each final carries a *Revision 2026-11-01* list.
+7. **Critique and revision** (2026-11-01): two AI agent critics, one in a pathologist role (not a human pathologist) and one in an a11y-ux role, reviewed the three finals; the shared design system was revised (changelog in `design-system/README.md` §10: top-bar collapse order, dialogs anchored over the dock instead of centred, HUD backdrop α 0.80, always-visible 44 px navigator pan pads, colour-dimmed hidden layer rows, 24/44 px target sizes, the settled `Sharp` label kept at 70 %, sheets ≤ 40 %) and each final carries a *Revision 2026-11-01* list.
 
 ### Judge ranking (from `screens/judging.json`)
 
-Weighted = 0.30 workflow + 0.20 clarity + 0.15 accessibility + 0.15 feasibility + 0.15 device fit + 0.05 distinctiveness; per-judge columns are each judge's own weighted total; criteria columns are means over the three judges. **Bold** = winner and base of the final.
+The judges are AI agents in the roles named above. Weighted = 0.30 workflow + 0.20 clarity + 0.15 accessibility + 0.15 feasibility + 0.15 device fit + 0.05 distinctiveness; per-judge columns are each judge's own weighted total; criteria columns are means over the three judges. **Bold** = winner and base of the final.
 
 **Clinical sign-out** (Stoipath Clinical-IH / Dx)
 
-| Concept | Angle | Weighted | Pathologist | UX/a11y | Engineering | Workflow | Clarity | Access. | Feas. | Device | Distinct. |
+| Concept | Angle | Weighted | Pathologist role (agent) | UX/a11y role (agent) | Engineering role (agent) | Workflow | Clarity | Access. | Feas. | Device | Distinct. |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | **clinical-signout-c** | Task-flow | **8.03** | 8.25 | 8.05 | 7.80 | 8.33 | 8.33 | 7.67 | 7.33 | 8.00 | 8.33 |
 | clinical-signout-b | Workbench | 7.32 | 7.55 | 7.35 | 7.05 | 7.67 | 7.33 | 7.67 | 6.67 | 6.67 | 8.00 |
@@ -71,7 +75,7 @@ Final = C's five-step flow (Open → Screen → Examine → Annotate → Sign-ou
 
 **Education module** (Stoipath Learn)
 
-| Concept | Angle | Weighted | Pathologist | UX/a11y | Engineering | Workflow | Clarity | Access. | Feas. | Device | Distinct. |
+| Concept | Angle | Weighted | Pathologist role (agent) | UX/a11y role (agent) | Engineering role (agent) | Workflow | Clarity | Access. | Feas. | Device | Distinct. |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | **education-module-c** | Task-flow | **8.03** | 8.35 | 7.90 | 7.85 | 8.33 | 8.00 | 8.00 | 7.00 | 8.33 | 8.67 |
 | education-module-b | Workbench | 6.98 | 6.45 | 7.30 | 7.20 | 6.67 | 6.67 | 7.33 | 8.00 | 7.00 | 6.00 |
@@ -81,13 +85,13 @@ Final = C's phase rail (Open → Screen → Examine → Decide → Complete) wit
 
 **Research annotation** (Stoipath Viewer, RUO)
 
-| Concept | Angle | Weighted | Pathologist | UX/a11y | Engineering | Workflow | Clarity | Access. | Feas. | Device | Distinct. |
+| Concept | Angle | Weighted | Pathologist role (agent) | UX/a11y role (agent) | Engineering role (agent) | Workflow | Clarity | Access. | Feas. | Device | Distinct. |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | **research-annotation-b** | Workbench | **7.73** | 7.65 | 7.65 | 7.90 | 8.00 | 8.00 | 7.00 | 8.00 | 7.67 | 6.67 |
 | research-annotation-c | Task-flow | 7.60 | 7.55 | 7.85 | 7.40 | 7.33 | 8.00 | 8.00 | 7.00 | 7.67 | 8.00 |
 | research-annotation-a | Canvas-maximal | 6.63 | 6.95 | 6.55 | 6.40 | 7.00 | 6.33 | 5.67 | 7.00 | 6.33 | 8.33 |
 
-The one split decision: the pathologist and the UX/a11y judge each narrowly preferred C, the engineer preferred B as the thinnest shell, and the weights chose B. Final = B's two-dock workbench (Library: Cohort/Slides/Layers; Context: Inspector/Annotations/Model/Channels/Export; always-visible search field) + C's cohort progress chip at every width, coverage bar, candidate queue, in-dock keymap/About, in-flow peeking sheet, pointer-anchored wheel and degraded-state inventory + A's focus mode (`\`), HUD tool line, counted legend and tool wheel.
+The one split decision: the pathologist-role and UX/a11y-role judges (AI agents) each narrowly preferred C, the engineering-role judge preferred B as the thinnest shell, and the weights chose B. Final = B's two-dock workbench (Library: Cohort/Slides/Layers; Context: Inspector/Annotations/Model/Channels/Export; always-visible search field) + C's cohort progress chip at every width, coverage bar, candidate queue, in-dock keymap/About, in-flow peeking sheet, pointer-anchored wheel and degraded-state inventory + A's focus mode (`\`), HUD tool line, counted legend and tool wheel.
 
 ---
 

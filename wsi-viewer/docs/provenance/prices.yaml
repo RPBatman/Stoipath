@@ -3,25 +3,50 @@
 # These are Anthropic first-party API list prices. The owner ran this project on a Claude subscription plan, not on
 # metered API billing, so cost computed from these prices is the comparable API cost of the same work, not money spent.
 #
-# Source of every price: the claude-api skill bundled with Claude Code 2.1.316 (read 2026-11-01 via the Skill tool):
-#   - SKILL.md, "Current Models (cached: 2026-10-06)" table: input and output prices per model;
-#   - shared/model-migration.md, "Migrating to Claude Fable 5.1" (Pricing bullet), "Migrating to Claude Opus 5.5"
-#     (Pricing bullet), "Migrating to Claude Haiku 5.5": cache-write and cache-read prices per model;
-#   - shared/prompt-caching.md, "Economics": cache writes cost 1.25x input for the 5-minute TTL and 2x for the 1-hour TTL.
-# The skill's table is a cache dated 2026-10-06; recheck against the live pricing page before quoting a price.
-# A model missing here, or with a null field, is reported by the roll-up as "unpriced" and is never estimated.
+# Source of every price: the claude-api skill bundled with Claude Code 2.1.322 (read 2026-11-10 via the Skill tool; its model
+# table is marked "cached: 2026-11-03"). The earlier 2026-11-01 table (read from skill version 2.1.316)
+# had three rows (Fable 5.1, Opus 5.5, Haiku 5.5); their figures are unchanged here. This table adds the two models that
+# appeared in the transcripts after it and had no row (claude-fable-5-2, claude-sonnet-5-5). Per model:
+#   - SKILL.md, "Current Models" table: input and output prices;
+#   - shared/model-migration.md, the "Migrating to ..." section of each model, Pricing bullet: cache-write and cache-read
+#     prices (Fable 5.1, Fable 5.2, Opus 5.5, Sonnet 5.5, Haiku 5.5);
+#   - shared/prompt-caching.md, "Economics": cache writes cost 1.25x input for the 5-minute TTL and 2x for the 1-hour TTL,
+#     cache reads 0.1x input (0.025x on the Fable models, 0.05x on Opus 5.5 and Sonnet 5.5);
+#   - shared/managed-agents-core.md, "What counts toward list cost": web searches at $10 per 1,000.
+# An independent copy of the vendor pricing page, saved by the project audit on 2026-11-10, shows the same figures for these rows.
+# The skill's table is a cache: recheck against the live pricing page before quoting a price.
+#
+# ONE table is applied to every run, whatever its run date; each run's cost_basis records this table's date and sha256, and
+# price_table.rows lists the model rows used. The plan (docs/plan/11-autonomous-execution-and-dissemination.md) asks for prices
+# "at the run date"; no price change within the period is known, but none was checked run by run. If a vendor price changes,
+# add a dated table and select it per run in rollup.py before re-running.
+#
+# A model missing here, or with a null field, makes rollup.py stop with status 2 ("unpriced"); it is never estimated.
 #
 # Transcript usage fields -> price fields:
 #   input_tokens -> input; output_tokens -> output (includes thinking tokens);
 #   cache_creation.ephemeral_5m_input_tokens -> cache_write_5m; cache_creation.ephemeral_1h_input_tokens -> cache_write_1h;
 #   cache_read_input_tokens -> cache_read.
 
-as_of: "2026-11-01"
+as_of: "2026-11-10"
 currency: "USD"
 unit: "per million tokens"
 basis: "Anthropic first-party API list price, standard speed, no batch discount"
 
+# Fees that are not token prices. Web-search requests made by the harness's search tool are not in any transcript message; the
+# roll-up prices the request count of the harness record separately and keeps it OUT of the ledger total.
+server_tools:
+  web_search_usd_per_1000: 10.00
+  web_search_source: "claude-api skill: shared/managed-agents-core.md, What counts toward list cost: web searches at $10 per 1,000"
+
 models:
+  claude-fable-5-2:
+    input: 8.00
+    output: 40.00
+    cache_write_5m: 10.00
+    cache_write_1h: 16.00
+    cache_read: 0.20
+    source: "claude-api skill: SKILL.md model table (8.00 / 40.00); shared/model-migration.md, Migrating to Claude Fable 5.2, Pricing: 5-minute cache writes 10, 1-hour cache writes 16, cache reads 0.20"
   claude-fable-5-1:
     input: 10.00
     output: 50.00
@@ -36,10 +61,17 @@ models:
     cache_write_1h: 8.00
     cache_read: 0.20
     source: "claude-api skill: SKILL.md model table (4.00 / 20.00); shared/model-migration.md, Migrating to Claude Opus 5.5, Pricing: 5-minute cache writes 5, 1-hour cache writes 8, cache reads 0.20"
+  claude-sonnet-5-5:
+    input: 2.00
+    output: 10.00
+    cache_write_5m: 2.50
+    cache_write_1h: 4.00
+    cache_read: 0.10
+    source: "claude-api skill: SKILL.md model table (2.00 / 10.00); shared/model-migration.md, Migrating to Claude Sonnet 5.5, Pricing: 5-minute cache writes 2.50, 1-hour cache writes 4, cache reads 0.10"
   claude-haiku-5-5:
     input: 0.10
     output: 0.50
     cache_write_5m: 0.125
     cache_write_1h: 0.20
     cache_read: 0.01
-    source: "claude-api skill: SKILL.md model table (0.10 / 0.50); shared/model-migration.md, Migrating to Claude Haiku 5.5: prompts of 100K tokens or fewer; cache reads 0.1x input, 5-minute writes 1.25x, 1-hour writes 2x (prompts over 100K are billed 0.50 / 2.50). Not used by any transcript message; listed because Claude Code's own cost-state record shows Haiku 5.5 calls made inside tools"
+    source: "claude-api skill: SKILL.md model table (0.10 / 0.50); shared/model-migration.md, Migrating to Claude Haiku 5.5: prompts of 100K tokens or fewer; cache reads 0.1x input, 5-minute writes 1.25x, 1-hour writes 2x (prompts over 100K are billed 0.50 / 2.50). Not used by any transcript message; listed because Claude Code's own cost-state record shows small-model calls made inside the search and fetch tools"

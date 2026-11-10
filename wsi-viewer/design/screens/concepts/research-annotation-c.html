@@ -437,8 +437,8 @@ body.show-live .navigator[data-live], body.show-live .panelabel[data-live] { pos
   .hud--bl .hud__position { display: none; }
 }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <!-- PART 1 END (head + CSS). Body follows. -->
 <a class="skip-link" href="#canvasArea">Skip to slide</a>
 
@@ -1231,7 +1231,7 @@ body.show-live .navigator[data-live], body.show-live .panelabel[data-live] { pos
           <dt>Engine</dt><dd>stoi-core 0.9.2 · WebGL2 · Tier 1 (W+)</dd>
           <dt>Surfaces</dt><dd>no sign-out · no LIS write-back · no Dx mode</dd>
           <dt>Telemetry</dt><dd><div class="segmented" data-live="telemetry:switch"><button class="segmented__item" aria-pressed="true">On</button><button class="segmented__item">Off</button><button class="segmented__item">Air-gap</button></div></dd>
-          <dt>Licence</dt><dd>Apache-2.0</dd>
+          <dt>Licence</dt><dd>Apache-2.0 (proposed; pending UT OTC approval)</dd>
         </dl>
         <p>Telemetry carries no PHI, no free text and no file names; command telemetry records command names, never keys. The full product label is also in English in every locale.</p>
         <div class="pad"><label class="toggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle__track"></span><span class="toggle__text">CVD-friendly stain remap<span class="toggle__hint">Per-user shader LUT (Dalton 2026); applies to tissue, not to the palette</span></span></label></div>
@@ -1585,7 +1585,7 @@ v.state</pre></div>
     if (state.demo === 'dx-refused') return state.product === 'ruo'
       ? 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.'
       : 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.';
-    if (state.product === 'dx' && state.demo === 'normal') return 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+    if (state.product === 'dx' && state.demo === 'normal') return 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago';
     if (state.slide === 'if') return '8-bit preview tier while moving · 16-bit at settle · 6 of 8 channels';
     return '1,240,000 features — tiling locally so zoom stays smooth';
   };
@@ -2004,7 +2004,7 @@ v.state</pre></div>
     { h: 'Navigation', rows: [['← ↑ ↓ →  W A S D', 'Pan 10 %'], ['⇧ arrows', 'Pan one viewport'], ['+  −', 'Zoom 2× in / out'], ['⇧ +  ⇧ −', 'Zoom 1.2× fine'], ['0  Home', 'Fit slide'], ['1 … 6', '1.25× · 2.5× · 5× · 10× · 20× · 40×'], ['Z', 'Last two magnifications'], ['R  ⇧ R', 'Rotate 90°'], [']  [', 'Next / previous slide'], ['O', 'Navigator'], ['G', 'HPF grid'], ['B  ⇧ B', 'Bookmark · gallery'], ['⇧ S', 'Snapshot'], ['J', 'Brightness / contrast / gamma']] },
     { h: 'Overlays and compare', rows: [['H', 'Hide / show overlays'], ['⇧ H', 'AI heatmap on / off'], [',  .', 'Overlay opacity'], ['/', 'Curtain'], ['C', 'Side by side'], ['⇧ A  ⇧ X', 'Accept / reject AI result'], ['⇧ Q', 'Class legend']] },
     { h: 'Annotation', rows: [['V', 'Select / pan'], ['P', 'Polygon · Enter closes · ⌫ removes last'], ['F', 'Brush (pen pressure)'], ['Y', 'Polyline'], ['X', 'Rectangle / ROI'], ['E', 'Ellipse'], ['T', 'Point'], ['M  ⇧ M', 'Measure length · area'], ['⇧ T', 'Count'], ['Q then 1–8', 'Class picker'], ['Space (held)', 'Temporary pan while drawing'], ['Ctrl Z  Ctrl Y', 'Undo · redo'], ['Ctrl C  Ctrl V', 'Copy · paste'], ['Tab  Space', 'Through the list · fly to item'], ['⌫', 'Delete selection']] },
-    { h: 'Not in this build', rows: [['⇧ Enter', 'Request sign-out (Clinical-IH / Dx only)', true], ['⇧ D', 'Dx mode (Dx-capable builds only)', true], ['F1 … F12, Alt+…', 'Never bound (Hyperdrive, browsers)', true]] }
+    { h: 'Not in this build', rows: [['⇧ Enter', 'Request sign-out (Clinical-IH / Dx only)', true], ['⇧ D', 'Dx mode (Dx-capable builds only)', true], ['F1 … F12, Alt+…', 'Never bound (EHR, browsers)', true]] }
   ];
   function renderKeymap() {
     $('#keymapGroups').innerHTML = KEYMAP.map(g => `<div class="keymap__group"><h4>${g.h}</h4>${g.rows.map(r => `<div class="keymap__row${r[2] ? ' is-reserved' : ''}"><span class="keymap__keys">${r[0].split('  ').map(k => `<kbd class="key${r[2] ? ' key--reserved' : ''}">${k}</kbd>`).join('')}</span><span>${r[1]}</span></div>`).join('')}</div>`).join('');
