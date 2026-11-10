@@ -365,8 +365,8 @@ svg.canvas [data-ch="sma"]   { fill: none; stroke: var(--col-sma); opacity: var(
 @media (min-width: 1024px) { .stage .app.cm .topbar__label.badge-string { display: inline; } }
 /* Short viewports: keep HUD position line hidden (base.css); nothing else collapses */
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 
 <!-- ====== Inline SVG defs: icons (design-system set), filters, synthetic scenes. No network. ====== -->
@@ -978,7 +978,7 @@ svg.canvas [data-ch="sma"]   { fill: none; stroke: var(--col-sma); opacity: var(
             </div>
           </div>
         </div>
-        <div class="dialog__footer"><span class="text-xs text-secondary" style="margin-right:auto">Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for the editing set and Ctrl+K; no Alt, no F-keys (Hyperdrive rule). All bindings rebindable.</span><button class="btn btn--accent" data-close>Done</button></div>
+        <div class="dialog__footer"><span class="text-xs text-secondary" style="margin-right:auto">Inside the canvas only unmodified keys and Shift-combinations are bound; Ctrl only for the editing set and Ctrl+K; no Alt, no F-keys (EHR rule). All bindings rebindable.</span><button class="btn btn--accent" data-close>Done</button></div>
       </div>
     </div>
 
@@ -1095,7 +1095,7 @@ v</pre></div>
   <h3>Trade-offs and the discoverability risk, honestly</h3>
   <ul>
     <li><b>Discoverability is the price.</b> A first-time user sees a slide and a top bar. Mitigations shown here: the HUD hint line (shown until the first command, telemetry <code>commandInvoked</code> decides when it has done its job), the <kbd class="key">?</kbd> sheet, <kbd class="key">Ctrl</kbd>+<kbd class="key">K</kbd>, the ⋯ menu listing every panel with its key, the "Pin chrome" button in the top bar and inside every drawer, and the touch bottom bar which always shows five labelled targets. Whether that is enough is exactly what a formative study with 6–8 research users should test before this concept is chosen.</li>
-    <li><b>Five new bindings</b> (<kbd class="key">K</kbd>, <kbd class="key">⇧K</kbd>, <kbd class="key">U</kbd>, <kbd class="key">⇧E</kbd>, <kbd class="key">⇧G</kbd>, <kbd class="key">⇧V</kbd>, <kbd class="key">`</kbd>) are proposed as Design note D-A1 against the command registry; all are unmodified or Shift keys, so the Hyperdrive rule holds, and all are rebindable. <kbd class="key">I</kbd> is reused from the clinical identity panel because the question it answers ("what am I looking at") is the same.</li>
+    <li><b>Five new bindings</b> (<kbd class="key">K</kbd>, <kbd class="key">⇧K</kbd>, <kbd class="key">U</kbd>, <kbd class="key">⇧E</kbd>, <kbd class="key">⇧G</kbd>, <kbd class="key">⇧V</kbd>, <kbd class="key">`</kbd>) are proposed as Design note D-A1 against the command registry; all are unmodified or Shift keys, so the EHR rule holds, and all are rebindable. <kbd class="key">I</kbd> is reused from the clinical identity panel because the question it answers ("what am I looking at") is the same.</li>
     <li><b>The drawer covers the right 360 px of tissue</b> while open. The alternative (push the canvas) would re-lay out the canvas, which P2 forbids during a gesture and which costs a frame between gestures; the concept accepts the occlusion because the drawer is transient. Pinning restores the push layout for people who prefer it.</li>
     <li><b>Hover is not used for anything</b> except pan buttons in the navigator; nothing auto-fades, nothing slides. That is a deliberate loss of "polish" in exchange for P2 and for pen/touch parity.</li>
   </ul>
@@ -1302,7 +1302,7 @@ const STR = {
   ruo: 'For Research Use Only. Not for use in diagnostic procedures.',
   dxRefusedRuo: 'This is Stoipath Viewer, for research use only. Diagnostic mode is not part of this build.',
   dxRefusedAttest: 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.',
-  dxEntered: 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago',
+  dxEntered: 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago',
   tiler: '1,240,000 features — tiling locally so zoom stays smooth',
   tiles: '3 tiles could not be loaded — retrying',
   slow: 'Server slow (p95 1.2 s) — prefetch paused',

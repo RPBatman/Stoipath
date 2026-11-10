@@ -49,7 +49,7 @@ body { overflow-x: hidden; }
 .review-foot .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
 .review-head .key, .review-foot .key { border-color: #7a66a0; color: #e7dcf5; background: #30244a; }
 
-/* ---- synthetic host (Hyperdrive) frame for the iframe variant */
+/* ---- synthetic host (EHR) frame for the iframe variant */
 .host { position: relative; }
 .host__bar { display: none; height: 44px; align-items: center; gap: var(--space-5); padding: 0 var(--space-6); background: #e9ecf1; color: #1f2a3a; font-size: var(--text-sm); border-bottom: 1px solid #c5ccd6; }
 .host__bar .tab { color: #1f2a3a; font-weight: 600; border-bottom: 2px solid #1f2a3a; }
@@ -251,8 +251,8 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
 .hud__echo { transition: opacity var(--motion-toast) var(--motion-ease) 900ms; }
 .hud__echo.is-fading { opacity: 0; }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 
 <!-- ============ shared inline SVG: icons and the synthetic slide scene (µm space) ============ -->
@@ -382,7 +382,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
 </header>
 
 <div class="host" id="host">
-  <div class="host__bar" aria-hidden="true"><span>Hyperdrive (synthetic host)</span><span class="tab">AP-26-04417 · Pathology</span><span>Chart</span><span>Results</span><span class="hostnote">iframe below · no popups · no top navigation · postMessage JSON-RPC</span></div>
+  <div class="host__bar" aria-hidden="true"><span>EHR host (synthetic)</span><span class="tab">AP-26-04417 · Pathology</span><span>Chart</span><span>Results</span><span class="hostnote">iframe below · no popups · no top navigation · postMessage JSON-RPC</span></div>
 
   <div class="app cm" id="app" data-build="clinical-ih">
     <!-- A. top bar: product, label string, identity, mode. Fixed; outside every dismissible layer (P4, P5). -->
@@ -513,7 +513,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
     <!-- E. status strip: the live region's visual twin -->
     <footer class="strip region" aria-label="Status" id="strip">
       <button class="indicator indicator--complete" id="indicator" data-live="events:renderingcomplete" aria-label="Rendering Complete. Open the quality sheet"><span class="indicator__glyph"></span><span class="indicator__label" id="indicatorLabel">Rendering Complete</span><span class="indicator__reason" id="indicatorReason"></span></button>
-      <span class="strip__notice" id="notice" data-live="events">Dx mode · display attested (EDID · <span data-synthetic>Barco MDPC-8127</span>) · QA passed 3 days ago</span>
+      <span class="strip__notice" id="notice" data-live="events">Dx mode · display attested (EDID · <span data-synthetic>Example display DX-27</span>) · QA passed 3 days ago</span>
       <div class="strip__group strip__group--end" id="stripEnd">
         <button class="chip chip--solid" id="netchip" data-live="telemetry:network" style="display:none"></button>
         <button class="chip chip--tier" id="tierchip" data-live="telemetry:tier" style="display:none"></button>
@@ -532,7 +532,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
 <footer class="review-foot" aria-label="Demo controls (review only)">
   <span class="lbl">Demo</span>
   <label>Product <select id="selProduct"><option value="clinical-ih">Clinical-IH</option><option value="dx">Dx (cleared)</option><option value="ruo">Viewer (RUO) → launch refused</option></select></label>
-  <label>Variant <select id="selVariant"><option value="signout">Sign-out · companion window · Tier 1</option><option value="consult-laptop">Consult · laptop · Tier 1</option><option value="consult-ipad">Consult · iPad Safari · Tier 2 · 60 Hz</option><option value="embedded">EHR iframe (Hyperdrive)</option></select></label>
+  <label>Variant <select id="selVariant"><option value="signout">Sign-out · companion window · Tier 1</option><option value="consult-laptop">Consult · laptop · Tier 1</option><option value="consult-ipad">Consult · iPad Safari · Tier 2 · 60 Hz</option><option value="embedded">EHR iframe</option></select></label>
   <label>Dx gate <select id="selGate"><option value="ok">attested (DX after Shift+D)</option><option value="noattest">no attestation</option><option value="qastale">QA stale</option><option value="selfcheck">self-check failed</option></select></label>
   <label>Network <select id="selNet"><option value="lan">LAN</option><option value="4g">cold 4G (slow link)</option><option value="offline">offline (cached)</option><option value="slow">translator slow</option></select></label>
   <label><input type="checkbox" id="chkTiles"> 3 tile errors</label>
@@ -565,7 +565,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
     <li><b>Discoverability is the risk and the summon tabs are the mitigation.</b> A first-week user has to learn that panels exist behind five tiny tabs and a right-click. The tabs, the command echo and the palette are the three teaching devices; a formative study on the pilot lab's residents should measure time-to-first-panel against the baseline frame before this concept is chosen.</li>
     <li><b>The cluster is wider than the §7 navigator</b> (320 px desktop, 300 px laptop, 360 px 4K, 200 px tablet vs 240/320/180) because it also carries the tray and the tabs; net chrome is still a third of the baseline's rail + dock.</li>
     <li><b>A drawer covers the right third of the canvas while open</b> and the annotation list, layer rows and bookmarks share one slot, so comparing two panels needs two keystrokes rather than a glance. The baseline's persistent dock wins when a pathologist reads with the layer panel permanently open (AI-assisted screening).</li>
-    <li><b>Keyboard-first favours the companion-window sign-out.</b> Inside the Hyperdrive iframe the controller binds no keys at all (principles §4.5 rule 5), so the embedded variant falls back to tray chips and a hand-off button; the concept's strengths do not apply there by design.</li>
+    <li><b>Keyboard-first favours the companion-window sign-out.</b> Inside the EHR iframe the controller binds no keys at all (principles §4.5 rule 5), so the embedded variant falls back to tray chips and a hand-off button; the concept's strengths do not apply there by design.</li>
     <li><b>Right-click as a tool entry conflicts with nothing in the plan</b>, but some pathologists rotate with a held right button in other viewers; the radial opens on release without drag, and middle-drag rotation stays as the plan has it.</li>
   </ul>
 
@@ -615,7 +615,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
       <tr><td>Launch-refused plate (RUO build)</td><td>Build-flag matrix FR-R0/FR-R3; <code>product</code> mismatch</td><td><code>launch:product</code></td></tr>
     </tbody>
   </table>
-  <p class="note text-secondary">All case, patient, display and vendor identifiers on this page are synthetic (DOE, JANE · AP-26-04417 · "Barco MDPC-8127" is the plan's named display class, not a real serial). The canvas is an SVG stand-in for tissue; in the product it is the engine's surface and every overlay drawn here in SVG is a GPU layer.</p>
+  <p class="note text-secondary">All case, patient, display and vendor identifiers on this page are synthetic (DOE, JANE · AP-26-04417 · "Example display DX-27" is the plan's named display class, not a real serial). The canvas is an SVG stand-in for tissue; in the product it is the engine's surface and every overlay drawn here in SVG is a GPU layer.</p>
 </details>
 
 <div class="live-region" aria-live="polite" id="lr-polite">Rendering Complete. 20 times. A1-1.</div>
@@ -715,7 +715,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
   cmd('space', 'Temporary pan while a drawing tool is active · fly to focused item', ['Space'], 'Annotate', '', null, { keyTest: () => false });
   cmd('commit', 'Commit · delete selected', ['↵', '⌫'], 'Annotate', '', null, { keyTest: () => false });
   cmd('undo', 'Undo / redo', ['Ctrl', 'Z', 'Y'], 'Annotate', '', null, { keyTest: (e) => (e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'y') });
-  cmd('reserved', 'Reserved at this site: Dragon Medical One push-to-talk', ['Num 0–9'], 'Annotate', '', null, { keyTest: () => false, reserved: true });
+  cmd('reserved', 'Reserved at this site: dictation push-to-talk', ['Num 0–9'], 'Annotate', '', null, { keyTest: () => false, reserved: true });
   const byId = (id) => C.find((c) => c.id === id);
 
   /* ---------------- helpers ---------------- */
@@ -800,7 +800,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
       return head('Case · <span class="mono" data-synthetic>AP-26-04417</span>', 'I') + `<div class="panel__body stack" data-live="launch">
         <dl class="idblock"><dt>Patient</dt><dd data-synthetic>DOE, JANE · b. 1958 · <span class="syn text-secondary">synthetic</span></dd><dt>Accession</dt><dd class="mono" data-synthetic>AP-26-04417</dd><dt>Specimen</dt><dd>Sentinel lymph node, left axilla</dd><dt>Parts</dt><dd>A · level I (blocks A1, A2) · B · level II (B1, scanning) · C · non-sentinel (C1)</dd><dt>Worklist</dt><dd><span class="chip chip--worklist" data-live="events:caseStatusChanged">${d.consult ? 'Preliminary pending' : 'In review'}</span> <span class="note">passed by the LIS · not editable here</span></dd><dt>Purpose</dt><dd>${d.consult ? 'Consultation · preliminary only' : 'Sign-out'}</dd></dl>
         ${label}
-        <dl class="idblock"><dt>Display</dt><dd data-live="dx:displayqa">${d.dx ? '<span data-synthetic>Barco MDPC-8127</span> · EDID · QA passed 3 days ago · next due in 27 days' : d.gate === 'qastale' ? '<span data-synthetic>Barco MDPC-8127</span> · EDID · QA overdue (last pass 34 days ago)' : d.tier2 ? 'iPad Safari · Tier 2 · 60 Hz · cannot be attested' : d.embedded ? 'Embedded window · cannot be attested' : S.variant === 'consult-laptop' ? 'Managed browser · pitch from dx_profile.json (mdm-profile) · Dx not offered for a consult purpose' : 'Not attested · pitch unknown'}</dd><dt>Hanging</dt><dd>Lab default · opened fit-to-slide · H&amp;E before IHC</dd><dt>Dictation</dt><dd data-live="commands:mic">Mic: dictation (Dragon Medical One)</dd><dt>Audit</dt><dd class="note">This session records where you looked, for the laboratory's quality record.</dd></dl>
+        <dl class="idblock"><dt>Display</dt><dd data-live="dx:displayqa">${d.dx ? '<span data-synthetic>Example display DX-27</span> · EDID · QA passed 3 days ago · next due in 27 days' : d.gate === 'qastale' ? '<span data-synthetic>Example display DX-27</span> · EDID · QA overdue (last pass 34 days ago)' : d.tier2 ? 'iPad Safari · Tier 2 · 60 Hz · cannot be attested' : d.embedded ? 'Embedded window · cannot be attested' : S.variant === 'consult-laptop' ? 'Managed browser · pitch from dx_profile.json (mdm-profile) · Dx not offered for a consult purpose' : 'Not attested · pitch unknown'}</dd><dt>Hanging</dt><dd>Lab default · opened fit-to-slide · H&amp;E before IHC</dd><dt>Dictation</dt><dd data-live="commands:mic">Mic: dictation (dictation software)</dd><dt>Audit</dt><dd class="note">This session records where you looked, for the laboratory's quality record.</dd></dl>
       </div><div class="panel__footer">${actions}</div>`;
     }
     if (p === 'slides') {
@@ -858,20 +858,20 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
   function dialogHTML(d) {
     if (d === 'signout') return `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-t" data-live="commands:signoutRequested">
       <div class="dialog__header"><h4 class="dialog__title" id="dlg-t">Request sign-out · <span class="mono" data-synthetic>AP-26-04417</span></h4><button class="btn btn--icon btn--ghost" data-cmd="escape" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
-      <div class="dialog__body"><p class="text-sm text-secondary">This returns to the LIS. Dictation and sign-out happen in Beaker; the viewer hands back viewing evidence.</p>
+      <div class="dialog__body"><p class="text-sm text-secondary">This returns to the LIS. Dictation and sign-out happen in the LIS; the viewer hands back viewing evidence.</p>
         <dl class="provenance"><dt>Status</dt><dd>In review → Reviewed</dd><dt>Slides viewed</dt><dd>3 of 3 · coverage 78 % / 31 % / 64 %</dd><dt>Measurements</dt><dd>1 · metastatic focus 2.3 mm (SR TID 1500)</dd><dt>Regions</dt><dd>1 polygon · Tumor · 2.31 mm² (ANN)</dd><dt>AI results</dt><dd>${S.overlay ? '1 accepted (unet-lnmet 1.3, research) · 0 rejected' : '0 shown · overlay off (Dx default)'}</dd><dt>Rendering</dt><dd>${derived().dx ? 'Dx mode · Rendering Complete on every interpreted frame' : 'Nav mode · not a reference rendering'}</dd></dl>
         <div class="alert alert--info"><span class="alert__glyph">i</span><div>Measurements and regions are sent as Observations linked to an ImagingSelection. Nothing is signed out here.</div></div></div>
       <div class="dialog__footer"><button class="btn btn--ghost" data-cmd="escape">Cancel <kbd class="key">Esc</kbd></button><button class="btn btn--secondary" data-cmd="escape">Stay in viewer</button><button class="btn btn--accent" data-cmd="return-lis">Return to LIS <kbd class="key">↵</kbd></button></div></div>`;
     if (d === 'dxenter') return `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-dx" style="width:min(420px,calc(100vw - 32px))" data-live="dx:attestation">
       <div class="dialog__header"><h4 class="dialog__title" id="dlg-dx">Enter Dx mode?</h4></div>
-      <div class="dialog__body"><dl class="provenance"><dt>Display</dt><dd data-synthetic>Barco MDPC-8127 · EDID</dd><dt>Display QA</dt><dd>Passed 3 days ago</dd><dt>Self-check</dt><dd>build_hash registered · pathway_hash match</dd><dt>Tier</dt><dd>Tier 1 · native shell</dd><dt>Adjustments</dt><dd>Will reset to default (logged)</dd><dt>Overlays</dt><dd>Off by default; non-validated layers carry the marker</dd></dl></div>
+      <div class="dialog__body"><dl class="provenance"><dt>Display</dt><dd data-synthetic>Example display DX-27 · EDID</dd><dt>Display QA</dt><dd>Passed 3 days ago</dd><dt>Self-check</dt><dd>build_hash registered · pathway_hash match</dd><dt>Tier</dt><dd>Tier 1 · native shell</dd><dt>Adjustments</dt><dd>Will reset to default (logged)</dd><dt>Overlays</dt><dd>Off by default; non-validated layers carry the marker</dd></dl></div>
       <div class="dialog__footer"><button class="btn btn--ghost" data-cmd="escape">Cancel</button><button class="btn btn--accent" data-cmd="dx-confirm">Enter Dx mode <kbd class="key">⇧D</kbd></button></div></div>`;
     if (d === 'keymap') {
       const groups = ['Navigate', 'View & sign-out', 'Annotate'];
       return `<div class="dialog dialog--wide" role="dialog" aria-modal="true" aria-labelledby="km-t" style="width:min(1040px,calc(100vw - 32px))" data-live="commands:registry">
         <div class="dialog__header"><h4 class="dialog__title" id="km-t">Keyboard shortcuts</h4><div class="keymap__preset"><span class="text-xs text-secondary">Preset</span><div class="segmented"><button class="segmented__item" aria-checked="true">Default</button><button class="segmented__item">Left-hand</button><button class="segmented__item">Right-hand</button></div><span class="text-xs text-secondary">Reserved here: numeric keypad (dictation push-to-talk)</span></div><button class="btn btn--icon btn--ghost" data-cmd="escape" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
         <div class="dialog__body"><div class="keymap">${groups.map((g) => `<div class="keymap__group"><h4>${g}</h4>${C.filter((c) => c.group === g && !c.hideInMap).map((c) => `<div class="keymap__row${c.reserved ? ' is-reserved' : ''}${S.echo === c.id ? ' is-live-key' : ''}"><span class="keymap__keys">${KEYS(c.mapKeys || c.keys)}</span><span>${c.mapLabel || c.label}</span></div>`).join('')}</div>`).join('')}
-        <div class="keymap__group"><h4>Rules in this build</h4><p class="text-sm text-secondary">Unmodified and Shift keys only inside the canvas; no F-keys, no Alt, no Ctrl except Ctrl+Z/Y/C/V/A and Ctrl+K (Hyperdrive rule). Shortcuts work whenever the viewer window has focus; the focus ring shows where keys land. <kbd class="key">Tab</kbd> always moves focus. The Hyperdrive controller iframe binds no keys at all.</p><p class="text-sm text-secondary" style="margin-top:8px">Pointer: wheel zooms at the cursor (1.2× per notch) · drag pans · right-click opens the radial tool · double-click steps 2× · single click never changes the camera.</p></div></div></div></div>`;
+        <div class="keymap__group"><h4>Rules in this build</h4><p class="text-sm text-secondary">Unmodified and Shift keys only inside the canvas; no F-keys, no Alt, no Ctrl except Ctrl+Z/Y/C/V/A and Ctrl+K (EHR rule). Shortcuts work whenever the viewer window has focus; the focus ring shows where keys land. <kbd class="key">Tab</kbd> always moves focus. The EHR controller iframe binds no keys at all.</p><p class="text-sm text-secondary" style="margin-top:8px">Pointer: wheel zooms at the cursor (1.2× per notch) · drag pans · right-click opens the radial tool · double-click steps 2× · single click never changes the camera.</p></div></div></div></div>`;
     }
     return '';
   }
@@ -988,8 +988,8 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
     else if (S.tileErr) n = '3 tiles could not be loaded — retrying';
     else if (S.net === 'offline') n = 'Offline — showing cached tiles only';
     else if (d.dx && S.adjusted) n = 'Brightness/contrast adjusted — not the reference rendering. Reset (Shift+J)';
-    else if (d.dx) n = 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
-    else if (d.gateOk) n = 'Nav mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago · Dx mode available: Shift+D';
+    else if (d.dx) n = 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago';
+    else if (d.gateOk) n = 'Nav mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago · Dx mode available: Shift+D';
     else if (d.gate === 'noattest') n = 'Dx mode unavailable: this display cannot be attested. Viewing in Nav mode.';
     else if (d.gate === 'qastale') n = 'Dx mode unavailable: display QA overdue (last pass 34 days ago). Ask your display administrator.';
     else if (d.gate === 'selfcheck') n = 'Dx mode unavailable: deployment check failed (unregistered build hash). Nav mode only.';
@@ -1045,8 +1045,8 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
     if (id === 'compare-toggle') { S.compare = !S.compare; echo(S.compare ? 'compare-open' : 'compare-close'); render(); return; }
     if (id === 'heat-on') { S.heat = true; S.overlay = true; echo('overlay-heatmap'); render(); return; }
     if (id === 'heat-off') { S.heat = false; echo('overlay-outline'); render(); return; }
-    if (id === 'dx-confirm') { S.dialog = null; S.dxOn = true; S.adjusted = false; S.overlay = false; render(); announce('Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago'); echo('dx-enter'); return; }
-    if (id === 'return-lis') { S.dialog = null; render(); toast('signoutRequested emitted', 'Status In review → Reviewed · 1 measurement · 1 region · returning focus to the Hyperdrive controller'); return; }
+    if (id === 'dx-confirm') { S.dialog = null; S.dxOn = true; S.adjusted = false; S.overlay = false; render(); announce('Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago'); echo('dx-enter'); return; }
+    if (id === 'return-lis') { S.dialog = null; render(); toast('signoutRequested emitted', 'Status In review → Reviewed · 1 measurement · 1 region · returning focus to the EHR controller'); return; }
     if (id === 'prelim') { toast('Preliminary note', 'Sent to the LIS as an Observation with the viewing evidence (regions, measurements) · Clinical-IH only'); return; }
     if (id === 'consult') { toast('shareCreated', 'Expiring consult link · de-identified · Tier 0 · 72 h · copied'); return; }
     if (id === 'handoff') { toast('Hand-off requested', 'Opening the companion window on the diagnostic display via the IID URL and launch token'); return; }
@@ -1075,7 +1075,7 @@ body.show-live .canvas-area .cluster, body.show-live .canvas-area .radial, body.
       return;
     }
     if (S.dialog) { if (e.key === 'Escape') { e.preventDefault(); escape(); } else if (e.key === 'Enter' && S.dialog === 'signout') { e.preventDefault(); S.dialog = null; render(); toast('signoutRequested emitted', 'Status In review → Reviewed · returning to the LIS'); } else if (e.key === '?') { e.preventDefault(); escape(); } return; }
-    if (e.altKey || /^F\d+$/.test(e.key)) return; // never bound (Hyperdrive rule)
+    if (e.altKey || /^F\d+$/.test(e.key)) return; // never bound (EHR rule)
     if (e.key === 'ContextMenu') { e.preventDefault(); const r = $('canvas').getBoundingClientRect(); openRadial(r.width / 2, r.height / 2); return; }
     if (e.key === 'Tab') return;
     if (derived().ruo && e.key !== 'Escape') return;

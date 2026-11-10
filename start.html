@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Static page: no script, no network request beyond this file; links are relative to the site root. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'self'; form-action 'none'">
+<meta name="stoipath-page" content="landing">
+<meta name="description" content="Stoipath: the published pages of a whole-slide image viewer for pathology research and education, with what each page is for, its intended use and its status. No patient data.">
+<meta name="theme-color" content="#303030">
+<title>Stoipath · all pages</title>
+<!--
+  Stoipath landing page (audit 2026-11-10, H3). Source: wsi-viewer/site/index.html. Published first at the site root as
+  start.html (beside client/, comparator/, design/), later as the root page itself; every link is relative to that root.
+  Self-contained: the design system's dark-theme tokens (design/design-system/tokens.css) are copied below, so the page
+  needs no other file. Phone first; WCAG 2.2 AA (harness/site-check.mjs runs axe-core at 390 and 1440 px).
+-->
+<style>
+:root {
+  color-scheme: dark;
+  /* design/design-system/tokens.css, dark theme (the subset this page uses) */
+  --grey-6: #141414; --grey-15: #262626; --grey-20: #303030; --grey-24: #3a3a3a; --grey-27: #404040; --grey-31: #4a4a4a;
+  --grey-57: #8a8a8a; --grey-72: #b0b0b0; --grey-83: #d0d0d0; --grey-91: #e6e6e6; --grey-95: #f2f2f2;
+  --color-surface--1: var(--grey-15); --color-surface-0: var(--grey-20); --color-surface-1: var(--grey-24); --color-surface-2: var(--grey-27);
+  --color-text: var(--grey-91); --color-text-secondary: var(--grey-72);
+  --color-border: var(--grey-31); --color-border-strong: var(--grey-57);
+  --color-accent-text: #a8c8f0; --color-accent-hover: #a3c4ee;
+  --color-badge-ruo-bg: var(--grey-83); --color-badge-learn-bg: var(--grey-72); --color-badge-fg: var(--grey-6);
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", "DejaVu Sans Mono", monospace;
+  --text-xs: 11px; --text-sm: 12px; --text-md: 13px; --text-lg: 14px; --text-xl: 16px; --text-2xl: 18px; --text-3xl: 22px; --text-4xl: 28px;
+  --space-2: 4px; --space-3: 6px; --space-4: 8px; --space-5: 12px; --space-6: 16px; --space-7: 20px; --space-8: 24px; --space-9: 32px; --space-10: 40px;
+  --radius-1: 2px; --radius-2: 4px; --radius-3: 6px;
+  --tracking-caps: 0.06em;
+  --focus-shadow: 0 0 0 1px var(--grey-6), 0 0 0 3px var(--grey-95);
+  --target: 24px;
+}
+@media (pointer: coarse) { :root { --target: 44px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--color-surface--1); color: var(--color-text);
+  font: 400 var(--text-xl)/1.5 var(--font-ui);
+}
+@media (min-width: 900px) { body { font-size: var(--text-lg); } }
+h1, h2, h3, p, ul, dl, dd { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: var(--color-accent-text); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--color-accent-hover); }
+:focus { outline: none; }
+:focus-visible { outline: none; box-shadow: var(--focus-shadow); border-radius: var(--radius-1); }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+
+.skip-link {
+  position: absolute; top: var(--space-2); left: var(--space-2); z-index: 10;
+  display: inline-flex; align-items: center; min-height: var(--target); padding: var(--space-3) var(--space-5);
+  background: var(--grey-95); color: var(--grey-6); border-radius: var(--radius-2); font-weight: 600;
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible { transform: none; }
+
+.page { max-width: 1180px; margin: 0 auto; padding: 0 var(--space-6) var(--space-10); }
+@media (min-width: 900px) { .page { padding: 0 var(--space-9) var(--space-10); } }
+
+/* Masthead */
+.masthead { padding: var(--space-8) 0 var(--space-7); border-bottom: 1px solid var(--color-border); }
+.eyebrow { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); color: var(--color-text-secondary); font-size: var(--text-md); }
+.masthead h1 { margin-top: var(--space-4); font-size: var(--text-4xl); line-height: 1.2; letter-spacing: -0.01em; }
+.lede { margin-top: var(--space-4); max-width: 68ch; color: var(--color-text-secondary); }
+.facts { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+.facts li { display: flex; gap: var(--space-4); align-items: baseline; }
+.facts li::before { content: ""; flex: 0 0 auto; width: 6px; height: 6px; margin-top: 0.55em; border-radius: 50%; background: var(--grey-83); align-self: flex-start; }
+@media (min-width: 760px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-8); } }
+
+/* Sections */
+section { padding-top: var(--space-9); }
+section > h2 { font-size: var(--text-2xl); line-height: 1.3; }
+.section-intro { margin-top: var(--space-3); max-width: 72ch; color: var(--color-text-secondary); }
+
+/* Product cards: one column on phones, two from 760 px */
+.cards { display: grid; gap: var(--space-6); margin-top: var(--space-6); }
+@media (min-width: 760px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.card {
+  display: flex; flex-direction: column; gap: var(--space-5);
+  padding: var(--space-7) var(--space-6); background: var(--color-surface-0);
+  border: 1px solid var(--color-border); border-radius: var(--radius-3);
+}
+.card__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.card h3 { font-size: var(--text-3xl); line-height: 1.25; flex: 1 1 100%; }
+.card h3 a { color: var(--color-text); text-decoration-color: var(--grey-57); }
+.card h3 a:hover { color: var(--grey-95); }
+.badge {
+  display: inline-flex; align-items: center; min-height: 22px; padding: 0 var(--space-3);
+  border-radius: var(--radius-1); font: 700 var(--text-xs)/1 var(--font-mono); letter-spacing: var(--tracking-caps);
+  text-transform: uppercase; white-space: nowrap; color: var(--color-badge-fg);
+}
+.badge--ruo { background: var(--color-badge-ruo-bg); }
+.badge--learn { background: var(--color-badge-learn-bg); }
+.badge--tool { background: transparent; color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-border-strong); }
+.purpose { font-size: var(--text-xl); }
+.use {
+  padding: var(--space-4) var(--space-5); border-left: 3px solid var(--grey-83);
+  background: var(--color-surface-1); border-radius: 0 var(--radius-2) var(--radius-2) 0;
+}
+.use dt { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.use dd { margin-top: var(--space-2); }
+.status { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.status li {
+  display: inline-flex; align-items: center; min-height: 26px; padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-strong); border-radius: 999px; font-size: var(--text-md); line-height: 1.3;
+}
+.status-label { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.card__foot { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.open {
+  display: inline-flex; align-items: center; justify-content: center; min-height: max(var(--target), 36px);
+  padding: var(--space-3) var(--space-6); border-radius: var(--radius-2);
+  background: var(--grey-95); color: var(--grey-6); font-weight: 600; text-decoration: none;
+}
+.open:hover { background: var(--grey-83); color: var(--grey-6); }
+.path { color: var(--color-text-secondary); font-size: var(--text-md); overflow-wrap: anywhere; }
+
+/* Secondary pages */
+.more { display: grid; gap: var(--space-5); margin-top: var(--space-6); }
+@media (min-width: 760px) { .more { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.more li { padding: var(--space-6); background: var(--color-surface-0); border: 1px solid var(--color-border); border-radius: var(--radius-3); }
+.more h3 { font-size: var(--text-xl); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.more h3 a { display: inline-flex; align-items: center; min-height: var(--target); }
+.more p { margin-top: var(--space-3); color: var(--color-text-secondary); }
+.more .path { margin-top: var(--space-3); }
+
+/* About this site */
+.about { display: grid; gap: var(--space-6); margin-top: var(--space-6); }
+@media (min-width: 760px) { .about { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-9); } }
+.about h3 { font-size: var(--text-lg); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-text-secondary); }
+.about p { margin-top: var(--space-3); }
+footer { margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: var(--text-md); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#products">Skip to the products</a>
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow"><span>Status as of 2026-11-10</span><span>Prototype</span><span>No patient data</span></p>
+    <h1>Stoipath</h1>
+    <p class="lede">A whole-slide image viewer for pathology research and education, built on a browser engine that measures its own speed and sharpness. These are its published pages.</p>
+    <ul class="facts" aria-label="Before you start">
+      <li><span><strong>No patient data.</strong> Every slide is public, de-identified research data. None of these pages is a medical device or for diagnosis.</span></li>
+      <li><span><strong>Intended for open-source release;</strong> licence proposed, pending UT OTC approval.</span></li>
+      <li><span><strong>Built by AI agents</strong> with human gate review by the project owner. No human pathologist has reviewed the teaching cases yet.</span></li>
+      <li><span><strong>Use Chrome or Edge on a computer</strong> for the practice report until its Safari colour check is done (on iPhone and iPad every browser uses Safari's engine).</span></li>
+    </ul>
+  </header>
+
+  <main id="products" tabindex="-1">
+    <section aria-labelledby="products-title">
+      <h2 id="products-title">Products</h2>
+      <p class="section-intro">Four pages, each with its own label and intended use. Open one to start; the About dialogs of Learn, the practice report and the research shell link back here.</p>
+      <div class="cards">
+
+        <article class="card" aria-labelledby="p-learn">
+          <div class="card__head">
+            <span class="badge badge--learn">Learn</span>
+            <h3 id="p-learn"><a href="client/dist/learn.html">Learn</a></h3>
+          </div>
+          <p class="purpose">A guided teaching case on a public sentinel lymph node slide: find the metastasis, answer the questions and see the expert's view. A short viewer tour comes first.</p>
+          <dl class="use"><dt>Intended use</dt><dd>For educational use. Not a medical device. Contains no protected health information.</dd></dl>
+          <div>
+            <p class="status-label" id="s-learn">Status</p>
+            <ul class="status" aria-labelledby="s-learn">
+              <li>Draft case pending pathologist review</li>
+              <li>Stoipath Learn L1</li>
+            </ul>
+          </div>
+          <div class="card__foot">
+            <a class="open" href="client/dist/learn.html" aria-label="Open Learn">Open</a>
+            <code class="path">client/dist/learn.html</code>
+          </div>
+        </article>
+
+        <article class="card" aria-labelledby="p-practice">
+          <div class="card__head">
+            <span class="badge badge--learn">Learn</span>
+            <h3 id="p-practice"><a href="client/dist/signout.html">Practice report</a></h3>
+          </div>
+          <p class="purpose">A worklist of ten five-node sentinel lymph node cases from CAMELYON17: review the slides, write a structured practice report, compare it with the reference and export your results.</p>
+          <dl class="use"><dt>Intended use</dt><dd>For educational use. Not a medical device. Contains no protected health information. Practice report on public de-identified teaching cases. Not a diagnostic or sign-out tool.</dd></dl>
+          <div>
+            <p class="status-label" id="s-practice">Status</p>
+            <ul class="status" aria-labelledby="s-practice">
+              <li>Draft cases pending pathologist review</li>
+              <li>Safari colour check pending: use Chrome or Edge on a computer (on iPhone and iPad every browser uses Safari's engine)</li>
+              <li>Simplified pN staging, as in the CAMELYON17 challenge</li>
+            </ul>
+          </div>
+          <div class="card__foot">
+            <a class="open" href="client/dist/signout.html" aria-label="Open the practice report">Open</a>
+            <code class="path">client/dist/signout.html</code>
+          </div>
+        </article>
+
+        <article class="card" aria-labelledby="p-viewer">
+          <div class="card__head">
+            <span class="badge badge--ruo">RUO</span>
+            <h3 id="p-viewer"><a href="client/dist/shell.html">Viewer, research use only</a></h3>
+          </div>
+          <p class="purpose">The Stage-0 engine in the research workspace: a slide library, annotation, measurement, layers, side-by-side compare and snapshots, on public sample slides.</p>
+          <dl class="use"><dt>Intended use</dt><dd>For Research Use Only. Not for use in diagnostic procedures.</dd></dl>
+          <div>
+            <p class="status-label" id="s-viewer">Status</p>
+            <ul class="status" aria-labelledby="s-viewer">
+              <li>Prototype research shell</li>
+              <li>Public sample slides only</li>
+            </ul>
+          </div>
+          <div class="card__foot">
+            <a class="open" href="client/dist/shell.html" aria-label="Open the research viewer">Open</a>
+            <code class="path">client/dist/shell.html</code>
+          </div>
+        </article>
+
+        <article class="card" aria-labelledby="p-instrument">
+          <div class="card__head">
+            <span class="badge badge--tool">Instrument</span>
+            <h3 id="p-instrument"><a href="client/dist/?overlay=1">Measurement instrument</a></h3>
+          </div>
+          <p class="purpose">The developer page that measures the Stage-0 engine's zoom and pan latency and sharpness on one public slide, and exports the numbers.</p>
+          <dl class="use"><dt>Intended use</dt><dd>Engineering measurement only. Not a product, not a viewer for teaching or research results, and not for diagnosis.</dd></dl>
+          <div>
+            <p class="status-label" id="s-instrument">Status</p>
+            <ul class="status" aria-labelledby="s-instrument">
+              <li>Frozen build of 2026-10-25</li>
+              <li>Later iPhone fix not published</li>
+              <li>Best on a laptop</li>
+            </ul>
+          </div>
+          <div class="card__foot">
+            <a class="open" href="client/dist/?overlay=1" aria-label="Open the measurement instrument">Open</a>
+            <code class="path">client/dist/?overlay=1</code>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section aria-labelledby="more-title">
+      <h2 id="more-title">Also published</h2>
+      <ul class="more">
+        <li>
+          <h3><span class="badge badge--tool">Comparator</span><a href="comparator/osd.html">OpenSeadragon comparator</a></h3>
+          <p>The same slide region and tiles in OpenSeadragon, an established web viewer, for comparison runs (one run so far, on a different metric; no comparison is quoted). A developer tool, like the measurement instrument.</p>
+          <p class="path"><code>comparator/osd.html</code></p>
+        </li>
+        <li>
+          <h3><span class="badge badge--tool">Design</span><a href="design/">Design pages</a></h3>
+          <p>The UX and UI design phase: final screens, the judged concepts and the design system. Synthetic content; the screens are mock-ups, and no product, validation or attestation exists behind them. The concept judges were AI agents.</p>
+          <p class="path"><code>design/</code></p>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="about-title">
+      <h2 id="about-title">About these pages</h2>
+      <div class="about">
+        <div>
+          <h3>Release status</h3>
+          <p>Stoipath is intended for open-source release; licence proposed, pending UT OTC approval. Proposed licence for the software: Apache-2.0 (proposed; pending UT OTC approval). The licence of the teaching text is to be confirmed.</p>
+        </div>
+        <div>
+          <h3>Data</h3>
+          <p>Slides from CAMELYON16 and CAMELYON17 (CC0 1.0; Computational Pathology Group, Radboud University Medical Center, Nijmegen, with partner hospitals) and from the OpenSlide test data (CC0 1.0, except one sample that its source lists as “distributable”).</p>
+        </div>
+        <div>
+          <h3>Privacy</h3>
+          <p>No patient data. Nothing you type or do on these pages is sent anywhere; progress stays in your browser until you export it. The practice report reads slide tiles from the public CAMELYON17 bucket (Amazon S3), which sees your network address, as any web host does.</p>
+        </div>
+        <div>
+          <h3>How it was built</h3>
+          <p>Built by AI agents with human gate review: the project owner reviews at defined gates. Reviews in the project's documents described as pathologist-educator, accessibility or engineering reviews were done by AI agents in those roles, not by human professionals.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Stoipath · status as of 2026-11-10 · not a medical device · no patient data.</p>
+  </footer>
+</div>
+</body>
+</html>

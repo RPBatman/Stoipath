@@ -1,7 +1,15 @@
-# Stoipath Stage-0 prototype (static deploy)
+# Stoipath: published pages (static site)
 
-Open client/dist/?overlay=1&label=<device> from any static server. See wsi-viewer/stage0/README.md and MEASUREMENT_PROTOCOL.md on the ccr-b12f6228-wup7tf branch.
+This branch is the published site. Start at `start.html` (all pages, with their status and intended use).
 
-## Design pages
+- Measurement instrument (frozen build of 2026-10-25): `client/dist/?overlay=1&label=<device>`
+- Viewer, research use only: `client/dist/shell.html`
+- Learn: `client/dist/learn.html`
+- Practice report: `client/dist/signout.html`
+- OpenSeadragon comparator: `comparator/osd.html`
+- Design pages: `design/`
 
-UX/UI wireframes, design system and review guide: https://rpbatman.github.io/Stoipath/design/
+Source, specifications and the measurement protocol are on the `main` branch under `wsi-viewer/`.
+`PUBLISHED.json` records the source commit, build id and CI run of the latest publish.
+
+No patient data. Not a medical device. Intended for open-source release; licence proposed, pending UT OTC approval.

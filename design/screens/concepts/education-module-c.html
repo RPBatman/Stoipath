@@ -574,8 +574,8 @@ html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence
 /* The full label string is visible at exactly 1024 px (principles §2.5 rule 2); the top bar container query would hide it because of its padding */
 @media (min-width: 1024px) and (max-width: 1079px) { .topbar .topbar__label { display: inline; } }
 </style>
-</head>
-<body>
+<style id="stoi-mockup-banner-css">.stoi-mockup-banner{position:fixed;top:0;left:0;right:0;width:fit-content;margin:0 auto;z-index:2147483647;pointer-events:none;box-sizing:border-box;max-width:calc(100vw - 16px);padding:2px 12px;background:#ffd60a;color:#111;border:1px solid #111;border-top:0;border-radius:0 0 6px 6px;font:700 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;letter-spacing:0}@media print{.stoi-mockup-banner{position:static;max-width:none}}</style></head>
+<body><aside class="stoi-mockup-banner" aria-label="Design mock-up notice">Design mock-up: no product or validation exists · synthetic data · not a clinical tool</aside>
 <a class="skip-link" href="#canvas">Skip to slide</a>
 <!-- Icon sprite (inline, no network) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1095,7 +1095,7 @@ html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence
     <!-- ============ CLINICAL-IH / DX: same flow shell, consult on iPad or frozen section ============ -->
     <section class="task" data-task="clin-open" aria-labelledby="t-co-h" hidden>
       <div class="task__grab" aria-hidden="true"></div>
-      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Open</span><span data-live="lis:worklist">From Epic Beaker · In review</span></div><h2 class="task__title" id="t-co-h"><span data-synthetic>AP-26-04417</span> · Left axillary SLN</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
+      <header class="task__head"><div class="stack stack--tight min-w-0"><div class="task__meta"><span>Open</span><span data-live="lis:worklist">From the LIS · In review</span></div><h2 class="task__title" id="t-co-h"><span data-synthetic>AP-26-04417</span> · Left axillary SLN</h2><div class="task__status js-status"></div></div><button class="btn btn--icon btn--ghost sheet-toggle" data-action="sheet" aria-label="Expand or collapse the task card"><svg class="icon"><use href="#i-up"/></svg></button></header>
       <div class="task__body">
         <dl class="vignette" data-live="launch"><dt>Patient</dt><dd data-synthetic>DOE, JANE · 1958 · synthetic</dd><dt>Parts</dt><dd>A Left axillary sentinel node · B Non-sentinel node · C Breast, left (re-excision)</dd><dt>Purpose</dt><dd>Consultation · preliminary only (set by the launch, not editable here)</dd></dl>
         <div class="tray tray-mini" role="listbox" aria-label="Slides in this case" data-live="state.slides">
@@ -1380,7 +1380,7 @@ html[data-product="clinical"] #hud-licence, html[data-product="dx"] #hud-licence
       <div class="dialog__header"><h2 class="dialog__title" id="ho-t">Request sign-out · <span data-synthetic>AP-26-04417</span></h2><button class="btn btn--icon btn--ghost" data-action="close" aria-label="Close, Escape"><svg class="icon"><use href="#i-close"/></svg></button></div>
       <div class="dialog__body">
         <div class="alert alert--info"><span class="alert__glyph">i</span><div id="ho-text">This device cannot sign out. The case, your preliminary impression and 2 bookmarks will open on the diagnostic display, where Dx mode can be attested.</div></div>
-        <div class="field"><label class="field__label" for="ho-to">Open on</label><span class="select"><select id="ho-to"><option>My reading-room workstation · RR-3 (Barco MDPC-8127)</option><option>Dr Example's queue (synthetic)</option></select></span></div>
+        <div class="field"><label class="field__label" for="ho-to">Open on</label><span class="select"><select id="ho-to"><option>My reading-room workstation · RR-3 (Example display DX-27)</option><option>Dr Example's queue (synthetic)</option></select></span></div>
       </div>
       <div class="dialog__footer"><button class="btn btn--ghost" data-action="close">Cancel</button><button class="btn btn--accent" data-action="close">Send to workstation <kbd class="key">↵</kbd></button></div>
     </div>
@@ -1644,7 +1644,7 @@ function learnerSteps(aud) {
   return base;
 }
 var CLIN = [
-  { s: 1, ph: 0, task: 'clin-open', title: 'AP-26-04417 · Left axillary SLN', cta: 'Start screening', key: 'N', stem: 'Opened from Epic Beaker · In review · consultation, preliminary only.', view: 'fit', slide: 'he' },
+  { s: 1, ph: 0, task: 'clin-open', title: 'AP-26-04417 · Left axillary SLN', cta: 'Start screening', key: 'N', stem: 'Opened from the LIS · In review · consultation, preliminary only.', view: 'fit', slide: 'he' },
   { s: 2, ph: 1, task: 'clin-review', title: 'Systematic survey', meta: 'Screen', cta: 'Next', key: 'N', stem: 'Survey the whole node at low power; ⇧+arrows step one viewport.', view: 'fit' },
   { s: 3, ph: 2, task: 'clin-review', title: 'Suspicious areas at 20×', meta: 'Examine', cta: 'Next', key: 'N', stem: 'Examine the right-pole sinus at 20×; open A1-2 CK with ].', view: 'focus20' },
   { s: 4, ph: 3, task: 'clin-decide', title: 'Preliminary impression', cta: 'Save preliminary impression', key: '↵', stem: 'Positive, negative or defer; measurement and note travel with the case.', view: 'focus20' },
@@ -1802,14 +1802,14 @@ function applyEnv() {
   if (banner && prev !== banner) announce(banner, true);
   var notice = '';
   if (state.tileErr) notice = '3 tiles could not be loaded — retrying <button class="btn btn--sm btn--secondary" type="button" data-action="retry">Retry</button>';
-  else if (dx) notice = 'Dx mode · display attested (EDID · Barco MDPC-8127) · QA passed 3 days ago';
+  else if (dx) notice = 'Dx mode · display attested (EDID · Example display DX-27) · QA passed 3 days ago';
   else if (state.product === 'dx') notice = banner;
   else if (state.product === 'clinical' && dev !== 'desktop') notice = 'Dx mode unavailable on this device (Tier 2). Consultation · preliminary only.';
   else if (state.product === 'clinical') notice = 'Nav mode · consultation, preliminary only · sign-out on the diagnostic display';
   else if (state.product === 'ruo') notice = 'Research use only · no sign-out, no LIS write-back, no Dx mode in this build';
   $('#strip-notice').innerHTML = notice;
-  txt('#clin-dx-text', dx ? 'Dx mode is active on this attested display (EDID · Barco MDPC-8127). Request sign-out opens the hand-off summary.' : 'Sign-out needs Dx mode on an attested diagnostic display. This device stays in Nav mode.');
-  txt('#ho-text', dx ? 'Worklist state In review → Reviewed, 1 measurement, 1 region and 2 bookmarks return to Epic Beaker. Dictation stays in the LIS.' : 'This device cannot sign out. The case, your preliminary impression and 2 bookmarks will open on the diagnostic display, where Dx mode can be attested.');
+  txt('#clin-dx-text', dx ? 'Dx mode is active on this attested display (EDID · Example display DX-27). Request sign-out opens the hand-off summary.' : 'Sign-out needs Dx mode on an attested diagnostic display. This device stays in Nav mode.');
+  txt('#ho-text', dx ? 'Worklist state In review → Reviewed, 1 measurement, 1 region and 2 bookmarks return to the LIS. Dictation stays in the LIS.' : 'This device cannot sign out. The case, your preliminary impression and 2 bookmarks will open on the diagnostic display, where Dx mode can be attested.');
   var NET = { ok: null, cold4g: 'Slow link (6 Mbps) — reduced detail while moving', pack: 'Offline pack · Lymph node unknowns, week 43 · saved 2026-10-20', offline: 'Offline — showing cached tiles only', slow: 'Server slow (p95 1.2 s) — prefetch paused', classroom: 'Shared Wi-Fi busy — following the instructor may lag' };
   var nc = $('#net-chip'); nc.hidden = !NET[state.net]; nc.textContent = NET[state.net] || '';
   var tier = dev === 'ipad' ? 'Tier 2 · 60 Hz' : dev === 'phone' ? 'Tier 2 · reduced memory' : null;
@@ -1830,7 +1830,7 @@ function applyEnv() {
   $('#nav-label').innerHTML = slideName.split(' · ')[0] + ' · overview · <kbd class="key">O</kbd> hides';
   $$('[data-slide]').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.slide === state.slideId)); });
   $$('.tray-mini .tray__slide').forEach(function (b, k) { var sel = (k === 1) === (state.slideId === 'ihc') && k < 2; b.classList.toggle('is-selected', sel); b.setAttribute('aria-selected', String(sel)); });
-  var AB = { learn: ['Stoipath Learn', 'LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn'], ruo: ['Stoipath Viewer (RUO)', 'Standalone · manifest URL · product viewer-ruo · no LIS write-back, no sign-out event, no Dx gate'], clinical: ['Stoipath Clinical-IH', 'Epic Beaker worklist launch (IID URL + token) · product clinical-ih · purposeOfUse consultation · companion window'], dx: ['Stoipath Dx', 'Epic Beaker worklist launch · product dx · purposeOfUse ' + (dx ? 'sign-out' : 'consultation') + ' · UDI, build_hash and pathway_hash shown at start-up'] };
+  var AB = { learn: ['Stoipath Learn', 'LTI 1.3 resource link · Canvas (synthetic deployment) · cookieless via Platform Storage · role Learner · product learn'], ruo: ['Stoipath Viewer (RUO)', 'Standalone · manifest URL · product viewer-ruo · no LIS write-back, no sign-out event, no Dx gate'], clinical: ['Stoipath Clinical-IH', 'LIS worklist launch (IID URL + token) · product clinical-ih · purposeOfUse consultation · companion window'], dx: ['Stoipath Dx', 'LIS worklist launch · product dx · purposeOfUse ' + (dx ? 'sign-out' : 'consultation') + ' · UDI, build_hash and pathway_hash shown at start-up'] };
   txt('#ab-product', AB[state.product][0]); txt('#ab-launch', AB[state.product][1]); txt('#km-t', 'Keyboard map · ' + AB[state.product][0]);
   $$('[data-action="labels"]').forEach(function (t) { t.setAttribute('aria-checked', String(state.labels)); }); var tl = $('#tool-labels'); if (tl) tl.setAttribute('aria-pressed', String(state.labels));
   $('#tool-overlays').setAttribute('aria-pressed', String(state.overlays));

@@ -1,0 +1,18 @@
+{
+ "published_at": "2026-11-10",
+ "source_commit": "5ae752698681ba70a763e1c4b237bbb43a629f95",
+ "source_branch": "main",
+ "build_id": "2026-11-10T22:26:37Z",
+ "ci_run": "https://github.com/RPBatman/Stoipath/actions/runs/42914439222",
+ "pages": [
+  "client/dist/learn.html",
+  "client/dist/signout.html",
+  "client/dist/shell.html",
+  "start.html",
+  "design/"
+ ],
+ "not_republished": {
+  "client/dist/index.html": "measurement instrument, frozen build of 2026-10-25",
+  "comparator/": "unchanged"
+ }
+}
